@@ -42,9 +42,9 @@
 						<TextBlock x:Uid="ProductAssignmentDescription" Style="{ThemeResource BodyStrongTextBlockStyle}" />
 					</StackPanel>
 				</Expander>
-				<!--  Official website  -->
+				<!--  Official site  -->
 				<Expander
-					x:Uid="ExpanderOfficialWebsites"
+					x:Uid="ExpanderOfficialSite"
 					Grid.Row="1"
 					Margin="{StaticResource ExpanderMargin}"
 					HorizontalAlignment="Stretch"
@@ -52,25 +52,7 @@
 					IsExpanded="False">
 					<StackPanel Margin="0,-15,0,-10">
 						<HyperlinkButton
-							x:Uid="SettingsPage_OfficialWebsite_TgdownloaderGlobal1"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_OfficialWebsite_TgdownloaderGlobal2"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_OfficialWebsite_TgdownloaderRu1"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_OfficialWebsite_TgdownloaderRu2"
+							x:Uid="SettingsPage_OfficialSite_OpenTgResearcher"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
@@ -93,7 +75,7 @@
 							HorizontalContentAlignment="Left"
 							Click="{x:Bind ViewModel.OpenHyperlink}" />
 						<HyperlinkButton
-							x:Uid="SettingsPage_Release_History"
+							x:Uid="SettingsPage_DownloadStatistics"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
@@ -110,13 +92,7 @@
 					IsExpanded="False">
 					<StackPanel Margin="0,-15,0,-10">
 						<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_TgDownloader"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_IssueTemplate"
+							x:Uid="SettingsPage_GitHub_Link"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
@@ -133,12 +109,6 @@
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_Ideas"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
 					</StackPanel>
 				</Expander>
 				<!--  User support  -->
@@ -151,13 +121,7 @@
 					IsExpanded="False">
 					<StackPanel Margin="0,-15,0,-10">
 						<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_TgDownloaderNews"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_TgDownloaderGlobalChat"
+							x:Uid="SettingsPage_GitHub_OpenTgResearcher"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"

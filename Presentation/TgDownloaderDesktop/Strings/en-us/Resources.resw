@@ -184,10 +184,10 @@
   <data name="ExpanderUpdate.Header" xml:space="preserve">
     <value>Update</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloader.Content" xml:space="preserve">
-    <value>TgDownloader repository</value>
+  <data name="SettingsPage_GitHub_Link.Content" xml:space="preserve">
+    <value>GitHub repository</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloader.Tag" xml:space="preserve">
+  <data name="SettingsPage_GitHub_Link.Tag" xml:space="preserve">
     <value>https://github.com/DamianMorozov/OpenTgResearcher/</value>
   </data>
   <data name="SettingsPage_GitHub_IssueTemplate.Content" xml:space="preserve">
@@ -214,17 +214,11 @@
   <data name="SettingsPage_GitHub_Ideas.Tag" xml:space="preserve">
     <value>https://github.com/DamianMorozov/OpenTgResearcher/discussions/categories/ideas</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloaderNews.Content" xml:space="preserve">
-    <value>TgDownloader News</value>
+  <data name="SettingsPage_GitHub_OpenTgResearcher.Content" xml:space="preserve">
+    <value>OpenTgResearcher</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloaderNews.Tag" xml:space="preserve">
-    <value>https://t.me/TgDownloader</value>
-  </data>
-  <data name="SettingsPage_GitHub_TgDownloaderGlobalChat.Content" xml:space="preserve">
-    <value>TgDownloader Global Chat</value>
-  </data>
-  <data name="SettingsPage_GitHub_TgDownloaderGlobalChat.Tag" xml:space="preserve">
-    <value>https://t.me/TgDownloaderChat</value>
+  <data name="SettingsPage_GitHub_OpenTgResearcher.Tag" xml:space="preserve">
+    <value>https://t.me/OpenTgResearcher</value>
   </data>
   <data name="ClientPage_MyTelegram.Content" xml:space="preserve">
     <value>my.telegram.org</value>
@@ -232,29 +226,11 @@
   <data name="ClientPage_MyTelegram.Tag" xml:space="preserve">
     <value>"https://my.telegram.org/auth?to=apps"</value>
   </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal1.Content" xml:space="preserve">
-    <value>tgdownloader.online</value>
+  <data name="SettingsPage_OfficialSite_OpenTgResearcher.Content" xml:space="preserve">
+    <value>opentgresearcher.online</value>
   </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal1.Tag" xml:space="preserve">
-    <value>"http://tgdownloader.online"</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal2.Content" xml:space="preserve">
-    <value>tg-downloader.online</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal2.Tag" xml:space="preserve">
-    <value>"http://tg-downloader.online"</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu1.Content" xml:space="preserve">
-    <value>tgdownloader.ru</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu1.Tag" xml:space="preserve">
-    <value>"http://tgdownloader.ru"</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu2.Content" xml:space="preserve">
-    <value>tg-downloader.ru</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu2.Tag" xml:space="preserve">
-    <value>"http://tg-downloader.ru"</value>
+  <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
+    <value>"http://opentgresearcher.online"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Releases</value>
@@ -262,14 +238,14 @@
   <data name="SettingsPage_Releases_Latest.Tag" xml:space="preserve">
     <value>"https://github.com/DamianMorozov/OpenTgResearcher/releases"</value>
   </data>
-  <data name="SettingsPage_Release_History.Content" xml:space="preserve">
-    <value>Release history</value>
+  <data name="SettingsPage_DownloadStatistics.Content" xml:space="preserve">
+    <value>Download statistics</value>
   </data>
-  <data name="SettingsPage_Release_History.Tag" xml:space="preserve">
+  <data name="SettingsPage_DownloadStatistics.Tag" xml:space="preserve">
     <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/Docs/RELEASES.md"</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Content" xml:space="preserve">
-    <value>TgDownloaderConsole Docker image</value>
+    <value>Docker image</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Tag" xml:space="preserve">
     <value>"https://hub.docker.com/repository/docker/damianmorozov/tgdownloader-console"</value>
@@ -348,8 +324,8 @@
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>
   </data>
-  <data name="ExpanderOfficialWebsites.Header" xml:space="preserve">
-    <value>Official websites</value>
+  <data name="ExpanderOfficialSite.Header" xml:space="preserve">
+    <value>Official site</value>
   </data>
   <data name="TextOfficialWebsiteGlobal.Text" xml:space="preserve">
     <value>Official website (global version)</value>
@@ -367,13 +343,13 @@
     <value>Project support</value>
   </data>
   <data name="ExpanderDocker.Header" xml:space="preserve">
-    <value>Docker images</value>
+    <value>Docker</value>
   </data>
   <data name="ExpanderInstallRequirements.Header" xml:space="preserve">
     <value>Install Requirements</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsSaveValues.Text" xml:space="preserve">
-    <value>Save the values of the "App api_id" and "App api_hash" fields</value>
+    <value>Save the values of the fields by App configuration section: `App api_id` / `App api_hash`</value>
   </data>
   <data name="SettingName.Text" xml:space="preserve">
     <value>Setting</value>
@@ -610,9 +586,8 @@
     <value>Product assignment</value>
   </data>
   <data name="ProductAssignmentDescription.Text" xml:space="preserve">
-    <value>Upgrade your Telegram. Download and distribute files from chats to your catalogs. 
-Console version is almost complete (production). 
-The desktop version is in active development stage (preview).</value>
+    <value>Telegram's open researcher and search engine. 
+Download chat rooms by catalogs. </value>
   </data>
   <data name="TemplateColumnEdit.Header" xml:space="preserve">
     <value>Edit</value>

@@ -145,5 +145,44 @@ public partial class App : Application
 		}
 	}
 
+	// https://github.com/AndrewKeepCoding/WinUI3Localizer
+	//private async Task InitializeLocalizer()
+	//{
+	//	// Initialize a "Strings" folder in the "LocalFolder" for the packaged app.
+	//	StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+	//	StorageFolder stringsFolder = await localFolder.CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
+	//	// Create string resources file from app resources if doesn't exists.
+	//	string resourceFileName = "Resources.resw";
+	//	await CreateStringResourceFileIfNotExists(stringsFolder, "en-US", resourceFileName);
+	//	await CreateStringResourceFileIfNotExists(stringsFolder, "ru-RU", resourceFileName);
+	//	var localizer = await new LocalizerBuilder()
+	//		.AddStringResourcesFolderForLanguageDictionaries(stringsFolder.Path)
+	//		.SetOptions(options =>
+	//		{
+	//			options.DefaultLanguage = "en-US";
+	//		})
+	//		.Build();
+	//}
+
+	//private static async Task CreateStringResourceFileIfNotExists(StorageFolder stringsFolder, string language, string resourceFileName)
+	//{
+	//	StorageFolder languageFolder = await stringsFolder.CreateFolderAsync(
+	//		language,
+	//		CreationCollisionOption.OpenIfExists);
+
+	//	if (await languageFolder.TryGetItemAsync(resourceFileName) is null)
+	//	{
+	//		string resourceFilePath = Path.Combine(stringsFolder.Name, language, resourceFileName);
+	//		StorageFile resourceFile = await LoadStringResourcesFileFromAppResource(resourceFilePath);
+	//		_ = await resourceFile.CopyAsync(languageFolder);
+	//	}
+	//}
+
+	//private static async Task<StorageFile> LoadStringResourcesFileFromAppResource(string filePath)
+	//{
+	//	Uri resourcesFileUri = new($"ms-appx:///{filePath}");
+	//	return await StorageFile.GetFileFromApplicationUriAsync(resourcesFileUri);
+	//}
+
 	#endregion
 }

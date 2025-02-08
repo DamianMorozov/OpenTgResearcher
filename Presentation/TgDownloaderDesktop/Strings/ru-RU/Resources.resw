@@ -243,10 +243,10 @@
   <data name="ExpanderUpdate.Header" xml:space="preserve">
     <value>Обновление</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloader.Content" xml:space="preserve">
-    <value>TgDownloader repository</value>
+  <data name="SettingsPage_GitHub_Link.Content" xml:space="preserve">
+    <value>ГитХаб репозиторий</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloader.Tag" xml:space="preserve">
+  <data name="SettingsPage_GitHub_Link.Tag" xml:space="preserve">
     <value>https://github.com/DamianMorozov/OpenTgResearcher/</value>
   </data>
   <data name="SettingsPage_GitHub_IssueTemplate.Content" xml:space="preserve">
@@ -273,17 +273,11 @@
   <data name="SettingsPage_GitHub_Ideas.Tag" xml:space="preserve">
     <value>https://github.com/DamianMorozov/OpenTgResearcher/discussions/categories/ideas</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloaderNews.Content" xml:space="preserve">
-    <value>TgDownloader News</value>
+  <data name="SettingsPage_GitHub_OpenTgResearcher.Content" xml:space="preserve">
+    <value>OpenTgResearcher</value>
   </data>
-  <data name="SettingsPage_GitHub_TgDownloaderNews.Tag" xml:space="preserve">
-    <value>https://t.me/TgDownloader</value>
-  </data>
-  <data name="SettingsPage_GitHub_TgDownloaderGlobalChat.Content" xml:space="preserve">
-    <value>TgDownloader Global Chat</value>
-  </data>
-  <data name="SettingsPage_GitHub_TgDownloaderGlobalChat.Tag" xml:space="preserve">
-    <value>https://t.me/TgDownloaderChat</value>
+  <data name="SettingsPage_GitHub_OpenTgResearcher.Tag" xml:space="preserve">
+    <value>https://t.me/OpenTgResearcher</value>
   </data>
   <data name="ClientPage_MyTelegram.Content" xml:space="preserve">
     <value>my.telegram.org</value>
@@ -291,29 +285,11 @@
   <data name="ClientPage_MyTelegram.Tag" xml:space="preserve">
     <value>"https://my.telegram.org/auth?to=apps"</value>
   </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal1.Content" xml:space="preserve">
-    <value>tgdownloader.online</value>
+  <data name="SettingsPage_OfficialSite_OpenTgResearcher.Content" xml:space="preserve">
+    <value>opentgresearcher.ru</value>
   </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal1.Tag" xml:space="preserve">
-    <value>"http://tgdownloader.online"</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal2.Content" xml:space="preserve">
-    <value>tg-downloader.online</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderGlobal2.Tag" xml:space="preserve">
-    <value>"http://tg-downloader.online"</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu1.Content" xml:space="preserve">
-    <value>tgdownloader.ru</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu1.Tag" xml:space="preserve">
-    <value>"http://tgdownloader.ru"</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu2.Content" xml:space="preserve">
-    <value>tg-downloader.ru</value>
-  </data>
-  <data name="SettingsPage_OfficialWebsite_TgdownloaderRu2.Tag" xml:space="preserve">
-    <value>"http://tg-downloader.ru"</value>
+  <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
+    <value>"http://opentgresearcher.ru"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Релизы</value>
@@ -321,14 +297,14 @@
   <data name="SettingsPage_Releases_Latest.Tag" xml:space="preserve">
     <value>"https://github.com/DamianMorozov/OpenTgResearcher/releases"</value>
   </data>
-  <data name="SettingsPage_Release_History.Content" xml:space="preserve">
-    <value>История релизов</value>
+  <data name="SettingsPage_DownloadStatistics.Content" xml:space="preserve">
+    <value>Статистика скачиваний</value>
   </data>
-  <data name="SettingsPage_Release_History.Tag" xml:space="preserve">
+  <data name="SettingsPage_DownloadStatistics.Tag" xml:space="preserve">
     <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/Docs/RELEASES-RUS.md"</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Content" xml:space="preserve">
-    <value>TgDownloaderConsole Докер образ</value>
+    <value>Докер образ</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Tag" xml:space="preserve">
     <value>"https://hub.docker.com/repository/docker/damianmorozov/tgdownloader-console"</value>
@@ -407,8 +383,8 @@
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>ГитХаб сообщество</value>
   </data>
-  <data name="ExpanderOfficialWebsites.Header" xml:space="preserve">
-    <value>Официальные вебсайты</value>
+  <data name="ExpanderOfficialSite.Header" xml:space="preserve">
+    <value>Официальный сайт</value>
   </data>
   <data name="TextOfficialWebsiteGlobal.Text" xml:space="preserve">
     <value>Официальный вебсайт (глобальная версия)</value>
@@ -426,13 +402,13 @@
     <value>Поддержка проекта</value>
   </data>
   <data name="ExpanderDocker.Header" xml:space="preserve">
-    <value>Docker образы</value>
+    <value>Docker</value>
   </data>
   <data name="ExpanderInstallRequirements.Header" xml:space="preserve">
     <value>Требования к установке</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsSaveValues.Text" xml:space="preserve">
-    <value>Сохраните значения полей "App api_id" и "App api_hash"</value>
+    <value>Сохраните значения полей секции App configuration: `App api_id` / `App api_hash`</value>
   </data>
   <data name="SettingName.Text" xml:space="preserve">
     <value>Настройка</value>
@@ -672,9 +648,8 @@
     <value>Назначение продукта</value>
   </data>
   <data name="ProductAssignmentDescription.Text" xml:space="preserve">
-    <value>Прокачай свой Телеграм. Скачивай и раскладывай файлы из чатов по своим каталогам. 
-Консольная версия практически завершена (продакшн). 
-Десктоп версии находится в активной стадии разработки (превью).</value>
+    <value>Открытый исследователь и поисковик Телеграм. 
+Скачивай чаты по каталогам. </value>
   </data>
   <data name="TemplateColumnEdit.Header" xml:space="preserve">
     <value>Править</value>

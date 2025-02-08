@@ -84,6 +84,16 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
 	public async Task SetAppLanguageAsync()
 	{
+		Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = TgEnumUtils.GetLanguageAsString(AppLanguage);
+		//// Update UI and resources
+		//var resourceLoader = new ResourceLoader();
+		//if (App.Current is App app)
+		//{
+		//	if (App.MainWindow.Content is FrameworkElement rootElement)
+		//	{
+		//		rootElement.Resources.ApplyResources(fe, fe.ResourceManager, languageCode);
+		//	}
+		//}
 		await Task.CompletedTask;
 	}
 
@@ -120,7 +130,6 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
 	private async Task SaveAppLanguageInSettingsAsync(TgEnumLanguage appLanguage)
 	{
-		Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = TgEnumUtils.GetLanguageAsString(AppLanguage);
 		await SaveSettingAsync(SettingsKeyAppLanguage, appLanguage.ToString());
 	}
 

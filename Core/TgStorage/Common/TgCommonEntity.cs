@@ -11,6 +11,10 @@ public sealed class TgCommonEntity
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	public Guid UidValue { get; set; }
 
+	[Timestamp]
+	[Column(TgEfConstants.ColumnRowVersion)]
+	public byte[]? RowVersion { get; set; }
+	
 	[DefaultValue(true)]
 	public bool BoolValue { get; set; }
 
@@ -41,13 +45,17 @@ public sealed class TgCommonEntity
 	[DefaultValue("2001-02-03 11:22:33")]
 	public DateTime DtValue { get; set; }
 
-	/// <summary>
-	/// Default constructor.
-	/// </summary>
+	/// <summary> Default constructor </summary>
 	public TgCommonEntity()
 	{
 		Default();
 	}
+
+	#endregion
+
+	#region Public and private methods
+
+	public string ToDebugString() => $"{Uid}";
 
 	private void Default()
 	{

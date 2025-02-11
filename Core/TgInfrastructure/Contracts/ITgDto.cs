@@ -7,8 +7,9 @@ public interface ITgDto<TDto, TEntity> : ITgCommon where TDto : new() where TEnt
 {
 	#region Public and private fields, properties, constructor
 
-	bool IsLoad { get; set; }
+	public bool IsLoad { get; set; }
 	public Guid Uid { get; set; }
+	public bool IsExistsAtStorage { get; set; }
 
 	#endregion
 

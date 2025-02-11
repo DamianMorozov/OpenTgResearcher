@@ -31,8 +31,7 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyDto, TgEfP
 
 	public TgEfProxyDto Fill(TgEfProxyDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		Type = dto.Type;
 		HostName = dto.HostName;
 		Port = dto.Port;

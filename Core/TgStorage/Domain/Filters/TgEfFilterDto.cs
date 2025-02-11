@@ -38,8 +38,7 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterDto, TgE
 
 	public TgEfFilterDto Fill(TgEfFilterDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		IsEnabled = dto.IsEnabled;
 		FilterType = dto.FilterType;
 		Name = dto.Name;

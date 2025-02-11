@@ -37,8 +37,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 
 	public TgEfSourceLiteDto Fill(TgEfSourceLiteDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		DtChangedString = dto.DtChangedString;
 		Id = dto.Id;
 		UserName = dto.UserName;

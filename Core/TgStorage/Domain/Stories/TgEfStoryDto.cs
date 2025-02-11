@@ -44,8 +44,7 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryDto, TgEfS
 
 	public TgEfStoryDto Fill(TgEfStoryDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		DtChanged = dto.DtChanged;
 		Id = dto.Id;
 		FromId = dto.FromId;

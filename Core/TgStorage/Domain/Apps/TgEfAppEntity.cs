@@ -90,7 +90,6 @@ public sealed class TgEfAppEntity : ITgDbEntity, ITgDbFillEntity<TgEfAppEntity>
 		ApiHash = this.GetDefaultPropertyGuid(nameof(ApiHash));
         ApiId = this.GetDefaultPropertyInt(nameof(ApiId));
         PhoneNumber = this.GetDefaultPropertyString(nameof(PhoneNumber));
-		//ProxyUid = this.GetDefaultPropertyGuid(nameof(ProxyUid));
 		ProxyUid = null;
 		FirstName = this.GetDefaultPropertyString(nameof(FirstName));
 		LastName = this.GetDefaultPropertyString(nameof(LastName));

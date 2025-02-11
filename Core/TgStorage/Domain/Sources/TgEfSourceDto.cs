@@ -71,8 +71,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 
 	public TgEfSourceDto Fill(TgEfSourceDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		DtChanged = dto.DtChanged;
 		Id = dto.Id;
 		AccessHash = dto.AccessHash;

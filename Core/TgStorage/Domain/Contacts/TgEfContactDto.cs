@@ -57,8 +57,7 @@ public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactDto, T
 
 	public TgEfContactDto Fill(TgEfContactDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		DtChanged = dto.DtChanged;
 		Id = dto.Id;
 		AccessHash = dto.AccessHash;

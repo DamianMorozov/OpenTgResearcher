@@ -45,8 +45,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppDto, TgEfAppEn
 	
 	public TgEfAppDto Fill(TgEfAppDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		ApiHash = dto.ApiHash;
 		ApiId = dto.ApiId;
 		FirstName = dto.FirstName;

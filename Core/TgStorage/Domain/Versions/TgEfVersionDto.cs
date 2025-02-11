@@ -21,8 +21,7 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionDto, T
 
 	public TgEfVersionDto Fill(TgEfVersionDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		Version = dto.Version;
 		Description = dto.Description;
 		return this;

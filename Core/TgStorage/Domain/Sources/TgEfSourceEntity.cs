@@ -51,13 +51,13 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
 	[Column(TgEfConstants.ColumnIsActive, TypeName = "BIT")]
 	public bool IsActive { get; set; }
 
-	[DefaultValue("UserName")]
+	[DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnUserName, TypeName = "NVARCHAR(128)")]
     public string? UserName { get; set; }
 
-    [DefaultValue("Title")]
+    [DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(256)]
     [Column(TgEfConstants.ColumnTitle, TypeName = "NVARCHAR(256)")]

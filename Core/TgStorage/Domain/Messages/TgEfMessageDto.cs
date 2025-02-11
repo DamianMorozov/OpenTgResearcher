@@ -33,8 +33,7 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageDto, T
 
 	public TgEfMessageDto Fill(TgEfMessageDto dto, bool isUidCopy)
 	{
-		if (isUidCopy)
-			Uid = dto.Uid;
+		base.Fill(dto, isUidCopy);
 		DtCreated = dto.DtCreated;
 		SourceId = dto.SourceId;
 		Id = dto.Id;

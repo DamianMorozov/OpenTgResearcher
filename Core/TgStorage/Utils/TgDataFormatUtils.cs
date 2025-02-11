@@ -106,6 +106,14 @@ public static class TgDataFormatUtils
 	public static string GetFormatString(string? value, int len = 30) =>
 		string.IsNullOrEmpty(value) ? string.Empty : value.PadRight(len)[..len];
 
+	public static string GetFormatStringWithStrongLength(string? value, int len = 30)
+	{
+		if (string.IsNullOrEmpty(value))
+			return new string('.', len);
+		var result = value.Length > len ? value[..len] : $"{value}{new string('.', len - value.Length)}";
+		return result;
+	}
+
 	public static string GetDtFormat(DateTime dt) => $"{dt:yyyy-MM-dd HH:mm:ss}";
 
 	public static string GetDateFormat(DateTime dt) => $"{dt:yyyy-MM-dd}";

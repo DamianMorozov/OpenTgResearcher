@@ -32,7 +32,7 @@ jobs:
             ${{ runner.os }}-nuget-
       
       - name: Install dependencies
-        run: nuget restore TgDownloader.sln
+        run: nuget restore OpenTgResearcher.sln
 
       - name: Tests for Release Any CPU
         run: | # 

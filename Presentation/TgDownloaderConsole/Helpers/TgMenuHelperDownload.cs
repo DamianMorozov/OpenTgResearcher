@@ -10,7 +10,7 @@ internal partial class TgMenuHelper
 
 	private TgEnumMenuDownload SetMenuDownload()
 	{
-		string prompt = AnsiConsole.Prompt(
+		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
@@ -114,15 +114,15 @@ internal partial class TgMenuHelper
 	private TgDownloadSettingsViewModel SetupDownloadSourceCore(long? id)
 	{
 		TgDownloadSettingsViewModel tgDownloadSettings = new();
-		bool isCheck = false;
+		var isCheck = false;
 		do
 		{
-			string source = id is { } lid
+			var source = id is { } lid
 				? lid.ToString()
 				: AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetSource}:"));
 			if (!string.IsNullOrEmpty(source))
 			{
-				if (long.TryParse(source, NumberStyles.Integer, CultureInfo.InvariantCulture, out long sourceId))
+				if (long.TryParse(source, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
 				{
 					tgDownloadSettings.SourceVm.Dto.Id = sourceId;
 					isCheck = tgDownloadSettings.SourceVm.Dto.IsReady;
@@ -227,7 +227,19 @@ internal partial class TgMenuHelper
 	{
 		await ShowTableDownloadAsync(tgDownloadSettings);
 		await UpdateSourceWithSettingsAsync(tgDownloadSettings);
-		await TgClient.DownloadAllDataAsync(tgDownloadSettings);
+		try
+		{
+			await TgClient.DownloadAllDataAsync(tgDownloadSettings);
+		}
+		catch (Exception ex)
+		{
+			TgLog.MarkupWarning(ex.Message);
+			var floodWait = TgClient.Client?.FloodRetryThreshold ?? 60;
+			TgLog.MarkupWarning($"Flood control: waiting {floodWait} seconds");
+			await Task.Delay(floodWait * 1_000);
+			// Repeat request after waiting
+			await ManualDownloadAsync(tgDownloadSettings);
+		}
 		await UpdateSourceWithSettingsAsync(tgDownloadSettings);
 	}
 

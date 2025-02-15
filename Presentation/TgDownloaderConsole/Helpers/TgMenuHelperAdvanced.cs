@@ -10,7 +10,7 @@ internal partial class TgMenuHelper
 
 	private TgEnumMenuDownload SetMenuAdvanced()
 	{
-		string prompt = AnsiConsole.Prompt(
+		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
@@ -167,10 +167,10 @@ internal partial class TgMenuHelper
 	private async Task AutoDownloadAsync(TgDownloadSettingsViewModel _)
 	{
 		IEnumerable<TgEfSourceEntity> sources = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
-		foreach (TgEfSourceEntity source in sources.Where(sourceSetting => sourceSetting.IsAutoUpdate))
+		foreach (var source in sources.Where(sourceSetting => sourceSetting.IsAutoUpdate))
 		{
-            TgDownloadSettingsViewModel tgDownloadSettings = await SetupDownloadSourceAsync(source.Id);
-			string sourceId = string.IsNullOrEmpty(source.UserName) ? $"{source.Id}" : $"{source.Id} | @{source.UserName}";
+            var tgDownloadSettings = await SetupDownloadSourceAsync(source.Id);
+			var sourceId = string.IsNullOrEmpty(source.UserName) ? $"{source.Id}" : $"{source.Id} | @{source.UserName}";
             // StatusContext.
             await TgClient.UpdateStateSourceAsync(source.Id, source.FirstId, source.Count, 
 				source.Count <= 0

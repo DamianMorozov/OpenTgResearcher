@@ -2,8 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
-using CodingSeb.Localization;
-
 namespace TgDownloaderConsole.Helpers;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -17,16 +15,15 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 	internal TgClientHelper TgClient => TgClientHelper.Instance;
 	internal Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
 	internal TgEnumMenuMain Value { get; set; }
-	private TgEfContext EfContext { get; } = TgEfUtils.CreateEfContext();
-	private TgEfAppRepository AppRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfContactRepository ContactRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfDocumentRepository DocumentRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfFilterRepository FilterRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfMessageRepository MessageRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfSourceRepository SourceRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfStoryRepository StoryRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfVersionRepository VersionRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfAppRepository AppRepository { get; } = new();
+	private TgEfContactRepository ContactRepository { get; } = new();
+	private TgEfDocumentRepository DocumentRepository { get; } = new();
+	private TgEfFilterRepository FilterRepository { get; } = new();
+	private TgEfMessageRepository MessageRepository { get; } = new();
+	private TgEfProxyRepository ProxyRepository { get; } = new();
+	private TgEfSourceRepository SourceRepository { get; } = new();
+	private TgEfStoryRepository StoryRepository { get; } = new();
+	private TgEfVersionRepository VersionRepository { get; } = new();
 
 	#endregion
 
@@ -34,7 +31,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 
 	public string ToDebugString() => TgLocale.UseOverrideMethod;
 
-	internal async Task ShowTableCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, string title, Action<Table> fillTableColumns,
+	internal static async Task ShowTableCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, string title, Action<Table> fillTableColumns,
 		Func<TgDownloadSettingsViewModel, Table, Task> fillTableRowsAsync)
 	{
 		AnsiConsole.Clear();
@@ -45,13 +42,8 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			Border = TableBorder.Rounded,
 			Title = new(title, Style.Plain),
 		};
-
 		fillTableColumns(table);
-
-		if (table.Rows.Count > 0)
-			table.Rows.Clear();
 		await fillTableRowsAsync(tgDownloadSettings, table);
-
 		table.Expand();
 		AnsiConsole.Write(table);
 	}
@@ -107,7 +99,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		// App version
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.AppVersion)), new Markup(TgAppSettings.AppVersion));
 		// Storage version
-		TgEfVersionEntity version = (await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).
+		var version = (await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).
 	            Items.Single(x => x.Version == VersionRepository.LastVersion);
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.StorageVersion)), new Markup($"v{version.Version}"));
 
@@ -117,9 +109,9 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			new Markup(TgAppSettings.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		// Storage settings
-		table.AddRow(new Markup(TgEfContext.IsXmlReady
+		table.AddRow(new Markup(TgGlobalTools.IsXmlReady
 				? TgLocale.InfoMessage(TgLocale.MenuMainStorage) : TgLocale.WarningMessage(TgLocale.MenuMainStorage)),
-			new Markup(TgEfContext.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+			new Markup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		// TG client settings
 		table.AddRow(new Markup(TgClient.IsReady ?
@@ -175,9 +167,9 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 	/// <param name="table"></param>
 	internal async Task FillTableRowsStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
-		table.AddRow(new Markup(TgEfContext.IsXmlReady
+		table.AddRow(new Markup(TgGlobalTools.IsXmlReady
 				? TgLocale.InfoMessage(TgLocale.MenuMainStorage) : TgLocale.WarningMessage(TgLocale.MenuMainStorage)),
-			new Markup(TgEfContext.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+			new Markup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 		await Task.CompletedTask;
 	}
 
@@ -335,7 +327,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 				new Markup(TgLocale.SettingsIsNeedSetup));
 		else
 		{
-			TgEfSourceEntity source = await SourceRepository.GetItemAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+			var source = await SourceRepository.GetItemAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.SettingsChat)),
 				new Markup(TgLog.GetMarkupString(source.ToConsoleString())));
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.SettingsDtChanged)),
@@ -434,7 +426,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 
     public bool AskQuestionReturnPositive(string title, bool isTrueFirst = false)
 	{
-		string prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
+		var prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title($"{title}?")
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(isTrueFirst
@@ -451,7 +443,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		items = items.OrderBy(x => x.Id);
 		List<string> list = [TgLocale.MenuMainReturn];
 		list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
-		string sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
+		var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(list));
@@ -460,8 +452,8 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			string[] parts = sourceString.Split('|');
 			if (parts.Length > 3)
 			{
-				string sourceId = parts[2].TrimEnd(' ');
-				if (long.TryParse(sourceId, out long id))
+				var sourceId = parts[2].TrimEnd(' ');
+				if (long.TryParse(sourceId, out var id))
 					return (await ContactRepository.GetAsync(new() { Id = id })).Item;
 			}
 		}
@@ -473,7 +465,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		items = items.OrderBy(x => x.Name);
 		List<string> list = [TgLocale.MenuMainReturn];
 		list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
-		string sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
+		var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(list));
@@ -482,7 +474,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			string[] parts = sourceString.Split('|');
 			if (parts.Length > 3)
 			{
-				string name = parts[0].TrimEnd(' ');
+				var name = parts[0].TrimEnd(' ');
 				return (await FilterRepository.GetAsync(new() { Name = name })).Item;
 			}
 		}
@@ -494,7 +486,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		items = items.OrderBy(x => x.UserName).ThenBy(x => x.Title);
 		List<string> list = [TgLocale.MenuMainReturn];
 		list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
-		string sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
+		var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(list));
@@ -503,8 +495,8 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			string[] parts = sourceString.Split('|');
 			if (parts.Length != 0)
 			{
-				string sourceId = parts[0].TrimEnd(' ');
-				if (long.TryParse(sourceId, out long id))
+				var sourceId = parts[0].TrimEnd(' ');
+				if (long.TryParse(sourceId, out var id))
 					return await SourceRepository.GetItemAsync(new() { Id = id });
 			}
 		}
@@ -516,7 +508,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		stories = stories.OrderBy(x => x.Id);
 		List<string> list = [TgLocale.MenuMainReturn];
 		list.AddRange(stories.Select(story => TgLog.GetMarkupString(story.ToConsoleString())));
-		string storyString = AnsiConsole.Prompt(new SelectionPrompt<string>()
+		var storyString = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title(title)
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(list));
@@ -525,8 +517,8 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			string[] parts = storyString.Split('|');
 			if (parts.Length > 3)
 			{
-				string sourceId = parts[2].TrimEnd(' ');
-				if (long.TryParse(sourceId, out long id))
+				var sourceId = parts[2].TrimEnd(' ');
+				if (long.TryParse(sourceId, out var id))
 					return (await StoryRepository.GetAsync(new() { Id = id })).Item;
 			}
 		}

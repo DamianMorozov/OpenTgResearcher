@@ -7,18 +7,23 @@ var menu = new TgMenuHelper();
 // Velopack installer update
 await menu.VelopackUpdateAsync();
 
+// DI
+var containerBuilder = new ContainerBuilder();
+containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
+TgGlobalTools.Container = containerBuilder.Build();
+
 var tgLocale = TgLocaleHelper.Instance;
 var tgLog = TgLogHelper.Instance;
 var tgDownloadSettings = new TgDownloadSettingsViewModel();
 
-// EF Core
+// Create and update storage
 tgLog.WriteLine("EF Core init ...");
 await TgEfUtils.CreateAndUpdateDbAsync();
 tgLog.WriteLine("EF Core init success");
 
 // Menu
 tgLog.WriteLine("Menu init ...");
-TgAsyncUtils.SetAppType(TgEnumAppType.Console);
+TgGlobalTools.SetAppType(TgEnumAppType.Console);
 tgLog.WriteLine("Menu init success");
 
 // TG Connection
@@ -30,7 +35,7 @@ do
 	try
 	{
 		await menu.ShowTableMainAsync(tgDownloadSettings);
-		string prompt = AnsiConsole.Prompt(
+		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 			.Title($"  {tgLocale.MenuSwitchNumber}")
 			.PageSize(Console.WindowHeight - 17)

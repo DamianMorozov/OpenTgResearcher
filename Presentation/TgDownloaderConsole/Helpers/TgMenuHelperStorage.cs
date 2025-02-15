@@ -10,7 +10,7 @@ internal partial class TgMenuHelper
 
 	private TgEnumMenuStorage SetMenuStorage()
 	{
-		string prompt = AnsiConsole.Prompt(
+		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
@@ -67,7 +67,9 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
-		(bool IsSuccess, string FileName) backupResult = EfContext.BackupDb();
+		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		(bool IsSuccess, string FileName) backupResult = efContext.BackupDb();
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
 		TgLog.WriteLine(backupResult.IsSuccess ? TgLocale.MenuStorageBackupSuccess : TgLocale.MenuStorageBackupFailed);
 		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
@@ -77,6 +79,7 @@ internal partial class TgMenuHelper
 	private async Task TgStorageCreateNewDbAsync()
 	{
 		if (AskQuestionReturnNegative(TgLocale.MenuStorageDbCreateNew)) return;
+		// Create and update storage
 		await TgEfUtils.CreateAndUpdateDbAsync();
 	}
 
@@ -99,7 +102,8 @@ internal partial class TgMenuHelper
 	private async Task TgStorageTablesCompactAsync()
 	{
 		if (AskQuestionReturnNegative(TgLocale.MenuStorageTablesCompact)) return;
-		await EfContext.CompactDbAsync();
+		// Shrink storage
+		await TgEfUtils.ShrinkDbAsync();
 		TgLog.WriteLine(TgLocale.MenuStorageTablesCompactFinished);
 		Console.ReadKey();
 	}

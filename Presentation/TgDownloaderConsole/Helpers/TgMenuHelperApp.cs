@@ -10,7 +10,7 @@ internal partial class TgMenuHelper
 
 	private TgEnumMenuAppSettings SetMenuApp()
 	{
-		string prompt = AnsiConsole.Prompt(
+		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
@@ -86,7 +86,7 @@ internal partial class TgMenuHelper
 
 	private void SetUseProxy()
 	{
-		string prompt = AnsiConsole.Prompt(
+		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)

@@ -19,7 +19,9 @@ public sealed partial class TgItemProxyViewModel : TgPageViewModelBase, INavigat
     public TgItemProxyViewModel()
 	{
         ProxyTypes = GetProxyTypes();
-		ItemProxyVm = new(ProxyRepository.CreateNew().Item);
+        var proxy = new TgEfProxyEntity();
+        ProxyRepository.Save(proxy);
+		ItemProxyVm = new(proxy);
 	}
 
 	#endregion

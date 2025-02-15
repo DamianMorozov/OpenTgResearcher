@@ -1,5 +1,9 @@
 ﻿# OpenTgResearcher - Open Telegram Researcher
 
+## Product assignment
+Telegram's open researcher and search engine. 
+Download chat rooms by catalogs. 
+
 ## Official site
 ### <div align="center"><b><a href="http://opentgresearcher.online">opentgresearcher.online</a></b></div>
 ### <div align="center"><b><a href="README.md">Readme</a> | <a href="Docs/CHANGELOG.md">Changelog</a> | <a href="Docs/RELEASES.md">Statistics</a></b></div>
@@ -7,12 +11,8 @@
 
 ## Официальный сайт
 ### <div align="center"><b><a href="http://opentgresearcher.ru">opentgresearcher.ru</a></b></div>
-### <div align="center"><b><a href="README-RUS.md">Прочти меня</a> | <a href="CHANGELOG-RUS.md">История версий</a> | <a href="Docs/RELEASES-RUS.md">Статистика</a></b></div>
+### <div align="center"><b><a href="README-RUS.md">Прочти меня</a> | <a href="Docs/CHANGELOG-RUS.md">История версий</a> | <a href="Docs/RELEASES-RUS.md">Статистика</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
-
-## Product assignment
-Telegram's open researcher and search engine. 
-Download chat rooms by catalogs. 
 
 ## Download
 - [Releases](https://github.com/DamianMorozov/OpenTgResearcher/releases)
@@ -21,7 +21,6 @@ Download chat rooms by catalogs.
 - [GitHub repository](https://github.com/DamianMorozov/OpenTgResearcher)
 - [Report a bug](https://github.com/DamianMorozov/OpenTgResearcher/issues)
 - [Discussions](https://github.com/DamianMorozov/OpenTgResearcher/discussions)
-- [Ideas](https://github.com/DamianMorozov/OpenTgResearcher/discussions/categories/ideas)
 
 ## User support
 - [OpenTgResearcher group](https://t.me/OpenTgResearcher)

@@ -6,10 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.460] - 2025-02-11
+## [0.5.460] - 2025-02-15
 ### Changed
 - Fixed links
 - Updated GitHub workflows actions
+- Updated apps table for TgStorage
+- Updated messages table for TgStorage
+- Updated documents table for TgStorage
 
 ## [0.5.450] - 2025-01-31
 ### Changed

@@ -31,6 +31,7 @@ public static class TgEfConstants
 	public const string ColumnBotInfoVersion = "BOT_INFO_VERSION";
 	public const string ColumnBotInlinePlaceholder = "BOT_INLINE_PLACEHOLDER";
 	public const string ColumnBotToken = "BOT_TOKEN";
+	public const string ColumnBotTokenKey = "BOT_TOKEN_KEY";
 	public const string ColumnCaption = "CAPTION";
 	public const string ColumnCount = "COUNT";
 	public const string ColumnCountThreads = "COUNT_THREADS";
@@ -76,6 +77,7 @@ public static class TgEfConstants
 	public const string ColumnTitle = "TITLE";
 	public const string ColumnType = "TYPE";
 	public const string ColumnUid = "UID";
+	public const string ColumnUseBot = "USE_BOT";
 	public const string ColumnUserName = "USER_NAME";
 	public const string ColumnUserNames = "USER_NAMES";
 	public const string ColumnVersion = "VERSION";

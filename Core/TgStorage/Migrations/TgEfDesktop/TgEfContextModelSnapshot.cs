@@ -3,13 +3,13 @@
 
 namespace TgStorage.Migrations.TgEfDesktop
 {
-    [DbContext(typeof(TgEfConsoleContext))]
+    [DbContext(typeof(TgEfDesktopContext))]
     partial class TgEfContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
 
             modelBuilder.Entity("TgStorage.Domain.Apps.TgEfAppEntity", b =>
                 {
@@ -28,12 +28,12 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .HasColumnType("INT")
                         .HasColumnName("API_ID");
 
-                    b.Property<string>("BotToken")
+                    b.Property<string>("BotTokenKey")
                         .IsConcurrencyToken()
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("NVARCHAR(50)")
-                        .HasColumnName("BOT_TOKEN");
+                        .HasColumnName("BOT_TOKEN_KEY");
 
                     b.Property<string>("FirstName")
                         .IsConcurrencyToken()
@@ -41,11 +41,6 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .HasMaxLength(64)
                         .HasColumnType("NVARCHAR(64)")
                         .HasColumnName("FIRST_NAME");
-
-                    b.Property<bool>("IsBot")
-                        .IsConcurrencyToken()
-                        .HasColumnType("BIT")
-                        .HasColumnName("IS_BOT");
 
                     b.Property<string>("LastName")
                         .IsConcurrencyToken()
@@ -65,6 +60,11 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .IsConcurrencyToken()
                         .HasColumnType("CHAR(36)")
                         .HasColumnName("PROXY_UID");
+
+                    b.Property<bool>("UseBot")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("USE_BOT");
 
                     b.HasKey("Uid");
 

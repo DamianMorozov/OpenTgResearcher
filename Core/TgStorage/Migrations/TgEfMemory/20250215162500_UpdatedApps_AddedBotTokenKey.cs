@@ -1,15 +1,15 @@
 ﻿#nullable disable
 
-namespace TgStorage.Migrations.TgEfDesktop
+namespace TgStorage.Migrations.TgEfMemory
 {
     /// <inheritdoc />
-    public partial class UpdatedApps_AddedBotToken : Migration
+    public partial class UpdatedApps_AddedBotTokenKey : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "BOT_TOKEN",
+                name: "BOT_TOKEN_KEY",
                 table: "APPS",
                 type: "NVARCHAR(50)",
                 maxLength: 50,
@@ -17,7 +17,7 @@ namespace TgStorage.Migrations.TgEfDesktop
                 defaultValue: "");
 
             migrationBuilder.AddColumn<bool>(
-                name: "IS_BOT",
+                name: "USE_BOT",
                 table: "APPS",
                 type: "BIT",
                 nullable: false,
@@ -28,11 +28,11 @@ namespace TgStorage.Migrations.TgEfDesktop
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "BOT_TOKEN",
+                name: "BOT_TOKEN_KEY",
                 table: "APPS");
 
             migrationBuilder.DropColumn(
-                name: "IS_BOT",
+                name: "USE_BOT",
                 table: "APPS");
         }
     }

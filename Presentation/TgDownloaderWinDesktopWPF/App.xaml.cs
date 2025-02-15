@@ -1,8 +1,10 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Autofac;
 using TgInfrastructure.Enums;
 using TgStorage.Domain;
+using TgStorage.Domain.Contacts;
 
 namespace TgDownloaderWinDesktopWPF;
 
@@ -31,7 +33,7 @@ public partial class App
 			// Register TgEfContext as the DbContext for EF Core
 			//services.AddDbContext<TgEfContext>(options => options
 			//	.UseSqlite(b => b.MigrationsAssembly(nameof(TgDownloaderWinDesktopWPF))));
-			services.AddDbContextFactory<TgEfContext>();
+			services.AddDbContextFactory<TgEfDesktopContext>();
 			// Page resolver service
 			services.AddSingleton<IPageService, PageService>();
 			// Theme manipulation
@@ -43,7 +45,9 @@ public partial class App
 			// Main window with navigation
 			services.AddScoped<INavigationWindow, MainWindow>();
 			services.AddScoped<TgMainWindowViewModel>();
-            // Views and ViewModels
+			// Core Services
+			services.AddTransient<ITgEfContext, TgEfDesktopContext>();
+			// Views and ViewModels
 			services.AddTransient<TgDashboardPage>();
 			services.AddTransient<TgDashboardViewModel>();
 			services.AddTransient<TgSettingsPage>();
@@ -76,10 +80,15 @@ public partial class App
 	/// </summary>
 	private async void OnStartup(object sender, StartupEventArgs e)
 	{
-		// Register TgEfContext as the DbContext for EF Core
+		// Create and update storage
 		await TgEfUtils.CreateAndUpdateDbAsync();
 
-		TgAsyncUtils.SetAppType(TgEnumAppType.Desktop);
+		TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
+		// DI
+		var containerBuilder = new ContainerBuilder();
+		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
+		TgGlobalTools.Container = containerBuilder.Build();
+		
 		await Host.StartAsync();
 		TgDesktopUtils.SetupClient();
 	}
@@ -87,9 +96,10 @@ public partial class App
 	/// <summary>
 	/// Occurs when the application is closing.
 	/// </summary>
-	private async void OnExit(object sender, ExitEventArgs e)
+	private void OnExit(object sender, ExitEventArgs e)
 	{
-		await Host.StopAsync().ConfigureAwait(true);
+		var task = Host.StopAsync();
+		task.Wait();
 		Host.Dispose();
 	}
 

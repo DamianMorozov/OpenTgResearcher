@@ -8,7 +8,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfSourceRepository SourceRepository { get; } = new(TgEfUtils.EfContext);
+    private TgEfSourceRepository SourceRepository { get; } = new();
     public TgEfSourceViewModel SourceVm { get; } = new();
     public Visibility ChartVisibility { get; private set; } = Visibility.Hidden;
     private LineSeries LineSerie { get; set; } = new()
@@ -32,8 +32,9 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
 
 	public void OnNavigatedTo()
 	{
-        InitializeViewModelAsync().GetAwaiter();
-    }
+        var task = InitializeViewModelAsync();
+		task.Wait();
+	}
 
 	public void OnNavigatedFrom() { }
 

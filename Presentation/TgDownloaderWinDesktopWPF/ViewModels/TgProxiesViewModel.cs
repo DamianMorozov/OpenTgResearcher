@@ -11,7 +11,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase, INavigatio
 	#region Public and private fields, properties, constructor
 
 	public ObservableCollection<TgEfProxyViewModel> ProxiesVms { get; set; } = [];
-	private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfProxyRepository ProxyRepository { get; } = new();
 
 	#endregion
 

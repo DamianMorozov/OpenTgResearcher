@@ -26,7 +26,8 @@ public sealed partial class TgDashboardViewModel : TgPageViewModelBase, INavigat
 
     public void OnNavigatedTo()
 	{
-        InitializeViewModelAsync().GetAwaiter();
+        var task = InitializeViewModelAsync();
+        task.Wait();
     }
 
 	public void OnNavigatedFrom() { }

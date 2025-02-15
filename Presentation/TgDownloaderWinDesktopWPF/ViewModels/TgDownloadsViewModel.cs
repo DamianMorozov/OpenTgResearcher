@@ -16,8 +16,9 @@ public sealed partial class TgDownloadsViewModel : TgPageViewModelBase, INavigat
 
     public void OnNavigatedTo()
     {
-        InitializeViewModelAsync().GetAwaiter();
-    }
+        var task = InitializeViewModelAsync();
+		task.Wait();
+	}
 
     public void OnNavigatedFrom() { }
 

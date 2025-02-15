@@ -304,7 +304,7 @@
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
 					<!--  Auto-update  -->
-					<!--<DataGridTemplateColumn Width=".5*">
+					<!--<DataGridTemplateColumn Width="0.5*">
 					<DataGridTemplateColumn.Header>
 						<Label
 							Margin="2"

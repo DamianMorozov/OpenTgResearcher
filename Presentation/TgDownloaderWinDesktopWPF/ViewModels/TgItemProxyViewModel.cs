@@ -10,7 +10,7 @@ public sealed partial class TgItemProxyViewModel : TgPageViewModelBase, INavigat
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
+    private TgEfProxyRepository ProxyRepository { get; } = new();
     public TgEfProxyViewModel ItemProxyVm { get; private set; }
     public IReadOnlyList<TgEnumProxyType> ProxyTypes { get; }
     public TgPageViewModelBase? ViewModel { get; set; }
@@ -31,8 +31,9 @@ public sealed partial class TgItemProxyViewModel : TgPageViewModelBase, INavigat
 
     public void OnNavigatedTo()
     {
-        InitializeViewModelAsync().GetAwaiter();
-    }
+        var task = InitializeViewModelAsync();
+		task.Wait();
+	}
 
     public void OnNavigatedFrom() { }
 

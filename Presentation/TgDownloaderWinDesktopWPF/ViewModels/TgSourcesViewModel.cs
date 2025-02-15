@@ -11,7 +11,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
     #region Public and private fields, properties, constructor
 
     public ObservableCollection<TgEfSourceViewModel> SourcesVms { get; set; } = [];
-    private TgEfSourceRepository SourceRepository { get; } = new(TgEfUtils.EfContext);
+    private TgEfSourceRepository SourceRepository { get; } = new();
 
     #endregion
 
@@ -19,8 +19,9 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
 
     public void OnNavigatedTo()
     {
-        InitializeViewModelAsync().GetAwaiter();
-    }
+        var task = InitializeViewModelAsync();
+		task.Wait();
+	}
 
     public void OnNavigatedFrom() { }
 

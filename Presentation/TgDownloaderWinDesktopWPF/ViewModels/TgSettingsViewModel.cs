@@ -14,8 +14,9 @@ public sealed partial class TgSettingsViewModel : TgPageViewModelBase, INavigati
 
 	public void OnNavigatedTo()
     {
-        InitializeViewModelAsync().GetAwaiter();
-    }
+        var task = InitializeViewModelAsync();
+		task.Wait();
+	}
 
     #endregion
 

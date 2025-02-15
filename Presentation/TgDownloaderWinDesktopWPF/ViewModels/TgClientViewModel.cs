@@ -10,8 +10,8 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfAppRepository AppRepository { get; } = new(TgEfUtils.EfContext);
-    private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
+    private TgEfAppRepository AppRepository { get; } = new();
+    private TgEfProxyRepository ProxyRepository { get; } = new();
     public TgEfAppViewModel AppVm { get; }
     public TgEfProxyViewModel ProxyVm { get; set; }
     public ObservableCollection<TgEfProxyViewModel> ProxiesVms { get; private set; }
@@ -93,8 +93,9 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
 
     public void OnNavigatedTo()
     {
-        InitializeViewModelAsync().GetAwaiter();
-    }
+        var task = InitializeViewModelAsync();
+		task.Wait();
+	}
 
     public void OnNavigatedFrom() { }
 
@@ -130,20 +131,21 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
     {
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
-            await Task.Delay(1);
             //TgDesktopUtils.TgClient.UpdateStateConnect(TgDesktopUtils.TgClient.IsReady
             //    ? TgDesktopUtils.TgLocale.MenuClientIsConnected : TgDesktopUtils.TgLocale.MenuClientIsDisconnected);
             IsFileSession = TgAppSettings.AppXml.IsExistsFileSession;
             if (TgDesktopUtils.TgClient.IsReady)
                 ViewModelClearConfig();
             IsLoad = false;
+            await Task.CompletedTask;
         }, false);
     }
 
     public string ConfigClientDesktop(string what)
     {
-        TgDesktopUtils.TgClient.UpdateStateSourceAsync(0, 0, 0, $"{TgDesktopUtils.TgLocale.MenuClientIsQuery}: {what}").GetAwaiter();
-        switch (what)
+        var task = TgDesktopUtils.TgClient.UpdateStateSourceAsync(0, 0, 0, $"{TgDesktopUtils.TgLocale.MenuClientIsQuery}: {what}");
+		task.Wait();
+		switch (what)
         {
             case "api_hash":
                 string apiHash = TgDataFormatUtils.ParseGuidToString(AppVm.Dto.ApiHash);

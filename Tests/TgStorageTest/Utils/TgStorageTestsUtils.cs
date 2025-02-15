@@ -14,8 +14,7 @@ internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			await using var efContext = CreateEfContext();
-			TgEfVersionRepository versionRepository = new(efContext);
+			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
 
 			var versionLast = await versionRepository.GetLastVersionAsync();
@@ -33,11 +32,11 @@ internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			await using var efContext = CreateEfContext();
-			TgEfVersionRepository versionRepository = new(efContext);
+			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
 
-			await versionRepository.CreateNewAsync();
+			var version = new TgEfVersionEntity();
+			await versionRepository.SaveAsync(version);
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == versionRepository.LastVersion);
@@ -53,12 +52,12 @@ internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			await using var efContext = CreateEfContext();
-			TgEfVersionRepository versionRepository = new(efContext);
+			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
 
 			await versionRepository.DeleteAllAsync();
-			await versionRepository.CreateNewAsync();
+			var version = new TgEfVersionEntity();
+			await versionRepository.SaveAsync(version);
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == new TgEfVersionEntity().Version);

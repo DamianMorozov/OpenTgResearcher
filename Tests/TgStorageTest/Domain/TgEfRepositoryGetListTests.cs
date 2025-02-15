@@ -16,9 +16,9 @@ internal sealed class TgEfRepositoryGetListTests : TgDbContextTestsBase
 		{
 			TgEfStorageResult<TEntity> storageResult = await repo.GetListAsync(count, 0);
 			TestContext.WriteLine($"Found {storageResult.Items.Count()} items.");
-			foreach (TEntity item in storageResult.Items)
+			foreach (var item in storageResult.Items)
 			{
-				TEntity itemFind = await repo.GetItemAsync(item);
+				var itemFind = await repo.GetItemAsync(item);
 				Assert.That(itemFind, Is.Not.Null);
                 TestContext.WriteLine(itemFind.ToDebugString());
 			}
@@ -26,31 +26,31 @@ internal sealed class TgEfRepositoryGetListTests : TgDbContextTestsBase
 	}
 
 	[Test]
-	public void Get_apps_async() => GetListAsync(new TgEfAppRepository(TgEfUtils.EfContext));
+	public void Get_apps_async() => GetListAsync(new TgEfAppRepository());
 
 	[Test]
-	public void Get_contacts_async() => GetListAsync(new TgEfContactRepository(TgEfUtils.EfContext));
+	public void Get_contacts_async() => GetListAsync(new TgEfContactRepository());
 
 	[Test]
-	public void Get_documents_async() => GetListAsync(new TgEfDocumentRepository(TgEfUtils.EfContext));
+	public void Get_documents_async() => GetListAsync(new TgEfDocumentRepository());
 
 	[Test]
-	public void Get_filters_async() => GetListAsync(new TgEfFilterRepository(TgEfUtils.EfContext));
+	public void Get_filters_async() => GetListAsync(new TgEfFilterRepository());
 
 	[Test]
-	public void Get_messages_async() => GetListAsync(new TgEfMessageRepository(TgEfUtils.EfContext));
+	public void Get_messages_async() => GetListAsync(new TgEfMessageRepository());
 
 	[Test]
-	public void Get_proxies_async() => GetListAsync(new TgEfProxyRepository(TgEfUtils.EfContext));
+	public void Get_proxies_async() => GetListAsync(new TgEfProxyRepository());
 
 	[Test]
-	public void Get_sources_async() => GetListAsync(new TgEfSourceRepository(TgEfUtils.EfContext));
+	public void Get_sources_async() => GetListAsync(new TgEfSourceRepository());
 
 	[Test]
-	public void Get_stories_async() => GetListAsync(new TgEfStoryRepository(TgEfUtils.EfContext));
+	public void Get_stories_async() => GetListAsync(new TgEfStoryRepository());
 
 	[Test]
-	public void Get_versions_async() => GetListAsync(new TgEfVersionRepository(TgEfUtils.EfContext));
+	public void Get_versions_async() => GetListAsync(new TgEfVersionRepository());
 
 	#endregion
 }

@@ -17,7 +17,7 @@ internal sealed class TgEfRepositorySaveTests : TgDbContextTestsBase
 			TgEfStorageResult<TEntity> storageResult = await repo.GetFirstAsync();
 			if (storageResult.IsExists)
 			{
-				TEntity itemFind = await repo.GetItemAsync(storageResult.Item, isReadOnly: false);
+				var itemFind = await repo.GetItemAsync(storageResult.Item, isReadOnly: false);
 				Assert.That(itemFind, Is.Not.Null);
 				TestContext.WriteLine(itemFind.ToDebugString());
 				// Save
@@ -28,31 +28,31 @@ internal sealed class TgEfRepositorySaveTests : TgDbContextTestsBase
 	}
 
 	[Test]
-	public void Save_apps_async() => SaveItemAsync(new TgEfAppRepository(TgEfUtils.EfContext));
+	public void Save_apps_async() => SaveItemAsync(new TgEfAppRepository());
 
 	[Test]
-	public void Save_contacts_async() => SaveItemAsync(new TgEfContactRepository(TgEfUtils.EfContext));
+	public void Save_contacts_async() => SaveItemAsync(new TgEfContactRepository());
 
 	[Test]
-	public void Save_documents_async() => SaveItemAsync(new TgEfDocumentRepository(TgEfUtils.EfContext));
+	public void Save_documents_async() => SaveItemAsync(new TgEfDocumentRepository());
 
 	[Test]
-	public void Save_filters_async() => SaveItemAsync(new TgEfFilterRepository(TgEfUtils.EfContext));
+	public void Save_filters_async() => SaveItemAsync(new TgEfFilterRepository());
 
 	[Test]
-	public void Save_messages_async() => SaveItemAsync(new TgEfMessageRepository(TgEfUtils.EfContext));
+	public void Save_messages_async() => SaveItemAsync(new TgEfMessageRepository());
 
 	[Test]
-	public void Save_proxies_async() => SaveItemAsync(new TgEfProxyRepository(TgEfUtils.EfContext));
+	public void Save_proxies_async() => SaveItemAsync(new TgEfProxyRepository());
 
 	[Test]
-	public void Save_sources_async() => SaveItemAsync(new TgEfSourceRepository(TgEfUtils.EfContext));
+	public void Save_sources_async() => SaveItemAsync(new TgEfSourceRepository());
 
 	[Test]
-	public void Save_stories_async() => SaveItemAsync(new TgEfStoryRepository(TgEfUtils.EfContext));
+	public void Save_stories_async() => SaveItemAsync(new TgEfStoryRepository());
 
 	[Test]
-	public void Save_versions_async() => SaveItemAsync(new TgEfVersionRepository(TgEfUtils.EfContext));
+	public void Save_versions_async() => SaveItemAsync(new TgEfVersionRepository());
 
 	#endregion
 }

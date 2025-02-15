@@ -2,13 +2,23 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma warning disable NUnit1033
 
-using FluentAssertions;
-
 namespace TgStorageTest.Domain;
 
 [TestFixture]
 internal sealed class TgEfModelTests : TgDbContextTestsBase
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfModelTests()
+	{
+		// DI
+		var containerBuilder = new ContainerBuilder();
+		containerBuilder.RegisterType<TgEfTestContext>().As<ITgEfContext>();
+		TgGlobalTools.Container = containerBuilder.Build();
+	}
+
+	#endregion
+
 	#region Public and private methods
 
 	[Test]
@@ -38,7 +48,7 @@ internal sealed class TgEfModelTests : TgDbContextTestsBase
 			Assert.Multiple(() =>
 			{
 				document.Id.Should().Be((long)0);
-				document.SourceId.Should().Be(null);
+				document.SourceId.Should().Be((long)0);
 				document.MessageId.Should().Be((long)0);
 				document.FileName.Should().Be(string.Empty);
 				document.FileSize.Should().Be((long)0);
@@ -76,7 +86,7 @@ internal sealed class TgEfModelTests : TgDbContextTestsBase
 			Assert.Multiple(() =>
 			{
 				message.Id.Should().Be((long)0);
-				message.SourceId.Should().Be(null);
+				message.SourceId.Should().Be((long)0);
 				message.Type.Should().Be(TgEnumMessageType.Message);
 				message.Size.Should().Be((long)0);
 				message.Message.Should().Be(string.Empty);
@@ -113,9 +123,9 @@ internal sealed class TgEfModelTests : TgDbContextTestsBase
 			Assert.Multiple(() =>
 			{
 				source.Id.Should().Be((long)-1);
-				source.UserName.Should().Be("UserName");
-				source.Title.Should().Be("Title");
-				source.About.Should().Be("About");
+				source.UserName.Should().Be("");
+				source.Title.Should().Be("");
+				source.About.Should().Be("");
 				source.Count.Should().Be(1);
 			});
 		});

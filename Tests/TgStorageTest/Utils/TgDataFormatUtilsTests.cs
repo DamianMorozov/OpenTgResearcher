@@ -13,8 +13,8 @@ public class TgDataFormatUtilsTests
 	{
 		Assert.DoesNotThrow(() =>
 		{
-			string fileName = "RW-Kotlin-Cheatsheet-1.1.pdf";
-			bool result = TgDataFormatUtils.CheckFileAtMask(fileName, "kotlin");
+			var fileName = "RW-Kotlin-Cheatsheet-1.1.pdf";
+			var result = TgDataFormatUtils.CheckFileAtMask(fileName, "kotlin");
 			Assert.That(result);
 			result = TgDataFormatUtils.CheckFileAtMask(fileName, "PDF");
 			Assert.That(result);

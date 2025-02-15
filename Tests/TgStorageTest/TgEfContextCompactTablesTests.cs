@@ -13,7 +13,8 @@ internal sealed class TgEfContextCompactTablesTests : TgDbContextTestsBase
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			await CreateEfContext().CompactDbAsync();
+			// Shrink storage
+			await TgEfUtils.ShrinkDbAsync();
 		});
 	}
 

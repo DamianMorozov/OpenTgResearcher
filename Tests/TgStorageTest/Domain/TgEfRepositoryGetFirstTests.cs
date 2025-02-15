@@ -13,37 +13,37 @@ internal sealed class TgEfRepositoryGetFirstTests : TgDbContextTestsBase
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			TEntity item = await repo.GetFirstItemAsync();
+			var item = await repo.GetFirstItemAsync();
 			TestContext.WriteLine($"Found {item.ToDebugString()}");
 		});
 	}
 
 	[Test]
-	public void TgEf_get_first_app() => GetFirst(new TgEfAppRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_app() => GetFirst(new TgEfAppRepository());
 
 	[Test]
-	public void TgEf_get_first_contact() => GetFirst(new TgEfContactRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_contact() => GetFirst(new TgEfContactRepository());
 
 	[Test]
-	public void TgEf_get_first_document() => GetFirst(new TgEfDocumentRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_document() => GetFirst(new TgEfDocumentRepository());
 
 	[Test]
-	public void TgEf_get_first_filter() => GetFirst(new TgEfFilterRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_filter() => GetFirst(new TgEfFilterRepository());
 
 	[Test]
-	public void TgEf_get_first_message() => GetFirst(new TgEfMessageRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_message() => GetFirst(new TgEfMessageRepository());
 
 	[Test]
-	public void TgEf_get_first_proxy() => GetFirst(new TgEfProxyRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_proxy() => GetFirst(new TgEfProxyRepository());
 
 	[Test]
-	public void TgEf_get_first_source() => GetFirst(new TgEfSourceRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_source() => GetFirst(new TgEfSourceRepository());
 
 	[Test]
-	public void TgEf_get_first_story() => GetFirst(new TgEfStoryRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_story() => GetFirst(new TgEfStoryRepository());
 
 	[Test]
-	public void TgEf_get_first_version() => GetFirst(new TgEfVersionRepository(TgEfUtils.EfContext));
+	public void TgEf_get_first_version() => GetFirst(new TgEfVersionRepository());
 
 	#endregion
 }

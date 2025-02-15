@@ -10,35 +10,20 @@ internal abstract class TgDbContextTestsBase
 
 	protected TgDbContextTestsBase()
 	{
-		TgEfUtils.CreateAndUpdateDbAsync().GetAwaiter().GetResult();
+		// DI
+		var containerBuilder = new ContainerBuilder();
+		containerBuilder.RegisterType<TgEfTestContext>().As<ITgEfContext>();
+		TgGlobalTools.Container = containerBuilder.Build();
+		// Create and update storage
+		var task = TgEfUtils.CreateAndUpdateDbAsync();
+		task.Wait();
 	}
 
 	#endregion
 
 	#region Public and private methods
 
-	protected static TgEfContext CreateEfContext()
-	{
-		LoggerFactory factory = new();
-		DbContextOptionsBuilder<TgEfContext> dbBuilder = new DbContextOptionsBuilder<TgEfContext>()
-			.UseLoggerFactory(factory)
-			.UseSqlite($"{TgInfrastructure.Helpers.TgLocaleHelper.Instance.SqliteDataSource}={TgAppSettingsHelper.Instance.AppXml.XmlEfStorage}");
-		TgEfContext efContext = new(dbBuilder.Options);
-		TgEfUtils.CreateAndUpdateDbAsync().GetAwaiter().GetResult();
-		TestContext.WriteLine(efContext.Database.GetConnectionString());
-		return efContext;
-	}
-
-	protected static TgEfContext CreateEfContextMemory()
-	{
-		LoggerFactory factory = new();
-		DbContextOptionsBuilder<TgEfContext> builderMemory = new DbContextOptionsBuilder<TgEfContext>()
-			.UseLoggerFactory(factory)
-			.UseSqlite("DataSource=:memory:");
-		TgEfContext efContext = new(builderMemory.Options);
-		TestContext.WriteLine(efContext.Database.GetConnectionString());
-		return efContext;
-	}
+	//
 
 	#endregion
 }

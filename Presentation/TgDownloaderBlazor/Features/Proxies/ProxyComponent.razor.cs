@@ -7,7 +7,7 @@ public partial class ProxyComponent : TgPageComponentEnumerable<TgEfProxyDto, Tg
 {
 	#region Public and private fields, properties, constructor
 
-	private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfProxyRepository ProxyRepository { get; } = new();
 
 	#endregion
 
@@ -19,7 +19,6 @@ public partial class ProxyComponent : TgPageComponentEnumerable<TgEfProxyDto, Tg
 	    if (!IsBlazorLoading)
 		    return;
 
-	    await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
 	    if (!AppSettings.AppXml.IsExistsEfStorage)
 	    {
 		    IsBlazorLoading = false;

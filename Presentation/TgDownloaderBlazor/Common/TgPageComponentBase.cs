@@ -7,13 +7,13 @@ public abstract class TgPageComponentBase : ComponentBase
 {
     #region Public and private fields, properties, constructor
 
-    [Inject] protected NavigationManager UriHelper { get; set; } = default!;
-    [Inject] protected DialogService DialogService { get; set; } = default!;
-    [Inject] protected TooltipService TooltipService { get; set; } = default!;
-    [Inject] protected ContextMenuService ContextMenuService { get; set; } = default!;
-    [Inject] protected NotificationService NotificationService { get; set; } = default!;
-    [Inject] protected IDbContextFactory<TgEfContext> EfFactory { get; set; } = default!;
-	[Inject] protected TgJsService JsService { get; set; } = default!;
+    [Inject] protected NavigationManager UriHelper { get; set; } = null!;
+    [Inject] protected DialogService DialogService { get; set; } = null!;
+    [Inject] protected TooltipService TooltipService { get; set; } = null!;
+    [Inject] protected ContextMenuService ContextMenuService { get; set; } = null!;
+    [Inject] protected NotificationService NotificationService { get; set; } = null!;
+    [Inject] protected IDbContextFactory<TgEfBlazorContext> EfFactory { get; set; } = null!;
+	[Inject] protected TgJsService JsService { get; set; } = null!;
 
     protected TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
     protected TgAppSettingsHelper AppSettings => TgAppSettingsHelper.Instance;

@@ -7,7 +7,7 @@ public partial class SourceComponent : TgPageComponentEnumerable<TgEfSourceDto, 
 {
 	#region Public and private fields, properties, constructor
 
-	private TgEfSourceRepository SourceRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfSourceRepository SourceRepository { get; } = new();
 
 	#endregion
 
@@ -19,7 +19,6 @@ public partial class SourceComponent : TgPageComponentEnumerable<TgEfSourceDto, 
 	    if (!IsBlazorLoading)
 		    return;
 
-	    await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
 	    if (!AppSettings.AppXml.IsExistsEfStorage)
 	    {
 		    IsBlazorLoading = false;

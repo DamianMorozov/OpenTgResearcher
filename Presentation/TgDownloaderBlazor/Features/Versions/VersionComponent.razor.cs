@@ -7,7 +7,7 @@ public partial class VersionComponent : TgPageComponentEnumerable<TgEfVersionDto
 {
 	#region Public and private fields, properties, constructor
 
-	private TgEfVersionRepository VersionRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfVersionRepository VersionRepository { get; } = new();
 
 	#endregion
 
@@ -19,7 +19,6 @@ public partial class VersionComponent : TgPageComponentEnumerable<TgEfVersionDto
 	    if (!IsBlazorLoading)
 		    return;
 
-	    await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
 	    if (!AppSettings.AppXml.IsExistsEfStorage)
 	    {
 		    IsBlazorLoading = false;

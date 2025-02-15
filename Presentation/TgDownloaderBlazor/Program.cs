@@ -1,6 +1,8 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Autofac;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
@@ -10,13 +12,18 @@ builder.Services.AddServerSideBlazor();
 // https://blazor.radzen.com/get-started
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<TgJsService>();
-// Inject
+// DI
 builder.Services.AddHttpClient();
+builder.Services.AddTransient<ITgEfContext, TgEfBlazorContext>();
+// DI
+var containerBuilder = new ContainerBuilder();
+containerBuilder.RegisterType<TgEfBlazorContext>().As<ITgEfContext>();
+TgGlobalTools.Container = containerBuilder.Build();
 
 // Register TgEfContext as the DbContext for EF Core
-builder.Services
-	.AddDbContextFactory<TgEfContext>(options => options
-	.UseSqlite(b => b.MigrationsAssembly(nameof(TgDownloaderBlazor))));
+//builder.Services.AddDbContextFactory<TgEfBlazorContext>(options => options
+//	.UseSqlite(b => b.MigrationsAssembly(nameof(TgDownloaderBlazor))));
+// Create and update storage
 await TgEfUtils.CreateAndUpdateDbAsync();
 
 WebApplication app = builder.Build();

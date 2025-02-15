@@ -16,7 +16,8 @@ public class TgJsService
         JsRuntime = jsRuntime;
         NotificationService = notificationService;
 
-        InitializeModuleAsync().ConfigureAwait(true);
+        var task = InitializeModuleAsync();
+        task.Wait();
     }
 
     #endregion
@@ -40,7 +41,7 @@ public class TgJsService
 
     public async Task OpenLink(string url)
     {
-        await Task.Delay(1).ConfigureAwait(false);
+        await Task.Delay(1);
         await JsRuntime.InvokeVoidAsync("open", url, "_blank");
         NotificationService.Notify(new NotificationMessage
         {

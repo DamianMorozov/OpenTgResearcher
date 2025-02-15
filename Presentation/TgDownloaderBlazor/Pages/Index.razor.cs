@@ -19,7 +19,7 @@ public sealed partial class Index : TgPageComponentBase
 		if (!IsBlazorLoading)
 			return;
 		
-		await Task.Delay(1).ConfigureAwait(false);
+		await Task.Delay(1);
 		IsBlazorLoading = false;
 	}
 
@@ -43,6 +43,7 @@ public sealed partial class Index : TgPageComponentBase
 		bool? result = await DialogService.Confirm(TgLocale.MenuStorageDbCreateNew, "", confirmOptions);
 		if (result == true)
 		{
+			// Create and update storage
 			await TgEfUtils.CreateAndUpdateDbAsync();
 			DialogService.Close();
 		}

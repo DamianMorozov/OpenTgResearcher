@@ -7,7 +7,7 @@ public class TgLayoutComponentBase : LayoutComponentBase
 {
     #region Public and private fields, properties, constructor
 
-    [Inject] protected NavigationManager UriHelper { get; set; } = default!;
+    [Inject] protected NavigationManager UriHelper { get; set; } = null!;
 
     #endregion
 }

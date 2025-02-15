@@ -7,8 +7,8 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 {
 	#region Public and private fields, properties, constructor
 
-	private TgEfAppDto Dto { get; set; } = default!;
-	private TgEfAppRepository AppRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfAppDto Dto { get; set; } = null!;
+	private TgEfAppRepository AppRepository { get; } = new();
 
 	#endregion
 
@@ -35,7 +35,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 
 	private async Task GridLoadData(LoadDataArgs args)
     {
-	    await Task.Delay(1).ConfigureAwait(false);
+	    await Task.Delay(1);
 		try
         {
             //var result = await TgStorageService.GetApps(filter: $@"(contains(UID,""{SearchString}"") or contains(API_HASH,""{search}"") or contains(PHONE_NUMBER,""{search}"") or contains(PROXY_UID,""{search}"")) and {(string.IsNullOrEmpty(args.Filter) ? "true" : args.Filter)}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count: args.Top != null && args.Skip != null);
@@ -92,7 +92,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 
     private async Task Search(ChangeEventArgs args)
     {
-		await Task.Delay(1).ConfigureAwait(false);
+		await Task.Delay(1);
 		SearchString = $"{args.Value}";
         await Grid.GoToPage(0);
         await Grid.Reload();
@@ -162,7 +162,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 
 	private async Task ClientConnect()
 	{
-        await Task.Delay(1).ConfigureAwait(false);
+        await Task.Delay(1);
 
 		await OnClientSave(false);
 
@@ -171,8 +171,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 			//if (!TgSqlUtils.GetValidXpLite(Item).IsValid)
 			// return;
 			//await TgClient.ConnectSessionAsync(proxyVm ?? ProxyVm);
-			await Task.Delay(1).ConfigureAwait(false);
-			await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
+			await Task.Delay(1);
 			//await TgClient.ConnectSessionAsync(efContext.ProxyRepo.CreateNew());
 		}, message =>
 		{
@@ -197,7 +196,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 	{
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
-			await Task.Delay(1).ConfigureAwait(false);
+			await Task.Delay(1);
 			await TgClient.DisconnectAsync();
 		}, message =>
 		{
@@ -222,8 +221,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 	{
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
-			await Task.Delay(1).ConfigureAwait(false);
-			await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
+			await Task.Delay(1);
 			var item = await AppRepository.GetFirstItemAsync();
 			Dto = new TgEfAppDto().GetDto(item);
 		}, message =>
@@ -249,13 +247,9 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 	{
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
-			await Task.Delay(1).ConfigureAwait(false);
-			await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
-			if (Dto is not null)
-			{
-				var item = Dto.GetEntity();
-				await AppRepository.SaveAsync(item);
-			}
+			await Task.Delay(1);
+			var item = Dto.GetEntity();
+			await AppRepository.SaveAsync(item);
 		}, message =>
 		{
 			NotificationService.Notify(new()
@@ -282,8 +276,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 	{
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
-			await Task.Delay(1).ConfigureAwait(false);
-			await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
+			await Task.Delay(1);
 			Dto = new();
 		}, message =>
 		{
@@ -308,8 +301,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 	{
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
-			await Task.Delay(1).ConfigureAwait(false);
-			await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
+			await Task.Delay(1);
 			//await efContext.AppsRepo.DeleteAllItemsAsync();
 		}, message =>
 		{

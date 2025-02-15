@@ -9,7 +9,7 @@ public static class TgBlazorUtils
 
 	public static async Task RunFuncAsync(Func<Task> action)
 	{
-		await Task.Delay(1).ConfigureAwait(false);
+		await Task.Delay(1);
 
 		try
 		{
@@ -23,7 +23,7 @@ public static class TgBlazorUtils
 
 	public static async Task RunFuncAsync(Func<Task> action, Action<string> actionException, Action actionFinally)
 	{
-		await Task.Delay(1).ConfigureAwait(false);
+		await Task.Delay(1);
 
 		try
 		{
@@ -48,7 +48,7 @@ public static class TgBlazorUtils
 
 	public static async Task RunActionAsync(Action action)
 	{
-		await Task.Delay(1).ConfigureAwait(false);
+		await Task.Delay(1);
 
 		try
 		{
@@ -62,7 +62,7 @@ public static class TgBlazorUtils
 
 	public static async Task RunActionAsync(Action action, Action actionFinally)
 	{
-		await Task.Delay(1).ConfigureAwait(false);
+		await Task.Delay(1);
 
 		try
 		{

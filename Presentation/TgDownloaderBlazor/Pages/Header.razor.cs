@@ -7,8 +7,8 @@ public sealed partial class Header : RadzenHeader
 {
     #region Public and private fields, properties, constructor
 
-    [Inject] private NotificationService NotificationService { get; set; } = default!;
-    [Inject] private TgJsService JsService { get; set; } = default!;
+    [Inject] private NotificationService NotificationService { get; set; } = null!;
+    [Inject] private TgJsService JsService { get; set; } = null!;
 
 	#endregion
 
@@ -16,7 +16,7 @@ public sealed partial class Header : RadzenHeader
 
 	private async Task ShowAppInfo()
 	{
-        await Task.Delay(1).ConfigureAwait(false);
+        await Task.Delay(1);
         NotificationService.Notify(new NotificationMessage
         {
             Severity = NotificationSeverity.Info,

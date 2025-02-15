@@ -7,7 +7,7 @@ public partial class FilterComponent : TgPageComponentEnumerable<TgEfFilterDto, 
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfFilterRepository FilterRepository { get; } = new(TgEfUtils.EfContext);
+    private TgEfFilterRepository FilterRepository { get; } = new();
 
     #endregion
 
@@ -19,7 +19,6 @@ public partial class FilterComponent : TgPageComponentEnumerable<TgEfFilterDto, 
 	    if (!IsBlazorLoading)
 		    return;
 
-	    await using TgEfContext efContext = await EfFactory.CreateDbContextAsync();
 	    if (!AppSettings.AppXml.IsExistsEfStorage)
 	    {
 		    IsBlazorLoading = false;

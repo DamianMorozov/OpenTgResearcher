@@ -62,8 +62,8 @@ public interface ITgEfRepository<TEntity> where TEntity : ITgDbFillEntity<TEntit
 	public TgEfStorageResult<TEntity> SaveWithoutTransaction(TEntity item);
 	public Task<TgEfStorageResult<TEntity>> SaveOrRecreateAsync(TEntity item, string tableName);
 	public TgEfStorageResult<TEntity> SaveOrRecreate(TEntity item, string tableName);
-	public Task<TgEfStorageResult<TEntity>> CreateNewAsync();
-	public TgEfStorageResult<TEntity> CreateNew();
+	//public Task<TgEfStorageResult<TEntity>> CreateNewAsync();
+	//public TgEfStorageResult<TEntity> CreateNew();
 
 	#endregion
 

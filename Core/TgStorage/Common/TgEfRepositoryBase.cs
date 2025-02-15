@@ -368,9 +368,9 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public TgEfStorageResult<TEntity> SaveOrRecreate(TEntity item, string tableName) => SaveOrRecreateAsync(item, tableName).GetAwaiter().GetResult();
 
-	public virtual async Task<TgEfStorageResult<TEntity>> CreateNewAsync() => await SaveAsync(new());
+	//public virtual async Task<TgEfStorageResult<TEntity>> CreateNewAsync() => await SaveAsync(new());
 
-	public TgEfStorageResult<TEntity> CreateNew() => CreateNewAsync().GetAwaiter().GetResult();
+	//public TgEfStorageResult<TEntity> CreateNew() => CreateNewAsync().GetAwaiter().GetResult();
 
 	#endregion
 

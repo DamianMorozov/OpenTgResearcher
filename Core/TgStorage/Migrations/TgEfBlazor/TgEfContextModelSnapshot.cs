@@ -251,7 +251,7 @@ namespace TgStorage.Migrations.TgEfBlazor
                         .HasColumnType("LONG(20)")
                         .HasColumnName("MESSAGE_ID");
 
-                    b.Property<long?>("SourceId")
+                    b.Property<long>("SourceId")
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")
                         .HasColumnName("SOURCE_ID");
@@ -365,7 +365,7 @@ namespace TgStorage.Migrations.TgEfBlazor
                         .HasColumnType("LONG(20)")
                         .HasColumnName("SIZE");
 
-                    b.Property<long?>("SourceId")
+                    b.Property<long>("SourceId")
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")
                         .HasColumnName("SOURCE_ID");
@@ -693,7 +693,9 @@ namespace TgStorage.Migrations.TgEfBlazor
                     b.HasOne("TgStorage.Domain.Sources.TgEfSourceEntity", "Source")
                         .WithMany("Documents")
                         .HasForeignKey("SourceId")
-                        .HasPrincipalKey("Id");
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Source");
                 });
@@ -703,7 +705,9 @@ namespace TgStorage.Migrations.TgEfBlazor
                     b.HasOne("TgStorage.Domain.Sources.TgEfSourceEntity", "Source")
                         .WithMany("Messages")
                         .HasForeignKey("SourceId")
-                        .HasPrincipalKey("Id");
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Source");
                 });

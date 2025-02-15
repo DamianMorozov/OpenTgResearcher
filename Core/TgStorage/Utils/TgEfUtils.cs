@@ -80,14 +80,10 @@ public static class TgEfUtils
 			case TgEfContactEntity contact:
 				break;
 			case TgEfDocumentEntity document:
-				if (document.SourceId == 0)
-					document.SourceId = null;
 				break;
 			case TgEfFilterEntity filter:
 				break;
 			case TgEfMessageEntity message:
-				if (message.SourceId == 0)
-					message.SourceId = null;
 				break;
 			case TgEfSourceEntity source:
 				break;
@@ -113,19 +109,6 @@ public static class TgEfUtils
 			foreach (var version in storageResult.Items)
 			{
 				TgLog.WriteLine($" {version.Version:00} | {version.Description}");
-			}
-		}
-	}
-
-	public static void FiltersView()
-	{
-		var filterRepository = new TgEfFilterRepository();
-		var storageResult = filterRepository.GetList(TgEnumTableTopRecords.All, 0);
-		if (storageResult.IsExists)
-		{
-			foreach (var filter in storageResult.Items)
-			{
-				TgLog.WriteLine(filter.ToConsoleString());
 			}
 		}
 	}

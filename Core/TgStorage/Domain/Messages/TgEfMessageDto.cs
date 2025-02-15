@@ -48,7 +48,7 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageDto, T
 		if (isUidCopy)
 			Uid = item.Uid;
 		DtCreated = item.DtCreated;
-		SourceId = item.SourceId ?? 0;
+		SourceId = item.SourceId;
 		Id = item.Id;
 		Type = item.Type;
 		Size = item.Size;

@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfTest
 {
     [DbContext(typeof(TgEfTestContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250215165527_UpdatedSourceIdFields")]
+    partial class UpdatedSourceIdFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");

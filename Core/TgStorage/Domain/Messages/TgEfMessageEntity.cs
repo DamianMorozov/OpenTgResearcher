@@ -30,9 +30,10 @@ public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessage
 	[DefaultValue(0)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnSourceId, TypeName = "LONG(20)")]
-    public long? SourceId { get; set; }
+    public long SourceId { get; set; }
 
-    public TgEfSourceEntity? Source { get; set; }
+	[NotMapped]
+	public TgEfSourceEntity Source { get; set; } = null!;
 
 	[DefaultValue(0)]
     [ConcurrencyCheck]
@@ -73,9 +74,9 @@ public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessage
 	public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
-		//SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
-		SourceId = null;
-	    Id = this.GetDefaultPropertyLong(nameof(Id));
+		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
+		Source = new();
+		Id = this.GetDefaultPropertyLong(nameof(Id));
 	    DtCreated = this.GetDefaultPropertyDateTime(nameof(DtCreated));
 		Type = this.GetDefaultPropertyGeneric<TgEnumMessageType>(nameof(Type));
 	    Size = this.GetDefaultPropertyLong(nameof(Size));

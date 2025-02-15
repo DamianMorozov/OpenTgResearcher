@@ -8,10 +8,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 {
 	#region Public and private fields, properties, constructor
 
-	private TgEfAppRepository AppRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfAppRepository AppRepository { get; } = new();
+	private TgEfProxyRepository ProxyRepository { get; } = new();
 	[ObservableProperty]
-	public partial TgEfAppEntity App { get; set; } = default!;
+	public partial TgEfAppEntity App { get; set; } = null!;
 	[ObservableProperty]
 	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new();
 	[ObservableProperty]
@@ -53,7 +53,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial bool IsBot { get; set; }
 	[ObservableProperty]
-	public partial string BotToken { get; set; } = "";
+	public partial string BotTokenKey { get; set; } = "";
 
 	public IRelayCommand ClientConnectCommand { get; }
     public IRelayCommand ClientDisconnectCommand { get; }
@@ -65,7 +65,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
     public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
 	{
-	    AppClearCoreAsync().GetAwaiter().GetResult();
+	    var task = AppClearCoreAsync();
+		task.Wait();
 		// Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
         ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
@@ -189,7 +190,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 			if (!IsBot)
 				await TgDesktopUtils.TgClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetEntity(), ConfigClientDesktop);
 			else
-				await TgDesktopUtils.TgClient.ConnectBotDesktopAsync(BotToken, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
+				await TgDesktopUtils.TgClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
         }
         catch (Exception ex)
         {
@@ -225,8 +226,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		PhoneNumber = App.PhoneNumber;
 		FirstName = App.FirstName;
 	    LastName = App.LastName;
-		IsBot = App.IsBot;
-		BotToken = App.BotToken;
+		IsBot = App.UseBot;
+		BotTokenKey = App.BotTokenKey;
 
 	    UserName = string.Empty;
 	    MtProxyUrl = string.Empty;
@@ -287,8 +288,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		App.LastName = LastName;
 		App.PhoneNumber = PhoneNumber;
 		App.ProxyUid = ProxyVm?.Dto.Uid;
-		App.IsBot = IsBot;
-		App.BotToken = BotToken;
+		App.UseBot = IsBot;
+		App.BotTokenKey = BotTokenKey;
 		if (App.ProxyUid is null || App.ProxyUid == Guid.Empty)
 			App.Proxy = null;
 		

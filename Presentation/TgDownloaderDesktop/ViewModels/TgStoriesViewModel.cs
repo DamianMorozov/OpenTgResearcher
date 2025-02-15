@@ -8,7 +8,7 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfStoryRepository Repository { get; } = new(TgEfUtils.EfContext);
+    private TgEfStoryRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfStoryDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }

@@ -8,7 +8,7 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfFilterRepository Repository { get; } = new(TgEfUtils.EfContext);
+    private TgEfFilterRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfFilterDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }

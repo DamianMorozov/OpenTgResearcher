@@ -8,7 +8,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfProxyRepository Repository { get; } = new(TgEfUtils.EfContext);
+    private TgEfProxyRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }

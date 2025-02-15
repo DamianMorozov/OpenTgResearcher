@@ -76,7 +76,7 @@ public static class TgSettingsStorageExtensions
 
 	public static async Task<byte[]?> ReadFileAsync(this StorageFolder folder, string fileName)
 	{
-		var item = await folder.TryGetItemAsync(fileName).AsTask().ConfigureAwait(false);
+		var item = await folder.TryGetItemAsync(fileName).AsTask();
 		if ((item != null) && item.IsOfType(StorageItemTypes.File))
 		{
 			var storageFile = await folder.GetFileAsync(fileName);

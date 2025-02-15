@@ -8,11 +8,11 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfContactRepository Repository { get; } = new(TgEfUtils.EfContext);
+    private TgEfContactRepository Repository { get; } = new();
 	[ObservableProperty]
-	public partial Guid Uid { get; set; } = default!;
+	public partial Guid Uid { get; set; } = Guid.Empty!;
 	[ObservableProperty]
-	public partial TgEfContactDto Dto { get; set; } = default!;
+	public partial TgEfContactDto Dto { get; set; } = null!;
 	public IRelayCommand LoadDataStorageCommand { get; }
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }

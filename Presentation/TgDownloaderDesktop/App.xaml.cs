@@ -1,6 +1,9 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Autofac;
+using TgStorage.Domain;
+
 namespace TgDownloaderDesktop;
 
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
@@ -42,6 +45,11 @@ public partial class App : Application
 			//	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
 			//})
 			.Run();
+		// DI
+		var containerBuilder = new ContainerBuilder();
+		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
+		TgGlobalTools.Container = containerBuilder.Build();
+
 		Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder().UseContentRoot(AppContext.BaseDirectory)
 			.ConfigureServices((context, services) =>
 			{
@@ -60,6 +68,7 @@ public partial class App : Application
 				// Core Services
 				services.AddSingleton<ISampleDataService, SampleDataService>();
 				services.AddSingleton<IFileService, FileService>();
+				services.AddTransient<ITgEfContext, TgEfDesktopContext>();
 				// Views and ViewModels
 				services.AddTransient<ShellViewModel>();
 				services.AddTransient<TgSettingsViewModel>();
@@ -129,19 +138,19 @@ public partial class App : Application
 		App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 		await App.GetService<IActivationService>().ActivateAsync(args);
 #if DEBUG
-		TgDesktopUtils.FileLog("OnLaunched");
+		await TgDesktopUtils.FileLogAsync("OnLaunched");
 #endif
 		try
 		{
-			TgAsyncUtils.SetAppType(TgEnumAppType.Desktop);
 			// Register TgEfContext as the DbContext for EF Core
-			TgEfUtils.AppStorage = App.GetService<ITgSettingsService>().AppStorage;
+			var settingsService = App.GetService<ITgSettingsService>();
+			TgEfUtils.AppStorage = settingsService.AppStorage;
+			// Create and update storage
 			await TgEfUtils.CreateAndUpdateDbAsync();
-			TgEfUtils.RecreateEfContext();
 		}
 		catch (Exception ex)
 		{
-			TgDesktopUtils.FileLog(ex);
+			await TgDesktopUtils.FileLogAsync(ex);
 		}
 	}
 

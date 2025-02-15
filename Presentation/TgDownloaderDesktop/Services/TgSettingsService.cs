@@ -14,11 +14,11 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 	private const string SettingsKeyAppStorage = nameof(LocalSettingsOptions.AppStorage);
 	private const string SettingsKeyAppSession = nameof(LocalSettingsOptions.AppSession);
 	[ObservableProperty]
-	public partial ObservableCollection<TgEnumTheme> AppThemes { get; set; } = default!;
+	public partial ObservableCollection<TgEnumTheme> AppThemes { get; set; } = null!;
 	[ObservableProperty]
 	public partial TgEnumTheme AppTheme { get; set; } = TgEnumTheme.Default;
 	[ObservableProperty]
-	public partial ObservableCollection<TgEnumLanguage> AppLanguages { get; set; } = default!;
+	public partial ObservableCollection<TgEnumLanguage> AppLanguages { get; set; } = null!;
 	[ObservableProperty]
 	public partial TgEnumLanguage AppLanguage { get; set; } = TgEnumLanguage.Default;
 	[ObservableProperty]

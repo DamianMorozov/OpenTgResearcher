@@ -8,7 +8,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfSourceRepository Repository { get; } = new(TgEfUtils.EfContext);
+    private TgEfSourceRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
 	[ObservableProperty]

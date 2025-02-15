@@ -344,7 +344,7 @@
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							IsEnabled="False"
-							Text="{x:Bind ViewModel.BotToken, Mode=TwoWay}"
+							Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
 							TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
 							Visibility="{x:Bind ViewModel.LicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
 					</Grid>

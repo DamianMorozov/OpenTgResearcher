@@ -8,14 +8,14 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfSourceRepository Repository { get; } = new(TgEfUtils.EfContext);
-    private TgEfMessageRepository MessageRepository { get; } = new(TgEfUtils.EfContext);
+    private TgEfSourceRepository Repository { get; } = new();
+    private TgEfMessageRepository MessageRepository { get; } = new();
 	[ObservableProperty]
-	public partial Guid Uid { get; set; } = default!;
+	public partial Guid Uid { get; set; } = Guid.Empty!;
 	[ObservableProperty]
-	public partial TgEfSourceDto Dto { get; set; } = default!;
+	public partial TgEfSourceDto Dto { get; set; } = null!;
 	[ObservableProperty]
-	public partial ObservableCollection<TgEfMessageDto> Messages { get; set; } = default!;
+	public partial ObservableCollection<TgEfMessageDto> Messages { get; set; } = null!;
 	[ObservableProperty]
 	public partial bool EmptyData { get; set; } = true;
 	[ObservableProperty]

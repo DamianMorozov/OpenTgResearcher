@@ -76,6 +76,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderDesktop.Core", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderDesktop.Tests.MSTest", "Tests\TgDownloaderDesktop.Tests.MSTest\TgDownloaderDesktop.Tests.MSTest.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{D1DB4BDE-5AA3-4A23-BE99-85AAADF0624A}"
+	ProjectSection(SolutionItems) = preProject
+		Settings\TgDownloader.xml = Settings\TgDownloader.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -400,8 +400,12 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Project sensetive
+# Sensitive project files
 *.session
 *.db
-*.xml
-/Core/TgStorage/Domain/TgDevContext.cs
+/Core/*.json
+/Presentation/*.json
+/Tests/*.json
+/Core/*.xml
+/Presentation/*.xml
+/Tests/*.xml

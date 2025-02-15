@@ -4,7 +4,7 @@
 namespace TgStorage.Domain;
 
 /// <summary> Base DB context </summary>
-public class TgEfContextBase : DbContext, ITgEfContext
+public abstract class TgEfContextBase : DbContext, ITgEfContext
 {
     #region Public and private fields, properties, constructor
 
@@ -98,7 +98,7 @@ public class TgEfContextBase : DbContext, ITgEfContext
         LoggerFactory factory = new();
 		optionsBuilder
 #if DEBUG
-            .LogTo(message => Debug.WriteLine($"{nameof(TgEfContextBase)}.{nameof(ContextId)} {ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
+            .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}{nameof(ContextId)} {ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
             .EnableDetailedErrors()
             .EnableSensitiveDataLogging()
 #endif
@@ -106,8 +106,8 @@ public class TgEfContextBase : DbContext, ITgEfContext
             .UseLoggerFactory(factory)
         ;
 		// This type need for resolve: The exception 'No database provider has been configured for this DbContext.
-		TgGlobalTools.SetAppType(TgEnumAppType.Memory);
-		optionsBuilder.UseSqlite(GetStoragePath(TgGlobalTools.AppType));
+		//TgGlobalTools.SetAppType(TgEnumAppType.Memory);
+		//optionsBuilder.UseSqlite(GetStoragePath(TgGlobalTools.AppType));
     }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -116,7 +116,7 @@ public class TgEfContextBase : DbContext, ITgEfContext
 		// https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
 		// https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/concurrency?view=aspnetcore-9.0&source=docs
 		// This property isn't on the C# class, so we set it up as a "shadow" property and use it for concurrency.
-		modelBuilder.Entity<TgEfTestEntity>().Property(x => x.RowVersion).IsRowVersion();
+		//modelBuilder.Entity<TgEfTestEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfAppEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfContactEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfDocumentEntity>().Property(x => x.RowVersion).IsRowVersion();
@@ -127,7 +127,7 @@ public class TgEfContextBase : DbContext, ITgEfContext
 		modelBuilder.Entity<TgEfStoryEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfVersionEntity>().Property(x => x.RowVersion).IsRowVersion();
 		// Ignore
-		modelBuilder.Entity<TgEfTestEntity>().Ignore(TgEfConstants.ColumnRowVersion);
+		//modelBuilder.Entity<TgEfTestEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfAppEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfContactEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfDocumentEntity>().Ignore(TgEfConstants.ColumnRowVersion);

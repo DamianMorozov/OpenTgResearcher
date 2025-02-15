@@ -3,7 +3,9 @@
 
 namespace TgInfrastructure.Contracts;
 
-public interface ITgDto<TDto, TEntity> : ITgCommon where TDto : new() where TEntity : new()
+public interface ITgDto<TDto, TEntity> : ITgCommon 
+	where TDto : new() 
+	where TEntity : new()
 {
 	#region Public and private fields, properties, constructor
 

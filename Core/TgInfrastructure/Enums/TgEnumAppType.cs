@@ -5,7 +5,9 @@ namespace TgInfrastructure.Enums;
 
 public enum TgEnumAppType
 {
-	Default,
+	Memory,
 	Console,
-	Desktop
+	Desktop,
+	Blazor,
+	Test
 }

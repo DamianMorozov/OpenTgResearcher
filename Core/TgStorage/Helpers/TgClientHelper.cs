@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using TL;
+using TgEfFilterDto = TgStorage.Domain.Filters.TgEfFilterDto;
 
 namespace TgStorage.Helpers;
 
@@ -10,9 +11,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 {
 	#region Design pattern "Lazy Singleton"
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-	private static TgClientHelper _instance;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	private static TgClientHelper _instance = null!;
 	public static TgClientHelper Instance => LazyInitializer.EnsureInitialized(ref _instance);
 
 	#endregion
@@ -20,15 +19,15 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	#region Public and private fields, properties, constructor
 	private static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 	private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
-	private TgEfAppRepository AppRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfContactRepository ContactRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfDocumentRepository DocumentRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfFilterRepository FilterRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfMessageRepository MessageRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfProxyRepository ProxyRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfSourceRepository SourceRepository { get; } = new(TgEfUtils.CreateEfContext());
-	private TgEfStoryRepository StoryRepository { get; } = new(TgEfUtils.EfContext);
-	private TgEfVersionRepository VersionRepository { get; } = new(TgEfUtils.EfContext);
+	private TgEfAppRepository AppRepository { get; } = new();
+	private TgEfContactRepository ContactRepository { get; } = new();
+	private TgEfDocumentRepository DocumentRepository { get; } = new();
+	private TgEfFilterRepository FilterRepository { get; } = new();
+	private TgEfMessageRepository MessageRepository { get; } = new();
+	private TgEfProxyRepository ProxyRepository { get; } = new();
+	private TgEfSourceRepository SourceRepository { get; } = new();
+	private TgEfStoryRepository StoryRepository { get; } = new();
+	private TgEfVersionRepository VersionRepository { get; } = new();
 
 	private static TgLogHelper TgLog => TgLogHelper.Instance;
 	public WTelegram.Client? Client { get; set; }
@@ -66,6 +65,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	public Func<long, Task> UpdateStateItemSourceAsync { get; private set; }
 	public Func<long, int, string, long, long, long, bool, int, Task> UpdateStateFileAsync { get; private set; }
 	public Func<string, Task> UpdateStateMessageAsync { get; private set; }
+	public Func<long, int, string, bool, int, Task> UpdateStateMessageThreadAsync { get; private set; }
 
 	public Microsoft.Data.Sqlite.SqliteConnection? BotSqlConnection { get; private set; }
 	public WTelegram.Bot? Bot { get; private set; }
@@ -101,6 +101,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		UpdateStateItemSourceAsync = _ => Task.CompletedTask;
 		UpdateStateFileAsync = (_, _, _, _, _, _, _, _) => Task.CompletedTask;
 		UpdateStateMessageAsync = _ => Task.CompletedTask;
+		UpdateStateMessageThreadAsync = (_, _, _, _, _) => Task.CompletedTask;
 
 #if DEBUG
 		// TgLog to VS Output debugging pane in addition.
@@ -159,6 +160,9 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	public void SetupUpdateStateMessage(Func<string, Task> updateStateMessageAsync) =>
 		UpdateStateMessageAsync = updateStateMessageAsync;
 
+	public void SetupUpdateStateMessageThread(Func<long, int, string, bool, int, Task> updateStateMessageThreadAsync) =>
+		UpdateStateMessageThreadAsync = updateStateMessageThreadAsync;
+
 	public async Task<bool> CheckClientIsReadyAsync()
 	{
 		if (Bot is null)
@@ -166,7 +170,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			var result = Client is { Disconnected: false };
 			if (!result)
 				return ClientResultDisconnected();
-			switch (TgAsyncUtils.AppType)
+			switch (TgGlobalTools.AppType)
 			{
 				case TgEnumAppType.Console:
 					if (!TgAppSettings.AppXml.IsExistsFileSession)
@@ -335,7 +339,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		if (tgDownloadSettings.SourceVm.Dto.IsReady)
 		{
 			tgDownloadSettings.SourceVm.Dto.Id = ReduceChatId(tgDownloadSettings.SourceVm.Dto.Id);
-			foreach (KeyValuePair<long, ChatBase> chat in DicChatsAll)
+			foreach (var chat in DicChatsAll)
 			{
 				if (chat.Value is Channel channel && Equals(channel.id, tgDownloadSettings.SourceVm.Dto.Id) &&
 					await IsChatBaseAccessAsync(channel))
@@ -344,7 +348,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		}
 		else
 		{
-			foreach (KeyValuePair<long, ChatBase> chat in DicChatsAll)
+			foreach (var chat in DicChatsAll)
 			{
 				if (chat.Value is Channel channel && Equals(channel.username, tgDownloadSettings.SourceVm.Dto.UserName) &&
 					await IsChatBaseAccessAsync(channel))
@@ -360,7 +364,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			messagesChats = await Client.Channels_GetChannels(new InputChannel(tgDownloadSettings.SourceVm.Dto.Id, Me.access_hash));
 		if (messagesChats is not null)
 		{
-			foreach (KeyValuePair<long, ChatBase> chat in messagesChats.chats)
+			foreach (var chat in messagesChats.chats)
 			{
 				if (chat.Value is Channel channel && Equals(channel.ID, tgDownloadSettings.SourceVm.Dto.Id))
 					return channel;
@@ -378,7 +382,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		if (tgDownloadSettings.SourceVm.Dto.IsReady)
 		{
 			tgDownloadSettings.SourceVm.Dto.Id = ReduceChatId(tgDownloadSettings.SourceVm.Dto.Id);
-			foreach (KeyValuePair<long, ChatBase> chat in DicChatsAll)
+			foreach (var chat in DicChatsAll)
 			{
 				if (chat.Value is { } chatBase && Equals(chatBase.ID, tgDownloadSettings.SourceVm.Dto.Id))
 					return chatBase;
@@ -386,7 +390,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		}
 		else
 		{
-			foreach (KeyValuePair<long, ChatBase> chat in DicChatsAll)
+			foreach (var chat in DicChatsAll)
 			{
 				if (chat.Value is { } chatBase)
 					return chatBase;
@@ -401,7 +405,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			messagesChats = await Client.Channels_GetGroupsForDiscussion();
 
 		if (messagesChats is not null)
-			foreach (KeyValuePair<long, ChatBase> chat in messagesChats.chats)
+			foreach (var chat in messagesChats.chats)
 			{
 				if (chat.Value is { } chatBase && Equals(chatBase.ID, tgDownloadSettings.SourceVm.Dto.Id))
 					return chatBase;
@@ -530,7 +534,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		{
 			case true when Client is not null:
 			{
-				Stories_AllStoriesBase storiesBase = await Client.Stories_GetAllStories();
+				var storiesBase = await Client.Stories_GetAllStories();
 				if (storiesBase is Stories_AllStories allStories)
 				{
 					FillEnumerableStories([.. allStories.peer_stories]);
@@ -568,37 +572,8 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		EnumerableChannels = listChannels;
 		EnumerableChats = listChats;
 		EnumerableGroups = listGroups;
-		EnumerableGroups = listGroups;
 		EnumerableSmallGroups = listSmallGroups;
 	}
-
-	//private void AddEnumerableChats(Dictionary<long, TL.ChatBase> chats)
-	//{
-	//	var listChats = new List<TL.ChatBase>();
-	//	var listSmallGroups = new List<TL.ChatBase>();
-	//	var listChannels = new List<Channel>();
-	//	var listGroups = new List<Channel>();
-	//	foreach (var chat in chats)
-	//	{
-	//		switch (chat.Value)
-	//		{
-	//			case Chat smallGroup when (smallGroup.flags & Chat.Flags.deactivated) is 0:
-	//				listSmallGroups.Add(chat.Value);
-	//				break;
-	//			case Channel { IsGroup: true } group:
-	//				listGroups.Add(group);
-	//				break;
-	//			case Channel channel:
-	//				listChannels.Add(channel);
-	//				break;
-	//		}
-	//	}
-	//	EnumerableChannels = [.. EnumerableChannels, .. listChannels];
-	//	EnumerableChats = [.. EnumerableChats, .. listChats];
-	//	EnumerableGroups = [.. EnumerableGroups, .. listGroups];
-	//	EnumerableGroups = [.. EnumerableGroups, .. listGroups];
-	//	EnumerableSmallGroups = [.. EnumerableSmallGroups, .. listSmallGroups];
-	//}
 
 	private void FillEnumerableContacts(Dictionary<long, User> users)
 	{
@@ -653,7 +628,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 					{
 						if (updateShort.Chats.Any())
 						{
-							foreach (KeyValuePair<long, ChatBase> chatBase in updateShort.Chats)
+							foreach (var chatBase in updateShort.Chats)
 							{
 								if (chatBase.Value is Channel { IsActive: true } channel)
 								{
@@ -690,7 +665,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 					{
 						if (updates.Chats.Any())
 						{
-							foreach (KeyValuePair<long, ChatBase> chatBase in updates.Chats)
+							foreach (var chatBase in updates.Chats)
 							{
 								if (chatBase.Value is Channel { IsActive: true } channel)
 								{
@@ -944,7 +919,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	{
 		TgLog.MarkupInfo($"Found {name}: {dicChats.Count}");
 		TgLog.MarkupInfo(TgLocale.TgGetDialogsInfo);
-		foreach (KeyValuePair<long, ChatBase> dicChat in dicChats)
+		foreach (var dicChat in dicChats)
 		{
 			await TryCatchFuncAsync(async () =>
 			{
@@ -1132,7 +1107,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		var max = chatFullBase is ChannelFull channelFull ? channelFull.read_inbox_max_id : 0;
 		var result = max;
 		var partition = 200;
-		InputMessage[] inputMessages = new InputMessage[partition];
+		var inputMessages = new InputMessage[partition];
 		var offset = 0;
 		var isSkipChannelCreate = false;
 		// While.
@@ -1185,7 +1160,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		if (Bot is not null)
 		{
 			//await GetChatTestAsync();
-			WTelegram.Types.ChatFullInfo? chatDetails = await GetChatDetails(dto.UserName, dto.Id);
+			var chatDetails = await GetChatDetails(dto.UserName, dto.Id);
 			if (chatDetails is not null)
 			{
 				if (chatDetails.TLInfo is TL.Messages_ChatFull { full_chat: TL.ChannelFull channelFull })
@@ -1246,7 +1221,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		else
 		{
 			long? chatId = dtoId.ToString().StartsWith("-100") ? dtoId :
-				long.TryParse($"-100{dtoId}", out long id) ? id : null;
+				long.TryParse($"-100{dtoId}", out var id) ? id : null;
 			if (chatId is not null)
 				chatDetails = await Bot.GetChat(chatId);
 		}
@@ -1279,8 +1254,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	private async Task UpdateSourceTgAsync(Channel channel, string about, int count)
 	{
 		var storageResult = await SourceRepository.GetAsync(new() { Id = channel.id });
-		TgEfSourceEntity sourceNew;
-		sourceNew = storageResult.IsExists ? storageResult.Item : new();
+		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
 		sourceNew.Id = channel.id;
 		sourceNew.AccessHash = channel.access_hash;
 		sourceNew.IsActive = channel.IsActive;
@@ -1295,8 +1269,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	private async Task UpdateContactTgAsync(User user)
 	{
 		var storageResult = await ContactRepository.GetAsync(new() { Id = user.id });
-		TgEfContactEntity contactNew;
-		contactNew = storageResult.IsExists ? storageResult.Item : new();
+		var contactNew = storageResult.IsExists ? storageResult.Item : new();
 		contactNew.DtChanged = DateTime.UtcNow;
 		contactNew.Id = user.id;
 		contactNew.AccessHash = user.access_hash;
@@ -1322,7 +1295,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	{
 		if (story.entities is not null)
 		{
-			foreach (MessageEntity? message in story.entities)
+			foreach (var message in story.entities)
 			{
 				await UpdateStoryItemTgAsync(story, message);
 			}
@@ -1336,8 +1309,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	private async Task UpdateStoryItemTgAsync(StoryItem story, MessageEntity? message)
 	{
 		var storageResult = await StoryRepository.GetAsync(new() { Id = story.id });
-		TgEfStoryEntity storyNew;
-		storyNew = storageResult.IsExists ? storageResult.Item : new();
+		var storyNew = storageResult.IsExists ? storageResult.Item : new();
 		storyNew.DtChanged = DateTime.UtcNow;
 		storyNew.Id = story.id;
 		storyNew.FromId = story.from_id?.ID;
@@ -1460,7 +1432,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	{
 		await TryCatchFuncAsync(async () =>
 		{
-			switch (TgAsyncUtils.AppType)
+			switch (TgGlobalTools.AppType)
 			{
 				case TgEnumAppType.Console:
 					await LoginUserConsoleAsync();
@@ -1670,7 +1642,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 				});
 			}
 			i++;
-			await UpdateStateSourceAsync(channel.ID, 0, 0, $"Read channel '{channel.ID}' | {channel.IsActive} | {i} from {count}");
+			await UpdateStateSourceAsync(channel.ID, 0, 0, $"Reading the channel '{channel.ID}' | {channel.IsActive} | {i} from {count}");
 		}
 
 		// ListGroups.
@@ -1689,7 +1661,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 				await afterScanAsync(new(source));
 			});
 			i++;
-			await UpdateStateSourceAsync(group.ID, 0, 0, $"Read channel '{group.ID}' | {group.IsActive} | {i} from {count}");
+			await UpdateStateSourceAsync(group.ID, 0, 0, $"Reading the channel '{group.ID}' | {group.IsActive} | {i} from {count}");
 		}
 	}
 
@@ -1702,7 +1674,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			// Filters
 			Filters = await FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled);
 
-			switch (TgAsyncUtils.AppType)
+			switch (TgGlobalTools.AppType)
 			{
 				case TgEnumAppType.Console:
 					await LoginUserConsoleAsync();
@@ -1711,7 +1683,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 					await LoginUserDesktopAsync();
 					break;
 				default:
-					throw new InvalidEnumArgumentException(TgLocale.MenuDownloadException, (int)TgAsyncUtils.AppType, typeof(TgEnumAppType));
+					throw new InvalidEnumArgumentException(TgLocale.MenuDownloadException, (int)TgGlobalTools.AppType, typeof(TgEnumAppType));
 			}
 
 			var dirExists = await CreateDestDirectoryIfNotExistsAsync(tgDownloadSettings);
@@ -1802,7 +1774,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	{
 		await TryCatchFuncAsync(async () =>
 		{
-			switch (TgAsyncUtils.AppType)
+			switch (TgGlobalTools.AppType)
 			{
 				case TgEnumAppType.Console:
 					await LoginUserConsoleAsync();
@@ -1811,7 +1783,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 					await LoginUserDesktopAsync();
 					break;
 				default:
-					throw new InvalidEnumArgumentException(TgLocale.MenuException, (int)TgAsyncUtils.AppType, typeof(TgEnumSourceType));
+					throw new InvalidEnumArgumentException(TgLocale.MenuException, (int)TgGlobalTools.AppType, typeof(TgEnumSourceType));
 			}
 		});
 
@@ -1862,7 +1834,6 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, tgDownloadSettings.SourceVm.Dto.Count, "Empty message");
 			return;
 		}
-
 		await TryCatchFuncAsync(async () =>
 		{
 			// Store message
@@ -1872,7 +1843,8 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			{
 				await DownloadDataCoreAsync(tgDownloadSettings, messageBase, message.media, threadNumber);
 			}
-			await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, message.ID, tgDownloadSettings.SourceVm.Dto.Count, "Read the message");
+			await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, message.ID, tgDownloadSettings.SourceVm.Dto.Count, 
+				$"Reading the message {message.ID} from {tgDownloadSettings.SourceVm.Dto.Count}");
 			await UpdateStateItemSourceAsync(tgDownloadSettings.SourceVm.Dto.Id);
 		}, maxRetries, delayBetweenRetries);
 	}
@@ -2029,7 +2001,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 						if ((mediaDocument.flags & TL.MessageMediaDocument.Flags.has_document) is not 0 && mediaDocument.document is Document document)
 						{
 							await Client.DownloadFileAsync(document, localFileStream, null,
-								CreateClientProgressCallback(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
+								ClientProgressForFile(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
 							TgEfDocumentEntity doc = new()
 							{
 								Id = document.ID,
@@ -2046,7 +2018,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 						if (mediaPhoto is { photo: Photo photo })
 						{
 							await Client.DownloadFileAsync(photo, localFileStream, null,
-								CreateClientProgressCallback(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
+								ClientProgressForFile(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
 						}
 						break;
 				}
@@ -2107,22 +2079,37 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	private async Task MessageSaveAsync(TgDownloadSettingsViewModel tgDownloadSettings, int messageId, DateTime dtCreated, long size, string message,
 		TgEnumMessageType messageType, int threadNumber)
 	{
-		var storageResult = await MessageRepository.GetAsync(
-			new() { SourceId = tgDownloadSettings.SourceVm.Dto.Id, Id = tgDownloadSettings.SourceVm.Dto.FirstId }, isReadOnly: false);
-		if (!storageResult.IsExists || storageResult.IsExists && tgDownloadSettings.IsRewriteMessages)
+		try
 		{
-			await MessageRepository.SaveAsync(new()
+			await ClientProgressForMessageThreadAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, message, isStartTask: true, threadNumber);
+			var storageResult = await MessageRepository.GetAsync(
+				new() { SourceId = tgDownloadSettings.SourceVm.Dto.Id, Id = tgDownloadSettings.SourceVm.Dto.FirstId }, isReadOnly: false);
+			if (!storageResult.IsExists || storageResult.IsExists && tgDownloadSettings.IsRewriteMessages)
 			{
-				Id = messageId,
-				SourceId = tgDownloadSettings.SourceVm.Dto.Id,
-				DtCreated = dtCreated,
-				Type = messageType,
-				Size = size,
-				Message = message,
-			});
+				await MessageRepository.SaveAsync(new()
+				{
+					Id = messageId,
+					SourceId = tgDownloadSettings.SourceVm.Dto.Id,
+					DtCreated = dtCreated,
+					Type = messageType,
+					Size = size,
+					Message = message,
+				});
+			}
+			if (messageType == TgEnumMessageType.Document)
+				await UpdateStateFileAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, string.Empty, 0, 0, 0, false, threadNumber);
 		}
-		if (messageType == TgEnumMessageType.Document)
-			await UpdateStateFileAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, string.Empty, 0, 0, 0, false, threadNumber);
+		catch (Exception ex)
+		{
+#if DEBUG
+			Debug.WriteLine(ex);
+			Debug.WriteLine(ex.StackTrace);
+#endif
+		}
+		finally
+		{
+			await ClientProgressForMessageThreadAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, message, isStartTask: false, threadNumber);
+		}
 	}
 
 
@@ -2162,34 +2149,36 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	//	}
 	//}
 
-	private WTelegram.Client.ProgressCallback CreateClientProgressCallback(long sourceId, int messageId, string fileName, int threadNumber)
+	private WTelegram.Client.ProgressCallback ClientProgressForFile(long sourceId, int messageId, string fileName, int threadNumber)
 	{
 		var sw = Stopwatch.StartNew();
-		var isFileNewDownload = true;
+		var isStartTask = true;
 		return (transmitted, size) =>
 		{
 			if (string.IsNullOrEmpty(fileName))
 			{
-				//transmitted = 0;
-				//size = 0;
-				isFileNewDownload = false;
+				isStartTask = false;
 			}
 			else
 			{
+				isStartTask = true;
 				var fileSpeed = transmitted <= 0 || sw.Elapsed.Seconds <= 0 ? 0 : transmitted / sw.Elapsed.Seconds;
-				UpdateStateFileAsync(sourceId, messageId, Path.GetFileName(fileName), size, transmitted, fileSpeed, isFileNewDownload, threadNumber)
-					.GetAwaiter().GetResult();
-				isFileNewDownload = false;
+				var task = UpdateStateFileAsync(sourceId, messageId, Path.GetFileName(fileName), size > 0 ? size : 0, transmitted, 
+					fileSpeed > 0 ? fileSpeed : 0, isStartTask, threadNumber);
+				task.Wait();
 			}
 		};
 	}
+
+	private async Task ClientProgressForMessageThreadAsync(long sourceId, int messageId, string message, bool isStartTask, int threadNumber) => 
+		await UpdateStateMessageThreadAsync(sourceId, messageId, message, isStartTask, threadNumber);
 
 	//private long GetAccessHash(long channelId) => Client?.GetAccessHashFor<Channel>(channelId) ?? 0;
 
 	//private long GetAccessHash(string userName)
 	//{
-	//	Contacts_ResolvedPeer contactsResolved = Client.Contacts_ResolveUsername(userName).GetAwaiter().GetResult();
-	//	//WClient.Channels_JoinChannel(new InputChannel(channelId, accessHash)).GetAwaiter().GetResult();
+	//	Contacts_ResolvedPeer contactsResolved = Client.Contacts_ResolveUsername(userName);
+	//	//WClient.Channels_JoinChannel(new InputChannel(channelId, accessHash));
 	//	return GetAccessHash(contactsResolved.peer.ID);
 	//}
 
@@ -2302,11 +2291,11 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		await UpdateStateExceptionAsync(filePath, lineNumber, memberName, ClientException.Message);
 	}
 
-	private void SetClientExceptionShort(Exception ex)
-	{
-		ClientException.Set(ex);
-		UpdateStateExceptionShortAsync(ClientException.Message).GetAwaiter().GetResult();
-	}
+	//private void SetClientExceptionShort(Exception ex)
+	//{
+	//	ClientException.Set(ex);
+	//	UpdateStateExceptionShortAsync(ClientException.Message);
+	//}
 
 	private async Task SetClientExceptionShortAsync(Exception ex)
 	{
@@ -2352,7 +2341,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 				{
 					await SetClientExceptionShortAsync(ex);
 					await UpdateStateMessageAsync("Reconnect client ...");
-					switch (TgAsyncUtils.AppType)
+					switch (TgGlobalTools.AppType)
 					{
 						case TgEnumAppType.Console:
 							await LoginUserConsoleAsync(isProxyUpdate: false);
@@ -2442,32 +2431,42 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			// CHANNEL_INVALID | BadMsgNotification 48
 			if (ClientException.Message.Contains("You must connect to Telegram first"))
 			{
-				SetClientExceptionShortAsync(ex).GetAwaiter().GetResult();
+				var task = SetClientExceptionShortAsync(ex);
+				task.Wait();
 				UpdateStateMessageAsync("Reconnect client ...");
-				LoginUserDesktopAsync().GetAwaiter().GetResult();
+				task = LoginUserDesktopAsync();
+				task.Wait();
 			}
 			else
 			{
+				Task? task = null;
 				if (!string.IsNullOrEmpty(ex.Source) && ex.Source.Equals("WTelegramClient"))
 				{
 					switch (ex.Message)
 					{
 						case "PEER_ID_INVALID":
-							UpdateStateExceptionShortAsync("The source is invalid!").GetAwaiter().GetResult();
+							task = UpdateStateExceptionShortAsync("The source is invalid!");
+							task.Wait();
 							break;
 						case "CHANNEL_PRIVATE":
-							UpdateStateExceptionShortAsync("The channel is private!").GetAwaiter().GetResult();
+							task = UpdateStateExceptionShortAsync("The channel is private!");
+							task.Wait();
 							break;
 						case "CHANNEL_INVALID":
-							UpdateStateExceptionShortAsync("The channel is invalid!").GetAwaiter().GetResult();
+							task = UpdateStateExceptionShortAsync("The channel is invalid!");
+							task.Wait();
 							break;
 						default:
-							SetClientExceptionShortAsync(ex).GetAwaiter().GetResult();
+							task = SetClientExceptionShortAsync(ex);
+							task.Wait();
 							break;
 					}
 				}
 				else
-					SetClientExceptionAsync(ex).GetAwaiter().GetResult();
+				{
+					task = SetClientExceptionAsync(ex);
+					task.Wait();
+				}
 			}
 		}
 	}

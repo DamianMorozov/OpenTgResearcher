@@ -85,25 +85,25 @@ public sealed class TgEfContactEntity : ITgDbEntity, ITgDbFillEntity<TgEfContact
 	[ConcurrencyCheck]
 	[MaxLength(20)]
 	[Column(TgEfConstants.ColumnPhoneNumber, TypeName = "NVARCHAR(20)")]
-	public string? PhoneNumber { get; set; } = default!;
+	public string? PhoneNumber { get; set; } = null!;
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
 	[MaxLength(20)]
 	[Column(TgEfConstants.ColumnStatus, TypeName = "NVARCHAR(20)")]
-	public string? Status { get; set; } = default!;
+	public string? Status { get; set; } = null!;
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
 	[MaxLength(128)]
 	[Column(TgEfConstants.ColumnRestrictionReason, TypeName = "NVARCHAR(128)")]
-	public string? RestrictionReason { get; set; } = default!;
+	public string? RestrictionReason { get; set; } = null!;
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
 	[MaxLength(16)]
 	[Column(TgEfConstants.ColumnLangCode, TypeName = "NVARCHAR(16)")]
-	public string? LangCode { get; set; } = default!;
+	public string? LangCode { get; set; } = null!;
 
 	[DefaultValue(-1)]
 	[ConcurrencyCheck]
@@ -114,13 +114,13 @@ public sealed class TgEfContactEntity : ITgDbEntity, ITgDbFillEntity<TgEfContact
 	[ConcurrencyCheck]
 	[MaxLength(20)]
 	[Column(TgEfConstants.ColumnBotInfoVersion, TypeName = "NVARCHAR(20)")]
-	public string? BotInfoVersion { get; set; } = default!;
+	public string? BotInfoVersion { get; set; } = null!;
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
 	[MaxLength(128)]
 	[Column(TgEfConstants.ColumnBotInlinePlaceholder, TypeName = "NVARCHAR(128)")]
-	public string BotInlinePlaceholder { get; set; } = default!;
+	public string BotInlinePlaceholder { get; set; } = null!;
 
 	[DefaultValue(-1)]
 	[ConcurrencyCheck]

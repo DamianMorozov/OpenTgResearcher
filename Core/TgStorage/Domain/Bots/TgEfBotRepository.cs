@@ -4,7 +4,7 @@
 //namespace TgStorage.Domain.Bots;
 
 ///// <summary> Bot repository </summary>
-//public sealed class TgEfBotRepository(TgEfContext efContext) : TgEfRepositoryBase<TgEfBotEntity>(efContext), ITgEfBotRepository
+//public sealed class TgEfBotRepository : TgEfRepositoryBase<TgEfBotEntity>, ITgEfBotRepository
 //{
 //	#region Public and private methods
 

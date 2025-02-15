@@ -9,9 +9,7 @@ public sealed class TgAppSettingsHelper : ITgHelper
 {
 	#region Design pattern "Lazy Singleton"
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-	private static TgAppSettingsHelper _instance;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	private static TgAppSettingsHelper _instance = null!;
 	public static TgAppSettingsHelper Instance => LazyInitializer.EnsureInitialized(ref _instance);
 
 	#endregion
@@ -45,11 +43,12 @@ public sealed class TgAppSettingsHelper : ITgHelper
 
 	public void LoadXmlSettings(Encoding? encoding = null)
 	{
-		if (TgAsyncUtils.AppType != TgEnumAppType.Console && TgAsyncUtils.AppType != TgEnumAppType.Default) return;
+		// Use for console app
+		if (TgGlobalTools.AppType != TgEnumAppType.Console && TgGlobalTools.AppType != TgEnumAppType.Memory) return;
 
         if (!File.Exists(TgFileUtils.FileAppXmlSettings)) return;
 		using StreamReader streamReader = new(TgFileUtils.FileAppXmlSettings, encoding ?? Encoding.Unicode);
-		string xml = streamReader.ReadToEnd();
+		var xml = streamReader.ReadToEnd();
 		if (!string.IsNullOrEmpty(xml))
 			AppXml = TgDataFormatUtils.DeserializeFromXml<TgAppXmlModel>(xml);
 	}
@@ -62,7 +61,8 @@ public sealed class TgAppSettingsHelper : ITgHelper
 
 	public void StoreXmlSettings(Encoding? encoding = null)
 	{
-		if (TgAsyncUtils.AppType != TgEnumAppType.Console && TgAsyncUtils.AppType != TgEnumAppType.Default) return;
+		// Use for console app
+		if (TgGlobalTools.AppType != TgEnumAppType.Console && TgGlobalTools.AppType != TgEnumAppType.Memory) return;
 
 		var xml = TgDataFormatUtils.SerializeAsXmlDocument(AppXml, isAddEmptyNamespace: true).InnerXml;
 		xml = TgDataFormatUtils.GetPrettyXml(xml);
@@ -77,7 +77,7 @@ public sealed class TgAppSettingsHelper : ITgHelper
 	{
 		AppVersion = FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion ?? string.Empty;
 		ushort count = 0, pos = 0;
-		foreach (char c in AppVersion)
+		foreach (var c in AppVersion)
 		{
 			if (Equals(c, '.'))
 				count++;

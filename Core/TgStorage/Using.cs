@@ -1,9 +1,13 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 
+global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using FluentValidation.Results;
 global using FluentValidation;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
+global using Microsoft.EntityFrameworkCore.Migrations;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
@@ -27,7 +31,6 @@ global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.Helpers;
 global using TgInfrastructure.Models;
-global using TgStorage.Common;
 global using TgStorage.Common;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Apps;

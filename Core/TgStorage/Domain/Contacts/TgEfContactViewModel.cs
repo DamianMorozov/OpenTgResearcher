@@ -9,9 +9,9 @@ public sealed partial class TgEfContactViewModel : TgEntityViewModelBase<TgEfCon
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfContactRepository Repository { get; } = new(TgEfUtils.EfContext);
+	public override TgEfContactRepository Repository { get; } = new();
 	[ObservableProperty]
-	public partial TgEfContactDto Dto { get; set; } = default!;
+	public partial TgEfContactDto Dto { get; set; } = null!;
 
 
 	public TgEfContactViewModel(TgEfContactEntity item) : base()

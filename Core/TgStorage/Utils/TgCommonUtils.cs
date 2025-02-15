@@ -34,8 +34,8 @@ public static class TgCommonUtils
     public static Version? GetTrimVersion(Version? version)
     {
         if (version is null) return null;
-        string versionStr = version.ToString();
-        int lastDotIndex = versionStr.LastIndexOf('.');
+        var versionStr = version.ToString();
+        var lastDotIndex = versionStr.LastIndexOf('.');
         if (lastDotIndex < 0) return version;
         versionStr = versionStr[..lastDotIndex];
         return Version.Parse(versionStr);

@@ -48,7 +48,7 @@ public static class TgFileUtils
 		ulong lineCount = 0L;
 		using StreamReader streamReader = new(sourceFile);
 
-		char[] byteBuffer = new char[1024 * 1024];
+		var byteBuffer = new char[1024 * 1024];
 		const int bytesAtTheTime = 4;
 		char? detectedEol = null;
 		char? currentChar = null;
@@ -56,7 +56,7 @@ public static class TgFileUtils
 		int bytesRead;
 		while ((bytesRead = streamReader.Read(byteBuffer, 0, byteBuffer.Length)) > 0)
 		{
-			int i = 0;
+			var i = 0;
 			for (; i <= bytesRead - bytesAtTheTime; i += bytesAtTheTime)
 			{
 				currentChar = byteBuffer[i];
@@ -164,7 +164,7 @@ public static class TgFileUtils
 
     public static string GetDefaultDirectory()
     {
-        string os = Environment.OSVersion.Platform.ToString();
+        var os = Environment.OSVersion.Platform.ToString();
         // Windows
         if (os == "Win32NT" || os == "Win32S" || os == "Win32Windows" || os == "WinCE")
 	        return "C:";

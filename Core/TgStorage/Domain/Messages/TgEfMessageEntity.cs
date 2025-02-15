@@ -3,7 +3,7 @@
 
 namespace TgStorage.Domain.Messages;
 
-/// <summary> Messagte entity </summary>
+/// <summary> Message entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(SourceId))]
@@ -57,7 +57,7 @@ public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessage
     [DefaultValue("")]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnMessage, TypeName = "NVARCHAR(100)")]
-    public string Message { get; set; } = default!;
+    public string Message { get; set; } = null!;
 
     public TgEfMessageEntity() : base()
     {

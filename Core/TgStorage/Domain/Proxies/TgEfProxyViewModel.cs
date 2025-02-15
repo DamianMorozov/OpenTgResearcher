@@ -9,9 +9,9 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfProxyRepository Repository { get; } = new(TgEfUtils.EfContext);
+	public override TgEfProxyRepository Repository { get; } = new();
 	[ObservableProperty]
-	public partial TgEfProxyDto Dto { get; set; } = default!;
+	public partial TgEfProxyDto Dto { get; set; } = null!;
 	public Action<TgEfProxyViewModel> UpdateAction { get; set; } = _ => { };
 
 

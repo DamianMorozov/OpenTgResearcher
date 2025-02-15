@@ -40,7 +40,7 @@ public static class TgEfUtils
 
 	public static string GetPercentCountString(TgEfSourceEntity source)
 	{
-		float percent = source.Count <= source.FirstId ? 100 : source.FirstId > 1 ? (float)source.FirstId * 100 / source.Count : 0;
+		var percent = source.Count <= source.FirstId ? 100 : source.FirstId > 1 ? (float)source.FirstId * 100 / source.Count : 0;
 		if (IsPercentCountAll(source))
 			return "100.00 %";
 		return percent > 9 ? $" {percent:00.00} %" : $"  {percent:0.00} %";
@@ -102,19 +102,15 @@ public static class TgEfUtils
 			item.Uid = Guid.NewGuid();
 	}
 
-	//private static TgEfContext? _efContext;
-	//public static TgEfContext EfContext => _efContext ??= CreateEfContext();
-	public static TgEfContext EfContext => CreateEfContext();
-
-	public static TgEfContext CreateEfContext() => new();
-
 	public static void VersionsView()
 	{
-		TgEfVersionRepository versionRepository = new(EfContext);
+		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		var versionRepository = new TgEfVersionRepository();
 		var storageResult = versionRepository.GetList(TgEnumTableTopRecords.All, 0);
 		if (storageResult.IsExists)
 		{
-			foreach (TgEfVersionEntity version in storageResult.Items)
+			foreach (var version in storageResult.Items)
 			{
 				TgLog.WriteLine($" {version.Version:00} | {version.Description}");
 			}
@@ -123,11 +119,11 @@ public static class TgEfUtils
 
 	public static void FiltersView()
 	{
-		TgEfFilterRepository filterRepository = new(EfContext);
-		TgEfStorageResult<TgEfFilterEntity> storageResult = filterRepository.GetList(TgEnumTableTopRecords.All, 0);
+		var filterRepository = new TgEfFilterRepository();
+		var storageResult = filterRepository.GetList(TgEnumTableTopRecords.All, 0);
 		if (storageResult.IsExists)
 		{
-			foreach (TgEfFilterEntity filter in storageResult.Items)
+			foreach (var filter in storageResult.Items)
 			{
 				TgLog.WriteLine(filter.ToConsoleString());
 			}
@@ -137,16 +133,21 @@ public static class TgEfUtils
 	/// <summary> Create and update storage </summary>
 	public static async Task CreateAndUpdateDbAsync()
 	{
-		await using TgEfContext efContext = CreateEfContext();
-		await efContext.CreateAndUpdateDbAsync();
-		TgEfVersionRepository versionRepository = new(efContext);
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		await efContext.MigrateDbAsync();
+		TgEfVersionRepository versionRepository = new();
 		await versionRepository.FillTableVersionsAsync();
-		await efContext.CompactDbAsync();
+		await efContext.ShrinkDbAsync();
 	}
 
-	//public static void RecreateEfContext() => _efContext = CreateEfContext();
-	/// <summary> Recreate </summary>
-	public static void RecreateEfContext() => CreateEfContext();
+	/// <summary> Shrink storage </summary>
+	public static async Task ShrinkDbAsync()
+	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		await efContext.ShrinkDbAsync();
+	}
 
 	///// <summary> Data transfer between storages </summary>
 	//public static async Task DataTransferBetweenStoragesAsync(TgEfContext efContextFrom, TgEfContext efContextTo, Action<string> logWrite)
@@ -161,116 +162,83 @@ public static class TgEfUtils
 	//	await DataTransferCoreAsync(new TgEfSourceRepository(efContextFrom), new TgEfSourceRepository(efContextTo), logWrite, TgEfConstants.TableSources);
 	//}
 
-	private static async Task DataTransferCoreAsync<TEntity>(ITgEfRepository<TEntity> repoFrom, ITgEfRepository<TEntity> repoTo, 
-		Action<string> logWrite, string tableName) where TEntity : ITgDbFillEntity<TEntity>, new()
-	{
-		logWrite($"Transferring table {tableName}: ...");
-		int batchSizeFrom = 100;
-		//const int batchSizeTo = 100;
-		int countFrom = await repoFrom.GetCountAsync(WhereUidNotEmpty<TEntity>());
-		//int countTo = await repoTo.GetCountAsync(WhereUidNotEmpty<TEntity>());
+//	private static async Task DataTransferCoreAsync<TEntity>(ITgEfRepository<TEntity> repoFrom, ITgEfRepository<TEntity> repoTo, 
+//		Action<string> logWrite, string tableName) where TEntity : ITgDbFillEntity<TEntity>, new()
+//	{
+//		logWrite($"Transferring table {tableName}: ...");
+//		var batchSizeFrom = 100;
+//		//const int batchSizeTo = 100;
+//		var countFrom = await repoFrom.GetCountAsync(WhereUidNotEmpty<TEntity>());
+//		//int countTo = await repoTo.GetCountAsync(WhereUidNotEmpty<TEntity>());
 
-		for (int i = 0; i < countFrom; i += batchSizeFrom)
-		{
-			try
-			{
-				TgEfStorageResult<TEntity> storageResultFrom = await repoFrom.GetListAsync(
-					batchSizeFrom, i, WhereUidNotEmpty<TEntity>(), isReadOnly: false);
-				if (storageResultFrom.IsExists)
-				{
-					//List<TEntity> itemsTo = storageResultTo.Items.ToList();
-					//List<TEntity> itemsFrom = storageResultFrom.Items.Where(itemFrom => itemsTo.All(itemTo => itemTo.Uid != itemFrom.Uid)).ToList();
-					//List<TEntity> itemsFrom = storageResultFrom.Items.ToList();
-					int countErrors = 0;
-					//await using var transaction = await repoTo.BeginTransactionAsync();
-					var tasks = new List<Task>();
-					if (storageResultFrom.Items.Any())
-					{
-						foreach (TEntity itemFrom in storageResultFrom.Items)
-						{
-							tasks.Add(Task.Run(async () =>
-							{
-								try
-								{
-									await repoTo.SaveAsync(itemFrom);
-								}
-#if DEBUG
-								catch (Exception ex)
-#else
-								catch (Exception)
-#endif
-								{
-									Interlocked.Increment(ref countErrors);
-#if DEBUG
-									logWrite(ex.Message);
-									if (ex.InnerException is not null)
-										logWrite(ex.InnerException.Message);
-#endif
-								}
-							}));
-						}
-						// Ожидаем завершения всех задач
-						await Task.WhenAll(tasks);
-					}
-					var countSuccess = storageResultFrom.Items.Count() - countErrors;
-					if (countSuccess > 0)
-						logWrite($"Transferring table {tableName}: copied {countSuccess} records");
-					if (countErrors > 0)
-						logWrite($"Transferring table {tableName}: errors in {countErrors} records");
-				}
-			}
-#if DEBUG
-			catch (Exception ex)
-#else
-			catch (Exception)
-#endif
-			{
-#if DEBUG
-				logWrite(ex.Message);
-#endif
-				throw;
-			}
-		}
-		logWrite($"Transferring table {tableName}: completed");
-	}
+//		for (var i = 0; i < countFrom; i += batchSizeFrom)
+//		{
+//			try
+//			{
+//				var storageResultFrom = await repoFrom.GetListAsync(
+//					batchSizeFrom, i, WhereUidNotEmpty<TEntity>(), isReadOnly: false);
+//				if (storageResultFrom.IsExists)
+//				{
+//					//List<TEntity> itemsTo = storageResultTo.Items.ToList();
+//					//List<TEntity> itemsFrom = storageResultFrom.Items.Where(itemFrom => itemsTo.All(itemTo => itemTo.Uid != itemFrom.Uid)).ToList();
+//					//List<TEntity> itemsFrom = storageResultFrom.Items.ToList();
+//					var countErrors = 0;
+//					//await using var transaction = await repoTo.BeginTransactionAsync();
+//					var tasks = new List<Task>();
+//					if (storageResultFrom.Items.Any())
+//					{
+//						foreach (var itemFrom in storageResultFrom.Items)
+//						{
+//							tasks.Add(Task.Run(async () =>
+//							{
+//								try
+//								{
+//									await repoTo.SaveAsync(itemFrom);
+//								}
+//#if DEBUG
+//								catch (Exception ex)
+//#else
+//								catch (Exception)
+//#endif
+//								{
+//									Interlocked.Increment(ref countErrors);
+//#if DEBUG
+//									logWrite(ex.Message);
+//									if (ex.InnerException is not null)
+//										logWrite(ex.InnerException.Message);
+//#endif
+//								}
+//							}));
+//						}
+//						// Ожидаем завершения всех задач
+//						await Task.WhenAll(tasks);
+//					}
+//					var countSuccess = storageResultFrom.Items.Count() - countErrors;
+//					if (countSuccess > 0)
+//						logWrite($"Transferring table {tableName}: copied {countSuccess} records");
+//					if (countErrors > 0)
+//						logWrite($"Transferring table {tableName}: errors in {countErrors} records");
+//				}
+//			}
+//#if DEBUG
+//			catch (Exception ex)
+//#else
+//			catch (Exception)
+//#endif
+//			{
+//#if DEBUG
+//				logWrite(ex.Message);
+//#endif
+//				throw;
+//			}
+//		}
+//		logWrite($"Transferring table {tableName}: completed");
+//	}
 
 	public static Expression<Func<TEntity, bool>> WhereUidNotEmpty<TEntity>() where TEntity : ITgDbFillEntity<TEntity>, new() => x => x.Uid != Guid.Empty;
 	
 	public static Expression<Func<TEntity, List<TEntity>, bool>> WhereUidNotEquals<TEntity>() where TEntity : ITgDbFillEntity<TEntity>, new() =>
 		(itemFrom, itemsTo) => itemsTo.All(itemTo => itemTo.Uid.ToString().ToUpper() != itemFrom.Uid.ToString().ToUpper());
-
-	private static async Task<bool> CheckTableCrudAsync<TEntity>(ITgEfRepository<TEntity> repository) where TEntity : ITgDbFillEntity<TEntity>, new()
-	{
-		var storageResult = await repository.CreateNewAsync();
-		if (!storageResult.IsExists)
-			return false;
-		storageResult = await repository.GetNewAsync(isReadOnly: false);
-		if (!storageResult.IsExists)
-			return false;
-		storageResult = await repository.SaveAsync(storageResult.Item);
-		if (storageResult.State != TgEnumEntityState.IsSaved)
-			return false;
-		storageResult = await repository.DeleteAsync(storageResult.Item);
-		return storageResult.State == TgEnumEntityState.IsDeleted;
-	}
-
-	public static Task<bool> CheckTableAppsCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfAppRepository(efContext));
-
-	public static Task<bool> CheckTableContactsCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfContactRepository(efContext));
-
-	public static Task<bool> CheckTableDocumentsCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfDocumentRepository(efContext));
-
-	public static Task<bool> CheckTableFiltersCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfFilterRepository(efContext));
-
-	public static Task<bool> CheckTableMessagesCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfMessageRepository(efContext));
-
-	public static Task<bool> CheckTableProxiesCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfProxyRepository(efContext));
-
-	public static Task<bool> CheckTableSourcesCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfSourceRepository(efContext));
-
-	public static Task<bool> CheckTableStoriesCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfStoryRepository(efContext));
-
-	public static Task<bool> CheckTableVersionsCrudAsync(TgEfContext efContext) => CheckTableCrudAsync(new TgEfVersionRepository(efContext));
 
 	#endregion
 }

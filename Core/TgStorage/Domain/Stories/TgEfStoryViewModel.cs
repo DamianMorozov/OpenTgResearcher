@@ -9,9 +9,9 @@ public sealed partial class TgEfStoryViewModel : TgEntityViewModelBase<TgEfStory
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfStoryRepository Repository { get; } = new(TgEfUtils.EfContext);
+	public override TgEfStoryRepository Repository { get; } = new();
 	[ObservableProperty]
-	public partial TgEfStoryDto Dto { get; set; } = default!;
+	public partial TgEfStoryDto Dto { get; set; } = null!;
 
 	public TgEfStoryViewModel(TgEfStoryEntity item) : base()
 	{

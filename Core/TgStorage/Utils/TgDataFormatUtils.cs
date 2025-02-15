@@ -27,7 +27,7 @@ public static class TgDataFormatUtils
 		// Don't use it.
 		// XmlSerializer xmlSerializer = new(typeof(T));
 		// Use it.
-		XmlSerializer? xmlSerializer = XmlSerializer.FromTypes([typeof(T)])[0];
+		var xmlSerializer = XmlSerializer.FromTypes([typeof(T)])[0];
 		// The T object must have properties with { get; set; }.
 		using StringWriter stringWriter = new();
 		switch (isAddEmptyNamespace)
@@ -36,7 +36,7 @@ public static class TgDataFormatUtils
 			{
 				XmlSerializerNamespaces emptyNamespaces = new();
 				emptyNamespaces.Add(string.Empty, string.Empty);
-				using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, GetXmlWriterSettings());
+				using var xmlWriter = XmlWriter.Create(stringWriter, GetXmlWriterSettings());
 				xmlSerializer?.Serialize(xmlWriter, item, emptyNamespaces);
 				xmlWriter.Flush();
 				xmlWriter.Close();
@@ -52,8 +52,8 @@ public static class TgDataFormatUtils
 	public static XmlDocument SerializeAsXmlDocument<T>(T item, bool isAddEmptyNamespace) where T : new()
 	{
 		XmlDocument xmlDocument = new();
-		string xmlString = SerializeAsXmlString(item, isAddEmptyNamespace);
-		byte[] bytes = Encoding.Unicode.GetBytes(xmlString);
+		var xmlString = SerializeAsXmlString(item, isAddEmptyNamespace);
+		var bytes = Encoding.Unicode.GetBytes(xmlString);
 		using MemoryStream memoryStream = new(bytes);
 		memoryStream.Flush();
 		memoryStream.Seek(0, SeekOrigin.Begin);
@@ -66,10 +66,10 @@ public static class TgDataFormatUtils
 		// Don't use it.
 		// XmlSerializer xmlSerializer = new(typeof(T));
 		// Use it.
-		XmlSerializer? xmlSerializer = XmlSerializer.FromTypes([typeof(T)])[0];
+		var xmlSerializer = XmlSerializer.FromTypes([typeof(T)])[0];
 		if (xmlSerializer is null)
 			return new();
-		object? obj = xmlSerializer.Deserialize(new MemoryStream(Encoding.Unicode.GetBytes(xml)));
+		var obj = xmlSerializer.Deserialize(new MemoryStream(Encoding.Unicode.GetBytes(xml)));
 		if (obj is null)
 			return new();
 		return (T)obj;
@@ -88,7 +88,7 @@ public static class TgDataFormatUtils
 			return false;
 
 		// Escape special regex characters in the mask
-		string regexPattern = Regex.Escape(mask)
+		var regexPattern = Regex.Escape(mask)
 			// Replace ? with . (match any character) and * with .* (match any number of characters)
 			.Replace("\\?", ".")
 			.Replace("\\*", ".*");
@@ -96,7 +96,7 @@ public static class TgDataFormatUtils
 		return Regex.IsMatch(name, regexPattern, RegexOptions.IgnoreCase);
 	}
 
-	public static Guid ParseStringToGuid(string uid) => Guid.TryParse(uid, out Guid guid) ? guid : Guid.Empty;
+	public static Guid ParseStringToGuid(string uid) => Guid.TryParse(uid, out var guid) ? guid : Guid.Empty;
 
 	public static string ParseGuidToString(Guid uid) => uid.ToString().Replace("-", "");
 

@@ -14,8 +14,8 @@ public static class TgCommonExtensions
 	{
 		if (item is null)
 			return null;
-		AttributeCollection? attributes = TypeDescriptor.GetProperties(item)[name]?.Attributes;
-		Attribute? attribute = attributes?[typeof(DefaultValueAttribute)];
+		var attributes = TypeDescriptor.GetProperties(item)[name]?.Attributes;
+		var attribute = attributes?[typeof(DefaultValueAttribute)];
 		if (attribute is DefaultValueAttribute defaultValueAttribute)
 			return defaultValueAttribute.Value;
 		return null;
@@ -45,13 +45,13 @@ public static class TgCommonExtensions
 
 	public static short GetDefaultPropertyShort(this object item, string name)
 	{
-		object? value = GetPropertyDefaultValueCore(item, name);
+		var value = GetPropertyDefaultValueCore(item, name);
 		return value is not null ? Convert.ToInt16(value) : default;
 	}
 
 	public static ushort GetDefaultPropertyUshort(this object item, string name)
 	{
-		object? value = GetPropertyDefaultValueCore(item, name);
+		var value = GetPropertyDefaultValueCore(item, name);
 		return value is not null ? Convert.ToUInt16(value) : default;
 	}
 

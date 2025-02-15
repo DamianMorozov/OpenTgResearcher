@@ -13,10 +13,10 @@ public sealed class TgAppXmlModel : ObservableObject, ITgCommon
 
 	[DefaultValue("")]
 	[XmlElement("FileSession")]
-	public string XmlFileSession { get; set; } = default!;
+	public string XmlFileSession { get; set; } = null!;
 	[DefaultValue("")]
 	[XmlElement("EfStorage")]
-	public string XmlEfStorage { get; set; } = default!;
+	public string XmlEfStorage { get; set; } = null!;
 
 	[XmlIgnore]
 	public bool IsExistsFileSession => File.Exists(XmlFileSession);

@@ -1,7 +1,7 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgStorage.Domain.Contacts;
+namespace TgStorage.Domain.Filters;
 
 /// <summary> Contact view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
@@ -9,9 +9,9 @@ public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilt
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfFilterRepository Repository { get; } = new(TgEfUtils.EfContext);
+	public override TgEfFilterRepository Repository { get; } = new();
 	[ObservableProperty]
-	public partial TgEfFilterDto Dto { get; set; } = default!;
+	public partial TgEfFilterDto Dto { get; set; } = null!;
 
 
 	public TgEfFilterViewModel(TgEfFilterEntity item) : base()

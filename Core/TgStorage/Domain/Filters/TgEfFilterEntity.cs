@@ -41,13 +41,13 @@ public sealed class TgEfFilterEntity : ITgDbEntity, ITgDbFillEntity<TgEfFilterEn
 	[ConcurrencyCheck]
 	[MaxLength(128)]
 	[Column(TgEfConstants.ColumnName, TypeName = "NVARCHAR(128)")]
-	public string Name { get; set; } = default!;
+	public string Name { get; set; } = null!;
 
 	[DefaultValue("*")]
 	[ConcurrencyCheck]
 	[MaxLength(128)]
 	[Column(TgEfConstants.ColumnMask, TypeName = "NVARCHAR(128)")]
-	public string Mask { get; set; } = default!;
+	public string Mask { get; set; } = null!;
 
 	[DefaultValue(0)]
 	[ConcurrencyCheck]

@@ -3,24 +3,28 @@
 
 namespace TgStorage.Domain.Messages;
 
-/// <summary> Messagte repository </summary>
-public sealed class TgEfMessageRepository(TgEfContext efContext) : TgEfRepositoryBase<TgEfMessageEntity>(efContext)
+/// <summary> Message repository </summary>
+public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity>
 {
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfMessageRepository)}";
 
-	public override IQueryable<TgEfMessageEntity> GetQuery(bool isReadOnly = true) =>
-		isReadOnly ? EfContext.Messages.AsNoTracking() : EfContext.Messages.AsTracking();
+	public override IQueryable<TgEfMessageEntity> GetQuery(ITgEfContext efContext, bool isReadOnly = true)
+	{
+		return isReadOnly ? efContext.Messages.AsNoTracking() : efContext.Messages.AsTracking();
+	}
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetAsync(TgEfMessageEntity item, bool isReadOnly = true)
 	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
 		// Find by Uid
-		var itemFind = await EfContext.Messages.FindAsync(item.Uid);
+		var itemFind = await efContext.Messages.FindAsync(item.Uid);
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 		// Find by Id
-		itemFind = await GetQuery(isReadOnly)
+		itemFind = await GetQuery(efContext, isReadOnly)
 			.Where(x => x.SourceId == item.SourceId && x.Id == item.Id)
 			.Include(x => x.Source)
 			.SingleOrDefaultAsync();
@@ -31,7 +35,9 @@ public sealed class TgEfMessageRepository(TgEfContext efContext) : TgEfRepositor
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetFirstAsync(bool isReadOnly = true)
 	{
-		TgEfMessageEntity? item = await GetQuery(isReadOnly).Include(x => x.Source).FirstOrDefaultAsync();
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		var item = await GetQuery(efContext, isReadOnly).Include(x => x.Source).FirstOrDefaultAsync();
 		return item is null
 			? new(TgEnumEntityState.NotExists)
 			: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.IsExists, item);
@@ -41,46 +47,65 @@ public sealed class TgEfMessageRepository(TgEfContext efContext) : TgEfRepositor
 
 	public async Task<TgEfMessageDto> GetDtoAsync(Expression<Func<TgEfMessageEntity, bool>> where)
 	{
-		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfMessageDto();
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		var dto = await GetQuery(efContext).Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfMessageDto();
 		return dto;
 	}
 
 	public async Task<List<TgEfMessageDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
 	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(efContext, isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(efContext, isReadOnly).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
 	public async Task<List<TgEfMessageDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfMessageEntity, bool>> where, bool isReadOnly = true)
 	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(efContext, isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(efContext, isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
 		IList<TgEfMessageEntity> items = take > 0
-			? await GetQuery(isReadOnly).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Include(x => x.Source).ToListAsync();
+			? await GetQuery(efContext, isReadOnly).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
+			: await GetQuery(efContext, isReadOnly).Include(x => x.Source).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfMessageEntity, bool>> where, bool isReadOnly = true)
 	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
 		IList<TgEfMessageEntity> items = take > 0
-			? await GetQuery(isReadOnly).Where(where).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Include(x => x.Source).ToListAsync();
+			? await GetQuery(efContext, isReadOnly).Where(where).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
+			: await GetQuery(efContext, isReadOnly).Where(where).Include(x => x.Source).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<int> GetCountAsync() => await EfContext.Messages.AsNoTracking().CountAsync();
+	public override async Task<int> GetCountAsync()
+	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		return await efContext.Messages.AsNoTracking().CountAsync();
+	}
 
-	public override async Task<int> GetCountAsync(Expression<Func<TgEfMessageEntity, bool>> where) => 
-		await EfContext.Messages.AsNoTracking().Where(where).CountAsync();
+	public override async Task<int> GetCountAsync(Expression<Func<TgEfMessageEntity, bool>> where)
+	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		return await efContext.Messages.AsNoTracking().Where(where).CountAsync();
+	}
 
 	#endregion
 
@@ -88,10 +113,10 @@ public sealed class TgEfMessageRepository(TgEfContext efContext) : TgEfRepositor
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> DeleteAllAsync()
 	{
-		TgEfStorageResult<TgEfMessageEntity> storageResult = await GetListAsync(0, 0, isReadOnly: false);
+		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
 		if (storageResult.IsExists)
 		{
-			foreach (TgEfMessageEntity item in storageResult.Items)
+			foreach (var item in storageResult.Items)
 			{
 				await DeleteAsync(item);
 			}

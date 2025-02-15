@@ -7,13 +7,13 @@ public interface ITgEfRepository<TEntity> where TEntity : ITgDbFillEntity<TEntit
 {
 	#region Public and private fields, properties, constructor
 
-	public TgEfContext EfContext { get; }
+	//public ITgEfContext EfContext { get; }
 
 	#endregion
 
 	#region Public and private methods
 
-	public IQueryable<TEntity> GetQuery(bool isReadOnly = true);
+	public IQueryable<TEntity> GetQuery(ITgEfContext efContext, bool isReadOnly = true);
 
 	#endregion
 

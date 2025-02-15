@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
 
-#nullable disable
-
-namespace TgStorage.Migrations
+namespace TgStorage.Migrations.TgEfMemory
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

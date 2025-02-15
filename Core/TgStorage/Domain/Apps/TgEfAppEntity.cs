@@ -40,7 +40,7 @@ public sealed class TgEfAppEntity : ITgDbEntity, ITgDbFillEntity<TgEfAppEntity>
 	[ConcurrencyCheck]
 	[MaxLength(20)]
 	[Column(TgEfConstants.ColumnPhoneNumber, TypeName = "NVARCHAR(20)")]
-	public string PhoneNumber { get; set; } = default!;
+	public string PhoneNumber { get; set; } = null!;
 
     [DefaultValue("00000000-0000-0000-0000-000000000000")]
     [ConcurrencyCheck]
@@ -54,24 +54,24 @@ public sealed class TgEfAppEntity : ITgDbEntity, ITgDbFillEntity<TgEfAppEntity>
 	[ConcurrencyCheck]
 	[MaxLength(64)]
 	[Column(TgEfConstants.ColumnFirstName, TypeName = "NVARCHAR(64)")]
-	public string FirstName { get; set; } = default!;
+	public string FirstName { get; set; } = null!;
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
 	[MaxLength(64)]
 	[Column(TgEfConstants.ColumnLastName, TypeName = "NVARCHAR(64)")]
-	public string LastName { get; set; } = default!;
+	public string LastName { get; set; } = null!;
 
 	[DefaultValue(false)]
 	[ConcurrencyCheck]
 	[Column(TgEfConstants.ColumnIsBot, TypeName = "BIT")]
-	public bool IsBot { get; set; } = default!;
+	public bool IsBot { get; set; } = false!;
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
 	[MaxLength(50)]
 	[Column(TgEfConstants.ColumnBotToken, TypeName = "NVARCHAR(50)")]
-	public string BotToken { get; set; } = default!;
+	public string BotToken { get; set; } = null!;
 
 	public TgEfAppEntity() : base()
     {

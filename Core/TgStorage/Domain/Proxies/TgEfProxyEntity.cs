@@ -36,7 +36,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy, ITgDbEntity, ITgDbFillEntity<T
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnHostName, TypeName = "NVARCHAR(128)")]
-    public string HostName { get; set; } = default!;
+    public string HostName { get; set; } = null!;
 
     [DefaultValue(404)]
     [ConcurrencyCheck]
@@ -47,21 +47,21 @@ public sealed class TgEfProxyEntity : ITgDbProxy, ITgDbEntity, ITgDbFillEntity<T
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnUserName, TypeName = "NVARCHAR(128)")]
-    public string UserName { get; set; } = default!;
+    public string UserName { get; set; } = null!;
 
     [DefaultValue("No password")]
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnPassword, TypeName = "NVARCHAR(128)")]
-    public string Password { get; set; } = default!;
+    public string Password { get; set; } = null!;
 
     [DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnSecret, TypeName = "NVARCHAR(128)")]
-    public string Secret { get; set; } = default!;
+    public string Secret { get; set; } = null!;
 
-    public ICollection<TgEfAppEntity> Apps { get; set; } = default!;
+    public ICollection<TgEfAppEntity> Apps { get; set; } = null!;
 
 	public TgEfProxyEntity() : base()
     {

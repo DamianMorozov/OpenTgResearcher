@@ -86,7 +86,7 @@ public sealed class TgEfStoryEntity : ITgDbEntity, ITgDbFillEntity<TgEfStoryEnti
 	[ConcurrencyCheck]
 	[MaxLength(256)]
 	[Column(TgEfConstants.ColumnMessage, TypeName = "NVARCHAR(256)")]
-	public string? Message { get; set; } = default!;
+	public string? Message { get; set; } = null!;
 	
     public TgEfStoryEntity() : base()
     {
@@ -136,7 +136,7 @@ public sealed class TgEfStoryEntity : ITgDbEntity, ITgDbFillEntity<TgEfStoryEnti
 
 	public string ToConsoleString()
 	{
-		string captionTrimmed = string.IsNullOrEmpty(Caption) ? string.Empty
+		var captionTrimmed = string.IsNullOrEmpty(Caption) ? string.Empty
 			: Caption.Contains('\n')
 				? Caption[..Caption.IndexOf('\n')] : Caption;
 		return $"{Id,11} | " +

@@ -33,7 +33,7 @@ public sealed class TgEfVersionEntity : ITgDbEntity, ITgDbFillEntity<TgEfVersion
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnDescription, TypeName = "NVARCHAR(128)")]
-    public string Description { get; set; } = default!;
+    public string Description { get; set; } = null!;
 
     public TgEfVersionEntity() : base()
     {

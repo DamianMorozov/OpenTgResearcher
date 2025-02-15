@@ -28,13 +28,13 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppDto, TgEfAppEn
 	public string ApiIdString
 	{
 		get => ApiId.ToString();
-		set => ApiId = int.TryParse(value, out int apiId) ? apiId : 0;
+		set => ApiId = int.TryParse(value, out var apiId) ? apiId : 0;
 	}
 
 	public string ApiHashString
 	{
 		get => ApiHash.ToString();
-		set => ApiHash = Guid.TryParse(value, out Guid apiHash) ? apiHash : Guid.Empty;
+		set => ApiHash = Guid.TryParse(value, out var apiHash) ? apiHash : Guid.Empty;
 	}
 
 	#endregion

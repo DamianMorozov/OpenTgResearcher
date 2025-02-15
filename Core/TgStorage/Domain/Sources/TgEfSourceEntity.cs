@@ -63,7 +63,7 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
     [Column(TgEfConstants.ColumnTitle, TypeName = "NVARCHAR(256)")]
     public string? Title { get; set; }
 
-    [DefaultValue("About")]
+    [DefaultValue("")]
     [ConcurrencyCheck]
 	[MaxLength(1024)]
 	[Column(TgEfConstants.ColumnAbout, TypeName = "NVARCHAR(1024)")]
@@ -90,9 +90,9 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
     [Column(TgEfConstants.ColumnIsAutoUpdate, TypeName = "BIT")]
     public bool IsAutoUpdate { get; set; }
 
-    public ICollection<TgEfDocumentEntity> Documents { get; set; } = default!;
+    public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
 
-	public ICollection<TgEfMessageEntity> Messages { get; set; } = default!;
+	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
 
     public TgEfSourceEntity() : base()
     {
@@ -153,7 +153,7 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
 
 	public string GetPercentCountString()
     {
-	    float percent = Count <= FirstId ? 100 : FirstId > 1 ? (float)FirstId * 100 / Count : 0;
+	    var percent = Count <= FirstId ? 100 : FirstId > 1 ? (float)FirstId * 100 / Count : 0;
 	    if (IsPercentCountAll())
 		    return "100.00 %";
 	    return percent > 9 ? $" {percent:00.00} %" : $"  {percent:0.00} %";

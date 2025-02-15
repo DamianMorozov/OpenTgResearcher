@@ -5,14 +5,12 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace TgStorage.Common;
 
-public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, ITgEfRepository<TEntity>
-	where TEntity : ITgDbFillEntity<TEntity>, new()
+public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity>
+	where TEntity : class, ITgDbFillEntity<TEntity>, new()
 {
 	#region Public and private fields, properties, constructor
 
-	public TgEfContext EfContext { get; } = efContext;
-	private static readonly SemaphoreSlim TransactionSemaphore = new(1, 1);
-
+	//private static readonly SemaphoreSlim TransactionSemaphore = new(1, 1);
 
 	#endregion
 
@@ -20,7 +18,8 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public override string ToDebugString() => $"{nameof(TgEfRepositoryBase<TEntity>)}";
 
-	public virtual IQueryable<TEntity> GetQuery(bool isReadOnly = true) => throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
+	public virtual IQueryable<TEntity> GetQuery(ITgEfContext efContext, bool isReadOnly = true) => 
+		throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
 
 	private static TgEfStorageResult<TEntity> UseOverrideMethod() => throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
 
@@ -170,8 +169,10 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveAsync(TEntity? item, bool isFirstTry = true)
 	{
-		await TransactionSemaphore.WaitAsync();
-		IDbContextTransaction transaction = await EfContext.Database.BeginTransactionAsync();
+		//await TransactionSemaphore.WaitAsync();
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		var transaction = await efContext.Database.BeginTransactionAsync();
 		TgEfStorageResult<TEntity> storageResult = new(TgEnumEntityState.Unknown, item);
 		await using (transaction)
 		{
@@ -183,9 +184,9 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 				// Entity is not exists - Create
 				if (!storageResult.IsExists)
 				{
-					await EfContext.AddAsync(storageResult.Item);
+					await efContext.AddItemAsync(storageResult.Item);
 				}
-				// Entity is exists - Update
+				// Entity is existing - Update
 				else
 				{
 					storageResult.Item.Fill(item, isUidCopy: false);
@@ -197,7 +198,7 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 				// Normilize entity
 				TgEfUtils.Normilize(storageResult.Item);
 				// Save entity
-				await EfContext.SaveChangesAsync();
+				await efContext.SaveChangesAsync();
 				await transaction.CommitAsync();
 				storageResult.State = TgEnumEntityState.IsSaved;
 			}
@@ -211,13 +212,9 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 				if (isFirstTry)
 				{
 					var entry = ex.Entries.Single();
-					var databaseValues = await entry.GetDatabaseValuesAsync();
-					if (databaseValues is null)
-					{
-						throw new Exception("The record you attempted to edit was deleted!");
-					}
+					var databaseValues = await entry.GetDatabaseValuesAsync() ?? throw new Exception("The record you attempted to edit was deleted!");
 					entry.OriginalValues.SetValues(databaseValues);
-					TransactionSemaphore.Release();
+					//TransactionSemaphore.Release();
 					await SaveAsync(item, isFirstTry: false);
 				}
 				else
@@ -237,8 +234,8 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 			}
 			finally
 			{
-				if (isFirstTry)
-					TransactionSemaphore.Release();
+				//if (isFirstTry)
+				//	TransactionSemaphore.Release();
 			}
 			return storageResult;
 		}
@@ -248,20 +245,22 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveListAsync(List<TEntity> items)
 	{
-		await TransactionSemaphore.WaitAsync();
-		IDbContextTransaction transaction = await EfContext.Database.BeginTransactionAsync();
+		//await TransactionSemaphore.WaitAsync();
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		var transaction = await efContext.Database.BeginTransactionAsync();
 		await using (transaction)
 		{
 			TgEfStorageResult<TEntity> storageResult = new(TgEnumEntityState.Unknown, items);
 			try
 			{
-				List<TEntity> uniqueItems = items.Distinct().ToList();
-				foreach (TEntity item in uniqueItems)
+				var uniqueItems = items.Distinct().ToList();
+				foreach (var item in uniqueItems)
 				{
 					TgEfUtils.Normilize(item);
-					EfContext.Add(item);
+					await efContext.AddItemAsync(item);
 				}
-				await EfContext.SaveChangesAsync();
+				await efContext.SaveChangesAsync();
 				await transaction.CommitAsync();
 				storageResult.State = TgEnumEntityState.IsSaved;
 			}
@@ -279,7 +278,7 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 			}
 			finally
 			{
-				TransactionSemaphore.Release();
+				//TransactionSemaphore.Release();
 			}
 			return storageResult;
 		}
@@ -289,7 +288,9 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveWithoutTransactionAsync(TEntity item)
 	{
-		await TransactionSemaphore.WaitAsync();
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		//await TransactionSemaphore.WaitAsync();
 		TgEfStorageResult<TEntity> storageResult;
 		try
 		{
@@ -297,17 +298,18 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 			// Create.
 			if (!storageResult.IsExists)
 			{
-				await EfContext.AddAsync(storageResult.Item);
-				await EfContext.SaveChangesAsync();
+				TgEfUtils.Normilize(storageResult.Item);
+				await efContext.AddItemAsync(storageResult.Item);
+				await efContext.SaveChangesAsync();
 			}
 			// Update.
 			else
 			{
 				storageResult.Item.Fill(item, false);
-				FluentValidation.Results.ValidationResult validationResult = TgEfUtils.GetEfValid(storageResult.Item);
+				var validationResult = TgEfUtils.GetEfValid(storageResult.Item);
 				if (!validationResult.IsValid)
 					throw new ValidationException(validationResult.Errors);
-				await EfContext.SaveChangesAsync();
+				await efContext.SaveChangesAsync();
 			}
 			storageResult.State = TgEnumEntityState.IsSaved;
 		}
@@ -324,7 +326,7 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 		}
 		finally
 		{
-			TransactionSemaphore.Release();
+			//TransactionSemaphore.Release();
 		}
 		return storageResult;
 	}
@@ -333,7 +335,7 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveOrRecreateAsync(TEntity item, string tableName)
 	{
-		await TransactionSemaphore.WaitAsync();
+		//await TransactionSemaphore.WaitAsync();
 		try
 		{
 			return await SaveAsync(item);
@@ -344,7 +346,7 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 		catch (Exception)
 #endif
 		{
-			TEntity itemBackup = item;
+			var itemBackup = item;
 			await DeleteAsync(item);
 #if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
@@ -360,7 +362,7 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 		}
 		finally
 		{
-			TransactionSemaphore.Release();
+			//TransactionSemaphore.Release();
 		}
 	}
 
@@ -376,18 +378,19 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public virtual async Task<TgEfStorageResult<TEntity>> DeleteAsync(TEntity item)
 	{
-		await TransactionSemaphore.WaitAsync();
-		IDbContextTransaction transaction = await EfContext.Database.BeginTransactionAsync();
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		//await TransactionSemaphore.WaitAsync();
+		var transaction = await efContext.Database.BeginTransactionAsync();
 		await using (transaction)
 		{
 			try
 			{
-				TgEfStorageResult<TEntity> storageResult;
-				storageResult = await GetAsync(item, isReadOnly: false);
+				var storageResult = await GetAsync(item, isReadOnly: false);
 				if (!storageResult.IsExists)
 					return storageResult;
-				EfContext.Remove(storageResult.Item);
-				await EfContext.SaveChangesAsync();
+				efContext.RemoveItem(storageResult.Item);
+				await efContext.SaveChangesAsync();
 				await transaction.CommitAsync();
 				return new(TgEnumEntityState.IsDeleted);
 			}
@@ -405,14 +408,14 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 			}
 			finally
 			{
-				TransactionSemaphore.Release();
+				//TransactionSemaphore.Release();
 			}
 		}
 	}
 
 	public virtual async Task<TgEfStorageResult<TEntity>> DeleteNewAsync()
 	{
-		TgEfStorageResult<TEntity> storageResult = await GetNewAsync(isReadOnly: false);
+		var storageResult = await GetNewAsync(isReadOnly: false);
 		return storageResult.IsExists
 			? await DeleteAsync(storageResult.Item)
 			: new(TgEnumEntityState.NotDeleted);
@@ -420,10 +423,10 @@ public class TgEfRepositoryBase<TEntity>(TgEfContext efContext) : TgCommonBase, 
 
 	public virtual async Task<TgEfStorageResult<TEntity>> DeleteAllAsync()
 	{
-		TgEfStorageResult<TEntity> storageResult = await GetListAsync(0, 0, isReadOnly: false);
+		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
 		if (storageResult.IsExists)
 		{
-			foreach (TEntity item in storageResult.Items)
+			foreach (var item in storageResult.Items)
 			{
 				await DeleteAsync(item);
 			}

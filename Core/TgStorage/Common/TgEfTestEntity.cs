@@ -4,12 +4,16 @@
 namespace TgStorage.Common;
 
 /// <summary> Common class to tests </summary>
-public sealed class TgCommonEntity
+public sealed class TgEfTestEntity : ITgDbEntity, ITgDbFillEntity<TgEfTestEntity>
 {
 	#region Public and private fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
-	public Guid UidValue { get; set; }
+	[Key]
+	[Required]
+	[Column(TgEfConstants.ColumnUid, TypeName = "CHAR(36)")]
+	[SQLite.Collation("NOCASE")]
+	public Guid Uid { get; set; }
 
 	[Timestamp]
 	[Column(TgEfConstants.ColumnRowVersion)]
@@ -22,7 +26,8 @@ public sealed class TgCommonEntity
 	public TgEnumCommon EnumValue { get; set; }
 
 	[DefaultValue("Some string")]
-	public string StringValue { get; set; } = default!;
+	[MaxLength(128)]
+	public string StringValue { get; set; } = null!;
 
 	[DefaultValue(-101)]
 	public short ShortValue { get; set; }
@@ -46,7 +51,7 @@ public sealed class TgCommonEntity
 	public DateTime DtValue { get; set; }
 
 	/// <summary> Default constructor </summary>
-	public TgCommonEntity()
+	public TgEfTestEntity()
 	{
 		Default();
 	}
@@ -59,7 +64,7 @@ public sealed class TgCommonEntity
 
 	private void Default()
 	{
-		UidValue = this.GetDefaultPropertyGuid(nameof(UidValue));
+		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		BoolValue = this.GetDefaultPropertyBool(nameof(BoolValue));
 		EnumValue = this.GetDefaultPropertyGeneric<TgEnumCommon>(nameof(EnumValue));
 		StringValue = this.GetDefaultPropertyString(nameof(StringValue));
@@ -70,6 +75,23 @@ public sealed class TgCommonEntity
 		LongValue = this.GetDefaultPropertyLong(nameof(LongValue));
 		UlongValue = this.GetDefaultPropertyUlong(nameof(UlongValue));
 		DtValue = this.GetDefaultPropertyDateTime(nameof(DtValue));
+	}
+
+	public TgEfTestEntity Fill(TgEfTestEntity item, bool isUidCopy)
+	{
+		if (isUidCopy)
+			Uid = item.Uid;
+		BoolValue = item.BoolValue;
+		EnumValue = item.EnumValue;
+		StringValue = item.StringValue;
+		ShortValue = item.ShortValue;
+		UshortValue = item.UshortValue;
+		IntValue = item.IntValue;
+		UintValue = item.UintValue;
+		LongValue = item.LongValue;
+		UlongValue = item.UlongValue;
+		DtValue = item.DtValue;
+		return this;
 	}
 
 	#endregion

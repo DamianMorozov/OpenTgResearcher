@@ -1,82 +1,95 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-#pragma warning disable S2589
 
 namespace TgStorage.Domain;
 
-/// <summary> EF DB context </summary>
-public class TgEfContext : DbContext
+/// <summary> Base DB context </summary>
+public class TgEfContextBase : DbContext, ITgEfContext
 {
     #region Public and private fields, properties, constructor
 
     /// <summary> App queries </summary>
-    public DbSet<TgEfAppEntity> Apps { get; set; } = default!;
+    public DbSet<TgEfAppEntity> Apps { get; set; } = null!;
 	/// <summary> Contact queries </summary>
-	public DbSet<TgEfContactEntity> Contacts { get; set; } = default!;
+	public DbSet<TgEfContactEntity> Contacts { get; set; } = null!;
 	/// <summary> Document queries </summary>
-	public DbSet<TgEfDocumentEntity> Documents { get; set; } = default!;
+	public DbSet<TgEfDocumentEntity> Documents { get; set; } = null!;
     /// <summary> Filter queries </summary>
-    public DbSet<TgEfFilterEntity> Filters { get; set; } = default!;
+    public DbSet<TgEfFilterEntity> Filters { get; set; } = null!;
     /// <summary> Message queries </summary>
-    public DbSet<TgEfMessageEntity> Messages { get; set; } = default!;
+    public DbSet<TgEfMessageEntity> Messages { get; set; } = null!;
     /// <summary> Proxy queries </summary>
-    public DbSet<TgEfProxyEntity> Proxies { get; set; } = default!;
+    public DbSet<TgEfProxyEntity> Proxies { get; set; } = null!;
     /// <summary> Source queries </summary>
-    public DbSet<TgEfSourceEntity> Sources { get; set; } = default!;
+    public DbSet<TgEfSourceEntity> Sources { get; set; } = null!;
     /// <summary> Stories queries </summary>
-    public DbSet<TgEfStoryEntity> Stories { get; set; } = default!;
+    public DbSet<TgEfStoryEntity> Stories { get; set; } = null!;
     /// <summary> Version queries </summary>
-    public DbSet<TgEfVersionEntity> Versions { get; set; } = default!;
+    public DbSet<TgEfVersionEntity> Versions { get; set; } = null!;
+
     public static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 
-	public static bool IsXmlReady => TgAppSettings.AppXml.IsExistsEfStorage;
-
-    #endregion
-
-    #region Public and private methods
-
-    public TgEfContext()
-    {
-#if DEBUG
-        Debug.WriteLine($"Created TgEfContext with {nameof(ContextId)} {ContextId}", TgConstants.LogTypeStorage);
-#endif
-    }
-
-    /// <summary> Inject options </summary>
-    // For using: services.AddDbContextFactory<TgEfContext>
-    public TgEfContext(DbContextOptions options) : base(options)
-    {
-#if DEBUG
-        Debug.WriteLine($"Created TgEfContext with {nameof(ContextId)} {ContextId}", TgConstants.LogTypeStorage);
-#endif
-    }
-
-    /// <summary> Inject options </summary>
-    // For using: services.AddDbContextFactory<TgEfContext>
-    public TgEfContext(DbContextOptions<TgEfContext> options) : base(options)
-    {
-#if DEBUG
-        Debug.WriteLine($"Created TgEfContext with {nameof(ContextId)} {ContextId}", TgConstants.LogTypeStorage);
-#endif
-    }
-
-	private string GetStoragePath()
+	// Public constructor need for resolve: The exception 'A suitable constructor for type 'TgStorage.Domain.TgEfContextBase' could not be located
+	public TgEfContextBase()
 	{
-		var storagePath = string.Empty;
-		// Console app
-		if (TgAsyncUtils.AppType == TgEnumAppType.Default || TgAsyncUtils.AppType == TgEnumAppType.Console)
+#if DEBUG
+		Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+#endif
+	}
+
+	/// <summary> Inject options </summary>
+	// For using: services.AddDbContextFactory<TgEfContextBase>
+	public TgEfContextBase(DbContextOptions options) : base(options)
+	{
+#if DEBUG
+		Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+#endif
+	}
+
+	/// <summary> Inject options </summary>
+	// For using: services.AddDbContextFactory<TgEfContextBase>
+	public TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options)
+	{
+#if DEBUG
+		Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+#endif
+	}
+
+	#endregion
+
+	#region Public and private methods - EF Core
+
+	public async ValueTask<EntityEntry<TEntity>> AddItemAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
+	{
+		return await AddAsync(entity, cancellationToken);
+	}
+
+	public EntityEntry<TEntity> RemoveItem<TEntity>(TEntity entity) where TEntity : class
+	{
+		return Remove(entity);
+	}
+
+	#endregion
+
+	#region Public and private methods
+
+	/// <inheritdoc />
+	public string GetStoragePath(TgEnumAppType appType)
+	{
+		var storagePath = appType switch
 		{
-			storagePath = File.Exists(TgAppSettingsHelper.Instance.AppXml.XmlEfStorage)
-				? $"{TgLocaleHelper.Instance.SqliteDataSource}={TgAppSettingsHelper.Instance.AppXml.XmlEfStorage}"
-				: $"{TgLocaleHelper.Instance.SqliteDataSource}={TgEfUtils.FileEfStorage}";
-		}
-		// Desktop app
-		if (TgAsyncUtils.AppType == TgEnumAppType.Desktop)
-		{
-			storagePath = File.Exists(TgEfUtils.AppStorage)
-				? $"{TgLocaleHelper.Instance.SqliteDataSource}={TgEfUtils.AppStorage}"
-				: $"{TgLocaleHelper.Instance.SqliteDataSource}={TgEfUtils.FileEfStorage}";
-		}
+			TgEnumAppType.Memory => ":memory:", // "DataSource=:memory:"
+			TgEnumAppType.Console or TgEnumAppType.Blazor =>
+				File.Exists(TgAppSettingsHelper.Instance.AppXml.XmlEfStorage) ? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgEfUtils.FileEfStorage,
+			TgEnumAppType.Desktop => File.Exists(TgEfUtils.AppStorage) ? TgEfUtils.AppStorage : TgEfUtils.FileEfStorage,
+			TgEnumAppType.Test => @"d:\DATABASES\SQLITE\TgStorageTest.db",
+			_ => throw new ArgumentOutOfRangeException()
+		};
+		// Concatenation
+		storagePath = $"{TgLocaleHelper.Instance.SqliteDataSource}={storagePath}";
+#if DEBUG
+		Debug.WriteLine(storagePath, TgConstants.LogTypeStorage);
+#endif
 		return storagePath;
 	}
 
@@ -85,22 +98,25 @@ public class TgEfContext : DbContext
         LoggerFactory factory = new();
 		optionsBuilder
 #if DEBUG
-            .LogTo(message => Debug.WriteLine($"{nameof(ContextId)} {ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
+            .LogTo(message => Debug.WriteLine($"{nameof(TgEfContextBase)}.{nameof(ContextId)} {ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
             .EnableDetailedErrors()
             .EnableSensitiveDataLogging()
 #endif
             .EnableThreadSafetyChecks()
             .UseLoggerFactory(factory)
         ;
-		optionsBuilder.UseSqlite(GetStoragePath());
+		// This type need for resolve: The exception 'No database provider has been configured for this DbContext.
+		TgGlobalTools.SetAppType(TgEnumAppType.Memory);
+		optionsBuilder.UseSqlite(GetStoragePath(TgGlobalTools.AppType));
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 		// Magic string - Define the model - Concurrency tokens
 		// https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
 		// https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/concurrency?view=aspnetcore-9.0&source=docs
 		// This property isn't on the C# class, so we set it up as a "shadow" property and use it for concurrency.
+		modelBuilder.Entity<TgEfTestEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfAppEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfContactEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfDocumentEntity>().Property(x => x.RowVersion).IsRowVersion();
@@ -111,7 +127,7 @@ public class TgEfContext : DbContext
 		modelBuilder.Entity<TgEfStoryEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfVersionEntity>().Property(x => x.RowVersion).IsRowVersion();
 		// Ignore
-		modelBuilder.Entity<TgCommonEntity>().Ignore(TgEfConstants.ColumnRowVersion);
+		modelBuilder.Entity<TgEfTestEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfAppEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfContactEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfDocumentEntity>().Ignore(TgEfConstants.ColumnRowVersion);
@@ -192,12 +208,11 @@ public class TgEfContext : DbContext
 		});
     }
 
-    public (bool IsSuccess, string FileName) BackupDb()
+    /// <inheritdoc />
+	public (bool IsSuccess, string FileName) BackupDb()
     {
-		if (string.IsNullOrEmpty(GetStoragePath()))
-			return (false, string.Empty);
 		// Console app
-		if (TgAsyncUtils.AppType == TgEnumAppType.Default || TgAsyncUtils.AppType == TgEnumAppType.Console)
+		if (TgGlobalTools.AppType == TgEnumAppType.Memory || TgGlobalTools.AppType == TgEnumAppType.Console)
 		{
 			if (File.Exists(TgAppSettings.AppXml.XmlEfStorage))
 			{
@@ -212,21 +227,11 @@ public class TgEfContext : DbContext
         return (false, string.Empty);
     }
 
-	/// <summary> Shrink storage </summary>
-	public async Task CompactDbAsync()
-	{
-		if (string.IsNullOrEmpty(GetStoragePath()))
-			return;
-		await Database.ExecuteSqlRawAsync("VACUUM;");
-	}
+	/// <inheritdoc />
+	public async Task ShrinkDbAsync() => await Database.ExecuteSqlRawAsync("VACUUM;");
 
-	/// <summary> Create and update storage </summary>
-	public async Task CreateAndUpdateDbAsync()
-	{
-		if (string.IsNullOrEmpty(GetStoragePath()))
-			return;
-		await Database.MigrateAsync();
-	}
+	/// <inheritdoc />
+	public async Task MigrateDbAsync() => await Database.MigrateAsync();
 
 	#endregion
 }

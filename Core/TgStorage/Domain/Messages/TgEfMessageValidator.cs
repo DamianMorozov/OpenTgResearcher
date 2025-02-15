@@ -3,7 +3,7 @@
 
 namespace TgStorage.Domain.Messages;
 
-/// <summary> Messagte validator </summary>
+/// <summary> Message validator </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed class TgEfMessageValidator : TgEfValidatorBase<TgEfMessageEntity>
 {

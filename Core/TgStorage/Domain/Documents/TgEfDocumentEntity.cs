@@ -49,7 +49,7 @@ public sealed class TgEfDocumentEntity : ITgDbEntity, ITgDbFillEntity<TgEfDocume
     [ConcurrencyCheck]
     [MaxLength(256)]
     [Column(TgEfConstants.ColumnFileName, TypeName = "NVARCHAR(256)")]
-    public string FileName { get; set; } = default!;
+    public string FileName { get; set; } = null!;
 
     [DefaultValue(0)]
     [ConcurrencyCheck]

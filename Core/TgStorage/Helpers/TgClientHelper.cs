@@ -2086,7 +2086,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 				new() { SourceId = tgDownloadSettings.SourceVm.Dto.Id, Id = tgDownloadSettings.SourceVm.Dto.FirstId }, isReadOnly: false);
 			if (!storageResult.IsExists || storageResult.IsExists && tgDownloadSettings.IsRewriteMessages)
 			{
-				await MessageRepository.SaveAsync(new()
+				var messageItem = new TgEfMessageEntity()
 				{
 					Id = messageId,
 					SourceId = tgDownloadSettings.SourceVm.Dto.Id,
@@ -2094,7 +2094,8 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 					Type = messageType,
 					Size = size,
 					Message = message,
-				});
+				};
+				await MessageRepository.SaveAsync(messageItem);
 			}
 			if (messageType == TgEnumMessageType.Document)
 				await UpdateStateFileAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, string.Empty, 0, 0, 0, false, threadNumber);

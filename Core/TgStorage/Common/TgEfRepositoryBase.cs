@@ -213,7 +213,18 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				// Normilize entity
 				TgEfUtils.Normilize(storageResult.Item);
 				// Save entity
-				await EfContext.SaveChangesAsync();
+				//await EfContext.SaveChangesAsync();
+				// Entity is not exists - Create
+				if (!storageResult.IsExists)
+				{
+					await EfContext.SaveChangesAsync();
+				}
+				// Entity is existing - Update
+				else
+				{
+					EfContext.UpdateItem(storageResult.Item);
+				}
+				EfContext.DetachItem(storageResult.Item);
 				await transaction.CommitAsync();
 				storageResult.State = TgEnumEntityState.IsSaved;
 			}
@@ -254,9 +265,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveListAsync(List<TEntity> items)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		var transaction = await efContext.Database.BeginTransactionAsync();
+		var transaction = await EfContext.Database.BeginTransactionAsync();
 		await using (transaction)
 		{
 			TgEfStorageResult<TEntity> storageResult = new(TgEnumEntityState.Unknown, items);
@@ -266,9 +275,9 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				foreach (var item in uniqueItems)
 				{
 					TgEfUtils.Normilize(item);
-					await efContext.AddItemAsync(item);
+					await EfContext.AddItemAsync(item);
 				}
-				await efContext.SaveChangesAsync();
+				await EfContext.SaveChangesAsync();
 				await transaction.CommitAsync();
 				storageResult.State = TgEnumEntityState.IsSaved;
 			}
@@ -292,8 +301,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveWithoutTransactionAsync(TEntity item)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		TgEfStorageResult<TEntity> storageResult;
 		try
 		{
@@ -302,8 +309,8 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 			if (!storageResult.IsExists)
 			{
 				TgEfUtils.Normilize(storageResult.Item);
-				await efContext.AddItemAsync(storageResult.Item);
-				await efContext.SaveChangesAsync();
+				await EfContext.AddItemAsync(storageResult.Item);
+				await EfContext.SaveChangesAsync();
 			}
 			// Update.
 			else
@@ -312,7 +319,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				var validationResult = TgEfUtils.GetEfValid(storageResult.Item);
 				if (!validationResult.IsValid)
 					throw new ValidationException(validationResult.Errors);
-				await efContext.SaveChangesAsync();
+				await EfContext.SaveChangesAsync();
 			}
 			storageResult.State = TgEnumEntityState.IsSaved;
 		}

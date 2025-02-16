@@ -100,8 +100,6 @@ public static class TgEfUtils
 
 	public static void VersionsView()
 	{
-		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		var versionRepository = new TgEfVersionRepository();
 		var storageResult = versionRepository.GetList(TgEnumTableTopRecords.All, 0);
 		if (storageResult.IsExists)
@@ -130,6 +128,14 @@ public static class TgEfUtils
 		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
 		using var efContext = scope.Resolve<ITgEfContext>();
 		await efContext.ShrinkDbAsync();
+	}
+
+	/// <summary> Backup storage </summary>
+	public static (bool IsSuccess, string FileName) BackupDbAsync()
+	{
+		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>();
+		return efContext.BackupDb();
 	}
 
 	///// <summary> Data transfer between storages </summary>

@@ -5,9 +5,13 @@ namespace TgStorage.Domain.Contacts;
 
 /// <summary> Storage context </summary>
 public interface ITgEfContext : IDisposable
+	//IInfrastructure<IServiceProvider>,
+	//IDbContextDependencies
+	//IDbSetCache,
+	//IDbContextPoolable
 {
 	#region DbContext
-	
+
 	/// <summary> Provides access to database related information and operations for this context </summary>
 	public DatabaseFacade Database { get; }
 	public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
@@ -16,7 +20,7 @@ public interface ITgEfContext : IDisposable
 
 	#endregion
 
-		/// <summary> App queries </summary>
+	/// <summary> App queries </summary>
 	public DbSet<TgEfAppEntity> Apps { get; set; }
 	/// <summary> Contact queries </summary>
 	public DbSet<TgEfContactEntity> Contacts { get; set; }
@@ -46,4 +50,10 @@ public interface ITgEfContext : IDisposable
 
 	/// <summary> Migrate storage </summary>
 	public Task MigrateDbAsync();
+
+	/// <summary> Detach entity </summary>
+	public void DetachItem(object item);
+
+	/// <summary> Update entity </summary>
+	public void UpdateItem(object item);
 }

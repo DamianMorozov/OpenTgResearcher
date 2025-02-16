@@ -17,9 +17,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 	internal TgEnumMenuMain Value { get; set; }
 	private TgEfAppRepository AppRepository { get; } = new();
 	private TgEfContactRepository ContactRepository { get; } = new();
-	private TgEfDocumentRepository DocumentRepository { get; } = new();
 	private TgEfFilterRepository FilterRepository { get; } = new();
-	private TgEfMessageRepository MessageRepository { get; } = new();
 	private TgEfProxyRepository ProxyRepository { get; } = new();
 	private TgEfSourceRepository SourceRepository { get; } = new();
 	private TgEfStoryRepository StoryRepository { get; } = new();

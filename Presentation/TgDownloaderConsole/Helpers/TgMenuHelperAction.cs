@@ -63,27 +63,19 @@ internal partial class TgMenuHelper
 		Func<TgDownloadSettingsViewModel, Task> task, bool isScanCount)
 	{
 		var swChat = Stopwatch.StartNew();
-		var swMessage = Stopwatch.StartNew();
+		//var swMessage = Stopwatch.StartNew();
 		var stringLimit = Console.WindowWidth / 2 - 10;
-		var progressTaskDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the message", stringLimit).TrimEnd();
+		//var progressTaskDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the message", stringLimit).TrimEnd();
 		var progressSourceDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the source", stringLimit).TrimEnd();
 		// progressMessages
-		var progressMessages = new ProgressTask[tgDownloadSettings.CountThreads];
-		for (var i = 0; i < tgDownloadSettings.CountThreads; i++)
-		{
-			progressMessages[i] = progressContext.AddTask($"Thread {i + 1}: {progressTaskDefaultName}", new()
-			{
-				AutoStart = true,
-				MaxValue = 100,
-			});
-			progressMessages[i].Value = 0;
-		}
+		var progressMessages = new List<ProgressTask>();// [tgDownloadSettings.CountThreads];
+		//for (var i = 0; i < tgDownloadSettings.CountThreads; i++)
+		//{
+		//	progressMessages[i] = progressContext.AddTask($"Thread {i + 1}: {progressTaskDefaultName}", new() { AutoStart = true, MaxValue = 100 });
+		//	progressMessages[i].Value = 0;
+		//}
 		// progressSource
-		var progressSource = progressContext.AddTask(progressSourceDefaultName, new()
-		{
-			AutoStart = true,
-			MaxValue = tgDownloadSettings.SourceVm.Dto.Count
-		});
+		var progressSource = progressContext.AddTask(progressSourceDefaultName, autoStart: true, maxValue: tgDownloadSettings.SourceVm.Dto.Count);
 		progressSource.Value = 0;
 		// Setup
 		TgClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
@@ -94,19 +86,17 @@ internal partial class TgMenuHelper
 		await task(tgDownloadSettings);
 		// Finish
 		swChat.Stop();
-		swMessage.Stop();
-		foreach (var progress in progressMessages)
-		{
-			if (progress.IsStarted)
-				progress.StopTask();
-		}
+		//swMessage.Stop();
+		var progressMessagesStarted = progressMessages.Where(x => x.IsStarted).ToList();
+		foreach (var progress in progressMessagesStarted)
+			progress.StopTask();
 		if (progressSource.IsStarted)
 			progressSource.StopTask();
-		await UpdateStateSourceAsync(0, 0, 0,
-			isScanCount
-				? $"{GetStatus(swChat, tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
-				: $"{GetStatus(swChat, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}");
-
+		var messageFinally = isScanCount
+			? $"{GetStatus(swChat, tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
+			: $"{GetStatus(swChat, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}";
+		await UpdateStateSourceAsync(0, 0, 0, messageFinally);
+		return;
 		// Update console title
 		async Task UpdateConsoleTitleAsync(string title)
 		{
@@ -116,14 +106,12 @@ internal partial class TgMenuHelper
 		// Update source
 		async Task UpdateStateSourceAsync(long sourceId, int messageId, int count, string message)
 		{
-			//if (progressSource.Description.Equals(progressSourceDefaultName))
-			//{
-			//	progressSource.Value = progressSource.MaxValue;
-			//}
-			//progressSource.Description = $"{message} {messageId} from {count}";
 			progressSource.Description = TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd();
-			if (messageId > 0)
-				progressSource.Value = messageId;
+			if (tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
+			{
+				if (messageId > 0)
+					progressSource.Value = messageId;
+			}
 			progressContext.Refresh();
 			await Task.CompletedTask;
 		}
@@ -131,57 +119,49 @@ internal partial class TgMenuHelper
 		async Task UpdateStateFileAsync(long sourceId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
 			bool isStartTask, int threadNumber)
 		{
+			if (!tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId)) return;
 			try
 			{
-				var progress = progressMessages[threadNumber];
-				if (tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
+				//var progressDescription = $"Thread {(threadNumber + 1):00}: Message {messageId} {TgDataFormatUtils.GetFormatStringWithStrongLength(fileName, stringLimit).TrimEnd()}";
+				var progressDescription = $"Message {messageId}: {TgDataFormatUtils.GetFormatStringWithStrongLength(fileName, stringLimit).TrimEnd()}";
+				var progress = progressMessages.FirstOrDefault(x => x.Description == progressDescription);
+				if (progress is null)
 				{
-					//if (progress.Description.Contains(progressTaskDefaultName))
-					//{
-					//	progress.Value = progress.MaxValue;
-					//}
-					// Start
-					if (isStartTask)
-					{
-						//if (!progress.IsStarted)
-						//if (progress.IsFinished)
-						//{
-						//	//progress = new(threadNumber, !string.IsNullOrEmpty(fileName) ? fileName : "Reading the file", transmitted, autoStart: false);
-						//	//progress.StartTask();
-						//	//progressMessages[threadNumber] = progress;
-						//}
-						//else
-						//{
-						progress.Description = $"Thread {threadNumber + 1}: {TgDataFormatUtils.GetFormatStringWithStrongLength(fileName, stringLimit).TrimEnd()}";
-						progress.Value = transmitted;
-						if (!progress.MaxValue.Equals(fileSize))
-							progress.MaxValue = fileSize;
-						//}
-						tgDownloadSettings.SourceVm.Dto.FirstId = messageId;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileName = fileName;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileSize = fileSize;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileTransmitted = transmitted;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileSpeed = fileSpeed;
-					}
-					// Stop
-					else
-					{
-						progress.Value = fileSize;
-						//progress.StopTask();
-						tgDownloadSettings.SourceVm.Dto.CurrentFileName = string.Empty;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileSize = 0;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileTransmitted = 0;
-						tgDownloadSettings.SourceVm.Dto.CurrentFileSpeed = 0;
-					}
+					progress = progressContext.AddTask(progressDescription, autoStart: true, maxValue: 100);
+					progressMessages.Add(progress);
+					progress.Value = 0;
+				}
+				// Start
+				if (isStartTask)
+				{
+					progress.Value = transmitted;
+					if (!progress.MaxValue.Equals(fileSize))
+						progress.MaxValue = fileSize;
+					tgDownloadSettings.SourceVm.Dto.FirstId = messageId;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileName = fileName;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileSize = fileSize;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileTransmitted = transmitted;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileSpeed = fileSpeed;
+				}
+				// Stop
+				else
+				{
+					progress.Value = fileSize;
+					progress.StopTask();
+					tgDownloadSettings.SourceVm.Dto.CurrentFileName = string.Empty;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileSize = 0;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileTransmitted = 0;
+					tgDownloadSettings.SourceVm.Dto.CurrentFileSpeed = 0;
 				}
 				// State
-				if (!swMessage.IsRunning)
-					swMessage.Start();
-				else if (swMessage.Elapsed > TimeSpan.FromMilliseconds(1_000))
-				{
-					swMessage.Reset();
-					progressContext.Refresh();
-				}
+				//if (!swMessage.IsRunning)
+				//	swMessage.Start();
+				//else if (swMessage.Elapsed > TimeSpan.FromMilliseconds(1_000))
+				//{
+				//	swMessage.Reset();
+				//	progressContext.Refresh();
+				//}
+				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
 			catch (Exception ex)
@@ -195,43 +175,32 @@ internal partial class TgMenuHelper
 		// Update message
 		async Task UpdateStateMessageThreadAsync(long sourceId, int messageId, string message, bool isStartTask, int threadNumber)
 		{
+			if (!tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId)) return;
 			try
 			{
-				var progress = progressMessages[threadNumber];
-				if (tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
+				//var progressDescription = $"Thread {(threadNumber + 1):00}: Message {messageId} {TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd()}";
+				var progressDescription = $"Message {messageId}: {TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd()}";
+				var progress = progressMessages.FirstOrDefault(x => x.Description == progressDescription);
+				if (progress is null)
 				{
-					//if (progress.Description.Contains(progressTaskDefaultName))
-					//{
-					//	progress.Value = progress.MaxValue;
-					//}
-					// Start
-					if (isStartTask)
-					{
-						//if (!progress.IsStarted)
-						//if (progress.IsFinished)
-						//{
-						//	//progress = new(threadNumber, !string.IsNullOrEmpty(message) ? message : "Reading the message", stringLimit, autoStart: false);
-						//	//progress.StartTask();
-						//	//progressMessages[threadNumber] = progress;
-						//}
-						//else
-						//{
-						progress.Description = $"Thread {threadNumber + 1}: {TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd()}";
-						progress.Value = 0;
-						progress.MaxValue = 100;
-						//}
-						tgDownloadSettings.SourceVm.Dto.FirstId = messageId;
-					}
-					// Stop
-					else
-					{
-						progress.Value = 100;
-						//progress.StopTask();
-					}
+					progress = progressContext.AddTask(progressDescription, autoStart: true, maxValue: 100);
+					progressMessages.Add(progress);
+					progress.Value = 0;
+				}
+				// Start
+				if (isStartTask)
+				{
+					tgDownloadSettings.SourceVm.Dto.FirstId = messageId;
+				}
+				// Stop
+				else
+				{
+					progress.Value = 100;
+					progress.StopTask();
 				}
 				// State
-				if (!swMessage.IsRunning)
-					swMessage.Start();
+				//if (!swMessage.IsRunning)
+				//	swMessage.Start();
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}

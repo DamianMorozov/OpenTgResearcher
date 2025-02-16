@@ -67,9 +67,7 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
-		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		(bool IsSuccess, string FileName) backupResult = efContext.BackupDb();
+		(bool IsSuccess, string FileName) backupResult = TgEfUtils.BackupDbAsync();
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
 		TgLog.WriteLine(backupResult.IsSuccess ? TgLocale.MenuStorageBackupSuccess : TgLocale.MenuStorageBackupFailed);
 		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);

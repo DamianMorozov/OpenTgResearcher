@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
+using TgStorage.Common;
+
 namespace TgDownloaderConsole.Helpers;
 
 internal partial class TgMenuHelper
@@ -212,10 +214,14 @@ internal partial class TgMenuHelper
 	private async Task LoadTgClientSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		var directory = tgDownloadSettings.SourceVm.Dto.Directory;
-		// Find by Id
-		var storageResult = await SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+		// Find by ID
+		TgEfStorageResult<TgEfSourceEntity>? storageResult = null;
+		if (tgDownloadSettings.SourceVm.Dto.Id > 0)
+		{
+			storageResult = await SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+		}
 		// Find by UserName
-		if (!storageResult.IsExists || storageResult.Item.Id < 0)
+		if (storageResult is null || !storageResult.IsExists || storageResult.Item.Id < 0)
 			storageResult = await SourceRepository.GetAsync(new() { UserName = tgDownloadSettings.SourceVm.Dto.UserName });
 		tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Fill(storageResult.Item, isUidCopy: true);
 		// Restore directory

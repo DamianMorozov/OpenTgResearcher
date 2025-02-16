@@ -80,14 +80,14 @@ public partial class App
 	/// </summary>
 	private async void OnStartup(object sender, StartupEventArgs e)
 	{
-		// Create and update storage
-		await TgEfUtils.CreateAndUpdateDbAsync();
-
-		TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
 		// DI
 		var containerBuilder = new ContainerBuilder();
 		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
 		TgGlobalTools.Container = containerBuilder.Build();
+		// Create and update storage
+		await TgEfUtils.CreateAndUpdateDbAsync();
+
+		TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
 		
 		await Host.StartAsync();
 		TgDesktopUtils.SetupClient();

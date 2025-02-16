@@ -90,7 +90,6 @@ internal partial class TgMenuHelper
 		if (Equals(type, TgLocale.MenuMainReturn))
 			return;
 
-		//filter.IsActive = AskQuestionReturnPositive(TgLocale.MenuFiltersSetIsActive, true);
 		filter.IsEnabled = true;
 		filter.Name = AnsiConsole.Ask<string>(TgLog.GetMarkupString($"{TgLocale.MenuFiltersSetName}:"));
 		switch (type)

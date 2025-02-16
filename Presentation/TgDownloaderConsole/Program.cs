@@ -1,16 +1,16 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+// DI
+var containerBuilder = new ContainerBuilder();
+containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
+TgGlobalTools.Container = containerBuilder.Build();
+
 TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
 var menu = new TgMenuHelper();
 
 // Velopack installer update
 await menu.VelopackUpdateAsync();
-
-// DI
-var containerBuilder = new ContainerBuilder();
-containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
-TgGlobalTools.Container = containerBuilder.Build();
 
 var tgLocale = TgLocaleHelper.Instance;
 var tgLog = TgLogHelper.Instance;

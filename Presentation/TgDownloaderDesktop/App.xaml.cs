@@ -34,6 +34,11 @@ public partial class App : Application
 	public App()
 	{
 		InitializeComponent();
+		// DI
+		var containerBuilder = new ContainerBuilder();
+		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
+		TgGlobalTools.Container = containerBuilder.Build();
+		// Velopack
 		VelopackApp.Build()
 			//.WithBeforeUninstallFastCallback((v) =>
 			//{
@@ -45,11 +50,6 @@ public partial class App : Application
 			//	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
 			//})
 			.Run();
-		// DI
-		var containerBuilder = new ContainerBuilder();
-		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
-		TgGlobalTools.Container = containerBuilder.Build();
-
 		Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder().UseContentRoot(AppContext.BaseDirectory)
 			.ConfigureServices((context, services) =>
 			{

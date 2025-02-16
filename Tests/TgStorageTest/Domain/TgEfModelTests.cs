@@ -7,18 +7,6 @@ namespace TgStorageTest.Domain;
 [TestFixture]
 internal sealed class TgEfModelTests : TgDbContextTestsBase
 {
-	#region Public and private fields, properties, constructor
-
-	public TgEfModelTests()
-	{
-		// DI
-		var containerBuilder = new ContainerBuilder();
-		containerBuilder.RegisterType<TgEfTestContext>().As<ITgEfContext>();
-		TgGlobalTools.Container = containerBuilder.Build();
-	}
-
-	#endregion
-
 	#region Public and private methods
 
 	[Test]

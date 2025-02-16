@@ -1,7 +1,10 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Autofac;
+// DI
+var containerBuilder = new ContainerBuilder();
+containerBuilder.RegisterType<TgEfBlazorContext>().As<ITgEfContext>();
+TgGlobalTools.Container = containerBuilder.Build();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +18,6 @@ builder.Services.AddScoped<TgJsService>();
 // DI
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<ITgEfContext, TgEfBlazorContext>();
-// DI
-var containerBuilder = new ContainerBuilder();
-containerBuilder.RegisterType<TgEfBlazorContext>().As<ITgEfContext>();
-TgGlobalTools.Container = containerBuilder.Build();
 
 // Register TgEfContext as the DbContext for EF Core
 //builder.Services.AddDbContextFactory<TgEfBlazorContext>(options => options

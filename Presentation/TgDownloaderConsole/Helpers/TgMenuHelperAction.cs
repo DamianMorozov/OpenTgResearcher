@@ -245,16 +245,20 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	public async Task RunTaskStatusAsync(TgDownloadSettingsViewModel tgDownloadSettings, Func<TgDownloadSettingsViewModel, Task> task,
+	public async Task RunTaskStatusAsync(TgDownloadSettingsViewModel tgDownloadSettings, Func<TgDownloadSettingsViewModel, Task> func,
 		bool isSkipCheckTgSettings, bool isScanCount, bool isWaitComplete)
 	{
 		if (!isSkipCheckTgSettings && !await CheckTgSettingsWithWarningAsync(tgDownloadSettings))
 			return;
-		await AnsiConsole.Status()
+		AnsiConsole.Status()
 			.AutoRefresh(false)
 			.Spinner(Spinner.Known.Star)
 			.SpinnerStyle(Style.Parse("green"))
-			.Start("Thinking...", async (statusContext) => await RunTaskStatusCoreAsync(statusContext, tgDownloadSettings, task, isScanCount));
+			.Start("Thinking...", statusContext =>
+			{
+				var task = RunTaskStatusCoreAsync(statusContext, tgDownloadSettings, func, isScanCount);
+				task.Wait();
+			});
 		TgLog.MarkupLine(TgLocale.WaitDownloadComplete);
 		while (isWaitComplete && !tgDownloadSettings.SourceVm.Dto.IsComplete)
 		{
@@ -264,7 +268,7 @@ internal partial class TgMenuHelper
 	}
 
 	private async Task RunTaskStatusCoreAsync(StatusContext statusContext, TgDownloadSettingsViewModel tgDownloadSettings,
-		Func<TgDownloadSettingsViewModel, Task> task, bool isScanCount)
+		Func<TgDownloadSettingsViewModel, Task> func, bool isScanCount)
 	{
 		statusContext.Spinner(Spinner.Known.Star);
 		statusContext.SpinnerStyle(Style.Parse("green"));
@@ -283,7 +287,7 @@ internal partial class TgMenuHelper
 		TgClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
 		// Task
 		var sw = Stopwatch.StartNew();
-		await task(tgDownloadSettings);
+		await func(tgDownloadSettings);
 		sw.Stop();
 		// Update console title
 		async Task UpdateConsoleTitleAsync(string title)

@@ -34,7 +34,6 @@
 
 ## Донат
 - [Звёздочка ГитХаб](https://github.com/DamianMorozov/OpenTgResearcher)
-- [Донат через Бусти](https://boosty.to/tgdownloader)
 - Донат через USDT TRC20: TBTDRWnMBw7acfpkhAXjSQNSNHQGFR662Y
 - Донат через USDT TON: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
 - Донат через Toncoin: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6

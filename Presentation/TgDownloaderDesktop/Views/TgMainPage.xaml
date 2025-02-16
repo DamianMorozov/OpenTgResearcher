@@ -176,10 +176,6 @@
 							x:Uid="SettingsPage_GitHub_ProjectSupportGitHubStar"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
 							Click="{x:Bind ViewModel.OpenHyperlink}" />
-						<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_ProjectSupportDonateBoosty"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />
 						<!--  USDT TRC20 Card  -->
 						<Border Padding="10" CornerRadius="8">
 							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">

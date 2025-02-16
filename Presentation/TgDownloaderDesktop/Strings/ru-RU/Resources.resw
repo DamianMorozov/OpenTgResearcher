@@ -333,12 +333,6 @@
   <data name="SettingsPage_GitHub_ProjectSupportGitHubStar.Tag" xml:space="preserve">
     <value>"https://github.com/DamianMorozov/OpenTgResearcher"</value>
   </data>
-  <data name="SettingsPage_GitHub_ProjectSupportDonateBoosty.Content" xml:space="preserve">
-    <value>Донат через Бусти</value>
-  </data>
-  <data name="SettingsPage_GitHub_ProjectSupportDonateBoosty.Tag" xml:space="preserve">
-    <value>"https://boosty.to/tgdownloader"</value>
-  </data>
   <data name="AppNotificationSamplePayload" xml:space="preserve">
     <value>&lt;toast launch="action=ToastClick"&gt;
   &lt;visual&gt;

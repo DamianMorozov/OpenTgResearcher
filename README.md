@@ -34,7 +34,6 @@ Download chat rooms by catalogs.
 
 ## Donate
 - [GitHub star](https://github.com/DamianMorozov/OpenTgResearcher)
-- [Donate through Boosty](https://boosty.to/tgdownloader)
 - Donate through USDT TRC20: TBTDRWnMBw7acfpkhAXjSQNSNHQGFR662Y
 - Donate through USDT TON: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
 - Donate through Toncoin: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6

@@ -105,42 +105,54 @@ internal partial class TgMenuHelper
 		} while (menu is not TgEnumMenuDownload.Return);
 	}
 
-	private async Task<TgDownloadSettingsViewModel> SetupDownloadSourceAsync(long? id = null)
+	private async Task<TgDownloadSettingsViewModel> SetupDownloadSourceByIdAsync(long id)
 	{
-		var tgDownloadSettings = SetupDownloadSourceCore(id);
-		await LoadTgClientSettingsAsync(tgDownloadSettings);
+		var tgDownloadSettings = SetupDownloadSourceByIdCore(id);
+		await LoadTgClientSettingsByIdAsync(tgDownloadSettings.SourceVm.Dto.Id);
 		await TgClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
 
-	private TgDownloadSettingsViewModel SetupDownloadSourceCore(long? id)
+	private async Task<TgDownloadSettingsViewModel> SetupDownloadSourceAsync()
+	{
+		var tgDownloadSettings = SetupDownloadSourceCore();
+		if (string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
+			await LoadTgClientSettingsByIdAsync(tgDownloadSettings.SourceVm.Dto.Id);
+		else
+			await LoadTgClientSettingsAsync(tgDownloadSettings);
+		await TgClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		return tgDownloadSettings;
+	}
+
+	private TgDownloadSettingsViewModel SetupDownloadSourceByIdCore(long id)
 	{
 		TgDownloadSettingsViewModel tgDownloadSettings = new();
-		var isCheck = false;
+		tgDownloadSettings.SourceVm.Dto.Id = id;
+		return tgDownloadSettings;
+	}
+
+	private TgDownloadSettingsViewModel SetupDownloadSourceCore()
+	{
 		do
 		{
-			var source = id is { } lid
-				? lid.ToString()
-				: AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetSource}:"));
-			if (!string.IsNullOrEmpty(source))
+			var input = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetSource}:"));
+			if (!string.IsNullOrEmpty(input))
 			{
-				if (long.TryParse(source, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
+				if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
 				{
-					tgDownloadSettings.SourceVm.Dto.Id = sourceId;
-					isCheck = tgDownloadSettings.SourceVm.Dto.IsReady;
+					return SetupDownloadSourceByIdCore(sourceId);
 				}
-				else
-				{
-					if (source.StartsWith("https://t.me/"))
-						source = source.Replace("https://t.me/", string.Empty);
-					else if (source.StartsWith('@'))
-						source = source.Replace("@", string.Empty);
-					tgDownloadSettings.SourceVm.Dto.UserName = source;
-					isCheck = !string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName);
-				}
+				if (input.StartsWith("https://t.me/"))
+					input = input.Replace("https://t.me/", string.Empty);
+				else if (input.StartsWith('@'))
+					input = input.Replace("@", string.Empty);
+				TgDownloadSettingsViewModel tgDownloadSettings = new();
+				tgDownloadSettings.SourceVm.Dto.UserName = input;
+				if (!string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
+					return tgDownloadSettings;
 			}
-		} while (!isCheck);
-		return tgDownloadSettings;
+		} while (1 == 0);
+		return new();
 	}
 
 	private async Task SetupDownloadSourceFirstIdAutoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -209,6 +221,19 @@ internal partial class TgMenuHelper
 		await tgDownloadSettings.UpdateSourceWithSettingsAsync();
 		await TgClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count, 
 			TgLocale.SettingsChat);
+	}
+
+	private async Task LoadTgClientSettingsByIdAsync(long id)
+	{
+		// Find by ID
+		TgEfStorageResult<TgEfSourceEntity>? storageResult = null;
+		if (id > 0)
+		{
+			storageResult = await SourceRepository.GetAsync(new() { Id = id });
+		}
+		TgEfSourceDto dto = new();
+		if (storageResult is not null)
+			dto = new TgEfSourceDto().Fill(storageResult.Item, isUidCopy: true);
 	}
 
 	private async Task LoadTgClientSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)

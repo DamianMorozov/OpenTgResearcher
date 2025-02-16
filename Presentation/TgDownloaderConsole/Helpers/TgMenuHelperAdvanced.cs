@@ -123,7 +123,7 @@ internal partial class TgMenuHelper
 		if (contact.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
-			tgDownloadSettings = await SetupDownloadSourceAsync(contact.Id);
+			tgDownloadSettings = await SetupDownloadSourceByIdAsync(contact.Id);
 			await SetupDownloadAsync(tgDownloadSettings);
 		}
 	}
@@ -136,7 +136,7 @@ internal partial class TgMenuHelper
 		if (source.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
-            tgDownloadSettings = await SetupDownloadSourceAsync(source.Id);
+            tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
 			await SetupDownloadAsync(tgDownloadSettings);
 		}
 	}
@@ -149,7 +149,7 @@ internal partial class TgMenuHelper
 		if (story.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
-			tgDownloadSettings = await SetupDownloadSourceAsync(story.Id);
+			tgDownloadSettings = await SetupDownloadSourceByIdAsync(story.Id);
 			await SetupDownloadAsync(tgDownloadSettings);
 		}
 	}
@@ -169,7 +169,7 @@ internal partial class TgMenuHelper
 		IEnumerable<TgEfSourceEntity> sources = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		foreach (var source in sources.Where(sourceSetting => sourceSetting.IsAutoUpdate))
 		{
-            var tgDownloadSettings = await SetupDownloadSourceAsync(source.Id);
+            var tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
 			var sourceId = string.IsNullOrEmpty(source.UserName) ? $"{source.Id}" : $"{source.Id} | @{source.UserName}";
             // StatusContext.
             await TgClient.UpdateStateSourceAsync(source.Id, source.FirstId, source.Count, 

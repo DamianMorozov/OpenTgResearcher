@@ -119,9 +119,15 @@ public static class TgDataFormatUtils
 	{
 		if (string.IsNullOrEmpty(input)) return input;
 		// Replace all types of line breaks
-		input = input.Replace("\r\n", replacement) // Windows
-			.Replace("\n", replacement)   // Unix
-			.Replace("\r", replacement);  // Old Mac
+		input = input
+			.Replace("\r\n", replacement)	// Windows
+			.Replace("\n", replacement)		// Unix
+			.Replace("\r", replacement)		// Mac
+			.Replace("[", "_")		// AnsiConsole
+			.Replace("]", "_")      // AnsiConsole
+			.Replace("{", "_")		// AnsiConsole
+			.Replace("}", "_")      // AnsiConsole
+			;
 		var sb = new StringBuilder();
 		foreach (char c in input)
 		{

@@ -430,6 +430,8 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			tgDownloadSettings.SourceVm.Dto.UserName = tgDownloadSettings.SourceVm.Dto.UserName.Trim();
 			var chatBase = DicChatsAll.FirstOrDefault(x => !string.IsNullOrEmpty(x.Value.MainUsername) &&
 				x.Value.MainUsername.Equals(tgDownloadSettings.SourceVm.Dto.UserName)).Value;
+			if (chatBase is null)
+				chatBase = DicChatsAll.FirstOrDefault(x => x.Value.ID.Equals(tgDownloadSettings.SourceVm.Dto.Id)).Value;
 			if (chatBase is not null)
 				tgDownloadSettings.Chat.Base = chatBase;
 		}
@@ -1251,7 +1253,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		sourceVm.Dto.Fill(tgDownloadSettings.SourceVm.Dto, isUidCopy: false);
 	}
 
-	private async Task UpdateSourceTgAsync(Channel channel, string about, int count)
+	private async Task UpdateSourceTgCoreAsync(Channel channel, string about, int count)
 	{
 		var storageResult = await SourceRepository.GetAsync(new() { Id = channel.id });
 		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
@@ -1260,6 +1262,21 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		sourceNew.IsActive = channel.IsActive;
 		sourceNew.UserName = channel.username;
 		sourceNew.Title = channel.title;
+		sourceNew.About = about;
+		sourceNew.Count = count;
+		// Save
+		await SourceRepository.SaveAsync(sourceNew);
+	}
+
+	private async Task UpdateSourceTgCoreAsync(ChatBase chatBase, string about, int count)
+	{
+		var storageResult = await SourceRepository.GetAsync(new() { Id = chatBase.ID });
+		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
+		sourceNew.Id = chatBase.ID;
+		sourceNew.AccessHash = 0;
+		sourceNew.IsActive = chatBase.IsActive;
+		sourceNew.UserName = chatBase.MainUsername;
+		sourceNew.Title = chatBase.Title;
 		sourceNew.About = about;
 		sourceNew.Count = count;
 		// Save
@@ -1426,7 +1443,10 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	}
 
 	private async Task UpdateSourceTgAsync(Channel channel, int count) =>
-		await UpdateSourceTgAsync(channel, string.Empty, count);
+		await UpdateSourceTgCoreAsync(channel, string.Empty, count);
+
+	private async Task UpdateSourceTgAsync(ChatBase chatBase, int count) =>
+		await UpdateSourceTgCoreAsync(chatBase, string.Empty, count);
 
 	public async Task SearchSourcesTgAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgEnumSourceType sourceType)
 	{
@@ -1440,6 +1460,14 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 				case TgEnumAppType.Desktop:
 					await LoginUserDesktopAsync();
 					break;
+				case TgEnumAppType.Memory:
+					break;
+				case TgEnumAppType.Blazor:
+					break;
+				case TgEnumAppType.Test:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 			switch (sourceType)
 			{
@@ -1448,20 +1476,20 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 					await CollectAllChatsAsync();
 					tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
 					tgDownloadSettings.SourceScanCurrent = 0;
-					// List channels
-					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings);
 					// List groups
 					await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
+					// List channels
+					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings);
 					break;
 				case TgEnumSourceType.Dialog:
 					await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, tgDownloadSettings.SourceVm.Dto.Count, TgLocale.CollectDialogs);
 					await CollectAllDialogsAsync();
 					tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
 					tgDownloadSettings.SourceScanCurrent = 0;
-					// List channels
-					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings);
 					// List groups
 					await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
+					// List channels
+					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings);
 					break;
 				case TgEnumSourceType.Contact:
 					await UpdateStateSourceAsync(tgDownloadSettings.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
@@ -1500,7 +1528,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 						var fullChannel = await Client.Channels_GetFullChannel(channel);
 						if (fullChannel?.full_chat is ChannelFull channelFull)
 						{
-							await UpdateSourceTgAsync(channel, channelFull.about, messagesCount);
+							await UpdateSourceTgCoreAsync(channel, channelFull.about, messagesCount);
 							await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent,
 								tgDownloadSettings.SourceScanCount, $"{channel} | {TgDataFormatUtils.TrimStringEnd(channelFull.about, 40)}");
 						}
@@ -1520,7 +1548,13 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 
 	private async Task SearchSourcesTgConsoleForGroupsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		foreach (var group in EnumerableGroups)
+		await SearchSourcesTgConsoleForGroupsCoreAsync(tgDownloadSettings, EnumerableSmallGroups);
+		await SearchSourcesTgConsoleForGroupsCoreAsync(tgDownloadSettings, EnumerableGroups);
+	}
+
+	private async Task SearchSourcesTgConsoleForGroupsCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, IEnumerable<ChatBase> groups)
+	{
+		foreach (var group in groups)
 		{
 			tgDownloadSettings.SourceScanCurrent++;
 			if (group.IsActive)
@@ -1529,7 +1563,10 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 				{
 					tgDownloadSettings.Chat.Base = group;
 					var messagesCount = await GetChannelMessageIdLastAsync(tgDownloadSettings);
-					await UpdateSourceTgAsync(group, messagesCount);
+					if (group is Channel channel)
+						await UpdateSourceTgAsync(channel, messagesCount);
+					else
+						await UpdateSourceTgAsync(group, messagesCount);
 					await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, 0, $"{group} | {messagesCount}");
 				});
 			}

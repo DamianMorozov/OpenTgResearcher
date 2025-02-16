@@ -10,21 +10,19 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public override string ToDebugString() => $"{nameof(TgEfDocumentRepository)}";
 
-	public override IQueryable<TgEfDocumentEntity> GetQuery(ITgEfContext efContext, bool isReadOnly = true)
+	public override IQueryable<TgEfDocumentEntity> GetQuery(bool isReadOnly = true)
 	{
-		return isReadOnly ? efContext.Documents.AsNoTracking() : efContext.Documents.AsTracking();
+		return isReadOnly ? EfContext.Documents.AsNoTracking() : EfContext.Documents.AsTracking();
 	}
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetAsync(TgEfDocumentEntity item, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		// Find by Uid
-		var itemFind = await efContext.Documents.FindAsync(item.Uid);
+		var itemFind = await EfContext.Documents.FindAsync(item.Uid);
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by SourceId and Id and MessageId
-		itemFind = await GetQuery(efContext, isReadOnly)
+		// Find by SourceId and ID and MessageId
+		itemFind = await GetQuery(isReadOnly)
 				.Where(x => x != null && x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
 				.Include(x => x.Source).SingleOrDefaultAsync();
 		return itemFind is not null
@@ -34,9 +32,7 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetFirstAsync(bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		var item = await GetQuery(efContext, isReadOnly).Include(x => x.Source).FirstOrDefaultAsync();
+		var item = await GetQuery(isReadOnly).Include(x => x.Source).FirstOrDefaultAsync();
 		return item is null
 			? new(TgEnumEntityState.NotExists)
 			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.IsExists, item);
@@ -44,36 +40,28 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		IList<TgEfDocumentEntity> items = take > 0
-			? await GetQuery(efContext, isReadOnly).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(efContext, isReadOnly).Include(x => x.Source).ToListAsync();
+			? await GetQuery(isReadOnly).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
+			: await GetQuery(isReadOnly).Include(x => x.Source).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfDocumentEntity, bool>> where, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		IList<TgEfDocumentEntity> items = take > 0
-			? await GetQuery(efContext, isReadOnly).Where(where).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(efContext, isReadOnly).Where(where).Include(x => x.Source).ToListAsync();
+			? await GetQuery(isReadOnly).Where(where).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
+			: await GetQuery(isReadOnly).Where(where).Include(x => x.Source).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
 	public override async Task<int> GetCountAsync()
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		return await efContext.Documents.AsNoTracking().CountAsync();
+		return await EfContext.Documents.AsNoTracking().CountAsync();
 	}
 
 	public override async Task<int> GetCountAsync(Expression<Func<TgEfDocumentEntity, bool>> where)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		return await efContext.Documents.AsNoTracking().Where(where).CountAsync();
+		return await EfContext.Documents.AsNoTracking().Where(where).CountAsync();
 	}
 
 	#endregion

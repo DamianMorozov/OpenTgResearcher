@@ -10,21 +10,19 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity>, I
 
 	public override string ToDebugString() => $"{nameof(TgEfProxyRepository)}";
 
-	public override IQueryable<TgEfProxyEntity> GetQuery(ITgEfContext efContext, bool isReadOnly = true)
+	public override IQueryable<TgEfProxyEntity> GetQuery(bool isReadOnly = true)
 	{
-		return isReadOnly ? efContext.Proxies.AsNoTracking() : efContext.Proxies.AsTracking();
+		return isReadOnly ? EfContext.Proxies.AsNoTracking() : EfContext.Proxies.AsTracking();
 	}
 
 	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetAsync(TgEfProxyEntity item, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		// Find by Uid
-		var itemFind = await efContext.Proxies.FindAsync(item.Uid);
+		var itemFind = await EfContext.Proxies.FindAsync(item.Uid);
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 		// Find by Type
-		itemFind = await GetQuery(efContext, isReadOnly)
+		itemFind = await GetQuery(isReadOnly)
 			.SingleOrDefaultAsync(x => x.Type == item.Type && x.HostName == item.HostName && x.Port == item.Port);
 		return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
@@ -33,9 +31,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity>, I
 
 	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetFirstAsync(bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		var item = await GetQuery(efContext, isReadOnly).FirstOrDefaultAsync();
+		var item = await GetQuery(isReadOnly).FirstOrDefaultAsync();
 		return item is null
 			? new(TgEnumEntityState.NotExists)
 			: new TgEfStorageResult<TgEfProxyEntity>(TgEnumEntityState.IsExists, item);
@@ -45,64 +41,50 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity>, I
 
 	public async Task<TgEfProxyDto> GetDtoAsync(Expression<Func<TgEfProxyEntity, bool>> where)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		var dto = await GetQuery(efContext).Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfProxyDto();
+		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfProxyDto();
 		return dto;
 	}
 
 	public async Task<List<TgEfProxyDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		var dtos = take > 0
-			? await GetQuery(efContext, isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(efContext, isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
 	public async Task<List<TgEfProxyDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfProxyEntity, bool>> where, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		var dtos = take > 0
-			? await GetQuery(efContext, isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(efContext, isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
 	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		IList<TgEfProxyEntity> items = take > 0 
-			? await GetQuery(efContext, isReadOnly).Skip(skip).Take(take).ToListAsync() 
-			: await GetQuery(efContext, isReadOnly).ToListAsync();
+			? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync() 
+			: await GetQuery(isReadOnly).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfProxyEntity, bool>> where, bool isReadOnly = true)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
 		var items = take > 0
-			? await GetQuery(efContext, isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync()
-			: (IList<TgEfProxyEntity>)await GetQuery(efContext, isReadOnly).Where(where).ToListAsync();
+			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync()
+			: (IList<TgEfProxyEntity>)await GetQuery(isReadOnly).Where(where).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
 	public override async Task<int> GetCountAsync()
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		return await efContext.Proxies.AsNoTracking().CountAsync();
+		return await EfContext.Proxies.AsNoTracking().CountAsync();
 	}
 
 	public override async Task<int> GetCountAsync(Expression<Func<TgEfProxyEntity, bool>> where)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		return await efContext.Proxies.AsNoTracking().Where(where).CountAsync();
+		return await EfContext.Proxies.AsNoTracking().Where(where).CountAsync();
 	}
 
 	#endregion

@@ -5,20 +5,38 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace TgStorage.Common;
 
-public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity>
+public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity>, IDisposable
 	where TEntity : class, ITgDbFillEntity<TEntity>, new()
 {
 	#region Public and private fields, properties, constructor
 
-	//private static readonly SemaphoreSlim TransactionSemaphore = new(1, 1);
+	protected ILifetimeScope Scope { get; }
+	protected ITgEfContext EfContext { get; }
+
+	public TgEfRepositoryBase()
+	{
+		Scope = TgGlobalTools.Container.BeginLifetimeScope();
+		EfContext = Scope.Resolve<ITgEfContext>();
+	}
 
 	#endregion
+
+	#region IDisposable
+
+	public void Dispose()
+	{
+		Scope.Dispose();
+		EfContext.Dispose();
+	}
+
+	#endregion
+
 
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfRepositoryBase<TEntity>)}";
 
-	public virtual IQueryable<TEntity> GetQuery(ITgEfContext efContext, bool isReadOnly = true) => 
+	public virtual IQueryable<TEntity> GetQuery(bool isReadOnly = true) => 
 		throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
 
 	private static TgEfStorageResult<TEntity> UseOverrideMethod() => throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
@@ -169,10 +187,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveAsync(TEntity? item, bool isFirstTry = true)
 	{
-		//await TransactionSemaphore.WaitAsync();
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		var transaction = await efContext.Database.BeginTransactionAsync();
+		var transaction = await EfContext.Database.BeginTransactionAsync();
 		TgEfStorageResult<TEntity> storageResult = new(TgEnumEntityState.Unknown, item);
 		await using (transaction)
 		{
@@ -184,7 +199,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				// Entity is not exists - Create
 				if (!storageResult.IsExists)
 				{
-					await efContext.AddItemAsync(storageResult.Item);
+					await EfContext.AddItemAsync(storageResult.Item);
 				}
 				// Entity is existing - Update
 				else
@@ -198,7 +213,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				// Normilize entity
 				TgEfUtils.Normilize(storageResult.Item);
 				// Save entity
-				await efContext.SaveChangesAsync();
+				await EfContext.SaveChangesAsync();
 				await transaction.CommitAsync();
 				storageResult.State = TgEnumEntityState.IsSaved;
 			}
@@ -214,7 +229,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 					var entry = ex.Entries.Single();
 					var databaseValues = await entry.GetDatabaseValuesAsync() ?? throw new Exception("The record you attempted to edit was deleted!");
 					entry.OriginalValues.SetValues(databaseValues);
-					//TransactionSemaphore.Release();
 					await SaveAsync(item, isFirstTry: false);
 				}
 				else
@@ -232,11 +246,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 #endif
 				throw;
 			}
-			finally
-			{
-				//if (isFirstTry)
-				//	TransactionSemaphore.Release();
-			}
 			return storageResult;
 		}
 	}
@@ -245,7 +254,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveListAsync(List<TEntity> items)
 	{
-		//await TransactionSemaphore.WaitAsync();
 		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
 		using var efContext = scope.Resolve<ITgEfContext>();
 		var transaction = await efContext.Database.BeginTransactionAsync();
@@ -276,10 +284,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 #endif
 				throw;
 			}
-			finally
-			{
-				//TransactionSemaphore.Release();
-			}
 			return storageResult;
 		}
 	}
@@ -290,7 +294,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 	{
 		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
 		using var efContext = scope.Resolve<ITgEfContext>();
-		//await TransactionSemaphore.WaitAsync();
 		TgEfStorageResult<TEntity> storageResult;
 		try
 		{
@@ -324,10 +327,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 #endif
 			throw;
 		}
-		finally
-		{
-			//TransactionSemaphore.Release();
-		}
 		return storageResult;
 	}
 
@@ -335,7 +334,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public virtual async Task<TgEfStorageResult<TEntity>> SaveOrRecreateAsync(TEntity item, string tableName)
 	{
-		//await TransactionSemaphore.WaitAsync();
 		try
 		{
 			return await SaveAsync(item);
@@ -360,17 +358,9 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				throw;
 			}
 		}
-		finally
-		{
-			//TransactionSemaphore.Release();
-		}
 	}
 
 	public TgEfStorageResult<TEntity> SaveOrRecreate(TEntity item, string tableName) => SaveOrRecreateAsync(item, tableName).GetAwaiter().GetResult();
-
-	//public virtual async Task<TgEfStorageResult<TEntity>> CreateNewAsync() => await SaveAsync(new());
-
-	//public TgEfStorageResult<TEntity> CreateNew() => CreateNewAsync().GetAwaiter().GetResult();
 
 	#endregion
 
@@ -378,10 +368,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 
 	public virtual async Task<TgEfStorageResult<TEntity>> DeleteAsync(TEntity item)
 	{
-		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		using var efContext = scope.Resolve<ITgEfContext>();
-		//await TransactionSemaphore.WaitAsync();
-		var transaction = await efContext.Database.BeginTransactionAsync();
+		var transaction = await EfContext.Database.BeginTransactionAsync();
 		await using (transaction)
 		{
 			try
@@ -389,8 +376,8 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				var storageResult = await GetAsync(item, isReadOnly: false);
 				if (!storageResult.IsExists)
 					return storageResult;
-				efContext.RemoveItem(storageResult.Item);
-				await efContext.SaveChangesAsync();
+				EfContext.RemoveItem(storageResult.Item);
+				await EfContext.SaveChangesAsync();
 				await transaction.CommitAsync();
 				return new(TgEnumEntityState.IsDeleted);
 			}
@@ -405,10 +392,6 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 #endif
 				throw;
-			}
-			finally
-			{
-				//TransactionSemaphore.Release();
 			}
 		}
 	}

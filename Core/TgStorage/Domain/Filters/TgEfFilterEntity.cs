@@ -78,7 +78,7 @@ public sealed class TgEfFilterEntity : ITgDbEntity, ITgDbFillEntity<TgEfFilterEn
 	public string ToConsoleString() =>
 		$"{TgDataFormatUtils.GetFormatString(Name, 20).TrimEnd(),-20} | " +
 		$"{TgDataFormatUtils.GetFormatString(Mask, 20).TrimEnd(),-20} | " +
-		$"{(IsEnabled ? "enabled" : ""),-7} | " +
+		$"{(IsEnabled ? "enabled" : "disabled"),-8} | " +
 		$"{this.GetStringForFilterType(),-20} | " +
 		$"{Size,12} | " +
 		$"{SizeType} ";

@@ -2269,7 +2269,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			return;
 		Client.OnUpdates -= OnUpdatesClientAsync;
 		Client.OnOther -= OnClientOtherAsync;
-		Client.Dispose();
+		await Client.DisposeAsync();
 		Client = null;
 		ClientException = new();
 		Me = null;

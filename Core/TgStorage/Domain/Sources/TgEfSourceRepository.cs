@@ -17,26 +17,37 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity>
 
 	public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetAsync(TgEfSourceEntity item, bool isReadOnly = true)
 	{
-		// Find by Uid
-		var itemFind = await EfContext.Sources.FindAsync(item.Uid);
-		if (itemFind is not null)
-			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by Id
-		if (item.Id > 0)
+		try
 		{
-			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
+			// Find by Uid
+			var itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Uid == item.Uid)
+				.FirstOrDefaultAsync();
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
+			// Find by ID
+			if (item.Id > 0)
+			{
+				itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
+				if (itemFind is not null)
+					return new(TgEnumEntityState.IsExists, itemFind);
+			}
+			// Find by UserName
+			if (!string.IsNullOrEmpty(item.UserName))
+			{
+				itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.UserName == item.UserName);
+				if (itemFind is not null)
+					return new(TgEnumEntityState.IsExists, itemFind);
+			}
 		}
-		// Find by UserName
-		if (!string.IsNullOrEmpty(item.UserName))
+		catch (Exception ex)
 		{
-			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.UserName == item.UserName);
-			if (itemFind is not null)
-				return new(TgEnumEntityState.IsExists, itemFind);
+#if DEBUG
+			Debug.WriteLine(ex);
+#endif
 		}
 		// Default
-		return new TgEfStorageResult<TgEfSourceEntity>(TgEnumEntityState.NotExists, item);
+		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetFirstAsync(bool isReadOnly = true)

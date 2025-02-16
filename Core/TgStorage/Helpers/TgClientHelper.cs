@@ -1185,7 +1185,7 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 		}
 		else
 		{
-			if (tgDownloadSettings.Chat.Base is ChatBase chatBase && await IsChatBaseAccessAsync(chatBase))
+			if (tgDownloadSettings.Chat.Base is { } chatBase && await IsChatBaseAccessAsync(chatBase))
 			{
 				source.UserName = chatBase.MainUsername ?? string.Empty;
 				source.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings);
@@ -2077,24 +2077,30 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 	}
 
 	private async Task MessageSaveAsync(TgDownloadSettingsViewModel tgDownloadSettings, int messageId, DateTime dtCreated, long size, string message,
-		TgEnumMessageType messageType, int threadNumber)
+		TgEnumMessageType messageType, int threadNumber, bool isRetry = false)
 	{
 		try
 		{
 			await ClientProgressForMessageThreadAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, message, isStartTask: true, threadNumber);
 			var storageResult = await MessageRepository.GetAsync(
-				new() { SourceId = tgDownloadSettings.SourceVm.Dto.Id, Id = tgDownloadSettings.SourceVm.Dto.FirstId }, isReadOnly: false);
+				new() { SourceId = tgDownloadSettings.SourceVm.Dto.Id, Id = tgDownloadSettings.SourceVm.Dto.FirstId }, isReadOnly: true);
 			if (!storageResult.IsExists || storageResult.IsExists && tgDownloadSettings.IsRewriteMessages)
 			{
-				var messageItem = new TgEfMessageEntity()
+				var sourceItem = await SourceRepository.GetItemAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id }, isReadOnly: true);
+				var messageItem = new TgEfMessageEntity
 				{
 					Id = messageId,
-					SourceId = tgDownloadSettings.SourceVm.Dto.Id,
+					Source = sourceItem,
+					SourceId = sourceItem.Id,
 					DtCreated = dtCreated,
 					Type = messageType,
 					Size = size,
 					Message = message,
 				};
+#if DEBUG
+				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToConsoleString()}");
+				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToConsoleString()}");
+#endif
 				await MessageRepository.SaveAsync(messageItem);
 			}
 			if (messageType == TgEnumMessageType.Document)
@@ -2106,6 +2112,11 @@ public sealed partial class TgClientHelper : ObservableRecipient, ITgHelper
 			Debug.WriteLine(ex);
 			Debug.WriteLine(ex.StackTrace);
 #endif
+			if (!isRetry)
+			{
+				await Task.Delay(500);
+				await MessageSaveAsync(tgDownloadSettings, messageId, dtCreated, size, message, messageType, threadNumber, isRetry: true);
+			}
 		}
 		finally
 		{

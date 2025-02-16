@@ -17,15 +17,28 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity>
 
 	public override async Task<TgEfStorageResult<TgEfStoryEntity>> GetAsync(TgEfStoryEntity item, bool isReadOnly = true)
 	{
-		// Find by Uid
-		var itemFind = await EfContext.Stories.FindAsync(item.Uid);
-		if (itemFind is not null)
-			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by Id
-		itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
-		return itemFind is not null
-			? new(TgEnumEntityState.IsExists, itemFind)
-			: new TgEfStorageResult<TgEfStoryEntity>(TgEnumEntityState.NotExists, item);
+		try
+		{
+			// Find by Uid
+			var itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Uid == item.Uid)
+				.FirstOrDefaultAsync();
+			if (itemFind is not null)
+				return new(TgEnumEntityState.IsExists, itemFind);
+			// Find by ID
+			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
+			return itemFind is not null
+				? new(TgEnumEntityState.IsExists, itemFind)
+				: new TgEfStorageResult<TgEfStoryEntity>(TgEnumEntityState.NotExists, item);
+		}
+		catch (Exception ex)
+		{
+#if DEBUG
+			Debug.WriteLine(ex);
+#endif
+		}
+		// Default
+		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfStoryEntity>> GetFirstAsync(bool isReadOnly = true)

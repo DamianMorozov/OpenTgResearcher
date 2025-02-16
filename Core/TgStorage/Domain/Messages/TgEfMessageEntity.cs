@@ -32,8 +32,8 @@ public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessage
     [Column(TgEfConstants.ColumnSourceId, TypeName = "LONG(20)")]
     public long SourceId { get; set; }
 
-	[NotMapped]
-	public TgEfSourceEntity Source { get; set; } = null!;
+	[ForeignKey(nameof(SourceId))]
+	public TgEfSourceEntity? Source { get; set; }
 
 	[DefaultValue(0)]
     [ConcurrencyCheck]
@@ -71,11 +71,19 @@ public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessage
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+	public string ToConsoleString() => 
+		$"{Id,11} | " +
+		$"{Message,20} | " +
+	    $"{TgDataFormatUtils.GetFormatString(Source?.UserName, 25).TrimEnd(),-25} | " +
+	    $"{(Source?.IsActive ?? false ? "active" : ""),-6} | " +
+	    $"{Source?.GetPercentCountString()} | " +
+	    $"{TgDataFormatUtils.GetFormatString(Source?.Title, 30).TrimEnd(),-30} | " +
+	    $"{Source?.FirstId} {TgLocaleHelper.Instance.From} {Source?.Count} {TgLocaleHelper.Instance.Messages}";
+
 	public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
-		Source = new();
 		Id = this.GetDefaultPropertyLong(nameof(Id));
 	    DtCreated = this.GetDefaultPropertyDateTime(nameof(DtCreated));
 		Type = this.GetDefaultPropertyGeneric<TgEnumMessageType>(nameof(Type));

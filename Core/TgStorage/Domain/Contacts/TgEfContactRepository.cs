@@ -17,15 +17,28 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 
 	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetAsync(TgEfContactEntity item, bool isReadOnly = true)
 	{
-		// Find by Uid
-		var itemFind = await EfContext.Contacts.FindAsync(item.Uid);
-		if (itemFind is not null)
-			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by Id
-		itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
-		return itemFind is not null
-			? new(TgEnumEntityState.IsExists, itemFind)
-			: new TgEfStorageResult<TgEfContactEntity>(TgEnumEntityState.NotExists, item);
+		try
+		{
+			// Find by Uid
+			var itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Uid == item.Uid)
+				.FirstOrDefaultAsync();
+			if (itemFind is not null)
+				return new(TgEnumEntityState.IsExists, itemFind);
+			// Find by ID
+			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
+			return itemFind is not null
+				? new(TgEnumEntityState.IsExists, itemFind)
+				: new TgEfStorageResult<TgEfContactEntity>(TgEnumEntityState.NotExists, item);
+		}
+		catch (Exception ex)
+		{
+#if DEBUG
+			Debug.WriteLine(ex);
+#endif
+		}
+		// Default
+		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetFirstAsync(bool isReadOnly = true)

@@ -199,7 +199,7 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				// Entity is not exists - Create
 				if (!storageResult.IsExists)
 				{
-					await EfContext.AddItemAsync(storageResult.Item);
+					//
 				}
 				// Entity is existing - Update
 				else
@@ -217,13 +217,14 @@ public class TgEfRepositoryBase<TEntity> : TgCommonBase, ITgEfRepository<TEntity
 				// Entity is not exists - Create
 				if (!storageResult.IsExists)
 				{
-					await EfContext.SaveChangesAsync();
+					await EfContext.AddItemAsync(storageResult.Item);
 				}
 				// Entity is existing - Update
 				else
 				{
 					EfContext.UpdateItem(storageResult.Item);
 				}
+				await EfContext.SaveChangesAsync();
 				EfContext.DetachItem(storageResult.Item);
 				await transaction.CommitAsync();
 				storageResult.State = TgEnumEntityState.IsSaved;

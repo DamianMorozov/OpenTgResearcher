@@ -109,9 +109,29 @@ public static class TgDataFormatUtils
 	public static string GetFormatStringWithStrongLength(string? value, int len = 30)
 	{
 		if (string.IsNullOrEmpty(value))
-			return new string('.', len);
+			return new('.', len);
+		value = RemoveNonPrintableCharacters(value, " ");
 		var result = value.Length > len ? value[..len] : $"{value}{new string('.', len - value.Length)}";
 		return result;
+	}
+
+	public static string RemoveNonPrintableCharacters(string input, string replacement)
+	{
+		if (string.IsNullOrEmpty(input)) return input;
+		// Replace all types of line breaks
+		input = input.Replace("\r\n", replacement) // Windows
+			.Replace("\n", replacement)   // Unix
+			.Replace("\r", replacement);  // Old Mac
+		var sb = new StringBuilder();
+		foreach (char c in input)
+		{
+			// Check if the character is a control character (unprintable)
+			if (!char.IsControl(c))
+			{
+				sb.Append(c);
+			}
+		}
+		return sb.ToString();
 	}
 
 	public static string GetDtFormat(DateTime dt) => $"{dt:yyyy-MM-dd HH:mm:ss}";

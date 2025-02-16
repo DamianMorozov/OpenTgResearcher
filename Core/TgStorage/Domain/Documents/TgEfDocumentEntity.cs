@@ -32,8 +32,8 @@ public sealed class TgEfDocumentEntity : ITgDbEntity, ITgDbFillEntity<TgEfDocume
     [Column(TgEfConstants.ColumnSourceId, TypeName = "LONG(20)")]
     public long SourceId { get; set; }
 
-	[NotMapped]
-	public TgEfSourceEntity Source { get; set; } = null!;
+	[ForeignKey(nameof(SourceId))]
+	public TgEfSourceEntity? Source { get; set; }
 
 	[DefaultValue(0)]
     [ConcurrencyCheck]
@@ -76,7 +76,6 @@ public sealed class TgEfDocumentEntity : ITgDbEntity, ITgDbFillEntity<TgEfDocume
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
-		Source = new();
 	    Id = this.GetDefaultPropertyLong(nameof(Id));
 	    MessageId = this.GetDefaultPropertyLong(nameof(MessageId));
 	    FileName = this.GetDefaultPropertyString(nameof(FileName));

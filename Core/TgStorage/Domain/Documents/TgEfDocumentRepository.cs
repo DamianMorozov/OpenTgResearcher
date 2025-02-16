@@ -17,17 +17,31 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetAsync(TgEfDocumentEntity item, bool isReadOnly = true)
 	{
-		// Find by Uid
-		var itemFind = await EfContext.Documents.FindAsync(item.Uid);
-		if (itemFind is not null)
-			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by SourceId and ID and MessageId
-		itemFind = await GetQuery(isReadOnly)
-				.Where(x => x != null && x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
+		try
+		{
+			// Find by Uid
+			var itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Source != null && x.Uid == item.Uid)
+				.Include(x => x.Source)
+				.FirstOrDefaultAsync();
+			if (itemFind is not null)
+				return new(TgEnumEntityState.IsExists, itemFind);
+			// Find by SourceId and ID and MessageId
+			itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
 				.Include(x => x.Source).SingleOrDefaultAsync();
-		return itemFind is not null
-			? new(TgEnumEntityState.IsExists, itemFind)
-			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists, item);
+			return itemFind is not null
+				? new(TgEnumEntityState.IsExists, itemFind)
+				: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists, item);
+		}
+		catch (Exception ex)
+		{
+#if DEBUG
+			Debug.WriteLine(ex);
+#endif
+		}
+		// Default
+		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetFirstAsync(bool isReadOnly = true)

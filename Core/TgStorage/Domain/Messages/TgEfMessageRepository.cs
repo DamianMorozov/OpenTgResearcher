@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 namespace TgStorage.Domain.Messages;
 
 /// <summary> Message repository </summary>
@@ -17,23 +19,38 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetAsync(TgEfMessageEntity item, bool isReadOnly = true)
 	{
-		// Find by Uid
-		var itemFind = await EfContext.Messages.FindAsync(item.Uid);
-		if (itemFind is not null)
-			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by ID
-		itemFind = await GetQuery(isReadOnly)
-			.Where(x => x.SourceId == item.SourceId && x.Id == item.Id)
-			.Include(x => x.Source)
-			.SingleOrDefaultAsync();
-		return itemFind is not null
-			? new(TgEnumEntityState.IsExists, itemFind)
-			: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.NotExists, item);
+		try
+		{
+			// Find by Uid
+			var itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Source != null && x.Uid == item.Uid)
+				.Include(x => x.Source)
+				.FirstOrDefaultAsync();
+			if (itemFind is not null)
+				return new(TgEnumEntityState.IsExists, itemFind);
+			// Find by ID
+			itemFind = await GetQuery(isReadOnly)
+				.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id)
+				.Include(x => x.Source)
+				.SingleOrDefaultAsync();
+			return itemFind is not null
+				? new(TgEnumEntityState.IsExists, itemFind)
+				: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.NotExists, item);
+		}
+		catch (Exception ex)
+		{
+#if DEBUG
+			Debug.WriteLine(ex);
+#endif
+		}
+		// Default
+		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetFirstAsync(bool isReadOnly = true)
 	{
-		var item = await GetQuery(isReadOnly).Include(x => x.Source).FirstOrDefaultAsync();
+		var item = await GetQuery(isReadOnly)
+			.Include(x => x.Source).FirstOrDefaultAsync();
 		return item is null
 			? new(TgEnumEntityState.NotExists)
 			: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.IsExists, item);

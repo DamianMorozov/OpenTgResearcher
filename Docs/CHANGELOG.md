@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.460] - 2025-02-15
-### Changed
+## [0.6.010] - 2025-02-16
+### Fixed
 - Fixed links
+- Fixed bugs in TgStorage
+- Fixed bugs in TgDownloaderConsole
+### Changed
 - Updated GitHub workflows actions
 - Updated apps table for TgStorage
 - Updated messages table for TgStorage

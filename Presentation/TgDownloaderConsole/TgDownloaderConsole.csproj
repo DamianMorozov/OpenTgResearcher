@@ -35,6 +35,9 @@
 	  <None Remove="TgLocale\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Content Include="..\..\..\TgDownloader-Helpers\TgDownloader.xml" Link="TgDownloader.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="applicationIcon.ico" />
 	</ItemGroup>
 	<ItemGroup>
@@ -60,6 +63,9 @@
 	  <Folder Include="Docs\" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Include="..\..\..\TgDownloader-Helpers\TgDownloader.session" Link="TgDownloader.session">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Include="..\..\Docs\CHANGELOG-RUS.md" Link="Docs\CHANGELOG-RUS.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -93,15 +99,4 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
-	<ItemGroup>
-	  <None Update="TgDownloader.session">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="TgDownloader.xml">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="Post-build.cmd" />
-	</Target>
 </Project>

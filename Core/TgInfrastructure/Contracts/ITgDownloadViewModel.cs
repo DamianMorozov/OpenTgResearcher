@@ -3,12 +3,9 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> SQL table fill </summary>
-public interface ITgDbFillEntity<TEntity> : ITgDbEntity where TEntity : new()
+public interface ITgDownloadViewModel : ITgCommon
 {
-	#region Public and private methods
-
-	public TEntity Fill(TEntity item, bool isUidCopy);
-
-	#endregion
+	public TgDownloadChat Chat { get; set; }
+	public int SourceScanCount { get; set; }
+	public int SourceScanCurrent { get; set; }
 }

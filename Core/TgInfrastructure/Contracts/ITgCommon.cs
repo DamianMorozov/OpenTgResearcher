@@ -3,7 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> Common interface </summary>
+/// <summary> Common </summary>
 public interface ITgCommon
 {
 	#region Public and private methods

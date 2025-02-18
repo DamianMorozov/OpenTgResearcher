@@ -3,7 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> SQL table interface </summary>
+/// <summary> SQL entity </summary>
 public interface ITgDbEntity : ITgCommon
 {
 	#region Public and private fields, properties, constructor

@@ -3,12 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> SQL table fill </summary>
-public interface ITgDbFillEntity<TEntity> : ITgDbEntity where TEntity : new()
+public interface ITgEfSourceViewModel : ITgDtoViewModel
 {
-	#region Public and private methods
 
-	public TEntity Fill(TEntity item, bool isUidCopy);
-
-	#endregion
 }

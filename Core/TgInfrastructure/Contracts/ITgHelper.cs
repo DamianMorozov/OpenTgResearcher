@@ -3,9 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary>
-/// Helper interface.
-/// </summary>
+/// <summary> Helper </summary>
 public interface ITgHelper : ITgCommon
 {
 	//

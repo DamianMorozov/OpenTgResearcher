@@ -3,6 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
+/// <summary> DTO </summary>
 public interface ITgDto<TDto, TEntity> : ITgCommon 
 	where TDto : new() 
 	where TEntity : new()

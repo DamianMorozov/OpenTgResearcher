@@ -3,6 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
+/// <summary> Proxy entity </summary>
 public interface ITgDbProxy : ITgDbEntity
 {
 	public TgEnumProxyType Type { get; set; }

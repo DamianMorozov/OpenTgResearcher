@@ -8,6 +8,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
 	xmlns:utils="clr-namespace:TgDownloaderWinDesktopWPF.Utils"
+	xmlns:utils1="clr-namespace:TgStorage.Utils;assembly=TgStorage"
 	d:DataContext="{d:DesignInstance controls:TgClientStateUserControl,
 	                                 IsDesignTimeCreatable=True}"
 	d:DesignHeight="90"
@@ -37,7 +38,7 @@
 			Command="{Binding Source={x:Static utils:TgDesktopUtils.TgClientVm}, Path=ClientConnectCommand, Mode=OneWay, IsAsync=True}"
 			Cursor="Hand"
 			Icon="Connector24"
-			IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsNotReady, Mode=OneWay, IsAsync=True}"
+			IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsNotReady, Mode=OneWay, IsAsync=True}"
 			ToolTip="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuClientConnect, Mode=OneWay, IsAsync=True}" />
 		<!--  Connect  -->
 		<CheckBox
@@ -46,7 +47,7 @@
 			Margin="2"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Center"
-			IsChecked="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
+			IsChecked="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
 			IsEnabled="False" />
 		<Label
 			Grid.Row="0"
@@ -82,7 +83,7 @@
 			Command="{Binding Source={x:Static utils:TgDesktopUtils.TgClientVm}, Path=ClientDisconnectCommand, Mode=OneWay, IsAsync=True}"
 			Cursor="Hand"
 			Icon="Connector24"
-			IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
+			IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
 			ToolTip="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuClientDisconnect, Mode=OneWay, IsAsync=True}" />
 		<!--  Proxy  -->
 		<CheckBox
@@ -91,7 +92,7 @@
 			Margin="2"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Center"
-			IsChecked="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsProxyUsage, Mode=OneWay, IsAsync=True}"
+			IsChecked="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsProxyUsage, Mode=OneWay, IsAsync=True}"
 			IsEnabled="False" />
 		<Label
 			Grid.Row="1"

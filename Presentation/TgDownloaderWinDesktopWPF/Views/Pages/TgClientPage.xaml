@@ -9,6 +9,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
 	xmlns:utils="clr-namespace:TgDownloaderWinDesktopWPF.Utils"
+	xmlns:utils1="clr-namespace:TgStorage.Utils;assembly=TgStorage"
 	Title="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuMainConnection, Mode=OneWay, IsAsync=True}"
 	d:Background="{DynamicResource ApplicationBackgroundBrush}"
 	d:DataContext="{d:DesignInstance local:TgClientPage,
@@ -60,7 +61,7 @@
 					Content="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuClientConnect, Mode=OneWay, IsAsync=True}"
 					Cursor="Hand"
 					Icon="Connector24"
-					IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsNotReady, Mode=OneWay, IsAsync=True}" />
+					IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsNotReady, Mode=OneWay, IsAsync=True}" />
 				<!--  Button Disconnect  -->
 				<ui:Button
 					Grid.Column="2"
@@ -72,7 +73,7 @@
 					Content="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuClientDisconnect, Mode=OneWay, IsAsync=True}"
 					Cursor="Hand"
 					Icon="Connector24"
-					IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}" />
+					IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}" />
 				<!--  Link  -->
 				<ui:Hyperlink
 					Grid.Column="3"

@@ -10,6 +10,7 @@
 	xmlns:sources="clr-namespace:TgStorage.Domain.Sources;assembly=TgStorage"
 	xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
 	xmlns:utils="clr-namespace:TgDownloaderWinDesktopWPF.Utils"
+	xmlns:utils1="clr-namespace:TgStorage.Utils;assembly=TgStorage"
 	Title="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=TableSources, Mode=OneWay, IsAsync=True}"
 	d:Background="{DynamicResource ApplicationBackgroundBrush}"
 	d:DataContext="{d:DesignInstance local:TgSourcesPage,
@@ -92,7 +93,7 @@
 					Content="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=UpdateFromTelegram, Mode=OneWay, IsAsync=True}"
 					Cursor="Hand"
 					Icon="ArrowSync12"
-					IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
+					IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
 					ToolTip="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=UpdateFromTelegram, Mode=OneWay, IsAsync=True}" />
 				<!--  Get from Telegram  -->
 				<ui:Button
@@ -104,7 +105,7 @@
 					Content="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=GetFromTelegram, Mode=OneWay, IsAsync=True}"
 					Cursor="Hand"
 					Icon="ArrowSync12"
-					IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}" />
+					IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}" />
 				<!--  Mark as read  -->
 				<ui:Button
 					Grid.Column="4"
@@ -115,7 +116,7 @@
 					Content="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuMarkAsRead, Mode=OneWay, IsAsync=True}"
 					Cursor="Hand"
 					Icon="ReadingModeMobile24"
-					IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}" />
+					IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}" />
 				<!--  Clear view  -->
 				<ui:Button
 					Grid.Column="5"

@@ -46,16 +46,17 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
     }
 
     /// <summary> Load sources from Telegram </summary>
-    public async Task LoadFromTelegramAsync(TgEfSourceViewModel sourceVm)
+    public async Task LoadFromTelegramAsync(ITgEfSourceViewModel sourceVm)
     {
+        if (sourceVm is not TgEfSourceViewModel sourceVm2) return;
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
-			var storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm.Dto.Id });
+			var storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm2.Dto.Id });
             if (storageResult.IsExists)
-                sourceVm = new(storageResult.Item);
-            if (!SourcesVms.Select(x => x.Dto.Id).Contains(sourceVm.Dto.Id))
-                SourcesVms.Add(sourceVm);
-            await SaveSourceAsync(sourceVm);
+                sourceVm2 = new (storageResult.Item);
+            if (!SourcesVms.Select(x => x.Dto.Id).Contains(sourceVm2.Dto.Id))
+                SourcesVms.Add(sourceVm2);
+            await SaveSourceAsync(sourceVm2);
         }, false);
     }
 
@@ -127,8 +128,8 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
             await Task.Delay(1);
-            await TgDesktopUtils.TgClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
-            await TgDesktopUtils.TgClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
+            await TgGlobalTools.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
+            await TgGlobalTools.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
         }, false);
     }
 
@@ -142,7 +143,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
             await Task.Delay(1);
-            await TgDesktopUtils.TgClient.MarkHistoryReadAsync();
+            await TgGlobalTools.ConnectClient.MarkHistoryReadAsync();
         }, false);
     }
 
@@ -181,7 +182,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
             // Checks.
             if (!SourcesVms.Any())
             {
-                await TgDesktopUtils.TgClient.UpdateStateSourceAsync(0, 0, 0, "Empty sources list!");
+                await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(0, 0, 0, "Empty sources list!");
                 return;
             }
             foreach (TgEfSourceViewModel sourceVm in SourcesVms)
@@ -201,7 +202,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
             {
                 var entity = sourceVm.Dto.GetEntity();
                 await SourceRepository.SaveAsync(entity);
-                await TgDesktopUtils.TgClient.UpdateStateSourceAsync(sourceVm.Dto.Id, sourceVm.Dto.FirstId, sourceVm.Dto.Count, $"Saved source | {sourceVm.Dto}");
+                await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(sourceVm.Dto.Id, sourceVm.Dto.FirstId, sourceVm.Dto.Count, $"Saved source | {sourceVm.Dto}");
             }
         }, false);
     }

@@ -1,6 +1,7 @@
 // This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+global using Autofac;
 global using Clipboard = Wpf.Ui.Common.Clipboard;
 global using CommunityToolkit.Mvvm.Input;
 global using LiveCharts.Wpf;
@@ -31,8 +32,11 @@ global using TgDownloaderWinDesktopWPF.Services;
 global using TgDownloaderWinDesktopWPF.ViewModels;
 global using TgDownloaderWinDesktopWPF.Views.Pages;
 global using TgDownloaderWinDesktopWPF.Views;
+global using TgInfrastructure.Common;
 global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Helpers;
+global using TgInfrastructure.Utils;
+global using TgInfrastructure.ViewModels;
 global using TgStorage.Common;
 global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Proxies;

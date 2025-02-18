@@ -9,6 +9,7 @@
 	xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
 	xmlns:utils="clr-namespace:TgDownloaderWinDesktopWPF.Utils"
 	xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+	xmlns:utils1="clr-namespace:TgStorage.Utils;assembly=TgStorage"
 	Title="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=TableSources, Mode=OneWay, IsAsync=True}"
 	d:Background="{DynamicResource ApplicationBackgroundBrush}"
 	d:DataContext="{d:DesignInstance local:TgItemSourcePage,
@@ -76,10 +77,10 @@
 					Content="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=UpdateFromTelegram, Mode=OneWay, IsAsync=True}"
 					Cursor="Hand"
 					Icon="ArrowSync12"
-					IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
+					IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}"
 					ToolTip="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=UpdateFromTelegram, Mode=OneWay, IsAsync=True}" />
 				<!--  Download from Telegram  -->
-				<Grid Grid.Column="3" IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}">
+				<Grid Grid.Column="3" IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}">
 					<ui:Button
 						Margin="3"
 						HorizontalAlignment="Stretch"
@@ -93,7 +94,7 @@
 						ToolTip="{Binding Source={x:Static utils:TgDesktopUtils.TgLocale}, Path=MenuMainDownload, Mode=OneWay, IsAsync=True}" />
 				</Grid>
 				<!--  Stop  -->
-				<Grid Grid.Column="4" IsEnabled="{Binding Source={x:Static utils:TgDesktopUtils.TgClient}, Path=IsReady, Mode=OneWay, IsAsync=True}">
+				<Grid Grid.Column="4" IsEnabled="{Binding Source={x:Static utils1:TgGlobalTools.ConnectClient}, Path=IsReady, Mode=OneWay, IsAsync=True}">
 					<ui:Button
 						Margin="3"
 						HorizontalAlignment="Stretch"

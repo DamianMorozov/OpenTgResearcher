@@ -131,10 +131,10 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
     {
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
-            //TgDesktopUtils.TgClient.UpdateStateConnect(TgDesktopUtils.TgClient.IsReady
+            //TgGlobalTools.ConnectClient.UpdateStateConnect(TgGlobalTools.ConnectClient.IsReady
             //    ? TgDesktopUtils.TgLocale.MenuClientIsConnected : TgDesktopUtils.TgLocale.MenuClientIsDisconnected);
             IsFileSession = TgAppSettings.AppXml.IsExistsFileSession;
-            if (TgDesktopUtils.TgClient.IsReady)
+            if (TgGlobalTools.ConnectClient.IsReady)
                 ViewModelClearConfig();
             IsLoad = false;
             await Task.CompletedTask;
@@ -143,7 +143,7 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
 
     public string ConfigClientDesktop(string what)
     {
-        var task = TgDesktopUtils.TgClient.UpdateStateSourceAsync(0, 0, 0, $"{TgDesktopUtils.TgLocale.MenuClientIsQuery}: {what}");
+        var task = TgGlobalTools.ConnectClient.UpdateStateSourceAsync(0, 0, 0, $"{TgDesktopUtils.TgLocale.MenuClientIsQuery}: {what}");
 		task.Wait();
 		switch (what)
         {
@@ -211,7 +211,7 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
             await Task.Delay(1);
             if (!TgEfUtils.GetEfValid<TgEfAppEntity>(AppVm.Dto.GetEntity()).IsValid)
                 return;
-            await TgDesktopUtils.TgClient.ConnectSessionAsync(proxyVm?.Dto.GetEntity() ?? ProxyVm.Dto.GetEntity());
+            await TgGlobalTools.ConnectClient.ConnectSessionAsync(proxyVm?.Dto.GetEntity() ?? ProxyVm.Dto.GetEntity());
         }, true);
 
         ServerMessage = TgDesktopUtils.TgClientVm.Exception.IsExist 
@@ -224,7 +224,7 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
     {
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
-			await TgDesktopUtils.TgClient.DisconnectAsync();
+			await TgGlobalTools.ConnectClient.DisconnectAsync();
         }, false).ConfigureAwait(false);
     }
 

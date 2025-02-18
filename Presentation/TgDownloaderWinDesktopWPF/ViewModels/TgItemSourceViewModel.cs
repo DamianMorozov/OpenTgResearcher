@@ -40,8 +40,8 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
 
     protected override async Task InitializeViewModelAsync()
     {
-        TgDesktopUtils.TgClient.SetupUpdateStateItemSource(UpdateStateItemSourceAsync);
-        TgDesktopUtils.TgClient.SetupUpdateStateFile(UpdateStateFileAsync);
+        TgGlobalTools.ConnectClient.SetupUpdateStateItemSource(UpdateStateItemSourceAsync);
+        TgGlobalTools.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
         await base.InitializeViewModelAsync();
         await OnGetSourceFromStorageAsync();
     }
@@ -154,16 +154,16 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
             if (SourceVm.Dto.Uid != SourceUid)
 				SourceUid = SourceVm.Dto.Uid;
             // Collect chats from Telegram
-            if (!TgDesktopUtils.TgClient.DicChatsAll.Any())
-                await TgDesktopUtils.TgClient.CollectAllChatsAsync();
+            if (!TgGlobalTools.ConnectClient.DicChatsAll.Any())
+                await TgGlobalTools.ConnectClient.CollectAllChatsAsync();
 			// Download settings
             TgDownloadSettingsViewModel tgDownloadSettings = TgDesktopUtils.TgDownloadsVm.CreateDownloadSettings(SourceVm);
 			// Update source from Telegram
-			await TgDesktopUtils.TgClient.UpdateSourceDbAsync(SourceVm, tgDownloadSettings);
+			await TgGlobalTools.ConnectClient.UpdateSourceDbAsync(SourceVm, tgDownloadSettings);
             var entity = SourceVm.Dto.GetEntity();
             await SourceRepository.SaveAsync(entity);
             // Message
-            await TgDesktopUtils.TgClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count, TgDesktopUtils.TgLocale.SettingsChat);
+            await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count, TgDesktopUtils.TgLocale.SettingsChat);
         }, false);
 
         await OnGetSourceFromStorageAsync();
@@ -185,7 +185,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
             // Check directory.
             if (!Directory.Exists(SourceVm.Dto.Directory))
             {
-                await TgDesktopUtils.TgClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count,
+                await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count,
                     $"Directory is not exists! {SourceVm.Dto.Directory}");
                 result = false;
                 return;
@@ -195,8 +195,8 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
             TgDownloadSettingsViewModel tgDownloadSettings = TgDesktopUtils.TgDownloadsVm.CreateDownloadSettings(SourceVm);
             SwDownloadChart = Stopwatch.StartNew();
 			// Job.
-			await TgDesktopUtils.TgClient.DownloadAllDataAsync(tgDownloadSettings);
-			await TgDesktopUtils.TgClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count, TgDesktopUtils.TgLocale.SettingsChat);
+			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(tgDownloadSettings);
+			await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count, TgDesktopUtils.TgLocale.SettingsChat);
         }, true);
 
         await OnGetSourceFromStorageAsync();

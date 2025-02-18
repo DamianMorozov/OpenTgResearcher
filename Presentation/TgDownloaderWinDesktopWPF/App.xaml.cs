@@ -3,6 +3,7 @@
 
 using Autofac;
 using TgInfrastructure.Enums;
+using TgStorage.Connect;
 using TgStorage.Domain;
 using TgStorage.Domain.Contacts;
 
@@ -83,7 +84,11 @@ public partial class App
 		// DI
 		var containerBuilder = new ContainerBuilder();
 		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
+		containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClient>();
 		TgGlobalTools.Container = containerBuilder.Build();
+		// TgGlobalTools
+		var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
 		// Create and update storage
 		await TgEfUtils.CreateAndUpdateDbAsync();
 

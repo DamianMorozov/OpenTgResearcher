@@ -8,9 +8,8 @@ namespace TgDownloaderWinDesktopWPF.Utils;
 /// </summary>
 public static class TgDesktopUtils
 {
-    #region Public and private fields, properties, constructor
+	#region Public and private fields, properties, constructor
 
-    public static TgClientHelper TgClient => TgClientHelper.Instance;
 	public static TgClientViewModel TgClientVm { get; } = new();
     public static TgDashboardViewModel TgDashboardVm { get; } = new();
     public static TgFiltersViewModel TgFiltersVm { get; } = new();
@@ -32,14 +31,14 @@ public static class TgDesktopUtils
 	/// </summary>
 	public static void SetupClient()
     {
-        TgClient.SetupUpdateStateConnect(TgClientVm.UpdateStateConnectAsync);
-        TgClient.SetupUpdateStateProxy(TgClientVm.UpdateStateProxyAsync);
-        TgClient.SetupUpdateStateSource(TgClientVm.UpdateStateSourceAsync);
-		TgClient.SetupUpdateStateMessage(TgClientVm.UpdateStateMessageAsync);
-        TgClient.SetupUpdateStateException(TgClientVm.UpdateStateExceptionAsync);
-        TgClient.SetupUpdateStateExceptionShort(TgClientVm.UpdateStateExceptionShortAsync);
-        TgClient.SetupAfterClientConnect(TgClientVm.AfterClientConnectAsync);
-        TgClient.SetupGetClientDesktopConfig(TgClientVm.ConfigClientDesktop);
+		TgGlobalTools.ConnectClient.SetupUpdateStateConnect(TgClientVm.UpdateStateConnectAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateProxy(TgClientVm.UpdateStateProxyAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateSource(TgClientVm.UpdateStateSourceAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateMessage(TgClientVm.UpdateStateMessageAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateException(TgClientVm.UpdateStateExceptionAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateExceptionShort(TgClientVm.UpdateStateExceptionShortAsync);
+		TgGlobalTools.ConnectClient.SetupAfterClientConnect(TgClientVm.AfterClientConnectAsync);
+		TgGlobalTools.ConnectClient.SetupGetClientDesktopConfig(TgClientVm.ConfigClientDesktop);
     }
 
     #endregion

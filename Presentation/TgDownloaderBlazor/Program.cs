@@ -4,7 +4,12 @@
 // DI
 var containerBuilder = new ContainerBuilder();
 containerBuilder.RegisterType<TgEfBlazorContext>().As<ITgEfContext>();
+containerBuilder.RegisterType<TgConnectClientBlazor>().As<ITgConnectClient>();
 TgGlobalTools.Container = containerBuilder.Build();
+
+// TgGlobalTools
+var scope = TgGlobalTools.Container.BeginLifetimeScope();
+TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

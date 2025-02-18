@@ -16,6 +16,8 @@ global using TgDownloaderBlazor.Services;
 global using TgDownloaderBlazor.Utils;
 global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Helpers;
+global using TgInfrastructure.Utils;
+global using TgStorage.Connect;
 global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Contacts;
 global using TgStorage.Domain.Filters;

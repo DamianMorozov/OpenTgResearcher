@@ -19,7 +19,7 @@ public abstract class TgPageComponentEnumerable<ITgDto, TEntity> : TgPageCompone
 
 	~TgPageComponentEnumerable()
 	{
-		Grid?.Dispose();
+		Grid.Dispose();
 	}
 
     #endregion

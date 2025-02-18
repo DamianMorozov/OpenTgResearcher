@@ -17,7 +17,6 @@ public abstract class TgPageComponentBase : ComponentBase
 
     protected TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
     protected TgAppSettingsHelper AppSettings => TgAppSettingsHelper.Instance;
-    protected static TgClientHelper TgClient => TgClientHelper.Instance;
     public bool IsBlazorLoading { get; set; } = true;
 
 	#endregion

@@ -3,12 +3,26 @@
 
 namespace TgDownloaderBlazor.Features.Client;
 
-public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppDto, TgEfAppEntity>
+public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppDto, TgEfAppEntity>, IDisposable
 {
 	#region Public and private fields, properties, constructor
 
 	private TgEfAppDto Dto { get; set; } = null!;
 	private TgEfAppRepository AppRepository { get; } = new();
+
+	public ClientComponent()
+	{
+		//
+	}
+
+	#endregion
+
+	#region IDisposable
+
+	public void Dispose()
+	{
+		//
+	}
 
 	#endregion
 
@@ -197,7 +211,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
 			await Task.Delay(1);
-			await TgClient.DisconnectAsync();
+			await TgGlobalTools.ConnectClient.DisconnectAsync();
 		}, message =>
 		{
 			NotificationService.Notify(new()

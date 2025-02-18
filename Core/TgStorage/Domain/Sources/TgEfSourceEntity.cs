@@ -16,6 +16,7 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(Directory))]
 [Index(nameof(FirstId))]
 [Index(nameof(IsAutoUpdate))]
+[Index(nameof(IsUserAccess))]
 public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEntity>
 {
 	#region Public and private fields, properties, constructor
@@ -90,6 +91,11 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
     [Column(TgEfConstants.ColumnIsAutoUpdate, TypeName = "BIT")]
     public bool IsAutoUpdate { get; set; }
 
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsUserAccess, TypeName = "BIT")]
+    public bool IsUserAccess { get; set; }
+
     public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
 
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
@@ -121,6 +127,7 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
 	    Directory = this.GetDefaultPropertyString(nameof(Directory));
 	    FirstId = this.GetDefaultPropertyInt(nameof(FirstId));
 	    IsAutoUpdate = this.GetDefaultPropertyBool(nameof(IsAutoUpdate));
+	    IsUserAccess = this.GetDefaultPropertyBool(nameof(IsUserAccess));
 	    Documents = new List<TgEfDocumentEntity>();
         Messages = new List<TgEfMessageEntity>();
     }
@@ -135,12 +142,13 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
 		AccessHash = item.AccessHash;
 		IsActive = item.IsActive;
 		FirstId = item.FirstId;
-		IsAutoUpdate = item.IsAutoUpdate;
 		UserName = item.UserName;
 		Title = item.Title;
 		About = item.About;
 		Count = item.Count;
 		Directory = item.Directory;
+		IsAutoUpdate = item.IsAutoUpdate;
+		IsUserAccess = item.IsUserAccess;
         return this;
 	}
 

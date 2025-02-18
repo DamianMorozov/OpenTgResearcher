@@ -31,6 +31,8 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 	[ObservableProperty]
 	public partial bool IsAutoUpdate { get; set; }
 	[ObservableProperty]
+	public partial bool IsUserAccess { get; set; }
+	[ObservableProperty]
 	public partial string CurrentFileName { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial long CurrentFileSize { get; set; }
@@ -83,6 +85,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 		Count = dto.Count;
 		Directory = dto.Directory;
 		IsAutoUpdate = dto.IsAutoUpdate;
+		IsUserAccess = dto.IsUserAccess;
 		IsDownload = dto.IsDownload;
 		CurrentFileName = dto.CurrentFileName;
 		return this;
@@ -103,6 +106,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 		Count = item.Count;
 		Directory = item.Directory ?? string.Empty;
 		IsAutoUpdate = item.IsAutoUpdate;
+		IsUserAccess = item.IsUserAccess;
 		return this;
 	}
 
@@ -127,6 +131,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 		Count = Count,
 		Directory = Directory,
 		IsAutoUpdate = IsAutoUpdate,
+		IsUserAccess = IsUserAccess,
 	};
 
 	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;

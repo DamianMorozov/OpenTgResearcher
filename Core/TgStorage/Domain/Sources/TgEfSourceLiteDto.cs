@@ -25,6 +25,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 	[ObservableProperty]
 	public partial bool IsAutoUpdate { get; set; }
 	[ObservableProperty]
+	public partial bool IsUserAccess { get; set; }
+	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	[ObservableProperty]
 	public partial string ProgressPercentString { get; set; }
@@ -46,6 +48,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 		FirstId = dto.FirstId;
 		Count = dto.Count;
 		IsAutoUpdate = dto.IsAutoUpdate;
+		IsUserAccess = dto.IsUserAccess;
 		IsDownload = dto.IsDownload;
 		ProgressPercentString = dto.ProgressPercentString;
 		return this;
@@ -63,6 +66,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 		FirstId = item.FirstId;
 		Count = item.Count;
 		IsAutoUpdate = item.IsAutoUpdate;
+		IsUserAccess = item.IsUserAccess;
 		var progress = (float)item.FirstId * 100 / item.Count;
 		ProgressPercentString = progress == 0 ? $"{0:00.00} %" : $"{progress:#00.00} %";
 		return this;

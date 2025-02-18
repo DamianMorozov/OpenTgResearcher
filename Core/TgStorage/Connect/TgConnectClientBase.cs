@@ -1195,6 +1195,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		{
 			if (tgDownloadSettings2.Chat.Base is { } chatBase && await IsChatBaseAccessAsync(chatBase))
 			{
+				source.IsUserAccess = true;
 				source.UserName = chatBase.MainUsername ?? string.Empty;
 				source.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings);
 				var chatFull = await PrintChatsInfoChatBaseAsync(chatBase, isFull: true, isSilent);
@@ -1205,8 +1206,11 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					source.About = chatBaseFull.About;
 				}
 			}
+			else
+			{
+				source.IsUserAccess = false;
+			}
 		}
-
 		source.Directory = dto.Directory;
 		source.FirstId = dto.FirstId;
 

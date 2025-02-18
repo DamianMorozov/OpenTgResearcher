@@ -19,21 +19,21 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 	{
 		try
 		{
-			// Find by Uid
-			var itemFind = await GetQuery(isReadOnly)
-				.Where(x => x.Source != null && x.Uid == item.Uid)
-				.Include(x => x.Source)
-				.FirstOrDefaultAsync();
-			if (itemFind is not null)
-				return new(TgEnumEntityState.IsExists, itemFind);
-			// Find by ID
-			itemFind = await GetQuery(isReadOnly)
-				.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id)
-				.Include(x => x.Source)
-				.SingleOrDefaultAsync();
-			return itemFind is not null
-				? new(TgEnumEntityState.IsExists, itemFind)
-				: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.NotExists, item);
+			TgEfStorageResult<TgEfMessageEntity> result;
+			// Too fast, read slower
+			try
+			{
+				result = await GetCoreAsync(item, isReadOnly);
+			}
+			catch (Exception ex)
+			{
+#if DEBUG
+				Debug.WriteLine(ex);
+#endif
+				await Task.Delay(500);
+				result = await GetCoreAsync(item, isReadOnly);
+			}
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -43,6 +43,26 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		}
 		// Default
 		return new(TgEnumEntityState.NotExists, item);
+	}
+
+	private async Task<TgEfStorageResult<TgEfMessageEntity>> GetCoreAsync(TgEfMessageEntity item, bool isReadOnly = true)
+	{
+		// Find by Uid
+		var itemFind = await GetQuery(isReadOnly)
+			.Where(x => x.Source != null && x.Uid == item.Uid)
+			.Include(x => x.Source)
+			.FirstOrDefaultAsync();
+		if (itemFind is not null)
+			return new(TgEnumEntityState.IsExists, itemFind);
+		// Find by ID
+		itemFind = await GetQuery(isReadOnly)
+			.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id)
+			.Include(x => x.Source)
+			.SingleOrDefaultAsync();
+		// Result
+		return itemFind is not null
+			? new(TgEnumEntityState.IsExists, itemFind)
+			: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetFirstAsync(bool isReadOnly = true)

@@ -514,6 +514,11 @@ namespace TgStorage.Migrations.TgEfTest
                         .HasColumnType("BIT")
                         .HasColumnName("IS_AUTO_UPDATE");
 
+                    b.Property<bool>("IsUserAccess")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_USER_ACCESS");
+
                     b.Property<string>("Title")
                         .IsConcurrencyToken()
                         .HasMaxLength(256)
@@ -544,6 +549,8 @@ namespace TgStorage.Migrations.TgEfTest
                     b.HasIndex("IsActive");
 
                     b.HasIndex("IsAutoUpdate");
+
+                    b.HasIndex("IsUserAccess");
 
                     b.HasIndex("Title");
 

@@ -84,6 +84,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetSource => "Setup source (ID/username)";
 	public string MenuDownloadSetSourceFirstIdAuto => "Setup first ID auto";
 	public string MenuDownloadSetSourceFirstIdManual => "Setup first ID manual";
+	public string MenuDownloadUserAccess => "User access";
 	public string MenuManualDownload => "Manual download";
 	public string MenuMarkAllMessagesAsRead => "Mark all messages as read";
 	public string MenuMarkAsRead => "Mark as read";

@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Sources;
 
 /// <summary> Source view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSourceEntity>, ITgDtoViewModel
+public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSourceEntity>, ITgEfSourceViewModel
 {
 	#region Public and private fields, properties, constructor
 

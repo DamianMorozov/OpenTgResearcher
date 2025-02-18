@@ -1,5 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 #pragma warning disable NUnit1033
 
 namespace TgStorageTest.Domain;
@@ -131,8 +132,8 @@ internal sealed class TgEfModelTests : TgDbContextTestsBase
 				story.Id.Should().Be((long)-1);
 				story.FromId.Should().Be((long)-1);
 				story.FromName.Should().Be(string.Empty);
-				story.Date.Should().Be(TgCommonExtensions.GetDefaultPropertyDateTime(story, nameof(story.Date)));
-				story.ExpireDate.Should().Be(TgCommonExtensions.GetDefaultPropertyDateTime(story, nameof(story.Date)));
+				story.Date.Should().Be(story.GetDefaultPropertyDateTime(nameof(story.Date)));
+				story.ExpireDate.Should().Be(story.GetDefaultPropertyDateTime(nameof(story.Date)));
 				story.Caption.Should().Be(string.Empty);
 				story.Type.Should().Be(string.Empty);
 				story.Offset.Should().Be(-1);

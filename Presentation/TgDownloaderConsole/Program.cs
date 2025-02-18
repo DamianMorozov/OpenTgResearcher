@@ -4,7 +4,12 @@
 // DI
 var containerBuilder = new ContainerBuilder();
 containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
+containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClient>();
 TgGlobalTools.Container = containerBuilder.Build();
+
+// TgGlobalTools
+var scope = TgGlobalTools.Container.BeginLifetimeScope();
+TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
 
 TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
 var menu = new TgMenuHelper();

@@ -10,11 +10,11 @@ internal partial class TgMenuHelper
 
 	public async Task<bool> CheckTgSettingsWithWarningAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		var result = TgClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
+		var result = TgGlobalTools.ConnectClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
 		if (!result)
 		{
 			await ClientConnectAsync(tgDownloadSettings, isSilent: true);
-			result = TgClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
+			result = TgGlobalTools.ConnectClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
 			if (!result)
 			{
 				TgLog.MarkupWarning(TgLocale.TgMustSetSettings);
@@ -78,10 +78,10 @@ internal partial class TgMenuHelper
 		var progressSource = progressContext.AddTask(progressSourceDefaultName, autoStart: true, maxValue: tgDownloadSettings.SourceVm.Dto.Count);
 		progressSource.Value = 0;
 		// Setup
-		TgClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
-		TgClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		TgClient.SetupUpdateStateFile(UpdateStateFileAsync);
-		TgClient.SetupUpdateStateMessageThread(UpdateStateMessageThreadAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateMessageThread(UpdateStateMessageThreadAsync);
 		// Task
 		await task(tgDownloadSettings);
 		// Finish
@@ -248,12 +248,12 @@ internal partial class TgMenuHelper
 				: $"{GetStatus(tgDownloadSettings.SourceVm.Dto.Count, tgDownloadSettings.SourceVm.Dto.FirstId)} | {message} | " +
 				  $"Progress {tgDownloadSettings.SourceVm.Dto.ProgressPercentString}";
 		// Setup
-		TgClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
-		TgClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		TgClient.SetupUpdateStateContact(UpdateStateContactAsync);
-		TgClient.SetupUpdateStateStory(UpdateStateStoryAsync);
-		TgClient.SetupUpdateStateFile(UpdateStateFileAsync);
-		TgClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateContact(UpdateStateContactAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateStory(UpdateStateStoryAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
 		// Task
 		var sw = Stopwatch.StartNew();
 		await func(tgDownloadSettings);

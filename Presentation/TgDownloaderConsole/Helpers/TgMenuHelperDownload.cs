@@ -2,8 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
-using TgStorage.Common;
-
 namespace TgDownloaderConsole.Helpers;
 
 internal partial class TgMenuHelper
@@ -109,7 +107,7 @@ internal partial class TgMenuHelper
 	{
 		var tgDownloadSettings = SetupDownloadSourceByIdCore(id);
 		await LoadTgClientSettingsByIdAsync(tgDownloadSettings.SourceVm.Dto.Id);
-		await TgClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
 
@@ -120,7 +118,7 @@ internal partial class TgMenuHelper
 			await LoadTgClientSettingsByIdAsync(tgDownloadSettings.SourceVm.Dto.Id);
 		else
 			await LoadTgClientSettingsAsync(tgDownloadSettings);
-		await TgClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
 
@@ -139,13 +137,8 @@ internal partial class TgMenuHelper
 			if (!string.IsNullOrEmpty(input))
 			{
 				if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
-				{
 					return SetupDownloadSourceByIdCore(sourceId);
-				}
-				if (input.StartsWith("https://t.me/"))
-					input = input.Replace("https://t.me/", string.Empty);
-				else if (input.StartsWith('@'))
-					input = input.Replace("@", string.Empty);
+				input = TgCommonUtils.ClearTgPeer(input);
 				TgDownloadSettingsViewModel tgDownloadSettings = new();
 				tgDownloadSettings.SourceVm.Dto.UserName = input;
 				if (!string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
@@ -158,8 +151,8 @@ internal partial class TgMenuHelper
 	private async Task SetupDownloadSourceFirstIdAutoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await LoadTgClientSettingsAsync(tgDownloadSettings);
-		await TgClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
-		await TgClient.SetChannelMessageIdFirstAsync(tgDownloadSettings);
+		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		await TgGlobalTools.ConnectClient.SetChannelMessageIdFirstAsync(tgDownloadSettings);
 	}
 
 	private async Task SetupDownloadSourceFirstIdManualAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -219,7 +212,7 @@ internal partial class TgMenuHelper
 	private async Task UpdateSourceWithSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await tgDownloadSettings.UpdateSourceWithSettingsAsync();
-		await TgClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count, 
+		await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count, 
 			TgLocale.SettingsChat);
 	}
 
@@ -260,12 +253,12 @@ internal partial class TgMenuHelper
 		await UpdateSourceWithSettingsAsync(tgDownloadSettings);
 		try
 		{
-			await TgClient.DownloadAllDataAsync(tgDownloadSettings);
+			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(tgDownloadSettings);
 		}
 		catch (Exception ex)
 		{
 			TgLog.MarkupWarning(ex.Message);
-			var floodWait = TgClient.Client?.FloodRetryThreshold ?? 60;
+			var floodWait = TgGlobalTools.ConnectClient.Client?.FloodRetryThreshold ?? 60;
 			TgLog.MarkupWarning($"Flood control: waiting {floodWait} seconds");
 			await Task.Delay(floodWait * 1_000);
 			// Repeat request after waiting
@@ -277,7 +270,7 @@ internal partial class TgMenuHelper
 	private async Task MarkHistoryReadCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableMarkHistoryReadProgressAsync(tgDownloadSettings);
-		await TgClient.MarkHistoryReadAsync();
+		await TgGlobalTools.ConnectClient.MarkHistoryReadAsync();
 		await ShowTableMarkHistoryReadCompleteAsync(tgDownloadSettings);
 	}
 

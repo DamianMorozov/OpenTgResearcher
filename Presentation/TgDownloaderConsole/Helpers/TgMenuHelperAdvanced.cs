@@ -104,14 +104,14 @@ internal partial class TgMenuHelper
 	private async Task SearchSourcesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgEnumSourceType sourceType)
 	{
 		await ShowTableAdvancedAsync(tgDownloadSettings);
-		if (!TgClient.IsReady)
+		if (!TgGlobalTools.ConnectClient.IsReady)
 		{
 			TgLog.MarkupWarning(TgLocale.TgMustClientConnect);
 			Console.ReadKey();
 			return;
 		}
 
-		await RunTaskStatusAsync(tgDownloadSettings, async _ => { await TgClient.SearchSourcesTgAsync(tgDownloadSettings, sourceType); }, 
+		await RunTaskStatusAsync(tgDownloadSettings, async _ => { await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, sourceType); }, 
 			isSkipCheckTgSettings: true, isScanCount: true, isWaitComplete: true);
 	}
 
@@ -166,13 +166,13 @@ internal partial class TgMenuHelper
 
 	private async Task AutoDownloadAsync(TgDownloadSettingsViewModel _)
 	{
-		IEnumerable<TgEfSourceEntity> sources = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+		var sources = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		foreach (var source in sources.Where(sourceSetting => sourceSetting.IsAutoUpdate))
 		{
             var tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
 			var sourceId = string.IsNullOrEmpty(source.UserName) ? $"{source.Id}" : $"{source.Id} | @{source.UserName}";
             // StatusContext.
-            await TgClient.UpdateStateSourceAsync(source.Id, source.FirstId, source.Count, 
+            await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(source.Id, source.FirstId, source.Count, 
 				source.Count <= 0
 					? $"The source {sourceId} hasn't any messages!"
 					: $"The source {sourceId} has {source.Count} messages.");
@@ -184,12 +184,12 @@ internal partial class TgMenuHelper
 
 	private async Task AutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		TgClient.IsUpdateStatus = true;
-		await TgClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
+		TgGlobalTools.ConnectClient.IsUpdateStatus = true;
+		await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
 			tgDownloadSettings.SourceVm.Dto.Count, "Auto view updates is started");
 		TgLog.MarkupLine(TgLocale.TypeAnyKeyForReturn);
 		Console.ReadKey();
-		TgClient.IsUpdateStatus = false;
+		TgGlobalTools.ConnectClient.IsUpdateStatus = false;
 		await Task.CompletedTask;
 	}
 

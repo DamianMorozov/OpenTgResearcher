@@ -202,8 +202,8 @@ internal partial class TgMenuHelper
 	public async Task ClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
 		await ShowTableClientAsync(tgDownloadSettings);
-		await TgClient.ConnectSessionConsoleAsync(ConfigConsole, (await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item);
-		if (TgClient.ClientException.IsExist || TgClient.ProxyException.IsExist)
+		await TgGlobalTools.ConnectClient.ConnectSessionConsoleAsync(ConfigConsole, (await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item);
+		if (TgGlobalTools.ConnectClient.ClientException.IsExist || TgGlobalTools.ConnectClient.ProxyException.IsExist)
 			TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
 		else
 			TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
@@ -216,7 +216,7 @@ internal partial class TgMenuHelper
 		await ShowTableClientAsync(tgDownloadSettings);
 		//TgSqlTableAppModel app = ContextManager.AppRepository.GetFirst();
 		//ContextManager.AppRepository.Delete(app);
-		await TgClient.DisconnectAsync();
+		await TgGlobalTools.ConnectClient.DisconnectAsync();
 	}
 
 	#endregion

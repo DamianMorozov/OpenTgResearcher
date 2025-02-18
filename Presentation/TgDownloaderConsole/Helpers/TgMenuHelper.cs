@@ -5,14 +5,13 @@
 namespace TgDownloaderConsole.Helpers;
 
 [DebuggerDisplay("{ToDebugString()}")]
-internal sealed partial class TgMenuHelper() : ITgHelper
+internal sealed partial class TgMenuHelper : ITgHelper
 {
 	#region Public and internal fields, properties, constructor
 
-	internal TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
-	internal TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
-	internal TgLogHelper TgLog => TgLogHelper.Instance;
-	internal TgClientHelper TgClient => TgClientHelper.Instance;
+	internal static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
+	internal static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
+	internal static TgLogHelper TgLog => TgLogHelper.Instance;
 	internal Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
 	internal TgEnumMenuMain Value { get; set; }
 	private TgEfAppRepository AppRepository { get; } = new();
@@ -112,9 +111,9 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 			new Markup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		// TG client settings
-		table.AddRow(new Markup(TgClient.IsReady ?
+		table.AddRow(new Markup(TgGlobalTools.ConnectClient.IsReady ?
 			TgLocale.InfoMessage(TgLocale.MenuMainConnection) : TgLocale.WarningMessage(TgLocale.MenuMainConnection)),
-			new Markup(TgClient.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+			new Markup(TgGlobalTools.ConnectClient.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		// Download settings
 		table.AddRow(new Markup(tgDownloadSettings.SourceVm.Dto.IsReady
@@ -131,7 +130,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 				TgLocale.InfoMessage(TgLocale.MenuMainApp) : TgLocale.WarningMessage(TgLocale.MenuMainApp)),
 			new Markup(TgAppSettings.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
-		// File session is exists
+		// File session is existing
 		if (TgAppSettings.AppXml.IsExistsFileSession)
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.FileSession)),
 				new Markup(TgLog.GetMarkupString(TgAppSettings.AppXml.XmlFileSession)));
@@ -186,11 +185,11 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 	internal async Task FillTableRowsClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
 		// TG client settings
-		table.AddRow(new Markup(TgClient.IsReady ?
+		table.AddRow(new Markup(TgGlobalTools.ConnectClient.IsReady ?
 			TgLocale.InfoMessage(TgLocale.MenuMainConnection) : TgLocale.WarningMessage(TgLocale.MenuMainConnection)),
-			new Markup(TgClient.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+			new Markup(TgGlobalTools.ConnectClient.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
-		if (TgClient.Me is null)
+		if (TgGlobalTools.ConnectClient.Me is null)
 		{
 			table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
 				new Markup(TgLog.GetMarkupString(TgLocale.SettingsIsNeedSetup)));
@@ -202,11 +201,11 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		else
 		{
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientUserName)),
-				new Markup(TgLog.GetMarkupString(TgClient.Me.username)));
+				new Markup(TgLog.GetMarkupString(TgGlobalTools.ConnectClient.Me.username)));
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientUserId)),
-				new Markup(TgLog.GetMarkupString(TgClient.Me.id.ToString())));
+				new Markup(TgLog.GetMarkupString(TgGlobalTools.ConnectClient.Me.id.ToString())));
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientUserIsActive)),
-				new Markup(TgLog.GetMarkupString(TgClient.Me.IsActive.ToString())));
+				new Markup(TgLog.GetMarkupString(TgGlobalTools.ConnectClient.Me.IsActive.ToString())));
 		}
 
 		// Proxy setup.
@@ -222,7 +221,7 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		else
 		{
 			// Proxy is not found.
-			if (!(await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).IsExists || TgClient.Me is null)
+			if (!(await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).IsExists || TgGlobalTools.ConnectClient.Me is null)
 			{
 				table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
 					new Markup(TgLog.GetMarkupString(TgLocale.SettingsIsNeedSetup)));
@@ -253,15 +252,15 @@ internal sealed partial class TgMenuHelper() : ITgHelper
 		}
 
 		// Exceptions
-		if (TgClient.ProxyException.IsExist)
+		if (TgGlobalTools.ConnectClient.ProxyException.IsExist)
 		{
 			table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)),
-				new Markup(TgLog.GetMarkupString(TgClient.ProxyException.Message)));
+				new Markup(TgLog.GetMarkupString(TgGlobalTools.ConnectClient.ProxyException.Message)));
 		}
-		if (TgClient.ClientException.IsExist)
+		if (TgGlobalTools.ConnectClient.ClientException.IsExist)
 		{
 			table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientException)),
-				new Markup(TgLog.GetMarkupString(TgClient.ClientException.Message)));
+				new Markup(TgLog.GetMarkupString(TgGlobalTools.ConnectClient.ClientException.Message)));
 			table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientFix)),
 				new Markup(TgLog.GetMarkupString(TgLocale.TgClientFixTryToDeleteSession)));
 		}

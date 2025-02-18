@@ -4,6 +4,7 @@
 
 namespace TgStorage.Utils;
 
+/// <summary> SQL constants </summary>
 public static class TgEfConstants
 {
 	#region Public and private fields, properties, constructor - Tables
@@ -54,6 +55,7 @@ public static class TgEfConstants
 	public const string ColumnIsAutoUpdate = "IS_AUTO_UPDATE";
 	public const string ColumnIsBot = "IS_BOT";
 	public const string ColumnIsEnabled = "IS_ENABLED";
+	public const string ColumnIsUserAccess = "IS_USER_ACCESS";
 	public const string ColumnLangCode = "LANG_CODE";
 	public const string ColumnLastName = "LAST_NAME";
 	public const string ColumnLength = "LENGTH";

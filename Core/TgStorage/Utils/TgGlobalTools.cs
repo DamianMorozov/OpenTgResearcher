@@ -15,7 +15,9 @@ public static class TgGlobalTools
     /// <summary> Autofac Container </summary>
 	public static Autofac.IContainer Container = null!;
 
-    #endregion
+	public static ITgConnectClient ConnectClient { get; set; } = null!;
+
+	#endregion
 
 	#region Public and private methods
 

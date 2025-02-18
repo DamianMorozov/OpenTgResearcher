@@ -5,7 +5,7 @@ namespace TgStorage.Models;
 
 /// <summary> Download settings </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, ITgCommon
+public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, ITgDownloadViewModel
 {
 	#region Public and private fields, properties, constructor
 

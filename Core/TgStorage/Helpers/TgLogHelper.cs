@@ -3,9 +3,7 @@
 
 namespace TgStorage.Helpers;
 
-/// <summary>
-/// Log helper.
-/// </summary>
+/// <summary> Log helper </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed class TgLogHelper : ITgHelper
 {

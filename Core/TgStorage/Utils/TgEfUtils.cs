@@ -5,6 +5,7 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace TgStorage.Utils;
 
+/// <summary> SQL utilities </summary>
 public static class TgEfUtils
 {
 	#region Public and private fields, properties, constructor

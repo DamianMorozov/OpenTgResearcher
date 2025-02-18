@@ -1,6 +1,7 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using CommunityToolkit.WinUI.UI.Animations;
@@ -45,8 +46,13 @@ global using TgDownloaderDesktop.Services;
 global using TgDownloaderDesktop.ViewModels;
 global using TgDownloaderDesktop.Views;
 global using TgInfrastructure.Common;
+global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.Helpers;
+global using TgInfrastructure.Utils;
+global using TgInfrastructure.ViewModels;
+global using TgStorage.Connect;
+global using TgStorage.Connect;
 global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Contacts;
 global using TgStorage.Domain.Filters;
@@ -54,6 +60,7 @@ global using TgStorage.Domain.Messages;
 global using TgStorage.Domain.Proxies;
 global using TgStorage.Domain.Sources;
 global using TgStorage.Domain.Stories;
+global using TgStorage.Domain;
 global using TgStorage.Helpers;
 global using TgStorage.Models;
 global using TgStorage.Utils;

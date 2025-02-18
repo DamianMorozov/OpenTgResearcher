@@ -69,8 +69,8 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await TgDesktopUtils.TgClient.CheckClientIsReadyAsync()) return;
-			await TgDesktopUtils.TgClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact);
+			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
+			await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact);
 			await LoadDataStorageCoreAsync();
 		});
 	}

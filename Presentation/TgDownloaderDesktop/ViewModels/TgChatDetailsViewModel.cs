@@ -33,7 +33,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
 		// Updates
-		TgDesktopUtils.TgClient.SetupUpdateStateSource(UpdateStateSource);
+		TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
 	}
 
 	#endregion
@@ -74,7 +74,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	{
 		await LoadDataAsync(async () => {
 			IsDownloading = true;
-			if (!await TgDesktopUtils.TgClient.CheckClientIsReadyAsync()) return;
+			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
 			var entity = Dto.GetEntity();
 			DownloadSettings.SourceVm.Fill(entity);
 			DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
@@ -90,9 +90,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 			//DirectorySystemWatcher.Changed += DirectorySystemWatcher_OnChanged;
 			//DirectorySystemWatcher.EnableRaisingEvents = true;
 
-			await TgDesktopUtils.TgClient.DownloadAllDataAsync(DownloadSettings);
+			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(DownloadSettings);
 			await DownloadSettings.UpdateSourceWithSettingsAsync();
-			//await TgDesktopUtils.TgClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
+			//await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
 			await LoadDataStorageCoreAsync();
 			IsDownloading = false;
 			//DirectorySystemWatcher.Changed -= DirectorySystemWatcher_OnChanged;
@@ -106,8 +106,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
 	private async Task StopDownloadingCoreAsync()
 	{
-		if (!await TgDesktopUtils.TgClient.CheckClientIsReadyAsync()) return;
-		TgDesktopUtils.TgClient.SetForceStopDownloading();
+		if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
+		TgGlobalTools.ConnectClient.SetForceStopDownloading();
 	}
 
 	#endregion

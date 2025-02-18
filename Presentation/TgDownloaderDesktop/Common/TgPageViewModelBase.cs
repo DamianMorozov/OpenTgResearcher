@@ -79,8 +79,8 @@ public partial class TgPageViewModelBase : ObservableRecipient
 		ConnectionDt = string.Empty;
 		ConnectionMsg = string.Empty;
 		Exception.Default();
-		await TgDesktopUtils.TgClient.CheckClientIsReadyAsync();
-		IsOnlineReady = TgDesktopUtils.TgClient.IsReady;
+		await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync();
+		IsOnlineReady = TgGlobalTools.ConnectClient.IsReady;
 	}
 
 	/// <summary> Open url </summary>

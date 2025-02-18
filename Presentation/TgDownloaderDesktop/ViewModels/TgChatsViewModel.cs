@@ -28,14 +28,14 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		// Updates
-		//TgDesktopUtils.TgClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateException(UpdateExceptionAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
-		//TgDesktopUtils.TgClient.SetupAfterClientConnect(AfterClientConnectAsync);
-		//TgDesktopUtils.TgClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
+		//TgGlobalTools.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
+		//TgGlobalTools.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
 	}
 
 	#endregion
@@ -75,16 +75,16 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
 	//private async Task UpdateFromTelegramAsync()
 	//{
-	//	if (!TgDesktopUtils.TgClient.CheckClientIsReady()) return;
+	//	if (!TgGlobalTools.ConnectClient.CheckClientIsReady()) return;
 	//	foreach (TgEfSourceViewModel sourceVm in Dtos)
 	//		await UpdateDtoFromTelegramAsync(sourceVm);
 	//}
 
 	//private async Task GetSourcesFromTelegramAsync()
 	//{
-	//	if (!TgDesktopUtils.TgClient.CheckClientIsReady()) return;
-	//	await TgDesktopUtils.TgClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
-	//	await TgDesktopUtils.TgClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
+	//	if (!TgGlobalTools.ConnectClient.CheckClientIsReady()) return;
+	//	await TgGlobalTools.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
+	//	await TgGlobalTools.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
 	//}
 
 	///// <summary> Load sources from Telegram </summary>
@@ -100,8 +100,8 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
 	//private async Task MarkAllMessagesAsReadAsync()
 	//{
-	//	if (!TgDesktopUtils.TgClient.CheckClientIsReady()) return;
-	//	await TgDesktopUtils.TgClient.MarkHistoryReadAsync();
+	//	if (!TgGlobalTools.ConnectClient.CheckClientIsReady()) return;
+	//	await TgGlobalTools.ConnectClient.MarkHistoryReadAsync();
 	//}
 
 	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), useLoadData: true);
@@ -134,7 +134,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	//	if (!storageResult.IsExists)
 	//	{
 	//		await SourceRepository.SaveAsync(sourceVm.Item);
-	//		await TgDesktopUtils.TgClient.UpdateStateSourceAsync(sourceVm.Item.Id, 0, $"Saved source | {sourceVm.Item}");
+	//		await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(sourceVm.Item.Id, 0, $"Saved source | {sourceVm.Item}");
 	//	}
 	//}
 
@@ -190,9 +190,9 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await TgDesktopUtils.TgClient.CheckClientIsReadyAsync()) return;
-			await TgDesktopUtils.TgClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat);
-			//await TgDesktopUtils.TgClient.SearchSourcesTgAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
+			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
+			await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat);
+			//await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
 			await LoadDataStorageCoreAsync();
 		});
 	}

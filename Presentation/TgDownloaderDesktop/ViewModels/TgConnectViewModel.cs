@@ -75,14 +75,14 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
         AppClearCommand = new AsyncRelayCommand(AppClearAsync);
         AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
 		// Delegates
-		//TgDesktopUtils.TgClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-		TgDesktopUtils.TgClient.SetupUpdateException(UpdateExceptionAsync);
-		//TgDesktopUtils.TgClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
-		TgDesktopUtils.TgClient.SetupAfterClientConnect(AfterClientConnectAsync);
-		//TgDesktopUtils.TgClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
+		TgGlobalTools.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
+		//TgGlobalTools.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
+		TgGlobalTools.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
+		//TgGlobalTools.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
 	}
 
 	#endregion
@@ -96,7 +96,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 		if (!IsBot)
 		{
-			var client = TgDesktopUtils.TgClient.Client;
+			var client = TgGlobalTools.ConnectClient.Client;
 			// Check exceptions
 			// https://www.infotelbot.com/2021/06/telegram-error-lists.html
 			if (Exception.Message.Contains("PHONE_CODE_INVALID", StringComparison.InvariantCultureIgnoreCase))
@@ -141,8 +141,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 
 		// Update connection buttons
-		await TgDesktopUtils.TgClient.CheckClientIsReadyAsync();
-		IsOnlineReady = TgDesktopUtils.TgClient.IsReady;
+		await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync();
+		IsOnlineReady = TgGlobalTools.ConnectClient.IsReady;
 	}
 
 	private string? ConfigClientDesktop(string what)
@@ -188,9 +188,9 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	        Exception.Default();
 			DataRequest = string.Empty;
 			if (!IsBot)
-				await TgDesktopUtils.TgClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetEntity(), ConfigClientDesktop);
+				await TgGlobalTools.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetEntity(), ConfigClientDesktop);
 			else
-				await TgDesktopUtils.TgClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
+				await TgGlobalTools.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
         }
         catch (Exception ex)
         {
@@ -205,7 +205,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task ClientDisconnectAsync() => await ContentDialogAsync(TgDesktopUtils.TgClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
+	private async Task ClientDisconnectAsync() => await ContentDialogAsync(TgGlobalTools.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
 
     private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 

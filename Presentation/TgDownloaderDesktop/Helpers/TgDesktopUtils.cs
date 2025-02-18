@@ -6,188 +6,182 @@ namespace TgDownloaderDesktop.Helpers;
 /// <summary> Desktop utils </summary>
 public static class TgDesktopUtils
 {
-    #region Public and private fields, properties, constructor
-
-    public static TgClientHelper TgClient => TgClientHelper.Instance;
-
-	#endregion
-
 	#region Public and private methods
 
-	//public static void RunAction(TgPageViewModelBase viewModel, Action action, bool isUpdateLoad)
-	//{
-	//    void Job()
-	//    {
-	//        if (isUpdateLoad)
-	//            viewModel.IsLoad = true;
-	//        TgConnectViewModel.Exception.Clear();
-	//        action();
-	//    }
+//public static void RunAction(TgPageViewModelBase viewModel, Action action, bool isUpdateLoad)
+//{
+//    void Job()
+//    {
+//        if (isUpdateLoad)
+//            viewModel.IsLoad = true;
+//        TgConnectViewModel.Exception.Clear();
+//        action();
+//    }
 
-	//    void JobFinally()
-	//    {
-	//        viewModel.IsLoad = false;
-	//    }
+//    void JobFinally()
+//    {
+//        viewModel.IsLoad = false;
+//    }
 
-	//    try
-	//    {
-	//     App.MainWindow.DispatcherQueue.TryEnqueue(Job);
-	//    }
-	//    catch (Exception ex)
-	//    {
-	//     App.MainWindow.DispatcherQueue.TryEnqueue(() => { TgConnectViewModel.Exception.Set(ex); });
-	//    }
-	//    finally
-	//    {
-	//        if (isUpdateLoad)
-	//        {
-	//         App.MainWindow.DispatcherQueue.TryEnqueue(JobFinally);
-	//        }
-	//    }
-	//}
+//    try
+//    {
+//     App.MainWindow.DispatcherQueue.TryEnqueue(Job);
+//    }
+//    catch (Exception ex)
+//    {
+//     App.MainWindow.DispatcherQueue.TryEnqueue(() => { TgConnectViewModel.Exception.Set(ex); });
+//    }
+//    finally
+//    {
+//        if (isUpdateLoad)
+//        {
+//         App.MainWindow.DispatcherQueue.TryEnqueue(JobFinally);
+//        }
+//    }
+//}
 
-	//public static async Task RunActionAsync(TgPageViewModelBase viewModel, Action action, bool isUpdateLoad)
-	//{
-	//    await Task.Delay(1);
+//public static async Task RunActionAsync(TgPageViewModelBase viewModel, Action action, bool isUpdateLoad)
+//{
+//    await Task.Delay(1);
 
-	//    void Job()
-	//    {
-	//        if (isUpdateLoad)
-	//            viewModel.IsLoad = true;
-	//        TgClientVm.Exception.Clear();
-	//        action();
-	//    }
+//    void Job()
+//    {
+//        if (isUpdateLoad)
+//            viewModel.IsLoad = true;
+//        TgClientVm.Exception.Clear();
+//        action();
+//    }
 
-	//    void JobFinally()
-	//    {
-	//        viewModel.IsLoad = false;
-	//    }
+//    void JobFinally()
+//    {
+//        viewModel.IsLoad = false;
+//    }
 
-	//    try
-	//    {
-	//        if (viewModel.Dispatcher.CheckAccess())
-	//        {
-	//            Job();
-	//        }
-	//        else
-	//        {
-	//            viewModel.Dispatcher.Invoke(() =>
-	//            {
-	//                Job();
-	//            });
-	//        }
-	//    }
-	//    catch (Exception ex)
-	//    {
-	//        if (viewModel.Dispatcher.CheckAccess())
-	//            TgClientVm.Exception.Set(ex);
-	//        else
-	//            viewModel.Dispatcher.Invoke(() => { TgClientVm.Exception.Set(ex); });
-	//    }
-	//    finally
-	//    {
-	//        if (isUpdateLoad)
-	//        {
-	//            if (viewModel.Dispatcher.CheckAccess())
-	//                JobFinally();
-	//            else
-	//                viewModel.Dispatcher.Invoke(() =>
-	//                {
-	//                    JobFinally();
-	//                });
-	//        }
-	//    }
-	//}
+//    try
+//    {
+//        if (viewModel.Dispatcher.CheckAccess())
+//        {
+//            Job();
+//        }
+//        else
+//        {
+//            viewModel.Dispatcher.Invoke(() =>
+//            {
+//                Job();
+//            });
+//        }
+//    }
+//    catch (Exception ex)
+//    {
+//        if (viewModel.Dispatcher.CheckAccess())
+//            TgClientVm.Exception.Set(ex);
+//        else
+//            viewModel.Dispatcher.Invoke(() => { TgClientVm.Exception.Set(ex); });
+//    }
+//    finally
+//    {
+//        if (isUpdateLoad)
+//        {
+//            if (viewModel.Dispatcher.CheckAccess())
+//                JobFinally();
+//            else
+//                viewModel.Dispatcher.Invoke(() =>
+//                {
+//                    JobFinally();
+//                });
+//        }
+//    }
+//}
 
-	//public static async Task RunAction2Async(TgPageViewModelBase viewModel, Action action, bool isUpdateLoad)
-	//{
-	//    await Task.Delay(1);
+//public static async Task RunAction2Async(TgPageViewModelBase viewModel, Action action, bool isUpdateLoad)
+//{
+//    await Task.Delay(1);
 
-	//    async Task Job()
-	//    {
-	//        await Task.Delay(1);
-	//        if (isUpdateLoad)
-	//            viewModel.IsLoad = true;
-	//        TgClientVm.Exception.Clear();
-	//        action();
-	//    }
+//    async Task Job()
+//    {
+//        await Task.Delay(1);
+//        if (isUpdateLoad)
+//            viewModel.IsLoad = true;
+//        TgClientVm.Exception.Clear();
+//        action();
+//    }
 
-	//    async Task JobFinally()
-	//    {
-	//        await Task.Delay(1);
-	//        viewModel.IsLoad = false;
-	//    }
+//    async Task JobFinally()
+//    {
+//        await Task.Delay(1);
+//        viewModel.IsLoad = false;
+//    }
 
-	//    try
-	//    {
-	//        if (viewModel.Dispatcher.CheckAccess())
-	//        {
-	//            Job();
-	//        }
-	//        else
-	//        {
-	//            viewModel.Dispatcher.InvokeAsync(async () =>
-	//            {
-	//                await Job();
-	//            });
-	//        }
-	//    }
-	//    catch (Exception ex)
-	//    {
-	//        if (viewModel.Dispatcher.CheckAccess())
-	//            TgClientVm.Exception.Set(ex);
-	//        else
-	//            viewModel.Dispatcher.InvokeAsync(async () => { TgClientVm.Exception.Set(ex); });
-	//    }
-	//    finally
-	//    {
-	//        if (isUpdateLoad)
-	//        {
-	//            if (viewModel.Dispatcher.CheckAccess())
-	//                JobFinally();
-	//            else
-	//                viewModel.Dispatcher.InvokeAsync(async () =>
-	//                {
-	//                    await JobFinally();
-	//                });
-	//        }
-	//    }
-	//}
+//    try
+//    {
+//        if (viewModel.Dispatcher.CheckAccess())
+//        {
+//            Job();
+//        }
+//        else
+//        {
+//            viewModel.Dispatcher.InvokeAsync(async () =>
+//            {
+//                await Job();
+//            });
+//        }
+//    }
+//    catch (Exception ex)
+//    {
+//        if (viewModel.Dispatcher.CheckAccess())
+//            TgClientVm.Exception.Set(ex);
+//        else
+//            viewModel.Dispatcher.InvokeAsync(async () => { TgClientVm.Exception.Set(ex); });
+//    }
+//    finally
+//    {
+//        if (isUpdateLoad)
+//        {
+//            if (viewModel.Dispatcher.CheckAccess())
+//                JobFinally();
+//            else
+//                viewModel.Dispatcher.InvokeAsync(async () =>
+//                {
+//                    await JobFinally();
+//                });
+//        }
+//    }
+//}
 
-	//public static async Task RunFuncAsync(TgPageViewModelBase viewModel, Func<Task> action, bool isUpdateLoad)
-	//   {
-	//       async Task Job()
-	//       {
-	//           if (isUpdateLoad)
-	//               viewModel.IsLoad = true;
-	//           //TgConnectViewModel.Exception.Clear();
-	//           await action();
-	//       }
+//public static async Task RunFuncAsync(TgPageViewModelBase viewModel, Func<Task> action, bool isUpdateLoad)
+//   {
+//       async Task Job()
+//       {
+//           if (isUpdateLoad)
+//               viewModel.IsLoad = true;
+//           //TgConnectViewModel.Exception.Clear();
+//           await action();
+//       }
 
-	//       void JobFinally()
-	//       {
-	//           viewModel.IsLoad = false;
-	//       }
+//       void JobFinally()
+//       {
+//           viewModel.IsLoad = false;
+//       }
 
-	//       try
-	//       {
-	//        App.MainWindow.DispatcherQueue.TryEnqueue(async () => await Job());
-	//       }
-	//       catch (Exception ex)
-	//       {
-	//        //App.MainWindow.DispatcherQueue.TryEnqueue(() => TgConnectViewModel.Exception.Set(ex));
-	//       }
-	//       finally
-	//       {
-	//           if (isUpdateLoad)
-	//           {
-	//            App.MainWindow.DispatcherQueue.TryEnqueue(JobFinally);
-	//           }
-	//           await Task.CompletedTask;
-	//       }
-	//   }
+//       try
+//       {
+//        App.MainWindow.DispatcherQueue.TryEnqueue(async () => await Job());
+//       }
+//       catch (Exception ex)
+//       {
+//        //App.MainWindow.DispatcherQueue.TryEnqueue(() => TgConnectViewModel.Exception.Set(ex));
+//       }
+//       finally
+//       {
+//           if (isUpdateLoad)
+//           {
+//            App.MainWindow.DispatcherQueue.TryEnqueue(JobFinally);
+//           }
+//           await Task.CompletedTask;
+//       }
+//   }
 
-	private static void AppendCallerInfo(this StringBuilder sb, string filePath, int lineNumber, string memberName)
+private static void AppendCallerInfo(this StringBuilder sb, string filePath, int lineNumber, string memberName)
 	{
 		sb.AppendLine($"[{DateTime.Now}] {nameof(filePath)}: {Path.GetFileName(filePath)}");
 		sb.AppendLine($"[{DateTime.Now}] {nameof(lineNumber)}: {lineNumber}");

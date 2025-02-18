@@ -25,7 +25,7 @@
 //		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 //		StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
 //		// Updates
-//		TgDesktopUtils.TgClient.SetupUpdateStateSource(UpdateStateSource);
+//		TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
 //	}
 
 //	#endregion
@@ -62,12 +62,12 @@
 //	{
 //		await LoadDataAsync(async () => {
 //			IsDownloading = true;
-//			if (!await TgDesktopUtils.TgClient.CheckClientIsReadyAsync()) return;
+//			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
 //			//var entity = Dto.GetEntity();
 //			//BotVm.Fill(entity);
 //			await DownloadSettings.UpdateSourceWithSettingsAsync();
 
-//			await TgDesktopUtils.TgClient.DownloadAllDataAsync(DownloadSettings);
+//			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(DownloadSettings);
 //			await DownloadSettings.UpdateSourceWithSettingsAsync();
 //			await LoadDataStorageCoreAsync();
 //			IsDownloading = false;
@@ -78,8 +78,8 @@
 
 //	private async Task StopDownloadingCoreAsync()
 //	{
-//		if (!await TgDesktopUtils.TgClient.CheckClientIsReadyAsync()) return;
-//		TgDesktopUtils.TgClient.SetForceStopDownloading();
+//		if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
+//		TgGlobalTools.ConnectClient.SetForceStopDownloading();
 //	}
 
 //	#endregion

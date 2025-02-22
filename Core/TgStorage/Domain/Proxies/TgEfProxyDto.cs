@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Proxies;
 
 /// <summary> Proxy DTO </summary>
-public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyDto, TgEfProxyEntity>
+public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, TgEfProxyDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -29,9 +29,9 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyDto, TgEfP
 
 	public override string ToString() => $"{Type} | {HostName} | {Port} | {UserName} | {Password} | {Secret}";
 
-	public TgEfProxyDto Fill(TgEfProxyDto dto, bool isUidCopy)
+	public TgEfProxyDto Copy(TgEfProxyDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		Type = dto.Type;
 		HostName = dto.HostName;
 		Port = dto.Port;
@@ -41,7 +41,7 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyDto, TgEfP
 		return this;
 	}
 
-	public TgEfProxyDto Fill(TgEfProxyEntity item, bool isUidCopy)
+	public TgEfProxyDto Copy(TgEfProxyEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -54,14 +54,20 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyDto, TgEfP
 		return this;
 	}
 
-	public TgEfProxyDto GetDto(TgEfProxyEntity item)
-	{
-		var dto = new TgEfProxyDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfProxyDto GetNewDto(TgEfProxyEntity item) => new TgEfProxyDto().Copy(item, isUidCopy: true);
 
-	public TgEfProxyEntity GetEntity() => new()
+	public TgEfProxyEntity GetNewEntity(TgEfProxyDto dto) => new()
+	{
+		Uid = dto.Uid,
+		Type = dto.Type,
+		HostName = dto.HostName,
+		Port = dto.Port,
+		UserName = dto.UserName,
+		Password = dto.Password,
+		Secret = dto.Secret,
+	};
+
+	public TgEfProxyEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		Type = Type,

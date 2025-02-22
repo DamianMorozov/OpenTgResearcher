@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Documents;
 
 /// <summary> Document repository </summary>
-public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEntity>
+public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEntity, TgEfDocumentDto>, ITgEfDocumentRepository
 {
 	#region Public and private methods
 
@@ -21,15 +21,18 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 		{
 			// Find by Uid
 			var itemFind = await GetQuery(isReadOnly)
-				.Where(x => x.Source != null && x.Uid == item.Uid)
-				.Include(x => x.Source)
+				//.Where(x => x.Source != null && x.Uid == item.Uid)
+				.Where(x => x.Uid == item.Uid)
+				//.Include(x => x.Source)
 				.FirstOrDefaultAsync();
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 			// Find by SourceId and ID and MessageId
 			itemFind = await GetQuery(isReadOnly)
-				.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
-				.Include(x => x.Source).SingleOrDefaultAsync();
+				//.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
+				.Where(x => x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
+				//.Include(x => x.Source)
+				.SingleOrDefaultAsync();
 			return itemFind is not null
 				? new(TgEnumEntityState.IsExists, itemFind)
 				: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists, item);
@@ -46,7 +49,9 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetFirstAsync(bool isReadOnly = true)
 	{
-		var item = await GetQuery(isReadOnly).Include(x => x.Source).FirstOrDefaultAsync();
+		var item = await GetQuery(isReadOnly)
+			//.Include(x => x.Source)
+			.FirstOrDefaultAsync();
 		return item is null
 			? new(TgEnumEntityState.NotExists)
 			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.IsExists, item);
@@ -55,16 +60,24 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
 		IList<TgEfDocumentEntity> items = take > 0
-			? await GetQuery(isReadOnly).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Include(x => x.Source).ToListAsync();
+			? await GetQuery(isReadOnly)
+				//.Include(x => x.Source)
+				.Skip(skip).Take(take).ToListAsync()
+			: await GetQuery(isReadOnly)
+				//.Include(x => x.Source)
+				.ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfDocumentEntity, bool>> where, bool isReadOnly = true)
 	{
 		IList<TgEfDocumentEntity> items = take > 0
-			? await GetQuery(isReadOnly).Where(where).Include(x => x.Source).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Include(x => x.Source).ToListAsync();
+			? await GetQuery(isReadOnly).Where(where)
+				//.Include(x => x.Source)
+				.Skip(skip).Take(take).ToListAsync()
+			: await GetQuery(isReadOnly).Where(where)
+				//.Include(x => x.Source)
+				.ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 

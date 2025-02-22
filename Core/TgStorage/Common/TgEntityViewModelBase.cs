@@ -5,11 +5,13 @@ namespace TgStorage.Common;
 
 /// <summary> Base class for TgMvvmModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public abstract partial class TgEntityViewModelBase<TEntity> : TgViewModelBase where TEntity : class, ITgDbFillEntity<TEntity>, new()
+public abstract partial class TgEntityViewModelBase<TEfEntity, TDto> : TgViewModelBase
+	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+	where TDto : class, new()
 {
 	#region Public and private fields, properties, constructor
 
-	public virtual TgEfRepositoryBase<TEntity> Repository { get; } = null!;
+	public virtual TgEfRepositoryBase<TEfEntity, TDto> Repository { get; } = null!;
 
 	#endregion
 

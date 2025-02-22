@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Apps;
 
 /// <summary> App DTO </summary>
-public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppDto, TgEfAppEntity>
+public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAppDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -43,9 +43,9 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppDto, TgEfAppEn
 
 	public override string ToString() => $"{ApiHash} | {ApiId}";
 	
-	public TgEfAppDto Fill(TgEfAppDto dto, bool isUidCopy)
+	public TgEfAppDto Copy(TgEfAppDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		ApiHash = dto.ApiHash;
 		ApiId = dto.ApiId;
 		FirstName = dto.FirstName;
@@ -57,7 +57,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppDto, TgEfAppEn
 		return this;
 	}
 
-	public TgEfAppDto Fill(TgEfAppEntity item, bool isUidCopy)
+	public TgEfAppDto Copy(TgEfAppEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -72,14 +72,22 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppDto, TgEfAppEn
 		return this;
 	}
 
-	public TgEfAppDto GetDto(TgEfAppEntity item)
-	{
-		var dto = new TgEfAppDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfAppDto GetNewDto(TgEfAppEntity item) => new TgEfAppDto().Copy(item, isUidCopy: true);
 
-	public TgEfAppEntity GetEntity() => new()
+	public TgEfAppEntity GetNewEntity(TgEfAppDto dto) => new()
+	{
+		Uid = dto.Uid,
+		ApiHash = dto.ApiHash,
+		ApiId = dto.ApiId,
+		FirstName = dto.FirstName,
+		LastName = dto.LastName,
+		PhoneNumber = dto.PhoneNumber,
+		ProxyUid = dto.ProxyUid,
+		UseBot = dto.UseBot,
+		BotTokenKey = dto.BotTokenKey,
+	};
+
+	public TgEfAppEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		ApiHash = ApiHash,

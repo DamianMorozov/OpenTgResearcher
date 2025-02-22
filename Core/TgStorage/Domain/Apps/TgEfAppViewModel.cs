@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Apps;
 
 /// <summary> App view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEntity>, ITgDtoViewModel
+public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEntity, TgEfAppDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
@@ -35,11 +35,11 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
 	public void Fill(TgEfAppEntity item)
 	{
 		Dto ??= new();
-		Dto.Fill(item, isUidCopy: true);
+		Dto.Copy(item, isUidCopy: true);
 	}
 
 	public async Task<TgEfStorageResult<TgEfAppEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetEntity());
+		await Repository.SaveAsync(Dto.GetNewEntity());
 
 	#endregion
 }

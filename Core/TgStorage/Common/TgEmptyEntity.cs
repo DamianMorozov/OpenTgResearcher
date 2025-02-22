@@ -4,7 +4,7 @@
 namespace TgStorage.Common;
 
 /// <summary> Empty entity </summary>
-public sealed class TgEmptyEntity : ITgDbEntity, ITgDbFillEntity<TgEmptyEntity>
+public sealed class TgEmptyEntity : ITgEfEntity<TgEmptyEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -32,7 +32,7 @@ public sealed class TgEmptyEntity : ITgDbEntity, ITgDbFillEntity<TgEmptyEntity>
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 	}
 
-	public TgEmptyEntity Fill(TgEmptyEntity item, bool isUidCopy)
+	public TgEmptyEntity Copy(TgEmptyEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

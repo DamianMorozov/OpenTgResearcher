@@ -12,7 +12,7 @@ namespace TgStorage.Domain.Documents;
 [Index(nameof(FileName))]
 [Index(nameof(FileSize))]
 [Index(nameof(AccessHash))]
-public sealed class TgEfDocumentEntity : ITgDbEntity, ITgDbFillEntity<TgEfDocumentEntity>
+public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -83,7 +83,7 @@ public sealed class TgEfDocumentEntity : ITgDbEntity, ITgDbFillEntity<TgEfDocume
 	    AccessHash = this.GetDefaultPropertyLong(nameof(AccessHash));
 	}
 
-    public TgEfDocumentEntity Fill(TgEfDocumentEntity item, bool isUidCopy)
+    public TgEfDocumentEntity Copy(TgEfDocumentEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

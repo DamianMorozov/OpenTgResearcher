@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Sources;
 
 /// <summary> Source DTO </summary>
-public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLiteDto, TgEfSourceEntity>
+public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEntity, TgEfSourceLiteDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -29,7 +29,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	[ObservableProperty]
-	public partial string ProgressPercentString { get; set; }
+	public partial string ProgressPercentString { get; set; } = null!;
 
 	#endregion
 
@@ -37,9 +37,9 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 
 	public override string ToString() => ProgressPercentString;
 
-	public TgEfSourceLiteDto Fill(TgEfSourceLiteDto dto, bool isUidCopy)
+	public TgEfSourceLiteDto Copy(TgEfSourceLiteDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		DtChangedString = dto.DtChangedString;
 		Id = dto.Id;
 		UserName = dto.UserName;
@@ -54,7 +54,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 		return this;
 	}
 
-	public TgEfSourceLiteDto Fill(TgEfSourceEntity item, bool isUidCopy)
+	public TgEfSourceLiteDto Copy(TgEfSourceEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -72,14 +72,33 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceLite
 		return this;
 	}
 
-	public TgEfSourceLiteDto GetDto(TgEfSourceEntity item)
-	{
-		var dto = new TgEfSourceLiteDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfSourceLiteDto GetNewDto(TgEfSourceEntity item) => new TgEfSourceLiteDto().Copy(item, isUidCopy: true);
 
-	public TgEfSourceEntity GetEntity() => throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
+	public TgEfSourceEntity GetNewEntity(TgEfSourceLiteDto dto) => new()
+	{
+		Uid = dto.Uid,
+		Id = dto.Id,
+		IsActive = dto.IsSourceActive,
+		UserName = dto.UserName,
+		Title = dto.Title,
+		FirstId = dto.FirstId,
+		Count = dto.Count,
+		IsAutoUpdate = dto.IsAutoUpdate,
+		IsUserAccess = dto.IsUserAccess,
+	};
+
+	public TgEfSourceEntity GetNewEntity() => new()
+	{
+		Uid = Uid,
+		Id = Id,
+		IsActive = IsSourceActive,
+		UserName = UserName,
+		Title = Title,
+		FirstId = FirstId,
+		Count = Count,
+		IsAutoUpdate = IsAutoUpdate,
+		IsUserAccess = IsUserAccess,
+	};
 
 	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;
 

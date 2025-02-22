@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgInfrastructure.Contracts;
+
 namespace TgStorage.Common;
 
 /// <summary> Base DB context </summary>
@@ -59,15 +61,20 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 
 	#region Public and private methods - EF Core
 
-	public async ValueTask<EntityEntry<TEntity>> AddItemAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default) where TEntity : class
-	{
-		return await AddAsync(entity, cancellationToken);
-	}
+	public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => 
+		await AddAsync(entity, cancellationToken);
 
-	public EntityEntry<TEntity> RemoveItem<TEntity>(TEntity entity) where TEntity : class
-	{
-		return Remove(entity);
-	}
+	public EntityEntry<TEfEntity> AddItem<TEfEntity>(TEfEntity entity)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Add(entity);
+
+	/// <inheritdoc />
+	public void UpdateItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Update(entity);
+
+	public EntityEntry<TEfEntity> RemoveItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Remove(entity);
+
+	/// <inheritdoc />
+	public void DetachItem(object item) => Entry(item).State = EntityState.Detached;
 
 	#endregion
 
@@ -232,12 +239,6 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 
 	/// <inheritdoc />
 	public async Task MigrateDbAsync() => await Database.MigrateAsync();
-
-	/// <inheritdoc />
-	public void DetachItem(object item) => Entry(item).State = EntityState.Detached;
-
-	/// <inheritdoc />
-	public void UpdateItem(object item) => Update(item);
 
 	#endregion
 }

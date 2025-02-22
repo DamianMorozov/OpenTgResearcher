@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Filters;
 
 /// <summary> Filter DTO </summary>
-public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterDto, TgEfFilterEntity>
+public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, TgEfFilterDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -36,9 +36,9 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterDto, TgE
 
 	public override string ToString() => $"{IsEnabled} | {FilterType} | {Name} | {Mask} | {Size} | {SizeType}";
 
-	public TgEfFilterDto Fill(TgEfFilterDto dto, bool isUidCopy)
+	public TgEfFilterDto Copy(TgEfFilterDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		IsEnabled = dto.IsEnabled;
 		FilterType = dto.FilterType;
 		Name = dto.Name;
@@ -48,7 +48,7 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterDto, TgE
 		return this;
 	}
 
-	public TgEfFilterDto Fill(TgEfFilterEntity item, bool isUidCopy)
+	public TgEfFilterDto Copy(TgEfFilterEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -61,14 +61,20 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterDto, TgE
 		return this;
 	}
 
-	public TgEfFilterDto GetDto(TgEfFilterEntity item)
-	{
-		var dto = new TgEfFilterDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfFilterDto GetNewDto(TgEfFilterEntity item) => new TgEfFilterDto().Copy(item, isUidCopy: true);
 
-	public TgEfFilterEntity GetEntity() => new()
+	public TgEfFilterEntity GetNewEntity(TgEfFilterDto dto) => new()
+	{
+		Uid = dto.Uid,
+		IsEnabled = dto.IsEnabled,
+		FilterType = dto.FilterType,
+		Name = dto.Name,
+		Mask = dto.Mask,
+		Size = dto.Size,
+		SizeType = dto.SizeType,
+	};
+
+	public TgEfFilterEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		IsEnabled = IsEnabled,

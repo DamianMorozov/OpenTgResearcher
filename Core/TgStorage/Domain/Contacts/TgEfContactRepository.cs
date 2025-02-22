@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Contacts;
 
 /// <summary> Contact repository </summary>
-public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity>
+public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity, TgEfContactDto>, ITgEfContactRepository
 {
 	#region Public and private methods
 
@@ -49,7 +49,7 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 			: new TgEfStorageResult<TgEfContactEntity>(TgEnumEntityState.IsExists, item);
 	}
 
-	private static Expression<Func<TgEfContactEntity, TgEfContactDto>> SelectDto() => item => new TgEfContactDto().GetDto(item);
+	private static Expression<Func<TgEfContactEntity, TgEfContactDto>> SelectDto() => item => new TgEfContactDto().GetNewDto(item);
 
 	public async Task<TgEfContactDto> GetDtoAsync(Expression<Func<TgEfContactEntity, bool>> where)
 	{

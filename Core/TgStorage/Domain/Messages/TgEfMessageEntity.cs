@@ -12,7 +12,7 @@ namespace TgStorage.Domain.Messages;
 [Index(nameof(Type))]
 [Index(nameof(Size))]
 [Index(nameof(Message))]
-public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessageEntity>
+public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -91,7 +91,7 @@ public sealed class TgEfMessageEntity : ITgDbEntity, ITgDbFillEntity<TgEfMessage
 	    Message = this.GetDefaultPropertyString(nameof(Message));
 	}
 
-    public TgEfMessageEntity Fill(TgEfMessageEntity item, bool isUidCopy)
+    public TgEfMessageEntity Copy(TgEfMessageEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

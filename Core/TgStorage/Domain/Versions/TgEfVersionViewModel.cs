@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Versions;
 
 /// <summary> Version view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVersionEntity>, ITgDtoViewModel
+public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVersionEntity, TgEfVersionDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
@@ -35,11 +35,11 @@ public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVer
 	public void Fill(TgEfVersionEntity item)
 	{
 		Dto ??= new();
-		Dto.Fill(item, isUidCopy: true);
+		Dto.Copy(item, isUidCopy: true);
 	}
 
 	public async Task<TgEfStorageResult<TgEfVersionEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetEntity());
+		await Repository.SaveAsync(Dto.GetNewEntity());
 
 	#endregion
 }

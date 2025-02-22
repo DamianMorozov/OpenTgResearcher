@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Proxies;
 
 /// <summary> Proxy repository </summary>
-public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity>, ITgEfProxyRepository
+public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
 {
 	#region Public and private methods
 
@@ -50,7 +50,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity>, I
 			: new TgEfStorageResult<TgEfProxyEntity>(TgEnumEntityState.IsExists, item);
 	}
 
-	private static Expression<Func<TgEfProxyEntity, TgEfProxyDto>> SelectDto() => item => new TgEfProxyDto().GetDto(item);
+	private static Expression<Func<TgEfProxyEntity, TgEfProxyDto>> SelectDto() => item => new TgEfProxyDto().GetNewDto(item);
 
 	public async Task<TgEfProxyDto> GetDtoAsync(Expression<Func<TgEfProxyEntity, bool>> where)
 	{

@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Sources;
 
 /// <summary> Source repository </summary>
-public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity>
+public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, TgEfSourceDto>, ITgEfSourceRepository
 {
 	#region Public and private methods
 
@@ -19,11 +19,10 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity>
 	{
 		try
 		{
-			TgEfStorageResult<TgEfSourceEntity> result;
 			// Too fast, read slower
 			try
 			{
-				result = await GetCoreAsync(item, isReadOnly);
+				return await GetCoreAsync(item, isReadOnly);
 			}
 			catch (Exception ex)
 			{
@@ -31,9 +30,8 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity>
 				Debug.WriteLine(ex);
 #endif
 				await Task.Delay(500);
-				result = await GetCoreAsync(item, isReadOnly);
+				return await GetCoreAsync(item, isReadOnly);
 			}
-			return result;
 		}
 		catch (Exception ex)
 		{
@@ -48,22 +46,26 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity>
 	private async Task<TgEfStorageResult<TgEfSourceEntity>> GetCoreAsync(TgEfSourceEntity item, bool isReadOnly = true)
 	{
 		// Find by Uid
+		//var itemFind = await GetQuery(isReadOnly)
+		//	.Where(x => x.Uid == item.Uid)
+		//	.FirstOrDefaultAsync();
 		var itemFind = await GetQuery(isReadOnly)
-			.Where(x => x.Uid == item.Uid)
-			.FirstOrDefaultAsync();
+			.FirstOrDefaultAsync(x => x.Uid == item.Uid);
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 		// Find by ID
 		if (item.Id > 0)
 		{
-			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
+			//itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
+			itemFind = await GetQuery(isReadOnly)
+				.FirstOrDefaultAsync(x => x.Id == item.Id);
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
 		// Find by UserName
 		if (!string.IsNullOrEmpty(item.UserName))
 		{
-			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.UserName == item.UserName);
+			itemFind = await GetQuery(isReadOnly).FirstOrDefaultAsync(x => x.UserName == item.UserName);
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
@@ -79,9 +81,9 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity>
 			: new TgEfStorageResult<TgEfSourceEntity>(TgEnumEntityState.IsExists, item);
 	}
 
-	private static Expression<Func<TgEfSourceEntity, TgEfSourceDto>> SelectDto() => item => new TgEfSourceDto().GetDto(item);
+	private static Expression<Func<TgEfSourceEntity, TgEfSourceDto>> SelectDto() => item => new TgEfSourceDto().GetNewDto(item);
 
-	private static Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetDto(item);
+	private static Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
 
 	public async Task<TgEfSourceDto> GetDtoAsync(Expression<Func<TgEfSourceEntity, bool>> where)
 	{

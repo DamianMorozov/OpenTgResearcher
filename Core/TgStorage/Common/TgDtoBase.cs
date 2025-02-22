@@ -3,7 +3,7 @@
 
 namespace TgStorage.Common;
 
-/// <summary> Base class for TgMvvmModel </summary>
+/// <summary> Base DTO </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgDtoBase : ObservableRecipient
 {
@@ -24,7 +24,7 @@ public partial class TgDtoBase : ObservableRecipient
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
-	public TgDtoBase Fill(TgDtoBase dto, bool isUidCopy)
+	protected TgDtoBase Copy(TgDtoBase dto, bool isUidCopy)
 	{
 		IsLoad = dto.IsLoad;
 		if (isUidCopy)

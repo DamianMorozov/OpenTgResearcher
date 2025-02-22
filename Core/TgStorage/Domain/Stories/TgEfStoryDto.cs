@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Stories;
 
 /// <summary> Proxy DTO </summary>
-public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryDto, TgEfStoryEntity>
+public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, TgEfStoryDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -42,9 +42,9 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryDto, TgEfS
 
 	public override string ToString() => $"{DtChanged} | {Id} | {FromId} | {FromName} | {Date} | {Caption}";
 
-	public TgEfStoryDto Fill(TgEfStoryDto dto, bool isUidCopy)
+	public TgEfStoryDto Copy(TgEfStoryDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		DtChanged = dto.DtChanged;
 		Id = dto.Id;
 		FromId = dto.FromId;
@@ -62,7 +62,7 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryDto, TgEfS
 		return this;
 	}
 
-	public TgEfStoryDto Fill(TgEfStoryEntity item, bool isUidCopy)
+	public TgEfStoryDto Copy(TgEfStoryEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -83,14 +83,24 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryDto, TgEfS
 		return this;
 	}
 
-	public TgEfStoryDto GetDto(TgEfStoryEntity item)
-	{
-		var dto = new TgEfStoryDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfStoryDto GetNewDto(TgEfStoryEntity item) => new TgEfStoryDto().Copy(item, isUidCopy: true);
 
-	public TgEfStoryEntity GetEntity() => new()
+	public TgEfStoryEntity GetNewEntity(TgEfStoryDto dto) => new()
+	{
+		Uid = dto.Uid,
+		DtChanged = dto.DtChanged,
+		Id = dto.Id,
+		FromId = dto.FromId,
+		FromName = dto.FromName,
+		Date = dto.Date,
+		ExpireDate = dto.ExpireDate,
+		Caption = dto.Caption,
+		Type = dto.Type,
+		Offset = dto.Offset,
+		Message = dto.Message,
+	};
+
+	public TgEfStoryEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		DtChanged = DtChanged,

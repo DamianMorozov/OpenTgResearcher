@@ -10,7 +10,7 @@ namespace TgStorage.Domain.Apps;
 [Index(nameof(ApiId))]
 [Index(nameof(PhoneNumber))]
 [Index(nameof(ProxyUid))]
-public sealed class TgEfAppEntity : ITgDbEntity, ITgDbFillEntity<TgEfAppEntity>
+public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -65,7 +65,7 @@ public sealed class TgEfAppEntity : ITgDbEntity, ITgDbFillEntity<TgEfAppEntity>
 	[DefaultValue(false)]
 	[ConcurrencyCheck]
 	[Column(TgEfConstants.ColumnUseBot, TypeName = "BIT")]
-	public bool UseBot { get; set; } = false!;
+	public bool UseBot { get; set; }
 
 	[DefaultValue("")]
 	[ConcurrencyCheck]
@@ -97,7 +97,7 @@ public sealed class TgEfAppEntity : ITgDbEntity, ITgDbFillEntity<TgEfAppEntity>
 		BotTokenKey = this.GetDefaultPropertyString(nameof(BotTokenKey));
     }
 
-	public TgEfAppEntity Fill(TgEfAppEntity item, bool isUidCopy)
+	public TgEfAppEntity Copy(TgEfAppEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

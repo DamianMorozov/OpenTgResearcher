@@ -17,7 +17,7 @@ namespace TgStorage.Domain.Contacts;
 [Index(nameof(PhoneNumber))]
 [Index(nameof(Status))]
 [Index(nameof(LangCode))]
-public sealed class TgEfContactEntity : ITgDbEntity, ITgDbFillEntity<TgEfContactEntity>
+public sealed class TgEfContactEntity : ITgEfEntity<TgEfContactEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -160,7 +160,7 @@ public sealed class TgEfContactEntity : ITgDbEntity, ITgDbFillEntity<TgEfContact
 		BotActiveUsers = this.GetDefaultPropertyInt(nameof(BotActiveUsers));
 	}
 
-	public TgEfContactEntity Fill(TgEfContactEntity item, bool isUidCopy)
+	public TgEfContactEntity Copy(TgEfContactEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

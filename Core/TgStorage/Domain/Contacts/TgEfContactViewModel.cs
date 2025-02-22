@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Contacts;
 
 /// <summary> Contact view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfContactViewModel : TgEntityViewModelBase<TgEfContactEntity>, ITgDtoViewModel
+public sealed partial class TgEfContactViewModel : TgEntityViewModelBase<TgEfContactEntity, TgEfContactDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
@@ -36,11 +36,11 @@ public sealed partial class TgEfContactViewModel : TgEntityViewModelBase<TgEfCon
 	public void Fill(TgEfContactEntity item)
 	{
 		Dto ??= new();
-		Dto.Fill(item, isUidCopy: true);
+		Dto.Copy(item, isUidCopy: true);
 	}
 
 	public async Task<TgEfStorageResult<TgEfContactEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetEntity());
+		await Repository.SaveAsync(Dto.GetNewEntity());
 
 	#endregion
 }

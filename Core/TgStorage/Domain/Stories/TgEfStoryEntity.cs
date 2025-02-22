@@ -14,7 +14,7 @@ namespace TgStorage.Domain.Stories;
 [Index(nameof(ExpireDate))]
 [Index(nameof(Caption))]
 [Index(nameof(Type))]
-public sealed class TgEfStoryEntity : ITgDbEntity, ITgDbFillEntity<TgEfStoryEntity>
+public sealed class TgEfStoryEntity : ITgEfEntity<TgEfStoryEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -115,7 +115,7 @@ public sealed class TgEfStoryEntity : ITgDbEntity, ITgDbFillEntity<TgEfStoryEnti
 		Message = this.GetDefaultPropertyString(nameof(Message));
     }
 
-    public TgEfStoryEntity Fill(TgEfStoryEntity item, bool isUidCopy)
+    public TgEfStoryEntity Copy(TgEfStoryEntity item, bool isUidCopy)
     {
 		if (isUidCopy)
 			Uid = item.Uid;

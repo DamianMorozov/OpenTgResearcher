@@ -17,7 +17,7 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(FirstId))]
 [Index(nameof(IsAutoUpdate))]
 [Index(nameof(IsUserAccess))]
-public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEntity>
+public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -132,7 +132,7 @@ public sealed class TgEfSourceEntity : ITgDbEntity, ITgDbFillEntity<TgEfSourceEn
         Messages = new List<TgEfMessageEntity>();
     }
 
-    public TgEfSourceEntity Fill(TgEfSourceEntity item, bool isUidCopy)
+    public TgEfSourceEntity Copy(TgEfSourceEntity item, bool isUidCopy)
     {
 		if (isUidCopy)
 			Uid = item.Uid;

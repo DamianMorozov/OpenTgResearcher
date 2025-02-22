@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Messages;
 
 /// <summary> Message view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMessageEntity>, ITgDtoViewModel
+public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMessageEntity, TgEfMessageDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
@@ -37,11 +37,11 @@ public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMes
 	public void Fill(TgEfMessageEntity item)
 	{
 		Dto ??= new();
-		Dto.Fill(item, isUidCopy: true);
+		Dto.Copy(item, isUidCopy: true);
 	}
 
 	public async Task<TgEfStorageResult<TgEfMessageEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetEntity());
+		await Repository.SaveAsync(Dto.GetNewEntity());
 
 	#endregion
 }

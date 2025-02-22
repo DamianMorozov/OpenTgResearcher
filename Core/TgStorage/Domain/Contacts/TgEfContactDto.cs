@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Contacts;
 
 /// <summary> Contact DTO </summary>
-public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactDto, TgEfContactEntity>
+public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactEntity, TgEfContactDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -55,9 +55,9 @@ public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactDto, T
 
 	public override string ToString() => $"{Id} | {AccessHash}";
 
-	public TgEfContactDto Fill(TgEfContactDto dto, bool isUidCopy)
+	public TgEfContactDto Copy(TgEfContactDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		DtChanged = dto.DtChanged;
 		Id = dto.Id;
 		AccessHash = dto.AccessHash;
@@ -75,13 +75,11 @@ public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactDto, T
 		BotInfoVersion = dto.BotInfoVersion;
 		BotInlinePlaceholder = dto.BotInlinePlaceholder;
 		BotActiveUsers = dto.BotActiveUsers;
-
 		IsDownload = dto.IsDownload;
-
 		return this;
 	}
 
-	public TgEfContactDto Fill(TgEfContactEntity item, bool isUidCopy)
+	public TgEfContactDto Copy(TgEfContactEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -102,20 +100,35 @@ public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactDto, T
 		BotInfoVersion = item.BotInfoVersion ?? string.Empty;
 		BotInlinePlaceholder = item.BotInlinePlaceholder;
 		BotActiveUsers = item.BotActiveUsers;
-
 		IsDownload = false;
-
 		return this;
 	}
 
-	public TgEfContactDto GetDto(TgEfContactEntity item)
-	{
-		var dto = new TgEfContactDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfContactDto GetNewDto(TgEfContactEntity item) => new TgEfContactDto().Copy(item, isUidCopy: true);
 
-	public TgEfContactEntity GetEntity() => new()
+	public TgEfContactEntity GetNewEntity(TgEfContactDto dto) => new()
+	{
+		Uid = dto.Uid,
+		DtChanged = dto.DtChanged,
+		Id = dto.Id,
+		AccessHash = dto.AccessHash,
+		IsActive = dto.IsContactActive,
+		IsBot = dto.IsBot,
+		FirstName = dto.FirstName,
+		LastName = dto.LastName,
+		UserName = dto.UserName,
+		UserNames = dto.UserNames,
+		PhoneNumber = dto.PhoneNumber,
+		Status = GetShortStatus(dto.Status),
+		RestrictionReason = dto.RestrictionReason,
+		LangCode = dto.LangCode,
+		StoriesMaxId = dto.StoriesMaxId,
+		BotInfoVersion = dto.BotInfoVersion,
+		BotInlinePlaceholder = dto.BotInlinePlaceholder,
+		BotActiveUsers = dto.BotActiveUsers,
+	};
+
+	public TgEfContactEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		DtChanged = DtChanged,

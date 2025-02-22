@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Versions;
 
 /// <summary> Version repository </summary>
-public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity>, ITgEfVersionRepository
+public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity, TgEfVersionDto>, ITgEfVersionRepository
 {
 	#region Public and private methods
 
@@ -49,7 +49,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 			: new TgEfStorageResult<TgEfVersionEntity>(TgEnumEntityState.IsExists, item);
 	}
 
-	private static Expression<Func<TgEfVersionEntity, TgEfVersionDto>> SelectDto() => item => new TgEfVersionDto().GetDto(item);
+	private static Expression<Func<TgEfVersionEntity, TgEfVersionDto>> SelectDto() => item => new TgEfVersionDto().GetNewDto(item);
 
 	public async Task<TgEfVersionDto> GetDtoAsync(Expression<Func<TgEfVersionEntity, bool>> where)
 	{

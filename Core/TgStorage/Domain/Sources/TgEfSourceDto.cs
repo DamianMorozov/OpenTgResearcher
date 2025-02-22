@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Sources;
 
 /// <summary> Source DTO </summary>
-public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgEfSourceEntity>
+public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, TgEfSourceDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -71,9 +71,9 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 
 	public override string ToString() => ProgressPercentString;
 
-	public TgEfSourceDto Fill(TgEfSourceDto dto, bool isUidCopy)
+	public TgEfSourceDto Copy(TgEfSourceDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		DtChanged = dto.DtChanged;
 		Id = dto.Id;
 		AccessHash = dto.AccessHash;
@@ -91,7 +91,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 		return this;
 	}
 
-	public TgEfSourceDto Fill(TgEfSourceEntity item, bool isUidCopy)
+	public TgEfSourceDto Copy(TgEfSourceEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -110,14 +110,26 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceDto, TgE
 		return this;
 	}
 
-	public TgEfSourceDto GetDto(TgEfSourceEntity item)
-	{
-		var dto = new TgEfSourceDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfSourceDto GetNewDto(TgEfSourceEntity item) => new TgEfSourceDto().Copy(item, isUidCopy: true);
 
-	public TgEfSourceEntity GetEntity() => new()
+	public TgEfSourceEntity GetNewEntity(TgEfSourceDto dto) => new()
+	{
+		Uid = dto.Uid,
+		DtChanged = dto.DtChanged,
+		Id = dto.Id,
+		AccessHash = dto.AccessHash,
+		IsActive = dto.IsSourceActive,
+		UserName = dto.UserName,
+		Title = dto.Title,
+		About = dto.About,
+		FirstId = dto.FirstId,
+		Count = dto.Count,
+		Directory = dto.Directory,
+		IsAutoUpdate = dto.IsAutoUpdate,
+		IsUserAccess = dto.IsUserAccess,
+	};
+
+	public TgEfSourceEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		DtChanged = DtChanged,

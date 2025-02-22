@@ -19,16 +19,6 @@ public static class TgEfUtils
 
 	#region Public and private methods
 
-	public static IEnumerable<ITgDbEntity> GetTableModels()
-	{
-		yield return new TgEfAppEntity();
-		yield return new TgEfDocumentEntity();
-		yield return new TgEfFilterEntity();
-		yield return new TgEfProxyEntity();
-		yield return new TgEfSourceEntity();
-		yield return new TgEfVersionEntity();
-	}
-
 	public static IEnumerable<Type> GetTableTypes()
 	{
 		yield return typeof(TgEfAppEntity);
@@ -50,9 +40,9 @@ public static class TgEfUtils
 	public static bool IsPercentCountAll(TgEfSourceEntity source) => source.Count <= source.FirstId;
 
 	/// <summary> Validate entity </summary>
-	/// <typeparam name="TEntity"> Type of entity </typeparam>
+	/// <typeparam name="TEfEntity"> Type of entity </typeparam>
 	/// <param name="item"> Entity </param>
-	public static ValidationResult GetEfValid<TEntity>(TEntity item) where TEntity : ITgDbFillEntity<TEntity>, new() =>
+	public static ValidationResult GetEfValid<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
 		item switch
 		{
 			TgEfAppEntity app => new TgEfAppValidator().Validate(app),
@@ -68,9 +58,9 @@ public static class TgEfUtils
 		};
 
 	/// <summary> Normilize entity </summary>
-	/// <typeparam name="TEntity"> Type of entity </typeparam>
+	/// <typeparam name="TEfEntity"> Type of entity </typeparam>
 	/// <param name="item"> Entity </param>
-	public static void Normilize<TEntity>(TEntity item) where TEntity : ITgDbFillEntity<TEntity>, new()
+	public static void Normilize<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		switch (item)
 		{
@@ -200,7 +190,6 @@ public static class TgEfUtils
 //								}
 //							}));
 //						}
-//						// Ожидаем завершения всех задач
 //						await Task.WhenAll(tasks);
 //					}
 //					var countSuccess = storageResultFrom.Items.Count() - countErrors;
@@ -225,9 +214,10 @@ public static class TgEfUtils
 //		logWrite($"Transferring table {tableName}: completed");
 //	}
 
-	public static Expression<Func<TEntity, bool>> WhereUidNotEmpty<TEntity>() where TEntity : ITgDbFillEntity<TEntity>, new() => x => x.Uid != Guid.Empty;
+	public static Expression<Func<TEfEntity, bool>> WhereUidNotEmpty<TEfEntity>() where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => 
+		x => x.Uid != Guid.Empty;
 	
-	public static Expression<Func<TEntity, List<TEntity>, bool>> WhereUidNotEquals<TEntity>() where TEntity : ITgDbFillEntity<TEntity>, new() =>
+	public static Expression<Func<TEfEntity, List<TEfEntity>, bool>> WhereUidNotEquals<TEfEntity>() where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
 		(itemFrom, itemsTo) => itemsTo.All(itemTo => itemTo.Uid.ToString().ToUpper() != itemFrom.Uid.ToString().ToUpper());
 
 	#endregion

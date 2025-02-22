@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Filters;
 
 /// <summary> Contact view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilterEntity>, ITgDtoViewModel
+public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilterEntity, TgEfFilterDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
@@ -36,11 +36,11 @@ public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilt
 	public void Fill(TgEfFilterEntity item)
 	{
 		Dto ??= new();
-		Dto.Fill(item, isUidCopy: true);
+		Dto.Copy(item, isUidCopy: true);
 	}
 
 	public async Task<TgEfStorageResult<TgEfFilterEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetEntity());
+		await Repository.SaveAsync(Dto.GetNewEntity());
 
 	#endregion
 }

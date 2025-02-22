@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Versions;
 
 /// <summary> Proxy DTO </summary>
-public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionDto, TgEfVersionEntity>
+public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity, TgEfVersionDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -19,15 +19,15 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionDto, T
 
 	public override string ToString() => $"{Version} | {Description}";
 
-	public TgEfVersionDto Fill(TgEfVersionDto dto, bool isUidCopy)
+	public TgEfVersionDto Copy(TgEfVersionDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		Version = dto.Version;
 		Description = dto.Description;
 		return this;
 	}
 
-	public TgEfVersionDto Fill(TgEfVersionEntity item, bool isUidCopy)
+	public TgEfVersionDto Copy(TgEfVersionEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -36,14 +36,16 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionDto, T
 		return this;
 	}
 
-	public TgEfVersionDto GetDto(TgEfVersionEntity item)
-	{
-		var dto = new TgEfVersionDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfVersionDto GetNewDto(TgEfVersionEntity item) => new TgEfVersionDto().Copy(item, isUidCopy: true);
 
-	public TgEfVersionEntity GetEntity() => new()
+	public TgEfVersionEntity GetNewEntity(TgEfVersionDto dto) => new()
+	{
+		Uid = dto.Uid,
+		Version = dto.Version,
+		Description = dto.Description,
+	};
+
+	public TgEfVersionEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		Version = Version,

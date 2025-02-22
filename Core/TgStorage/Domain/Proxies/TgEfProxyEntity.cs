@@ -12,7 +12,7 @@ namespace TgStorage.Domain.Proxies;
 [Index(nameof(UserName))]
 [Index(nameof(Password))]
 [Index(nameof(Secret))]
-public sealed class TgEfProxyEntity : ITgDbProxy, ITgDbEntity, ITgDbFillEntity<TgEfProxyEntity>
+public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<TgEfProxyEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -88,7 +88,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy, ITgDbEntity, ITgDbFillEntity<T
 	    Apps = new List<TgEfAppEntity>();
     }
 
-    public TgEfProxyEntity Fill(TgEfProxyEntity item, bool isUidCopy)
+    public TgEfProxyEntity Copy(TgEfProxyEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

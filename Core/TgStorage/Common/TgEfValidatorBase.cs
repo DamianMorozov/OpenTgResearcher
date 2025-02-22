@@ -4,7 +4,8 @@
 namespace TgStorage.Common;
 
 /// <summary> SQL validator base </summary>
-public class TgEfValidatorBase<TEntity> : AbstractValidator<TEntity>, ITgCommon where TEntity : ITgDbEntity
+public class TgEfValidatorBase<TEfEntity> : AbstractValidator<TEfEntity>, ITgCommon
+	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
     #region Public and private fields, properties, constructor
 

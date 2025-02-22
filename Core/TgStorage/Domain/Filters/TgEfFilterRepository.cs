@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Filters;
 
 /// <summary> Filter repository </summary>
-public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity>
+public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, TgEfFilterDto>, ITgEfFilterRepository
 {
 	#region Public and private methods
 
@@ -49,7 +49,7 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity>
 			: new TgEfStorageResult<TgEfFilterEntity>(TgEnumEntityState.IsExists, item);
 	}
 
-	private static Expression<Func<TgEfFilterEntity, TgEfFilterDto>> SelectDto() => item => new TgEfFilterDto().GetDto(item);
+	private static Expression<Func<TgEfFilterEntity, TgEfFilterDto>> SelectDto() => item => new TgEfFilterDto().GetNewDto(item);
 
 	public async Task<TgEfFilterDto> GetDtoAsync(Expression<Func<TgEfFilterEntity, bool>> where)
 	{

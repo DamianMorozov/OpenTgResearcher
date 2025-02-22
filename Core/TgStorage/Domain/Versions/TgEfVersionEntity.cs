@@ -8,7 +8,7 @@ namespace TgStorage.Domain.Versions;
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(Version), IsUnique = true)]
 [Index(nameof(Description))]
-public sealed class TgEfVersionEntity : ITgDbEntity, ITgDbFillEntity<TgEfVersionEntity>
+public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -56,7 +56,7 @@ public sealed class TgEfVersionEntity : ITgDbEntity, ITgDbFillEntity<TgEfVersion
 	    Description = this.GetDefaultPropertyString(nameof(Description));
     }
 
-    public TgEfVersionEntity Fill(TgEfVersionEntity item, bool isUidCopy)
+    public TgEfVersionEntity Copy(TgEfVersionEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

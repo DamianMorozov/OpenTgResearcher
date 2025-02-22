@@ -12,7 +12,7 @@ namespace TgStorage.Domain.Filters;
 [Index(nameof(Mask))]
 [Index(nameof(Size))]
 [Index(nameof(SizeType))]
-public sealed class TgEfFilterEntity : ITgDbEntity, ITgDbFillEntity<TgEfFilterEntity>
+public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 {
 	#region Public and private fields, properties, constructor
 
@@ -94,7 +94,7 @@ public sealed class TgEfFilterEntity : ITgDbEntity, ITgDbFillEntity<TgEfFilterEn
 		SizeType = this.GetDefaultPropertyGeneric<TgEnumFileSizeType>(nameof(SizeType));
 	}
 
-	public TgEfFilterEntity Fill(TgEfFilterEntity item, bool isUidCopy)
+	public TgEfFilterEntity Copy(TgEfFilterEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;

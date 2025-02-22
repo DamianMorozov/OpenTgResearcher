@@ -62,6 +62,10 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	public Microsoft.Data.Sqlite.SqliteConnection? BotSqlConnection { get; private set; }
 	public WTelegram.Bot? Bot { get; private set; }
 
+	private List<TgEfMessageEntity> MessageEntities { get; }
+	private int BatchMessagesCount { get; set; }
+	private int BatchMessagesSize => 100;
+
 	protected TgConnectClientBase()
 	{
 		DicChatsAll = [];
@@ -78,6 +82,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		ClientException = new();
 		ProxyException = new();
 		Filters = [];
+		MessageEntities = new();
 
 		UpdateTitleAsync = _ => Task.CompletedTask;
 		UpdateStateConnectAsync = _ => Task.CompletedTask;
@@ -222,7 +227,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		return IsReady = true;
 	}
 
-	public async Task ConnectSessionConsoleAsync(Func<string, string?>? config, ITgDbProxy proxy)
+	public async Task ConnectSessionConsoleAsync<TEfEntity>(Func<string, string?>? config, ITgDbProxy<TEfEntity> proxy)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		if (IsReady)
 			return;
@@ -234,7 +240,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await LoginUserAsync(true);
 	}
 
-	public async Task ConnectSessionAsync(ITgDbProxy? proxy)
+	public async Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		if (IsReady)
 			return;
@@ -246,7 +253,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await LoginUserAsync(true);
 	}
 
-	public async Task ConnectSessionDesktopAsync(ITgDbProxy? proxy, Func<string, string?> config)
+	public async Task ConnectSessionDesktopAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, Func<string, string?> config)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		if (IsReady)
 			return;
@@ -258,7 +266,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await LoginUserAsync(true);
 	}
 
-	public async Task ConnectThroughProxyAsync(ITgDbProxy? proxy, bool isDesktop)
+	public async Task ConnectThroughProxyAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, bool isDesktop)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		IsProxyUsage = false;
 		if (!await CheckClientIsReadyAsync())
@@ -1260,7 +1269,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		if (sourceVm is not TgEfSourceViewModel sourceVm2) return;
 		if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
 		await CreateChatAsync(tgDownloadSettings, isSilent: true);
-		sourceVm2.Dto.Fill(tgDownloadSettings2.SourceVm.Dto, isUidCopy: false);
+		sourceVm2.Dto.Copy(tgDownloadSettings2.SourceVm.Dto, isUidCopy: false);
 	}
 
 	private async Task UpdateSourceTgCoreAsync(Channel channel, string about, int count)
@@ -1778,10 +1787,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					{
 						counterForSave = 0;
 						tgDownloadSettings2.SourceVm.Dto.FirstId = sourceFirstId;
-						await SourceRepository.SaveAsync(tgDownloadSettings2.SourceVm.Dto.GetEntity());
+						await SourceRepository.SaveAsync(tgDownloadSettings2.SourceVm.Dto.GetNewEntity());
 					}
 				}
 				tgDownloadSettings2.SourceVm.Dto.FirstId = sourceFirstId > sourceLastId ? sourceLastId : sourceFirstId;
+				// Finally save all not stored messages
+				await MessageSaveAsync();
 			}
 			else
 			{
@@ -1851,12 +1862,14 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		}
 		await TryCatchFuncAsync(async () =>
 		{
-			// Store message
-			await MessageSaveAsync(tgDownloadSettings, message.ID, message.Date, 0, message.message, TgEnumMessageType.Message, threadNumber);
 			// Parse documents and photos
 			if ((message.flags & Message.Flags.has_media) is not 0)
 			{
 				await DownloadDataCoreAsync(tgDownloadSettings, messageBase, message.media, threadNumber);
+			}
+			else
+			{
+				await MessageSaveAsync(tgDownloadSettings, message.ID, message.Date, 0, message.message, TgEnumMessageType.Message, threadNumber);
 			}
 			await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, message.ID, tgDownloadSettings.SourceVm.Dto.Count,
 				$"Reading the message {message.ID} from {tgDownloadSettings.SourceVm.Dto.Count}");
@@ -2105,7 +2118,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				var messageItem = new TgEfMessageEntity
 				{
 					Id = messageId,
-					Source = sourceItem,
+					//Source = sourceItem,
 					SourceId = sourceItem.Id,
 					DtCreated = dtCreated,
 					Type = messageType,
@@ -2116,13 +2129,25 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToConsoleString()}");
 				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToConsoleString()}");
 #endif
-				await MessageRepository.SaveAsync(messageItem);
+				if (BatchMessagesCount < BatchMessagesSize)
+				{
+					MessageEntities.Add(messageItem);
+					BatchMessagesCount++;
+				}
+				else
+				{
+					await MessageRepository.SaveListAsync(MessageEntities);
+					BatchMessagesCount = 0;
+					MessageEntities.Clear();
+				}
 			}
 			if (messageType == TgEnumMessageType.Document)
 				await UpdateStateFileAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, string.Empty, 0, 0, 0, false, threadNumber);
 		}
 		catch (Exception ex)
 		{
+			BatchMessagesCount = 0;
+			MessageEntities.Clear();
 #if DEBUG
 			Debug.WriteLine(ex);
 			Debug.WriteLine(ex.StackTrace);
@@ -2139,6 +2164,13 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		}
 	}
 
+	private async Task MessageSaveAsync()
+	{
+		BatchMessagesCount = 0;
+		if (!MessageEntities.Any()) return;
+		await MessageRepository.SaveListAsync(MessageEntities);
+		MessageEntities.Clear();
+	}
 
 	private bool IsFileLocked(string filePath)
 	{

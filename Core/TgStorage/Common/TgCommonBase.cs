@@ -3,6 +3,7 @@
 
 namespace TgStorage.Common;
 
+/// <summary> Base common </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public abstract class TgCommonBase : ITgCommon
 {

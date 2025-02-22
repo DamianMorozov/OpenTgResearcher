@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Messages;
 
 /// <summary> Message DTO </summary>
-public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageDto, TgEfMessageEntity>
+public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity, TgEfMessageDto>
 {
 	#region Public and private fields, properties, constructor
 
@@ -31,9 +31,9 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageDto, T
 
 	public override string ToString() => $"{DtCreated} | {SourceId} | {Id} | {Type} | {Size} | {Message}";
 
-	public TgEfMessageDto Fill(TgEfMessageDto dto, bool isUidCopy)
+	public TgEfMessageDto Copy(TgEfMessageDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		DtCreated = dto.DtCreated;
 		SourceId = dto.SourceId;
 		Id = dto.Id;
@@ -43,7 +43,7 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageDto, T
 		return this;
 	}
 
-	public TgEfMessageDto Fill(TgEfMessageEntity item, bool isUidCopy)
+	public TgEfMessageDto Copy(TgEfMessageEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
@@ -57,14 +57,20 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageDto, T
 		return this;
 	}
 
-	public TgEfMessageDto GetDto(TgEfMessageEntity item)
-	{
-		var dto = new TgEfMessageDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfMessageDto GetNewDto(TgEfMessageEntity item) => new TgEfMessageDto().Copy(item, isUidCopy: true);
 
-	public TgEfMessageEntity GetEntity() => new()
+	public TgEfMessageEntity GetNewEntity(TgEfMessageDto dto) => new()
+	{
+		Uid = dto.Uid,
+		DtCreated = dto.DtCreated,
+		SourceId = dto.SourceId,
+		Id = dto.Id,
+		Type = dto.Type,
+		Size = dto.Size,
+		Message = dto.Message,
+	};
+
+	public TgEfMessageEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 		DtCreated = DtCreated,

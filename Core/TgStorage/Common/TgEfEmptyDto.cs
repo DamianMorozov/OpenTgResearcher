@@ -4,37 +4,33 @@
 namespace TgStorage.Common;
 
 /// <summary> Empty DTO </summary>
-public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEfEmptyDto, TgEmptyEntity>
+public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEmptyEntity, TgEfEmptyDto>
 {
-	#region Public and private fields, properties, constructor
-
-	//
-
-	#endregion
-
 	#region Public and private methods
 
-	public TgEfEmptyDto Fill(TgEfEmptyDto dto, bool isUidCopy)
+	public override string ToString() => base.ToString();
+
+	public TgEfEmptyDto Copy(TgEfEmptyDto dto, bool isUidCopy)
 	{
-		base.Fill(dto, isUidCopy);
+		base.Copy(dto, isUidCopy);
 		return this;
 	}
 
-	public TgEfEmptyDto Fill(TgEmptyEntity item, bool isUidCopy)
+	public TgEfEmptyDto Copy(TgEmptyEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
 		return this;
 	}
 
-	public TgEfEmptyDto GetDto(TgEmptyEntity item)
-	{
-		var dto = new TgEfEmptyDto();
-		dto.Fill(item, isUidCopy: true);
-		return dto;
-	}
+	public TgEfEmptyDto GetNewDto(TgEmptyEntity item) => new TgEfEmptyDto().Copy(item, isUidCopy: true);
 
-	public TgEmptyEntity GetEntity() => new()
+	public TgEmptyEntity GetNewEntity(TgEfEmptyDto dto) => new()
+	{
+		Uid = dto.Uid,
+	};
+
+	public TgEmptyEntity GetNewEntity() => new()
 	{
 		Uid = Uid,
 	};

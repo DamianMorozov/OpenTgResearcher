@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Stories;
 
 /// <summary> Story repository </summary>
-public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity>
+public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, TgEfStoryDto>, ITgEfStoryRepository
 {
 	#region Public and private methods
 
@@ -49,7 +49,7 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity>
 			: new TgEfStorageResult<TgEfStoryEntity>(TgEnumEntityState.IsExists, item);
 	}
 
-	private static Expression<Func<TgEfStoryEntity, TgEfStoryDto>> SelectDto() => item => new TgEfStoryDto().GetDto(item);
+	private static Expression<Func<TgEfStoryEntity, TgEfStoryDto>> SelectDto() => item => new TgEfStoryDto().GetNewDto(item);
 
 	public async Task<TgEfStoryDto> GetDtoAsync(Expression<Func<TgEfStoryEntity, bool>> where)
 	{

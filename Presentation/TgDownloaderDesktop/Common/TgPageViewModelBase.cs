@@ -231,7 +231,7 @@ public partial class TgPageViewModelBase : ObservableRecipient
 		{
 			IsEnabledContent = false;
 			IsPageLoad = true;
-			await Task.Delay(100);
+			await Task.Delay(250);
 			await task();
 		}
 		finally

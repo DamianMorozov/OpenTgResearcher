@@ -75,7 +75,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 		await LoadDataAsync(async () => {
 			IsDownloading = true;
 			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
-			var entity = Dto.GetEntity();
+			var entity = Dto.GetNewEntity();
 			DownloadSettings.SourceVm.Fill(entity);
 			DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
 			await DownloadSettings.UpdateSourceWithSettingsAsync();

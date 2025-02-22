@@ -63,7 +63,7 @@
 //		await LoadDataAsync(async () => {
 //			IsDownloading = true;
 //			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
-//			//var entity = Dto.GetEntity();
+//			//var entity = Dto.GetNewEntity();
 //			//BotVm.Fill(entity);
 //			await DownloadSettings.UpdateSourceWithSettingsAsync();
 

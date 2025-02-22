@@ -188,7 +188,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	        Exception.Default();
 			DataRequest = string.Empty;
 			if (!IsBot)
-				await TgGlobalTools.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetEntity(), ConfigClientDesktop);
+				await TgGlobalTools.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
 			else
 				await TgGlobalTools.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
         }

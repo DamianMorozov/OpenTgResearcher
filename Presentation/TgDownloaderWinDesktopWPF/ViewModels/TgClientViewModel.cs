@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgInfrastructure.Enums;
-
 namespace TgDownloaderWinDesktopWPF.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -112,7 +110,7 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
             await Task.Delay(1);
-            var app = AppVm.Dto.GetEntity();
+            var app = AppVm.Dto.GetNewEntity();
             TgEfProxyEntity proxyNew = await ProxyRepository.GetItemAsync(new TgEfProxyEntity { Uid = app.ProxyUid ?? Guid.Empty });
             ProxiesVms = [];
             foreach (TgEfProxyEntity proxy in (await ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false)).Items)
@@ -209,9 +207,9 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
         await TgDesktopUtils.RunFuncAsync(this, async () =>
         {
             await Task.Delay(1);
-            if (!TgEfUtils.GetEfValid<TgEfAppEntity>(AppVm.Dto.GetEntity()).IsValid)
+            if (!TgEfUtils.GetEfValid<TgEfAppEntity>(AppVm.Dto.GetNewEntity()).IsValid)
                 return;
-            await TgGlobalTools.ConnectClient.ConnectSessionAsync(proxyVm?.Dto.GetEntity() ?? ProxyVm.Dto.GetEntity());
+            await TgGlobalTools.ConnectClient.ConnectSessionAsync(proxyVm?.Dto.GetNewEntity() ?? ProxyVm.Dto.GetNewEntity());
         }, true);
 
         ServerMessage = TgDesktopUtils.TgClientVm.Exception.IsExist 
@@ -236,7 +234,7 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
 	    {
 		    await Task.Delay(1);
 		    var app = await AppRepository.GetFirstItemAsync(isReadOnly: false);
-		    AppVm.Dto = new TgEfAppDto().GetDto(app);
+		    AppVm.Dto = new TgEfAppDto().GetNewDto(app);
 	    }, false).ConfigureAwait(false);
     }
 

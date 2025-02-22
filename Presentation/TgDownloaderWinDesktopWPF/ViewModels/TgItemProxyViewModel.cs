@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgInfrastructure.Enums;
-
 namespace TgDownloaderWinDesktopWPF.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -47,11 +45,11 @@ public sealed partial class TgItemProxyViewModel : TgPageViewModelBase, INavigat
     }
 
     public void SetItemProxyVm(TgEfProxyViewModel itemProxyVm) =>
-        SetItemProxyVm(itemProxyVm.Dto.GetEntity());
+        SetItemProxyVm(itemProxyVm.Dto.GetNewEntity());
 
     public void SetItemProxyVm(TgEfProxyEntity proxy)
     {
-        ItemProxyVm.Dto.Fill(proxy, isUidCopy: false);
+        ItemProxyVm.Dto.Copy(proxy, isUidCopy: false);
         TgEfProxyViewModel itemBackup = ItemProxyVm;
 		ItemProxyVm = new() { Dto = itemBackup.Dto };
 	}
@@ -91,7 +89,7 @@ public sealed partial class TgItemProxyViewModel : TgPageViewModelBase, INavigat
         await TgDesktopUtils.RunFuncAsync(ViewModel ?? this, async () =>
         {
             await Task.Delay(1);
-            await ProxyRepository.SaveAsync(ItemProxyVm.Dto.GetEntity());
+            await ProxyRepository.SaveAsync(ItemProxyVm.Dto.GetNewEntity());
         }, false);
     }
 

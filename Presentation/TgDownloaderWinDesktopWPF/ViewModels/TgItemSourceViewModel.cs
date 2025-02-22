@@ -68,7 +68,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
 
     public void SetItemSourceVm(TgEfSourceDto dto)
     {
-        SourceVm.Dto.Fill(dto, isUidCopy: false);
+        SourceVm.Dto.Copy(dto, isUidCopy: false);
     }
 
     // GetSourceFromStorageCommand
@@ -81,7 +81,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
             if (SourceVm.Dto.Uid != SourceUid)
                 SourceUid = SourceVm.Dto.Uid;
             TgEfSourceEntity source = await SourceRepository.GetItemAsync(new TgEfSourceEntity() { Uid = SourceUid });
-            var dto = new TgEfSourceDto().Fill(source, isUidCopy: true);
+            var dto = new TgEfSourceDto().Copy(source, isUidCopy: true);
 			SetItemSourceVm(dto);
         }, true);
     }
@@ -160,7 +160,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
             TgDownloadSettingsViewModel tgDownloadSettings = TgDesktopUtils.TgDownloadsVm.CreateDownloadSettings(SourceVm);
 			// Update source from Telegram
 			await TgGlobalTools.ConnectClient.UpdateSourceDbAsync(SourceVm, tgDownloadSettings);
-            var entity = SourceVm.Dto.GetEntity();
+            var entity = SourceVm.Dto.GetNewEntity();
             await SourceRepository.SaveAsync(entity);
             // Message
             await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(SourceVm.Dto.Id, SourceVm.Dto.FirstId, SourceVm.Dto.Count, TgDesktopUtils.TgLocale.SettingsChat);
@@ -230,7 +230,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
             //if (ItemSourceVm.SourceUid != SourceUid)
             //    SourceUid = ItemSourceVm.SourceUid;
             var entity = (await SourceRepository.GetNewAsync()).Item;
-            SourceVm.Dto = new TgEfSourceDto().Fill(entity, isUidCopy: true);
+            SourceVm.Dto = new TgEfSourceDto().Copy(entity, isUidCopy: true);
         }, false);
     }
 
@@ -241,7 +241,7 @@ public sealed partial class TgItemSourceViewModel : TgPageViewModelBase, INaviga
         await TgDesktopUtils.RunFuncAsync(ViewModel ?? this, async () =>
         {
             await Task.Delay(1);
-            var entity = SourceVm.Dto.GetEntity();
+            var entity = SourceVm.Dto.GetNewEntity();
             await SourceRepository.SaveAsync(entity);
         }, false);
 

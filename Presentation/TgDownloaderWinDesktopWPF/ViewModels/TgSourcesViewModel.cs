@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgInfrastructure.Enums;
-
 namespace TgDownloaderWinDesktopWPF.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -69,7 +67,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
             if (SourcesVms[i].Dto.Id.Equals(sourceId))
             {
                 var entity = await SourceRepository.GetItemAsync(new TgEfSourceEntity { Id = sourceId });
-				SourcesVms[i].Dto = new TgEfSourceDto().Fill(entity, isUidCopy: true);
+				SourcesVms[i].Dto = new TgEfSourceDto().Copy(entity, isUidCopy: true);
                 break;
             }
         }
@@ -99,7 +97,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
             //    await ContextManager.SourceRepository.SaveAsync(sourceDefault);
             //    sources.Add(sourceDefault);
             //}
-            SetOrderSources(sources.Select(x => new TgEfSourceDto().Fill(x, isUidCopy: true)));
+            SetOrderSources(sources.Select(x => new TgEfSourceDto().Copy(x, isUidCopy: true)));
         }, false);
     }
 
@@ -200,7 +198,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
 			TgEfStorageResult<TgEfSourceEntity> storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm.Dto.Id }, isReadOnly: false);
             if (!storageResult.IsExists)
             {
-                var entity = sourceVm.Dto.GetEntity();
+                var entity = sourceVm.Dto.GetNewEntity();
                 await SourceRepository.SaveAsync(entity);
                 await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(sourceVm.Dto.Id, sourceVm.Dto.FirstId, sourceVm.Dto.Count, $"Saved source | {sourceVm.Dto}");
             }
@@ -225,7 +223,7 @@ public sealed partial class TgSourcesViewModel : TgPageViewModelBase, INavigatio
             {
                 if (SourcesVms[i].Dto.Id.Equals(sourceVm.Dto.Id))
                 {
-                    SourcesVms[i].Dto.Fill(TgDesktopUtils.TgItemSourceVm.SourceVm.Dto, isUidCopy: false);
+                    SourcesVms[i].Dto.Copy(TgDesktopUtils.TgItemSourceVm.SourceVm.Dto, isUidCopy: false);
                     break;
                 }
             }

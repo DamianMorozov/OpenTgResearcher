@@ -51,5 +51,25 @@ public static class TgCommonUtils
 	    return input;
     }
 
+    public static string CleanString(string input)
+    {
+	    if (string.IsNullOrEmpty(input))
+		    return input;
+	    // Remove HTML-tags and &nbsp;
+	    var cleaned = Regex.Replace(input, "<[^>]*>|&nbsp;", string.Empty);
+	    // Remove control characters
+	    var sb = new StringBuilder();
+	    foreach (char c in cleaned)
+	    {
+		    if (!char.IsControl(c))
+			    sb.Append(c);
+	    }
+	    cleaned = sb.ToString();
+	    // Replace multiple spaces by one
+	    cleaned = Regex.Replace(cleaned, @"\s+", " ");
+	    // Trim
+	    return cleaned.Trim();
+    }
+
 	#endregion
 }

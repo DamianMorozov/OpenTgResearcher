@@ -4,7 +4,8 @@
 namespace TgInfrastructure.Contracts;
 
 /// <summary> SQL entity </summary>
-public interface ITgDbEntity : ITgCommon
+public interface ITgEfEntity<TEfEntity> : ITgCommon 
+	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
 	#region Public and private fields, properties, constructor
 
@@ -15,7 +16,7 @@ public interface ITgDbEntity : ITgCommon
 
 	#region Public and private methods
 
-	// 
+	public TEfEntity Copy(TEfEntity item, bool isUidCopy);
 
 	#endregion
 }

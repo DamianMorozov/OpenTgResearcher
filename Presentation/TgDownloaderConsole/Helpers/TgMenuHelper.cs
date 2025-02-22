@@ -177,7 +177,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	/// <param name="table"></param>
 	internal async Task FillTableRowsFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
-		IEnumerable<TgEfFilterEntity> filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+		var filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuFiltersAllCount)), 
 			new Markup($"{filters.Count()}"));
 	}
@@ -387,12 +387,18 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			new Markup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
 
         // Enabled filters
-        IEnumerable<TgEfFilterEntity> filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
+        var filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
 	        .Items.Where(f => f.IsEnabled);
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuFiltersEnabledCount)), new Markup($"{filters.Count()}"));
 
         // Count of threads
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreads)), new Markup($"{tgDownloadSettings.CountThreads}"));
+
+        // User access
+		if (tgDownloadSettings.SourceVm.Dto.IsUserAccess)
+			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadUserAccess)), new Markup($"{true}"));
+		else
+			table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.MenuDownloadUserAccess)), new Markup($"{false}"));
 
 		await Task.CompletedTask;
 	}
@@ -446,7 +452,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			.AddChoices(list));
 		if (!Equals(sourceString, TgLocale.MenuMainReturn))
 		{
-			string[] parts = sourceString.Split('|');
+			var parts = sourceString.Split('|');
 			if (parts.Length > 3)
 			{
 				var sourceId = parts[2].TrimEnd(' ');
@@ -468,7 +474,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			.AddChoices(list));
 		if (!Equals(sourceString, TgLocale.MenuMainReturn))
 		{
-			string[] parts = sourceString.Split('|');
+			var parts = sourceString.Split('|');
 			if (parts.Length > 3)
 			{
 				var name = parts[0].TrimEnd(' ');
@@ -489,7 +495,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			.AddChoices(list));
 		if (!Equals(sourceString, TgLocale.MenuMainReturn))
 		{
-			string[] parts = sourceString.Split('|');
+			var parts = sourceString.Split('|');
 			if (parts.Length != 0)
 			{
 				var sourceId = parts[0].TrimEnd(' ');
@@ -511,7 +517,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			.AddChoices(list));
 		if (!Equals(storyString, TgLocale.MenuMainReturn))
 		{
-			string[] parts = storyString.Split('|');
+			var parts = storyString.Split('|');
 			if (parts.Length > 3)
 			{
 				var sourceId = parts[2].TrimEnd(' ');

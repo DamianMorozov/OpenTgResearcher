@@ -86,7 +86,7 @@ internal partial class TgMenuHelper
 					await MarkHistoryReadAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuDownload.ViewVersions:
-					ViewVersions(tgDownloadSettings);
+					await ViewVersionsAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuDownload.ViewContacts:
 					await ViewContactsAsync(tgDownloadSettings);
@@ -154,7 +154,7 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	private async void ViewVersions(TgDownloadSettingsViewModel tgDownloadSettings)
+	private async Task ViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewVersionsAsync(tgDownloadSettings);
 		GetVersionFromEnumerable(TgLocale.MenuViewChats,

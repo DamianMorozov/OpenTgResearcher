@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 // DI
+using TgStorage.Contracts;
+
 var containerBuilder = new ContainerBuilder();
 containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
 containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClient>();

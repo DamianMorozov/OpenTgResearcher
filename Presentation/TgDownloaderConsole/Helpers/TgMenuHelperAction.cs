@@ -59,8 +59,8 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	private async Task RunTaskProgressCoreAsync(ProgressContext progressContext, TgDownloadSettingsViewModel tgDownloadSettings,
-		Func<TgDownloadSettingsViewModel, Task> task, bool isScanCount)
+	private static async Task RunTaskProgressCoreAsync(ProgressContext progressContext, TgDownloadSettingsViewModel tgDownloadSettings,
+		Func<TgDownloadSettingsViewModel, Task> func, bool isScanCount)
 	{
 		var swChat = Stopwatch.StartNew();
 		//var swMessage = Stopwatch.StartNew();
@@ -68,12 +68,7 @@ internal partial class TgMenuHelper
 		//var progressTaskDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the message", stringLimit).TrimEnd();
 		var progressSourceDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the source", stringLimit).TrimEnd();
 		// progressMessages
-		var progressMessages = new List<ProgressTask>();// [tgDownloadSettings.CountThreads];
-		//for (var i = 0; i < tgDownloadSettings.CountThreads; i++)
-		//{
-		//	progressMessages[i] = progressContext.AddTask($"Thread {i + 1}: {progressTaskDefaultName}", new() { AutoStart = true, MaxValue = 100 });
-		//	progressMessages[i].Value = 0;
-		//}
+		var progressMessages = new List<ProgressTask>();
 		// progressSource
 		var progressSource = progressContext.AddTask(progressSourceDefaultName, autoStart: true, maxValue: tgDownloadSettings.SourceVm.Dto.Count);
 		progressSource.Value = 0;
@@ -83,7 +78,7 @@ internal partial class TgMenuHelper
 		TgGlobalTools.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
 		TgGlobalTools.ConnectClient.SetupUpdateStateMessageThread(UpdateStateMessageThreadAsync);
 		// Task
-		await task(tgDownloadSettings);
+		await func(tgDownloadSettings);
 		// Finish
 		swChat.Stop();
 		//swMessage.Stop();
@@ -97,6 +92,7 @@ internal partial class TgMenuHelper
 			: $"{GetStatus(swChat, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}";
 		await UpdateStateSourceAsync(0, 0, 0, messageFinally);
 		return;
+
 		// Update console title
 		async Task UpdateConsoleTitleAsync(string title)
 		{
@@ -279,6 +275,8 @@ internal partial class TgMenuHelper
 		await UpdateStateSourceAsync(0, 0, 0, isScanCount
 			? $"{GetStatus(sw, tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
 			: $"{GetStatus(sw, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}");
+		return;
+
 		// Update contact
 		async Task UpdateStateContactAsync(long id, string firstName, string lastName, string userName)
 		{
@@ -339,12 +337,12 @@ internal partial class TgMenuHelper
 	}
 
 
-	private string GetStatus(Stopwatch sw, long count, long current) =>
+	private static string GetStatus(Stopwatch sw, long count, long current) =>
 		count is 0 && current is 0
 			? $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | "
 			: $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | {TgCommonUtils.CalcSourceProgress(count, current):#00.00} % | {TgCommonUtils.GetLongString(current)} / {TgCommonUtils.GetLongString(count)}";
 
-	private string GetStatus(long count, long current) =>
+	private static string GetStatus(long count, long current) =>
 		count is 0 && current is 0
 			? TgLog.GetDtShortStamp()
 			: $"{TgLog.GetDtShortStamp()} | {TgCommonUtils.CalcSourceProgress(count, current):#00.00} % | {TgCommonUtils.GetLongString(current)} / {TgCommonUtils.GetLongString(count)}";

@@ -106,7 +106,7 @@ internal partial class TgMenuHelper
 	private async Task<TgDownloadSettingsViewModel> SetupDownloadSourceByIdAsync(long id)
 	{
 		var tgDownloadSettings = SetupDownloadSourceByIdCore(id);
-		await LoadTgClientSettingsByIdAsync(tgDownloadSettings.SourceVm.Dto.Id);
+		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
 		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
@@ -115,9 +115,9 @@ internal partial class TgMenuHelper
 	{
 		var tgDownloadSettings = SetupDownloadSourceCore();
 		if (string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
-			await LoadTgClientSettingsByIdAsync(tgDownloadSettings.SourceVm.Dto.Id);
+			await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
 		else
-			await LoadTgClientSettingsAsync(tgDownloadSettings);
+			await LoadTgClientSettingsByNameAsync(tgDownloadSettings);
 		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
@@ -131,33 +131,30 @@ internal partial class TgMenuHelper
 
 	private TgDownloadSettingsViewModel SetupDownloadSourceCore()
 	{
-		do
+		TgDownloadSettingsViewModel tgDownloadSettings = new();
+		var input = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetSource}:"));
+		if (!string.IsNullOrEmpty(input))
 		{
-			var input = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetSource}:"));
-			if (!string.IsNullOrEmpty(input))
-			{
-				if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
-					return SetupDownloadSourceByIdCore(sourceId);
-				input = TgCommonUtils.ClearTgPeer(input);
-				TgDownloadSettingsViewModel tgDownloadSettings = new();
-				tgDownloadSettings.SourceVm.Dto.UserName = input;
-				if (!string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
-					return tgDownloadSettings;
-			}
-		} while (1 == 0);
-		return new();
+			if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
+				return SetupDownloadSourceByIdCore(sourceId);
+			input = TgCommonUtils.ClearTgPeer(input);
+			tgDownloadSettings.SourceVm.Dto.UserName = input;
+			if (!string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
+				return tgDownloadSettings;
+		}
+		return tgDownloadSettings;
 	}
 
 	private async Task SetupDownloadSourceFirstIdAutoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		await LoadTgClientSettingsAsync(tgDownloadSettings);
+		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
 		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		await TgGlobalTools.ConnectClient.SetChannelMessageIdFirstAsync(tgDownloadSettings);
 	}
 
 	private async Task SetupDownloadSourceFirstIdManualAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		await LoadTgClientSettingsAsync(tgDownloadSettings);
+		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
 		do
 		{
 			tgDownloadSettings.SourceVm.Dto.FirstId = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgSourceFirstId}:"));
@@ -201,12 +198,12 @@ internal partial class TgMenuHelper
 
 	private async Task SetTgDownloadCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		await LoadTgClientSettingsAsync(tgDownloadSettings);
+		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
 		tgDownloadSettings.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreads}:"));
 		if (tgDownloadSettings.CountThreads < 1)
 			tgDownloadSettings.CountThreads = 1;
-		else if (tgDownloadSettings.CountThreads > 20)
-			tgDownloadSettings.CountThreads = 20;
+		else if (tgDownloadSettings.CountThreads > 100)
+			tgDownloadSettings.CountThreads = 100;
 	}
 
 	private async Task UpdateSourceWithSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -216,34 +213,35 @@ internal partial class TgMenuHelper
 			TgLocale.SettingsChat);
 	}
 
-	private async Task LoadTgClientSettingsByIdAsync(long id)
-	{
-		// Find by ID
-		TgEfStorageResult<TgEfSourceEntity>? storageResult = null;
-		if (id > 0)
-		{
-			storageResult = await SourceRepository.GetAsync(new() { Id = id });
-		}
-		TgEfSourceDto dto = new();
-		if (storageResult is not null)
-			dto = new TgEfSourceDto().Fill(storageResult.Item, isUidCopy: true);
-	}
-
-	private async Task LoadTgClientSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	private async Task LoadTgClientSettingsByIdAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		var directory = tgDownloadSettings.SourceVm.Dto.Directory;
 		// Find by ID
-		TgEfStorageResult<TgEfSourceEntity>? storageResult = null;
-		if (tgDownloadSettings.SourceVm.Dto.Id > 0)
+		var storageResult = await SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+		if (storageResult.IsExists)
 		{
-			storageResult = await SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+			if (string.IsNullOrEmpty(directory))
+				directory = storageResult.Item.Directory;
+			tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Copy(storageResult.Item, isUidCopy: true);
 		}
-		// Find by UserName
-		if (storageResult is null || !storageResult.IsExists || storageResult.Item.Id < 0)
-			storageResult = await SourceRepository.GetAsync(new() { UserName = tgDownloadSettings.SourceVm.Dto.UserName });
-		tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Fill(storageResult.Item, isUidCopy: true);
 		// Restore directory
-		if (!string.IsNullOrEmpty(directory))
+		if (!string.IsNullOrEmpty(directory) && string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.Directory))
+			tgDownloadSettings.SourceVm.Dto.Directory = directory;
+	}
+
+	private async Task LoadTgClientSettingsByNameAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		var directory = tgDownloadSettings.SourceVm.Dto.Directory;
+		// Find by UserName
+		var storageResult = await SourceRepository.GetAsync(new() { UserName = tgDownloadSettings.SourceVm.Dto.UserName });
+		if (storageResult.IsExists)
+		{
+			if (string.IsNullOrEmpty(directory))
+				directory = storageResult.Item.Directory;
+			tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Copy(storageResult.Item, isUidCopy: true);
+		}
+		// Restore directory
+		if (!string.IsNullOrEmpty(directory) && string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.Directory))
 			tgDownloadSettings.SourceVm.Dto.Directory = directory;
 	}
 

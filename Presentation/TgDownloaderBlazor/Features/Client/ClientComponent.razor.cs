@@ -237,7 +237,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 		{
 			await Task.Delay(1);
 			var item = await AppRepository.GetFirstItemAsync();
-			Dto = new TgEfAppDto().GetDto(item);
+			Dto = new TgEfAppDto().GetNewDto(item);
 		}, message =>
 		{
 			NotificationService.Notify(new()
@@ -262,7 +262,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
 			await Task.Delay(1);
-			var item = Dto.GetEntity();
+			var item = Dto.GetNewEntity();
 			await AppRepository.SaveAsync(item);
 		}, message =>
 		{

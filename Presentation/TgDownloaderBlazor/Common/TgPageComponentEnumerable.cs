@@ -3,7 +3,7 @@
 
 namespace TgDownloaderBlazor.Common;
 
-public abstract class TgPageComponentEnumerable<ITgDto, TEntity> : TgPageComponentBase //where TDto : ITgDto<TDto, TEntity>
+public abstract class TgPageComponentEnumerable<ITgDto, TEntity> : TgPageComponentBase
 {
 	#region Public and private fields, properties, constructor
 

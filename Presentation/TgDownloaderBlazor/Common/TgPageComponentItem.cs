@@ -3,12 +3,13 @@
 
 namespace TgDownloaderBlazor.Common;
 
-public abstract class TgPageComponentItem<TEntity> : TgPageComponentBase where TEntity : ITgDbEntity, new()
+public abstract class TgPageComponentItem<TEfEntity> : TgPageComponentBase
+	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
 	#region Public and private fields, properties, constructor
 
     [Parameter] public string Uid { get; set; } = string.Empty;
-	protected TEntity Item { get; set; } = new();
+	protected TEfEntity Item { get; set; } = new();
 	protected string ItemSummaryString => Item.ToDebugString();
 
 	#endregion

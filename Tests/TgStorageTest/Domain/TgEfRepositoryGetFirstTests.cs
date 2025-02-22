@@ -9,7 +9,7 @@ internal sealed class TgEfRepositoryGetFirstTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetFirst<TEntity>(ITgEfRepository<TEntity> repo) where TEntity : ITgDbFillEntity<TEntity>, new()
+	private void GetFirst<TEfEntity>(ITgEfRepository<TEfEntity> repo) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{

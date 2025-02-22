@@ -65,9 +65,9 @@
 //        });
 //    }
 
-//    private async Task CreateNewItemAndDeleteAsync<TEntity>(ITgEfRepository<TEntity> repository) where TEntity : ITgDbFillEntity<TEntity>, new()
+//    private async Task CreateNewItemAndDeleteAsync<TEfEntity>(ITgEfRepository<TEfEntity> repository) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 //    {
-//		TgEfStorageResult<TEntity> storageResult = await repository.CreateNewAsync();
+//		TgEfStorageResult<TEfEntity> storageResult = await repository.CreateNewAsync();
 //		Assert.That(storageResult.IsExists);
 //		TestContext.WriteLine(storageResult.Item.ToDebugString());
 //		storageResult = await repository.DeleteAsync(storageResult.Item);
@@ -117,16 +117,16 @@
 //        });
 //    }
 
-//	private static async Task GetNewItemsAndDeleteAsync<TEntity>(ITgEfRepository<TEntity> repository) where TEntity : ITgDbFillEntity<TEntity>, new()
+//	private static async Task GetNewItemsAndDeleteAsync<TEfEntity>(ITgEfRepository<TEfEntity> repository) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 //	{
-//		TgEfStorageResult<TEntity> storageResult;
+//		TgEfStorageResult<TEfEntity> storageResult;
 //		do
 //		{
 //			storageResult = await repository.GetNewAsync(isReadOnly: false);
 //			if (storageResult.IsExists)
 //			{
 //				TestContext.WriteLine(storageResult.Item.ToDebugString());
-//				TgEfStorageResult<TEntity> storageResultDelete = await repository.DeleteAsync(storageResult.Item);
+//				TgEfStorageResult<TEfEntity> storageResultDelete = await repository.DeleteAsync(storageResult.Item);
 //				Assert.That(!storageResultDelete.IsExists);
 //			}
 //		} while (storageResult.IsExists);

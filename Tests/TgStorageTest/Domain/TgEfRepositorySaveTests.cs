@@ -9,12 +9,12 @@ internal sealed class TgEfRepositorySaveTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void SaveItemAsync<TEntity>(ITgEfRepository<TEntity> repo) 
-		where TEntity : ITgDbFillEntity<TEntity>, new()
+	private void SaveItemAsync<TEfEntity>(ITgEfRepository<TEfEntity> repo) 
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			TgEfStorageResult<TEntity> storageResult = await repo.GetFirstAsync();
+			TgEfStorageResult<TEfEntity> storageResult = await repo.GetFirstAsync();
 			if (storageResult.IsExists)
 			{
 				var itemFind = await repo.GetItemAsync(storageResult.Item, isReadOnly: false);

@@ -9,12 +9,12 @@ internal sealed class TgEfRepositoryGetListWhereTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetListWhereAsync<TEntity>(ITgEfRepository<TEntity> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
-		where TEntity : ITgDbFillEntity<TEntity>, new()
+	private void GetListWhereAsync<TEfEntity>(ITgEfRepository<TEfEntity> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			TgEfStorageResult<TEntity> storageResult = await repo.GetListAsync(count, 0, TgEfUtils.WhereUidNotEmpty<TEntity>());
+			TgEfStorageResult<TEfEntity> storageResult = await repo.GetListAsync(count, 0, TgEfUtils.WhereUidNotEmpty<TEfEntity>());
 			TestContext.WriteLine($"Found {storageResult.Items.Count()} items.");
 			foreach (var item in storageResult.Items)
 			{

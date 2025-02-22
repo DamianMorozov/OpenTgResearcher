@@ -9,7 +9,8 @@ internal sealed class TgEfRepositoryGetCountTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetCountAsync<TEntity>(ITgEfRepository<TEntity> repo) where TEntity : ITgDbFillEntity<TEntity>, new()
+	private void GetCountAsync<TEfEntity>(ITgEfRepository<TEfEntity> repo)
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
@@ -19,7 +20,7 @@ internal sealed class TgEfRepositoryGetCountTests : TgDbContextTestsBase
 	}
 
 	[Test]
-	public void TgEf_get_count_appa_async() => GetCountAsync(new TgEfAppRepository());
+	public void TgEf_get_count_apps_async() => GetCountAsync(new TgEfAppRepository());
 
 	[Test]
 	public void TgEf_get_count_contacts_async() => GetCountAsync(new TgEfContactRepository());

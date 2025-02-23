@@ -26,5 +26,16 @@ public static class TgGlobalTools
         AppType = appType;
     }
 
-    #endregion
+	#endregion
+
+	#region Constants
+	
+	public const string HttpHeaderContentTypeJson = "application/json";
+	public const string RouteChangeLog = "ChangeLog";
+	public const string RouteController = "[controller]";
+	public const string RouteGet = "Get";
+	public const string RoutePost = "Post";
+	public const string RouteRoot = "";
+	
+	#endregion
 }

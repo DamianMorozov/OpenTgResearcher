@@ -1,6 +1,7 @@
 ﻿# Download statistics
 
 - GitHub all releases       	![GitHub all releases](https://img.shields.io/github/downloads/DamianMorozov/TgDownloader/total?style=social)
+- GitHub preview v0.6.020		![GitHub preview v0.6.020](https://img.shields.io/github/downloads/DamianMorozov/TgDownloader/v0.6.020/total?style=social)
 - GitHub preview v0.5.440		![GitHub preview v0.5.440](https://img.shields.io/github/downloads/DamianMorozov/TgDownloader/v0.5.440/total?style=social)
 - GitHub preview v0.5.430		![GitHub preview v0.5.430](https://img.shields.io/github/downloads/DamianMorozov/TgDownloader/v0.5.430/total?style=social)
 - GitHub preview v0.5.410		![GitHub preview v0.5.410](https://img.shields.io/github/downloads/DamianMorozov/TgDownloader/v0.5.410/total?style=social)

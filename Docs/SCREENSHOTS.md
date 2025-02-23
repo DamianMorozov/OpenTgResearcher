@@ -1,5 +1,12 @@
 # Screenshots
 
+## [0.6.020] - 2025-02-23
+### TgDownloaderConsole
+<p align="center"><img src="Assets/v0.6.020/TgDownloaderConsoleHome.png"></p>
+<p align="center"><img src="Assets/v0.6.020/TgDownloaderConsoleApplication.png"></p>
+<p align="center"><img src="Assets/v0.6.020/TgDownloaderConsoleAdvanced.png"></p>
+<p align="center"><img src="Assets/v0.6.020/TgDownloaderConsoleUpdate.png"></p>
+
 ## [0.5.440] - 2025-01-25
 ### TgDownloaderConsole
 <p align="center"><img src="Assets/v0.5.440/TgDownloaderConsoleHome.png"></p>

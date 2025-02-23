@@ -79,6 +79,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetFolder => "Setup download folder";
 	public string MenuDownloadSetIsAddMessageId => "Enable join message ID with file name";
 	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
+	public string MenuDownloadSetIsReadMessages => "Enable read messages";
 	public string MenuDownloadSetIsRewriteFiles => "Enable rewrite exists files";
 	public string MenuDownloadSetIsRewriteMessages => "Enable rewrite exists messages";
 	public string MenuDownloadSetSource => "Setup source (ID/username)";
@@ -236,6 +237,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgMustSetSettings => "You must setup the settings before";
 	public string TgSettingsDestDirectory => "Destination";
 	public string TgSettingsIsJoinFileNameWithMessageId => "Join message ID";
+	public string TgSettingsIsReadMessages => "Read messages";
 	public string TgSettingsIsRewriteFiles => "Rewrite files";
 	public string TgSettingsIsRewriteMessages => "Rewrite messages";
 	public string TgSettingsSourceFirstLastId => "First/last ID";

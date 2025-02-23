@@ -374,6 +374,10 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsRewriteFiles)),
 			new Markup(tgDownloadSettings.IsRewriteFiles.ToString()));
 
+		//// Read messages
+		//table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsReadMessages)),
+		//	new Markup(tgDownloadSettings.IsReadMessages.ToString()));
+
 		// Rewrite messages
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsRewriteMessages)),
 			new Markup(tgDownloadSettings.IsRewriteMessages.ToString()));

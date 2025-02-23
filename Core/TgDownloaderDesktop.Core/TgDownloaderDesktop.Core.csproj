@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Platforms>x86;x64;arm64;AnyCPU</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.5.440.0</Version>
+    <Version>0.6.20.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

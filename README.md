@@ -2,7 +2,7 @@
 
 ## Product assignment
 Telegram's open researcher and search engine. 
-Download chat rooms by catalogs. 
+Download chats by catalogs. 
 
 ## Official site
 ### <div align="center"><b><a href="http://opentgresearcher.online">opentgresearcher.online</a></b></div>

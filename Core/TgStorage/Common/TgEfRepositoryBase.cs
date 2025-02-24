@@ -134,14 +134,14 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 	public virtual async Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true) =>
 		topRecords switch
 		{
-			TgEnumTableTopRecords.Top1 => await GetListItemsAsync(1, skip, isReadOnly),
-			TgEnumTableTopRecords.Top20 => await GetListItemsAsync(20, skip, isReadOnly),
-			TgEnumTableTopRecords.Top100 => await GetListItemsAsync(200, skip, isReadOnly),
-			TgEnumTableTopRecords.Top1000 => await GetListItemsAsync(1_000, skip, isReadOnly),
-			TgEnumTableTopRecords.Top10000 => await GetListItemsAsync(10_000, skip, isReadOnly),
-			TgEnumTableTopRecords.Top100000 => await GetListItemsAsync(100_000, skip, isReadOnly),
-			TgEnumTableTopRecords.Top1000000 => await GetListItemsAsync(1_000_000, skip, isReadOnly),
-			_ => await GetListItemsAsync(0, skip, isReadOnly),
+			TgEnumTableTopRecords.Top1 => (await GetListAsync(1, skip, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top20 => (await GetListAsync(20, skip, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top100 => (await GetListAsync(200, skip, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top1000 => (await GetListAsync(1_000, skip, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top10000 => (await GetListAsync(10_000, skip, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top100000 => (await GetListAsync(100_000, skip, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top1000000 => (await GetListAsync(1_000_000, skip, isReadOnly)).Items,
+			_ => (await GetListAsync(0, skip, isReadOnly)).Items,
 		};
 
 	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true)
@@ -161,19 +161,9 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, bool isReadOnly = true) => 
 		await UseOverrideMethodAsync();
 
-	public virtual async Task<IEnumerable<TEfEntity>> GetListItemsAsync(int take, int skip, bool isReadOnly = true) => 
-		await UseOverrideMethodItemsAsync();
-
 	public TgEfStorageResult<TEfEntity> GetList(int take, int skip, bool isReadOnly = true)
 	{
 		var task = GetListAsync(take, skip, isReadOnly);
-		task.Wait();
-		return task.Result;
-	}
-
-	public IEnumerable<TEfEntity> GetListItems(int take, int skip, bool isReadOnly = true)
-	{
-		var task = GetListItemsAsync(take, skip, isReadOnly);
 		task.Wait();
 		return task.Result;
 	}
@@ -196,14 +186,14 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		bool isReadOnly = true) =>
 		topRecords switch
 		{
-			TgEnumTableTopRecords.Top1 => await GetListItemsAsync(1, skip, where, isReadOnly),
-			TgEnumTableTopRecords.Top20 => await GetListItemsAsync(20, skip, where, isReadOnly),
-			TgEnumTableTopRecords.Top100 => await GetListItemsAsync(200, skip, where, isReadOnly),
-			TgEnumTableTopRecords.Top1000 => await GetListItemsAsync(1_000, skip, where, isReadOnly),
-			TgEnumTableTopRecords.Top10000 => await GetListItemsAsync(10_000, skip, where, isReadOnly),
-			TgEnumTableTopRecords.Top100000 => await GetListItemsAsync(100_000, skip, where, isReadOnly),
-			TgEnumTableTopRecords.Top1000000 => await GetListItemsAsync(1_000_000, skip, where, isReadOnly),
-			_ => await GetListItemsAsync(0, skip, where, isReadOnly),
+			TgEnumTableTopRecords.Top1 => (await GetListAsync(1, skip, where, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top20 => (await GetListAsync(20, skip, where, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top100 => (await GetListAsync(200, skip, where, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top1000 => (await GetListAsync(1_000, skip, where, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top10000 => (await GetListAsync(10_000, skip, where, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top100000 => (await GetListAsync(100_000, skip, where, isReadOnly)).Items,
+			TgEnumTableTopRecords.Top1000000 => (await GetListAsync(1_000_000, skip, where, isReadOnly)).Items,
+			_ => (await GetListAsync(0, skip, where, isReadOnly)).Items,
 		};
 
 	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true)
@@ -223,19 +213,9 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true) =>
 		await UseOverrideMethodAsync();
 
-	public virtual async Task<IEnumerable<TEfEntity>> GetListItemsAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true) =>
-		await UseOverrideMethodItemsAsync();
-
 	public TgEfStorageResult<TEfEntity> GetList(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true)
 	{
 		var task = GetListAsync(take, skip, where, isReadOnly);
-		task.Wait();
-		return task.Result;
-	}
-
-	public IEnumerable<TEfEntity> GetListItems(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true)
-	{
-		var task = GetListItemsAsync(take, skip, where, isReadOnly);
 		task.Wait();
 		return task.Result;
 	}
@@ -344,14 +324,15 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		return task.Result;
 	}
 
-	public virtual async Task<bool> SaveListAsync(List<TEfEntity> items, bool isFirstTry = true)
+	public virtual async Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isFirstTry = true)
 	{
 		var transaction = await EfContext.Database.BeginTransactionAsync();
 		await using (transaction)
 		{
+			var array = items as TEfEntity[] ?? items.ToArray();
 			try
 			{
-				var uniqueItems = items.Distinct().ToList();
+				var uniqueItems = array.Distinct().ToArray();
 				var storageItems = new List<TEfEntity>();
 				foreach (var item in uniqueItems)
 				{
@@ -407,7 +388,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 					var entry = ex.Entries.Single();
 					var databaseValues = await entry.GetDatabaseValuesAsync() ?? throw new Exception("The record you attempted to edit was deleted!");
 					entry.OriginalValues.SetValues(databaseValues);
-					return await SaveListAsync(items, isFirstTry: false);
+					return await SaveListAsync(array, isFirstTry: false);
 				}
 				throw;
 			}

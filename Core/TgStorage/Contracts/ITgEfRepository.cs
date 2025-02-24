@@ -30,17 +30,13 @@ public interface ITgEfRepository<TEfEntity> where TEfEntity : class, ITgEfEntity
 	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public IEnumerable<TEfEntity> GetListItems(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, bool isReadOnly = true);
-	public Task<IEnumerable<TEfEntity>> GetListItemsAsync(int take, int skip, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetList(int take, int skip, bool isReadOnly = true);
-	public IEnumerable<TEfEntity> GetListItems(int take, int skip, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public IEnumerable<TEfEntity> GetListItems(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
-	public Task<IEnumerable<TEfEntity>> GetListItemsAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetList(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
-	public IEnumerable<TEfEntity> GetListItems(int take, int skip, Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public Task<int> GetCountAsync();
 	public int GetCount();
 	public Task<int> GetCountAsync(Expression<Func<TEfEntity, bool>> where);
@@ -52,7 +48,7 @@ public interface ITgEfRepository<TEfEntity> where TEfEntity : class, ITgEfEntity
 
 	public Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity item, bool isFirstTry = true);
 	public TgEfStorageResult<TEfEntity> Save(TEfEntity item);
-	public Task<bool> SaveListAsync(List<TEfEntity> items, bool isFirstTry = true);
+	public Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isFirstTry = true);
 	public bool SaveList(List<TEfEntity> items, bool isFirstTry = true);
 	public Task<TgEfStorageResult<TEfEntity>> SaveWithoutTransactionAsync(TEfEntity item);
 	public TgEfStorageResult<TEfEntity> SaveWithoutTransaction(TEfEntity item);

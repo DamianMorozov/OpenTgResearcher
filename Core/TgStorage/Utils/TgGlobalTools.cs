@@ -14,8 +14,15 @@ public static class TgGlobalTools
 
     /// <summary> Autofac Container </summary>
 	public static Autofac.IContainer Container = null!;
-
+	/// <summary> Telegram client </summary>
 	public static ITgConnectClient ConnectClient { get; set; } = null!;
+	/// <summary> Limit count of download threads by free license </summary>
+	public static int DownloadCountThreadsLimitFree => 10;
+	/// <summary> Limit count of download threads by test license </summary>
+	public static int DownloadCountThreadsLimitTest => 100;
+	/// <summary> Limit batch of saving messages </summary>
+	public static int BatchMessagesLimit => 100;
+
 
 	#endregion
 

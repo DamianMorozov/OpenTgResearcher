@@ -111,7 +111,9 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 
     public string ToDebugString() =>
         $"{TgEfConstants.TableSources} | {Uid} | {Id} | {(IsAutoUpdate ? "a" : " ")} | {(FirstId == Count ? "v" : "x")} | {UserName} | " +
-        $"{(string.IsNullOrEmpty(Title) ? string.Empty : TgDataFormatUtils.TrimStringEnd(Title))} | {FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";
+        $"{(string.IsNullOrEmpty(Title) 
+	        ? string.Empty 
+	        : TgDataFormatUtils.TrimStringEnd(Title))} | {FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";
 
     public void Default()
     {
@@ -154,6 +156,7 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 
 	public string ToConsoleString() => $"{Id,11} | " +
 		$"{TgDataFormatUtils.GetFormatString(UserName, 25).TrimEnd(),-25} | " +
+		$"{(IsUserAccess ? "access" : ""),-6} | " +
 		$"{(IsActive ? "active" : ""),-6} | " +
 		$"{GetPercentCountString()} | " +
 		$"{TgDataFormatUtils.GetFormatString(Title, 30).TrimEnd(),-30} | " +

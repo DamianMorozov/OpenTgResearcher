@@ -64,7 +64,6 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 
 	private List<TgEfMessageEntity> MessageEntities { get; }
 	private int BatchMessagesCount { get; set; }
-	private int BatchMessagesSize => 100;
 
 	protected TgConnectClientBase()
 	{
@@ -1272,7 +1271,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		sourceVm2.Dto.Copy(tgDownloadSettings2.SourceVm.Dto, isUidCopy: false);
 	}
 
-	private async Task UpdateSourceTgCoreAsync(Channel channel, string about, int count)
+	private async Task UpdateSourceTgCoreAsync(Channel channel, string about, int count, bool isUserAccess)
 	{
 		var storageResult = await SourceRepository.GetAsync(new() { Id = channel.id });
 		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
@@ -1283,11 +1282,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		sourceNew.Title = channel.title;
 		sourceNew.About = about;
 		sourceNew.Count = count;
+		sourceNew.IsUserAccess = isUserAccess;
 		// Save
 		await SourceRepository.SaveAsync(sourceNew);
 	}
 
-	private async Task UpdateSourceTgCoreAsync(ChatBase chatBase, string about, int count)
+	private async Task UpdateSourceTgCoreAsync(ChatBase chatBase, string about, int count, bool isUserAccess)
 	{
 		var storageResult = await SourceRepository.GetAsync(new() { Id = chatBase.ID });
 		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
@@ -1298,6 +1298,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		sourceNew.Title = chatBase.Title;
 		sourceNew.About = about;
 		sourceNew.Count = count;
+		sourceNew.IsUserAccess = isUserAccess;
 		// Save
 		await SourceRepository.SaveAsync(sourceNew);
 	}
@@ -1461,11 +1462,11 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		}
 	}
 
-	private async Task UpdateSourceTgAsync(Channel channel, int count) =>
-		await UpdateSourceTgCoreAsync(channel, string.Empty, count);
+	private async Task UpdateSourceTgAsync(Channel channel, int count, bool isUserAccess) =>
+		await UpdateSourceTgCoreAsync(channel, string.Empty, count, isUserAccess);
 
-	private async Task UpdateSourceTgAsync(ChatBase chatBase, int count) =>
-		await UpdateSourceTgCoreAsync(chatBase, string.Empty, count);
+	private async Task UpdateSourceTgAsync(ChatBase chatBase, int count, bool isUserAccess) =>
+		await UpdateSourceTgCoreAsync(chatBase, string.Empty, count, isUserAccess);
 
 	public async Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType)
 	{
@@ -1476,6 +1477,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			switch (sourceType)
 			{
 				case TgEnumSourceType.Chat:
+					await DisableUserAccessForAllChatsAsync();
 					await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectChats);
 					await CollectAllChatsAsync();
 					tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
@@ -1486,6 +1488,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
 					break;
 				case TgEnumSourceType.Dialog:
+					await DisableUserAccessForAllChatsAsync();
 					await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectDialogs);
 					await CollectAllDialogsAsync();
 					tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
@@ -1516,6 +1519,16 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await UpdateTitleAsync(string.Empty);
 	}
 
+	private async Task DisableUserAccessForAllChatsAsync()
+	{
+		var chats = (await SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false)).ToArray();
+		foreach (var chat in chats)
+		{
+			chat.IsUserAccess = false;
+		}
+		await SourceRepository.SaveListAsync(chats);
+	}
+
 	private async Task SearchSourcesTgConsoleForChannelsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		foreach (var channel in EnumerableChannels)
@@ -1532,14 +1545,14 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 						var fullChannel = await Client.Channels_GetFullChannel(channel);
 						if (fullChannel?.full_chat is ChannelFull channelFull)
 						{
-							await UpdateSourceTgCoreAsync(channel, channelFull.about, messagesCount);
+							await UpdateSourceTgCoreAsync(channel, channelFull.about, messagesCount, isUserAccess: true);
 							await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent,
 								tgDownloadSettings.SourceScanCount, $"{channel} | {TgDataFormatUtils.TrimStringEnd(channelFull.about, 40)}");
 						}
 					}
 					else
 					{
-						await UpdateSourceTgAsync(channel, messagesCount);
+						await UpdateSourceTgAsync(channel, messagesCount, isUserAccess: true);
 						await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent,
 							tgDownloadSettings.SourceScanCount, $"{channel}");
 					}
@@ -1568,9 +1581,9 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					tgDownloadSettings.Chat.Base = group;
 					var messagesCount = await GetChannelMessageIdLastAsync(tgDownloadSettings);
 					if (group is Channel channel)
-						await UpdateSourceTgAsync(channel, messagesCount);
+						await UpdateSourceTgAsync(channel, messagesCount, isUserAccess: true);
 					else
-						await UpdateSourceTgAsync(group, messagesCount);
+						await UpdateSourceTgAsync(group, messagesCount, isUserAccess: true);
 					if (tgDownloadSettings is TgDownloadSettingsViewModel tgDownloadSettings2)
 						await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, 0, $"{group} | {messagesCount}");
 				});
@@ -1792,7 +1805,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				}
 				tgDownloadSettings2.SourceVm.Dto.FirstId = sourceFirstId > sourceLastId ? sourceLastId : sourceFirstId;
 				// Finally save all not stored messages
-				await MessageSaveAsync();
+				await MessageSaveAsync(tgDownloadSettings);
 			}
 			else
 			{
@@ -2129,16 +2142,19 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToConsoleString()}");
 				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToConsoleString()}");
 #endif
-				if (BatchMessagesCount < BatchMessagesSize)
+				if (tgDownloadSettings.IsSaveMessages)
 				{
-					MessageEntities.Add(messageItem);
-					BatchMessagesCount++;
-				}
-				else
-				{
-					await MessageRepository.SaveListAsync(MessageEntities);
-					BatchMessagesCount = 0;
-					MessageEntities.Clear();
+					if (BatchMessagesCount < TgGlobalTools.BatchMessagesLimit)
+					{
+						MessageEntities.Add(messageItem);
+						BatchMessagesCount++;
+					}
+					else
+					{
+						await MessageRepository.SaveListAsync(MessageEntities);
+						BatchMessagesCount = 0;
+						MessageEntities.Clear();
+					}
 				}
 			}
 			if (messageType == TgEnumMessageType.Document)
@@ -2164,11 +2180,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		}
 	}
 
-	private async Task MessageSaveAsync()
+	private async Task MessageSaveAsync(ITgDownloadViewModel tgDownloadSettings)
 	{
 		BatchMessagesCount = 0;
 		if (!MessageEntities.Any()) return;
-		await MessageRepository.SaveListAsync(MessageEntities);
+		if (tgDownloadSettings.IsSaveMessages)
+			await MessageRepository.SaveListAsync(MessageEntities);
 		MessageEntities.Clear();
 	}
 

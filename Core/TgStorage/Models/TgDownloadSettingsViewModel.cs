@@ -18,7 +18,7 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 	[ObservableProperty]
 	public partial TgEfVersionViewModel VersionVm { get; set; }
 	[ObservableProperty] 
-	public partial bool IsReadMessages { get; set; } = true;
+	public partial bool IsSaveMessages { get; set; } = true;
 	[ObservableProperty]
 	public partial bool IsRewriteFiles { get; set; }
 	[ObservableProperty]

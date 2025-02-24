@@ -18,6 +18,8 @@ public sealed class TgAppSettingsHelper : ITgHelper
 
 	[DefaultValue("")]
 	public string AppVersion { get; set; }
+	[DefaultValue("")]
+	public string StorageVersion { get; set; }
 	[DefaultValue(false)]
 	public bool IsUseProxy { get; set; }
 	public TgAppXmlModel AppXml { get; set; }
@@ -27,6 +29,8 @@ public sealed class TgAppSettingsHelper : ITgHelper
 	{
 		if (string.IsNullOrEmpty(AppVersion))
 			AppVersion = this.GetDefaultPropertyString(nameof(AppVersion));
+		if (string.IsNullOrEmpty(StorageVersion))
+			StorageVersion = this.GetDefaultPropertyString(nameof(StorageVersion));
 		IsUseProxy = this.GetDefaultPropertyBool(nameof(IsUseProxy));
 
 		AppXml = new();

@@ -1,8 +1,7 @@
 ﻿# OpenTgResearcher - Открытый исследователь Telegram
 
 ## Назначение продукта
-Открытый исследователь и поисковик Телеграм. 
-Скачивай чаты по каталогам. 
+Открытый исследователь и поисковик Телеграм. Скачивай чаты по каталогам. 
 
 ## Official site
 ### <div align="center"><b><a href="http://opentgresearcher.online">opentgresearcher.online</a></b></div>

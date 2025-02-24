@@ -1,8 +1,7 @@
 ﻿# OpenTgResearcher - Open Telegram Researcher
 
 ## Product assignment
-Telegram's open researcher and search engine. 
-Download chats by catalogs. 
+Telegram's open researcher and search engine. Download chats by catalogs. 
 
 ## Official site
 ### <div align="center"><b><a href="http://opentgresearcher.online">opentgresearcher.online</a></b></div>

@@ -22,11 +22,11 @@ internal partial class TgMenuHelper
 					TgLocale.MenuDownloadSetSourceFirstIdAuto,
 					TgLocale.MenuDownloadSetSourceFirstIdManual,
 					TgLocale.MenuDownloadSetIsRewriteFiles,
-					//TgLocale.MenuDownloadSetIsReadMessages,
+					TgLocale.MenuDownloadSetIsSaveMessages,
 					TgLocale.MenuDownloadSetIsRewriteMessages,
 					TgLocale.MenuDownloadSetIsAddMessageId,
 					TgLocale.MenuDownloadSetIsAutoUpdate,
-					TgLocale.MenuDownloadSetCountThreads,
+					TgLocale.MenuDownloadSetCountThreadsByFreeLicense,
 					TgLocale.MenuSaveSettings,
 					TgLocale.MenuManualDownload
 				));
@@ -38,8 +38,8 @@ internal partial class TgMenuHelper
 			return TgEnumMenuDownload.SetSourceFirstIdAuto;
 		if (prompt.Equals(TgLocale.MenuDownloadSetSourceFirstIdManual))
 			return TgEnumMenuDownload.SetSourceFirstIdManual;
-		//if (prompt.Equals(TgLocale.MenuDownloadSetIsReadMessages))
-		//	return TgEnumMenuDownload.SetIsReadMessages;
+		if (prompt.Equals(TgLocale.MenuDownloadSetIsSaveMessages))
+			return TgEnumMenuDownload.SetIsSaveMessages;
 		if (prompt.Equals(TgLocale.MenuDownloadSetIsRewriteFiles))
 			return TgEnumMenuDownload.SetIsRewriteFiles;
 		if (prompt.Equals(TgLocale.MenuDownloadSetIsRewriteMessages))
@@ -48,7 +48,7 @@ internal partial class TgMenuHelper
 			return TgEnumMenuDownload.SetIsAddMessageId;
 		if (prompt.Equals(TgLocale.MenuDownloadSetIsAutoUpdate))
 			return TgEnumMenuDownload.SetIsAutoUpdate;
-		if (prompt.Equals(TgLocale.MenuDownloadSetCountThreads))
+		if (prompt.Equals(TgLocale.MenuDownloadSetCountThreadsByFreeLicense))
 			return TgEnumMenuDownload.SetCountThreads;
 		if (prompt.Equals(TgLocale.MenuSaveSettings))
 			return TgEnumMenuDownload.SettingsSave;
@@ -81,8 +81,8 @@ internal partial class TgMenuHelper
 					if (!tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
 						SetTgDownloadIsAutoUpdate(tgDownloadSettings);
 					break;
-				case TgEnumMenuDownload.SetIsReadMessages:
-					SetTgDownloadIsReadMessages(tgDownloadSettings);
+				case TgEnumMenuDownload.SetIsSaveMessages:
+					SetTgDownloadIsSaveMessages(tgDownloadSettings);
 					break;
 				case TgEnumMenuDownload.SetIsRewriteFiles:
 					SetTgDownloadIsRewriteFiles(tgDownloadSettings);
@@ -190,8 +190,8 @@ internal partial class TgMenuHelper
 		} while (!Directory.Exists(tgDownloadSettings.SourceVm.Dto.Directory));
 	}
 
-	private void SetTgDownloadIsReadMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsReadMessages = AskQuestionReturnPositive(TgLocale.TgSettingsIsReadMessages, true);
+	private void SetTgDownloadIsSaveMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		tgDownloadSettings.IsSaveMessages = AskQuestionReturnPositive(TgLocale.TgSettingsIsSaveMessages, true);
 
 	private void SetTgDownloadIsRewriteFiles(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		tgDownloadSettings.IsRewriteFiles = AskQuestionReturnPositive(TgLocale.TgSettingsIsRewriteFiles, true);
@@ -208,11 +208,25 @@ internal partial class TgMenuHelper
 	private async Task SetTgDownloadCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
-		tgDownloadSettings.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreads}:"));
+		tgDownloadSettings.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreadsByFreeLicense}:"));
 		if (tgDownloadSettings.CountThreads < 1)
 			tgDownloadSettings.CountThreads = 1;
-		else if (tgDownloadSettings.CountThreads > 20)
-			tgDownloadSettings.CountThreads = 20;
+		else
+		{
+			switch (TgLicense.CurrentLicense.LicenseType)
+			{
+				case TgEnumLicenseType.Test:
+				case TgEnumLicenseType.Paid:
+				case TgEnumLicenseType.Premium:
+					if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitTest)
+						tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimitTest;
+					break;
+				default:
+					if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitFree)
+						tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimitFree;
+					break;
+			}
+		}
 	}
 
 	private async Task UpdateSourceWithSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -224,7 +238,9 @@ internal partial class TgMenuHelper
 
 	private async Task LoadTgClientSettingsByIdAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
+		// Save manual settings
 		var directory = tgDownloadSettings.SourceVm.Dto.Directory;
+		var firstId = tgDownloadSettings.SourceVm.Dto.FirstId;
 		// Find by ID
 		var storageResult = await SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
 		if (storageResult.IsExists)
@@ -233,9 +249,11 @@ internal partial class TgMenuHelper
 				directory = storageResult.Item.Directory;
 			tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Copy(storageResult.Item, isUidCopy: true);
 		}
-		// Restore directory
-		if (!string.IsNullOrEmpty(directory) && string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.Directory))
+		// Restore manual settings
+		if (!string.IsNullOrEmpty(directory))
 			tgDownloadSettings.SourceVm.Dto.Directory = directory;
+		if (firstId > 1)
+			tgDownloadSettings.SourceVm.Dto.FirstId = firstId;
 	}
 
 	private async Task LoadTgClientSettingsByNameAsync(TgDownloadSettingsViewModel tgDownloadSettings)

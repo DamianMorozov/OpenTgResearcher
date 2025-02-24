@@ -50,7 +50,7 @@ internal partial class TgMenuHelper
 		if (prompt.Equals(TgLocale.MenuViewStories))
 			return TgEnumMenuDownload.ViewStories;
 		if (prompt.Equals(TgLocale.MenuViewChats))
-			return TgEnumMenuDownload.ViewSources;
+			return TgEnumMenuDownload.ViewChats;
 		return TgEnumMenuDownload.Return;
 	}
 
@@ -94,8 +94,8 @@ internal partial class TgMenuHelper
 				case TgEnumMenuDownload.ViewStories:
                     await ViewStoriesAsync(tgDownloadSettings);
 					break;
-				case TgEnumMenuDownload.ViewSources:
-					await ViewSourcesAsync(tgDownloadSettings);
+				case TgEnumMenuDownload.ViewChats:
+					await ViewChatsAsync(tgDownloadSettings);
 					break;
 			}
 		} while (menu is not TgEnumMenuDownload.Return);
@@ -128,7 +128,7 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	private async Task ViewSourcesAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	private async Task ViewChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewSourcesAsync(tgDownloadSettings);
 		var storageResult = await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);

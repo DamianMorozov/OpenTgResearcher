@@ -12,6 +12,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 	internal static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
 	internal static TgLogHelper TgLog => TgLogHelper.Instance;
+	internal static TgLicenseManagerHelper TgLicense => TgLicenseManagerHelper.Instance;
 	internal Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
 	internal TgEnumMenuMain Value { get; set; }
 	private TgEfAppRepository AppRepository { get; } = new();
@@ -28,6 +29,13 @@ internal sealed partial class TgMenuHelper : ITgHelper
 
 	public string ToDebugString() => TgLocale.UseOverrideMethod;
 
+	internal async Task SetStorageVersionAsync()
+	{
+		var version = (await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
+			.Items.Single(x => x.Version == VersionRepository.LastVersion);
+		TgAppSettings.StorageVersion = $"v{version.Version}";
+	}
+
 	internal static async Task ShowTableCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, string title, Action<Table> fillTableColumns,
 		Func<TgDownloadSettingsViewModel, Table, Task> fillTableRowsAsync)
 	{
@@ -35,9 +43,9 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		AnsiConsole.Write(new FigletText(TgConstants.AppTitle).Centered().Color(Color.Yellow));
 		Table table = new()
 		{
-			ShowHeaders = true,
+			ShowHeaders = false,
 			Border = TableBorder.Rounded,
-			Title = new(title, Style.Plain),
+			Title = new($"{title} / {TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / {TgLicense.CurrentLicense.Description}", Style.Plain),
 		};
 		fillTableColumns(table);
 		await fillTableRowsAsync(tgDownloadSettings, table);
@@ -53,6 +61,9 @@ internal sealed partial class TgMenuHelper : ITgHelper
 
 	internal async Task ShowTableFiltersSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, TgLocale.MenuMainFilters, FillTableColumns, FillTableRowsFiltersAsync);
+
+	internal async Task ShowTableLicenseSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		await ShowTableCoreAsync(tgDownloadSettings, TgLocale.MenuMainLicense, FillTableColumns, FillTableRowsLicenseAsync);
 
 	internal async Task ShowTableAppSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, TgLocale.MenuMainApp, FillTableColumns, FillTableRowsAppAsync);
@@ -96,9 +107,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		// App version
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.AppVersion)), new Markup(TgAppSettings.AppVersion));
 		// Storage version
-		var version = (await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).
-	            Items.Single(x => x.Version == VersionRepository.LastVersion);
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.StorageVersion)), new Markup($"v{version.Version}"));
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.StorageVersion)), new Markup(TgAppSettings.StorageVersion));
 
 		// App settings
 		table.AddRow(new Markup(TgAppSettings.IsReady
@@ -157,11 +166,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		await Task.CompletedTask;
 	}
 
-	/// <summary>
-	/// Storage settings.
-	/// </summary>
-	/// <param name="tgDownloadSettings"></param>
-	/// <param name="table"></param>
+	/// <summary> Storage settings </summary>
 	internal async Task FillTableRowsStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
 		table.AddRow(new Markup(TgGlobalTools.IsXmlReady
@@ -170,16 +175,20 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		await Task.CompletedTask;
 	}
 
-	/// <summary>
-	/// Filters settings.
-	/// </summary>
-	/// <param name="tgDownloadSettings"></param>
-	/// <param name="table"></param>
+	/// <summary> Filters settings </summary>
 	internal async Task FillTableRowsFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
 		var filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuFiltersAllCount)), 
 			new Markup($"{filters.Count()}"));
+	}
+
+	/// <summary> License settings </summary>
+	internal async Task FillTableRowsLicenseAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+	{
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), new Markup($"{TgLicense.CurrentLicense.Description}"));
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), new Markup($"{TgLicense.CurrentLicense.LicenseKey}"));
+		await Task.CompletedTask;
 	}
 
 	internal async Task FillTableRowsClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
@@ -208,7 +217,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 				new Markup(TgLog.GetMarkupString(TgGlobalTools.ConnectClient.Me.IsActive.ToString())));
 		}
 
-		// Proxy setup.
+		// Proxy setup
 		if (Equals(await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync()), Guid.Empty))
 		{
 			if (TgAppSettings.IsUseProxy)
@@ -220,7 +229,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		}
 		else
 		{
-			// Proxy is not found.
+			// Proxy is not found
 			if (!(await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).IsExists || TgGlobalTools.ConnectClient.Me is null)
 			{
 				table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
@@ -234,7 +243,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 				table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientProxySecret)),
 					new Markup(TgLog.GetMarkupString(TgLocale.SettingsIsNeedSetup)));
 			}
-			// Proxy is found.
+			// Proxy is found
 			else
 			{
 				table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
@@ -374,9 +383,9 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsRewriteFiles)),
 			new Markup(tgDownloadSettings.IsRewriteFiles.ToString()));
 
-		//// Read messages
-		//table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsReadMessages)),
-		//	new Markup(tgDownloadSettings.IsReadMessages.ToString()));
+		// Save messages
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsSaveMessages)),
+			new Markup(tgDownloadSettings.IsSaveMessages.ToString()));
 
 		// Rewrite messages
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsRewriteMessages)),
@@ -396,7 +405,16 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuFiltersEnabledCount)), new Markup($"{filters.Count()}"));
 
         // Count of threads
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreads)), new Markup($"{tgDownloadSettings.CountThreads}"));
+        switch (TgLicense.CurrentLicense.LicenseType)
+        {
+	        case TgEnumLicenseType.Paid:
+	        case TgEnumLicenseType.Premium:
+		        table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByTestLicense)), new Markup($"{tgDownloadSettings.CountThreads}"));
+		        break;
+	        default:
+		        table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByFreeLicense)), new Markup($"{tgDownloadSettings.CountThreads}"));
+				break;
+        }
 
         // User access
 		if (tgDownloadSettings.SourceVm.Dto.IsUserAccess)
@@ -541,60 +559,6 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			.Title(title)
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(list));
-	}
-
-	// Velopack installer update
-	public async Task VelopackUpdateAsync()
-	{
-		Console.OutputEncoding = Encoding.UTF8;
-		Console.Title = TgConstants.AppTitleConsoleShort;
-		TgLog.SetMarkupLine(AnsiConsole.WriteLine);
-		TgLog.SetMarkupLineStamp(AnsiConsole.MarkupLine);
-		TgLog.WriteLine($"Update started");
-		TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
-		TgLog.WriteLine($"{TgConstants.AppTitleConsole} {TgAppSettingsHelper.Instance.AppVersion}");
-
-		VelopackApp.Build()
-#if WINDOWS
-		.WithBeforeUninstallFastCallback((v) => {
-			// delete / clean up some files before uninstallation
-			tgLog.WriteLine($"Uninstalling the {TgConstants.AppTitleConsole}!");
-		})
-#endif
-			.WithFirstRun((v) => {
-				TgLog.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
-			})
-			.Run();
-		TgLog.WriteLine($"Checking updates on the link github.com");
-		var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: false));
-		// Check for new version
-		try
-		{
-			var newVersion = await mgr.CheckForUpdatesAsync();
-			if (newVersion is null)
-			{
-				TgLog.WriteLine("You are using the latest version of the software");
-				return;
-			}
-			// Download new version
-			TgLog.WriteLine("Download new version");
-			await mgr.DownloadUpdatesAsync(newVersion);
-			// Install new version and restart app
-			var prompt = AnsiConsole.Prompt(
-				new SelectionPrompt<string>()
-					.Title("Install new version and restart app?")
-					.PageSize(Console.WindowHeight - 5)
-					.MoreChoicesText(TgLocale.MoveUpDown)
-					.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
-			var isInstall = prompt.Equals(TgLocale.MenuYes);
-			if (isInstall)
-				mgr.ApplyUpdatesAndRestart(newVersion);
-		}
-		// Cannot perform this operation in an application which is not installed
-		catch (Exception ex)
-		{
-			TgLog.WriteLine(ex.Message);
-		}
 	}
 
 	#endregion

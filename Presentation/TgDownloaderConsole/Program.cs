@@ -2,8 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 // DI
-using TgStorage.Contracts;
-
 var containerBuilder = new ContainerBuilder();
 containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
 containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClient>();
@@ -17,9 +15,12 @@ TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
 var menu = new TgMenuHelper();
 
 // Velopack installer update
-await menu.VelopackUpdateAsync();
+await menu.VelopackUpdateAsync(isWait: false);
 
 var tgLocale = TgLocaleHelper.Instance;
+// License
+TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty);
+
 var tgLog = TgLogHelper.Instance;
 var tgDownloadSettings = new TgDownloadSettingsViewModel();
 
@@ -32,6 +33,7 @@ tgLog.WriteLine("EF Core init success");
 tgLog.WriteLine("Menu init ...");
 TgGlobalTools.SetAppType(TgEnumAppType.Console);
 tgLog.WriteLine("Menu init success");
+await menu.SetStorageVersionAsync();
 
 // TG Connection
 if (File.Exists(TgFileUtils.FileTgSession))
@@ -48,8 +50,8 @@ do
 			.PageSize(Console.WindowHeight - 17)
 			.MoreChoicesText(tgLocale.MoveUpDown)
 			.AddChoices(
-				tgLocale.MenuMainExit, tgLocale.MenuMainApp, tgLocale.MenuMainConnection, tgLocale.MenuMainStorage, 
-				tgLocale.MenuMainFilters, tgLocale.MenuMainDownload, tgLocale.MenuMainAdvanced, tgLocale.MenuMainUpdate));
+				tgLocale.MenuMainExit, tgLocale.MenuMainApp, tgLocale.MenuMainConnection, tgLocale.MenuMainStorage,
+				tgLocale.MenuMainFilters, tgLocale.MenuMainDownload, tgLocale.MenuMainAdvanced, tgLocale.MenuMainUpdate, tgLocale.MenuMainLicense));
 		if (prompt.Equals(tgLocale.MenuMainExit))
 			menu.Value = TgEnumMenuMain.Exit;
 		if (prompt.Equals(tgLocale.MenuMainApp))
@@ -85,9 +87,12 @@ do
 		if (prompt.Equals(tgLocale.MenuMainUpdate))
 		{
 			menu.Value = TgEnumMenuMain.Update;
-			await menu.VelopackUpdateAsync();
-			tgLog.WriteLine(tgLocale.TypeAnyKeyForReturn);
-			Console.ReadKey();
+			await menu.VelopackUpdateAsync(isWait: true);
+		}
+		if (prompt.Equals(tgLocale.MenuMainLicense))
+		{
+			menu.Value = TgEnumMenuMain.License;
+			await menu.SetupLicenseAsync(tgDownloadSettings);
 		}
 	}
 	catch (Exception ex)

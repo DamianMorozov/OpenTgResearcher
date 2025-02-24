@@ -45,26 +45,26 @@ internal partial class TgMenuHelper
 			switch (menu)
 			{
 				case TgEnumMenuFilter.FiltersView:
-					await TgFiltersViewAsync();
+					await FiltersViewAsync();
 					break;
 				case TgEnumMenuFilter.FiltersReset:
-					await SetTgFiltersResetAsync();
+					await SetFiltersResetAsync();
 					break;
 				case TgEnumMenuFilter.FiltersAdd:
-					await SetTgFiltersAddAsync();
+					await SetFiltersAddAsync();
 					break;
 				case TgEnumMenuFilter.FiltersEdit:
-					await SetTgFiltersEditAsync();
+					await SetFiltersEditAsync();
 					break;
 				case TgEnumMenuFilter.FiltersRemove:
-					await SetTgFiltersRemoveAsync();
+					await SetFiltersRemoveAsync();
 					break;
 			}
 		} while (menu is not TgEnumMenuFilter.Return);
 	}
 
 	/// <summary> View filters </summary>
-	private async Task TgFiltersViewAsync()
+	private async Task FiltersViewAsync()
 	{
 		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		if (storageResult.IsExists)
@@ -78,7 +78,7 @@ internal partial class TgMenuHelper
 		Console.ReadKey();
 	}
 
-	private async Task SetTgFiltersAddAsync()
+	private async Task SetFiltersAddAsync()
 	{
 		var filter = new TgEfFilterEntity();
 		var type = AnsiConsole.Prompt(new SelectionPrompt<string>()
@@ -130,17 +130,17 @@ internal partial class TgMenuHelper
 		}
 
 		await FilterRepository.SaveAsync(filter);
-		await TgFiltersViewAsync();
+		await FiltersViewAsync();
 	}
 
 	/// <summary> Edit filter </summary>
-	private async Task SetTgFiltersEditAsync()
+	private async Task SetFiltersEditAsync()
 	{
 		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
 		filter.IsEnabled = AskQuestionReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
 		await FilterRepository.SaveAsync(filter);
-		await TgFiltersViewAsync();
+		await FiltersViewAsync();
 	}
 
 	/// <summary> Set filter size </summary>
@@ -154,20 +154,20 @@ internal partial class TgMenuHelper
 	}
 
 	/// <summary> Remove filter </summary>
-	private async Task SetTgFiltersRemoveAsync()
+	private async Task SetFiltersRemoveAsync()
 	{
 		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
 		await FilterRepository.DeleteAsync(filter);
-		await TgFiltersViewAsync();
+		await FiltersViewAsync();
 	}
 
 	/// <summary> Reset filters </summary>
-	private async Task SetTgFiltersResetAsync()
+	private async Task SetFiltersResetAsync()
 	{
 		if (AskQuestionReturnNegative(TgLocale.MenuFiltersReset)) return;
 		await FilterRepository.DeleteAllAsync();
-		await TgFiltersViewAsync();
+		await FiltersViewAsync();
 	}
 
 	#endregion

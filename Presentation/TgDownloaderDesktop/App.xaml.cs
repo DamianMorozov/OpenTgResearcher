@@ -53,6 +53,10 @@ public partial class App : Application
 			//	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
 			//})
 			.Run();
+		// License
+		TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(), 
+			TgResourceExtensions.GetLicenseTestDescription(), TgResourceExtensions.GetLicensePaidDescription(), 
+			TgResourceExtensions.GetLicensePremiumDescription());
 		Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder().UseContentRoot(AppContext.BaseDirectory)
 			.ConfigureServices((context, services) =>
 			{

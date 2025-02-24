@@ -56,8 +56,6 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	{
 		SettingsService = settingsService;
 		NavigationService = navigationService;
-		LicenseManager.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(),
-			TgResourceExtensions.GetLicensePaidDescription(), TgResourceExtensions.GetLicensePremiumDescription());
 	}
 
 	#endregion

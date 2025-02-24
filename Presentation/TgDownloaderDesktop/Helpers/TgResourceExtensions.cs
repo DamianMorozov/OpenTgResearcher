@@ -45,6 +45,7 @@ public static class TgResourceExtensions
 	public static string GetLicenseFreeDescription() => "LicenseFreeDescription".GetLocalized();
 	public static string GetLicensePaidDescription() => "LicensePaidDescription".GetLocalized();
 	public static string GetLicensePremiumDescription() => "LicensePremiumDescription".GetLocalized();
+	public static string GetLicenseTestDescription() => "LicenseTestDescription".GetLocalized();
 	public static string GetMenuClientIsQuery() => "MenuClientIsQuery".GetLocalized();
 	public static string GetNoButton() => "NoButton".GetLocalized();
 	public static string GetOkButton() => "OkButton".GetLocalized();

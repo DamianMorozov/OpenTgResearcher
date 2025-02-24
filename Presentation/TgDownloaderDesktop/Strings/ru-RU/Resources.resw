@@ -629,6 +629,9 @@
   <data name="LicenseFreeDescription" xml:space="preserve">
     <value>Бесплатная лицензия</value>
   </data>
+  <data name="LicenseTestDescription" xml:space="preserve">
+    <value>Тестовая license</value>
+  </data>
   <data name="LicensePaidDescription" xml:space="preserve">
     <value>Платная лицензия</value>
   </data>
@@ -642,8 +645,7 @@
     <value>Назначение продукта</value>
   </data>
   <data name="ProductAssignmentDescription.Text" xml:space="preserve">
-    <value>Открытый исследователь и поисковик Телеграм. 
-Скачивай чаты по каталогам. </value>
+    <value>Открытый исследователь и поисковик Телеграм. Скачивай чаты по каталогам. </value>
   </data>
   <data name="TemplateColumnEdit.Header" xml:space="preserve">
     <value>Править</value>

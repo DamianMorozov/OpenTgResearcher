@@ -570,6 +570,9 @@
   <data name="LicensePaidDescription" xml:space="preserve">
     <value>Paid license</value>
   </data>
+  <data name="LicenseTestDescription" xml:space="preserve">
+    <value>Test license</value>
+  </data>
   <data name="LicensePremiumDescription" xml:space="preserve">
     <value>Premium license</value>
   </data>
@@ -580,8 +583,7 @@
     <value>Product assignment</value>
   </data>
   <data name="ProductAssignmentDescription.Text" xml:space="preserve">
-    <value>Telegram's open researcher and search engine. 
-Download chats by catalogs. </value>
+    <value>Telegram's open researcher and search engine. Download chats by catalogs. </value>
   </data>
   <data name="TemplateColumnEdit.Header" xml:space="preserve">
     <value>Edit</value>

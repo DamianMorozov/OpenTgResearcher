@@ -6,6 +6,7 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumLicenseType
 {
 	Free,
+	Test,
 	Paid,
 	Premium
 }

@@ -13,4 +13,5 @@ public enum TgEnumMenuMain
 	Download,
 	Advanced,
 	Update,
+	License,
 }

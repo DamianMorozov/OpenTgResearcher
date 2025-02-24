@@ -5,7 +5,7 @@ using TL;
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> Client </summary>
+/// <summary> Telegram client </summary>
 public interface ITgConnectClient : ITgCommon, IDisposable
 {
 	public bool IsReady { get; }

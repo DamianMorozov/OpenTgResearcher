@@ -18,7 +18,7 @@ public enum TgEnumMenuDownload
 	SetDestDirectory,
 	SetIsAddMessageId,
 	SetIsAutoUpdate,
-	SetIsReadMessages,
+	SetIsSaveMessages,
 	SetIsRewriteFiles,
 	SetIsRewriteMessages,
 	SetSource,
@@ -26,7 +26,7 @@ public enum TgEnumMenuDownload
 	SetSourceFirstIdManual,
 	SettingsSave,
 	ViewContacts,
-	ViewSources,
+	ViewChats,
 	ViewStories,
 	ViewVersions,
 }

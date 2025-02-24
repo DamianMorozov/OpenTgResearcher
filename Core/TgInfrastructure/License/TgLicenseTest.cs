@@ -3,11 +3,12 @@
 
 namespace TgInfrastructure.License;
 
-public partial class TgLicensePaid : TgLicenseTest
+public partial class TgLicenseTest : TgLicenseFree
 {
 	#region Public and private fields, properties, constructor
 
-	//
+	public DateTime StartDate { get; set; }
+	public DateTime ExpirationDate { get; set; }
 
 	#endregion
 

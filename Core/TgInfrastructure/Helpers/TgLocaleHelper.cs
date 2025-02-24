@@ -19,7 +19,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string AppName => "Name";
 	public string AppValue => "Value";
 	public string AppVersion => "App version";
-	public string AskDataMigration => "Perform a data migration from a previous storage?";
+	public string AppVersionShort => "App";
 	public string Exception => "Exception";
 	public string FoundRows => "Found rows";
 	public string From => "from";
@@ -35,6 +35,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string ServerMessage => "Server message";
 	public string SqliteDataSource => "Data Source";
 	public string StorageVersion => "Storage version";
+	public string StorageVersionShort => "Storage";
 	public string UrlOpened => "URL opened";
 
 	#endregion
@@ -74,12 +75,12 @@ public sealed class TgLocaleHelper : ObservableObject
 
     public string MenuAutoDownload => "Auto download";
 	public string MenuAutoViewEvents => "Auto view events";
-	public string MenuDownloadException => "Download exception";
-	public string MenuDownloadSetCountThreads => "Count of threads (1-20)";
+	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
+	public string MenuDownloadSetCountThreadsByTestLicense => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
 	public string MenuDownloadSetIsAddMessageId => "Enable join message ID with file name";
-	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
-	public string MenuDownloadSetIsReadMessages => "Enable read messages";
+	public string MenuDownloadSetIsAutoUpdate => "Enabled auto update";
+	public string MenuDownloadSetIsSaveMessages => "Enable save messages";
 	public string MenuDownloadSetIsRewriteFiles => "Enable rewrite exists files";
 	public string MenuDownloadSetIsRewriteMessages => "Enable rewrite exists messages";
 	public string MenuDownloadSetSource => "Setup source (ID/username)";
@@ -128,9 +129,19 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#endregion
 
+	#region License
+
+	public string MenuLicenseChange => "Change license online";
+	public string MenuLicenseCheck => "Check license online";
+	public string MenuLicenseCurrent => "Current license";
+	public string MenuLicenseDescription => "License description";
+	public string MenuLicenseKey => "License key";
+
+	#endregion
+
 	#region Main menu
 
-    public string MenuMainApps => "Apps";
+	public string MenuMainApps => "Apps";
     public string MenuMainProxies => "Proxies";
     public string MenuMainSources => "Sources";
     public string MenuMainVersions => "Versions";
@@ -148,6 +159,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainStop => "Stop";
 	public string MenuMainStorage => "Storage";
 	public string MenuMainUpdate => "Update";
+	public string MenuMainLicense => "License";
 
 	#endregion
 
@@ -195,6 +207,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string EfStorage => "EF storage";
 	public string Empty => "Empty";
 	public string FileSession => "File session";
+	public string InDevelopment => "In development";
 	public string Load=> "Load";
 	public string MoveUpDown => "(Move up and down to switch select)";
 	public string ObjectHasBeenDisposedOff => "object has been disposed off";
@@ -236,10 +249,10 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgMustClientConnect => "You must connect the client before";
 	public string TgMustSetSettings => "You must setup the settings before";
 	public string TgSettingsDestDirectory => "Destination";
-	public string TgSettingsIsJoinFileNameWithMessageId => "Join message ID";
-	public string TgSettingsIsReadMessages => "Read messages";
-	public string TgSettingsIsRewriteFiles => "Rewrite files";
-	public string TgSettingsIsRewriteMessages => "Rewrite messages";
+	public string TgSettingsIsJoinFileNameWithMessageId => "Enabled join message ID";
+	public string TgSettingsIsRewriteFiles => "Enabled rewriting files";
+	public string TgSettingsIsRewriteMessages => "Enabled rewriting messages";
+	public string TgSettingsIsSaveMessages => "Enabled saving messages";
 	public string TgSettingsSourceFirstLastId => "First/last ID";
 	public string TgSetupApiHash => "Type API hash";
 	public string TgSetupAppId => "Type APP ID";
@@ -310,5 +323,14 @@ public sealed class TgLocaleHelper : ObservableObject
     public string ProxyIsConnected => "Proxy is connected";
     public string ProxyIsDisconnect => "Proxy is disconnected";
 
-    #endregion
+	#endregion
+
+	#region License
+
+	public string LicenseFreeDescription => "Free license";
+	public string LicenseTestDescription => "Test license";
+	public string LicensePaidDescription => "Paid license";
+	public string LicensePremiumDescription => "Premium license";
+
+	#endregion
 }

@@ -14,11 +14,22 @@ public sealed class TgLicenseManagerHelper
 
 	#region Public and private methods
 
-	public TgLicense CurrentLicense { get; private set; } = default!;
+	public TgLicense CurrentLicense { get; private set; } = null!;
 
-	public void ActivateLicense(string licenseKey = "", string licenseFreeDescription = "Free license", 
+	public void ActivateLicense(string licenseKey = "", string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
 		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license")
 	{
+		if (licenseKey.StartsWith("TEST"))
+		{
+			CurrentLicense = new TgLicenseTest
+			{
+				LicenseKey = licenseKey,
+				LicenseType = TgEnumLicenseType.Test,
+				ExpirationDate = DateTime.Now.AddYears(1),
+				Description = licensePaidDescription
+			};
+			return;
+		}
 		if (licenseKey.StartsWith("PAID"))
 		{
 			CurrentLicense = new TgLicensePaid

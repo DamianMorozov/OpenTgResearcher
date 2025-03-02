@@ -33,14 +33,18 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 				return await GetCoreAsync(item, isReadOnly);
 			}
 		}
+#if DEBUG
 		catch (Exception ex)
+#else
+		catch (Exception)
+#endif
 		{
 #if DEBUG
-			Debug.WriteLine(ex);
+			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+			Debug.WriteLine(ex.StackTrace);
 #endif
+			throw;
 		}
-		// Default
-		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	private async Task<TgEfStorageResult<TgEfMessageEntity>> GetCoreAsync(TgEfMessageEntity item, bool isReadOnly = true)

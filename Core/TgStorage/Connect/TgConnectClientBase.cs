@@ -2160,19 +2160,24 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			if (messageType == TgEnumMessageType.Document)
 				await UpdateStateFileAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, string.Empty, 0, 0, 0, false, threadNumber);
 		}
-		catch (Exception ex)
-		{
-			BatchMessagesCount = 0;
-			MessageEntities.Clear();
 #if DEBUG
-			Debug.WriteLine(ex);
+		catch (Exception ex)
+#else
+		catch (Exception)
+#endif
+		{
+#if DEBUG
+			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 			Debug.WriteLine(ex.StackTrace);
 #endif
+			BatchMessagesCount = 0;
+			MessageEntities.Clear();
 			if (!isRetry)
 			{
 				await Task.Delay(500);
 				await MessageSaveAsync(tgDownloadSettings, messageId, dtCreated, size, message, messageType, threadNumber, isRetry: true);
 			}
+			throw;
 		}
 		finally
 		{
@@ -2348,6 +2353,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 #if DEBUG
 				Debug.WriteLine($"{filePath} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex, TgConstants.LogTypeNetwork);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				if (attempt < maxRetries - 1)
 					await Task.Delay(delayBetweenRetries);

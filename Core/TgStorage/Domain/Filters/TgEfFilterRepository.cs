@@ -31,14 +31,18 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 				? new(TgEnumEntityState.IsExists, itemFind)
 				: new TgEfStorageResult<TgEfFilterEntity>(TgEnumEntityState.NotExists, item);
 		}
+#if DEBUG
 		catch (Exception ex)
+#else
+		catch (Exception)
+#endif
 		{
 #if DEBUG
-			Debug.WriteLine(ex);
+			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+			Debug.WriteLine(ex.StackTrace);
 #endif
+			throw;
 		}
-		// Default
-		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfFilterEntity>> GetFirstAsync(bool isReadOnly = true)

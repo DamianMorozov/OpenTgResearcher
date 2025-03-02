@@ -289,6 +289,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 				await transaction.RollbackAsync();
 #if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				// Retry
 				if (isFirstTry)
@@ -310,6 +311,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 				await transaction.RollbackAsync();
 #if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				throw;
 			}
@@ -381,6 +383,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 				await transaction.RollbackAsync();
 #if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				// Retry
 				if (isFirstTry)
@@ -401,6 +404,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 				await transaction.RollbackAsync();
 #if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				throw;
 			}
@@ -446,6 +450,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		{
 #if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 			throw;
 		}
@@ -475,6 +480,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 			await DeleteAsync(item);
 #if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 			try
 			{
@@ -522,6 +528,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 				await transaction.RollbackAsync();
 #if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				throw;
 			}

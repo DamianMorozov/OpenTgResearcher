@@ -24,23 +24,32 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 			{
 				return await GetCoreAsync(item, isReadOnly);
 			}
+#if DEBUG
 			catch (Exception ex)
+#else
+			catch (Exception)
+#endif
 			{
 #if DEBUG
-				Debug.WriteLine(ex);
+				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+				Debug.WriteLine(ex.StackTrace);
 #endif
 				await Task.Delay(500);
 				return await GetCoreAsync(item, isReadOnly);
 			}
 		}
+#if DEBUG
 		catch (Exception ex)
+#else
+		catch (Exception)
+#endif
 		{
 #if DEBUG
-			Debug.WriteLine(ex);
+			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+			Debug.WriteLine(ex.StackTrace);
 #endif
+			throw;
 		}
-		// Default
-		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	private async Task<TgEfStorageResult<TgEfSourceEntity>> GetCoreAsync(TgEfSourceEntity item, bool isReadOnly = true)

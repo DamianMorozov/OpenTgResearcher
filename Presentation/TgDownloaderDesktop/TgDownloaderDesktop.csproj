@@ -87,6 +87,9 @@
     <Page Update="Views\TgStoriesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\TgLicensePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

@@ -113,6 +113,8 @@ public partial class App : Application
 				services.AddTransient<TgProxiesPage>();
 				services.AddTransient<TgUpdateViewModel>();
 				services.AddTransient<TgUpdatePage>();
+				services.AddTransient<TgLicenseViewModel>();
+				services.AddTransient<TgLicensePage>();
 				// Configuration
 				services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
 			})

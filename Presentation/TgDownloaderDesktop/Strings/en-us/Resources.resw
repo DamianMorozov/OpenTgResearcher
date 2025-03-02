@@ -103,6 +103,9 @@
   <data name="Shell_Bots.Content" xml:space="preserve">
     <value>Bots</value>
   </data>
+  <data name="Shell_License.Content" xml:space="preserve">
+    <value>License</value>
+  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
   </data>
@@ -176,7 +179,7 @@
     <value>Default</value>
   </data>
   <data name="ExpanderAbout.Header" xml:space="preserve">
-    <value>TgDownloader - Telegram Files Downloader</value>
+    <value>OpenTgResearcher - Open Telegram Researcher</value>
   </data>
   <data name="ExpanderLicense.Header" xml:space="preserve">
     <value>License</value>
@@ -278,7 +281,7 @@
     <value>&lt;toast launch="action=ToastClick"&gt;
   &lt;visual&gt;
     &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;TgDownloader launched&lt;/text&gt;
+      &lt;text&gt;OpenTgResearcherDesktop launched&lt;/text&gt;
       &lt;text&gt;&lt;/text&gt;
       &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/applicationIcon.ico"/&gt;
     &lt;/binding&gt;
@@ -314,6 +317,18 @@
   </data>
   <data name="ActionUpdateApp.Text" xml:space="preserve">
     <value>Update the application</value>
+  </data>
+  <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
+    <value>Check license online</value>
+  </data>
+  <data name="ActionCheckLicenseOnlineMsg" xml:space="preserve">
+    <value>Check license online</value>
+  </data>
+  <data name="ActionChangeLicenseOnline.Text" xml:space="preserve">
+    <value>Change license online</value>
+  </data>
+  <data name="ActionChangeLicenseOnlineMsg" xml:space="preserve">
+    <value>Change license online</value>
   </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>
@@ -866,5 +881,8 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="InDevelopment" xml:space="preserve">
+    <value>In development</value>
   </data>
 </root>

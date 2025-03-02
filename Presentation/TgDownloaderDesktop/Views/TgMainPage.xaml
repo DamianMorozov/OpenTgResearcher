@@ -37,7 +37,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="True">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<TextBlock x:Uid="ProductAssignment" Style="{ThemeResource SubtitleTextBlockStyle}" />
 						<TextBlock x:Uid="ProductAssignmentDescription" Style="{ThemeResource BodyStrongTextBlockStyle}" />
 					</StackPanel>
@@ -50,7 +50,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_OfficialSite_OpenTgResearcher"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -67,7 +67,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_Releases_Latest"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -90,7 +90,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_GitHub_Link"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -119,7 +119,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_GitHub_OpenTgResearcher"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -136,7 +136,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_GitHub_DockerConsole"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -153,7 +153,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -171,14 +171,14 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="False">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<HyperlinkButton
 							x:Uid="SettingsPage_GitHub_ProjectSupportGitHubStar"
 							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
 							Click="{x:Bind ViewModel.OpenHyperlink}" />
 						<!--  USDT TRC20 Card  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -202,7 +202,7 @@
 						</Border>
 						<!--  USDT TON Card  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -226,7 +226,7 @@
 						</Border>
 						<!--  Toncoin  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -250,7 +250,7 @@
 						</Border>
 						<!--  Bitcoin  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -274,7 +274,7 @@
 						</Border>
 						<!--  Notcoin  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -298,7 +298,7 @@
 						</Border>
 						<!--  Dogs  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -322,7 +322,7 @@
 						</Border>
 						<!--  Hamster Kombat  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -346,7 +346,7 @@
 						</Border>
 						<!--  X Empire  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -370,7 +370,7 @@
 						</Border>
 						<!--  Catizen  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -394,7 +394,7 @@
 						</Border>
 						<!--  Major  -->
 						<Border Padding="10" CornerRadius="8">
-							<StackPanel Margin="0,-5,0,-5" Orientation="Horizontal">
+							<StackPanel Margin="0,-10,0,-5" Orientation="Horizontal">
 								<Button
 									Width="60"
 									Height="60"
@@ -416,31 +416,6 @@
 								</StackPanel>
 							</StackPanel>
 						</Border>
-					</StackPanel>
-				</Expander>
-				<!--  License & version  -->
-				<Expander
-					x:Uid="ExpanderLicense"
-					Grid.Row="9"
-					Margin="{StaticResource ExpanderMargin}"
-					HorizontalAlignment="Stretch"
-					HorizontalContentAlignment="Stretch"
-					IsExpanded="True">
-					<StackPanel Margin="0,-15,0,-10">
-						<TextBlock
-							Margin="10,5,0,0"
-							Style="{ThemeResource SubtitleTextBlockStyle}"
-							Text="{x:Bind ViewModel.AppVersionFull, Mode=OneWay}" />
-						<TextBlock
-							Margin="10,0,0,0"
-							Style="{ThemeResource SubtitleTextBlockStyle}"
-							Text="{x:Bind ViewModel.LicenseDescription, Mode=OneWay}" />
-						<!--<HyperlinkButton
-							x:Uid="SettingsPage_GitHub_InstallRequirementsNet9"
-							Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-							HorizontalAlignment="Stretch"
-							HorizontalContentAlignment="Left"
-							Click="{x:Bind ViewModel.OpenHyperlink}" />-->
 					</StackPanel>
 				</Expander>
 			</Grid>

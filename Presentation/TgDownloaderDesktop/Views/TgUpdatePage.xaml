@@ -27,7 +27,7 @@
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="True">
-					<StackPanel Margin="0,-15,0,-10">
+					<StackPanel Margin="0,-10,0,-5">
 						<Button
 							Margin="0,5,5,0"
 							HorizontalAlignment="Stretch"

@@ -162,6 +162,9 @@
   <data name="Shell_Bots.Content" xml:space="preserve">
     <value>Боты</value>
   </data>
+  <data name="Shell_License.Content" xml:space="preserve">
+    <value>Лицензия</value>
+  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Загрузка...</value>
   </data>
@@ -235,7 +238,7 @@
     <value>Default</value>
   </data>
   <data name="ExpanderAbout.Header" xml:space="preserve">
-    <value>TgDownloader - Загрузчик файлов Telegram</value>
+    <value>OpenTgResearcher - ЗОткрытый исследователь Telegram</value>
   </data>
   <data name="ExpanderLicense.Header" xml:space="preserve">
     <value>Лицензия</value>
@@ -337,7 +340,7 @@
     <value>&lt;toast launch="action=ToastClick"&gt;
   &lt;visual&gt;
     &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Запущен TgDownloader&lt;/text&gt;
+      &lt;text&gt;OpenTgResearcherDesktop запущен&lt;/text&gt;
       &lt;text&gt;&lt;/text&gt;
       &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/applicationIcon.ico"/&gt;
     &lt;/binding&gt;
@@ -373,6 +376,18 @@
   </data>
   <data name="ActionUpdateApp.Text" xml:space="preserve">
     <value>Обновить приложение</value>
+  </data>
+  <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
+    <value>Проверить лицензию онлайн</value>
+  </data>
+  <data name="ActionCheckLicenseOnlineMsg" xml:space="preserve">
+    <value>Проверить лицензию онлайн</value>
+  </data>
+  <data name="ActionChangeLicenseOnline.Text" xml:space="preserve">
+    <value>Сменить лицензию онлайн</value>
+  </data>
+  <data name="ActionChangeLicenseOnlineMsg" xml:space="preserve">
+    <value>Сменить лицензию онлайн</value>
   </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>ГитХаб сообщество</value>
@@ -928,5 +943,8 @@
   </data>
   <data name="Error" xml:space="preserve">
     <value>Ошибка</value>
+  </data>
+  <data name="InDevelopment" xml:space="preserve">
+    <value>В разработке</value>
   </data>
 </root>

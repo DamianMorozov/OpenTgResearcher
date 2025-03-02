@@ -9,16 +9,6 @@ public partial class TgMainViewModel : TgPageViewModelBase
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial string VersionDescription { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string AppVersionTitle { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string AppVersionShort { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string AppVersionFull { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string LicenseDescription { get; set; } = string.Empty;
-	[ObservableProperty]
 	public partial string DonateUsdtTrc20 { get; set; } = "TBTDRWnMBw7acfpkhAXjSQNSNHQGFR662Y";
 	[ObservableProperty]
 	public partial string DonateUsdtTon { get; set; } = "UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6";
@@ -41,13 +31,7 @@ public partial class TgMainViewModel : TgPageViewModelBase
 
 	public TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
 	{
-		VersionDescription = GetVersionDescription();
-		AppVersionTitle =
-			$"{TgConstants.AppTitleDesktop} " +
-			$"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
-		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
-		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";
-		LicenseDescription = LicenseManager.CurrentLicense.Description;
+		//
 	}
 
 	#endregion
@@ -58,21 +42,6 @@ public partial class TgMainViewModel : TgPageViewModelBase
 	{
 		await ReloadUiAsync();
 	});
-
-	private static string GetVersionDescription()
-	{
-		Version version;
-		if (TgRuntimeHelper.IsMSIX)
-		{
-			var packageVersion = Package.Current.Id.Version;
-			version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
-		}
-		else
-		{
-			version = Assembly.GetExecutingAssembly().GetName().Version!;
-		}
-		return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
-	}
 
 	#endregion
 }

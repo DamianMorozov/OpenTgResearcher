@@ -86,6 +86,12 @@
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;" />
 					</NavigationViewItem.Icon>
 				</NavigationViewItem>
+				<!--  License  -->
+				<NavigationViewItem x:Uid="Shell_License" helpers:TgNavigationHelper.NavigateTo="TgDownloaderDesktop.ViewModels.TgLicenseViewModel">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE719;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
 			</NavigationView.MenuItems>
 			<NavigationView.HeaderTemplate>
 				<DataTemplate>

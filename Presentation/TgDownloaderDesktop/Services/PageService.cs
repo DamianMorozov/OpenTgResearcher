@@ -20,6 +20,7 @@ public sealed class PageService : IPageService
 		Configure<TgLoadDataViewModel, TgLoadDataPage>();
 		Configure<TgMainViewModel, TgMainPage>();
 		Configure<TgUpdateViewModel, TgUpdatePage>();
+		Configure<TgLicenseViewModel, TgLicensePage>();
 		Configure<TgProxiesViewModel, TgProxiesPage>();
 		Configure<TgSettingsViewModel, TgSettingsPage>();
 		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();

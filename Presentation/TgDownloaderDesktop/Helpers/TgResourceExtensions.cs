@@ -31,6 +31,8 @@ public static class TgResourceExtensions
 	public static string AskUpdateOnline() => "AskUpdateOnline".GetLocalized();
 	public static string AssertionRestartApp() => "AssertionRestartApp".GetLocalized();
 	public static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalized();
+	public static string GetActionChangeLicenseOnlineMsg() => "ActionChangeLicenseOnlineMsg".GetLocalized();
+	public static string GetActionCheckLicenseOnlineMsg() => "ActionCheckLicenseOnlineMsg".GetLocalized();
 	public static string GetAppDisplayName() => "AppDisplayName".GetLocalized();
 	public static string GetAppVersion() => "AppVersion".GetLocalized();
 	public static string GetCancelButton() => "CancelButton".GetLocalized();
@@ -42,6 +44,7 @@ public static class TgResourceExtensions
 	public static string GetClientIsDisconnected() => "ClientIsDisconnected".GetLocalized();
 	public static string GetClipboard() => "Clipboard".GetLocalized();
 	public static string GetError() => "Error".GetLocalized();
+	public static string GetInDevelopment() => "InDevelopment".GetLocalized();
 	public static string GetLicenseFreeDescription() => "LicenseFreeDescription".GetLocalized();
 	public static string GetLicensePaidDescription() => "LicensePaidDescription".GetLocalized();
 	public static string GetLicensePremiumDescription() => "LicensePremiumDescription".GetLocalized();

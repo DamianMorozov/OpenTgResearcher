@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.030 Preview] - 2025-02-24
+## [0.6.040] - 2025-03-02
 ### Fixed
 - Fixed references in the documentation
 - Fixed bugs in TgStorage
@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added option to enable/disable saving messages for chat in TgDownloaderConsole
 - Added reading user access to chat via search in TgDownloaderConsole
+- Added license page for TgDownloaderDesktop
+- Added connection state for TgDownloaderDesktop application title
 
 ## [0.5.450] - 2025-01-31
 ### Changed

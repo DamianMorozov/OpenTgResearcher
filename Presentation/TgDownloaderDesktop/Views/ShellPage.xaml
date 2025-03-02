@@ -14,17 +14,43 @@
 			VerticalAlignment="Top"
 			Canvas.ZIndex="1"
 			IsHitTestVisible="True">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<!--  App icon  -->
 			<Image
+				Grid.Column="0"
 				Width="36"
 				Height="36"
 				HorizontalAlignment="Left"
 				Source="/Assets/applicationIcon.ico" />
+			<!--  App version  -->
 			<TextBlock
-				Margin="45,0,0,0"
+				Grid.Column="1"
+				Margin="24,0,12,0"
 				VerticalAlignment="Center"
+				FontWeight="Bold"
 				Style="{StaticResource CaptionTextBlockStyle}"
 				Text="{x:Bind ViewModel.AppVersion}"
 				TextWrapping="NoWrap" />
+			<!--  Connection state  -->
+			<TextBlock
+				x:Uid="ClientConnectionState"
+				Grid.Column="2"
+				Margin="12,0,12,0"
+				VerticalAlignment="Center"
+				Style="{StaticResource CaptionTextBlockStyle}" />
+			<ToggleSwitch
+				Grid.Column="3"
+				Margin="0,0,0,0"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				HorizontalContentAlignment="Center"
+				IsEnabled="False"
+				IsOn="{x:Bind ViewModel.IsClientConnected, Mode=OneWay}" />
 		</Grid>
 		<NavigationView
 			x:Name="NavigationViewControl"

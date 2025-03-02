@@ -20,6 +20,8 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	[ObservableProperty]
 	public partial string ConnectionDt { get; set; } = string.Empty;
 	[ObservableProperty]
+	public partial bool IsClientConnected { get; set; }
+	[ObservableProperty]
 	public partial string ConnectionMsg { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string StateProxyDt { get; set; }= string.Empty;

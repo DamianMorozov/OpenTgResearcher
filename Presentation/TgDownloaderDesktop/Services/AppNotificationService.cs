@@ -6,6 +6,22 @@ namespace TgDownloaderDesktop.Services;
 public sealed class AppNotificationService : IAppNotificationService
 {
 	//private readonly INavigationService _navigationService;
+	#region Public and private fields, properties, constructor
+
+	private bool _isClientConnected;
+	public bool IsClientConnected
+	{
+		get => _isClientConnected;
+		set
+		{
+			if (_isClientConnected != value)
+			{
+				_isClientConnected = value;
+				ClientConnectionChanged.Invoke(this, value);
+			}
+		}
+	}
+	public event EventHandler<bool> ClientConnectionChanged = (_, _) => { };
 
 	public AppNotificationService(INavigationService navigationService)
 	{
@@ -16,6 +32,10 @@ public sealed class AppNotificationService : IAppNotificationService
 	{
 		Unregister();
 	}
+
+	#endregion
+
+	#region Public and private methods
 
 	public void Initialize()
 	{
@@ -37,7 +57,7 @@ public sealed class AppNotificationService : IAppNotificationService
 		App.MainWindow.DispatcherQueue.TryEnqueue(() =>
 		{
 			App.MainWindow.ShowMessageDialogAsync(
-				$"{TgLocaleHelper.Instance.AppVersion}: v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}", 
+				$"{TgLocaleHelper.Instance.AppVersion}: v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}",
 				TgConstants.AppTitleDesktop);
 			App.MainWindow.BringToFront();
 		});
@@ -61,4 +81,11 @@ public sealed class AppNotificationService : IAppNotificationService
 	{
 		AppNotificationManager.Default.Unregister();
 	}
+
+	public void SetClientIsConnected()
+	{
+
+	}
+
+	#endregion
 }

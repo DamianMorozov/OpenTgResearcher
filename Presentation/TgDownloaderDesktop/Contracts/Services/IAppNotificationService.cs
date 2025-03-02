@@ -12,4 +12,8 @@ public interface IAppNotificationService
     NameValueCollection ParseArguments(string arguments);
 
     void Unregister();
+
+    bool IsClientConnected { get; set; }
+
+    event EventHandler<bool> ClientConnectionChanged;
 }

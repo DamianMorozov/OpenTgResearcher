@@ -8,6 +8,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 {
 	#region Public and private fields, properties, constructor
 
+	private IAppNotificationService AppNotificationService { get; }
 	private TgEfAppRepository AppRepository { get; } = new();
 	private TgEfProxyRepository ProxyRepository { get; } = new();
 	[ObservableProperty]
@@ -17,63 +18,67 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyViewModel> ProxiesVms { get; set; } = [];
 	[ObservableProperty]
-	public partial string ApiHash { get; set; } = "";
+	public partial string ApiHash { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial int ApiId { get; set; } = 0;
 	[ObservableProperty]
-	public partial string PhoneNumber { get; set; } = "";
+	public partial string PhoneNumber { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string FirstName { get; set; }= "";
+	public partial string FirstName { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string LastName { get; set; }= "";
+	public partial string LastName { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string Password { get; set; }= "";
-    [ObservableProperty]
-	public partial string VerificationCode { get; set; }= "";
+	public partial string Password { get; set; } = string.Empty;
+	[ObservableProperty]
+	public partial string VerificationCode { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial bool IsNotReady { get; set; }
 	[ObservableProperty]
-	public partial string MtProxyUrl { get; set; } = "";
+	public partial string MtProxyUrl { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string UserName { get; set; } = "";
+	public partial string UserName { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string MaxAutoReconnects { get; set; } = "";
+	public partial string MaxAutoReconnects { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string FloodRetryThreshold { get; set; } = "";
+	public partial string FloodRetryThreshold { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial string PingInterval { get; set; } = "";
+	public partial string PingInterval { get; set; } = string.Empty;
 	[ObservableProperty]
-    public partial string MaxCodePwdAttempts { get; set; } = "";
+	public partial string MaxCodePwdAttempts { get; set; } = string.Empty;
 	[ObservableProperty]
-    public partial string DataRequest { get; set; } = "";
+	public partial string DataRequest { get; set; } = string.Empty;
 	[ObservableProperty]
-    public partial string DataRequestEmptyResponse { get; set; } = "";
+	public partial string DataRequestEmptyResponse { get; set; } = string.Empty;
 	[ObservableProperty]
-    public partial bool IsFieldsCheck { get; set; }
+	public partial bool IsFieldsCheck { get; set; }
 	[ObservableProperty]
 	public partial bool IsBot { get; set; }
 	[ObservableProperty]
-	public partial string BotTokenKey { get; set; } = "";
+	public partial string BotTokenKey { get; set; } = string.Empty;
 
 	public IRelayCommand ClientConnectCommand { get; }
-    public IRelayCommand ClientDisconnectCommand { get; }
-    public IRelayCommand AppLoadCommand { get; }
-    public IRelayCommand AppSaveCommand { get; }
-    public IRelayCommand AppClearCommand { get; }
-    public IRelayCommand AppDeleteCommand { get; }
+	public IRelayCommand ClientDisconnectCommand { get; }
+	public IRelayCommand AppLoadCommand { get; }
+	public IRelayCommand AppSaveCommand { get; }
+	public IRelayCommand AppClearCommand { get; }
+	public IRelayCommand AppDeleteCommand { get; }
 
 
-    public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
+	public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService) 
+		: base(settingsService, navigationService)
 	{
-	    var task = AppClearCoreAsync();
+		AppNotificationService = appNotificationService;
+		IsClientConnected = AppNotificationService.IsClientConnected;
+
+		var task = AppClearCoreAsync();
 		task.Wait();
 		// Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
-        ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
-        AppLoadCommand = new AsyncRelayCommand(AppLoadAsync);
-        AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
-        AppClearCommand = new AsyncRelayCommand(AppClearAsync);
-        AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
+		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
+		AppLoadCommand = new AsyncRelayCommand(AppLoadAsync);
+		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
+		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
+		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
 		// Delegates
 		//TgGlobalTools.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
 		//TgGlobalTools.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
@@ -94,6 +99,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	private async Task AfterClientConnectAsync()
 	{
 		ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+		IsClientConnected = false;
 		if (!IsBot)
 		{
 			var client = TgGlobalTools.ConnectClient.Client;
@@ -117,8 +123,15 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 			}
 			else
 			{
-				ConnectionMsg = client is null || client.Disconnected
-					? TgResourceExtensions.GetClientIsDisconnected() : TgResourceExtensions.GetClientIsConnected();
+				if (client is null || client.Disconnected)
+				{
+					ConnectionMsg = TgResourceExtensions.GetClientIsDisconnected();
+				}
+				else
+				{
+					IsClientConnected = true;
+					ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
+				}
 			}
 			if (client is not null)
 			{
@@ -133,20 +146,18 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 			{
 				await ReloadUiAsync();
 			}
-			// Clear memory
-			client = null;
 		}
-		else
-		{
-		}
-
+		
 		// Update connection buttons
 		await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync();
 		IsOnlineReady = TgGlobalTools.ConnectClient.IsReady;
+
+		// Set app client state
+		AppNotificationService.IsClientConnected = IsClientConnected;
 	}
 
 	private string? ConfigClientDesktop(string what)
-    {
+	{
 		var response = what switch
 		{
 			"api_hash" => ApiHash,
@@ -183,20 +194,21 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task ClientConnectCoreAsync(bool isRetry)
 	{
-        try
-        {
-	        Exception.Default();
+		try
+		{
+			Exception.Default();
 			DataRequest = string.Empty;
 			if (!IsBot)
 				await TgGlobalTools.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
 			else
 				await TgGlobalTools.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
-        }
-        catch (Exception ex)
-        {
+		}
+		catch (Exception ex)
+		{
 			Exception.Set(ex);
 			await TgDesktopUtils.FileLogAsync(ex);
-			if (isRetry) return;
+			if (isRetry)
+				return;
 			if (Exception.Message.Contains("or delete the file to start a new session"))
 			{
 				await TgDesktopUtils.DeleteFileStorageExistsAsync(SettingsService.AppSession);
@@ -207,10 +219,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task ClientDisconnectAsync() => await ContentDialogAsync(TgGlobalTools.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
 
-    private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
+	private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 
-    private async Task AppLoadCoreAsync()
-    {
+	private async Task AppLoadCoreAsync()
+	{
 		var storageResult = await AppRepository.GetFirstAsync(isReadOnly: false);
 		App = storageResult.IsExists ? storageResult.Item : new();
 
@@ -218,23 +230,23 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	}
 
 	protected override async Task ReloadUiAsync()
-    {
+	{
 		await base.ReloadUiAsync();
 
 		ApiHash = TgDataFormatUtils.ParseGuidToString(App.ApiHash);
-	    ApiId = App.ApiId;
+		ApiId = App.ApiId;
 		PhoneNumber = App.PhoneNumber;
 		FirstName = App.FirstName;
-	    LastName = App.LastName;
+		LastName = App.LastName;
 		IsBot = App.UseBot;
 		BotTokenKey = App.BotTokenKey;
 
-	    UserName = string.Empty;
-	    MtProxyUrl = string.Empty;
-	    MaxAutoReconnects = string.Empty;
-	    FloodRetryThreshold = string.Empty;
-	    PingInterval = string.Empty;
-	    MaxCodePwdAttempts = string.Empty;
+		UserName = string.Empty;
+		MtProxyUrl = string.Empty;
+		MaxAutoReconnects = string.Empty;
+		FloodRetryThreshold = string.Empty;
+		PingInterval = string.Empty;
+		MaxCodePwdAttempts = string.Empty;
 
 		DataRequest = string.Empty;
 		DataRequestEmptyResponse = TgResourceExtensions.GetClientDataRequestEmptyResponse();
@@ -243,10 +255,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		OnFieldsTextChangedCore();
 	}
 
-    private async Task ReloadProxyAsync()
-    {
-	    ProxiesVms.Clear();
-	    var storageResult = await ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false);
+	private async Task ReloadProxyAsync()
+	{
+		ProxiesVms.Clear();
+		var storageResult = await ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false);
 		if (storageResult.IsExists)
 		{
 			foreach (TgEfProxyEntity proxy in storageResult.Items)
@@ -254,26 +266,26 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 				ProxiesVms.Add(new(proxy));
 			}
 		}
-	    // Insert empty proxy if not exists
-	    TgEfProxyViewModel? emptyProxyVm = null;
-	    var proxiesVmsEmpty = ProxiesVms.Where(x =>
-		    x.Dto.Type == TgEnumProxyType.None && (x.Dto.UserName == "No user" || x.Dto.Password == "No password"));
-	    if (!proxiesVmsEmpty.Any())
-	    {
-		    emptyProxyVm = new(new());
-		    ProxiesVms.Add(emptyProxyVm);
-	    }
-	    // Select proxy
-	    var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
-	    if (App.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
-	    {
-		    ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
-	    }
-	    // Select empty proxy
-	    else
-	    {
-		    ProxyVm = emptyProxyVm;
-	    }
+		// Insert empty proxy if not exists
+		TgEfProxyViewModel? emptyProxyVm = null;
+		var proxiesVmsEmpty = ProxiesVms.Where(x =>
+			x.Dto.Type == TgEnumProxyType.None && (x.Dto.UserName == "No user" || x.Dto.Password == "No password"));
+		if (!proxiesVmsEmpty.Any())
+		{
+			emptyProxyVm = new(new());
+			ProxiesVms.Add(emptyProxyVm);
+		}
+		// Select proxy
+		var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
+		if (App.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
+		{
+			ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
+		}
+		// Select empty proxy
+		else
+		{
+			ProxyVm = emptyProxyVm;
+		}
 	}
 
 	private async Task AppSaveAsync() => await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave());
@@ -281,7 +293,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	private async Task AppSaveCoreAsync()
 	{
 		await AppRepository.DeleteAllAsync();
-		
+
 		App.ApiHash = TgDataFormatUtils.ParseStringToGuid(ApiHash);
 		App.ApiId = ApiId;
 		App.FirstName = FirstName;
@@ -292,7 +304,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		App.BotTokenKey = BotTokenKey;
 		if (App.ProxyUid is null || App.ProxyUid == Guid.Empty)
 			App.Proxy = null;
-		
+
 		await AppRepository.SaveAsync(App);
 	}
 
@@ -301,11 +313,11 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	private async Task AppClearCoreAsync()
 	{
 		var storageResult = await AppRepository.GetNewAsync(isReadOnly: false);
-        App = storageResult.IsExists ? storageResult.Item : new();
+		App = storageResult.IsExists ? storageResult.Item : new();
 		ProxiesVms.Clear();
 		if (ProxyVm is not null)
 			ProxyVm.Dto = new();
-		
+
 		await ReloadUiAsync();
 		Password = string.Empty;
 		VerificationCode = string.Empty;
@@ -314,10 +326,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	private async Task AppDeleteAsync() => await ContentDialogAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete());
 
 	private async Task AppDeleteCoreAsync()
-    {
-        await AppRepository.DeleteAllAsync();
-        await AppLoadCoreAsync();
-    }
+	{
+		await AppRepository.DeleteAllAsync();
+		await AppLoadCoreAsync();
+	}
 
 	public void OnFieldsTextChangedCore()
 	{
@@ -332,7 +344,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (sender is not TextBox textBox) return;
+		if (sender is not TextBox textBox)
+			return;
 		if (TgDataFormatUtils.ParseStringToGuid(textBox.Text) == Guid.Empty)
 		{
 			IsFieldsCheck = false;
@@ -344,7 +357,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	public void OnApiIdTextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (sender is not TextBox textBox) return;
+		if (sender is not TextBox textBox)
+			return;
 		if (!int.TryParse(textBox.Text, out int id) || id <= 0)
 		{
 			IsFieldsCheck = false;
@@ -356,7 +370,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	public void OnPhoneTextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (sender is not TextBox textBox) return;
+		if (sender is not TextBox textBox)
+			return;
 		if (string.IsNullOrEmpty(textBox.Text))
 		{
 			IsFieldsCheck = false;

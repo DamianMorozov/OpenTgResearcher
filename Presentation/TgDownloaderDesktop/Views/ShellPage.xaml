@@ -106,6 +106,12 @@
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
 					</NavigationViewItem.Icon>
 				</NavigationViewItem>
+				<!--  Logs  -->
+				<NavigationViewItem x:Uid="Shell_Logs" helpers:TgNavigationHelper.NavigateTo="TgDownloaderDesktop.ViewModels.TgLogsViewModel">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A5;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
 				<!--  Update  -->
 				<NavigationViewItem x:Uid="Shell_Update" helpers:TgNavigationHelper.NavigateTo="TgDownloaderDesktop.ViewModels.TgUpdateViewModel">
 					<NavigationViewItem.Icon>

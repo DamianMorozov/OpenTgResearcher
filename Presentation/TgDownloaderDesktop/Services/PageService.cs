@@ -17,6 +17,7 @@ public sealed class PageService : IPageService
 		Configure<TgContactDetailsViewModel, TgContactDetailsPage>();
 		Configure<TgContactsViewModel, TgContactsPage>();
 		Configure<TgFiltersViewModel, TgFiltersPage>();
+		Configure<TgLogsViewModel, TgLogsPage>();
 		Configure<TgLoadDataViewModel, TgLoadDataPage>();
 		Configure<TgMainViewModel, TgMainPage>();
 		Configure<TgUpdateViewModel, TgUpdatePage>();

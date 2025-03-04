@@ -52,6 +52,7 @@ global using TgInfrastructure.Helpers;
 global using TgInfrastructure.Utils;
 global using TgInfrastructure.ViewModels;
 global using TgStorage.Connect;
+global using TgStorage.Contracts;
 global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Contacts;
 global using TgStorage.Domain.Filters;

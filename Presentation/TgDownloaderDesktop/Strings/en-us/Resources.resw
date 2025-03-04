@@ -106,6 +106,12 @@
   <data name="Shell_License.Content" xml:space="preserve">
     <value>License</value>
   </data>
+  <data name="Shell_ErrorsLogs.Content" xml:space="preserve">
+    <value>Errors log</value>
+  </data>
+  <data name="Shell_Logs.Content" xml:space="preserve">
+    <value>Logs</value>
+  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
   </data>
@@ -302,6 +308,9 @@
   </data>
   <data name="ActionLoadFromStorage.Text" xml:space="preserve">
     <value>Storage loading</value>
+  </data>
+  <data name="ActionUpdateFromFile.Text" xml:space="preserve">
+    <value>Update from file</value>
   </data>
   <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
     <value>Add record</value>

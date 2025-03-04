@@ -165,6 +165,12 @@
   <data name="Shell_License.Content" xml:space="preserve">
     <value>Лицензия</value>
   </data>
+  <data name="Shell_ErrorsLogs.Content" xml:space="preserve">
+    <value>Журнал ошибок</value>
+  </data>
+  <data name="Shell_Logs.Content" xml:space="preserve">
+    <value>Логи</value>
+  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Загрузка...</value>
   </data>
@@ -361,6 +367,9 @@
   </data>
   <data name="ActionLoadFromStorage.Text" xml:space="preserve">
     <value>Загрузка хранилища</value>
+  </data>
+  <data name="ActionUpdateFromFile.Text" xml:space="preserve">
+    <value>Обновить из файла</value>
   </data>
   <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
     <value>Добавить запись</value>

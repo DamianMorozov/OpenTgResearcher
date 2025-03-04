@@ -22,9 +22,15 @@ public partial class TgLoadDataPage
 
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
-		base.OnNavigatedTo(e);
-		await ViewModel.OnNavigatedToAsync(e);
-		ViewModel.IsPageLoad = true;
+		try
+		{
+			base.OnNavigatedTo(e);
+			await ViewModel.OnNavigatedToAsync(e);
+		}
+		catch (Exception ex)
+		{
+			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
+		}
 	}
 
 	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
@@ -32,7 +38,6 @@ public partial class TgLoadDataPage
 	protected override void OnNavigatedFrom(NavigationEventArgs e)
 	{
 		base.OnNavigatedFrom(e);
-		ViewModel.IsPageLoad = false;
 	}
 
 	#endregion

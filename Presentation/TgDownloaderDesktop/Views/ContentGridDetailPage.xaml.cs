@@ -19,10 +19,17 @@ public sealed partial class ContentGridDetailPage : Page
 
 	#region Public and private methods
 
-	protected override void OnNavigatedTo(NavigationEventArgs e)
+	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
-		base.OnNavigatedTo(e);
-		this.RegisterElementForConnectedAnimation("animationKeyContentGrid", itemHero);
+		try
+		{
+			base.OnNavigatedTo(e);
+			this.RegisterElementForConnectedAnimation("animationKeyContentGrid", itemHero);
+		}
+		catch (Exception ex)
+		{
+			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
+		}
 	}
 
 	protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)

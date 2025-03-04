@@ -22,8 +22,15 @@ public partial class TgChatsPage
 
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
-		base.OnNavigatedTo(e);
-		await ViewModel.OnNavigatedToAsync(e);
+		try
+		{
+			base.OnNavigatedTo(e);
+			await ViewModel.OnNavigatedToAsync(e);
+		}
+		catch (Exception ex)
+		{
+			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
+		}
 	}
 
 	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);

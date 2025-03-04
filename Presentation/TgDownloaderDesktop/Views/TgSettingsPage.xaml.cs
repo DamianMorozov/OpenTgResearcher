@@ -24,15 +24,42 @@ public sealed partial class TgSettingsPage : Page
 
 	protected override async void OnNavigatedTo(NavigationEventArgs e)
 	{
-		base.OnNavigatedTo(e);
-		await ViewModel.OnNavigatedToAsync(e);
+		try
+		{
+			base.OnNavigatedTo(e);
+			await ViewModel.OnNavigatedToAsync(e);
+		}
+		catch (Exception ex)
+		{
+			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
+		}
 	}
 
 	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
-	private async void ComboBoxAppThemes_OnSelectionChanged(object sender, SelectionChangedEventArgs e) => await ViewModel.SettingsService.SetAppThemeAsync();
+	private async void ComboBoxAppThemes_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		try
+		{
+			await ViewModel.SettingsService.SetAppThemeAsync();
+		}
+		catch (Exception ex)
+		{
+			await TgDesktopUtils.FileLogAsync(ex, "An error occurred set theme.");
+		}
+	}
 
-	private async void ComboBoxAppLanguages_OnSelectionChanged(object sender, SelectionChangedEventArgs e) => await ViewModel.SettingsService.SetAppLanguageAsync();
+	private async void ComboBoxAppLanguages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		try
+		{
+			await ViewModel.SettingsService.SetAppLanguageAsync();
+		}
+		catch (Exception ex)
+		{
+			await TgDesktopUtils.FileLogAsync(ex, "An error occurred set language.");
+		}
+	}
 
 	#endregion
 }

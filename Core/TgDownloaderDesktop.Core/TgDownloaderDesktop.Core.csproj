@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>TgDownloaderDesktop.Core</RootNamespace>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x86;x64;AnyCPU</Platforms>
     <Platforms>x86;x64;arm64;AnyCPU</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>0.6.40.0</Version>

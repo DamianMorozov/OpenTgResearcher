@@ -43,8 +43,6 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 #endif
 			throw;
 		}
-		// Default
-		return new(TgEnumEntityState.NotExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetFirstAsync(bool isReadOnly = true)

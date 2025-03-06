@@ -1,25 +1,26 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgStorage.Utils;
+namespace TgInfrastructure.Utils;
 
-/// <summary> Files utilities </summary>
+/// <summary> File utils </summary>
 public static class TgFileUtils
 {
-	#region Public and private fields, properties, constructor
+	#region Public and private methods
 
-	private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
+	public static string GetShortFilePath(string filePath) => string.IsNullOrEmpty(filePath) ? string.Empty : Path.GetFileName(filePath);
+
 	private static TgLogHelper TgLog => TgLogHelper.Instance;
-	public static string FileAppXmlSettings => !string.IsNullOrEmpty(TgFileUtils.BaseDirectory) ? Path.Combine(TgFileUtils.BaseDirectory, "TgDownloader.xml") : string.Empty;
-	public static string FileTgSession => "TgDownloader.session";
-	public static string FileLog => "TgDownloader.log";
 	public static string BaseDirectory = string.Empty;
+	public static string FileAppXmlSettings => !string.IsNullOrEmpty(BaseDirectory) ? Path.Combine(BaseDirectory, "TgDownloader.xml") : string.Empty;
+	public static string FileTgSession => "TgDownloader.session";
+	public static string LogsDirectory = "Logs";
 
 	static TgFileUtils()
 	{
 		try
 		{
-			TgFileUtils.BaseDirectory = AppContext.BaseDirectory;
+			BaseDirectory = AppContext.BaseDirectory;
 		}
 		catch (Exception)
 		{
@@ -141,9 +142,9 @@ public static class TgFileUtils
 		}
 		catch (Exception ex)
 		{
-			TgLog.MarkupLine($"{TgLocale.StatusException}: " + TgLog.GetMarkupString(ex.Message));
+			TgLog.MarkupLine($"Status exception: " + TgLog.GetMarkupString(ex.Message));
 			if (ex.InnerException is not null)
-				TgLog.MarkupLine($"{TgLocale.StatusInnerException}: " + TgLog.GetMarkupString(ex.InnerException.Message));
+				TgLog.MarkupLine($"Status inner exception: " + TgLog.GetMarkupString(ex.InnerException.Message));
 			return 0L;
 		}
 	}
@@ -162,24 +163,24 @@ public static class TgFileUtils
 			}
 			: "0 B";
 
-    public static string GetDefaultDirectory()
-    {
-        var os = Environment.OSVersion.Platform.ToString();
-        // Windows
-        if (os == "Win32NT" || os == "Win32S" || os == "Win32Windows" || os == "WinCE")
-	        return "C:";
-        // Linux or Mac OS
-        if (os == "Unix" || os == "X11")
-	        return "/home/username";
-        // Android
-        if (os.Contains("Android"))
-	        return "/sdcard";
-        // WebAssembly
-        if (os.Contains("WebAssembly"))
-	        return "/";
+	public static string GetDefaultDirectory()
+	{
+		var os = Environment.OSVersion.Platform.ToString();
+		// Windows
+		if (os == "Win32NT" || os == "Win32S" || os == "Win32Windows" || os == "WinCE")
+			return "C:";
+		// Linux or Mac OS
+		if (os == "Unix" || os == "X11")
+			return "/home/username";
+		// Android
+		if (os.Contains("Android"))
+			return "/sdcard";
+		// WebAssembly
+		if (os.Contains("WebAssembly"))
+			return "/";
 		// Other.
 		return Environment.CurrentDirectory;
-    }
+	}
 
-    #endregion
+	#endregion
 }

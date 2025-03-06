@@ -19,7 +19,7 @@
     <PackageReference Include="CodingSeb.Localization" Version="1.3.1" />
     <PackageReference Include="CodingSeb.Localization.JsonFileLoader" Version="1.3.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="WTelegramBot" Version="8.2.1" />
-    <PackageReference Include="WTelegramClient" Version="4.3.1" />
+    <PackageReference Include="WTelegramBot" Version="8.3.1" />
+    <PackageReference Include="WTelegramClient" Version="4.3.2" />
   </ItemGroup>
 </Project>

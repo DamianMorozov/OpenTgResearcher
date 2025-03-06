@@ -2310,7 +2310,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	{
 		ClientException.Set(ex);
 		await UpdateExceptionAsync(ex);
-		await UpdateStateExceptionAsync(filePath, lineNumber, memberName, ClientException.Message);
+		await UpdateStateExceptionAsync(TgFileUtils.GetShortFilePath(filePath), lineNumber, memberName, ClientException.Message);
 	}
 
 	//private void SetClientExceptionShort(Exception ex)
@@ -2330,7 +2330,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	{
 		ProxyException.Set(ex);
 		await UpdateExceptionAsync(ex);
-		await UpdateStateExceptionAsync(filePath, lineNumber, memberName, ProxyException.Message);
+		await UpdateStateExceptionAsync(TgFileUtils.GetShortFilePath(filePath), lineNumber, memberName, ProxyException.Message);
 	}
 
 	#endregion
@@ -2351,7 +2351,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			catch (Exception ex)
 			{
 #if DEBUG
-				Debug.WriteLine($"{filePath} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
+				Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex, TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex.StackTrace);
 #endif

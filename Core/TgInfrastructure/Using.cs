@@ -4,6 +4,7 @@
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using System.ComponentModel;
 global using System.Diagnostics;
+global using System.IO.Enumeration;
 global using System.Reflection;
 global using System.Text.RegularExpressions;
 global using System.Text;
@@ -13,6 +14,7 @@ global using System.Xml;
 global using TgInfrastructure.Common;
 global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Enums;
+global using TgInfrastructure.Helpers;
 global using TgInfrastructure.License;
 global using TgInfrastructure.Models;
 global using TgInfrastructure.Utils;

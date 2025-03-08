@@ -312,6 +312,15 @@
   <data name="ActionUpdateFromFile.Text" xml:space="preserve">
     <value>Update from file</value>
   </data>
+  <data name="ActionLogsLoading.Text" xml:space="preserve">
+    <value>Logs loading</value>
+  </data>
+  <data name="ActionDeleteFile.Content" xml:space="preserve">
+    <value>Delete file</value>
+  </data>
+  <data name="ActionCopy.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
   <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
     <value>Add record</value>
   </data>
@@ -449,6 +458,9 @@
   </data>
   <data name="AskSettingsDelete" xml:space="preserve">
     <value>Delete the settings?</value>
+  </data>
+  <data name="AskDeleteFile" xml:space="preserve">
+    <value>Delete the file?</value>
   </data>
   <data name="AskClientConnect" xml:space="preserve">
     <value>Connect the client?</value>
@@ -893,5 +905,8 @@
   </data>
   <data name="InDevelopment" xml:space="preserve">
     <value>In development</value>
+  </data>
+  <data name="ErrorOccurredWhileLoadingLogs" xml:space="preserve">
+    <value>При загрузке логов произошла ошибка!</value>
   </data>
 </root>

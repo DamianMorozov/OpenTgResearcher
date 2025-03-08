@@ -56,7 +56,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgDesktopUtils.FileLog(ex);
+			TgLogUtils.LogFatal(ex);
 		}
 
 		try
@@ -67,7 +67,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgDesktopUtils.FileLog(ex);
+			TgLogUtils.LogFatal(ex);
 		}
 	}
 
@@ -147,27 +147,27 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 			if (!Directory.Exists(AppFolder))
 				AppFolder = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			//
+			TgLogUtils.LogFatal(ex);
 		}
 		try
 		{
 			if (!Directory.Exists(AppFolder))
 				AppFolder = AppDomain.CurrentDomain.BaseDirectory;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			//
+			TgLogUtils.LogFatal(ex);
 		}
 		try
 		{
 			if (!Directory.Exists(AppFolder))
 				AppFolder = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			//
+			TgLogUtils.LogFatal(ex);
 		}
 	}
 
@@ -245,9 +245,9 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 				}
 			}
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			//
+			TgLogUtils.LogFatal(ex);
 		}
 		return default;
 	}
@@ -267,9 +267,9 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 				await Task.Run(() => _fileService.Save(_applicationDataFolder, _localSettingsFile, _settings));
 			}
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
-			//
+			TgLogUtils.LogFatal(ex);
 		}
 	}
 

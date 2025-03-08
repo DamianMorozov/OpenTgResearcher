@@ -5,7 +5,7 @@ namespace TgDownloaderDesktop.Common;
 
 /// <summary> Base class for TgViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public partial class TgPageViewModelBase : ObservableRecipient
+public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 {
 	#region Public and private fields, properties, constructor
 
@@ -13,6 +13,9 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	public partial ITgSettingsService SettingsService { get; private set; }
 	[ObservableProperty]
 	public partial INavigationService NavigationService { get; private set; }
+	[ObservableProperty]
+	public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
+
 	[ObservableProperty]
 	public partial TgLicenseManagerHelper LicenseManager { get; set; } = TgLicenseManagerHelper.Instance;
 	[ObservableProperty]
@@ -49,15 +52,14 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	public partial bool IsEnabledContent { get; set; }
 	[ObservableProperty]
 	public partial bool IsDownloading { get; set; }
-	//[ObservableProperty]
-	//public partial FileSystemWatcher? DirectorySystemWatcher { get; set; }
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
 
-	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService)
+	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger)
 	{
 		SettingsService = settingsService;
 		NavigationService = navigationService;
+		Logger = logger;
 	}
 
 	#endregion
@@ -69,7 +71,12 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	public virtual void OnLoaded(object parameter)
 	{
 		if (parameter is XamlRoot xamlRoot)
+		{
 			XamlRootVm = xamlRoot;
+			Logger.LogInformation("Page loaded.");
+		}
+		else
+			Logger.LogInformation("Page loaded without XamlRoot.");
 	}
 
 	public virtual async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(async () => await Task.CompletedTask);
@@ -97,7 +104,7 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	/// <summary> Update state client message </summary>
 	public virtual void UpdateStateProxy(string message)
 	{
-		App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+		App.MainWindow.DispatcherQueue.TryEnqueueWithLog(() =>
 		{
 			StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 			StateProxyMsg = message;
@@ -114,7 +121,7 @@ public partial class TgPageViewModelBase : ObservableRecipient
 	/// <summary> Update state source message </summary>
 	public async Task UpdateStateSource(long sourceId, int messageId, int count, string message)
 	{
-		App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+		App.MainWindow.DispatcherQueue.TryEnqueueWithLog(() =>
 		{
 			float progress = messageId == 0 || count  == 0 ? 0 : (float) messageId * 100 / count;
 			StateSourceProgress = (int)progress;
@@ -128,58 +135,39 @@ public partial class TgPageViewModelBase : ObservableRecipient
 		await Task.CompletedTask;
 	}
 
-//	protected void DirectorySystemWatcher_OnChanged(object sender, FileSystemEventArgs e)
-//	{
-//		App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
-//		{
-//			try
-//			{
-//				long size = await TgDesktopUtils.CalculateDirSizeAsync(StateSourceDirectory);
-//				StateSourceDirectorySizeString = FormatSize(size);
-//				//Debug.WriteLine($"File: {e.FullPath} {e.ChangeType}");
-//			}
-//			catch (Exception ex)
-//			{
-//#if DEBUG
-//				Debug.WriteLine(ex);
-//#endif
-//			}
-//		});
-//	}
+	//private string FormatSize(long size)
+	//{
+	//	if (size < 1024)
+	//	{
+	//		return $"{size} B";
+	//	}
+	//	else if (size < 1024 * 1024)
+	//	{
+	//		return $"{size / 1024.0:###.###} KB";
+	//	}
+	//	else if (size < 1024 * 1024 * 1024)
+	//	{
+	//		return $"{size / (1024 * 1024.0):###.###} MB";
+	//	}
+	//	else
+	//	{
+	//		return $"{size / (1024 * 1024 * 1024.0):###.###} GB";
+	//	}
+	//}
 
-	private string FormatSize(long size)
-	{
-		if (size < 1024)
-		{
-			return $"{size} B";
-		}
-		else if (size < 1024 * 1024)
-		{
-			return $"{size / 1024.0:###.###} KB";
-		}
-		else if (size < 1024 * 1024 * 1024)
-		{
-			return $"{size / (1024 * 1024.0):###.###} MB";
-		}
-		else
-		{
-			return $"{size / (1024 * 1024 * 1024.0):###.###} GB";
-		}
-	}
-
-	protected async Task ContentDialogAsync(string title, ContentDialogButton defaultButton = ContentDialogButton.Close)
-	{
-		if (XamlRootVm is null) return;
-		ContentDialog dialog = new()
-		{
-			XamlRoot = XamlRootVm,
-			Title = title,
-			PrimaryButtonText = TgResourceExtensions.GetYesButton(),
-			CloseButtonText = TgResourceExtensions.GetCancelButton(),
-			DefaultButton = defaultButton,
-		};
-		_ = await dialog.ShowAsync();
-	}
+	//protected async Task ContentDialogAsync(string title, ContentDialogButton defaultButton = ContentDialogButton.Close)
+	//{
+	//	if (XamlRootVm is null) return;
+	//	ContentDialog dialog = new()
+	//	{
+	//		XamlRoot = XamlRootVm,
+	//		Title = title,
+	//		PrimaryButtonText = TgResourceExtensions.GetYesButton(),
+	//		CloseButtonText = TgResourceExtensions.GetCancelButton(),
+	//		DefaultButton = defaultButton,
+	//	};
+	//	_ = await dialog.ShowAsync();
+	//}
 
 	protected async Task ContentDialogAsync(string title, string content)
 	{
@@ -241,22 +229,30 @@ public partial class TgPageViewModelBase : ObservableRecipient
 		}
 	}
 
-	/// <summary> Write text to clipboard </summary>
-	public async void OnClipboardWriteClick(object sender, RoutedEventArgs e)
+	/// <summary> Core write text to clipboard </summary>
+	private void OnClipboardWriteCoreClick(object sender, RoutedEventArgs e, bool isSilent)
 	{
-		if (sender is Button button)
+		App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
-			var address = button.Tag?.ToString();
+			if (sender is not Button button) return;
+			var address = button.Tag.ToString();
 			if (string.IsNullOrEmpty(address)) return;
 			if (!string.IsNullOrEmpty(address))
 			{
 				var dataPackage = new DataPackage();
 				dataPackage.SetText(address);
 				Clipboard.SetContent(dataPackage);
-				await ContentDialogAsync(TgResourceExtensions.GetClipboard(), address);
+				if (!isSilent)
+					await ContentDialogAsync(TgResourceExtensions.GetClipboard(), address);
 			}
-		}
+		});
 	}
+
+	/// <summary> Write text to clipboard </summary>
+	public void OnClipboardWriteClick(object sender, RoutedEventArgs e) => OnClipboardWriteCoreClick(sender, e, isSilent: false);
+
+	/// <summary> Silent write text to clipboard </summary>
+	public void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e) => OnClipboardWriteCoreClick(sender, e, isSilent: true);
 
 	#endregion
 }

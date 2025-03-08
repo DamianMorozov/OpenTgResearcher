@@ -1,9 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using AppInstance = Microsoft.Windows.AppLifecycle.AppInstance;
-using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
-
 namespace TgDownloaderDesktop.Activation;
 
 public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
@@ -19,7 +16,7 @@ public class AppNotificationActivationHandler : ActivationHandler<LaunchActivate
 
 	protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
 	{
-		return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
+		return Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
 	}
 
 	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
@@ -33,13 +30,13 @@ public class AppNotificationActivationHandler : ActivationHandler<LaunchActivate
 		//// if (notificationService.ParseArguments(activatedEventArgs.Argument)["action"] == "Settings")
 		//// {
 		////     // Queue navigation with low priority to allow the UI to initialize.
-		////     App.MainWindow.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+		////     App.MainWindow.DispatcherQueue.TryEnqueueWithLog(DispatcherQueuePriority.Low, () =>
 		////     {
 		////         navigationService.NavigateTo(typeof(TgSettingsViewModel).FullName!);
 		////     });
 		//// }
 
-		App.MainWindow.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+		App.MainWindow.DispatcherQueue.TryEnqueueWithLog(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
 		{
 			App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation");
 		});

@@ -5,5 +5,20 @@ namespace TgDownloaderDesktop.Helpers;
 
 public static class TgFrameExtensions
 {
-	public static object? GetPageViewModel(this Frame frame) => frame?.Content?.GetType().GetProperty("ViewModel")?.GetValue(frame.Content, null);
+	public static object? GetPageViewModel(this Frame frame)
+	{
+		var content = frame.Content;
+		var type = content?.GetType();
+		var properties = type?.GetProperties();
+		if (properties != null)
+			foreach (var property in properties)
+			{
+				if (property.Name.Contains("ViewModel"))
+					return property.GetValue(frame.Content, null);
+			}
+
+		//var property = type?.GetProperty("ViewModel");
+		//return property?.GetValue(frame.Content, null);
+		return null;
+	}
 }

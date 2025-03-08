@@ -54,7 +54,7 @@ public sealed class AppNotificationService : IAppNotificationService
 		////        _navigationService.NavigateTo(typeof(TgSettingsViewModel).FullName!);
 		////    });
 		//// }
-		App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+		App.MainWindow.DispatcherQueue.TryEnqueueWithLog(() =>
 		{
 			App.MainWindow.ShowMessageDialogAsync(
 				$"{TgLocaleHelper.Instance.AppVersion}: v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}",

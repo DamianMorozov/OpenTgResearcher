@@ -244,7 +244,7 @@
     <value>Default</value>
   </data>
   <data name="ExpanderAbout.Header" xml:space="preserve">
-    <value>OpenTgResearcher - ЗОткрытый исследователь Telegram</value>
+    <value>OpenTgResearcher - Открытый исследователь Telegram</value>
   </data>
   <data name="ExpanderLicense.Header" xml:space="preserve">
     <value>Лицензия</value>
@@ -370,6 +370,15 @@
   </data>
   <data name="ActionUpdateFromFile.Text" xml:space="preserve">
     <value>Обновить из файла</value>
+  </data>
+  <data name="ActionLogsLoading.Text" xml:space="preserve">
+    <value>Загрузка логов</value>
+  </data>
+  <data name="ActionDeleteFile.Content" xml:space="preserve">
+    <value>Удалить файл</value>
+  </data>
+  <data name="ActionCopy.Content" xml:space="preserve">
+    <value>Копировать</value>
   </data>
   <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
     <value>Добавить запись</value>
@@ -508,6 +517,9 @@
   </data>
   <data name="AskSettingsDelete" xml:space="preserve">
     <value>Удалить настройки?</value>
+  </data>
+  <data name="AskDeleteFile" xml:space="preserve">
+    <value>Удалить файл?</value>
   </data>
   <data name="AskClientConnect" xml:space="preserve">
     <value>Подключить клиент?</value>
@@ -955,5 +967,8 @@
   </data>
   <data name="InDevelopment" xml:space="preserve">
     <value>В разработке</value>
+  </data>
+  <data name="ErrorOccurredWhileLoadingLogs" xml:space="preserve">
+    <value>An error occurred while loading logs!</value>
   </data>
 </root>

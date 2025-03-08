@@ -20,6 +20,7 @@ public static class TgResourceExtensions
 	public static string AskClientDisconnect() => "AskClientDisconnect".GetLocalized();
 	public static string AskDataClear() => "AskDataClear".GetLocalized();
 	public static string AskDataLoad() => "AskDataLoad".GetLocalized();
+	public static string AskDeleteFile() => "AskDeleteFile".GetLocalized();
 	public static string AskRestartApp() => "AskRestartApp".GetLocalized();
 	public static string AskSettingsClear() => "AskSettingsClear".GetLocalized();
 	public static string AskSettingsDefault() => "AskSettingsDefault".GetLocalized();
@@ -44,6 +45,7 @@ public static class TgResourceExtensions
 	public static string GetClientIsDisconnected() => "ClientIsDisconnected".GetLocalized();
 	public static string GetClipboard() => "Clipboard".GetLocalized();
 	public static string GetError() => "Error".GetLocalized();
+	public static string GetErrorOccurredWhileLoadingLogs() => "ErrorOccurredWhileLoadingLogs".GetLocalized();
 	public static string GetInDevelopment() => "InDevelopment".GetLocalized();
 	public static string GetLicenseFreeDescription() => "LicenseFreeDescription".GetLocalized();
 	public static string GetLicensePaidDescription() => "LicensePaidDescription".GetLocalized();

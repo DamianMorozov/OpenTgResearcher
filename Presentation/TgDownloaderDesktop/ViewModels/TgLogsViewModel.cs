@@ -1,9 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Telegram.Bot.Types;
-using Windows.Storage;
-
 namespace TgDownloaderDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -47,21 +44,46 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 			foreach (var logFile in storageFiles)
 			{
 				if (logFile is null) continue;
-				try
-				{
-					var content = await File.ReadAllTextAsync(logFile.Path);
-					LogFiles.Add(new(this, Path.GetFileName(logFile.Path), content));
-				}
-				catch (Exception ex)
-				{
-					TgLogUtils.LogFatal(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
-					LogFiles.Add(new(this, Path.GetFileName(logFile.Path), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
-				}
+				await TryLoadLogAsync(logFile);
 			}
 		}
 		catch (Exception ex)
 		{
 			TgLogUtils.LogFatal(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
+		}
+	}
+
+	private async Task TryLoadLogAsync(StorageFile logFile, bool isRetry = false, int attempt = 0)
+	{
+		const int maxAttempts = 5;
+		try
+		{
+			if (!isRetry)
+			{
+				var content = await File.ReadAllTextAsync(logFile.Path);
+				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), content));
+			}
+			else
+			{
+				await using var fileStream = new FileStream(logFile.Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				using var reader = new StreamReader(fileStream);
+				var content = await reader.ReadToEndAsync();
+				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), content));
+			}
+		}
+		catch (Exception ex)
+		{
+			if (attempt < maxAttempts)
+			{
+				int delay = 100 * (attempt + 1);
+				await Task.Delay(delay);
+				await TryLoadLogAsync(logFile, isRetry: true, attempt + 1);
+			}
+			else
+			{
+				TgLogUtils.LogFatal(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
+				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
+			}
 		}
 	}
 

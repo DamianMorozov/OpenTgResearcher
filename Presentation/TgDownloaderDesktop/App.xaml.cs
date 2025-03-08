@@ -132,8 +132,9 @@ public partial class App : Application
 		var appFolder = GetService<ITgSettingsService>().AppFolder;
 		Log.Logger = new LoggerConfiguration()
 			.MinimumLevel.Verbose()
-			.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day)
+			.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
 			.CreateLogger();
+		Log.CloseAndFlush();
 	}
 
 	~App()

@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.050] - 2025-03-08
+### Changed
+- Updated load pages for TgDownloaderDesktop
+### Added
+- Added logs pages for TgDownloaderDesktop
+
 ## [0.6.040] - 2025-03-02
 ### Fixed
 - Fixed references in the documentation

@@ -1,5 +1,21 @@
 # Screenshots
 
+## [0.6.050] - 2025-03-08
+### OpenTgResearcherDesktop
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopHome.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopConnection.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopFilters.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopProxies.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopContacts.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopContactDetails.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopStories.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopChats.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopChatDetails.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopLogs.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopUpdate.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopLicense.png"></p>
+<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopSettings.png"></p>
+
 ## [0.6.040] - 2025-03-02
 ### OpenTgResearcherDesktop
 <p align="center"><img src="Assets/v0.6.040/TgDownloaderDesktopHome.png"></p>

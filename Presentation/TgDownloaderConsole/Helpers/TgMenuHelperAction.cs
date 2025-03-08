@@ -160,13 +160,17 @@ internal partial class TgMenuHelper
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
+#if DEBUG
 			catch (Exception ex)
 			{
-#if DEBUG
 				Debug.WriteLine(ex);
 				Debug.WriteLine(ex.StackTrace);
-#endif
+#else
+			catch (Exception)
+			{
+				//
 			}
+#endif
 		}
 		// Update message
 		async Task UpdateStateMessageThreadAsync(long sourceId, int messageId, string message, bool isStartTask, int threadNumber)
@@ -200,13 +204,17 @@ internal partial class TgMenuHelper
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
+#if DEBUG
 			catch (Exception ex)
 			{
-#if DEBUG
 				Debug.WriteLine(ex);
 				Debug.WriteLine(ex.StackTrace);
-#endif
+#else
+			catch (Exception)
+			{
+				//
 			}
+#endif
 		}
 	}
 
@@ -347,5 +355,5 @@ internal partial class TgMenuHelper
 			? TgLog.GetDtShortStamp()
 			: $"{TgLog.GetDtShortStamp()} | {TgCommonUtils.CalcSourceProgress(count, current):#00.00} % | {TgCommonUtils.GetLongString(current)} / {TgCommonUtils.GetLongString(count)}";
 
-	#endregion
+#endregion
 }

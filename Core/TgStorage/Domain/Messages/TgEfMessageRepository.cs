@@ -24,7 +24,11 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 			{
 				return await GetCoreAsync(item, isReadOnly);
 			}
+#if DEBUG
 			catch (Exception ex)
+#else
+			catch (Exception)
+#endif
 			{
 #if DEBUG
 				Debug.WriteLine(ex);

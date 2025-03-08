@@ -3,11 +3,11 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public partial class TgFiltersPage
+public sealed partial class TgFiltersPage
 {
 	#region Public and private fields, properties, constructor
 
-	public TgFiltersViewModel ViewModel { get; }
+	public override TgFiltersViewModel ViewModel { get; }
 
 	public TgFiltersPage()
 	{
@@ -15,25 +15,6 @@ public partial class TgFiltersPage
 		InitializeComponent();
 		Loaded += PageLoaded;
 	}
-
-	#endregion
-
-	#region Public and private methods
-
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
-	{
-		try
-		{
-			base.OnNavigatedTo(e);
-			await ViewModel.OnNavigatedToAsync(e);
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
-		}
-	}
-
-	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
 	#endregion
 }

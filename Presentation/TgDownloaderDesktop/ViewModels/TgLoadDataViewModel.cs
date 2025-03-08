@@ -8,13 +8,10 @@ public sealed partial class TgLoadDataViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-	public TgLoadDataViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
+	public TgLoadDataViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLoadDataViewModel> logger) 
+		: base(settingsService, navigationService, logger)
 	{
 	}
-
-	#endregion
-
-	#region Public and private methods
 
 	#endregion
 }

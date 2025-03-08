@@ -3,7 +3,7 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class ListDetailsDetailControl : UserControl
+public sealed partial class ListDetailsDetailControl
 {
 	#region Public and private fields, properties, constructor
 
@@ -13,7 +13,8 @@ public sealed partial class ListDetailsDetailControl : UserControl
 		set => SetValue(ListDetailsMenuItemProperty, value);
 	}
 
-	public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(SampleOrder), typeof(ListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
+	public static readonly DependencyProperty ListDetailsMenuItemProperty = 
+		DependencyProperty.Register("ListDetailsMenuItem", typeof(SampleOrder), typeof(ListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
 
 	public ListDetailsDetailControl()
 	{

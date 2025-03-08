@@ -12,7 +12,8 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 	public partial string UpdateLog { get; set; } = string.Empty;
 	public IRelayCommand UpdateCommand { get; }
 
-	public TgUpdateViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
+	public TgUpdateViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUpdateViewModel> logger) 
+		: base(settingsService, navigationService, logger)
 	{
 		// Commands
 		UpdateCommand = new AsyncRelayCommand(UpdateAsync);
@@ -66,6 +67,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 		catch (Exception ex)
 		{
 			log.AppendLine(ex.Message);
+			TgLogUtils.LogFatal(ex);
 		}
 		finally
 		{

@@ -64,8 +64,9 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	public IRelayCommand AppDeleteCommand { get; }
 
 
-	public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService) 
-		: base(settingsService, navigationService)
+	public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
+		ILogger<TgConnectViewModel> logger) 
+		: base(settingsService, navigationService, logger)
 	{
 		AppNotificationService = appNotificationService;
 		IsClientConnected = AppNotificationService.IsClientConnected;
@@ -177,15 +178,9 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 				: DataRequest + Environment.NewLine +
 					$"{what}: {(string.IsNullOrEmpty(response) ? DataRequestEmptyResponse : response)}";
 		}
-#if DEBUG
 		catch (Exception ex)
-#else
-		catch (Exception)
-#endif
 		{
-#if DEBUG
-			Debug.WriteLine(ex);
-#endif
+			TgLogUtils.LogFatal(ex);
 		}
 		return response;
 	}
@@ -206,7 +201,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		catch (Exception ex)
 		{
 			Exception.Set(ex);
-			await TgDesktopUtils.FileLogAsync(ex);
+			TgLogUtils.LogFatal(ex);
 			if (isRetry)
 				return;
 			if (Exception.Message.Contains("or delete the file to start a new session"))

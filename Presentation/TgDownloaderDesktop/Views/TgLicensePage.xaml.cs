@@ -3,11 +3,11 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class TgLicensePage : Page
+public sealed partial class TgLicensePage
 {
 	#region Public and private fields, properties, constructor
 
-	public TgLicenseViewModel ViewModel { get; }
+	public override TgLicenseViewModel ViewModel { get; }
 
 	public TgLicensePage()
 	{
@@ -15,25 +15,6 @@ public sealed partial class TgLicensePage : Page
 		InitializeComponent();
 		Loaded += PageLoaded;
 	}
-
-	#endregion
-
-	#region Public and private methods
-
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
-	{
-		try
-		{
-			base.OnNavigatedTo(e);
-			await ViewModel.OnNavigatedToAsync(e);
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
-		}
-	}
-
-	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
 	#endregion
 }

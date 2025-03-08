@@ -3,25 +3,28 @@
 
 namespace TgDownloaderDesktop.ViewModels;
 
-public partial class ContentGridDetailViewModel : ObservableRecipient, INavigationAware
+public partial class ContentGridDetailViewModel(ISampleDataService sampleDataService) : ObservableRecipient, INavigationAware
 {
-	private readonly ISampleDataService _sampleDataService;
-
 	[ObservableProperty]
 	public partial SampleOrder? Item { get; set; }
 
-	public ContentGridDetailViewModel(ISampleDataService sampleDataService)
+	public void OnNavigatedTo(object parameter)
 	{
-		_sampleDataService = sampleDataService;
-	}
-
-	public async void OnNavigatedTo(object parameter)
-	{
-		if (parameter is long orderID)
+		Task.Run(async () =>
 		{
-			var data = await _sampleDataService.GetContentGridDataAsync();
-			Item = data.First(i => i.OrderID == orderID);
-		}
+			try
+			{
+				if (parameter is long orderId)
+				{
+					var data = await sampleDataService.GetContentGridDataAsync();
+					Item = data.First(i => i.OrderID == orderId);
+				}
+			}
+			catch (Exception ex)
+			{
+				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+			}
+		});
 	}
 
 	public void OnNavigatedFrom()

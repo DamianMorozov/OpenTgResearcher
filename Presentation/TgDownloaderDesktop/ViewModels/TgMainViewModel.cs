@@ -4,7 +4,8 @@
 namespace TgDownloaderDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public partial class TgMainViewModel : TgPageViewModelBase
+public partial class TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgMainViewModel> logger)
+	: TgPageViewModelBase(settingsService, navigationService, logger)
 {
 	#region Public and private fields, properties, constructor
 
@@ -28,11 +29,6 @@ public partial class TgMainViewModel : TgPageViewModelBase
 	public partial string DonateCatizen { get; set; } = "UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6";
 	[ObservableProperty]
 	public partial string DonateMajor { get; set; } = "UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6";
-
-	public TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
-	{
-		//
-	}
 
 	#endregion
 

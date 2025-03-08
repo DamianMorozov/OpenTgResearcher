@@ -25,7 +25,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	public IRelayCommand UpdateOnlineCommand { get; }
 	public IRelayCommand StopDownloadingCommand { get; }
 
-	public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
+	public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger) 
+		: base(settingsService, navigationService, logger)
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
@@ -81,24 +82,12 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 			await DownloadSettings.UpdateSourceWithSettingsAsync();
 
 			StateSourceDirectory = Dto.Directory;
-			//DirectorySystemWatcher = new FileSystemWatcher()
-			//{
-			//	Path = StateSourceDirectory,
-			//	NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName,
-			//	Filter = "*.*"
-			//};
-			//DirectorySystemWatcher.Changed += DirectorySystemWatcher_OnChanged;
-			//DirectorySystemWatcher.EnableRaisingEvents = true;
 
 			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(DownloadSettings);
 			await DownloadSettings.UpdateSourceWithSettingsAsync();
 			//await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
 			await LoadDataStorageCoreAsync();
 			IsDownloading = false;
-			//DirectorySystemWatcher.Changed -= DirectorySystemWatcher_OnChanged;
-			//DirectorySystemWatcher.EnableRaisingEvents = false;
-			//DirectorySystemWatcher.Dispose();
-			//DirectorySystemWatcher = null;
 		});
 	}
 

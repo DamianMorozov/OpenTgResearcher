@@ -3,29 +3,30 @@
 
 namespace TgDownloaderDesktop.ViewModels;
 
-public partial class DataGridViewModel : ObservableRecipient, INavigationAware
+public partial class DataGridViewModel(ISampleDataService sampleDataService) : ObservableRecipient, INavigationAware
 {
-	private readonly ISampleDataService _sampleDataService;
-
 	[ObservableProperty]
 	public partial ObservableCollection<SampleOrder> Source { get; set; } = [];
 
-	public DataGridViewModel(ISampleDataService sampleDataService)
+	public void OnNavigatedTo(object parameter)
 	{
-		_sampleDataService = sampleDataService;
-	}
-
-	public async void OnNavigatedTo(object parameter)
-	{
-		Source.Clear();
-
-		// TODO: Replace with real data.
-		var data = await _sampleDataService.GetGridDataAsync();
-
-		foreach (var item in data)
+		Task.Run(async () =>
 		{
-			Source.Add(item);
-		}
+			try
+			{
+				Source.Clear();
+				// TODO: Replace with real data.
+				var data = await sampleDataService.GetGridDataAsync();
+				foreach (var item in data)
+				{
+					Source.Add(item);
+				}
+			}
+			catch (Exception ex)
+			{
+				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+			}
+		});
 	}
 
 	public void OnNavigatedFrom()

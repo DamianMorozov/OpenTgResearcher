@@ -19,16 +19,25 @@ public partial class ContentGridViewModel : ObservableRecipient, INavigationAwar
 		ItemClickCommand = new AsyncRelayCommand<SampleOrder>(OnItemClickAsync);
 	}
 
-	public async void OnNavigatedTo(object parameter)
+	public void OnNavigatedTo(object parameter)
 	{
-		Source.Clear();
-
-		// TODO: Replace with real data.
-		var data = await _sampleDataService.GetContentGridDataAsync();
-		foreach (var item in data)
+		Task.Run(async () =>
 		{
-			Source.Add(item);
-		}
+			try
+			{
+				Source.Clear();
+				// TODO: Replace with real data.
+				var data = await _sampleDataService.GetContentGridDataAsync();
+				foreach (var item in data)
+				{
+					Source.Add(item);
+				}
+			}
+			catch (Exception ex)
+			{
+				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+			}
+		});
 	}
 
 	public void OnNavigatedFrom()

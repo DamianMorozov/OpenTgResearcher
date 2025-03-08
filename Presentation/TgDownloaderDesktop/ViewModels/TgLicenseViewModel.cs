@@ -23,7 +23,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	public IRelayCommand CheckLicenseOnlineCommand { get; }
 	public IRelayCommand ChangeLicenseOnlineCommand { get; }
 
-	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
+	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger) 
+		: base(settingsService, navigationService, logger)
 	{
 		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";
@@ -71,7 +72,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			await TgDesktopUtils.FileLogAsync(ex);
+			TgLogUtils.LogFatal(ex);
 		}
 		await Task.CompletedTask;
 	}
@@ -86,7 +87,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			await TgDesktopUtils.FileLogAsync(ex);
+			TgLogUtils.LogFatal(ex);
 		}
 		await Task.CompletedTask;
 	}

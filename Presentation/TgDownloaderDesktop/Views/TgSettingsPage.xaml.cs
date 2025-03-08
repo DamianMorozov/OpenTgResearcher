@@ -3,11 +3,11 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class TgSettingsPage : Page
+public sealed partial class TgSettingsPage
 {
 	#region Public and private fields, properties, constructor
 
-	public TgSettingsViewModel ViewModel { get; }
+	public override TgSettingsViewModel ViewModel { get; }
 
 	public TgSettingsPage()
 	{
@@ -22,43 +22,34 @@ public sealed partial class TgSettingsPage : Page
 
 	#region Public and private methods
 
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
+	private void ComboBoxAppThemes_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		try
+		Task.Run(async () =>
 		{
-			base.OnNavigatedTo(e);
-			await ViewModel.OnNavigatedToAsync(e);
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
-		}
+			try
+			{
+				await ViewModel.SettingsService.SetAppThemeAsync();
+			}
+			catch (Exception ex)
+			{
+				TgLogUtils.LogFatal(ex, "An error occurred set theme!");
+			}
+		});
 	}
 
-	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
-
-	private async void ComboBoxAppThemes_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+	private void ComboBoxAppLanguages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		try
+		Task.Run(async () =>
 		{
-			await ViewModel.SettingsService.SetAppThemeAsync();
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred set theme.");
-		}
-	}
-
-	private async void ComboBoxAppLanguages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-	{
-		try
-		{
-			await ViewModel.SettingsService.SetAppLanguageAsync();
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred set language.");
-		}
+			try
+			{
+				await ViewModel.SettingsService.SetAppLanguageAsync();
+			}
+			catch (Exception ex)
+			{
+				TgLogUtils.LogFatal(ex, "An error occurred set language!");
+			}
+		});
 	}
 
 	#endregion

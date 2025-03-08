@@ -12,7 +12,8 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 	public IRelayCommand SettingsDefaultCommand { get; }
 	public IRelayCommand SettingsSaveCommand { get; }
 
-	public TgSettingsViewModel(ITgSettingsService settingsService, INavigationService navigationService) : base(settingsService, navigationService)
+	public TgSettingsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSettingsViewModel> logger) 
+		: base(settingsService, navigationService, logger)
 	{
 		SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync);
 		SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync);

@@ -3,7 +3,7 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class ListDetailsPage : Page
+public sealed partial class ListDetailsPage
 {
 	#region Public and private fields, properties, constructor
 

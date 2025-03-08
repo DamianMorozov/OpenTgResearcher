@@ -4,7 +4,7 @@
 namespace TgDownloaderDesktop.Views;
 
 // To learn more about WebView2, see https://docs.microsoft.com/microsoft-edge/webview2/.
-public sealed partial class WebViewPage : Page
+public sealed partial class WebViewPage
 {
 	#region Public and private fields, properties, constructor
 
@@ -14,7 +14,6 @@ public sealed partial class WebViewPage : Page
 	{
 		ViewModel = App.GetService<WebViewViewModel>();
 		InitializeComponent();
-
 		ViewModel.WebViewService.Initialize(WebView);
 	}
 

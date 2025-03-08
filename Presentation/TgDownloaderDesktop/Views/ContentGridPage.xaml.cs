@@ -3,7 +3,7 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class ContentGridPage : Page
+public sealed partial class ContentGridPage
 {
 	#region Public and private fields, properties, constructor
 

@@ -3,7 +3,7 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class ShellPage : Microsoft.UI.Xaml.Controls.Page
+public sealed partial class ShellPage
 {
 	#region Public and private fields, properties, constructor
 

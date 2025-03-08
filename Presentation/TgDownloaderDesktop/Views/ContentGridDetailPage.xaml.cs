@@ -3,7 +3,7 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public sealed partial class ContentGridDetailPage : Page
+public sealed partial class ContentGridDetailPage
 {
 	#region Public and private fields, properties, constructor
 
@@ -19,7 +19,7 @@ public sealed partial class ContentGridDetailPage : Page
 
 	#region Public and private methods
 
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
+	protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
 		try
 		{
@@ -28,7 +28,7 @@ public sealed partial class ContentGridDetailPage : Page
 		}
 		catch (Exception ex)
 		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
+			TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
 		}
 	}
 

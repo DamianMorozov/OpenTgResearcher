@@ -3,11 +3,11 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public partial class TgContactsPage
+public sealed partial class TgContactsPage
 {
 	#region Public and private fields, properties, constructor
 
-	public TgContactsViewModel ViewModel { get; }
+	public override TgContactsViewModel ViewModel { get; }
 
 	public TgContactsPage()
 	{
@@ -15,25 +15,6 @@ public partial class TgContactsPage
 		InitializeComponent();
 		Loaded += PageLoaded;
 	}
-
-	#endregion
-
-	#region Public and private methods
-
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
-	{
-		try
-		{
-			base.OnNavigatedTo(e);
-			await ViewModel.OnNavigatedToAsync(e);
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
-		}
-	}
-
-	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
 	#endregion
 }

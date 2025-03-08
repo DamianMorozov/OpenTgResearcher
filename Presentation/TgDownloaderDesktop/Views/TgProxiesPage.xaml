@@ -1,7 +1,8 @@
-﻿<Page
+﻿<common:TgPageBase
 	x:Class="TgDownloaderDesktop.Views.TgProxiesPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:common="using:TgDownloaderDesktop.Common"
 	xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:helpers="using:TgDownloaderDesktop.Helpers"
@@ -11,9 +12,9 @@
 	d:DataContext="{d:DesignInstance Type=viewmodels:TgProxiesViewModel}"
 	mc:Ignorable="d">
 
-	<Page.Resources>
+	<common:TgPageBase.Resources>
 		<helpers:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-	</Page.Resources>
+	</common:TgPageBase.Resources>
 
 	<Grid>
 		<Grid.RowDefinitions>
@@ -227,4 +228,4 @@
 			</Expander>
 		</ContentControl>
 	</Grid>
-</Page>
+</common:TgPageBase>

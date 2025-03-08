@@ -19,7 +19,7 @@ public sealed partial class MainWindow : WindowEx
 
         // Theme change code picked from https://github.com/microsoft/WinUI-Gallery/pull/1239
         _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        _settings = new UISettings();
+        _settings = new();
         _settings.ColorValuesChanged += Settings_ColorValuesChanged; // cannot use FrameworkElement.ActualThemeChanged event
     }
 
@@ -27,9 +27,6 @@ public sealed partial class MainWindow : WindowEx
     private void Settings_ColorValuesChanged(UISettings sender, object args)
     {
         // This calls comes off-thread, hence we will need to dispatch it to current app's thread
-        _dispatcherQueue.TryEnqueue(() =>
-        {
-            TgTitleBarHelper.ApplySystemThemeToCaptionButtons();
-        });
+        _dispatcherQueue.TryEnqueueWithLog(TgTitleBarHelper.ApplySystemThemeToCaptionButtons);
     }
 }

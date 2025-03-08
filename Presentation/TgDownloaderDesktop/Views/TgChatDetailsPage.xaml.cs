@@ -3,11 +3,11 @@
 
 namespace TgDownloaderDesktop.Views;
 
-public partial class TgChatDetailsPage
+public sealed partial class TgChatDetailsPage
 {
 	#region Public and private fields, properties, constructor
 
-	public TgChatDetailsViewModel ViewModel { get; }
+	public override TgChatDetailsViewModel ViewModel { get; }
 
 	public TgChatDetailsPage()
 	{
@@ -20,21 +20,6 @@ public partial class TgChatDetailsPage
 	#endregion
 
 	#region Public and private methods
-
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
-	{
-		try
-		{
-			base.OnNavigatedTo(e);
-			await ViewModel.OnNavigatedToAsync(e);
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
-		}
-	}
-
-	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
 	private void ScrollRequested()
 	{

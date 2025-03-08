@@ -55,7 +55,11 @@ public partial class App : Application
 		TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(), 
 			TgResourceExtensions.GetLicenseTestDescription(), TgResourceExtensions.GetLicensePaidDescription(), 
 			TgResourceExtensions.GetLicensePremiumDescription());
-		Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder().UseContentRoot(AppContext.BaseDirectory)
+		// Host
+		Host = Microsoft.Extensions.Hosting.Host
+			.CreateDefaultBuilder()
+			.UseSerilog()
+			.UseContentRoot(AppContext.BaseDirectory)
 			.ConfigureServices((context, services) =>
 			{
 				// Default Activation Handler
@@ -115,17 +119,27 @@ public partial class App : Application
 				services.AddTransient<TgLicensePage>();
 				services.AddTransient<TgLogsViewModel>();
 				services.AddTransient<TgLogsPage>();
+				// Logger
+				services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 				// Configuration
 				services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
 			})
 			.Build();
-		App.GetService<IAppNotificationService>().Initialize();
+
+		GetService<IAppNotificationService>().Initialize();
 		UnhandledException += App_UnhandledException;
+		// Logger
+		var appFolder = GetService<ITgSettingsService>().AppFolder;
+		Log.Logger = new LoggerConfiguration()
+			.MinimumLevel.Verbose()
+			.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day)
+			.CreateLogger();
 	}
 
 	~App()
 	{
 		Host.Dispose();
+		Log.CloseAndFlush();
 	}
 
 	#endregion
@@ -136,7 +150,7 @@ public partial class App : Application
 	{
 		// TODO: Log and handle exceptions as appropriate.
 		// https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
-		TgDesktopUtils.FileLog(e.Exception);
+		TgLogUtils.LogFatal(e.Exception, sender.ToString() ?? string.Empty);
 		// Set a handled exception to prevent the application from terminating
 		e.Handled = true;
 	}
@@ -144,63 +158,17 @@ public partial class App : Application
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		base.OnLaunched(args);
-		App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
-		await App.GetService<IActivationService>().ActivateAsync(args);
-#if DEBUG
-		await TgDesktopUtils.FileLogAsync("OnLaunched");
-#endif
-		try
+		GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+
+		await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
+			await GetService<IActivationService>().ActivateAsync(args);
 			// Register TgEfContext as the DbContext for EF Core
-			var settingsService = App.GetService<ITgSettingsService>();
-			TgEfUtils.AppStorage = settingsService.AppStorage;
+			TgEfUtils.AppStorage = GetService<ITgSettingsService>().AppStorage;
 			// Create and update storage
 			await TgEfUtils.CreateAndUpdateDbAsync();
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex);
-		}
+		}, "Application launched");
 	}
-
-	// https://github.com/AndrewKeepCoding/WinUI3Localizer
-	//private async Task InitializeLocalizer()
-	//{
-	//	// Initialize a "Strings" folder in the "LocalFolder" for the packaged app.
-	//	StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-	//	StorageFolder stringsFolder = await localFolder.CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
-	//	// Create string resources file from app resources if doesn't exists.
-	//	string resourceFileName = "Resources.resw";
-	//	await CreateStringResourceFileIfNotExists(stringsFolder, "en-US", resourceFileName);
-	//	await CreateStringResourceFileIfNotExists(stringsFolder, "ru-RU", resourceFileName);
-	//	var localizer = await new LocalizerBuilder()
-	//		.AddStringResourcesFolderForLanguageDictionaries(stringsFolder.Path)
-	//		.SetOptions(options =>
-	//		{
-	//			options.DefaultLanguage = "en-US";
-	//		})
-	//		.Build();
-	//}
-
-	//private static async Task CreateStringResourceFileIfNotExists(StorageFolder stringsFolder, string language, string resourceFileName)
-	//{
-	//	StorageFolder languageFolder = await stringsFolder.CreateFolderAsync(
-	//		language,
-	//		CreationCollisionOption.OpenIfExists);
-
-	//	if (await languageFolder.TryGetItemAsync(resourceFileName) is null)
-	//	{
-	//		string resourceFilePath = Path.Combine(stringsFolder.Name, language, resourceFileName);
-	//		StorageFile resourceFile = await LoadStringResourcesFileFromAppResource(resourceFilePath);
-	//		_ = await resourceFile.CopyAsync(languageFolder);
-	//	}
-	//}
-
-	//private static async Task<StorageFile> LoadStringResourcesFileFromAppResource(string filePath)
-	//{
-	//	Uri resourcesFileUri = new($"ms-appx:///{filePath}");
-	//	return await StorageFile.GetFileFromApplicationUriAsync(resourcesFileUri);
-	//}
 
 	#endregion
 }

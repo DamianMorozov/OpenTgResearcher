@@ -7,7 +7,7 @@ public partial class TgStoriesPage
 {
 	#region Public and private fields, properties, constructor
 
-	public TgStoriesViewModel ViewModel { get; }
+	public override TgStoriesViewModel ViewModel { get; }
 
 	public TgStoriesPage()
 	{
@@ -15,25 +15,6 @@ public partial class TgStoriesPage
 		InitializeComponent();
 		Loaded += PageLoaded;
 	}
-
-	#endregion
-
-	#region Public and private methods
-
-	protected override async void OnNavigatedTo(NavigationEventArgs e)
-	{
-		try
-		{
-			base.OnNavigatedTo(e);
-			await ViewModel.OnNavigatedToAsync(e);
-		}
-		catch (Exception ex)
-		{
-			await TgDesktopUtils.FileLogAsync(ex, "An error occurred during navigation.");
-		}
-	}
-
-	private void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
 	#endregion
 }

@@ -3,32 +3,33 @@
 
 namespace TgDownloaderDesktop.ViewModels;
 
-public partial class ListDetailsViewModel : ObservableRecipient, INavigationAware
+public partial class ListDetailsViewModel(ISampleDataService sampleDataService) : ObservableRecipient, INavigationAware
 {
-	private readonly ISampleDataService _sampleDataService;
-
 	[ObservableProperty]
 	public partial SampleOrder? Selected { get; set; }
 
 	[ObservableProperty]
 	public partial ObservableCollection<SampleOrder> SampleItems { get; set; } = [];
 
-	public ListDetailsViewModel(ISampleDataService sampleDataService)
+	public void OnNavigatedTo(object parameter)
 	{
-		_sampleDataService = sampleDataService;
-	}
-
-	public async void OnNavigatedTo(object parameter)
-	{
-		SampleItems.Clear();
-
-		// TODO: Replace with real data.
-		var data = await _sampleDataService.GetListDetailsDataAsync();
-
-		foreach (var item in data)
+		Task.Run(async () =>
 		{
-			SampleItems.Add(item);
-		}
+			try
+			{
+				SampleItems.Clear();
+				// TODO: Replace with real data.
+				var data = await sampleDataService.GetListDetailsDataAsync();
+				foreach (var item in data)
+				{
+					SampleItems.Add(item);
+				}
+			}
+			catch (Exception ex)
+			{
+				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+			}
+		});
 	}
 
 	public void OnNavigatedFrom()

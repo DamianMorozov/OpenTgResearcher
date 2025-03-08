@@ -3,7 +3,9 @@
 	<PropertyGroup>
 		<Deterministic>true</Deterministic>
 		<LangVersion>preview</LangVersion>
-		<WarningLevel>9999</WarningLevel>
+		<WarningLevel>4</WarningLevel>
+		<AnalysisLevel>preview</AnalysisLevel>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -14,7 +16,6 @@
 		<Optimize>false</Optimize>
 		<OutputPath>bin\Debug_AnyCPU</OutputPath>
 		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>9999</WarningLevel>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
 		<PlatformTarget>x64</PlatformTarget>
@@ -24,7 +25,6 @@
 		<Optimize>false</Optimize>
 		<OutputPath>bin\Debug_x64</OutputPath>
 		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>9999</WarningLevel>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
 		<PlatformTarget>x86</PlatformTarget>
@@ -35,21 +35,18 @@
 		<Optimize>false</Optimize>
 		<OutputPath>bin\Debug_x86</OutputPath>
 		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>9999</WarningLevel>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>portable</DebugType>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<DefineConstants>TRACE</DefineConstants>
 		<OutputPath>bin\Release_AnyCPU</OutputPath>
-		<WarningLevel>9999</WarningLevel>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
 		<DebugType>portable</DebugType>
 		<PlatformTarget>x64</PlatformTarget>
 		<DefineConstants>TRACE</DefineConstants>
 		<OutputPath>bin\Release_x64</OutputPath>
-		<WarningLevel>9999</WarningLevel>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
 		<DebugType>portable</DebugType>
@@ -57,6 +54,5 @@
 		<DefineConstants>TRACE</DefineConstants>
 		<Prefer32Bit>true</Prefer32Bit>
 		<OutputPath>bin\Release_x86</OutputPath>
-		<WarningLevel>9999</WarningLevel>
 	</PropertyGroup>
 </Project>

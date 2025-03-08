@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-	<Target Name="Optimize" BeforeTargets="Link">
-		<Message Text="Optimizing Tasks to run before link" />
+	<!--
+	Assembly step	Description	When performed
+	_______________|___________________________________________________________________|____________________
+	BeforeClean		Executed before the standard clean target							Before cleaning
+	Clean			Standard cleaning target											During cleaning
+	AfterClean		Executed after the standard cleaning target							After cleaning
+	BeforeBuild		Executed before the start of the build process						Before building
+	BeforeCompile	Executed before compiling source code								Before compilation
+	Compile			Standard target object for compiling source code into object files	During compilation
+	AfterCompile	Executed after compilation is complete								After compilation
+	Build			Standard target object for building a project						During building
+	AfterBuild		Executed after the build process is complete						After building
+	BeforeRebuild	Executed before the start of the Rebuild process					Before rebuilding
+	Rebuild			Clean and Build sequence											During rebuilding
+	AfterRebuild	Executed after the Rebuild process is complete						After rebuilding
+	-->
+	<!-- Setting the IsRebuild property before starting the rebuilding -->
+	<Target Name="SetRebuildFlag" BeforeTargets="BeforeRebuild">
+		<PropertyGroup>
+			<IsRebuild>true</IsRebuild>
+		</PropertyGroup>
 	</Target>
-	<Target Name="BeforeBuild">
-		<Message Text="Tasks to run before build" />
+	<!-- Standard cleaning target -->
+	<Target Name="CleanTargetDir" AfterTargets="Clean" Condition="'$(IsRebuild)' != 'true'">
+		<RemoveDir Directories="$(TargetDir)" ContinueOnError="true" />
 	</Target>
-	<Target Name="AfterBuild">
-		<Message Text="Tasks to run after build" />
-	</Target>
-	<Target Name="ClearObj" BeforeTargets="Clean">
-		<Message Text="Tasks to run after build" />
-	</Target>
-	<Target Name="ClearBin" BeforeTargets="Clean">
-		<RemoveDir Directories="$(TargetDir)" />
+	<!-- Resetting the IsRebuild property after cleaning -->
+	<Target Name="ResetRebuildFlag" AfterTargets="Clean">
+		<PropertyGroup>
+			<IsRebuild>false</IsRebuild>
+		</PropertyGroup>
 	</Target>
 </Project>

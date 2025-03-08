@@ -134,7 +134,6 @@ public partial class App : Application
 			.MinimumLevel.Verbose()
 			.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
 			.CreateLogger();
-		Log.CloseAndFlush();
 	}
 
 	~App()

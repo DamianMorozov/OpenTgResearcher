@@ -38,7 +38,11 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		try
 		{
 			LogFiles.Clear();
+
 			var appFolder = SettingsService.AppFolder;
+			// Close logger
+			await Log.CloseAndFlushAsync();
+
 			var storageFolder = await StorageFolder.GetFolderFromPathAsync(Path.Combine(appFolder, TgFileUtils.LogsDirectory));
 			var storageFiles = await storageFolder.GetFilesAsync();
 			foreach (var logFile in storageFiles)
@@ -46,6 +50,12 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 				if (logFile is null) continue;
 				await TryLoadLogAsync(logFile);
 			}
+
+			// Recreate logger
+			Log.Logger = new LoggerConfiguration()
+				.MinimumLevel.Verbose()
+				.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
+				.CreateLogger();
 		}
 		catch (Exception ex)
 		{
@@ -112,6 +122,9 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 	{
 		if (logFile is null) return;
 		var appFolder = SettingsService.AppFolder;
+		// Close logger
+		await Log.CloseAndFlushAsync();
+		
 		var storageFolder = await StorageFolder.GetFolderFromPathAsync(Path.Combine(appFolder, TgFileUtils.LogsDirectory));
 		var storageFile = await storageFolder.GetFileAsync(logFile.FileName);
 		if (storageFile.IsAvailable)

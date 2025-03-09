@@ -35,4 +35,4 @@ jobs:
         run: nuget restore OpenTgResearcher.sln
 
       - name: Build app for Release Any CPU
-        run: msbuild OpenTgResearcher.sln -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="Any CPU"
+        run: msbuild OpenTgResearcher.sln -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"

@@ -310,7 +310,7 @@
 								<!--  Title  -->
 								<controls:DataGridTemplateColumn
 									x:Uid="TemplateColumnTitle"
-									Width="3.0*"
+									Width="3*"
 									CanUserReorder="True"
 									CanUserSort="True">
 									<controls:DataGridTemplateColumn.CellTemplate>

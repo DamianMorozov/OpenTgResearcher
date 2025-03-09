@@ -222,7 +222,7 @@
 								<!--  Caption  -->
 								<controls:DataGridTemplateColumn
 									x:Uid="TemplateColumnCaption"
-									Width="3.0*"
+									Width="3*"
 									CanUserReorder="True"
 									CanUserSort="True">
 									<controls:DataGridTemplateColumn.CellTemplate>

@@ -134,7 +134,7 @@
 							HeadersVisibility="Column"
 							ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
 							<controls:DataGrid.Columns>
-								<!--  Is ebabled  -->
+								<!--  Is enabled  -->
 								<controls:DataGridTemplateColumn
 									x:Uid="TemplateColumnIsEnabled"
 									Width="Auto"
@@ -188,7 +188,7 @@
 								<!--  Mask  -->
 								<controls:DataGridTemplateColumn
 									x:Uid="TemplateColumnMask"
-									Width="3.0*"
+									Width="3*"
 									CanUserReorder="True"
 									CanUserSort="True">
 									<controls:DataGridTemplateColumn.CellTemplate>
@@ -205,7 +205,7 @@
 								<!--  Size  -->
 								<controls:DataGridTemplateColumn
 									x:Uid="TemplateColumnSize"
-									Width="3.0*"
+									Width="3*"
 									CanUserReorder="True"
 									CanUserSort="True">
 									<controls:DataGridTemplateColumn.CellTemplate>

@@ -697,7 +697,7 @@
     <value>Name</value>
   </data>
   <data name="TemplateColumnMask.Header" xml:space="preserve">
-    <value>Name</value>
+    <value>Mask</value>
   </data>
   <data name="TemplateColumnSize.Header" xml:space="preserve">
     <value>Size</value>

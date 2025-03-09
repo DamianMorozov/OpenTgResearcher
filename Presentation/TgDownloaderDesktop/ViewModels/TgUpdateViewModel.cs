@@ -10,13 +10,15 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial string UpdateLog { get; set; } = string.Empty;
-	public IRelayCommand UpdateCommand { get; }
+	public IRelayCommand UpdateReleaseCommand { get; }
+	public IRelayCommand UpdatePreviewCommand { get; }
 
 	public TgUpdateViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUpdateViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgUpdateViewModel))
 	{
 		// Commands
-		UpdateCommand = new AsyncRelayCommand(UpdateAsync);
+		UpdateReleaseCommand = new AsyncRelayCommand(UpdateReleaseAsync);
+		UpdatePreviewCommand = new AsyncRelayCommand(UpdatePreviewAsync);
 	}
 
 	#endregion
@@ -28,20 +30,22 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 		await ReloadUiAsync();
 	});
 
-	private async Task UpdateAsync() => await ContentDialogAsync(VelopackUpdateAsync, TgResourceExtensions.AskUpdateApp());
+	private async Task UpdateReleaseAsync() => await ContentDialogAsync(async () => await VelopackUpdateAsync(isPreview: false), TgResourceExtensions.AskUpdateReleaseApp());
+
+	private async Task UpdatePreviewAsync() => await ContentDialogAsync(async () => await VelopackUpdateAsync(isPreview: true), TgResourceExtensions.AskUpdatePreviewApp());
 
 	/// <summary> Velopack installer update </summary>
-	private async Task VelopackUpdateAsync()
+	private async Task VelopackUpdateAsync(bool isPreview)
 	{
 		UpdateLog = string.Empty;
 		var log = new StringBuilder();
 		try
 		{
-			log.AppendLine($"Update started");
+			log.AppendLine("Update started");
 			TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
 			log.AppendLine($"{TgConstants.AppTitleDesktop} {TgAppSettingsHelper.Instance.AppVersion}");
-			log.AppendLine($"Checking updates on the link github.com");
-			var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: false));
+			log.AppendLine("Checking updates on the link github.com");
+			var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
 			// Check for new version
 			var newVersion = await mgr.CheckForUpdatesAsync();
 			if (newVersion is null)

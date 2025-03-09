@@ -28,8 +28,9 @@ public static class TgResourceExtensions
 	public static string AskSettingsLoad() => "AskSettingsLoad".GetLocalized();
 	public static string AskSettingsSave() => "AskSettingsSave".GetLocalized();
 	public static string AskStopDownloading() => "AskStopDownloading".GetLocalized();
-	public static string AskUpdateApp() => "AskUpdateApp".GetLocalized();
 	public static string AskUpdateOnline() => "AskUpdateOnline".GetLocalized();
+	public static string AskUpdatePreviewApp() => "AskUpdatePreviewApp".GetLocalized();
+	public static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalized();
 	public static string AssertionRestartApp() => "AssertionRestartApp".GetLocalized();
 	public static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalized();
 	public static string GetActionChangeLicenseOnlineMsg() => "ActionChangeLicenseOnlineMsg".GetLocalized();

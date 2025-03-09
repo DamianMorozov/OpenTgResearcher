@@ -333,8 +333,11 @@
   <data name="ActionDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="ActionUpdateApp.Text" xml:space="preserve">
-    <value>Update the application</value>
+  <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
+    <value>Checking for release updates</value>
+  </data>
+  <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
+    <value>Checking for preview updates</value>
   </data>
   <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
     <value>Check license online</value>
@@ -486,8 +489,11 @@
   <data name="AskRestartApp" xml:space="preserve">
     <value>Restart the application?</value>
   </data>
-  <data name="AskUpdateApp" xml:space="preserve">
-    <value>Update the application?</value>
+  <data name="AskUpdateReleaseApp" xml:space="preserve">
+    <value>Check for release updates of the application?</value>
+  </data>
+  <data name="AskUpdatePreviewApp" xml:space="preserve">
+    <value>Check for preview updates of the application?</value>
   </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Restart the application.</value>

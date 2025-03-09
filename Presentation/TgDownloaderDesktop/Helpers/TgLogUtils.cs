@@ -13,9 +13,6 @@ public static class TgLogUtils
 	public static void LogFatal(Exception ex, string message = "", 
 		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
 	{
-		if (!string.IsNullOrEmpty(message))
-			Log.Fatal(ex, $"{message} exception!");
-		Log.Fatal(ex, $"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #if DEBUG
 		if (!string.IsNullOrEmpty(message))
 			Debug.WriteLine(ex, $"{message} exception!");
@@ -23,13 +20,20 @@ public static class TgLogUtils
 		Debug.WriteLine(ex);
 		Debug.WriteLine(ex.StackTrace);
 #endif
+		try
+		{
+			if (!string.IsNullOrEmpty(message))
+				Log.Fatal(ex, $"{message} exception!");
+			Log.Fatal(ex, $"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
+		}
+		catch (Exception)
+		{
+			//
+		}
 	}
 
 	public static void LogFatalProxy(Exception ex, string message, string filePath, int lineNumber, string memberName)
 	{
-		if (!string.IsNullOrEmpty(message))
-			Log.Fatal(ex, $"{message} exception!");
-		Log.Fatal(ex, $"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #if DEBUG
 		if (!string.IsNullOrEmpty(message))
 			Debug.WriteLine(ex, $"{message} exception!");
@@ -37,56 +41,94 @@ public static class TgLogUtils
 		Debug.WriteLine(ex);
 		Debug.WriteLine(ex.StackTrace);
 #endif
+		try
+		{
+			if (!string.IsNullOrEmpty(message))
+				Log.Fatal(ex, $"{message} exception!");
+			Log.Fatal(ex, $"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
+		}
+		catch (Exception)
+		{
+			//
+		}
 	}
 
 	public static void LogFatal(string message = "", 
 		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
 	{
-		if (!string.IsNullOrEmpty(message))
-			Log.Fatal($"{message} exception!");
-		Log.Fatal($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #if DEBUG
 		if (!string.IsNullOrEmpty(message))
 			Debug.WriteLine($"{message} exception!");
 		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #endif
+		try
+		{
+			if (!string.IsNullOrEmpty(message))
+				Log.Fatal($"{message} exception!");
+			Log.Fatal($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
+		}
+		catch (Exception)
+		{
+			//
+		}
 	}
 
 	public static void LogFatalProxy(string message, string filePath, int lineNumber, string memberName)
 	{
-		if (!string.IsNullOrEmpty(message))
-			Log.Fatal($"{message} exception!");
-		Log.Fatal($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #if DEBUG
 		if (!string.IsNullOrEmpty(message))
 			Debug.WriteLine($"{message} exception!");
 		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #endif
+		try
+		{
+			if (!string.IsNullOrEmpty(message))
+				Log.Fatal($"{message} exception!");
+			Log.Fatal($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
+		}
+		catch (Exception)
+		{
+			//
+		}
 	}
 
 	public static void LogInformation(string message,
 		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
 	{
-		if (!string.IsNullOrEmpty(message))
-			Log.Information($"{message}");
-		Log.Information($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #if DEBUG
 		if (!string.IsNullOrEmpty(message))
 			Debug.WriteLine(message);
 		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #endif
+		try
+		{
+			if (!string.IsNullOrEmpty(message))
+				Log.Information($"{message}");
+			Log.Information($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
+		}
+		catch (Exception)
+		{
+			//
+		}
 	}
 
 	public static void LogInformationProxy(string message, string filePath, int lineNumber, string memberName)
 	{
-		if (!string.IsNullOrEmpty(message))
-			Log.Information($"{message}");
-		Log.Information($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #if DEBUG
 		if (!string.IsNullOrEmpty(message))
 			Debug.WriteLine(message);
 		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
 #endif
+		try
+		{
+			if (!string.IsNullOrEmpty(message))
+				Log.Information($"{message}");
+			Log.Information($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
+		}
+		catch (Exception)
+		{
+			//
+		}
 	}
 
 	#endregion

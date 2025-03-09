@@ -108,6 +108,9 @@ public partial class App : Application
 			.Build();
 		// Exceptions
 		UnhandledException += App_UnhandledException;
+		// TG client loading
+		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
 	}
 
 	~App()
@@ -120,11 +123,28 @@ public partial class App : Application
 
 	#region Public and private methods
 
-	private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+	private static void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
 		// TODO: Log and handle exceptions as appropriate.
 		// https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
-		TgLogUtils.LogFatal(e.Exception, sender.ToString() ?? string.Empty);
+		var message = e.Exception.Message;
+		if (e.Exception.InnerException is not null)
+			message += Environment.NewLine + e.Exception.InnerException.Message;
+		GetService<IAppNotificationService>().Show(message);
+		try
+		{
+			TgLogUtils.LogFatal(e.Exception, sender.ToString() ?? string.Empty);
+		}
+#if DEBUG
+		catch (Exception ex)
+		{
+			Debug.WriteLine(ex);
+#else
+		catch (Exception)
+		{
+			//
+#endif
+		}
 		// Set a handled exception to prevent the application from terminating
 		e.Handled = true;
 	}
@@ -134,33 +154,35 @@ public partial class App : Application
 		try
 		{
 			base.OnLaunched(args);
-			GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
 			await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 			{
-				// TG client loading
-				await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-				TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
 				// Activate the app
 				await GetService<IActivationService>().ActivateAsync(args);
 				var content = App.MainWindow.Content;
 				// App loading
 				var textBlock = CreateTextBlockLoad();
 				await Task.Delay(500);
+				// Notification loading
+				textBlock.Text = $"{TgResourceExtensions.GetNotificationLoading()}...  10%";
+				var notificationService = GetService<IAppNotificationService>();
+				notificationService.Initialize();
+				await Task.Delay(500);
+				TgLogUtils.LogInformation(textBlock.Text);
+				await Task.Delay(250);
+				notificationService.Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 				// Logger loading
-				textBlock.Text = $"{TgResourceExtensions.GetLoggerLoading()}...  10%";
+				textBlock.Text = $"{TgResourceExtensions.GetLoggerLoading()}...  20%";
+				TgLogUtils.LogInformation(textBlock.Text);
 				await Task.Delay(250);
 				var appFolder = GetService<ITgSettingsService>().AppFolder;
 				Log.Logger = new LoggerConfiguration()
 					.MinimumLevel.Verbose()
 					.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
 					.CreateLogger();
-				// Notification loading
-				textBlock.Text = $"{TgResourceExtensions.GetNotificationLoading()}...  20%";
-				await Task.Delay(250);
-				GetService<IAppNotificationService>().Initialize();
 				// Velopack
-				textBlock.Text = $"{TgResourceExtensions.GetInstallerLoading()}...  40%";
+				textBlock.Text = $"{TgResourceExtensions.GetInstallerLoading()}...  30%";
+				TgLogUtils.LogInformation(textBlock.Text);
 				await Task.Delay(250);
 				VelopackApp.Build()
 					//.WithBeforeUninstallFastCallback((v) =>
@@ -179,6 +201,7 @@ public partial class App : Application
 					TgResourceExtensions.GetLicensePremiumDescription());
 				// Register TgEfContext as the DbContext for EF Core
 				textBlock.Text = $"{TgResourceExtensions.GetStorageLoading()}...  50%";
+				TgLogUtils.LogInformation(textBlock.Text);
 				await Task.Delay(100);
 				TgEfUtils.AppStorage = GetService<ITgSettingsService>().AppStorage;
 				// Create and update storage

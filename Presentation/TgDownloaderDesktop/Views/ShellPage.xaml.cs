@@ -22,7 +22,7 @@ public sealed partial class ShellPage
 		// https://docs.microsoft.com/windows/apps/develop/title-bar?tabs=winui3#full-customization
 		App.MainWindow.ExtendsContentIntoTitleBar = true;
 		App.MainWindow.SetTitleBar(AppTitleBar);
-		App.MainWindow.Activated += MainWindow_Activated;
+		//App.MainWindow.Activated += MainWindow_Activated;
 		//AppTitleBarText.Text = "AppDisplayName".GetLocalized();
 	}
 
@@ -40,10 +40,10 @@ public sealed partial class ShellPage
 		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
 	}
 
-	private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-	{
-		//App.AppTitlebar = AppTitleBarText as UIElement;
-	}
+	//private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+	//{
+	//	//App.AppTitlebar = AppTitleBarText as UIElement;
+	//}
 
 	private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
 	{

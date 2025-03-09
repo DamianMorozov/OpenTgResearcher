@@ -392,8 +392,11 @@
   <data name="ActionDelete.Text" xml:space="preserve">
     <value>Удалить</value>
   </data>
-  <data name="ActionUpdateApp.Text" xml:space="preserve">
-    <value>Обновить приложение</value>
+  <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
+    <value>Проверка наличия обновлений релиза</value>
+  </data>
+  <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
+    <value>Проверка обновлений предварительного просмотра</value>
   </data>
   <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
     <value>Проверить лицензию онлайн</value>
@@ -545,8 +548,11 @@
   <data name="AskRestartApp" xml:space="preserve">
     <value>Перезапустить приложение?</value>
   </data>
-  <data name="AskUpdateApp" xml:space="preserve">
-    <value>Обновить приложение?</value>
+  <data name="AskUpdateReleaseApp" xml:space="preserve">
+    <value>Проверить наличие обновлений релиза приложения?</value>
+  </data>
+  <data name="AskUpdatePreviewApp" xml:space="preserve">
+    <value>Проверить наличие предварительных обновлений приложения?</value>
   </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Перезапустите приложение.</value>

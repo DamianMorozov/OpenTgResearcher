@@ -37,22 +37,22 @@ internal sealed partial class TgMenuHelper
 			switch (menu)
 			{
 				case TgEnumMenuUpdate.ReleaseCheck:
-					await VelopackUpdateAsync(isWait: true, isRelease: true);
+					await VelopackUpdateAsync(isWait: true, isPreview: false);
 					break;
 				case TgEnumMenuUpdate.PreviewCheck:
-					await VelopackUpdateAsync(isWait: true, isRelease: false);
+					await VelopackUpdateAsync(isWait: true, isPreview: true);
 					break;
 			}
 		} while (menu is not TgEnumMenuUpdate.Return);
 	}
 	
 	/// <summary> Velopack installer update </summary>
-	public async Task VelopackUpdateAsync(bool isWait, bool isRelease = true)
+	public async Task VelopackUpdateAsync(bool isWait, bool isPreview = true)
 	{
 		TgLog.WriteLine("Update started");
 		await Task.Delay(250);
 		TgLog.WriteLine("Checking updates on the link github.com");
-		var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: false));
+		var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
 		// Check for new version
 		try
 		{

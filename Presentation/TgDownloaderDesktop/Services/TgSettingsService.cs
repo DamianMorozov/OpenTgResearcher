@@ -149,8 +149,16 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			try
+			{
+				TgLogUtils.LogFatal(ex);
+			}
+			catch (Exception)
+			{
+				//
+			}
 		}
+		
 		try
 		{
 			if (!Directory.Exists(AppFolder))
@@ -158,8 +166,16 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			try
+			{
+				TgLogUtils.LogFatal(ex);
+			}
+			catch (Exception)
+			{
+				//
+			}
 		}
+		
 		try
 		{
 			if (!Directory.Exists(AppFolder))
@@ -167,7 +183,14 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			try
+			{
+				TgLogUtils.LogFatal(ex);
+			}
+			catch (Exception)
+			{
+				//
+			}
 		}
 	}
 

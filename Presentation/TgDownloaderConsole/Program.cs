@@ -24,6 +24,17 @@ TgLogHelper.Instance.WriteLine($"{TgConstants.AppTitleConsole} {TgAppSettingsHel
 
 // Velopack installer update
 //await menu.VelopackUpdateAsync(isWait: false, isRelease: true);
+VelopackApp.Build()
+#if WINDOWS
+		.WithBeforeUninstallFastCallback((v) => {
+			// delete / clean up some files before uninstallation
+			tgLog.WriteLine($"Uninstalling the {TgConstants.AppTitleConsole}!");
+		})
+#endif
+	.WithFirstRun((v) => {
+		TgLogHelper.Instance.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
+	})
+	.Run();
 
 var tgLocale = TgLocaleHelper.Instance;
 // License

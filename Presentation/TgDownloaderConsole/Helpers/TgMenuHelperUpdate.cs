@@ -51,17 +51,6 @@ internal sealed partial class TgMenuHelper
 	{
 		TgLog.WriteLine("Update started");
 		await Task.Delay(250);
-		VelopackApp.Build()
-#if WINDOWS
-		.WithBeforeUninstallFastCallback((v) => {
-			// delete / clean up some files before uninstallation
-			tgLog.WriteLine($"Uninstalling the {TgConstants.AppTitleConsole}!");
-		})
-#endif
-			.WithFirstRun((v) => {
-				TgLog.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
-			})
-			.Run();
 		TgLog.WriteLine("Checking updates on the link github.com");
 		var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: false));
 		// Check for new version

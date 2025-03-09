@@ -169,8 +169,8 @@ internal partial class TgMenuHelper
 			catch (Exception)
 			{
 				//
-			}
 #endif
+			}
 		}
 		// Update message
 		async Task UpdateStateMessageThreadAsync(long sourceId, int messageId, string message, bool isStartTask, int threadNumber)
@@ -213,8 +213,8 @@ internal partial class TgMenuHelper
 			catch (Exception)
 			{
 				//
-			}
 #endif
+			}
 		}
 	}
 

@@ -9,7 +9,7 @@
 		<UserSecretsId>acec7ca6-caa9-470e-96aa-3f14f080d6bd</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
-		<Version>0.6.50.0</Version>
+		<Version>0.6.70.0</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

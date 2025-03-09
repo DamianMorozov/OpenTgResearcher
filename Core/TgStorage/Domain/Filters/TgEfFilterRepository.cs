@@ -33,13 +33,12 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 		}
 #if DEBUG
 		catch (Exception ex)
-#else
-		catch (Exception)
-#endif
 		{
-#if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 			Debug.WriteLine(ex.StackTrace);
+#else
+		catch (Exception)
+		{
 #endif
 			throw;
 		}

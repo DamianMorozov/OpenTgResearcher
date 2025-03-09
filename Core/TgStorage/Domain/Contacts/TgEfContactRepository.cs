@@ -33,13 +33,12 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		}
 #if DEBUG
 		catch (Exception ex)
-#else
-		catch (Exception)
-#endif
 		{
-#if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 			Debug.WriteLine(ex.StackTrace);
+#else
+		catch (Exception)
+		{
 #endif
 			throw;
 		}

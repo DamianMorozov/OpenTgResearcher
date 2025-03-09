@@ -26,12 +26,11 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 			}
 #if DEBUG
 			catch (Exception ex)
+			{
+				Debug.WriteLine(ex);
 #else
 			catch (Exception)
-#endif
 			{
-#if DEBUG
-				Debug.WriteLine(ex);
 #endif
 				await Task.Delay(500);
 				return await GetCoreAsync(item, isReadOnly);
@@ -39,13 +38,12 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		}
 #if DEBUG
 		catch (Exception ex)
-#else
-		catch (Exception)
-#endif
 		{
-#if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 			Debug.WriteLine(ex.StackTrace);
+#else
+		catch (Exception)
+		{
 #endif
 			throw;
 		}

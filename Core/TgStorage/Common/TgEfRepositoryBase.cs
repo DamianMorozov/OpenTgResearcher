@@ -304,15 +304,14 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 			}
 #if DEBUG
 			catch (Exception ex)
-#else
-			catch (Exception)
-#endif
 			{
-				await transaction.RollbackAsync();
-#if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 				Debug.WriteLine(ex.StackTrace);
+#else
+			catch (Exception)
+			{
 #endif
+				await transaction.RollbackAsync();
 				throw;
 			}
 			return storageResult;
@@ -397,15 +396,14 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 			}
 #if DEBUG
 			catch (Exception ex)
-#else
-			catch (Exception)
-#endif
 			{
-				await transaction.RollbackAsync();
-#if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 				Debug.WriteLine(ex.StackTrace);
+#else
+			catch (Exception)
+			{
 #endif
+				await transaction.RollbackAsync();
 				throw;
 			}
 		}
@@ -444,13 +442,12 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		}
 #if DEBUG
 		catch (Exception ex)
+		{
+			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+			Debug.WriteLine(ex.StackTrace);
 #else
 		catch (Exception)
-#endif
 		{
-#if DEBUG
-			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-				Debug.WriteLine(ex.StackTrace);
 #endif
 			throw;
 		}
@@ -472,16 +469,15 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		}
 #if DEBUG
 		catch (Exception ex)
+		{
+			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+			Debug.WriteLine(ex.StackTrace);
 #else
 		catch (Exception)
-#endif
 		{
+#endif
 			var itemBackup = item;
 			await DeleteAsync(item);
-#if DEBUG
-			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-				Debug.WriteLine(ex.StackTrace);
-#endif
 			try
 			{
 				return await SaveAsync(itemBackup);
@@ -521,15 +517,14 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 			}
 #if DEBUG
 			catch (Exception ex)
-#else
-			catch (Exception)
-#endif
 			{
-				await transaction.RollbackAsync();
-#if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 				Debug.WriteLine(ex.StackTrace);
+#else
+			catch (Exception)
+			{
 #endif
+				await transaction.RollbackAsync();
 				throw;
 			}
 		}

@@ -2162,13 +2162,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		}
 #if DEBUG
 		catch (Exception ex)
-#else
-		catch (Exception)
-#endif
 		{
-#if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 			Debug.WriteLine(ex.StackTrace);
+#else
+		catch (Exception)
+		{
 #endif
 			BatchMessagesCount = 0;
 			MessageEntities.Clear();

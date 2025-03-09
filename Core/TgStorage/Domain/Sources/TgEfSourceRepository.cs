@@ -26,13 +26,12 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 			}
 #if DEBUG
 			catch (Exception ex)
-#else
-			catch (Exception)
-#endif
 			{
-#if DEBUG
 				Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 				Debug.WriteLine(ex.StackTrace);
+#else
+			catch (Exception)
+			{
 #endif
 				await Task.Delay(500);
 				return await GetCoreAsync(item, isReadOnly);
@@ -40,13 +39,12 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 		}
 #if DEBUG
 		catch (Exception ex)
-#else
-		catch (Exception)
-#endif
 		{
-#if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
 			Debug.WriteLine(ex.StackTrace);
+#else
+		catch (Exception)
+		{
 #endif
 			throw;
 		}

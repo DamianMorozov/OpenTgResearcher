@@ -42,10 +42,31 @@ public sealed partial class TgEfContactDto : TgDtoBase, ITgDto<TgEfContactEntity
 	public partial string BotInlinePlaceholder { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial int BotActiveUsers { get; set; }
-
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	public bool IsReady => Id > 0;
+
+	public TgEfContactDto() : base()
+	{
+		DtChanged = DateTime.MinValue;
+		Id = 0;
+		AccessHash = 0;
+		IsContactActive = false;
+		IsBot = false;
+		FirstName = string.Empty;
+		LastName = string.Empty;
+		UserName = string.Empty;
+		UserNames = string.Empty;
+		PhoneNumber = string.Empty;
+		Status = string.Empty;
+		RestrictionReason = string.Empty;
+		LangCode = string.Empty;
+		StoriesMaxId = 0;
+		BotInfoVersion = string.Empty;
+		BotInlinePlaceholder = string.Empty;
+		BotActiveUsers = 0;
+		IsDownload = false;
+	}
 
 	#endregion
 

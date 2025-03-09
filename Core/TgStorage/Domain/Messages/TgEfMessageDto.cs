@@ -23,6 +23,16 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 	[ObservableProperty]
 	public partial TgEnumDirection Direction { get; set; } = TgEnumDirection.Default;
 
+	public TgEfMessageDto() : base()
+	{
+		DtCreated = DateTime.MinValue;
+		SourceId = 0;
+		Id = 0;
+		Type = TgEnumMessageType.Message;
+		Size = 0;
+		Message = string.Empty;
+	}
+
 	#endregion
 
 	#region Public and private methods

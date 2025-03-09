@@ -11,7 +11,13 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity
 	[ObservableProperty]
 	public partial short Version { get; set; }
 	[ObservableProperty]
-	public partial string Description { get; set; } = string.Empty;
+	public partial string Description { get; set; }
+
+	public TgEfVersionDto() : base()
+	{
+		Version = 0;
+		Description = string.Empty;
+	}
 
 	#endregion
 	

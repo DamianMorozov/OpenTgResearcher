@@ -13,17 +13,17 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 	[ObservableProperty]
 	public partial int ApiId { get; set; }
 	[ObservableProperty]
-	public partial string PhoneNumber { get; set; } = string.Empty;
+	public partial string PhoneNumber { get; set; }
 	[ObservableProperty]
 	public partial Guid ProxyUid { get; set; }
 	[ObservableProperty]
-	public partial string FirstName { get; set; } = string.Empty;
+	public partial string FirstName { get; set; }
 	[ObservableProperty]
-	public partial string LastName { get; set; } = string.Empty;
+	public partial string LastName { get; set; }
 	[ObservableProperty]
 	public partial bool UseBot { get; set; }
 	[ObservableProperty]
-	public partial string BotTokenKey { get; set; } = string.Empty;
+	public partial string BotTokenKey { get; set; }
 
 	public string ApiIdString
 	{
@@ -35,6 +35,18 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 	{
 		get => ApiHash.ToString();
 		set => ApiHash = Guid.TryParse(value, out var apiHash) ? apiHash : Guid.Empty;
+	}
+
+	public TgEfAppDto() : base()
+	{
+		ApiHash = Guid.Empty;
+		ApiId = 0;
+		PhoneNumber = string.Empty;
+		ProxyUid = Guid.Empty;
+		FirstName = string.Empty;
+		LastName = string.Empty;
+		UseBot = false;
+		BotTokenKey = string.Empty;
 	}
 
 	#endregion

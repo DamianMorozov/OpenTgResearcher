@@ -15,24 +15,40 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, Tg
 	[ObservableProperty]
 	public partial long FromId { get; set; }
 	[ObservableProperty]
-	public partial string FromName { get; set; } = string.Empty;
+	public partial string FromName { get; set; }
 	[ObservableProperty]
 	public partial DateTime Date { get; set; }
 	[ObservableProperty]
 	public partial DateTime ExpireDate { get; set; }
 	[ObservableProperty]
-	public partial string Caption { get; set; } = string.Empty;
+	public partial string Caption { get; set; }
 	[ObservableProperty]
-	public partial string Type { get; set; } = string.Empty;
+	public partial string Type { get; set; }
 	[ObservableProperty]
 	public partial int Offset { get; set; }
 	[ObservableProperty]
 	public partial int Length { get; set; }
 	[ObservableProperty]
-	public partial string Message { get; set; } = string.Empty;
+	public partial string Message { get; set; }
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	public bool IsReady => Id > 0;
+
+	public TgEfStoryDto() : base()
+	{
+		DtChanged = DateTime.MinValue;
+		Id = 0;
+		FromId = 0;
+		FromName = string.Empty;
+		Date = DateTime.MinValue;
+		ExpireDate = DateTime.MinValue;
+		Caption = string.Empty;
+		Type = string.Empty;
+		Offset = 0;
+		Length = 0;
+		Message = string.Empty;
+		IsDownload = false;
+	}
 
 	#endregion
 
@@ -56,9 +72,7 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, Tg
 		Offset = dto.Offset;
 		Length = dto.Length;
 		Message = dto.Message;
-
 		IsDownload = dto.IsDownload;
-
 		return this;
 	}
 

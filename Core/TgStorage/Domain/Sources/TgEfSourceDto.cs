@@ -46,7 +46,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 	public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";
 
 	public float Progress => (float)FirstId * 100 / Count;
-	public string ProgressPercentString => Progress == 0 ? $"{0:00.00} %" : $"{Progress:#00.00} %";
+	public string ProgressPercentString => Progress == 0 ? "{0:00.00} %" : $"{Progress:#00.00} %";
 	public bool IsComplete => FirstId >= Count;
 	public string ProgressItemString => $"{FirstId} from {Count}";
 	public float CurrentFileProgress => CurrentFileSize > 0 ? (float)CurrentFileTransmitted * 100 / CurrentFileSize : 0;
@@ -64,6 +64,24 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		? $"{TgLocaleHelper.Instance.TgDirectoryIsExists}." : $"{TgLocaleHelper.Instance.TgDirectoryIsNotExists}!";
 	public bool IsReady => Id > 0;
 	public bool IsReadySourceFirstId => FirstId > 0;
+
+	public TgEfSourceDto() : base()
+	{
+		DtChanged = DateTime.MinValue;
+		Id = 0;
+		AccessHash = 0;
+		IsSourceActive = false;
+		UserName = string.Empty;
+		Title = string.Empty;
+		About = string.Empty;
+		FirstId = 0;
+		Count = 0;
+		Directory = string.Empty;
+		IsAutoUpdate = false;
+		IsUserAccess = false;
+		IsDownload = false;
+		CurrentFileName = string.Empty;
+	}
 
 	#endregion
 

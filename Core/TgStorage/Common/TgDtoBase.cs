@@ -16,6 +16,13 @@ public partial class TgDtoBase : ObservableRecipient
 	[ObservableProperty]
 	public partial bool IsExistsAtStorage { get; set; }
 
+	public TgDtoBase()
+	{
+		IsLoad = false;
+		Uid = Guid.Empty;
+		IsExistsAtStorage = false;
+	}
+
 	#endregion
 
 	#region Public and private methods

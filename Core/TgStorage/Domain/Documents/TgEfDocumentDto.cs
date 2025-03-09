@@ -21,6 +21,16 @@ public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEnti
 	[ObservableProperty]
 	public partial long AccessHash { get; set; }
 
+	public TgEfDocumentDto() : base()
+	{
+		SourceId = 0;
+		Id = 0;
+		MessageId = 0;
+		FileName = string.Empty;
+		FileSize = 0;
+		AccessHash = 0;
+	}
+
 	#endregion
 
 	#region Private methods

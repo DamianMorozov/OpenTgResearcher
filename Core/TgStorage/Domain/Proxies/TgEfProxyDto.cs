@@ -20,8 +20,17 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, Tg
 	public partial string Password { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string Secret { get; set; } = string.Empty;
-
 	public string PrettyName => $"{Type} | {TgDataFormatUtils.GetFormatString(HostName, 30)} | {Port} | {UserName}";
+
+	public TgEfProxyDto() : base()
+	{
+		Type = TgEnumProxyType.None;
+		HostName = string.Empty;
+		Port = 0;
+		UserName = string.Empty;
+		Password = string.Empty;
+		Secret = string.Empty;
+	}
 
 	#endregion
 

@@ -13,9 +13,9 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, 
 	[ObservableProperty]
 	public partial TgEnumFilterType FilterType { get; set; }
 	[ObservableProperty]
-	public partial string Name { get; set; } = string.Empty;
+	public partial string Name { get; set; }
 	[ObservableProperty]
-	public partial string Mask { get; set; } = string.Empty;
+	public partial string Mask { get; set; }
 	[ObservableProperty]
 	public partial long Size { get; set; }
 	[ObservableProperty]
@@ -29,6 +29,16 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, 
 		TgEnumFileSizeType.TBytes => Size * 1024 * 1024 * 1024 * 1024,
 		_ => Size,
 	};
+
+	public TgEfFilterDto() : base()
+	{
+		IsEnabled = false;
+		FilterType = TgEnumFilterType.None;
+		Name = string.Empty;
+		Mask = string.Empty;
+		Size = 0;
+		SizeType = TgEnumFileSizeType.Bytes;
+	}
 
 	#endregion
 

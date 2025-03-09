@@ -11,13 +11,13 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	[ObservableProperty]
 	public partial long Id { get; set; }
 	[ObservableProperty]
-	public partial string DtChangedString { get; set; } = string.Empty;
+	public partial string DtChangedString { get; set; }
 	[ObservableProperty]
-	public partial string UserName { get; set; } = string.Empty;
+	public partial string UserName { get; set; }
 	[ObservableProperty]
 	public partial bool IsSourceActive { get; set; }
 	[ObservableProperty]
-	public partial string Title { get; set; } = string.Empty;
+	public partial string Title { get; set; }
 	[ObservableProperty]
 	public partial int FirstId { get; set; }
 	[ObservableProperty]
@@ -29,7 +29,22 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	[ObservableProperty]
-	public partial string ProgressPercentString { get; set; } = null!;
+	public partial string ProgressPercentString { get; set; }
+
+	public TgEfSourceLiteDto() : base()
+	{
+		Id = 0;
+		DtChangedString = string.Empty;
+		UserName = string.Empty;
+		IsSourceActive = false;
+		Title = string.Empty;
+		FirstId = 0;
+		Count = 0;
+		IsAutoUpdate = false;
+		IsUserAccess = false;
+		IsDownload = false;
+		ProgressPercentString = string.Empty;
+	}
 
 	#endregion
 
@@ -40,8 +55,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	public TgEfSourceLiteDto Copy(TgEfSourceLiteDto dto, bool isUidCopy)
 	{
 		base.Copy(dto, isUidCopy);
-		DtChangedString = dto.DtChangedString;
 		Id = dto.Id;
+		DtChangedString = dto.DtChangedString;
 		UserName = dto.UserName;
 		IsSourceActive = dto.IsActive;
 		Title = dto.Title;
@@ -58,8 +73,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
-		DtChangedString = $"{item.DtChanged:yyyy-MM-dd HH:mm:ss}";
 		Id = item.Id;
+		DtChangedString = $"{item.DtChanged:yyyy-MM-dd HH:mm:ss}";
 		UserName = item.UserName ?? string.Empty;
 		IsSourceActive = item.IsActive;
 		Title = item.Title ?? string.Empty;
@@ -68,7 +83,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		IsAutoUpdate = item.IsAutoUpdate;
 		IsUserAccess = item.IsUserAccess;
 		var progress = (float)item.FirstId * 100 / item.Count;
-		ProgressPercentString = progress == 0 ? $"{0:00.00} %" : $"{progress:#00.00} %";
+		ProgressPercentString = progress == 0 ? "{0:00.00} %" : $"{progress:#00.00} %";
 		return this;
 	}
 

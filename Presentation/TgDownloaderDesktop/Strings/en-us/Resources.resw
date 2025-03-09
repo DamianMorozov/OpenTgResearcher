@@ -59,10 +59,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>TgDownloaderDesktop</value>
+    <value>OpenTgResearcher</value>
   </data>
 	<data name="AppDescription" xml:space="preserve">
-		<value>TgDownloaderDesktop</value>
+		<value>OpenTgResearcher</value>
   	</data>
   <data name="Shell_Main.Content" xml:space="preserve">
     <value>Main</value>
@@ -287,7 +287,7 @@
     <value>&lt;toast launch="action=ToastClick"&gt;
   &lt;visual&gt;
     &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;OpenTgResearcherDesktop launched&lt;/text&gt;
+      &lt;text&gt;OpenTgResearcher launched&lt;/text&gt;
       &lt;text&gt;&lt;/text&gt;
       &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/applicationIcon.ico"/&gt;
     &lt;/binding&gt;
@@ -908,5 +908,23 @@
   </data>
   <data name="ErrorOccurredWhileLoadingLogs" xml:space="preserve">
     <value>При загрузке логов произошла ошибка!</value>
+  </data>
+  <data name="AppLoading" xml:space="preserve">
+    <value>Application loading</value>
+  </data>
+  <data name="StorageLoading" xml:space="preserve">
+    <value>Storage loading</value>
+  </data>
+  <data name="LoggerLoading" xml:space="preserve">
+    <value>Logger loading</value>
+  </data>
+  <data name="NotificationLoading" xml:space="preserve">
+    <value>Notification loading</value>
+  </data>
+  <data name="TgClientLoading" xml:space="preserve">
+    <value>Telegram client loading</value>
+  </data>
+  <data name="InstallerLoading" xml:space="preserve">
+    <value>Installer loading</value>
   </data>
 </root>

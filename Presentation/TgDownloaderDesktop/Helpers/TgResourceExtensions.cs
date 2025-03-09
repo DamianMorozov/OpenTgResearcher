@@ -35,6 +35,7 @@ public static class TgResourceExtensions
 	public static string GetActionChangeLicenseOnlineMsg() => "ActionChangeLicenseOnlineMsg".GetLocalized();
 	public static string GetActionCheckLicenseOnlineMsg() => "ActionCheckLicenseOnlineMsg".GetLocalized();
 	public static string GetAppDisplayName() => "AppDisplayName".GetLocalized();
+	public static string GetAppLoading() => "AppLoading".GetLocalized();
 	public static string GetAppVersion() => "AppVersion".GetLocalized();
 	public static string GetCancelButton() => "CancelButton".GetLocalized();
 	public static string GetClientDataRequestEmptyResponse() => "ClientDataRequestEmptyResponse".GetLocalized();
@@ -47,12 +48,15 @@ public static class TgResourceExtensions
 	public static string GetError() => "Error".GetLocalized();
 	public static string GetErrorOccurredWhileLoadingLogs() => "ErrorOccurredWhileLoadingLogs".GetLocalized();
 	public static string GetInDevelopment() => "InDevelopment".GetLocalized();
+	public static string GetInstallerLoading() => "InstallerLoading".GetLocalized();
 	public static string GetLicenseFreeDescription() => "LicenseFreeDescription".GetLocalized();
 	public static string GetLicensePaidDescription() => "LicensePaidDescription".GetLocalized();
 	public static string GetLicensePremiumDescription() => "LicensePremiumDescription".GetLocalized();
 	public static string GetLicenseTestDescription() => "LicenseTestDescription".GetLocalized();
+	public static string GetLoggerLoading() => "LoggerLoading".GetLocalized();
 	public static string GetMenuClientIsQuery() => "MenuClientIsQuery".GetLocalized();
 	public static string GetNoButton() => "NoButton".GetLocalized();
+	public static string GetNotificationLoading() => "NotificationLoading".GetLocalized();
 	public static string GetOkButton() => "OkButton".GetLocalized();
 	public static string GetRpcErrorFloodWait() => "RpcErrorFloodWait".GetLocalized();
 	public static string GetRpcErrorPasswordHashInvalid() => "RpcErrorPasswordHashInvalid".GetLocalized();
@@ -63,6 +67,8 @@ public static class TgResourceExtensions
 	public static string GetSettingsThemeDark() => "SettingsThemeDark".GetLocalized();
 	public static string GetSettingsThemeDefault() => "SettingsThemeDefault".GetLocalized();
 	public static string GetSettingsThemeLight() => "SettingsThemeLight".GetLocalized();
+	public static string GetStorageLoading() => "StorageLoading".GetLocalized();
+	public static string GetTgClientLoading() => "TgClientLoading".GetLocalized();
 	public static string GetYesButton() => "YesButton".GetLocalized();
 
 	#endregion

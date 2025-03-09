@@ -36,25 +36,6 @@ public partial class App : Application
 		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
 		containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClient>();
 		TgGlobalTools.Container = containerBuilder.Build();
-		// TgGlobalTools
-		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
-		// Velopack
-		VelopackApp.Build()
-			//.WithBeforeUninstallFastCallback((v) =>
-			//{
-			//	delete / clean up some files before uninstallation
-			//   UpdateLog += $"Uninstalling the {TgConstants.AppTitleConsole}!";
-			//})
-			//.WithFirstRun((v) =>
-			//{
-			//	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
-			//})
-			.Run();
-		// License
-		TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(), 
-			TgResourceExtensions.GetLicenseTestDescription(), TgResourceExtensions.GetLicensePaidDescription(), 
-			TgResourceExtensions.GetLicensePremiumDescription());
 		// Host
 		Host = Microsoft.Extensions.Hosting.Host
 			.CreateDefaultBuilder()
@@ -125,15 +106,8 @@ public partial class App : Application
 				services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
 			})
 			.Build();
-
-		GetService<IAppNotificationService>().Initialize();
+		// Exceptions
 		UnhandledException += App_UnhandledException;
-		// Logger
-		var appFolder = GetService<ITgSettingsService>().AppFolder;
-		Log.Logger = new LoggerConfiguration()
-			.MinimumLevel.Verbose()
-			.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
-			.CreateLogger();
 	}
 
 	~App()
@@ -157,17 +131,95 @@ public partial class App : Application
 
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
 	{
-		base.OnLaunched(args);
-		GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
-
-		await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+		try
 		{
-			await GetService<IActivationService>().ActivateAsync(args);
-			// Register TgEfContext as the DbContext for EF Core
-			TgEfUtils.AppStorage = GetService<ITgSettingsService>().AppStorage;
-			// Create and update storage
-			await TgEfUtils.CreateAndUpdateDbAsync();
-		}, "Application launched");
+			base.OnLaunched(args);
+			GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+
+			await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+			{
+				// TG client loading
+				await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+				TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
+				// Activate the app
+				await GetService<IActivationService>().ActivateAsync(args);
+				var content = App.MainWindow.Content;
+				// App loading
+				var textBlock = CreateTextBlockLoad();
+				await Task.Delay(500);
+				// Logger loading
+				textBlock.Text = $"{TgResourceExtensions.GetLoggerLoading()}...  10%";
+				await Task.Delay(250);
+				var appFolder = GetService<ITgSettingsService>().AppFolder;
+				Log.Logger = new LoggerConfiguration()
+					.MinimumLevel.Verbose()
+					.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
+					.CreateLogger();
+				// Notification loading
+				textBlock.Text = $"{TgResourceExtensions.GetNotificationLoading()}...  20%";
+				await Task.Delay(250);
+				GetService<IAppNotificationService>().Initialize();
+				// Velopack
+				textBlock.Text = $"{TgResourceExtensions.GetInstallerLoading()}...  40%";
+				await Task.Delay(250);
+				VelopackApp.Build()
+					//.WithBeforeUninstallFastCallback((v) =>
+					//{
+					//	delete / clean up some files before uninstallation
+					//   UpdateLog += $"Uninstalling the {TgConstants.AppTitleConsole}!";
+					//})
+					//.WithFirstRun((v) =>
+					//{
+					//	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
+					//})
+					.Run();
+				// License
+				TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(),
+					TgResourceExtensions.GetLicenseTestDescription(), TgResourceExtensions.GetLicensePaidDescription(),
+					TgResourceExtensions.GetLicensePremiumDescription());
+				// Register TgEfContext as the DbContext for EF Core
+				textBlock.Text = $"{TgResourceExtensions.GetStorageLoading()}...  50%";
+				await Task.Delay(100);
+				TgEfUtils.AppStorage = GetService<ITgSettingsService>().AppStorage;
+				// Create and update storage
+				await TgEfUtils.CreateAndUpdateDbAsync();
+				// App loading complete
+				MainWindow.Content = content;
+			}, "Application launched");
+		}
+		catch (Exception ex)
+		{
+			TgLogUtils.LogFatal(ex, "Application launched");
+		}
+	}
+
+	private static TextBlock CreateTextBlockLoad()
+	{
+		var grid = new Grid();
+		grid.ColumnDefinitions.Add(new() { Width = new(1, GridUnitType.Star) });
+		grid.ColumnDefinitions.Add(new() { Width = new(4, GridUnitType.Star) });
+		var progressRing = new ProgressRing
+		{
+			IsActive = true,
+			VerticalAlignment = VerticalAlignment.Center,
+			HorizontalAlignment = HorizontalAlignment.Center,
+			Width = 120,
+			Height = 120,
+		};
+		var textBlock = new TextBlock
+		{
+			Text = $"{TgResourceExtensions.GetAppLoading()}...  0%",
+			VerticalAlignment = VerticalAlignment.Center,
+			HorizontalAlignment = HorizontalAlignment.Center,
+			FontSize = 40,
+			TextWrapping = TextWrapping.WrapWholeWords,
+		};
+		grid.Children.Add(progressRing);
+		grid.Children.Add(textBlock);
+		Grid.SetColumn(progressRing, 0);
+		Grid.SetColumn(textBlock, 1);
+		MainWindow.Content = grid;
+		return textBlock;
 	}
 
 	#endregion

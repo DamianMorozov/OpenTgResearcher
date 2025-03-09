@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.050] - 2025-03-08
+## [0.6.070] - 2025-03-09
+### Fixed
+- Fixed page views in OpenTgResearcherDesktop
 ### Changed
-- Updated load pages for TgDownloaderDesktop
+- Updated load pages in OpenTgResearcherDesktop
+- Updated checking for updates in TgDownloaderConsole
 ### Added
-- Added logs pages for TgDownloaderDesktop
+- Added logs pages in OpenTgResearcherDesktop
+- Added OpenTgResearcherDesktop application loading progress
 
 ## [0.6.040] - 2025-03-02
 ### Fixed

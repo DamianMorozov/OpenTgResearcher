@@ -8,7 +8,7 @@ internal partial class TgMenuHelper
 {
 	#region Public and private methods
 
-	private TgEnumMenuClient SetMenuClient()
+	private static TgEnumMenuClient SetMenuConnection()
 	{
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
@@ -29,13 +29,13 @@ internal partial class TgMenuHelper
 		return TgEnumMenuClient.Return;
 	}
 
-	public async Task SetupClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	public async Task SetupConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		TgEnumMenuClient menu;
 		do
 		{
 			await ShowTableClientAsync(tgDownloadSettings);
-			menu = SetMenuClient();
+			menu = SetMenuConnection();
 			switch (menu)
 			{
 				case TgEnumMenuClient.SetProxy:

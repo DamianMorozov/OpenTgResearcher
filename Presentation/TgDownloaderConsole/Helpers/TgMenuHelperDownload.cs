@@ -8,7 +8,7 @@ internal partial class TgMenuHelper
 {
 	#region Public and private methods
 
-	private TgEnumMenuDownload SetMenuDownload()
+	private static TgEnumMenuDownload SetMenuDownload()
 	{
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()

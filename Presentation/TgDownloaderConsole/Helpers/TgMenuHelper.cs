@@ -65,6 +65,9 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal async Task ShowTableLicenseSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, TgLocale.MenuMainLicense, FillTableColumns, FillTableRowsLicenseAsync);
 
+	internal async Task ShowTableUpdateSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		await ShowTableCoreAsync(tgDownloadSettings, TgLocale.MenuMainUpdate, FillTableColumns, FillTableRowsUpdateAsync);
+
 	internal async Task ShowTableAppSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, TgLocale.MenuMainApp, FillTableColumns, FillTableRowsAppAsync);
 
@@ -188,6 +191,14 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	{
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), new Markup($"{TgLicense.CurrentLicense.Description}"));
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), new Markup($"{TgLicense.CurrentLicense.LicenseKey}"));
+		await Task.CompletedTask;
+	}
+
+	/// <summary> Update settings </summary>
+	internal async Task FillTableRowsUpdateAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+	{
+		// App version
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.AppVersion)), new Markup(TgAppSettings.AppVersion));
 		await Task.CompletedTask;
 	}
 

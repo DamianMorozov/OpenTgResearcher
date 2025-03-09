@@ -139,6 +139,13 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#endregion
 
+	#region Update
+
+	public string MenuUpdatePreviewCheck => "Checking for preview updates";
+	public string MenuUpdateReleaseCheck => "Checking for release updates";
+
+	#endregion
+
 	#region Main menu
 
 	public string MenuMainApps => "Apps";

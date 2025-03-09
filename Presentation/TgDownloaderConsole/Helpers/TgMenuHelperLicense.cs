@@ -9,7 +9,7 @@ internal sealed partial class TgMenuHelper
 {
 	#region Public and internal methods
 
-	private TgEnumMenuLicense SetMenuLicense()
+	private static TgEnumMenuLicense SetMenuLicense()
 	{
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()

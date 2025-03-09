@@ -9,17 +9,48 @@ internal sealed partial class TgMenuHelper
 {
 	#region Public and internal methods
 
-	/// <summary> Velopack installer update </summary>
-	public async Task VelopackUpdateAsync(bool isWait)
+	private static TgEnumMenuUpdate SetMenuUpdate()
 	{
-		Console.OutputEncoding = Encoding.UTF8;
-		Console.Title = TgConstants.AppTitleConsoleShort;
-		TgLog.SetMarkupLine(AnsiConsole.WriteLine);
-		TgLog.SetMarkupLineStamp(AnsiConsole.MarkupLine);
-		TgLog.WriteLine($"Update started");
-		TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
-		TgLog.WriteLine($"{TgConstants.AppTitleConsole} {TgAppSettingsHelper.Instance.AppVersion}");
+		var prompt = AnsiConsole.Prompt(
+			new SelectionPrompt<string>()
+				.Title($"  {TgLocale.MenuSwitchNumber}")
+				.PageSize(Console.WindowHeight - 17)
+				.MoreChoicesText(TgLocale.MoveUpDown)
+				.AddChoices(TgLocale.MenuMainReturn,
+					TgLocale.MenuUpdateReleaseCheck,
+					TgLocale.MenuUpdatePreviewCheck
+				));
+		if (prompt.Equals(TgLocale.MenuUpdateReleaseCheck))
+			return TgEnumMenuUpdate.ReleaseCheck;
+		if (prompt.Equals(TgLocale.MenuUpdatePreviewCheck))
+			return TgEnumMenuUpdate.PreviewCheck;
+		return TgEnumMenuUpdate.Return;
+	}
 
+	public async Task SetupUpdateAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		TgEnumMenuUpdate menu;
+		do
+		{
+			await ShowTableUpdateSettingsAsync(tgDownloadSettings);
+			menu = SetMenuUpdate();
+			switch (menu)
+			{
+				case TgEnumMenuUpdate.ReleaseCheck:
+					await VelopackUpdateAsync(isWait: true, isRelease: true);
+					break;
+				case TgEnumMenuUpdate.PreviewCheck:
+					await VelopackUpdateAsync(isWait: true, isRelease: false);
+					break;
+			}
+		} while (menu is not TgEnumMenuUpdate.Return);
+	}
+	
+	/// <summary> Velopack installer update </summary>
+	public async Task VelopackUpdateAsync(bool isWait, bool isRelease = true)
+	{
+		TgLog.WriteLine("Update started");
+		await Task.Delay(250);
 		VelopackApp.Build()
 #if WINDOWS
 		.WithBeforeUninstallFastCallback((v) => {
@@ -31,7 +62,7 @@ internal sealed partial class TgMenuHelper
 				TgLog.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
 			})
 			.Run();
-		TgLog.WriteLine($"Checking updates on the link github.com");
+		TgLog.WriteLine("Checking updates on the link github.com");
 		var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: false));
 		// Check for new version
 		try

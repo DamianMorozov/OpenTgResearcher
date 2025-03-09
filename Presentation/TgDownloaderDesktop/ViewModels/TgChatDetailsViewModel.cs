@@ -26,7 +26,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	public IRelayCommand StopDownloadingCommand { get; }
 
 	public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger) 
-		: base(settingsService, navigationService, logger)
+		: base(settingsService, navigationService, logger, nameof(TgChatDetailsViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);

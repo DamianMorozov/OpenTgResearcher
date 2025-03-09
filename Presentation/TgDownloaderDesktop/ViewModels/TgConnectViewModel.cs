@@ -66,7 +66,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
 		ILogger<TgConnectViewModel> logger) 
-		: base(settingsService, navigationService, logger)
+		: base(settingsService, navigationService, logger, nameof(TgConnectViewModel))
 	{
 		AppNotificationService = appNotificationService;
 		IsClientConnected = AppNotificationService.IsClientConnected;

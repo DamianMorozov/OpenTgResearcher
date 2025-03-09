@@ -18,7 +18,7 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	public IRelayCommand UpdateOnlineCommand { get; }
 
 	public TgContactDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgContactDetailsViewModel> logger) 
-		: base(settingsService, navigationService, logger)
+		: base(settingsService, navigationService, logger, nameof(TgContactDetailsViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);

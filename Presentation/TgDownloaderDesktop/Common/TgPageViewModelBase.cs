@@ -8,13 +8,16 @@ namespace TgDownloaderDesktop.Common;
 public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 {
 	#region Public and private fields, properties, constructor
-
+	
 	[ObservableProperty]
 	public partial ITgSettingsService SettingsService { get; private set; }
 	[ObservableProperty]
 	public partial INavigationService NavigationService { get; private set; }
 	[ObservableProperty]
 	public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
+
+	[ObservableProperty]
+	public partial string Name { get; private set; }
 
 	[ObservableProperty]
 	public partial TgLicenseManagerHelper LicenseManager { get; set; } = TgLicenseManagerHelper.Instance;
@@ -55,11 +58,12 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
 
-	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger)
+	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{
 		SettingsService = settingsService;
 		NavigationService = navigationService;
 		Logger = logger;
+		Name = name;
 	}
 
 	#endregion
@@ -125,7 +129,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		{
 			float progress = messageId == 0 || count  == 0 ? 0 : (float) messageId * 100 / count;
 			StateSourceProgress = (int)progress;
-			StateSourceProgressString = progress == 0 ? $"{0:00.00} %" : $"{progress:#00.00} %";
+			StateSourceProgressString = progress == 0 ? "{0:00.00} %" : $"{progress:#00.00} %";
 			StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 			StateSourceMsg = $"{messageId} | {message}";
 

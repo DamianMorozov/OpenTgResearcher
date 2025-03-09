@@ -24,7 +24,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	public IRelayCommand ChangeLicenseOnlineCommand { get; }
 
 	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger) 
-		: base(settingsService, navigationService, logger)
+		: base(settingsService, navigationService, logger, nameof(TgLicenseViewModel))
 	{
 		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";

@@ -19,7 +19,7 @@ public abstract class TgPageBase : Page
 		App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
 			await ViewModel.OnNavigatedToAsync(e);
-		}, "OnNavigatedTo");
+		}, $"{ViewModel.Name}.{nameof(OnNavigatedTo)}");
 	}
 
 	protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);

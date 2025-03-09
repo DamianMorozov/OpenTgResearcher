@@ -4,14 +4,12 @@
 namespace TgDownloaderDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgLoadDataViewModel : TgPageViewModelBase
+public sealed partial class TgLoadDataViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLoadDataViewModel> logger)
+	: TgPageViewModelBase(settingsService, navigationService, logger, nameof(TgLoadDataViewModel))
 {
     #region Public and private fields, properties, constructor
 
-	public TgLoadDataViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLoadDataViewModel> logger) 
-		: base(settingsService, navigationService, logger)
-	{
-	}
+	//
 
-	#endregion
+    #endregion
 }

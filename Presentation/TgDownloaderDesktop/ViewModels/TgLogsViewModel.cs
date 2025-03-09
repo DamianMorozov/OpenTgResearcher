@@ -9,12 +9,12 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = new();
+	public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
 	public IRelayCommand LoadLogsCommand { get; }
 	public IRelayCommand DeleteLogFileCommand { get; }
 
 	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLogsViewModel> logger)
-		: base(settingsService, navigationService, logger)
+		: base(settingsService, navigationService, logger, nameof(TgLogsViewModel))
 	{
 		// Commands
 		LoadLogsCommand = new AsyncRelayCommand(LoadLogsAsync);

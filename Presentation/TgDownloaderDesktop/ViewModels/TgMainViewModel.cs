@@ -5,7 +5,7 @@ namespace TgDownloaderDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgMainViewModel> logger)
-	: TgPageViewModelBase(settingsService, navigationService, logger)
+	: TgPageViewModelBase(settingsService, navigationService, logger, nameof(TgMainViewModel))
 {
 	#region Public and private fields, properties, constructor
 

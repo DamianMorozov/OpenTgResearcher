@@ -17,7 +17,7 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	public IRelayCommand UpdateOnlineCommand { get; }
 
 	public TgStoriesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStoriesViewModel> logger) 
-		: base(settingsService, navigationService, logger)
+		: base(settingsService, navigationService, logger, nameof(TgStoriesViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);

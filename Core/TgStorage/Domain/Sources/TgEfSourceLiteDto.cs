@@ -25,6 +25,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	[ObservableProperty]
 	public partial bool IsAutoUpdate { get; set; }
 	[ObservableProperty]
+	public partial bool IsCreatingSubdirectories { get; set; }
+	[ObservableProperty]
 	public partial bool IsUserAccess { get; set; }
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
@@ -41,6 +43,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		FirstId = 0;
 		Count = 0;
 		IsAutoUpdate = false;
+		IsCreatingSubdirectories = false;
 		IsUserAccess = false;
 		IsDownload = false;
 		ProgressPercentString = string.Empty;
@@ -63,6 +66,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		FirstId = dto.FirstId;
 		Count = dto.Count;
 		IsAutoUpdate = dto.IsAutoUpdate;
+		IsCreatingSubdirectories = dto.IsCreatingSubdirectories;
 		IsUserAccess = dto.IsUserAccess;
 		IsDownload = dto.IsDownload;
 		ProgressPercentString = dto.ProgressPercentString;
@@ -81,6 +85,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		FirstId = item.FirstId;
 		Count = item.Count;
 		IsAutoUpdate = item.IsAutoUpdate;
+		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
 		IsUserAccess = item.IsUserAccess;
 		var progress = (float)item.FirstId * 100 / item.Count;
 		ProgressPercentString = progress == 0 ? "{0:00.00} %" : $"{progress:#00.00} %";
@@ -99,6 +104,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		FirstId = dto.FirstId,
 		Count = dto.Count,
 		IsAutoUpdate = dto.IsAutoUpdate,
+		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
 		IsUserAccess = dto.IsUserAccess,
 	};
 
@@ -112,6 +118,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		FirstId = FirstId,
 		Count = Count,
 		IsAutoUpdate = IsAutoUpdate,
+		IsCreatingSubdirectories = IsCreatingSubdirectories,
 		IsUserAccess = IsUserAccess,
 	};
 

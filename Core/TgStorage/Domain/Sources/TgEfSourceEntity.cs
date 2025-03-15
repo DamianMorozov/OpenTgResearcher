@@ -16,6 +16,7 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(Directory))]
 [Index(nameof(FirstId))]
 [Index(nameof(IsAutoUpdate))]
+[Index(nameof(IsCreatingSubdirectories))]
 [Index(nameof(IsUserAccess))]
 public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 {
@@ -96,6 +97,11 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
     [Column(TgEfConstants.ColumnIsUserAccess, TypeName = "BIT")]
     public bool IsUserAccess { get; set; }
 
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsCreatingSubdirectories, TypeName = "BIT")]
+    public bool IsCreatingSubdirectories { get; set; }
+
     public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
 
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
@@ -129,6 +135,7 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 	    Directory = this.GetDefaultPropertyString(nameof(Directory));
 	    FirstId = this.GetDefaultPropertyInt(nameof(FirstId));
 	    IsAutoUpdate = this.GetDefaultPropertyBool(nameof(IsAutoUpdate));
+	    IsCreatingSubdirectories = this.GetDefaultPropertyBool(nameof(IsCreatingSubdirectories));
 	    IsUserAccess = this.GetDefaultPropertyBool(nameof(IsUserAccess));
 	    Documents = new List<TgEfDocumentEntity>();
         Messages = new List<TgEfMessageEntity>();
@@ -150,6 +157,7 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 		Count = item.Count;
 		Directory = item.Directory;
 		IsAutoUpdate = item.IsAutoUpdate;
+		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
 		IsUserAccess = item.IsUserAccess;
         return this;
 	}

@@ -514,6 +514,11 @@ namespace TgStorage.Migrations.TgEfBlazor
                         .HasColumnType("BIT")
                         .HasColumnName("IS_AUTO_UPDATE");
 
+                    b.Property<bool>("IsCreatingSubdirectories")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_CREATING_SUBDIRS");
+
                     b.Property<bool>("IsUserAccess")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
@@ -549,6 +554,8 @@ namespace TgStorage.Migrations.TgEfBlazor
                     b.HasIndex("IsActive");
 
                     b.HasIndex("IsAutoUpdate");
+
+                    b.HasIndex("IsCreatingSubdirectories");
 
                     b.HasIndex("IsUserAccess");
 

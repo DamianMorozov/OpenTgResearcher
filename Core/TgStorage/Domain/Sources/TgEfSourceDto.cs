@@ -31,6 +31,8 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 	[ObservableProperty]
 	public partial bool IsAutoUpdate { get; set; }
 	[ObservableProperty]
+	public partial bool IsCreatingSubdirectories { get; set; }
+	[ObservableProperty]
 	public partial bool IsUserAccess { get; set; }
 	[ObservableProperty]
 	public partial string CurrentFileName { get; set; } = string.Empty;
@@ -78,6 +80,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Count = 0;
 		Directory = string.Empty;
 		IsAutoUpdate = false;
+		IsCreatingSubdirectories = false;
 		IsUserAccess = false;
 		IsDownload = false;
 		CurrentFileName = string.Empty;
@@ -103,6 +106,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Count = dto.Count;
 		Directory = dto.Directory;
 		IsAutoUpdate = dto.IsAutoUpdate;
+		IsCreatingSubdirectories = dto.IsCreatingSubdirectories;
 		IsUserAccess = dto.IsUserAccess;
 		IsDownload = dto.IsDownload;
 		CurrentFileName = dto.CurrentFileName;
@@ -124,6 +128,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Count = item.Count;
 		Directory = item.Directory ?? string.Empty;
 		IsAutoUpdate = item.IsAutoUpdate;
+		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
 		IsUserAccess = item.IsUserAccess;
 		return this;
 	}
@@ -144,6 +149,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Count = dto.Count,
 		Directory = dto.Directory,
 		IsAutoUpdate = dto.IsAutoUpdate,
+		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
 		IsUserAccess = dto.IsUserAccess,
 	};
 
@@ -161,6 +167,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Count = Count,
 		Directory = Directory,
 		IsAutoUpdate = IsAutoUpdate,
+		IsCreatingSubdirectories = IsCreatingSubdirectories,
 		IsUserAccess = IsUserAccess,
 	};
 

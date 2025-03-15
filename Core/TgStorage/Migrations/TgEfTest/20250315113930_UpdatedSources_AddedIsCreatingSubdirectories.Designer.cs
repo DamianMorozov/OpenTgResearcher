@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfTest
 {
     [DbContext(typeof(TgEfTestContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250315113930_UpdatedSources_AddedIsCreatingSubdirectories")]
+    partial class UpdatedSources_AddedIsCreatingSubdirectories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");

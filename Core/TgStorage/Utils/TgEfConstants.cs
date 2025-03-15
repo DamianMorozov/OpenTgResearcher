@@ -54,6 +54,7 @@ public static class TgEfConstants
 	public const string ColumnIsActive = "IS_ACTIVE";
 	public const string ColumnIsAutoUpdate = "IS_AUTO_UPDATE";
 	public const string ColumnIsBot = "IS_BOT";
+	public const string ColumnIsCreatingSubdirectories = "IS_CREATING_SUBDIRS";
 	public const string ColumnIsEnabled = "IS_ENABLED";
 	public const string ColumnIsUserAccess = "IS_USER_ACCESS";
 	public const string ColumnLangCode = "LANG_CODE";

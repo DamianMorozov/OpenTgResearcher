@@ -20,7 +20,7 @@ public sealed partial class TgChatsPage
 
 	#region Public and private methods
 
-	private void OnFilterTextChanged(object sender, TextChangedEventArgs e) => ViewModel.OnFilterTextChanged(sender, e);
+	//
 
 	#endregion
 }

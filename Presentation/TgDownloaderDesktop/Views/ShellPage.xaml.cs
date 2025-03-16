@@ -30,7 +30,7 @@ public sealed partial class ShellPage
 
 	#region Public and private methods
 
-	private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+	private void OnLoaded(object sender, RoutedEventArgs e)
 	{
 		var settingsService = App.GetService<ITgSettingsService>();
 		settingsService.ApplyTheme(settingsService.AppTheme);
@@ -39,11 +39,6 @@ public sealed partial class ShellPage
 		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
 		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
 	}
-
-	//private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-	//{
-	//	//App.AppTitlebar = AppTitleBarText as UIElement;
-	//}
 
 	private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
 	{

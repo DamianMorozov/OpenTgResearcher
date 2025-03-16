@@ -511,6 +511,7 @@
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
@@ -524,13 +525,19 @@
 							Grid.Row="0"
 							Margin="2,7,7,2"
 							TextAlignment="Left" />
-						<TextBox
+						<NumberBox
+							x:Name="NumberBoxSpinButtonPlacementExample"
 							Grid.Row="0"
 							Grid.Column="1"
 							Margin="2"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
-							Text="{x:Bind ViewModel.DownloadSettings.CountThreads, Mode=TwoWay}" />
+							LargeChange="10"
+							Maximum="10"
+							Minimum="1"
+							SmallChange="1"
+							SpinButtonPlacementMode="Compact"
+							Value="{x:Bind ViewModel.DownloadSettings.CountThreads, Mode=TwoWay}" />
 						<!--  IsActive  -->
 						<TextBlock
 							x:Uid="FieldIsActive"
@@ -546,10 +553,11 @@
 							HorizontalContentAlignment="Left"
 							IsEnabled="False"
 							IsOn="{x:Bind ViewModel.DownloadSettings.IsActive, Mode=OneWay}" />
-						<!--  IsRewriteFiles  -->
+						<!--  Overwriting files  -->
 						<TextBlock
 							x:Uid="FieldIsRewriteFiles"
 							Grid.Row="1"
+							Grid.Column="0"
 							Margin="2,7,7,2"
 							TextAlignment="Left" />
 						<ToggleSwitch
@@ -560,7 +568,7 @@
 							HorizontalContentAlignment="Left"
 							IsEnabled="True"
 							IsOn="{x:Bind ViewModel.DownloadSettings.IsRewriteFiles, Mode=TwoWay}" />
-						<!--  IsRewriteMessages  -->
+						<!--  Overwriting messages  -->
 						<TextBlock
 							x:Uid="FieldIsRewriteMessages"
 							Grid.Row="1"
@@ -574,39 +582,38 @@
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							IsOn="{x:Bind ViewModel.DownloadSettings.IsRewriteMessages, Mode=TwoWay}" />
-						<!--  StateSourceDt  -->
+						<!--  Joining message ID with file  -->
 						<TextBlock
-							x:Uid="FieldDtChanged"
+							x:Uid="FieldIsJoinFileNameWithMessageId"
 							Grid.Row="2"
+							Grid.Column="0"
 							Margin="2,7,7,2"
 							TextAlignment="Left" />
-						<TextBox
+						<ToggleSwitch
 							Grid.Row="2"
 							Grid.Column="1"
 							Margin="2"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
-							IsEnabled="False"
-							Text="{x:Bind ViewModel.StateSourceDt, Mode=OneWay}" />
-						<!--  StateSourceMsg  -->
+							IsEnabled="True"
+							IsOn="{x:Bind ViewModel.DownloadSettings.IsJoinFileNameWithMessageId, Mode=TwoWay}" />
+						<!--  Creating subdirectories  -->
 						<TextBlock
-							x:Uid="FieldMessage"
+							x:Uid="FieldIsCreatingSubdirectories"
 							Grid.Row="2"
 							Grid.Column="2"
 							Margin="12,7,7,2"
 							TextAlignment="Left" />
-						<TextBox
+						<ToggleSwitch
 							Grid.Row="2"
 							Grid.Column="3"
 							Margin="2"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
-							IsEnabled="False"
-							IsReadOnly="True"
-							Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
-						<!--  StateSourceProgressString  -->
+							IsOn="{x:Bind ViewModel.Dto.IsCreatingSubdirectories, Mode=TwoWay}" />
+						<!--  StateSourceDt  -->
 						<TextBlock
-							x:Uid="FieldPercent"
+							x:Uid="FieldDtChanged"
 							Grid.Row="3"
 							Grid.Column="0"
 							Margin="2,7,7,2"
@@ -618,10 +625,10 @@
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							IsEnabled="False"
-							Text="{x:Bind ViewModel.StateSourceProgressString, Mode=OneWay}" />
-						<!--  StateSourceProgress  -->
+							Text="{x:Bind ViewModel.StateSourceDt, Mode=OneWay}" />
+						<!--  StateSourceMsg  -->
 						<TextBlock
-							x:Uid="FieldDirectory"
+							x:Uid="FieldMessage"
 							Grid.Row="3"
 							Grid.Column="2"
 							Margin="12,7,7,2"
@@ -634,21 +641,38 @@
 							HorizontalContentAlignment="Left"
 							IsEnabled="False"
 							IsReadOnly="True"
-							Text="{x:Bind ViewModel.StateSourceDirectory, Mode=OneWay}" />
-						<!--<TextBlock
-							x:Uid="FieldSize"
-							Grid.Row="2"
+							Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
+						<!--  StateSourceProgressString  -->
+						<TextBlock
+							x:Uid="FieldPercent"
+							Grid.Row="4"
+							Grid.Column="0"
+							Margin="2,7,7,2"
+							TextAlignment="Left" />
+						<TextBox
+							Grid.Row="4"
+							Grid.Column="1"
+							Margin="2"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							IsEnabled="False"
+							Text="{x:Bind ViewModel.StateSourceProgressString, Mode=OneWay}" />
+						<!--  StateSourceProgress  -->
+						<TextBlock
+							x:Uid="FieldDirectory"
+							Grid.Row="4"
 							Grid.Column="2"
 							Margin="12,7,7,2"
 							TextAlignment="Left" />
 						<TextBox
-							Grid.Row="2"
+							Grid.Row="4"
 							Grid.Column="3"
 							Margin="2"
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							IsEnabled="False"
-							Text="{x:Bind ViewModel.StateSourceDirectorySizeString, Mode=OneWay}" />-->
+							IsReadOnly="True"
+							Text="{x:Bind ViewModel.StateSourceDirectory, Mode=OneWay}" />
 					</Grid>
 				</ScrollView>
 			</Expander>

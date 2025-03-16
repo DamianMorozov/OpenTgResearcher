@@ -181,6 +181,7 @@
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 						<!--  Filter  -->
 						<TextBox
@@ -190,8 +191,24 @@
 							Margin="0,0,5,10"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
-							Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}"
-							TextChanged="{x:Bind OnFilterTextChanged, Mode=OneWay}" />
+							Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
+						<!--  TextChanged="{x:Bind OnFilterTextChanged, Mode=OneWay}"  -->
+						<!--  Search  -->
+						<Button
+							Grid.Row="0"
+							Grid.Column="1"
+							Margin="5,0,0,10"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							Command="{x:Bind ViewModel.SearchCommand, Mode=OneWay}">
+							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+								<FontIcon Margin="0,0,10,0" Glyph="&#xE721;" />
+								<TextBlock
+									x:Uid="ActionSearch"
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center" />
+							</StackPanel>
+						</Button>
 						<!--  Data  -->
 						<controls:DataGrid
 							Grid.Row="1"
@@ -375,7 +392,7 @@
 												Minimum="0"
 												ToolTipService.ToolTip="{Binding ProgressPercentString, Mode=OneWay}"
 												Visibility="Visible"
-												Value="{Binding ProgressPercentString, Mode=OneWay}" />
+												Value="{Binding ProgressPercent, Mode=OneWay}" />
 										</DataTemplate>
 									</controls:DataGridTemplateColumn.CellTemplate>
 								</controls:DataGridTemplateColumn>

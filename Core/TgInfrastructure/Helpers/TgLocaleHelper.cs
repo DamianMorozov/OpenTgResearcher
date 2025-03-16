@@ -78,11 +78,12 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByTestLicense => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
-	public string MenuDownloadSetIsAddMessageId => "Enable join message ID with file name";
-	public string MenuDownloadSetIsAutoUpdate => "Enabled auto update";
-	public string MenuDownloadSetIsSaveMessages => "Enable save messages";
+	public string MenuDownloadSetIsAddMessageId => "Enable join message ID with file";
+	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
+	public string MenuDownloadSetIsCreatingSubdirectories => "Enable creating subdirectories";
 	public string MenuDownloadSetIsRewriteFiles => "Enable rewrite exists files";
 	public string MenuDownloadSetIsRewriteMessages => "Enable rewrite exists messages";
+	public string MenuDownloadSetIsSaveMessages => "Enable save messages";
 	public string MenuDownloadSetSource => "Setup source (ID/username)";
 	public string MenuDownloadSetSourceFirstIdAuto => "Setup first ID auto";
 	public string MenuDownloadSetSourceFirstIdManual => "Setup first ID manual";
@@ -256,10 +257,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgMustClientConnect => "You must connect the client before";
 	public string TgMustSetSettings => "You must setup the settings before";
 	public string TgSettingsDestDirectory => "Destination";
-	public string TgSettingsIsJoinFileNameWithMessageId => "Enabled join message ID";
-	public string TgSettingsIsRewriteFiles => "Enabled rewriting files";
-	public string TgSettingsIsRewriteMessages => "Enabled rewriting messages";
-	public string TgSettingsIsSaveMessages => "Enabled saving messages";
 	public string TgSettingsSourceFirstLastId => "First/last ID";
 	public string TgSetupApiHash => "Type API hash";
 	public string TgSetupAppId => "Type APP ID";

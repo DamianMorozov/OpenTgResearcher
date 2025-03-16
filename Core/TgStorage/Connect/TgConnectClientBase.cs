@@ -1193,7 +1193,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				//{
 				//	if (chatFull.chats.Any())
 				//	{
-				//		if (chatFull.chats.FirstOrDefault().Value is TL.Channel channel)
+				//		if (chatFull.chats.FirstOrDefault().Value is Channel channel)
 				//			source.AccessHash = channel.access_hash;
 				//	}
 				//}
@@ -1740,7 +1740,13 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			}
 
 			tgDownloadSettings2.SourceVm.Dto.IsDownload = true;
-			var isAccessToMessages = tgDownloadSettings.Chat.Base is Channel channel && await Client.Channels_ReadMessageContents(channel);
+			ForumTopicBase[]? topics = null;
+			ForumTopicBase? topicRoot = null;
+			Channel? channel = null;
+			if (tgDownloadSettings.Chat.Base is Channel)
+				channel = tgDownloadSettings.Chat.Base as Channel;
+
+			var isAccessToMessages = channel is not null && await Client.Channels_ReadMessageContents(channel);
 			var sourceFirstId = tgDownloadSettings2.SourceVm.Dto.FirstId;
 			var sourceLastId = tgDownloadSettings2.SourceVm.Dto.Count;
 			var counterForSave = 0;
@@ -1748,6 +1754,33 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			{
 				List<Task> downloadTasks = [];
 				var threadNumber = 0;
+				if (Client is not null && channel is not null)
+				{
+					var forumTopics = await Client.Channels_GetAllForumTopics(channel);
+					topics = forumTopics.topics;
+					topicRoot = topics.SingleOrDefault(x => x.ID == 1);
+					// Enable creating subdirectories
+					if (tgDownloadSettings2.SourceVm.Dto.IsCreatingSubdirectories)
+					{
+						foreach (var topic in topics)
+						{
+							try
+							{
+								var dir = Path.Combine(tgDownloadSettings2.SourceVm.Dto.Directory, topic.Title);
+								if (!Directory.Exists(dir))
+									Directory.CreateDirectory(dir);
+							}
+							catch (Exception ex)
+							{
+#if DEBUG
+								Debug.WriteLine(ex);
+								Debug.WriteLine(ex.StackTrace);
+#endif
+								await SetClientExceptionAsync(ex);
+							}
+						}
+					}
+				}
 				while (sourceFirstId <= sourceLastId)
 				{
 					if (Client is null)
@@ -1766,17 +1799,16 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					}
 					await TryCatchFuncAsync(async () =>
 					{
-						if (Client is null)
-							return;
-						var messages = tgDownloadSettings.Chat.Base is not null
-							? await Client.Channels_GetMessages(tgDownloadSettings.Chat.Base as Channel, sourceFirstId)
+						if (Client is null) return;
+						var messages = channel is not null
+							? await Client.Channels_GetMessages(channel, sourceFirstId)
 							: await Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId);
 						await UpdateTitleAsync($"{TgCommonUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
 						foreach (var message in messages.Messages)
 						{
 							// Check message exists
 							downloadTasks.Add(message.Date > DateTime.MinValue
-								? DownloadDataAsync(tgDownloadSettings2, message, threadNumber)
+								? DownloadDataAsync(tgDownloadSettings2, message, threadNumber, topics, topicRoot)
 								: UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, message.ID, tgDownloadSettings2.SourceVm.Dto.Count,
 									$"Message {message.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
 							counterForSave++;
@@ -1866,7 +1898,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	}
 
 	private async Task DownloadDataAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, int threadNumber,
-		int maxRetries = 6, int delayBetweenRetries = 10_000)
+		ForumTopicBase[]? topics, ForumTopicBase? topicRoot, int maxRetries = 6, int delayBetweenRetries = 10_000)
 	{
 		if (messageBase is not Message message)
 		{
@@ -1878,7 +1910,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			// Parse documents and photos
 			if ((message.flags & Message.Flags.has_media) is not 0)
 			{
-				await DownloadDataCoreAsync(tgDownloadSettings, messageBase, message.media, threadNumber);
+				await DownloadDataCoreAsync(tgDownloadSettings, messageBase, message.media, threadNumber, topics, topicRoot);
 			}
 			else
 			{
@@ -1890,7 +1922,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		}, maxRetries, delayBetweenRetries);
 	}
 
-	private TgMediaInfoModel GetMediaInfo(MessageMedia messageMedia, TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase)
+	private TgMediaInfoModel GetMediaInfo(MessageMedia messageMedia, TgDownloadSettingsViewModel tgDownloadSettings,
+		MessageBase messageBase, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
 	{
 		var extensionName = string.Empty;
 		TgMediaInfoModel? mediaInfo = null;
@@ -1964,6 +1997,24 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			};
 		// Join tgDownloadSettings.DestDirectory
 		mediaInfo.LocalPathOnly = tgDownloadSettings.SourceVm.Dto.Directory;
+		// Enable creating subdirectories
+		if (!string.IsNullOrEmpty(mediaInfo.RemoteName) &&
+			tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories && topics is not null)
+		{
+			var topicId = messageBase.ReplyHeader?.TopicID ?? 0;
+			if (topicId > 0)
+			{
+				var topic = topics.SingleOrDefault(x => x.ID == topicId);
+				mediaInfo.LocalPathOnly = Path.Combine(tgDownloadSettings.SourceVm.Dto.Directory, topic?.Title ?? string.Empty);
+			}
+			else
+			{
+				if (topicRoot is not null)
+				{
+					mediaInfo.LocalPathOnly = Path.Combine(tgDownloadSettings.SourceVm.Dto.Directory, topicRoot?.Title ?? string.Empty);
+				}
+			}
+		}
 		mediaInfo.Normalize(tgDownloadSettings.IsJoinFileNameWithMessageId);
 		return mediaInfo;
 	}
@@ -2018,9 +2069,9 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	}
 
 	private async Task DownloadDataCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase,
-		MessageMedia messageMedia, int threadNumber)
+		MessageMedia messageMedia, int threadNumber, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
 	{
-		var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase);
+		var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, topics, topicRoot);
 		if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly))
 			return;
 		// Delete files
@@ -2091,6 +2142,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			}
 		});
 	}
+	
 	/// <summary> Move existing files at the current directory </summary>
 	private void MoveExistsFilesAtCurrentDir(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo)
 	{

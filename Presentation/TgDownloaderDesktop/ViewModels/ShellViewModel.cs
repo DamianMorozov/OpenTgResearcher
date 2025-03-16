@@ -1,6 +1,9 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.UI.Xaml.Controls.Primitives;
+using System.Threading.Tasks;
+
 namespace TgDownloaderDesktop.ViewModels;
 
 public partial class ShellViewModel : ObservableRecipient
@@ -15,10 +18,13 @@ public partial class ShellViewModel : ObservableRecipient
 	public partial string AppVersion { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial bool IsClientConnected { get; set; }
+	private NavigationEventArgs? _eventArgs;
 
 	public IAppNotificationService AppNotificationService { get; }
 	public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
+	public IRelayCommand ClientConnectCommand { get; }
+	public IRelayCommand ClientDisconnectCommand { get; }
 
 	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
 	{
@@ -27,6 +33,8 @@ public partial class ShellViewModel : ObservableRecipient
 		NavigationService = navigationService;
 		NavigationService.Navigated += OnNavigated;
 		NavigationViewService = navigationViewService;
+		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
+		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
 	}
 
 	#endregion
@@ -35,6 +43,7 @@ public partial class ShellViewModel : ObservableRecipient
 
 	private void OnNavigated(object sender, NavigationEventArgs e)
 	{
+		_eventArgs = e;
 		IsBackEnabled = NavigationService.CanGoBack;
 		if (e.SourcePageType == typeof(TgSettingsPage))
 		{
@@ -54,6 +63,34 @@ public partial class ShellViewModel : ObservableRecipient
 	{
 		IsClientConnected = isClientConnected;
 	}
-	
+
+	public async Task ClientConnectAsync()
+	{
+		if (_eventArgs is null) return;
+		await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+		{
+			var connectViewModel = App.GetService<TgConnectViewModel>();
+			await connectViewModel.OnNavigatedToAsync(_eventArgs);
+			if (!connectViewModel.IsClientConnected)
+			{
+				await connectViewModel.ClientConnectAsync();
+			}
+		});
+	}
+
+	public async Task ClientDisconnectAsync()
+	{
+		if (_eventArgs is null) return;
+		await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+		{
+			var connectViewModel = App.GetService<TgConnectViewModel>();
+			await connectViewModel.OnNavigatedToAsync(_eventArgs);
+			if (connectViewModel.IsClientConnected)
+			{
+				await TgGlobalTools.ConnectClient.DisconnectAsync();
+			}
+		});
+	}
+
 	#endregion
 }

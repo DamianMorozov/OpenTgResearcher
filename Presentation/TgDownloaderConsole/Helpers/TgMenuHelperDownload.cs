@@ -10,6 +10,16 @@ internal partial class TgMenuHelper
 
 	private static TgEnumMenuDownload SetMenuDownload()
 	{
+		// License options
+		var menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByFreeLicense;
+		switch (TgLicense.CurrentLicense.LicenseType)
+		{
+			case TgEnumLicenseType.Test:
+			case TgEnumLicenseType.Paid:
+			case TgEnumLicenseType.Premium:
+				menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByTestLicense;
+				break;
+		}
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
@@ -26,7 +36,8 @@ internal partial class TgMenuHelper
 					TgLocale.MenuDownloadSetIsRewriteMessages,
 					TgLocale.MenuDownloadSetIsAddMessageId,
 					TgLocale.MenuDownloadSetIsAutoUpdate,
-					TgLocale.MenuDownloadSetCountThreadsByFreeLicense,
+					TgLocale.MenuDownloadSetIsCreatingSubdirectories,
+					menuDownloadSetCountThreads,
 					TgLocale.MenuSaveSettings,
 					TgLocale.MenuManualDownload
 				));
@@ -48,7 +59,9 @@ internal partial class TgMenuHelper
 			return TgEnumMenuDownload.SetIsAddMessageId;
 		if (prompt.Equals(TgLocale.MenuDownloadSetIsAutoUpdate))
 			return TgEnumMenuDownload.SetIsAutoUpdate;
-		if (prompt.Equals(TgLocale.MenuDownloadSetCountThreadsByFreeLicense))
+		if (prompt.Equals(TgLocale.MenuDownloadSetIsCreatingSubdirectories))
+			return TgEnumMenuDownload.SetIsCreatingSubdirectories;
+		if (prompt.Equals(menuDownloadSetCountThreads))
 			return TgEnumMenuDownload.SetCountThreads;
 		if (prompt.Equals(TgLocale.MenuSaveSettings))
 			return TgEnumMenuDownload.SettingsSave;
@@ -95,6 +108,9 @@ internal partial class TgMenuHelper
 					break;
 				case TgEnumMenuDownload.SetIsAutoUpdate:
 					SetTgDownloadIsAutoUpdate(tgDownloadSettings);
+					break;
+				case TgEnumMenuDownload.SetIsCreatingSubdirectories:
+					SetTgDownloadIsCreatingSubdirectories(tgDownloadSettings);
 					break;
 				case TgEnumMenuDownload.SetCountThreads:
 					await SetTgDownloadCountThreadsAsync(tgDownloadSettings);
@@ -191,19 +207,22 @@ internal partial class TgMenuHelper
 	}
 
 	private void SetTgDownloadIsSaveMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsSaveMessages = AskQuestionReturnPositive(TgLocale.TgSettingsIsSaveMessages, true);
+		tgDownloadSettings.IsSaveMessages = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsSaveMessages, true);
 
 	private void SetTgDownloadIsRewriteFiles(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsRewriteFiles = AskQuestionReturnPositive(TgLocale.TgSettingsIsRewriteFiles, true);
+		tgDownloadSettings.IsRewriteFiles = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsRewriteFiles, true);
 
 	private void SetTgDownloadIsRewriteMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsRewriteMessages = AskQuestionReturnPositive(TgLocale.TgSettingsIsRewriteMessages, true);
+		tgDownloadSettings.IsRewriteMessages = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsRewriteMessages, true);
 
 	private void SetTgDownloadIsJoinFileNameWithMessageId(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsJoinFileNameWithMessageId = AskQuestionReturnPositive(TgLocale.TgSettingsIsJoinFileNameWithMessageId, true);
+		tgDownloadSettings.IsJoinFileNameWithMessageId = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsAddMessageId, true);
 
 	private void SetTgDownloadIsAutoUpdate(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		tgDownloadSettings.SourceVm.Dto.IsAutoUpdate = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsAutoUpdate, true);
+
+	private void SetTgDownloadIsCreatingSubdirectories(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsCreatingSubdirectories, true);
 
 	private async Task SetTgDownloadCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{

@@ -113,6 +113,14 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		return dtos;
 	}
 
+	public async Task<List<TgEfMessageDto>> GetListDtosDescAsync(int take, int skip, Expression<Func<TgEfMessageEntity, bool>> where, bool isReadOnly = true)
+	{
+		var dtos = take > 0
+			? await GetQuery(isReadOnly).Where(where).OrderByDescending(x => x.Id).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly).Where(where).OrderByDescending(x => x.Id).Select(SelectDto()).ToListAsync();
+		return dtos;
+	}
+
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
 		IList<TgEfMessageEntity> items = take > 0

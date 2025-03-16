@@ -333,6 +333,9 @@
   <data name="ActionDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="ActionSearch.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
     <value>Checking for release updates</value>
   </data>
@@ -512,6 +515,12 @@
   </data>
   <data name="ClientConnect.Text" xml:space="preserve">
     <value>Connect to TG server</value>
+  </data>
+  <data name="ButtonConnect.Content" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="ButtonDisconnect.Content" xml:space="preserve">
+    <value>Disconnect</value>
   </data>
   <data name="ClientDisconnect.Text" xml:space="preserve">
     <value>Disconnect from TG server</value>
@@ -895,10 +904,16 @@
     <value>Threads count</value>
   </data>
   <data name="FieldIsRewriteFiles.Text" xml:space="preserve">
-    <value>Overwrite files</value>
+    <value>Overwriting files</value>
   </data>
   <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
-    <value>Overwrite messages</value>
+    <value>Overwriting messages</value>
+  </data>
+  <data name="FieldIsJoinFileNameWithMessageId.Text" xml:space="preserve">
+    <value>Joining message ID with file</value>
+  </data>
+  <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
+    <value>Creating subdirectories</value>
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Enter the text to filter</value>

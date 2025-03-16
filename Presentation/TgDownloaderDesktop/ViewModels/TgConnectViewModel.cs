@@ -185,7 +185,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		return response;
 	}
 
-	private async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
+	public async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
 
 	private async Task ClientConnectCoreAsync(bool isRetry)
 	{
@@ -212,7 +212,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task ClientDisconnectAsync() => await ContentDialogAsync(TgGlobalTools.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
+	public async Task ClientDisconnectAsync() => await ContentDialogAsync(TgGlobalTools.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
 
 	private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 

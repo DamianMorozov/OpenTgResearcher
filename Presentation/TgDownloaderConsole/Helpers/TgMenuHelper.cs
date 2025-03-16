@@ -391,24 +391,28 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			new Markup($"{tgDownloadSettings.SourceVm.Dto.FirstId} / {tgDownloadSettings.SourceVm.Dto.Count}"));
 
 		// Rewrite files
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsRewriteFiles)),
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsRewriteFiles)),
 			new Markup(tgDownloadSettings.IsRewriteFiles.ToString()));
 
 		// Save messages
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsSaveMessages)),
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsSaveMessages)),
 			new Markup(tgDownloadSettings.IsSaveMessages.ToString()));
 
 		// Rewrite messages
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsRewriteMessages)),
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsRewriteMessages)),
 			new Markup(tgDownloadSettings.IsRewriteMessages.ToString()));
 
 		// Join message ID
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgSettingsIsJoinFileNameWithMessageId)),
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAddMessageId)),
 			new Markup(tgDownloadSettings.IsJoinFileNameWithMessageId.ToString()));
 
 		// Enable auto update
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
 			new Markup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+
+		// Enable creating subdirectories
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsCreatingSubdirectories)),
+			new Markup(tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories.ToString()));
 
         // Enabled filters
         var filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
@@ -438,7 +442,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 
 	internal async Task FillTableRowsAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
-		// Is auto update.
+		// Enable auto update
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
 			new Markup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
 		await Task.CompletedTask;

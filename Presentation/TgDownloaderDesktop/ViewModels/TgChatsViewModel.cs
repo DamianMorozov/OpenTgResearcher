@@ -19,6 +19,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand DefaultSortCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
+	public IRelayCommand SearchCommand { get; }
 
 	public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
@@ -28,6 +29,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
+		SearchCommand = new AsyncRelayCommand(SearchAsync);
 		// Updates
 		//TgGlobalTools.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
 		//TgGlobalTools.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
@@ -208,12 +210,10 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		NavigationService.NavigateTo(typeof(TgChatDetailsViewModel).FullName!, dto.Uid);
 	}
 
-	public void OnFilterTextChanged(object sender, TextChangedEventArgs e)
+	private async Task SearchAsync()
 	{
-		var textBox = sender as TextBox;
-		if (textBox is null) return;
-		FilterText = textBox.Text;
 		ApplyFilter();
+		await Task.CompletedTask;
 	}
 
 	#endregion

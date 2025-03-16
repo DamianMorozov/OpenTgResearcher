@@ -62,9 +62,10 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
 	private async Task LoadDataStorageCoreAsync()
 	{
+		await ReloadUiAsync();
 		if (!SettingsService.IsExistsAppStorage) return;
 		Dto = await Repository.GetDtoAsync(x => x.Uid == Uid);
-		Messages = [.. await MessageRepository.GetListDtosAsync(take: 0, skip: 0, x => x.SourceId == Dto.Id, isReadOnly: true)];
+		Messages = [.. await MessageRepository.GetListDtosDescAsync(take: 100, skip: 0, x => x.SourceId == Dto.Id, isReadOnly: true)];
 		EmptyData = !Messages.Any();
 		ScrollRequested?.Invoke();
 	}

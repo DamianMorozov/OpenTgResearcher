@@ -392,6 +392,9 @@
   <data name="ActionDelete.Text" xml:space="preserve">
     <value>Удалить</value>
   </data>
+  <data name="ActionSearch.Text" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
     <value>Проверка наличия обновлений релиза</value>
   </data>
@@ -571,6 +574,12 @@
   </data>
   <data name="ClientConnect.Text" xml:space="preserve">
     <value>Подключиться к серверу TG</value>
+  </data>
+  <data name="ButtonConnect.Content" xml:space="preserve">
+    <value>Подключиться</value>
+  </data>
+  <data name="ButtonDisconnect.Content" xml:space="preserve">
+    <value>Отключиться</value>
   </data>
   <data name="ClientDisconnect.Text" xml:space="preserve">
     <value>Отключиться от сервера TG</value>
@@ -961,6 +970,12 @@
   </data>
   <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
     <value>Перезапись сообщений</value>
+  </data>
+  <data name="FieldIsJoinFileNameWithMessageId.Text" xml:space="preserve">
+    <value>Присоединение идентификатора сообщения к файлу</value>
+  </data>
+  <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
+    <value>Создание подкаталогов</value>
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Введите текст для фильтрации</value>

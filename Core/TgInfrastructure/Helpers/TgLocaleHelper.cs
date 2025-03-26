@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.Win32;
+
 namespace TgInfrastructure.Helpers;
 
 /// <summary> Localization helper </summary>
@@ -91,6 +93,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuManualDownload => "Manual download";
 	public string MenuMarkAllMessagesAsRead => "Mark all messages as read";
 	public string MenuMarkAsRead => "Mark as read";
+	public string MenuRegisterTelegramApp => "Register Telegram app";
 	public string MenuSaveSettings => "Save settings";
 	public string MenuSearchChats => "Search chats";
 	public string MenuSearchContacts => "Search contacts";
@@ -136,7 +139,13 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseCheck => "Check license online";
 	public string MenuLicenseCurrent => "Current license";
 	public string MenuLicenseDescription => "License description";
+	public string MenuLicenseFolowThisLink => "Follow this link";
 	public string MenuLicenseKey => "License key";
+	public string MenuWebSiteGlobalTitle => "opentgresearcher.online";
+	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
+	public string MenuWebSiteOpen => "Open the website to donate";
+	public string MenuWebSiteRussianTitle => "opentgresearcher.ru";
+	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
 
 	#endregion
 
@@ -149,25 +158,28 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#region Main menu
 
-	public string MenuMainApps => "Apps";
     public string MenuMainProxies => "Proxies";
     public string MenuMainSources => "Sources";
     public string MenuMainVersions => "Versions";
 	public string MenuMain => "Main menu";
 	public string MenuMainAdvanced => "Advanced";
 	public string MenuMainApp => "Application";
+	public string MenuMainApps => "Apps";
 	public string MenuMainConnection => "Connection";
+	public string MenuMainConnectionHealthCheck => "Connection health check";
 	public string MenuMainDownload => "Download";
+	public string MenuMainDownloadHealthCheck => "Download health check";
 	public string MenuMainDownloads => "Downloads";
 	public string MenuMainExit => "Exit";
 	public string MenuMainFilters => "Filters";
+	public string MenuMainLicense => "License";
 	public string MenuMainReset => "Reset";
 	public string MenuMainReturn => "Return";
 	public string MenuMainSettings => "Settings";
 	public string MenuMainStop => "Stop";
 	public string MenuMainStorage => "Storage";
+	public string MenuMainStorageHealthCheck => "Storage health check";
 	public string MenuMainUpdate => "Update";
-	public string MenuMainLicense => "License";
 
 	#endregion
 
@@ -278,9 +290,10 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#region Public and private fields, properties, constructor
 
-	public TgEnumLanguage Language { get; set; } = TgEnumLanguage.Default;
 	public string InfoMessage(string message, bool isUseX = false) => !isUseX ? $"[green]v {message}[/]" : $"[green]x {message}[/]";
+	public string LinkWebSite(string linkText, string url) => $"\x1B]8;;{url}\x1B\\{linkText}\x1B]8;;\x1B\\";
 	public string WarningMessage(string message) => $"[red]x {message}[/]";
+	public TgEnumLanguage Language { get; set; } = TgEnumLanguage.Default;
 
 	#endregion
 
@@ -332,9 +345,10 @@ public sealed class TgLocaleHelper : ObservableObject
 	#region License
 
 	public string LicenseFreeDescription => "Free license";
-	public string LicenseTestDescription => "Test license";
 	public string LicensePaidDescription => "Paid license";
 	public string LicensePremiumDescription => "Premium license";
+	public string LicenseTestDescription => "Test license";
+	public string LicenseVersionShort => "License";
 
 	#endregion
 }

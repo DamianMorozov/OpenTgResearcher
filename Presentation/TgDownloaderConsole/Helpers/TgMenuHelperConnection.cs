@@ -17,9 +17,12 @@ internal partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(
 					TgLocale.MenuMainReturn,
+					TgLocale.MenuRegisterTelegramApp,
 					TgLocale.MenuSetProxy,
 					TgLocale.MenuClientConnect,
 					TgLocale.MenuClientDisconnect));
+		if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
+			return TgEnumMenuClient.RegisterTelegramApp;
 		if (prompt.Equals(TgLocale.MenuSetProxy))
 			return TgEnumMenuClient.SetProxy;
 		if (prompt.Equals(TgLocale.MenuClientConnect))
@@ -38,6 +41,9 @@ internal partial class TgMenuHelper
 			menu = SetMenuConnection();
 			switch (menu)
 			{
+				case TgEnumMenuClient.RegisterTelegramApp:
+					await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
+					break;
 				case TgEnumMenuClient.SetProxy:
 					await SetupClientProxyAsync();
 					await AskClientConnectAsync(tgDownloadSettings);

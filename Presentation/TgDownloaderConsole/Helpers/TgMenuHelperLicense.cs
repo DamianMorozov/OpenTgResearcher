@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
+using System;
+
 namespace TgDownloaderConsole.Helpers;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -18,12 +20,15 @@ internal sealed partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(TgLocale.MenuMainReturn,
 					TgLocale.MenuLicenseCheck,
-					TgLocale.MenuLicenseChange
+					TgLocale.MenuLicenseChange,
+					TgLocale.MenuWebSiteOpen
 				));
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
 			return TgEnumMenuLicense.LicenseCheck;
 		if (prompt.Equals(TgLocale.MenuLicenseChange))
 			return TgEnumMenuLicense.LicenseChange;
+		if (prompt.Equals(TgLocale.MenuWebSiteOpen))
+			return TgEnumMenuLicense.WebSiteOpen;
 		return TgEnumMenuLicense.Return;
 	}
 
@@ -41,6 +46,9 @@ internal sealed partial class TgMenuHelper
 					break;
 				case TgEnumMenuLicense.LicenseChange:
 					await LicenseChangeAsync();
+					break;
+				case TgEnumMenuLicense.WebSiteOpen:
+					await WebSiteOpenAsync(TgLocale.MenuWebSiteGlobalUrl);
 					break;
 			}
 		} while (menu is not TgEnumMenuLicense.Return);
@@ -61,6 +69,22 @@ internal sealed partial class TgMenuHelper
 		AnsiConsole.WriteLine(TgLocale.InDevelopment);
 		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
 		Console.ReadKey();
+		await Task.CompletedTask;
+	}
+
+	/// <summary> Open a web-site </summary>
+	private async Task WebSiteOpenAsync(string url)
+	{
+		try
+		{
+			Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+		}
+		catch (Exception ex)
+		{
+#if DEBUG
+			Console.WriteLine($"Opening error URL: {ex.Message}");
+#endif
+		}
 		await Task.CompletedTask;
 	}
 

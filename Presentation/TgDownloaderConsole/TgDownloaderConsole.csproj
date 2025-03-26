@@ -36,7 +36,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Include="..\..\..\TgDownloader-Helpers\TgDownloader.xml" Link="TgDownloader.xml">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="applicationIcon.ico" />
 	</ItemGroup>
@@ -64,7 +64,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="..\..\..\TgDownloader-Helpers\TgDownloader.session" Link="TgDownloader.session">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	  <None Include="..\..\Docs\CHANGELOG-RUS.md" Link="Docs\CHANGELOG-RUS.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

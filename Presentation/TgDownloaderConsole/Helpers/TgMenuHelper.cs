@@ -101,16 +101,18 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal void FillTableColumns(Table table)
 	{
 		if (table.Columns.Count > 0) return;
-		table.AddColumn(new TableColumn(new Markup(TgLocale.AppName, StyleMain)) { Width = 20 }.LeftAligned());
-		table.AddColumn(new TableColumn(new Markup(TgLocale.AppValue, StyleMain)) { Width = 80 }.LeftAligned());
+		table.AddColumn(new TableColumn(new Markup(TgLocale.AppName, StyleMain)) { Width = 23 }.LeftAligned());
+		table.AddColumn(new TableColumn(new Markup(TgLocale.AppValue, StyleMain)) { Width = 77 }.LeftAligned());
 	}
 
 	internal async Task FillTableRowsMainAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
 		// App version
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.AppVersion)), new Markup(TgAppSettings.AppVersion));
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.AppVersionShort)), new Markup(TgAppSettings.AppVersion));
 		// Storage version
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.StorageVersion)), new Markup(TgAppSettings.StorageVersion));
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.StorageVersionShort)), new Markup(TgAppSettings.StorageVersion));
+		// License version
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.LicenseVersionShort)), new Markup(TgLicense.CurrentLicense.Description));
 
 		// App settings
 		table.AddRow(new Markup(TgAppSettings.IsReady
@@ -119,17 +121,20 @@ internal sealed partial class TgMenuHelper : ITgHelper
 
 		// Storage settings
 		table.AddRow(new Markup(TgGlobalTools.IsXmlReady
-				? TgLocale.InfoMessage(TgLocale.MenuMainStorage) : TgLocale.WarningMessage(TgLocale.MenuMainStorage)),
+				? TgLocale.InfoMessage(TgLocale.MenuMainStorageHealthCheck) 
+				: TgLocale.WarningMessage(TgLocale.MenuMainStorageHealthCheck)),
 			new Markup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		// TG client settings
-		table.AddRow(new Markup(TgGlobalTools.ConnectClient.IsReady ?
-			TgLocale.InfoMessage(TgLocale.MenuMainConnection) : TgLocale.WarningMessage(TgLocale.MenuMainConnection)),
+		table.AddRow(new Markup(TgGlobalTools.ConnectClient.IsReady 
+			? TgLocale.InfoMessage(TgLocale.MenuMainConnectionHealthCheck) 
+			: TgLocale.WarningMessage(TgLocale.MenuMainConnectionHealthCheck)),
 			new Markup(TgGlobalTools.ConnectClient.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		// Download settings
 		table.AddRow(new Markup(tgDownloadSettings.SourceVm.Dto.IsReady
-			? TgLocale.InfoMessage(TgLocale.MenuMainDownload) : TgLocale.WarningMessage(TgLocale.MenuMainDownload)),
+			? TgLocale.InfoMessage(TgLocale.MenuMainDownloadHealthCheck) 
+			: TgLocale.WarningMessage(TgLocale.MenuMainDownloadHealthCheck)),
 			new Markup(tgDownloadSettings.SourceVm.Dto.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
 		await Task.CompletedTask;
@@ -186,11 +191,11 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			new Markup($"{filters.Count()}"));
 	}
 
-	/// <summary> License settings </summary>
+	/// <summary> License version </summary>
 	internal async Task FillTableRowsLicenseAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), new Markup($"{TgLicense.CurrentLicense.Description}"));
-		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), new Markup($"{TgLicense.CurrentLicense.LicenseKey}"));
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), new Markup(TgLicense.CurrentLicense.Description));
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), new Markup(TgLicense.CurrentLicense.LicenseKey));
 		await Task.CompletedTask;
 	}
 

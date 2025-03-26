@@ -6,6 +6,7 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuClient
 {
 	Return,
+	RegisterTelegramApp,
 	SetProxy,
 	Connect,
 	Disconnect,

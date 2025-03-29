@@ -37,13 +37,14 @@ public sealed class TgLogHelper : ITgHelper
 
 	public void SetMarkupLineStamp(Action<string> markupLineStamp) => _markupLineStamp = markupLineStamp;
 
-	public string GetMarkupString(string message, bool isReplaceSpec = false) => isReplaceSpec
-	? message
-		.Replace("[", "[[").Replace("]", "]]")
-		.Replace("'", "").Replace("/", "")
-	: message
-		.Replace("[", "[[").Replace("]", "]]")
-		.Replace("'", "");
+	public string GetMarkupString(string message, bool isReplaceSpec = false) => 
+		string.IsNullOrEmpty(message) ? string.Empty : isReplaceSpec
+			? message
+				.Replace("[", "[[").Replace("]", "]]")
+				.Replace("'", "").Replace("/", "")
+			: message
+				.Replace("[", "[[").Replace("]", "]]")
+				.Replace("'", "");
 
 	public string GetDtStamp() => $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}";
 

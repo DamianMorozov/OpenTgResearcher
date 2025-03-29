@@ -17,7 +17,7 @@ public interface ITgConnectClient : ITgCommon, IDisposable
 	public Dictionary<long, ChatBase> DicChatsAll { get; }
 	public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; }
 
-	public Task LoginUserAsync(bool isProxyUpdate = false);
+	public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectAsync();
 	public Task ConnectSessionConsoleAsync<TEfEntity>(Func<string, string?>? config, ITgDbProxy<TEfEntity> proxy) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
 	public Task<bool> CheckClientIsReadyAsync();

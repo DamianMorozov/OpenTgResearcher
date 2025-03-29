@@ -30,4 +30,5 @@ public enum TgEnumMenuDownload
 	ViewContacts,
 	ViewStories,
 	ViewVersions,
+	ClearChats,
 }

@@ -6,8 +6,8 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuFilter
 {
 	Return,
+	FiltersClear,
 	FiltersView,
-	FiltersReset,
 	FiltersAdd,
 	FiltersEdit,
 	FiltersRemove,

@@ -77,6 +77,8 @@ public sealed class TgLocaleHelper : ObservableObject
 
     public string MenuAutoDownload => "Auto download";
 	public string MenuAutoViewEvents => "Auto view events";
+	public string MenuClearChats => "Clear chats";
+	public string MenuClearConnectionData => "Clear connection data";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByTestLicense => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
@@ -116,7 +118,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuFiltersEdit => "Edit filter";
 	public string MenuFiltersError => "Error";
 	public string MenuFiltersRemove => "Remove filter";
-	public string MenuFiltersReset => "Reset filters";
+	public string MenuFiltersClear => "Clear filters";
 	public string MenuFiltersSetEnabled => "Set filter enabled";
 	public string MenuFiltersSetIsEnabled => "Is enabled";
 	public string MenuFiltersSetMask => "Set mask";
@@ -174,6 +176,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainFilters => "Filters";
 	public string MenuMainLicense => "License";
 	public string MenuMainReset => "Reset";
+	public string MenuMainClearAppData => "Clear application data";
 	public string MenuMainReturn => "Return";
 	public string MenuMainSettings => "Settings";
 	public string MenuMainStop => "Stop";
@@ -201,7 +204,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageBackupSuccess => "Backup storage was successful";
 	public string MenuStorageDbBackup => "Create backup";
 	public string MenuStorageDbCreateNew => "Create new storage";
-	public string MenuStorageDbDeleteExists => "Delete exists storage";
+	public string MenuStorageDbClear => "Clear storage data";
 	public string MenuStorageDbUpgradeUid => "Update the UID field";
 	public string MenuStorageExitProgram => "Exit the program";
 	public string MenuStoragePerformSteps => "Perform the following set of steps";

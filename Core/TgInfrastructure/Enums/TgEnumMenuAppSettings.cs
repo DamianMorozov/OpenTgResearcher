@@ -6,7 +6,7 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuAppSettings
 {
 	Return,
-	Reset,
+	Clear,
 	SetFileSession,
 	SetEfStorage,
 	SetUseProxy,

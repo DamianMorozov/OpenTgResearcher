@@ -6,9 +6,9 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuStorage
 {
 	Return,
+	DbClear,
 	DbBackup,
 	DbCreateNew,
-	DbDeleteExists,
 	TablesVersionsView,
 	TablesClear,
 	TablesCompact,

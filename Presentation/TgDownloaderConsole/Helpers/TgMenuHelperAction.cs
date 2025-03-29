@@ -13,7 +13,7 @@ internal partial class TgMenuHelper
 		var result = TgGlobalTools.ConnectClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
 		if (!result)
 		{
-			await ClientConnectAsync(tgDownloadSettings, isSilent: true);
+			await ConnectClientAsync(tgDownloadSettings, isSilent: true);
 			result = TgGlobalTools.ConnectClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
 			if (!result)
 			{

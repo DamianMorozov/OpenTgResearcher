@@ -17,10 +17,13 @@ internal partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(
 					TgLocale.MenuMainReturn,
+					TgLocale.MenuClearConnectionData,
 					TgLocale.MenuRegisterTelegramApp,
 					TgLocale.MenuSetProxy,
 					TgLocale.MenuClientConnect,
 					TgLocale.MenuClientDisconnect));
+		if (prompt.Equals(TgLocale.MenuClearConnectionData))
+			return TgEnumMenuClient.ClearConnectionData;
 		if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
 			return TgEnumMenuClient.RegisterTelegramApp;
 		if (prompt.Equals(TgLocale.MenuSetProxy))
@@ -41,6 +44,9 @@ internal partial class TgMenuHelper
 			menu = SetMenuConnection();
 			switch (menu)
 			{
+				case TgEnumMenuClient.ClearConnectionData:
+					await ResetClientAsync(tgDownloadSettings);
+					break;
 				case TgEnumMenuClient.RegisterTelegramApp:
 					await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
 					break;
@@ -50,11 +56,11 @@ internal partial class TgMenuHelper
 					break;
 				case TgEnumMenuClient.Connect:
 					TgLog.WriteLine("TG client connect ...");
-					await ClientConnectAsync(tgDownloadSettings, isSilent: false);
+					await ConnectClientAsync(tgDownloadSettings, isSilent: false);
 					TgLog.WriteLine("TG client connect success");
 					break;
 				case TgEnumMenuClient.Disconnect:
-					await ClientDisconnectAsync(tgDownloadSettings);
+					await DisconnectClientAsync(tgDownloadSettings);
 					break;
 			}
 		} while (menu is not TgEnumMenuClient.Return);
@@ -94,7 +100,7 @@ internal partial class TgMenuHelper
 		proxy = (await ProxyRepository.GetAsync(
 			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port}, isReadOnly: false)).Item;
 
-		var app = await AppRepository.GetFirstItemAsync(isReadOnly: false);
+		var app = (await AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
 		app.ProxyUid = proxy.Uid;
 		await AppRepository.SaveAsync(app);
 
@@ -125,10 +131,10 @@ internal partial class TgMenuHelper
 		//SetupClientProxyCore();
 	}
 
-	private string? ConfigConsole(string what)
+	private string? ConfigClientConsole(string what)
 	{
 		var appNew = AppRepository.GetNewItem();
-		var app = AppRepository.GetFirstItem(isReadOnly: false);
+		var app = AppRepository.GetCurrentApp(isReadOnly: false).Item;
 		switch (what)
 		{
 			case "api_hash":
@@ -194,21 +200,18 @@ internal partial class TgMenuHelper
 
 	private async Task AskClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title(TgLocale.MenuClientConnect)
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
-		var isConnect = prompt.Equals(TgLocale.MenuYes);
-		if (isConnect)
-			await ClientConnectAsync(tgDownloadSettings, isSilent: false);
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect)) return;
+		
+		await ConnectClientAsync(tgDownloadSettings, isSilent: false);
 	}
 
-	public async Task ClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+	public async Task ConnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
 		await ShowTableClientAsync(tgDownloadSettings);
-		await TgGlobalTools.ConnectClient.ConnectSessionConsoleAsync(ConfigConsole, (await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item);
+		var app = (await AppRepository.GetCurrentAppAsync()).Item;
+		var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+		var proxy = proxyResult.Item;
+		await TgGlobalTools.ConnectClient.ConnectSessionConsoleAsync(ConfigClientConsole, proxy);
 		if (TgGlobalTools.ConnectClient.ClientException.IsExist || TgGlobalTools.ConnectClient.ProxyException.IsExist)
 			TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
 		else
@@ -217,11 +220,18 @@ internal partial class TgMenuHelper
 		    Console.ReadKey();
 	}
 
-	public async Task ClientDisconnectAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	public async Task DisconnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableClientAsync(tgDownloadSettings);
-		//TgSqlTableAppModel app = ContextManager.AppRepository.GetFirst();
-		//ContextManager.AppRepository.Delete(app);
+		await TgGlobalTools.ConnectClient.DisconnectAsync();
+	}
+
+	public async Task ResetClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearConnectionData)) return;
+
+		await ShowTableClientAsync(tgDownloadSettings);
+		await AppRepository.DeleteAllAsync();
 		await TgGlobalTools.ConnectClient.DisconnectAsync();
 	}
 

@@ -246,7 +246,8 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		else
 		{
 			// Proxy is not found
-			if (!(await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).IsExists || TgGlobalTools.ConnectClient.Me is null)
+			var app = (await AppRepository.GetCurrentAppAsync()).Item;
+			if (!(await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid)).IsExists || TgGlobalTools.ConnectClient.Me is null)
 			{
 				table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
 					new Markup(TgLog.GetMarkupString(TgLocale.SettingsIsNeedSetup)));
@@ -265,14 +266,14 @@ internal sealed partial class TgMenuHelper : ITgHelper
 				table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
 					new Markup(TgLog.GetMarkupString(TgLocale.SettingsIsOk)));
 				table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
-					new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item.Type.ToString())));
+					new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid)).Item.Type.ToString())));
 				table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
-					new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item.HostName)));
+					new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid)).Item.HostName)));
 				table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
-					new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item.Port.ToString())));
-				if (Equals((await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item.Type, TgEnumProxyType.MtProto))
+					new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid)).Item.Port.ToString())));
+				if (Equals((await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
 					table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
-						new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync())).Item.Secret)));
+						new Markup(TgLog.GetMarkupString((await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid)).Item.Secret)));
 			}
 		}
 
@@ -469,7 +470,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
     internal async Task FillTableRowsViewDownloadedVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table) => 
         await FillTableRowsDownloadedVersionsAsync(tgDownloadSettings, table);
 
-    public bool AskQuestionReturnPositive(string title, bool isTrueFirst = false)
+    public bool AskQuestionTrueFalseReturnPositive(string title, bool isTrueFirst = false)
 	{
 		var prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
 			.Title($"{title}?")
@@ -480,8 +481,22 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		return prompt.Equals(TgLocale.MenuIsTrue);
     }
 
-	public bool AskQuestionReturnNegative(string question, bool isTrueFirst = false) =>
-		!AskQuestionReturnPositive(question, isTrueFirst);
+	public bool AskQuestionTrueFalseReturnNegative(string question, bool isTrueFirst = false) =>
+		!AskQuestionTrueFalseReturnPositive(question, isTrueFirst);
+
+    public bool AskQuestionYesNoReturnPositive(string title, bool isYesFirst = false)
+	{
+		var prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
+			.Title($"{title}?")
+			.PageSize(Console.WindowHeight - 17)
+			.AddChoices(isYesFirst
+				? new() { TgLocale.MenuYes, TgLocale.MenuNo }
+				: new List<string> { TgLocale.MenuNo, TgLocale.MenuYes }));
+		return prompt.Equals(TgLocale.MenuYes);
+    }
+
+	public bool AskQuestionYesNoReturnNegative(string question, bool isYesFirst = false) =>
+		!AskQuestionYesNoReturnPositive(question, isYesFirst);
 
 	public async Task<TgEfContactEntity> GetContactFromEnumerableAsync(string title, IEnumerable<TgEfContactEntity> items)
 	{

@@ -56,7 +56,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await Repository.GetListDtosAsync(take: 0, skip: 0)]);
+		SetOrderData([.. await Repository.GetListDtosAsync()]);
 	}
 
 	private async Task DefaultSortAsync()

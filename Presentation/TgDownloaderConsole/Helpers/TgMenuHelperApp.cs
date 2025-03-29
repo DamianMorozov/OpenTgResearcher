@@ -17,13 +17,13 @@ internal partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(
 					TgLocale.MenuMainReturn,
-					TgLocale.MenuMainReset,
+					TgLocale.MenuMainClearAppData,
 					TgLocale.MenuLocateStorage,
 					TgLocale.MenuLocateSession,
 					TgLocale.MenuAppUseProxy
 			));
-		if (prompt.Equals(TgLocale.MenuMainReset))
-			return TgEnumMenuAppSettings.Reset;
+		if (prompt.Equals(TgLocale.MenuMainClearAppData))
+			return TgEnumMenuAppSettings.Clear;
 		if (prompt.Equals(TgLocale.MenuLocateStorage))
 			return TgEnumMenuAppSettings.SetEfStorage;
 		if (prompt.Equals(TgLocale.MenuLocateSession))
@@ -42,8 +42,8 @@ internal partial class TgMenuHelper
 			menu = SetMenuApp();
 			switch (menu)
 			{
-				case TgEnumMenuAppSettings.Reset:
-					ResetAppSettings();
+				case TgEnumMenuAppSettings.Clear:
+					ClearAppData();
 					break;
 				case TgEnumMenuAppSettings.SetFileSession:
 					SetFileSession();
@@ -64,8 +64,10 @@ internal partial class TgMenuHelper
 		TgAppSettings.StoreXmlSettings();
 	}
 
-	private void ResetAppSettings()
+	private void ClearAppData()
 	{
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuMainClearAppData)) return;
+
 		TgAppSettings.AppXml = new();
 		SetFileAppSettings();
 	}
@@ -86,13 +88,7 @@ internal partial class TgMenuHelper
 
 	private void SetUseProxy()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuAppUseProxyDisable, TgLocale.MenuAppUseProxyEnable));
-		TgAppSettings.IsUseProxy = prompt.Equals(TgLocale.MenuAppUseProxyEnable);
+		TgAppSettings.IsUseProxy = AskQuestionYesNoReturnNegative(TgLocale.MenuAppUseProxy);
 		SetFileAppSettings();
 	}
 

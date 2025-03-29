@@ -16,18 +16,18 @@ internal partial class TgMenuHelper
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(TgLocale.MenuMainReturn,
+					TgLocale.MenuStorageDbClear,
 					TgLocale.MenuStorageDbBackup,
 					TgLocale.MenuStorageDbCreateNew,
-					TgLocale.MenuStorageDbDeleteExists,
 					TgLocale.MenuStorageTablesVersionsView,
 					TgLocale.MenuStorageTablesCompact
 				));
+		if (prompt.Equals(TgLocale.MenuStorageDbClear))
+			return TgEnumMenuStorage.DbClear;
 		if (prompt.Equals(TgLocale.MenuStorageDbBackup))
 			return TgEnumMenuStorage.DbBackup;
 		if (prompt.Equals(TgLocale.MenuStorageDbCreateNew))
 			return TgEnumMenuStorage.DbCreateNew;
-		if (prompt.Equals(TgLocale.MenuStorageDbDeleteExists))
-			return TgEnumMenuStorage.DbDeleteExists;
 		if (prompt.Equals(TgLocale.MenuStorageTablesVersionsView))
 			return TgEnumMenuStorage.TablesVersionsView;
 		if (prompt.Equals(TgLocale.MenuStorageTablesCompact))
@@ -44,14 +44,14 @@ internal partial class TgMenuHelper
 			menu = SetMenuStorage();
 			switch (menu)
 			{
+				case TgEnumMenuStorage.DbClear:
+					ClearStorageData();
+					break;
 				case TgEnumMenuStorage.DbBackup:
 					TgStorageBackupDb();
 					break;
 				case TgEnumMenuStorage.DbCreateNew:
 					await TgStorageCreateNewDbAsync();
-					break;
-				case TgEnumMenuStorage.DbDeleteExists:
-					TgStorageDeleteExistsDb();
 					break;
 				case TgEnumMenuStorage.TablesVersionsView:
 					TgStorageTablesVersionsView();
@@ -65,7 +65,7 @@ internal partial class TgMenuHelper
 
 	private void TgStorageBackupDb()
 	{
-		if (AskQuestionReturnNegative(TgLocale.MenuStorageDbBackup)) return;
+		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
 		var backupResult = TgEfUtils.BackupDbAsync();
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
@@ -76,12 +76,12 @@ internal partial class TgMenuHelper
 
 	private async Task TgStorageCreateNewDbAsync()
 	{
-		if (AskQuestionReturnNegative(TgLocale.MenuStorageDbCreateNew)) return;
+		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbCreateNew)) return;
 		// Create and update storage
 		await TgEfUtils.CreateAndUpdateDbAsync();
 	}
 
-	private void TgStorageDeleteExistsDb()
+	private void ClearStorageData()
 	{
 		AnsiConsole.WriteLine(TgLocale.MenuStoragePerformSteps);
 		AnsiConsole.WriteLine($"- {TgLocale.MenuStorageExitProgram}");
@@ -99,7 +99,7 @@ internal partial class TgMenuHelper
 
 	private async Task TgStorageTablesCompactAsync()
 	{
-		if (AskQuestionReturnNegative(TgLocale.MenuStorageTablesCompact)) return;
+		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageTablesCompact)) return;
 		// Shrink storage
 		await TgEfUtils.ShrinkDbAsync();
 		TgLog.WriteLine(TgLocale.MenuStorageTablesCompactFinished);

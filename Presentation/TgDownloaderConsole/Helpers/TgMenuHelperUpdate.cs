@@ -72,8 +72,8 @@ internal sealed partial class TgMenuHelper
 					.PageSize(Console.WindowHeight - 5)
 					.MoreChoicesText(TgLocale.MoveUpDown)
 					.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
-			var isInstall = prompt.Equals(TgLocale.MenuYes);
-			if (isInstall)
+			var isYes = prompt.Equals(TgLocale.MenuYes);
+			if (isYes)
 				mgr.ApplyUpdatesAndRestart(newVersion);
 		}
 		// Cannot perform this operation in an application which is not installed

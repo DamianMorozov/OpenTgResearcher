@@ -16,22 +16,22 @@ internal partial class TgMenuHelper
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(TgLocale.MenuMainReturn,
-					TgLocale.MenuFiltersView,
+					TgLocale.MenuFiltersClear,
 					TgLocale.MenuFiltersAdd,
 					TgLocale.MenuFiltersEdit,
 					TgLocale.MenuFiltersRemove,
-					TgLocale.MenuFiltersReset
+					TgLocale.MenuFiltersView
 				));
-		if (prompt.Equals(TgLocale.MenuFiltersView))
-			return TgEnumMenuFilter.FiltersView;
+		if (prompt.Equals(TgLocale.MenuFiltersClear))
+			return TgEnumMenuFilter.FiltersClear;
 		if (prompt.Equals(TgLocale.MenuFiltersAdd))
 			return TgEnumMenuFilter.FiltersAdd;
 		if (prompt.Equals(TgLocale.MenuFiltersEdit))
 			return TgEnumMenuFilter.FiltersEdit;
 		if (prompt.Equals(TgLocale.MenuFiltersRemove))
 			return TgEnumMenuFilter.FiltersRemove;
-		if (prompt.Equals(TgLocale.MenuFiltersReset))
-			return TgEnumMenuFilter.FiltersReset;
+		if (prompt.Equals(TgLocale.MenuFiltersView))
+			return TgEnumMenuFilter.FiltersView;
 		return TgEnumMenuFilter.Return;
 	}
 
@@ -44,11 +44,8 @@ internal partial class TgMenuHelper
 			menu = SetMenuFilters();
 			switch (menu)
 			{
-				case TgEnumMenuFilter.FiltersView:
-					await FiltersViewAsync();
-					break;
-				case TgEnumMenuFilter.FiltersReset:
-					await SetFiltersResetAsync();
+				case TgEnumMenuFilter.FiltersClear:
+					await ClearFiltersAsync();
 					break;
 				case TgEnumMenuFilter.FiltersAdd:
 					await SetFiltersAddAsync();
@@ -58,6 +55,9 @@ internal partial class TgMenuHelper
 					break;
 				case TgEnumMenuFilter.FiltersRemove:
 					await SetFiltersRemoveAsync();
+					break;
+				case TgEnumMenuFilter.FiltersView:
+					await FiltersViewAsync();
 					break;
 			}
 		} while (menu is not TgEnumMenuFilter.Return);
@@ -138,7 +138,7 @@ internal partial class TgMenuHelper
 	{
 		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
-		filter.IsEnabled = AskQuestionReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
+		filter.IsEnabled = AskQuestionTrueFalseReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
 		await FilterRepository.SaveAsync(filter);
 		await FiltersViewAsync();
 	}
@@ -162,10 +162,11 @@ internal partial class TgMenuHelper
 		await FiltersViewAsync();
 	}
 
-	/// <summary> Reset filters </summary>
-	private async Task SetFiltersResetAsync()
+	/// <summary> Clear filters </summary>
+	private async Task ClearFiltersAsync()
 	{
-		if (AskQuestionReturnNegative(TgLocale.MenuFiltersReset)) return;
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuFiltersClear)) return;
+
 		await FilterRepository.DeleteAllAsync();
 		await FiltersViewAsync();
 	}

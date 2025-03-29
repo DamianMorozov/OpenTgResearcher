@@ -191,7 +191,7 @@ internal partial class TgMenuHelper
 			if (!Directory.Exists(tgDownloadSettings.SourceVm.Dto.Directory))
 			{
 				TgLog.MarkupInfo(TgLocale.DirectoryIsNotExists(tgDownloadSettings.SourceVm.Dto.Directory));
-				if (AskQuestionReturnPositive(TgLocale.DirectoryCreate, true))
+				if (AskQuestionTrueFalseReturnPositive(TgLocale.DirectoryCreate, true))
 				{
 					try
 					{
@@ -207,22 +207,22 @@ internal partial class TgMenuHelper
 	}
 
 	private void SetTgDownloadIsSaveMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsSaveMessages = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsSaveMessages, true);
+		tgDownloadSettings.IsSaveMessages = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsSaveMessages, true);
 
 	private void SetTgDownloadIsRewriteFiles(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsRewriteFiles = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsRewriteFiles, true);
+		tgDownloadSettings.IsRewriteFiles = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsRewriteFiles, true);
 
 	private void SetTgDownloadIsRewriteMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsRewriteMessages = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsRewriteMessages, true);
+		tgDownloadSettings.IsRewriteMessages = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsRewriteMessages, true);
 
 	private void SetTgDownloadIsJoinFileNameWithMessageId(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.IsJoinFileNameWithMessageId = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsAddMessageId, true);
+		tgDownloadSettings.IsJoinFileNameWithMessageId = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsAddMessageId, true);
 
 	private void SetTgDownloadIsAutoUpdate(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.SourceVm.Dto.IsAutoUpdate = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsAutoUpdate, true);
+		tgDownloadSettings.SourceVm.Dto.IsAutoUpdate = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsAutoUpdate, true);
 
 	private void SetTgDownloadIsCreatingSubdirectories(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories = AskQuestionReturnPositive(TgLocale.MenuDownloadSetIsCreatingSubdirectories, true);
+		tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsCreatingSubdirectories, true);
 
 	private async Task SetTgDownloadCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{

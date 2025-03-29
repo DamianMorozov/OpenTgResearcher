@@ -236,7 +236,7 @@ public sealed partial class ClientComponent : TgPageComponentEnumerable<TgEfAppD
 		await TgBlazorUtils.RunFuncAsync(async () =>
 		{
 			await Task.Delay(1);
-			var item = await AppRepository.GetFirstItemAsync();
+			var item = (await AppRepository.GetCurrentAppAsync()).Item;
 			Dto = new TgEfAppDto().GetNewDto(item);
 		}, message =>
 		{

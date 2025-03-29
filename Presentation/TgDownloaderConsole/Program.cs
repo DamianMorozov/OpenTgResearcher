@@ -58,7 +58,7 @@ await menu.SetStorageVersionAsync();
 
 // TG Connection
 if (File.Exists(TgFileUtils.FileTgSession))
-	await menu.ClientConnectAsync(tgDownloadSettings, isSilent: true);
+	await menu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
 
 do
 {

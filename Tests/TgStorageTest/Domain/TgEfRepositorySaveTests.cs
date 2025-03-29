@@ -14,10 +14,10 @@ internal sealed class TgEfRepositorySaveTests : TgDbContextTestsBase
 	{
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			TgEfStorageResult<TEfEntity> storageResult = await repo.GetFirstAsync();
+			var storageResult = await repo.GetListAsync(TgEnumTableTopRecords.Top1, isReadOnly: false, skip: 0);
 			if (storageResult.IsExists)
 			{
-				var itemFind = await repo.GetItemAsync(storageResult.Item, isReadOnly: false);
+				var itemFind = storageResult.Items.FirstOrDefault();
 				Assert.That(itemFind, Is.Not.Null);
 				TestContext.WriteLine(itemFind.ToDebugString());
 				// Save

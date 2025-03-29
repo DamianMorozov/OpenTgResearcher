@@ -17,6 +17,7 @@ internal partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(
 					TgLocale.MenuMainReturn,
+					TgLocale.MenuClearChats,
 					TgLocale.MenuAutoDownload,
 					TgLocale.MenuAutoViewEvents,
 					TgLocale.MenuSearchContacts,
@@ -29,6 +30,8 @@ internal partial class TgMenuHelper
 					TgLocale.MenuViewStories,
 					TgLocale.MenuViewChats
 				));
+		if (prompt.Equals(TgLocale.MenuClearChats))
+			return TgEnumMenuDownload.ClearChats;
 		if (prompt.Equals(TgLocale.MenuAutoDownload))
 			return TgEnumMenuDownload.AutoDownload;
 		if (prompt.Equals(TgLocale.MenuAutoViewEvents))
@@ -63,6 +66,9 @@ internal partial class TgMenuHelper
 			menu = SetMenuAdvanced();
 			switch (menu)
 			{
+				case TgEnumMenuDownload.ClearChats:
+					await ClearChatsAsync(tgDownloadSettings);
+					break;
 				case TgEnumMenuDownload.AutoDownload:
 					await RunTaskStatusAsync(tgDownloadSettings, AutoDownloadAsync, 
 						isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
@@ -136,9 +142,17 @@ internal partial class TgMenuHelper
 		if (source.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
-            tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
+			tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
 			await SetupDownloadAsync(tgDownloadSettings);
 		}
+	}
+
+	private async Task ClearChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearChats)) return;
+
+		await ShowTableViewSourcesAsync(tgDownloadSettings);
+		await SourceRepository.DeleteAllAsync();
 	}
 
 	private async Task ViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings)

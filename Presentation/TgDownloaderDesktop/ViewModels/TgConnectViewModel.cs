@@ -218,7 +218,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task AppLoadCoreAsync()
 	{
-		var storageResult = await AppRepository.GetFirstAsync(isReadOnly: false);
+		var storageResult = await AppRepository.GetCurrentAppAsync(isReadOnly: false);
 		App = storageResult.IsExists ? storageResult.Item : new();
 
 		await ReloadUiAsync();
@@ -307,7 +307,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task AppClearCoreAsync()
 	{
-		var storageResult = await AppRepository.GetNewAsync(isReadOnly: false);
+		var storageResult = await AppRepository.GetCurrentAppAsync(isReadOnly: false);
 		App = storageResult.IsExists ? storageResult.Item : new();
 		ProxiesVms.Clear();
 		if (ProxyVm is not null)

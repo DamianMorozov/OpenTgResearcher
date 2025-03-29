@@ -10,10 +10,8 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 
 	public override string ToDebugString() => $"{nameof(TgEfContactRepository)}";
 
-	public override IQueryable<TgEfContactEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Contacts.AsNoTracking() : EfContext.Contacts.AsTracking();
-	}
+	public override IQueryable<TgEfContactEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Contacts.AsNoTracking() : EfContext.Contacts.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetAsync(TgEfContactEntity item, bool isReadOnly = true)
 	{
@@ -44,14 +42,6 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		}
 	}
 
-	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly).FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfContactEntity>(TgEnumEntityState.IsExists, item);
-	}
-
 	private static Expression<Func<TgEfContactEntity, TgEfContactDto>> SelectDto() => item => new TgEfContactDto().GetNewDto(item);
 
 	public async Task<TgEfContactDto> GetDtoAsync(Expression<Func<TgEfContactEntity, bool>> where)
@@ -60,19 +50,19 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		return dto;
 	}
 
-	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
+	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
-	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfContactEntity, bool>> where, bool isReadOnly = true)
+	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfContactEntity, bool>> where)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 

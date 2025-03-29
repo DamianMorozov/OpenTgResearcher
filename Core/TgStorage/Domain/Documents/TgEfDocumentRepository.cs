@@ -10,10 +10,8 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public override string ToDebugString() => $"{nameof(TgEfDocumentRepository)}";
 
-	public override IQueryable<TgEfDocumentEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Documents.AsNoTracking() : EfContext.Documents.AsTracking();
-	}
+	public override IQueryable<TgEfDocumentEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Documents.AsNoTracking() : EfContext.Documents.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetAsync(TgEfDocumentEntity item, bool isReadOnly = true)
 	{
@@ -48,16 +46,6 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 #endif
 			throw;
 		}
-	}
-
-	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly)
-			//.Include(x => x.Source)
-			.FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.IsExists, item);
 	}
 
 	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)

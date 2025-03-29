@@ -10,10 +10,8 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 
 	public override string ToDebugString() => $"{nameof(TgEfVersionRepository)}";
 
-	public override IQueryable<TgEfVersionEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Versions.AsNoTracking() : EfContext.Versions.AsTracking();
-	}
+	public override IQueryable<TgEfVersionEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Versions.AsNoTracking() : EfContext.Versions.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetAsync(TgEfVersionEntity item, bool isReadOnly = true)
 	{
@@ -44,14 +42,6 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 		}
 	}
 
-	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly).FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfVersionEntity>(TgEnumEntityState.IsExists, item);
-	}
-
 	private static Expression<Func<TgEfVersionEntity, TgEfVersionDto>> SelectDto() => item => new TgEfVersionDto().GetNewDto(item);
 
 	public async Task<TgEfVersionDto> GetDtoAsync(Expression<Func<TgEfVersionEntity, bool>> where)
@@ -60,19 +50,19 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 		return dto;
 	}
 
-	public async Task<List<TgEfVersionDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
+	public async Task<List<TgEfVersionDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
-	public async Task<List<TgEfVersionDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfVersionEntity, bool>> where, bool isReadOnly = true)
+	public async Task<List<TgEfVersionDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfVersionEntity, bool>> where)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 

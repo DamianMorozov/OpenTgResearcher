@@ -6,7 +6,7 @@ namespace TgStorage.Connect;
 /// <summary> Console connection client </summary>
 public partial class TgConnectClientConsole : TgConnectClientBase
 {
-	public override async Task LoginUserAsync(bool isProxyUpdate = false)
+	public override async Task LoginUserAsync(bool isProxyUpdate)
 	{
 		ClientException = new();
 		if (Client is null)
@@ -26,15 +26,21 @@ public partial class TgConnectClientConsole : TgConnectClientBase
 		finally
 		{
 			await CheckClientIsReadyAsync();
-			if (isProxyUpdate && IsReady)
-			{
-				var app = await AppRepository.GetFirstItemAsync(isReadOnly: false);
-				if (await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync()) != app.ProxyUid)
-				{
-					app.ProxyUid = await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync());
-					await AppRepository.SaveAsync(app);
-				}
-			}
+			//if (isProxyUpdate && IsReady)
+			//{
+			//	var appResult = await AppRepository.GetCurrentAppAsync();
+			//	if (appResult.IsExists)
+			//	{
+			//		//if (await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync()) != app.ProxyUid)
+			//		//{
+			//		//	app.ProxyUid = await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync());
+			//		//	await AppRepository.SaveAsync(app);
+			//		//}
+			//		appResult.Item.ProxyUid = await ProxyRepository.GetCurrentProxyUidAsync(appResult);
+			//		await AppRepository.SaveAsync(appResult.Item);
+			//	}
+			//}
+			await AfterClientConnectAsync();
 		}
 	}
 }

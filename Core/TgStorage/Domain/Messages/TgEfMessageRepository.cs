@@ -10,10 +10,8 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 
 	public override string ToDebugString() => $"{nameof(TgEfMessageRepository)}";
 
-	public override IQueryable<TgEfMessageEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Messages.AsNoTracking() : EfContext.Messages.AsTracking();
-	}
+	public override IQueryable<TgEfMessageEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Messages.AsNoTracking() : EfContext.Messages.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetAsync(TgEfMessageEntity item, bool isReadOnly = true)
 	{
@@ -79,16 +77,6 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 			: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.NotExists, item);
 	}
 
-	public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly)
-			//.Include(x => x.Source)
-			.FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfMessageEntity>(TgEnumEntityState.IsExists, item);
-	}
-
 	private static Expression<Func<TgEfMessageEntity, TgEfMessageDto>> SelectDto() => item => new TgEfMessageDto().GetNewDto(item);
 
 	public async Task<TgEfMessageDto> GetDtoAsync(Expression<Func<TgEfMessageEntity, bool>> where)
@@ -97,19 +85,19 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		return dto;
 	}
 
-	public async Task<List<TgEfMessageDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
+	public async Task<List<TgEfMessageDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
-	public async Task<List<TgEfMessageDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfMessageEntity, bool>> where, bool isReadOnly = true)
+	public async Task<List<TgEfMessageDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfMessageEntity, bool>> where)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 

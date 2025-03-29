@@ -184,8 +184,9 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 						return ClientResultDisconnected();
 					break;
 			}
-			var storageResult = await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync());
-			if (TgAppSettings.IsUseProxy && !storageResult.IsExists)
+			var app = (await AppRepository.GetCurrentAppAsync()).Item;
+			var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+			if (TgAppSettings.IsUseProxy && !proxyResult.IsExists)
 				return ClientResultDisconnected();
 			if (ProxyException.IsExist || ClientException.IsExist)
 				return ClientResultDisconnected();
@@ -203,8 +204,9 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			//			return ClientResultDisconnected();
 			//		break;
 			//}
-			var storageResult = await ProxyRepository.GetCurrentProxyAsync(await AppRepository.GetCurrentAppAsync());
-			if (TgAppSettings.IsUseProxy && !storageResult.IsExists)
+			var app = (await AppRepository.GetCurrentAppAsync()).Item;
+			var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+			if (TgAppSettings.IsUseProxy && !proxyResult.IsExists)
 				return ClientResultDisconnected();
 			if (ProxyException.IsExist || ClientException.IsExist)
 				return ClientResultDisconnected();
@@ -236,7 +238,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await ConnectThroughProxyAsync(proxy, false);
 		Client.OnUpdates += OnUpdatesClientAsync;
 		Client.OnOther += OnClientOtherAsync;
-		await LoginUserAsync(true);
+		await LoginUserAsync(isProxyUpdate: true);
 	}
 
 	public async Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy)
@@ -249,7 +251,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await ConnectThroughProxyAsync(proxy, true);
 		Client.OnUpdates += OnUpdatesClientAsync;
 		Client.OnOther += OnClientOtherAsync;
-		await LoginUserAsync(true);
+		await LoginUserAsync(isProxyUpdate: true);
 	}
 
 	public async Task ConnectSessionDesktopAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, Func<string, string?> config)
@@ -262,7 +264,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await ConnectThroughProxyAsync(proxy, true);
 		Client.OnUpdates += OnUpdatesClientAsync;
 		Client.OnOther += OnClientOtherAsync;
-		await LoginUserAsync(true);
+		await LoginUserAsync(isProxyUpdate: true);
 	}
 
 	public async Task ConnectThroughProxyAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, bool isDesktop)
@@ -1473,7 +1475,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
 		await TryCatchFuncAsync(async () =>
 		{
-			await LoginUserAsync();
+			await LoginUserAsync(isProxyUpdate: false);
 			switch (sourceType)
 			{
 				case TgEnumSourceType.Chat:
@@ -1730,7 +1732,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			// Filters
 			Filters = await FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled);
 
-			await LoginUserAsync();
+			await LoginUserAsync(isProxyUpdate: false);
 
 			var dirExists = await CreateDestDirectoryIfNotExistsAsync(tgDownloadSettings);
 			if (!dirExists)
@@ -1854,7 +1856,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	{
 		await TryCatchFuncAsync(async () =>
 		{
-			await LoginUserAsync();
+			await LoginUserAsync(isProxyUpdate: false);
 		});
 
 		await CollectAllChatsAsync();
@@ -2330,7 +2332,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	//        _ => string.Empty
 	//    };
 
-	public virtual async Task LoginUserAsync(bool isProxyUpdate = false) => await UseOverrideMethodAsync();
+	public virtual async Task LoginUserAsync(bool isProxyUpdate) => await UseOverrideMethodAsync();
 
 	public async Task DisconnectAsync()
 	{
@@ -2457,7 +2459,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			{
 				await SetClientExceptionShortAsync(ex);
 				await UpdateStateMessageAsync("Reconnect client ...");
-				await LoginUserAsync();
+				await LoginUserAsync(isProxyUpdate: false);
 			}
 			else
 			{
@@ -2500,7 +2502,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				var task = SetClientExceptionShortAsync(ex);
 				task.Wait();
 				UpdateStateMessageAsync("Reconnect client ...");
-				task = LoginUserAsync();
+				task = LoginUserAsync(isProxyUpdate: false);
 				task.Wait();
 			}
 			else

@@ -10,10 +10,8 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 
 	public override string ToDebugString() => $"{nameof(TgEfFilterRepository)}";
 
-	public override IQueryable<TgEfFilterEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Filters.AsNoTracking() : EfContext.Filters.AsTracking();
-	}
+	public override IQueryable<TgEfFilterEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Filters.AsNoTracking() : EfContext.Filters.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfFilterEntity>> GetAsync(TgEfFilterEntity item, bool isReadOnly = true)
 	{
@@ -44,14 +42,6 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 		}
 	}
 
-	public override async Task<TgEfStorageResult<TgEfFilterEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly).FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfFilterEntity>(TgEnumEntityState.IsExists, item);
-	}
-
 	private static Expression<Func<TgEfFilterEntity, TgEfFilterDto>> SelectDto() => item => new TgEfFilterDto().GetNewDto(item);
 
 	public async Task<TgEfFilterDto> GetDtoAsync(Expression<Func<TgEfFilterEntity, bool>> where)
@@ -60,19 +50,19 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 		return dto;
 	}
 
-	public async Task<List<TgEfFilterDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
+	public async Task<List<TgEfFilterDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
-	public async Task<List<TgEfFilterDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfFilterEntity, bool>> where, bool isReadOnly = true)
+	public async Task<List<TgEfFilterDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfFilterEntity, bool>> where)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 

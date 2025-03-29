@@ -10,10 +10,8 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 
 	public override string ToDebugString() => $"{nameof(TgEfProxyRepository)}";
 
-	public override IQueryable<TgEfProxyEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Proxies.AsNoTracking() : EfContext.Proxies.AsTracking();
-	}
+	public override IQueryable<TgEfProxyEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Proxies.AsNoTracking() : EfContext.Proxies.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetAsync(TgEfProxyEntity item, bool isReadOnly = true)
 	{
@@ -45,14 +43,6 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 		}
 	}
 
-	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly).FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfProxyEntity>(TgEnumEntityState.IsExists, item);
-	}
-
 	private static Expression<Func<TgEfProxyEntity, TgEfProxyDto>> SelectDto() => item => new TgEfProxyDto().GetNewDto(item);
 
 	public async Task<TgEfProxyDto> GetDtoAsync(Expression<Func<TgEfProxyEntity, bool>> where)
@@ -61,19 +51,19 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 		return dto;
 	}
 
-	public async Task<List<TgEfProxyDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
+	public async Task<List<TgEfProxyDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
-	public async Task<List<TgEfProxyDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfProxyEntity, bool>> where, bool isReadOnly = true)
+	public async Task<List<TgEfProxyDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfProxyEntity, bool>> where)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
@@ -124,17 +114,14 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 
 	#region Public and private methods - ITgEfProxyRepository
 
-	public async Task<TgEfStorageResult<TgEfProxyEntity>> GetCurrentProxyAsync(TgEfStorageResult<TgEfAppEntity> storageResult)
+	public async Task<TgEfStorageResult<TgEfProxyEntity>> GetCurrentProxyAsync(Guid? proxyUid)
 	{
-		if (!storageResult.IsExists)
-			return new(TgEnumEntityState.NotExists);
-
-		var storageResultProxy = await GetAsync(
-			new() { Uid = storageResult.Item.ProxyUid ?? Guid.Empty }, isReadOnly: false);
+		var storageResultProxy = await GetAsync(new() { Uid = proxyUid ?? Guid.Empty }, isReadOnly: false);
 		return storageResultProxy.IsExists ? storageResultProxy : new(TgEnumEntityState.NotExists);
 	}
 
-	public async Task<Guid> GetCurrentProxyUidAsync(TgEfStorageResult<TgEfAppEntity> storageResult) => (await GetCurrentProxyAsync(storageResult)).Item.Uid;
+	public async Task<Guid> GetCurrentProxyUidAsync(TgEfStorageResult<TgEfAppEntity> storageResult) =>
+		(await GetCurrentProxyAsync(storageResult.Item.ProxyUid)).Item.Uid;
 
 	#endregion
 }

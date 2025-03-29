@@ -17,14 +17,11 @@ public interface ITgEfRepository<TEfEntity> where TEfEntity : class, ITgEfEntity
 	public bool CheckExists(TEfEntity item);
 	public Task<TgEfStorageResult<TEfEntity>> GetAsync(TEfEntity item, bool isReadOnly = true);
 	public Task<TEfEntity> GetItemAsync(TEfEntity item, bool isReadOnly = true);
+	public Task<TEfEntity> GetItemWhereAsync(Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> Get(TEfEntity item, bool isReadOnly = true);
 	public TEfEntity GetItem(TEfEntity item, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetNewAsync(bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetNew(bool isReadOnly = true);
-	public Task<TgEfStorageResult<TEfEntity>> GetFirstAsync(bool isReadOnly = true);
-	public TgEfStorageResult<TEfEntity> GetFirst(bool isReadOnly = true);
-	public Task<TEfEntity> GetFirstItemAsync(bool isReadOnly = true);
-	public TEfEntity GetFirstItem(bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);

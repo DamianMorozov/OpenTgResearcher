@@ -24,10 +24,32 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 
 	#region IDisposable
 
+	private bool _isDisposed;
+
+	~TgEfRepositoryBase() => Dispose(false);
+
 	public void Dispose()
 	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected void Dispose(bool disposing)
+	{
+		if (_isDisposed)
+			return;
+
+		// Release managed resources
+		if (disposing)
+		{
+			//
+		}
+
+		// Release unmanaged resources
 		Scope.Dispose();
 		EfContext.Dispose();
+
+		_isDisposed = true;
 	}
 
 	#endregion
@@ -37,7 +59,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 
 	public override string ToDebugString() => $"{nameof(TgEfRepositoryBase<TEfEntity, TDto>)}";
 
-	public virtual IQueryable<TEfEntity> GetQuery(bool isReadOnly = true) => 
+	public virtual IQueryable<TEfEntity> GetQuery(bool isReadOnly = true) =>
 		throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
 
 	private static TgEfStorageResult<TEfEntity> UseOverrideMethod() => throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
@@ -64,7 +86,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		return storageResult.IsExists;
 	}
 
-	public virtual bool CheckExists(TEfEntity item) => 
+	public virtual bool CheckExists(TEfEntity item) =>
 		throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
 
 	public virtual async Task<TgEfStorageResult<TEfEntity>> GetAsync(TEfEntity item, bool isReadOnly = true) =>
@@ -72,6 +94,9 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 
 	public virtual async Task<TEfEntity> GetItemAsync(TEfEntity item, bool isReadOnly = true) =>
 		(await GetAsync(item, isReadOnly)).Item;
+
+	public async Task<TEfEntity> GetItemWhereAsync(Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true) =>
+		await GetQuery(isReadOnly).FirstOrDefaultAsync(where) ?? new();
 
 	public TgEfStorageResult<TEfEntity> Get(TEfEntity item, bool isReadOnly = true)
 	{
@@ -88,7 +113,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 	}
 
 	public virtual async Task<TgEfStorageResult<TEfEntity>> GetNewAsync(bool isReadOnly = true) => await GetAsync(new(), isReadOnly);
-	
+
 	public virtual async Task<TEfEntity> GetNewItemAsync(bool isReadOnly = true) => (await GetNewAsync(isReadOnly)).Item;
 
 	public TgEfStorageResult<TEfEntity> GetNew(bool isReadOnly = true)
@@ -104,19 +129,6 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		task.Wait();
 		return task.Result;
 	}
-
-	public virtual async Task<TgEfStorageResult<TEfEntity>> GetFirstAsync(bool isReadOnly = true) => await UseOverrideMethodAsync();
-
-	public TgEfStorageResult<TEfEntity> GetFirst(bool isReadOnly = true)
-	{
-		var task = GetFirstAsync(isReadOnly);
-		task.Wait();
-		return task.Result;
-	}
-
-	public virtual async Task<TEfEntity> GetFirstItemAsync(bool isReadOnly = true) => (await GetFirstAsync(isReadOnly)).Item;
-
-	public TEfEntity GetFirstItem(bool isReadOnly = true) => GetFirst(isReadOnly).Item;
 
 	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true) =>
 		topRecords switch
@@ -158,7 +170,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		return task.Result;
 	}
 
-	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, bool isReadOnly = true) => 
+	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, bool isReadOnly = true) =>
 		await UseOverrideMethodAsync();
 
 	public TgEfStorageResult<TEfEntity> GetList(int take, int skip, bool isReadOnly = true)
@@ -168,7 +180,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		return task.Result;
 	}
 
-	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, 
+	public virtual async Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where,
 		bool isReadOnly = true) =>
 		topRecords switch
 		{
@@ -182,7 +194,7 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 			_ => await GetListAsync(0, skip, where, isReadOnly),
 		};
 
-	public virtual async Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where, 
+	public virtual async Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, Expression<Func<TEfEntity, bool>> where,
 		bool isReadOnly = true) =>
 		topRecords switch
 		{
@@ -248,7 +260,8 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		TgEfStorageResult<TEfEntity> storageResult = new(TgEnumEntityState.Unknown, item);
 		await using (transaction)
 		{
-			if (item is null) return storageResult;
+			if (item is null)
+				return storageResult;
 			try
 			{
 				// Load actual entity

@@ -5,6 +5,6 @@ namespace TgStorage.Contracts;
 
 public interface ITgEfAppRepository
 {
-	Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync();
+	Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync(bool isReadOnly = true);
 	Task<Guid> GetCurrentAppUidAsync();
 }

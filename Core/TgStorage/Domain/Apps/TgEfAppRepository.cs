@@ -10,10 +10,8 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
 	public override string ToDebugString() => $"{nameof(TgEfAppRepository)}";
 
-	public override IQueryable<TgEfAppEntity> GetQuery(bool isReadOnly = true)
-	{
-		return isReadOnly ? EfContext.Apps.AsNoTracking() : EfContext.Apps.AsTracking();
-	}
+	public override IQueryable<TgEfAppEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Apps.AsNoTracking() : EfContext.Apps.AsTracking();
 
 	public override async Task<TgEfStorageResult<TgEfAppEntity>> GetAsync(TgEfAppEntity item, bool isReadOnly = true)
 	{
@@ -44,14 +42,6 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 		}
 	}
 
-	public override async Task<TgEfStorageResult<TgEfAppEntity>> GetFirstAsync(bool isReadOnly = true)
-	{
-		var item = await GetQuery(isReadOnly).Include(x => x.Proxy).FirstOrDefaultAsync();
-		return item is null
-			? new(TgEnumEntityState.NotExists)
-			: new TgEfStorageResult<TgEfAppEntity>(TgEnumEntityState.IsExists, item);
-	}
-
 	private static Expression<Func<TgEfAppEntity, TgEfAppDto>> SelectDto() => item => new TgEfAppDto().GetNewDto(item);
 
 	public async Task<TgEfAppDto> GetDtoAsync(Expression<Func<TgEfAppEntity, bool>> where)
@@ -60,19 +50,19 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 		return dto;
 	}
 
-	public async Task<List<TgEfAppDto>> GetListDtosAsync(int take, int skip, bool isReadOnly = true)
+	public async Task<List<TgEfAppDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
-	public async Task<List<TgEfAppDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where, bool isReadOnly = true)
+	public async Task<List<TgEfAppDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where)
 	{
 		var dtos = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Select(SelectDto()).ToListAsync();
+			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
 		return dtos;
 	}
 
@@ -123,7 +113,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
 	#region Public and private methods - ITgEfAppRepository
 
-	public async Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync()
+	public async Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync(bool isReadOnly = true)
 	{
 		var item = await
 			EfContext.Apps.AsTracking()
@@ -133,6 +123,13 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 		return item is not null
 			? new(TgEnumEntityState.IsExists, item)
 			: new TgEfStorageResult<TgEfAppEntity>(TgEnumEntityState.NotExists, new TgEfAppEntity());
+	}
+
+	public TgEfStorageResult<TgEfAppEntity> GetCurrentApp(bool isReadOnly = true)
+	{
+		var task = GetCurrentAppAsync(isReadOnly);
+		task.Wait();
+		return task.Result;
 	}
 
 	public async Task<Guid> GetCurrentAppUidAsync() => (await GetCurrentAppAsync()).Item.Uid;

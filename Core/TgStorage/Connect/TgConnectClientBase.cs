@@ -1758,28 +1758,37 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				var threadNumber = 0;
 				if (Client is not null && channel is not null)
 				{
-					var forumTopics = await Client.Channels_GetAllForumTopics(channel);
-					topics = forumTopics.topics;
-					topicRoot = topics.SingleOrDefault(x => x.ID == 1);
 					// Enable creating subdirectories
 					if (tgDownloadSettings2.SourceVm.Dto.IsCreatingSubdirectories)
 					{
-						foreach (var topic in topics)
+						try
 						{
-							try
+							var forumTopics = await Client.Channels_GetAllForumTopics(channel);
+							topics = forumTopics.topics;
+							topicRoot = topics.SingleOrDefault(x => x.ID == 1);
+							foreach (var topic in topics)
 							{
-								var dir = Path.Combine(tgDownloadSettings2.SourceVm.Dto.Directory, topic.Title);
-								if (!Directory.Exists(dir))
-									Directory.CreateDirectory(dir);
-							}
-							catch (Exception ex)
-							{
+								try
+								{
+									var dir = Path.Combine(tgDownloadSettings2.SourceVm.Dto.Directory, topic.Title);
+									if (!Directory.Exists(dir))
+										Directory.CreateDirectory(dir);
+								}
+								catch (Exception ex)
+								{
 #if DEBUG
-								Debug.WriteLine(ex);
-								Debug.WriteLine(ex.StackTrace);
+									Debug.WriteLine(ex);
+									Debug.WriteLine(ex.StackTrace);
 #endif
-								await SetClientExceptionAsync(ex);
+									await SetClientExceptionAsync(ex);
+								}
 							}
+						}
+						catch (Exception ex)
+						{
+#if DEBUG
+							Debug.WriteLine(ex);
+#endif
 						}
 					}
 				}

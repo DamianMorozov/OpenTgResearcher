@@ -77,10 +77,15 @@ internal sealed partial class TgMenuHelper
 		{
 			Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 		}
+#if DEBUG
 		catch (Exception ex)
 		{
-#if DEBUG
+			Debug.WriteLine(ex, TgConstants.LogTypeConsole);
+			Debug.WriteLine(ex.StackTrace);
 			Console.WriteLine($"Opening error URL: {ex.Message}");
+#else
+		catch (Exception)
+		{
 #endif
 		}
 		await Task.CompletedTask;

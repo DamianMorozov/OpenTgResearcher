@@ -16,7 +16,8 @@ public sealed class TgConstants
 	public static string LinkGitHubTitle => "GitHub";
 	public static string LinkTelegramApps => "https://my.telegram.org/auth?to=apps";
 	public static string LinkTelegramAppsTitle => "Telegram";
+	public static string LogTypeConsole = "Console";
 	public static string LogTypeNetwork = "Network";
-	public static string LogTypeSystem = "System";
 	public static string LogTypeStorage= "Storage";
+	public static string LogTypeSystem = "System";
 }

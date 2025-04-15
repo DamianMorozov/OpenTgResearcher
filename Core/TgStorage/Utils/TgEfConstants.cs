@@ -14,6 +14,7 @@ public static class TgEfConstants
 	public const string TableContacts = "CONTACTS";
 	public const string TableDocuments = "DOCUMENTS";
 	public const string TableFilters = "FILTERS";
+	public const string TableLicenses = "LICENSES";
 	public const string TableMessages = "MESSAGES";
 	public const string TableProxies = "PROXIES";
 	public const string TableSources = "SOURCES";
@@ -54,12 +55,16 @@ public static class TgEfConstants
 	public const string ColumnIsActive = "IS_ACTIVE";
 	public const string ColumnIsAutoUpdate = "IS_AUTO_UPDATE";
 	public const string ColumnIsBot = "IS_BOT";
+	public const string ColumnIsConfirmed = "IS_CONFIRMED";
 	public const string ColumnIsCreatingSubdirectories = "IS_CREATING_SUBDIRS";
 	public const string ColumnIsEnabled = "IS_ENABLED";
+	public const string ColumnIsFileNamingByMessage = "IS_FILE_NAMING_BY_MESSAGE";
 	public const string ColumnIsUserAccess = "IS_USER_ACCESS";
 	public const string ColumnLangCode = "LANG_CODE";
 	public const string ColumnLastName = "LAST_NAME";
 	public const string ColumnLength = "LENGTH";
+	public const string ColumnLicenseKey = "LICENSE_KEY";
+	public const string ColumnLicenseType = "LICENSE_TYPE";
 	public const string ColumnMask = "MASK";
 	public const string ColumnMessage = "MESSAGE";
 	public const string ColumnMessageId = "MESSAGE_ID";
@@ -81,8 +86,10 @@ public static class TgEfConstants
 	public const string ColumnType = "TYPE";
 	public const string ColumnUid = "UID";
 	public const string ColumnUseBot = "USE_BOT";
+	public const string ColumnUserId = "USER_ID";
 	public const string ColumnUserName = "USER_NAME";
 	public const string ColumnUserNames = "USER_NAMES";
+	public const string ColumnValidTo = "VALID_TO";
 	public const string ColumnVersion = "VERSION";
 
 	#endregion

@@ -30,6 +30,8 @@ public interface ITgEfContext : IDisposable
 	public DbSet<TgEfDocumentEntity> Documents { get; set; }
 	/// <summary> Filter queries </summary>
 	public DbSet<TgEfFilterEntity> Filters { get; set; }
+	/// <summary> License queries </summary>
+	public DbSet<TgEfLicenseEntity> Licenses { get; set; }
 	/// <summary> Message queries </summary>
 	public DbSet<TgEfMessageEntity> Messages { get; set; }
 	/// <summary> Proxy queries </summary>

@@ -27,6 +27,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	[ObservableProperty]
 	public partial bool IsCreatingSubdirectories { get; set; }
 	[ObservableProperty]
+	public partial bool IsFileNamingByMessage { get; set; }
+	[ObservableProperty]
 	public partial bool IsUserAccess { get; set; }
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
@@ -46,6 +48,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = 0;
 		IsAutoUpdate = false;
 		IsCreatingSubdirectories = false;
+		IsFileNamingByMessage = false;
 		IsUserAccess = false;
 		IsDownload = false;
 		ProgressPercent = 0;
@@ -70,6 +73,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = dto.Count;
 		IsAutoUpdate = dto.IsAutoUpdate;
 		IsCreatingSubdirectories = dto.IsCreatingSubdirectories;
+		IsFileNamingByMessage = dto.IsFileNamingByMessage;
 		IsUserAccess = dto.IsUserAccess;
 		IsDownload = dto.IsDownload;
 		ProgressPercent = dto.ProgressPercent;
@@ -90,6 +94,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = item.Count;
 		IsAutoUpdate = item.IsAutoUpdate;
 		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
+		IsFileNamingByMessage = item.IsFileNamingByMessage;
 		IsUserAccess = item.IsUserAccess;
 		ProgressPercent = item.Count == 0 ? 0 : item.FirstId * 100 / item.Count;
 		ProgressPercentString = ProgressPercent == 0 ? "{0:00.00} %" : $"{ProgressPercent:#00.00} %";
@@ -109,6 +114,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = dto.Count,
 		IsAutoUpdate = dto.IsAutoUpdate,
 		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
+		IsFileNamingByMessage = dto.IsFileNamingByMessage,
 		IsUserAccess = dto.IsUserAccess,
 	};
 
@@ -123,6 +129,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = Count,
 		IsAutoUpdate = IsAutoUpdate,
 		IsCreatingSubdirectories = IsCreatingSubdirectories,
+		IsFileNamingByMessage = IsFileNamingByMessage,
 		IsUserAccess = IsUserAccess,
 	};
 

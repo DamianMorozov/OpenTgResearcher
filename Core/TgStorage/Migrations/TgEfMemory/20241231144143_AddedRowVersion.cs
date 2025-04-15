@@ -1,20 +1,19 @@
 ﻿#nullable disable
 
-namespace TgStorage.Migrations.TgEfMemory
+namespace TgStorage.Migrations.TgEfMemory;
+
+/// <inheritdoc />
+public partial class AddedRowVersion : Migration
 {
     /// <inheritdoc />
-    public partial class AddedRowVersion : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
 
-        }
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
 
-        }
     }
 }

@@ -337,6 +337,63 @@ namespace TgStorage.Migrations.TgEfMemory
                     b.ToTable("FILTERS", (string)null);
                 });
 
+            modelBuilder.Entity("TgStorage.Domain.Licenses.TgEfLicenseEntity", b =>
+                {
+                    b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("CHAR(36)")
+                        .HasColumnName("UID");
+
+                    b.Property<bool>("IsConfirmed")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_CONFIRMED");
+
+                    b.Property<Guid>("LicenseKey")
+                        .IsConcurrencyToken()
+                        .HasColumnType("CHAR(36)")
+                        .HasColumnName("LICENSE_KEY");
+
+                    b.Property<int>("LicenseType")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT(1)")
+                        .HasColumnName("LICENSE_TYPE");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB")
+                        .HasColumnName("RowVersion");
+
+                    b.Property<long>("UserId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("USER_ID");
+
+                    b.Property<DateTime>("ValidTo")
+                        .IsConcurrencyToken()
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("VALID_TO");
+
+                    b.HasKey("Uid");
+
+                    b.HasIndex("IsConfirmed");
+
+                    b.HasIndex("LicenseKey")
+                        .IsUnique();
+
+                    b.HasIndex("LicenseType");
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ValidTo");
+
+                    b.ToTable("LICENSES", (string)null);
+                });
+
             modelBuilder.Entity("TgStorage.Domain.Messages.TgEfMessageEntity", b =>
                 {
                     b.Property<Guid>("Uid")
@@ -519,6 +576,11 @@ namespace TgStorage.Migrations.TgEfMemory
                         .HasColumnType("BIT")
                         .HasColumnName("IS_CREATING_SUBDIRS");
 
+                    b.Property<bool>("IsFileNamingByMessage")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_FILE_NAMING_BY_MESSAGE");
+
                     b.Property<bool>("IsUserAccess")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
@@ -556,6 +618,8 @@ namespace TgStorage.Migrations.TgEfMemory
                     b.HasIndex("IsAutoUpdate");
 
                     b.HasIndex("IsCreatingSubdirectories");
+
+                    b.HasIndex("IsFileNamingByMessage");
 
                     b.HasIndex("IsUserAccess");
 

@@ -40,6 +40,7 @@ global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Contacts;
 global using TgStorage.Domain.Documents;
 global using TgStorage.Domain.Filters;
+global using TgStorage.Domain.Licenses;
 global using TgStorage.Domain.Messages;
 global using TgStorage.Domain.Proxies;
 global using TgStorage.Domain.Sources;

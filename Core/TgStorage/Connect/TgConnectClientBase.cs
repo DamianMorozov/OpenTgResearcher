@@ -1945,10 +1945,11 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				{
 					if (!string.IsNullOrEmpty(document.Filename) && Path.GetExtension(document.Filename).TrimStart('.') is { } str)
 						extensionName = str;
-					if (!string.IsNullOrEmpty(document.Filename) &&
-						CheckFileAtFilter(document.Filename, extensionName, document.size))
+					var fileName = tgDownloadSettings.IsJoinFileNameWithMessageId && messageBase is TL.Message message 
+						? $"{message.message}.{extensionName}" : document.Filename;
+					if (!string.IsNullOrEmpty(document.Filename) && CheckFileAtFilter(document.Filename, extensionName, document.size))
 					{
-						mediaInfo = new(document.Filename, document.size, document.date);
+						mediaInfo = new(fileName, document.size, document.date);
 						break;
 					}
 					if (document.attributes.Length > 0)
@@ -1984,9 +1985,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				{
 					extensionName = "jpg";
 					//return photo.sizes.Select(x => ($"{photo.ID} {x.Width}x{x.Height}.{GetPhotoExt(x.Type)}", Convert.ToInt64(x.FileSize), photo.date, string.Empty, string.Empty)).ToArray();
-					if (CheckFileAtFilter(string.Empty, extensionName, photo.sizes.Last().FileSize))
+					//var fileName = tgDownloadSettings.IsJoinFileNameWithMessageId && messageBase is TL.Message message
+					//	? $"{message.message}.{extensionName}" : $"{photo.ID}.{extensionName}";
+					var fileName = $"{photo.ID}.{extensionName}";
+					if (CheckFileAtFilter(fileName, extensionName, photo.sizes.Last().FileSize))
 					{
-						mediaInfo = new($"{photo.ID}.{extensionName}", photo.sizes.Last().FileSize, photo.date);
+						mediaInfo = new(fileName, photo.sizes.Last().FileSize, photo.date);
 						break;
 					}
 				}

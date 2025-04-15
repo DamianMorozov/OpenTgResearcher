@@ -16,6 +16,8 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 	public DbSet<TgEfDocumentEntity> Documents { get; set; } = null!;
 	/// <summary> Filter queries </summary>
 	public DbSet<TgEfFilterEntity> Filters { get; set; } = null!;
+	/// <summary> License queries </summary>
+	public DbSet<TgEfLicenseEntity> Licenses { get; set; } = null!;
 	/// <summary> Message queries </summary>
 	public DbSet<TgEfMessageEntity> Messages { get; set; } = null!;
 	/// <summary> Proxy queries </summary>
@@ -83,12 +85,13 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 	{
 		var storagePath = appType switch
 		{
-			TgEnumAppType.Memory => ":memory:", // "DataSource=:memory:"
+			TgEnumAppType.Memory => ":memory:", // In-memory database
 			TgEnumAppType.Console or TgEnumAppType.Blazor =>
-				File.Exists(TgAppSettingsHelper.Instance.AppXml.XmlEfStorage) ? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgEfUtils.FileEfStorage,
+				File.Exists(TgAppSettingsHelper.Instance.AppXml.XmlEfStorage) 
+				? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgEfUtils.FileEfStorage,
 			TgEnumAppType.Desktop => File.Exists(TgEfUtils.AppStorage) ? TgEfUtils.AppStorage : TgEfUtils.FileEfStorage,
 			TgEnumAppType.Test => @"d:\DATABASES\SQLITE\TgStorageTest.db",
-			_ => throw new ArgumentOutOfRangeException()
+			_ => throw new ArgumentOutOfRangeException(nameof(appType), appType, null)
 		};
 		// Concatenation
 		storagePath = $"{TgLocaleHelper.Instance.SqliteDataSource}={storagePath}";
@@ -176,6 +179,13 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 		{
 			entity.ToTable(TgEfConstants.TableFilters);
 		});
+
+		// Licenses
+		modelBuilder.Entity<TgEfLicenseEntity>(entity =>
+		{
+			entity.ToTable(TgEfConstants.TableLicenses);
+		});
+		modelBuilder.Entity<TgEfLicenseEntity>();
 
 		// Messages
 		modelBuilder.Entity<TgEfMessageEntity>(entity =>

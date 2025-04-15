@@ -19,6 +19,7 @@ public enum TgEnumMenuDownload
 	SetIsAddMessageId,
 	SetIsAutoUpdate,
 	SetIsCreatingSubdirectories,
+	SetIsFileNamingByMessage,
 	SetIsRewriteFiles,
 	SetIsRewriteMessages,
 	SetIsSaveMessages,

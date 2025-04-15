@@ -37,6 +37,7 @@ internal partial class TgMenuHelper
 					TgLocale.MenuDownloadSetIsAddMessageId,
 					TgLocale.MenuDownloadSetIsAutoUpdate,
 					TgLocale.MenuDownloadSetIsCreatingSubdirectories,
+					TgLocale.MenuDownloadSetIsFileNamingByMessage,
 					menuDownloadSetCountThreads,
 					TgLocale.MenuSaveSettings,
 					TgLocale.MenuManualDownload
@@ -61,6 +62,8 @@ internal partial class TgMenuHelper
 			return TgEnumMenuDownload.SetIsAutoUpdate;
 		if (prompt.Equals(TgLocale.MenuDownloadSetIsCreatingSubdirectories))
 			return TgEnumMenuDownload.SetIsCreatingSubdirectories;
+		if (prompt.Equals(TgLocale.MenuDownloadSetIsFileNamingByMessage))
+			return TgEnumMenuDownload.SetIsFileNamingByMessage;
 		if (prompt.Equals(menuDownloadSetCountThreads))
 			return TgEnumMenuDownload.SetCountThreads;
 		if (prompt.Equals(TgLocale.MenuSaveSettings))
@@ -111,6 +114,9 @@ internal partial class TgMenuHelper
 					break;
 				case TgEnumMenuDownload.SetIsCreatingSubdirectories:
 					SetTgDownloadIsCreatingSubdirectories(tgDownloadSettings);
+					break;
+				case TgEnumMenuDownload.SetIsFileNamingByMessage:
+					SetTgDownloadIsFileNamingByMessage(tgDownloadSettings);
 					break;
 				case TgEnumMenuDownload.SetCountThreads:
 					await SetTgDownloadCountThreadsAsync(tgDownloadSettings);
@@ -223,6 +229,9 @@ internal partial class TgMenuHelper
 
 	private void SetTgDownloadIsCreatingSubdirectories(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsCreatingSubdirectories, true);
+
+	private void SetTgDownloadIsFileNamingByMessage(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsFileNamingByMessage, true);
 
 	private async Task SetTgDownloadCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{

@@ -157,8 +157,11 @@ internal sealed partial class TgMenuHelper : ITgHelper
 
 		// File storage is existing
 		if (TgAppSettings.AppXml.IsExistsEfStorage)
+		{
+			var fileSize = TgFileUtils.GetFileSizeString(TgFileUtils.CalculateFileSize(TgAppSettings.AppXml.XmlEfStorage));
 			table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.EfStorage)),
-				new Markup(TgLog.GetMarkupString(TgAppSettings.AppXml.XmlEfStorage)));
+			new Markup(TgLog.GetMarkupString($"{TgAppSettings.AppXml.XmlEfStorage} ({fileSize})")));
+		}
 		else
 			table.AddRow(new Markup(TgLocale.WarningMessage(TgLocale.EfStorage)),
 				new Markup(TgLog.GetMarkupString(TgAppSettings.AppXml.XmlEfStorage)));
@@ -419,6 +422,10 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		// Enable creating subdirectories
 		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsCreatingSubdirectories)),
 			new Markup(tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories.ToString()));
+
+		// Enable file naming by message
+		table.AddRow(new Markup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsFileNamingByMessage)),
+			new Markup(tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage.ToString()));
 
         // Enabled filters
         var filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0))

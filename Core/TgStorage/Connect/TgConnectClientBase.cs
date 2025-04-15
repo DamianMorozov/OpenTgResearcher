@@ -1945,7 +1945,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				{
 					if (!string.IsNullOrEmpty(document.Filename) && Path.GetExtension(document.Filename).TrimStart('.') is { } str)
 						extensionName = str;
-					var fileName = tgDownloadSettings.IsJoinFileNameWithMessageId && messageBase is TL.Message message 
+					var fileName = tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage && messageBase is TL.Message message 
 						? $"{message.message}.{extensionName}" : document.Filename;
 					if (!string.IsNullOrEmpty(document.Filename) && CheckFileAtFilter(document.Filename, extensionName, document.size))
 					{

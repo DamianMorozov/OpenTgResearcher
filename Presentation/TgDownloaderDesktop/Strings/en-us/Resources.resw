@@ -915,6 +915,9 @@
   <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
     <value>Creating subdirectories</value>
   </data>
+  <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
+    <value>Naming media files by message</value>
+  </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Enter the text to filter</value>
   </data>

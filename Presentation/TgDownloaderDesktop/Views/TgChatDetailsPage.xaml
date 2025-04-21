@@ -512,6 +512,7 @@
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
@@ -611,15 +612,29 @@
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							IsOn="{x:Bind ViewModel.Dto.IsCreatingSubdirectories, Mode=TwoWay}" />
+						<!--  File naming by message subdirectories  -->
+						<TextBlock
+							x:Uid="FieldIsFileNamingByMessage"
+							Grid.Row="3"
+							Grid.Column="2"
+							Margin="12,7,7,2"
+							TextAlignment="Left" />
+						<ToggleSwitch
+							Grid.Row="3"
+							Grid.Column="3"
+							Margin="2"
+							HorizontalAlignment="Stretch"
+							HorizontalContentAlignment="Left"
+							IsOn="{x:Bind ViewModel.Dto.IsFileNamingByMessage, Mode=TwoWay}" />
 						<!--  StateSourceDt  -->
 						<TextBlock
 							x:Uid="FieldDtChanged"
-							Grid.Row="3"
+							Grid.Row="4"
 							Grid.Column="0"
 							Margin="2,7,7,2"
 							TextAlignment="Left" />
 						<TextBox
-							Grid.Row="3"
+							Grid.Row="4"
 							Grid.Column="1"
 							Margin="2"
 							HorizontalAlignment="Stretch"
@@ -629,12 +644,12 @@
 						<!--  StateSourceMsg  -->
 						<TextBlock
 							x:Uid="FieldMessage"
-							Grid.Row="3"
+							Grid.Row="4"
 							Grid.Column="2"
 							Margin="12,7,7,2"
 							TextAlignment="Left" />
 						<TextBox
-							Grid.Row="3"
+							Grid.Row="4"
 							Grid.Column="3"
 							Margin="2"
 							HorizontalAlignment="Stretch"
@@ -645,12 +660,12 @@
 						<!--  StateSourceProgressString  -->
 						<TextBlock
 							x:Uid="FieldPercent"
-							Grid.Row="4"
+							Grid.Row="5"
 							Grid.Column="0"
 							Margin="2,7,7,2"
 							TextAlignment="Left" />
 						<TextBox
-							Grid.Row="4"
+							Grid.Row="5"
 							Grid.Column="1"
 							Margin="2"
 							HorizontalAlignment="Stretch"
@@ -660,12 +675,12 @@
 						<!--  StateSourceProgress  -->
 						<TextBlock
 							x:Uid="FieldDirectory"
-							Grid.Row="4"
+							Grid.Row="5"
 							Grid.Column="2"
 							Margin="12,7,7,2"
 							TextAlignment="Left" />
 						<TextBox
-							Grid.Row="4"
+							Grid.Row="5"
 							Grid.Column="3"
 							Margin="2"
 							HorizontalAlignment="Stretch"

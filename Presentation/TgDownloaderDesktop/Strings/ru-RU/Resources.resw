@@ -977,6 +977,9 @@
   <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
     <value>Создание подкаталогов</value>
   </data>
+  <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
+    <value>Именование медиа-файлов по сообщению</value>
+  </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Введите текст для фильтрации</value>
   </data>

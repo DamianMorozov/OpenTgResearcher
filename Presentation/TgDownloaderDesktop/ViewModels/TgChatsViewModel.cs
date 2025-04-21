@@ -67,6 +67,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		}
 		else
 		{
+			FilterText = FilterText.Trim();
 			var filtered = Dtos.Where(dto =>
 				dto.Id.ToString().Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||
 				dto.UserName.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||

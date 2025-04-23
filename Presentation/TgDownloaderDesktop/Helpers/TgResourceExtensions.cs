@@ -68,6 +68,7 @@ public static class TgResourceExtensions
 	public static string GetSettingsThemeDark() => "SettingsThemeDark".GetLocalized();
 	public static string GetSettingsThemeDefault() => "SettingsThemeDefault".GetLocalized();
 	public static string GetSettingsThemeLight() => "SettingsThemeLight".GetLocalized();
+	public static string GetStorage() => "Storage".GetLocalized();
 	public static string GetStorageLoading() => "StorageLoading".GetLocalized();
 	public static string GetTgClientLoading() => "TgClientLoading".GetLocalized();
 	public static string GetYesButton() => "YesButton".GetLocalized();

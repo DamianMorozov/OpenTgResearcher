@@ -45,6 +45,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		{
 			ShowHeaders = false,
 			Border = TableBorder.Rounded,
+			// App version + Storage version + License
 			Title = new($"{title} / {TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / {TgLicense.CurrentLicense.Description}", Style.Plain),
 		};
 		fillTableColumns(table);

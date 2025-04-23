@@ -749,6 +749,9 @@
   <data name="TemplateColumnIsActive.Header" xml:space="preserve">
     <value>Активно</value>
   </data>
+  <data name="TemplateColumnIsAccess.Header" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
   <data name="TemplateColumnIsBot.Header" xml:space="preserve">
     <value>Бот</value>
   </data>
@@ -1012,5 +1015,8 @@
   </data>
   <data name="InstallerLoading" xml:space="preserve">
     <value>Загрузка установщика</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Хранилище</value>
   </data>
 </root>

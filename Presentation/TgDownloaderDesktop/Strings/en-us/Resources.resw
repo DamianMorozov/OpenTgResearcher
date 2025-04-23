@@ -687,6 +687,9 @@
   <data name="TemplateColumnIsActive.Header" xml:space="preserve">
     <value>Active</value>
   </data>
+  <data name="TemplateColumnIsAccess.Header" xml:space="preserve">
+    <value>Access</value>
+  </data>
   <data name="TemplateColumnIsBot.Header" xml:space="preserve">
     <value>Bot</value>
   </data>
@@ -950,5 +953,8 @@
   </data>
   <data name="InstallerLoading" xml:space="preserve">
     <value>Installer loading</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Storage</value>
   </data>
 </root>

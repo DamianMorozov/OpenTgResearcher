@@ -1,9 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Microsoft.UI.Xaml.Controls.Primitives;
-using System.Threading.Tasks;
-
 namespace TgDownloaderDesktop.ViewModels;
 
 public partial class ShellViewModel : ObservableRecipient
@@ -16,6 +13,10 @@ public partial class ShellViewModel : ObservableRecipient
 	public partial object? Selected { get; set; }
 	[ObservableProperty]
 	public partial string AppVersion { get; set; } = string.Empty;
+	[ObservableProperty]
+	public partial string StorageVersion { get; set; } = string.Empty;
+	[ObservableProperty]
+	public partial string License { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial bool IsClientConnected { get; set; }
 	private NavigationEventArgs? _eventArgs;
@@ -55,8 +56,11 @@ public partial class ShellViewModel : ObservableRecipient
 		{
 			Selected = selectedItem;
 		}
-		AppVersion =
-			TgResourceExtensions.GetAppDisplayName() + $" v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+		// App version + Storage version + License
+		AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+		StorageVersion = $"{TgResourceExtensions.GetStorage()} {TgAppSettingsHelper.Instance.StorageVersion}";
+		if (TgLicenseManagerHelper.Instance.CurrentLicense is not null)
+			License = TgLicenseManagerHelper.Instance.CurrentLicense.Description;
 	}
 
 	private void OnClientConnectionChanged(object? sender, bool isClientConnected)

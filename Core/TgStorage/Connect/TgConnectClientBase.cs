@@ -858,16 +858,18 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 
 	private async Task OnClientOtherAuthSentCodeAsync(Auth_SentCodeBase authSentCode)
 	{
+#if DEBUG
 		try
 		{
-#if DEBUG
 			Debug.WriteLine($"{nameof(authSentCode)}: {authSentCode}", TgConstants.LogTypeNetwork);
-#endif
 		}
 		catch (Exception ex)
 		{
 			await SetClientExceptionAsync(ex);
 		}
+#else
+		await Task.Delay(1);
+#endif
 	}
 
 
@@ -1784,12 +1786,17 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 								}
 							}
 						}
+#if DEBUG
 						catch (Exception ex)
 						{
-#if DEBUG
 							Debug.WriteLine(ex);
-#endif
 						}
+#else
+						catch (Exception)
+						{
+							// ignored
+						}
+#endif
 					}
 				}
 				while (sourceFirstId <= sourceLastId)

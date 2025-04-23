@@ -275,6 +275,23 @@
 								</controls:DataGridTemplateColumn>-->
 								<!--  Is active  -->
 								<controls:DataGridTemplateColumn
+									x:Uid="TemplateColumnIsAccess"
+									Width="Auto"
+									CanUserReorder="True"
+									CanUserSort="True">
+									<controls:DataGridTemplateColumn.CellTemplate>
+										<DataTemplate>
+											<ToggleButton
+												Margin="2"
+												HorizontalAlignment="Center"
+												VerticalAlignment="Center"
+												IsChecked="{Binding IsUserAccess, Mode=OneWay}"
+												IsEnabled="False" />
+										</DataTemplate>
+									</controls:DataGridTemplateColumn.CellTemplate>
+								</controls:DataGridTemplateColumn>
+								<!--  Is active  -->
+								<controls:DataGridTemplateColumn
 									x:Uid="TemplateColumnIsActive"
 									Width="Auto"
 									CanUserReorder="True"

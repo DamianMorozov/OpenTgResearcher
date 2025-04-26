@@ -30,16 +30,3 @@
 ## Требования к установке
 - [Зарегистрируйте Telegram приложение](https://my.telegram.org/apps)
 - Сохраните значения полей секции `App configuration`: `App api_id` / `App api_hash`
-
-## Донат
-- [Звёздочка ГитХаб](https://github.com/DamianMorozov/OpenTgResearcher)
-- Донат через USDT TRC20: TBTDRWnMBw7acfpkhAXjSQNSNHQGFR662Y
-- Донат через USDT TON: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через Toncoin: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через Bitcoin: 1FJayytWUK6vkxK2nUcD2TJskk3g9ZnmfW
-- Донат через Notcoin: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через Dogs: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через Hamster Kombat: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через X Empire: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через Catizen: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Донат через Major: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6

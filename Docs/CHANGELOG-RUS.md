@@ -4,7 +4,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.130] - 2025-04-13
+## [0.6.140] - 2025-04-26
 ### Исправлено
 - Исправлено отображение прогресса для чатов в OpenTgResearcherDesktop
 - Исправлено подключение к серверу
@@ -13,6 +13,8 @@
 ### Добавлено
 - Добавлена опция создания подкаталогов для чатов в TgDownloaderConsole
 - Добавлена опция создания подкаталогов для чатов в OpenTgResearcherDesktop
+- Добавлена опция именования медиа файлов по сообщению для чатов в TgDownloaderConsole
+- Добавлена опция именования медиа файлов по сообщению для чатов в OpenTgResearcherDesktop
 - Добавлено подключение и отключение клиента из заголовка OpenTgResearcherDesktop
 - Добавлены ссылки в TgDownloaderConsole
 

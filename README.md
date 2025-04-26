@@ -30,16 +30,3 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 ## Install Requirements
 - [Register Telegram app](https://my.telegram.org/apps)
 - Save the values of the fields by `App configuration` section: `App api_id` / `App api_hash`
-
-## Donate
-- [GitHub star](https://github.com/DamianMorozov/OpenTgResearcher)
-- Donate through USDT TRC20: TBTDRWnMBw7acfpkhAXjSQNSNHQGFR662Y
-- Donate through USDT TON: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through Toncoin: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through Bitcoin: 1FJayytWUK6vkxK2nUcD2TJskk3g9ZnmfW
-- Donate through Notcoin: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through Dogs: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through Hamster Kombat: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through X Empire: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through Catizen: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6
-- Donate through Major: UQBkjSs3XPmraI_sS4Mf05SMd1y44DahNhwPg9ySp3V-M3N6

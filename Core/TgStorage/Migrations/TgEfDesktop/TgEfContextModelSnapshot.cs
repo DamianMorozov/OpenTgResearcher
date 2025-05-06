@@ -359,12 +359,6 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .HasColumnType("INT(1)")
                         .HasColumnName("LICENSE_TYPE");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("BLOB")
-                        .HasColumnName("RowVersion");
-
                     b.Property<long>("UserId")
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")

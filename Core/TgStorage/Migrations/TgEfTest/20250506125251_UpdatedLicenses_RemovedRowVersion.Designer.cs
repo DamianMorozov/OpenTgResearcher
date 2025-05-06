@@ -4,8 +4,8 @@
 namespace TgStorage.Migrations.TgEfTest
 {
     [DbContext(typeof(TgEfTestContext))]
-    [Migration("20250415184349_UpdatedSources_AddedIsFileNamingByMessage")]
-    partial class UpdatedSources_AddedIsFileNamingByMessage
+    [Migration("20250506125251_UpdatedLicenses_RemovedRowVersion")]
+    partial class UpdatedLicenses_RemovedRowVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -360,12 +360,6 @@ namespace TgStorage.Migrations.TgEfTest
                         .IsConcurrencyToken()
                         .HasColumnType("INT(1)")
                         .HasColumnName("LICENSE_TYPE");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("BLOB")
-                        .HasColumnName("RowVersion");
 
                     b.Property<long>("UserId")
                         .IsConcurrencyToken()

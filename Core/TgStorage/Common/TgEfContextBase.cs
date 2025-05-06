@@ -124,22 +124,22 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 		// https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
 		// https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/concurrency?view=aspnetcore-9.0&source=docs
 		// This property isn't on the C# class, so we set it up as a "shadow" property and use it for concurrency.
-		//modelBuilder.Entity<TgEfTestEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfAppEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfContactEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfDocumentEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfFilterEntity>().Property(x => x.RowVersion).IsRowVersion();
+		modelBuilder.Entity<TgEfLicenseEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfMessageEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfProxyEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfSourceEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfStoryEntity>().Property(x => x.RowVersion).IsRowVersion();
 		modelBuilder.Entity<TgEfVersionEntity>().Property(x => x.RowVersion).IsRowVersion();
 		// Ignore
-		//modelBuilder.Entity<TgEfTestEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfAppEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfContactEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfDocumentEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfFilterEntity>().Ignore(TgEfConstants.ColumnRowVersion);
+		modelBuilder.Entity<TgEfLicenseEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfMessageEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfProxyEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 		modelBuilder.Entity<TgEfSourceEntity>().Ignore(TgEfConstants.ColumnRowVersion);

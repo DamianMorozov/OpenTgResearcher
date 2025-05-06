@@ -6,7 +6,8 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuDownload
 {
 	Return,
-	AutoDownload,
+	ClearAutoDownload,
+	StartAutoDownload,
 	AutoViewEvents,
 	ManualDownload,
 	MarkHistoryRead,

@@ -43,17 +43,19 @@ internal partial class TgMenuHelper
 			switch (menu)
 			{
 				case TgEnumMenuAppSettings.Clear:
-					ClearAppData();
-					break;
-				case TgEnumMenuAppSettings.SetFileSession:
-					SetFileSession();
+					MenuAppClearData();
 					break;
 				case TgEnumMenuAppSettings.SetEfStorage:
-					SetEfStorage();
+					MenuAppSetEfStorage();
+					break;
+				case TgEnumMenuAppSettings.SetFileSession:
+					MenuAppSetFileSession();
 					break;
 				case TgEnumMenuAppSettings.SetUseProxy:
-					SetUseProxy();
+					MenuAppSetUseProxy();
 					await AskClientConnectAsync(tgDownloadSettings);
+					break;
+				case TgEnumMenuAppSettings.Return:
 					break;
 			}
 		} while (menu is not TgEnumMenuAppSettings.Return);
@@ -62,9 +64,10 @@ internal partial class TgMenuHelper
 	private void SetFileAppSettings()
 	{
 		TgAppSettings.StoreXmlSettings();
+		TgAppSettings.LoadXmlSettings();
 	}
 
-	private void ClearAppData()
+	private void MenuAppClearData()
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuMainClearAppData)) return;
 
@@ -72,21 +75,21 @@ internal partial class TgMenuHelper
 		SetFileAppSettings();
 	}
 
-	private void SetFileSession()
+	private void MenuAppSetFileSession()
 	{
 		TgAppSettings.AppXml.SetFileSessionPath(AnsiConsole.Ask<string>(
 			TgLog.GetLineStampInfo($"{TgLocale.MenuLocateSession}:")));
 		SetFileAppSettings();
 	}
 
-	private void SetEfStorage()
+	private void MenuAppSetEfStorage()
 	{
 		TgAppSettings.AppXml.SetEfStoragePath(AnsiConsole.Ask<string>(
 			TgLog.GetLineStampInfo($"{TgLocale.MenuLocateStorage}:")));
 		SetFileAppSettings();
 	}
 
-	private void SetUseProxy()
+	private void MenuAppSetUseProxy()
 	{
 		TgAppSettings.IsUseProxy = AskQuestionYesNoReturnNegative(TgLocale.MenuAppUseProxy);
 		SetFileAppSettings();

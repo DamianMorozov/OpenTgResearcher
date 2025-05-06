@@ -42,10 +42,12 @@ internal sealed partial class TgMenuHelper
 				case TgEnumMenuUpdate.PreviewCheck:
 					await VelopackUpdateAsync(isWait: true, isPreview: true);
 					break;
+				case TgEnumMenuUpdate.Return:
+					break;
 			}
 		} while (menu is not TgEnumMenuUpdate.Return);
 	}
-	
+
 	/// <summary> Velopack installer update </summary>
 	public async Task VelopackUpdateAsync(bool isWait, bool isPreview = true)
 	{

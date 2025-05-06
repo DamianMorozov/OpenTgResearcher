@@ -8,5 +8,5 @@ public enum TgEnumMenuLicense
 	Return,
 	LicenseCheck,
 	LicenseChange,
-	WebSiteOpen,
+	LicenseWebSiteOpen,
 }

@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Microsoft.Win32;
-
 namespace TgInfrastructure.Helpers;
 
 /// <summary> Localization helper </summary>
@@ -20,16 +18,16 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string AppInfo => "App info";
 	public string AppName => "Name";
 	public string AppValue => "Value";
-	public string AppVersion => "App version";
-	public string AppVersionShort => "App";
+	public string AppVersion => "Application version";
+	public string AppVersionShort => "Application";
 	public string Exception => "Exception";
 	public string FoundRows => "Found rows";
 	public string From => "from";
 	public string HomeResetToDefault => "Reset to default";
 	public string HomeSaveToXml => "Save to XML";
-	public string MenuLocateStorage => "Locate the storage file";
-	public string MenuLocateSession => "Locate the session file";
-	public string MenuAppUseProxy => "Usage proxy";
+	public string MenuLocateStorage => "Specify the path to the EF storage file";
+	public string MenuLocateSession => "Specify the path to the session file";
+	public string MenuAppUseProxy => "Using a proxy";
 	public string MenuAppUseProxyDisable => "Disable proxy";
 	public string MenuAppUseProxyEnable => "Enable proxy";
 	public string MenuException => "Exception";
@@ -75,9 +73,10 @@ public sealed class TgLocaleHelper : ObservableObject
 
     #region Download
 
-    public string MenuAutoDownload => "Auto download";
+    public string MenuClearAutoDownload => "Clear automatically updated chats (reset auto update field)";
+    public string MenuStartAutoDownload => "Start downloading automatically updated chats";
 	public string MenuAutoViewEvents => "Auto view events";
-	public string MenuClearChats => "Clear chats";
+	public string MenuClearChats => "Clear all chats (delete from storage)";
 	public string MenuClearConnectionData => "Clear connection data";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByTestLicense => "Count of threads (1-100)";
@@ -226,6 +225,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string ClearView => "Clear view";
 	public string DirectoryCreate => "Create directory";
 	public string DirectoryCreateIsException(Exception ex) => $"Exception of create directory: {(ex.InnerException is null ? ex.Message : ex.Message + $" | {ex.InnerException.Message}")}";
+	public string DirectoryCurrent => "Current directory";
 	public string DirectoryDestType => "Type destination directory";
 	public string DirectoryIsNotExists(string dir = "") => string.IsNullOrEmpty(dir) ? "The directory is not exists!" : $"The directory \"{dir}\" is not exists!";
 	public string EfStorage => "EF storage";

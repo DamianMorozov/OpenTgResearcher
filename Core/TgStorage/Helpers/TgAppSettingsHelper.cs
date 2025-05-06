@@ -23,7 +23,6 @@ public sealed class TgAppSettingsHelper : ITgHelper
 	[DefaultValue(false)]
 	public bool IsUseProxy { get; set; }
 	public TgAppXmlModel AppXml { get; set; }
-	public bool IsReady => AppXml.IsReady;
 
 	public TgAppSettingsHelper()
 	{

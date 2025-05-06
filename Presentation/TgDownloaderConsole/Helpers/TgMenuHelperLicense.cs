@@ -26,7 +26,7 @@ internal sealed partial class TgMenuHelper
 		if (prompt.Equals(TgLocale.MenuLicenseChange))
 			return TgEnumMenuLicense.LicenseChange;
 		if (prompt.Equals(TgLocale.MenuWebSiteOpen))
-			return TgEnumMenuLicense.WebSiteOpen;
+			return TgEnumMenuLicense.LicenseWebSiteOpen;
 		return TgEnumMenuLicense.Return;
 	}
 
@@ -45,8 +45,10 @@ internal sealed partial class TgMenuHelper
 				case TgEnumMenuLicense.LicenseChange:
 					await LicenseChangeAsync();
 					break;
-				case TgEnumMenuLicense.WebSiteOpen:
+				case TgEnumMenuLicense.LicenseWebSiteOpen:
 					await WebSiteOpenAsync(TgLocale.MenuWebSiteGlobalUrl);
+					break;
+				case TgEnumMenuLicense.Return:
 					break;
 			}
 		} while (menu is not TgEnumMenuLicense.Return);

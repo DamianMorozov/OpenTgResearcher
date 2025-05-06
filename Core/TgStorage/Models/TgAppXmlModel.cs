@@ -22,8 +22,6 @@ public sealed class TgAppXmlModel : ObservableObject, ITgCommon
 	public bool IsExistsFileSession => File.Exists(XmlFileSession);
 	[XmlIgnore]
 	public bool IsExistsEfStorage => File.Exists(XmlEfStorage) && new FileInfo(XmlEfStorage).Length > 0;
-	[XmlIgnore]
-	public bool IsReady => IsExistsFileSession && IsExistsEfStorage;
 
 	public TgAppXmlModel()
 	{
@@ -35,7 +33,7 @@ public sealed class TgAppXmlModel : ObservableObject, ITgCommon
 	#region Public and private methods
 
     public string ToDebugString() => 
-	    $"{TgCommonUtils.GetIsReady(IsReady)} | {nameof(XmlFileSession)}: {XmlFileSession} | {nameof(XmlEfStorage)}: {XmlEfStorage}";
+	    $"{nameof(XmlFileSession)}: {XmlFileSession} | {nameof(XmlEfStorage)}: {XmlEfStorage}";
 
     public void Default()
     {

@@ -62,6 +62,8 @@ internal partial class TgMenuHelper
 				case TgEnumMenuClient.Disconnect:
 					await DisconnectClientAsync(tgDownloadSettings);
 					break;
+				case TgEnumMenuClient.Return:
+					break;
 			}
 		} while (menu is not TgEnumMenuClient.Return);
 	}

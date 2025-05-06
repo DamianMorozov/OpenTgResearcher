@@ -170,10 +170,22 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
         return this;
 	}
 
-	public string ToConsoleString() => $"{Id,11} | " +
+	public static string ToHeaderString() => 
+		$"{nameof(Id),11} | " +
+		$"{TgDataFormatUtils.GetFormatString(nameof(UserName), 25).TrimEnd(),-25} | " +
+		$"Access | " +
+		$"Active | " +
+		$"Update | " +
+		$"%        | " +
+		$"{nameof(Title),-30} | " +
+		$"Progress";
+
+	public string ToConsoleString() => 
+		$"{Id,11} | " +
 		$"{TgDataFormatUtils.GetFormatString(UserName, 25).TrimEnd(),-25} | " +
 		$"{(IsUserAccess ? "access" : ""),-6} | " +
 		$"{(IsActive ? "active" : ""),-6} | " +
+		$"{(IsAutoUpdate ? "auto" : ""),-6} | " +
 		$"{GetPercentCountString()} | " +
 		$"{TgDataFormatUtils.GetFormatString(Title, 30).TrimEnd(),-30} | " +
 		$"{FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";

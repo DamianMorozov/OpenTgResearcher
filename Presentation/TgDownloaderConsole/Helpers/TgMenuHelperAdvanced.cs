@@ -18,7 +18,8 @@ internal partial class TgMenuHelper
 				.AddChoices(
 					TgLocale.MenuMainReturn,
 					TgLocale.MenuClearChats,
-					TgLocale.MenuAutoDownload,
+					TgLocale.MenuClearAutoDownload,
+					TgLocale.MenuStartAutoDownload,
 					TgLocale.MenuAutoViewEvents,
 					TgLocale.MenuSearchContacts,
 					TgLocale.MenuSearchChats,
@@ -32,8 +33,10 @@ internal partial class TgMenuHelper
 				));
 		if (prompt.Equals(TgLocale.MenuClearChats))
 			return TgEnumMenuDownload.ClearChats;
-		if (prompt.Equals(TgLocale.MenuAutoDownload))
-			return TgEnumMenuDownload.AutoDownload;
+		if (prompt.Equals(TgLocale.MenuClearAutoDownload))
+			return TgEnumMenuDownload.ClearAutoDownload;
+		if (prompt.Equals(TgLocale.MenuStartAutoDownload))
+			return TgEnumMenuDownload.StartAutoDownload;
 		if (prompt.Equals(TgLocale.MenuAutoViewEvents))
 			return TgEnumMenuDownload.AutoViewEvents;
 		if (prompt.Equals(TgLocale.MenuSearchChats))
@@ -69,8 +72,12 @@ internal partial class TgMenuHelper
 				case TgEnumMenuDownload.ClearChats:
 					await ClearChatsAsync(tgDownloadSettings);
 					break;
-				case TgEnumMenuDownload.AutoDownload:
-					await RunTaskStatusAsync(tgDownloadSettings, AutoDownloadAsync, 
+				case TgEnumMenuDownload.ClearAutoDownload:
+					await RunTaskStatusAsync(tgDownloadSettings, ClearAutoDownloadAsync, 
+						isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
+					break;
+				case TgEnumMenuDownload.StartAutoDownload:
+					await RunTaskStatusAsync(tgDownloadSettings, StartAutoDownloadAsync, 
 						isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
 					break;
 				case TgEnumMenuDownload.AutoViewEvents:
@@ -136,13 +143,13 @@ internal partial class TgMenuHelper
 
 	private async Task ViewChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		await ShowTableViewSourcesAsync(tgDownloadSettings);
+		await ShowTableViewChatsAsync(tgDownloadSettings);
 		var storageResult = await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-		var source = await GetSourceFromEnumerableAsync(TgLocale.MenuViewChats, storageResult.Items);
-		if (source.Uid != Guid.Empty)
+		var chat = await GetChatFromEnumerableAsync(TgLocale.MenuViewChats, storageResult.Items);
+		if (chat.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
-			tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
+			tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
 			await SetupDownloadAsync(tgDownloadSettings);
 		}
 	}
@@ -151,7 +158,7 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearChats)) return;
 
-		await ShowTableViewSourcesAsync(tgDownloadSettings);
+		await ShowTableViewChatsAsync(tgDownloadSettings);
 		await SourceRepository.DeleteAllAsync();
 	}
 
@@ -171,27 +178,42 @@ internal partial class TgMenuHelper
 	private async Task ViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewVersionsAsync(tgDownloadSettings);
-		GetVersionFromEnumerable(TgLocale.MenuViewChats,
-			(await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
+		GetVersionFromEnumerable(TgLocale.MenuViewChats, (await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
 	}
 
 	private async Task MarkHistoryReadAsync(TgDownloadSettingsViewModel tgDownloadSettings) => 
 		await RunTaskStatusAsync(tgDownloadSettings, MarkHistoryReadCoreAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
 
-	private async Task AutoDownloadAsync(TgDownloadSettingsViewModel _)
+	private async Task ClearAutoDownloadAsync(TgDownloadSettingsViewModel _)
 	{
-		var sources = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
-		foreach (var source in sources.Where(sourceSetting => sourceSetting.IsAutoUpdate))
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearAutoDownload)) return;
+
+		var chats = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+		chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
+		foreach (var chat in chats)
 		{
-            var tgDownloadSettings = await SetupDownloadSourceByIdAsync(source.Id);
-			var sourceId = string.IsNullOrEmpty(source.UserName) ? $"{source.Id}" : $"{source.Id} | @{source.UserName}";
-            // StatusContext.
-            await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(source.Id, source.FirstId, source.Count, 
-				source.Count <= 0
-					? $"The source {sourceId} hasn't any messages!"
-					: $"The source {sourceId} has {source.Count} messages.");
-			// ManualDownload.
-			if (source.Count > 0)
+			chat.IsAutoUpdate = false;
+			await SourceRepository.SaveAsync(chat);
+		}
+	}
+
+	private async Task StartAutoDownloadAsync(TgDownloadSettingsViewModel _)
+	{
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStartAutoDownload)) return;
+
+		var chats = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+		chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
+		foreach (var chat in chats)
+		{
+			var tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
+			var chatId = string.IsNullOrEmpty(chat.UserName) ? $"{chat.Id}" : $"{chat.Id} | @{chat.UserName}";
+			// StatusContext
+			await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(chat.Id, chat.FirstId, chat.Count,
+				chat.Count <= 0
+					? $"The source {chatId} hasn't any messages!"
+					: $"The source {chatId} has {chat.Count} messages.");
+			// ManualDownload
+			if (chat.Count > 0)
 				await ManualDownloadAsync(tgDownloadSettings);
 		}
 	}

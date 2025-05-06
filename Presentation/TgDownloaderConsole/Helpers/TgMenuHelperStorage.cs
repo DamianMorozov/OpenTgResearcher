@@ -59,6 +59,8 @@ internal partial class TgMenuHelper
 				case TgEnumMenuStorage.TablesCompact:
 					await TgStorageTablesCompactAsync();
 					break;
+				case TgEnumMenuStorage.Return:
+					break;
 			}
 		} while (menu is not TgEnumMenuStorage.Return);
 	}

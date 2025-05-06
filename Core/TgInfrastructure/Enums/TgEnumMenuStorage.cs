@@ -10,6 +10,5 @@ public enum TgEnumMenuStorage
 	DbBackup,
 	DbCreateNew,
 	TablesVersionsView,
-	TablesClear,
 	TablesCompact,
 }

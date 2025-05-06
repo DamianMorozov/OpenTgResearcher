@@ -59,6 +59,8 @@ internal partial class TgMenuHelper
 				case TgEnumMenuFilter.FiltersView:
 					await FiltersViewAsync();
 					break;
+				case TgEnumMenuFilter.Return:
+					break;
 			}
 		} while (menu is not TgEnumMenuFilter.Return);
 	}

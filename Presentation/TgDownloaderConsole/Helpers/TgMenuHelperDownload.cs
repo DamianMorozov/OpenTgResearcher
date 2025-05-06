@@ -19,6 +19,8 @@ internal partial class TgMenuHelper
 			case TgEnumLicenseType.Premium:
 				menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByTestLicense;
 				break;
+			case TgEnumLicenseType.Free:
+				break;
 		}
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()

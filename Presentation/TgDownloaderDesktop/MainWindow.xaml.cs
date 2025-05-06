@@ -17,14 +17,50 @@ public sealed partial class MainWindow : WindowEx
         Content = null;
         Title = "AppDisplayName".GetLocalized();
 
-        // Theme change code picked from https://github.com/microsoft/WinUI-Gallery/pull/1239
-        _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+		LoadWindowState();
+		Closed += MainWindow_Closed;
+
+		// Theme change code picked from https://github.com/microsoft/WinUI-Gallery/pull/1239
+		_dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         _settings = new();
         _settings.ColorValuesChanged += Settings_ColorValuesChanged; // cannot use FrameworkElement.ActualThemeChanged event
     }
 
-    // this handles updating the caption button colors correctly when Windows system theme is changed while the app is open
-    private void Settings_ColorValuesChanged(UISettings sender, object args)
+	private void LoadWindowState()
+	{
+		var localSettings = ApplicationData.Current.LocalSettings;
+
+		if (localSettings.Values.TryGetValue("WindowWidth", out var width) &&
+			localSettings.Values.TryGetValue("WindowHeight", out var height) &&
+			localSettings.Values.TryGetValue("WindowX", out var x) &&
+			localSettings.Values.TryGetValue("WindowY", out var y))
+		{
+			AppWindow.Resize(new Windows.Graphics.SizeInt32((int)width, (int)height));
+			AppWindow.Move(new Windows.Graphics.PointInt32((int)x, (int)y));
+		}
+		else
+		{
+			// Default
+			AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 600));
+			AppWindow.Move(new Windows.Graphics.PointInt32(0, 0));
+		}
+	}
+
+	private void SaveWindowState()
+	{
+		var localSettings = ApplicationData.Current.LocalSettings;
+
+		var appWindow = AppWindow;
+		localSettings.Values["WindowWidth"] = appWindow.Size.Width;
+		localSettings.Values["WindowHeight"] = appWindow.Size.Height;
+		localSettings.Values["WindowX"] = appWindow.Position.X;
+		localSettings.Values["WindowY"] = appWindow.Position.Y;
+	}
+
+	private void MainWindow_Closed(object sender, WindowEventArgs args) => SaveWindowState();
+
+	// this handles updating the caption button colors correctly when Windows system theme is changed while the app is open
+	private void Settings_ColorValuesChanged(UISettings sender, object args)
     {
         // This calls comes off-thread, hence we will need to dispatch it to current app's thread
         _dispatcherQueue.TryEnqueueWithLog(TgTitleBarHelper.ApplySystemThemeToCaptionButtons);

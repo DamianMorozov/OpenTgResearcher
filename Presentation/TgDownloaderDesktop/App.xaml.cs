@@ -195,12 +195,6 @@ public partial class App : Application
 					//	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
 					//})
 					.Run();
-				// Storage version
-				var versionRepository = new TgEfVersionRepository();
-				var version = (await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
-					.Items.Single(x => x.Version == versionRepository.LastVersion);
-				TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
-
 				// License
 				TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(),
 					TgResourceExtensions.GetLicenseTestDescription(), TgResourceExtensions.GetLicensePaidDescription(),
@@ -211,9 +205,16 @@ public partial class App : Application
 				await Task.Delay(100);
 				TgEfUtils.AppStorage = GetService<ITgSettingsService>().AppStorage;
 				// Create and update storage
+				textBlock.Text = $"{TgResourceExtensions.GetStorageLoading()}...  60%";
 				await TgEfUtils.CreateAndUpdateDbAsync();
 				// App loading complete
 				MainWindow.Content = content;
+				// Storage version
+				textBlock.Text = $"{TgResourceExtensions.GetStorageLoading()}...  70%";
+				var versionRepository = new TgEfVersionRepository();
+				var versionsResult = await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+				var version = versionsResult.Items.Single(x => x.Version == versionRepository.LastVersion);
+				TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
 			}, "Application launched");
 		}
 		catch (Exception ex)

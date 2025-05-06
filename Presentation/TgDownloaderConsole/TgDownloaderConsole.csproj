@@ -9,7 +9,7 @@
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
-		<Version>0.6.140.0</Version>
+		<Version>0.6.150.0</Version>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	  <DebugType>full</DebugType>

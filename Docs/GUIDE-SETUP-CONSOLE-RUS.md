@@ -5,7 +5,7 @@
 - Нажмите кнопку `Старт`, затем наберите и выполните `TgDownloaderConsole`
 
 ## Быстрый старт
-- Application -> Locate the storage file
+- Application -> Specify the path to the EF storage file
 - Connection -> Connect the client to TG server
 
 ## Настройки по умолчанию для TgDownloaderConsole

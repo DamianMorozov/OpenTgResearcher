@@ -25,7 +25,7 @@ internal sealed partial class TgMenuHelper
 		if (prompt.Equals(TgLocale.MenuLicenseInfo))
 			return TgEnumMenuLicense.LicenseInfo;
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
-			return TgEnumMenuLicense.LicenseInfo;
+			return TgEnumMenuLicense.LicenseCheck;
 		if (prompt.Equals(TgLocale.MenuLicenseChange))
 			return TgEnumMenuLicense.LicenseChange;
 		if (prompt.Equals(TgLocale.MenuWebSiteOpen))
@@ -46,10 +46,10 @@ internal sealed partial class TgMenuHelper
 					await LicenseInfoAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuLicense.LicenseCheck:
-					await LicenseCheckAsync();
+					await LicenseCheckAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuLicense.LicenseChange:
-					await LicenseChangeAsync();
+					await LicenseChangeAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuLicense.LicenseWebSiteOpen:
 					await WebSiteOpenAsync(TgLocale.MenuWebSiteGlobalUrl);
@@ -63,38 +63,164 @@ internal sealed partial class TgMenuHelper
 	/// <summary> View info </summary>
 	private async Task LicenseInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		var licenseDtos = await LicenseRepository.GetListDtosAsync();
-		licenseDtos = [.. licenseDtos.Where(x => x.IsConfirmed)];
-		if (licenseDtos.Any())
-		{
-			var licenseDto = licenseDtos.FirstOrDefault();
-			if (licenseDto is not null)
-				TgLicense.ActivateLicense(licenseDto.LicenseKey, licenseDto.LicenseType, licenseDto.UserId, licenseDto.ValidTo);
-		}
-
-		await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-
-		await Task.CompletedTask;
+		await LicenseShowInfo(tgDownloadSettings);
 	}
 
 	/// <summary> Check license </summary>
-	private async Task LicenseCheckAsync()
+	private async Task LicenseCheckAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		AnsiConsole.WriteLine(TgLocale.InDevelopment);
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-		await Task.CompletedTask;
+		try
+		{
+			const int timeoutSeconds = 10;
+			var licenseDtos = await LicenseRepository.GetListDtosAsync();
+			var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed);
+
+			var userId = await GetUserId();
+			if (userId == 0)
+			{
+				await LicenseShowInfo(tgDownloadSettings, TgLocale.MenuLicenseUserNotLoggedIn);
+				return;
+			}
+
+			var apiUrls = new[] { TgLocale.MenuWebSiteGlobalUrl, TgLocale.MenuWebSiteRussianUrl };
+
+			using var httpClient = new HttpClient();
+			httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
+
+			foreach (var apiUrl in apiUrls)
+			{
+				try
+				{
+					var url = $"{apiUrl}License/Get?userId={userId}";
+					var response = await httpClient.GetAsync(url);
+					AnsiConsole.WriteLine($"{TgLocale.MenuLicenseCheckServer}: {apiUrl}");
+					AnsiConsole.WriteLine();
+					if (!response.IsSuccessStatusCode)
+					{
+						await LicenseShowInfo(tgDownloadSettings, $"{TgLocale.MenuLicenseResponseStatusCode}: {response.StatusCode}");
+						continue;
+					}
+
+					var jsonResponse = await response.Content.ReadAsStringAsync();
+					var licenseData = JsonSerializer.Deserialize<TgLicenseApiResponse>(jsonResponse, GetJsonOptions());
+					if (licenseData?.IsConfirmed != true)
+					{
+						await LicenseShowInfo(tgDownloadSettings, $"{TgLocale.MenuLicenseIsNotCofirmed}: {response.StatusCode}");
+						continue;
+					}
+
+					// Updating an existing license or creating a new license
+					var licenseEntity = new TgEfLicenseEntity
+					{
+						IsConfirmed = licenseData.IsConfirmed,
+						LicenseKey = licenseData.LicenseKey,
+						LicenseType = licenseData.LicenseType,
+						UserId = licenseData.UserId,
+						ValidTo = DateTime.Parse($"{licenseData.ValidTo:yyyy-MM-dd}")
+					};
+
+					if (currentLicenseDto is null)
+					{
+						await LicenseRepository.SaveAsync(licenseEntity);
+					}
+					else
+					{
+						var licenseExists = await LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
+						licenseExists.Copy(licenseEntity, isUidCopy: false);
+						await LicenseRepository.SaveAsync(licenseEntity);
+					}
+
+					await LicenseShowInfo(tgDownloadSettings, TgLocale.MenuLicenseUpdatedSuccessfully);
+					return;
+				}
+#if DEBUG
+				catch (Exception ex)
+				{
+					Debug.WriteLine(ex);
+					Debug.WriteLine(ex.StackTrace);
+#else
+				catch (Exception)
+				{
+#endif
+					AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
+					AnsiConsole.WriteLine(ex.Message);
+				}
+			}
+
+			await LicenseShowInfo(tgDownloadSettings);
+		}
+#if DEBUG
+		catch (Exception ex)
+		{
+			Debug.WriteLine(ex);
+			Debug.WriteLine(ex.StackTrace);
+			AnsiConsole.WriteLine(ex.Message);
+#else
+		catch (Exception)
+		{
+#endif
+			AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
+			AnsiConsole.WriteLine(ex.Message);
+		}
+		finally
+		{
+			await Task.CompletedTask;
+		}
+	}
+
+	private static JsonSerializerOptions GetJsonOptions() => new()
+	{
+		PropertyNameCaseInsensitive = true,
+		Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
+	};
+
+	private static async Task<long> GetUserId()
+	{
+		if (TgGlobalTools.ConnectClient.Me is null)
+			await TgGlobalTools.ConnectClient.LoginUserAsync(isProxyUpdate: false);
+		var userId = TgGlobalTools.ConnectClient.Me?.ID ?? 0;
+		if (userId == 0)
+		{
+			AnsiConsole.WriteLine(TgLocale.MenuLicenseUserNotLoggedIn);
+		}
+		return userId;
+	}
+
+	private async Task LicenseShowInfo(TgDownloadSettingsViewModel tgDownloadSettings, string message = "")
+	{
+		try
+		{
+			var licenseDtos = await LicenseRepository.GetListDtosAsync();
+			var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed);
+			if (currentLicenseDto is not null)
+				TgLicense.ActivateLicense(currentLicenseDto.LicenseKey, currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
+
+			await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
+			if (!string.IsNullOrEmpty(message))
+				AnsiConsole.WriteLine(message);
+			TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
+			Console.ReadKey();
+		}
+		finally
+		{
+			await Task.CompletedTask;
+		}
 	}
 
 	/// <summary> Change license </summary>
-	private async Task LicenseChangeAsync()
+	private async Task LicenseChangeAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		AnsiConsole.WriteLine(TgLocale.InDevelopment);
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-		await Task.CompletedTask;
+		try
+		{
+			AnsiConsole.WriteLine(TgLocale.InDevelopment);
+		}
+		finally
+		{
+			await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
+			TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
+			Console.ReadKey();
+			await Task.CompletedTask;
+		}
 	}
 
 	/// <summary> Open a web-site </summary>

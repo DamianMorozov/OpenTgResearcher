@@ -49,6 +49,7 @@ public static class TgEfUtils
 			TgEfContactEntity contact => new TgEfContactValidator().Validate(contact),
 			TgEfDocumentEntity document => new TgEfDocumentValidator().Validate(document),
 			TgEfFilterEntity filter => new TgEfFilterValidator().Validate(filter),
+			TgEfLicenseEntity license => new TgEfLicenseValidator().Validate(license),
 			TgEfMessageEntity message => new TgEfMessageValidator().Validate(message),
 			TgEfSourceEntity source => new TgEfSourceValidator().Validate(source),
 			TgEfStoryEntity story => new TgEfStoryValidator().Validate(story),
@@ -73,6 +74,8 @@ public static class TgEfUtils
 			case TgEfDocumentEntity document:
 				break;
 			case TgEfFilterEntity filter:
+				break;
+			case TgEfLicenseEntity license:
 				break;
 			case TgEfMessageEntity message:
 				break;

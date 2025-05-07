@@ -6,6 +6,7 @@ global using Spectre.Console;
 global using System.Diagnostics;
 global using System.Globalization;
 global using System.Reflection;
+global using System.Text.Json;
 global using System.Text;
 global using TgDownloaderConsole.Helpers;
 global using TgInfrastructure.Contracts;

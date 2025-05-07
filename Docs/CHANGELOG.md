@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated license view in OpenTgResearcherDesktop
 ### Added
 - Added methods to memorize window size and position between sessions in OpenTgResearcherDesktop
+- Added license request to TgDownloaderConsole
 
 ## [0.6.140] - 2025-04-26
 ### Fixed

@@ -38,7 +38,7 @@ VelopackApp.Build()
 
 var tgLocale = TgLocaleHelper.Instance;
 // License
-TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty);
+TgLicenseManagerHelper.Instance.ActivateDefaultLicense();
 
 var tgLog = TgLogHelper.Instance;
 var tgDownloadSettings = new TgDownloadSettingsViewModel();

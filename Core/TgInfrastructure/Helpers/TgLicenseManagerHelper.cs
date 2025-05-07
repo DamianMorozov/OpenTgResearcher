@@ -16,48 +16,33 @@ public sealed class TgLicenseManagerHelper
 
 	public TgLicense CurrentLicense { get; private set; } = null!;
 
-	public void ActivateLicense(string licenseKey = "", string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
+	public void ActivateDefaultLicense() => ActivateLicense(Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue);
+
+	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription, 
+		string licensePaidDescription, string licensePremiumDescription) => 
+		ActivateLicense(Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue, 
+		licenseFreeDescription, licenseTestDescription, licensePaidDescription, licensePremiumDescription);
+
+	public void ActivateLicense(Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo, 
+		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
 		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license")
 	{
-		if (licenseKey.StartsWith("TEST"))
+		CurrentLicense = new TgLicense() { LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
+		switch (licenseType)
 		{
-			CurrentLicense = new TgLicenseTest
-			{
-				LicenseKey = licenseKey,
-				LicenseType = TgEnumLicenseType.Test,
-				ExpirationDate = DateTime.Now.AddYears(1),
-				Description = licensePaidDescription
-			};
-			return;
+			case TgEnumLicenseType.Free:
+				CurrentLicense.SetDescription(licenseFreeDescription);
+				break;
+			case TgEnumLicenseType.Test:
+				CurrentLicense.SetDescription(licenseTestDescription);
+				break;
+			case TgEnumLicenseType.Paid:
+				CurrentLicense.SetDescription(licensePaidDescription);
+				break;
+			case TgEnumLicenseType.Premium:
+				CurrentLicense.SetDescription(licensePremiumDescription);
+				break;
 		}
-		if (licenseKey.StartsWith("PAID"))
-		{
-			CurrentLicense = new TgLicensePaid
-			{
-				LicenseKey = licenseKey,
-				LicenseType = TgEnumLicenseType.Paid,
-				ExpirationDate = DateTime.Now.AddYears(1),
-				Description = licensePaidDescription
-			};
-			return;
-		}
-		if (licenseKey.StartsWith("PREMIUM"))
-		{
-			CurrentLicense = new TgLicensePremium
-			{
-				LicenseKey = licenseKey,
-				LicenseType = TgEnumLicenseType.Premium,
-				ExpirationDate = DateTime.Now.AddYears(1),
-				PrioritySupport = true,
-				Description = licensePremiumDescription
-			};
-			return;
-		}
-		CurrentLicense = new TgLicenseFree
-		{
-			LicenseKey = licenseKey,
-			Description = licenseFreeDescription
-		};
 	}
 
 	public bool IsLicenseValid() => CurrentLicense.IsValid();

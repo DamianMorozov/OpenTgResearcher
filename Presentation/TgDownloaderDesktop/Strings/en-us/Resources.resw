@@ -957,4 +957,20 @@
   <data name="Storage" xml:space="preserve">
     <value>Storage</value>
   </data>
+  <!--License-->
+  <data name="TextBlockIsConfirmed.Text" xml:space="preserve">
+    <value>Confirmed</value>
+  </data>
+  <data name="TextBlockLicenseKey.Text" xml:space="preserve">
+    <value>License key</value>
+  </data>
+  <data name="TextBlockLicenseDescription.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TextBlockUserId.Text" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="TextBlockExpiration.Text" xml:space="preserve">
+    <value>Expiration</value>
+  </data>
 </root>

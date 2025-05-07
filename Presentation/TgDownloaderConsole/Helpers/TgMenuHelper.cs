@@ -18,6 +18,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	private TgEfAppRepository AppRepository { get; } = new();
 	private TgEfContactRepository ContactRepository { get; } = new();
 	private TgEfFilterRepository FilterRepository { get; } = new();
+	private TgEfLicenseRepository LicenseRepository { get; } = new();
 	private TgEfProxyRepository ProxyRepository { get; } = new();
 	private TgEfSourceRepository SourceRepository { get; } = new();
 	private TgEfStoryRepository StoryRepository { get; } = new();
@@ -59,19 +60,22 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal async Task ShowTableMainAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsMainAsync);
 
-	internal async Task ShowTableStorageSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+	internal async Task ShowTableStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageAsync);
 
-	internal async Task ShowTableFiltersSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+	internal async Task ShowTableFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsFiltersAsync);
 
-	internal async Task ShowTableLicenseSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseAsync);
+	internal async Task ShowTableLicenseShortInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseShortInfoAsync);
 
-	internal async Task ShowTableUpdateSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+	internal async Task ShowTableLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseFullInfoAsync);
+
+	internal async Task ShowTableUpdateAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsUpdateAsync);
 
-	internal async Task ShowTableAppSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+	internal async Task ShowTableApplicationAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsApplicationAsync);
 
 	internal async Task ShowTableClientAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
@@ -196,10 +200,20 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	}
 
 	/// <summary> License version </summary>
-	internal async Task FillTableRowsLicenseAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+	internal async Task FillTableRowsLicenseShortInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
 		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), GetMarkup(TgLicense.CurrentLicense.Description));
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), GetMarkup(TgLicense.CurrentLicense.LicenseKey));
+		await Task.CompletedTask;
+	}
+
+	/// <summary> License view info </summary>
+	internal async Task FillTableRowsLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+	{
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseIsConfirmed)), GetMarkup(TgLicense.CurrentLicense.IsConfirmed.ToString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), GetMarkup(TgLicense.CurrentLicense.GetLicenseKeyString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), GetMarkup(TgLicense.CurrentLicense.Description));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuUserId)), GetMarkup(TgLicense.CurrentLicense.GetUserIdString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseExpiration)), GetMarkup(TgLicense.CurrentLicense.GetValidToString()));
 		await Task.CompletedTask;
 	}
 

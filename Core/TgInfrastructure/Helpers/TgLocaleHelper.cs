@@ -141,8 +141,12 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseCheck => "Check license online";
 	public string MenuLicenseCurrent => "Current license";
 	public string MenuLicenseDescription => "License description";
+	public string MenuLicenseExpiration => "Expiration";
 	public string MenuLicenseFolowThisLink => "Follow this link";
+	public string MenuLicenseInfo => "View license info";
+	public string MenuLicenseIsConfirmed => "Confirmed";
 	public string MenuLicenseKey => "License key";
+	public string MenuUserId => "User ID";
 	public string MenuWebSiteGlobalTitle => "opentgresearcher.online";
 	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
 	public string MenuWebSiteOpen => "Open the website to donate";

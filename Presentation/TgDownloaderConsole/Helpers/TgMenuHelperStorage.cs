@@ -40,7 +40,7 @@ internal partial class TgMenuHelper
 		TgEnumMenuStorage menu;
 		do
 		{
-			await ShowTableStorageSettingsAsync(tgDownloadSettings);
+			await ShowTableStorageAsync(tgDownloadSettings);
 			menu = SetMenuStorage();
 			switch (menu)
 			{

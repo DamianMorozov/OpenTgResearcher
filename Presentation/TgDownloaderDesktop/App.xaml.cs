@@ -196,9 +196,9 @@ public partial class App : Application
 					//})
 					.Run();
 				// License
-				TgLicenseManagerHelper.Instance.ActivateLicense(string.Empty, TgResourceExtensions.GetLicenseFreeDescription(),
-					TgResourceExtensions.GetLicenseTestDescription(), TgResourceExtensions.GetLicensePaidDescription(),
-					TgResourceExtensions.GetLicensePremiumDescription());
+				TgLicenseManagerHelper.Instance.ActivateLicenseWithDescriptions(
+					TgResourceExtensions.GetLicenseFreeDescription(), TgResourceExtensions.GetLicenseTestDescription(), 
+					TgResourceExtensions.GetLicensePaidDescription(), TgResourceExtensions.GetLicensePremiumDescription());
 				// Register TgEfContext as the DbContext for EF Core
 				textBlock.Text = $"{TgResourceExtensions.GetStorageLoading()}...  50%";
 				TgLogUtils.LogInformation(textBlock.Text);

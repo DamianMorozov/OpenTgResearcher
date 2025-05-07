@@ -32,7 +32,7 @@ internal sealed partial class TgMenuHelper
 		TgEnumMenuUpdate menu;
 		do
 		{
-			await ShowTableUpdateSettingsAsync(tgDownloadSettings);
+			await ShowTableUpdateAsync(tgDownloadSettings);
 			menu = SetMenuUpdate();
 			switch (menu)
 			{

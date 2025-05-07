@@ -1019,4 +1019,20 @@
   <data name="Storage" xml:space="preserve">
     <value>Хранилище</value>
   </data>
+  <!--License-->
+  <data name="TextBlockIsConfirmed.Text" xml:space="preserve">
+    <value>Подтверждение</value>
+  </data>
+  <data name="TextBlockLicenseKey.Text" xml:space="preserve">
+    <value>Лицензионный ключ</value>
+  </data>
+  <data name="TextBlockLicenseDescription.Text" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="TextBlockUserId.Text" xml:space="preserve">
+    <value>ID пользователя</value>
+  </data>
+  <data name="TextBlockExpiration.Text" xml:space="preserve">
+    <value>Срок действия</value>
+  </data>
 </root>

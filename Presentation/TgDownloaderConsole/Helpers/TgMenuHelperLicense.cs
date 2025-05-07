@@ -17,12 +17,15 @@ internal sealed partial class TgMenuHelper
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(TgLocale.MenuMainReturn,
+					TgLocale.MenuLicenseInfo,
 					TgLocale.MenuLicenseCheck,
 					TgLocale.MenuLicenseChange,
 					TgLocale.MenuWebSiteOpen
 				));
+		if (prompt.Equals(TgLocale.MenuLicenseInfo))
+			return TgEnumMenuLicense.LicenseInfo;
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
-			return TgEnumMenuLicense.LicenseCheck;
+			return TgEnumMenuLicense.LicenseInfo;
 		if (prompt.Equals(TgLocale.MenuLicenseChange))
 			return TgEnumMenuLicense.LicenseChange;
 		if (prompt.Equals(TgLocale.MenuWebSiteOpen))
@@ -35,10 +38,13 @@ internal sealed partial class TgMenuHelper
 		TgEnumMenuLicense menu;
 		do
 		{
-			await ShowTableLicenseSettingsAsync(tgDownloadSettings);
+			await ShowTableLicenseShortInfoAsync(tgDownloadSettings);
 			menu = SetMenuLicense();
 			switch (menu)
 			{
+				case TgEnumMenuLicense.LicenseInfo:
+					await LicenseInfoAsync(tgDownloadSettings);
+					break;
 				case TgEnumMenuLicense.LicenseCheck:
 					await LicenseCheckAsync();
 					break;
@@ -52,6 +58,25 @@ internal sealed partial class TgMenuHelper
 					break;
 			}
 		} while (menu is not TgEnumMenuLicense.Return);
+	}
+
+	/// <summary> View info </summary>
+	private async Task LicenseInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		var licenseDtos = await LicenseRepository.GetListDtosAsync();
+		licenseDtos = [.. licenseDtos.Where(x => x.IsConfirmed)];
+		if (licenseDtos.Any())
+		{
+			var licenseDto = licenseDtos.FirstOrDefault();
+			if (licenseDto is not null)
+				TgLicense.ActivateLicense(licenseDto.LicenseKey, licenseDto.LicenseType, licenseDto.UserId, licenseDto.ValidTo);
+		}
+
+		await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
+		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
+		Console.ReadKey();
+
+		await Task.CompletedTask;
 	}
 
 	/// <summary> Check license </summary>

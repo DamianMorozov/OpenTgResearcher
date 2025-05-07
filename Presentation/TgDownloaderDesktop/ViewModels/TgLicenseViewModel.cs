@@ -17,7 +17,15 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial string AppVersionShort { get; set; } = string.Empty;
 	[ObservableProperty]
+	public partial string IsConfirmed { get; set; } = string.Empty;
+	[ObservableProperty]
+	public partial string LicenseKey { get; set; } = string.Empty;
+	[ObservableProperty]
 	public partial string LicenseDescription { get; set; } = string.Empty;
+	[ObservableProperty]
+	public partial string UserId { get; set; } = string.Empty;
+	[ObservableProperty]
+	public partial string Expiration { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string LicenseLog { get; set; } = string.Empty;
 	public IRelayCommand CheckLicenseOnlineCommand { get; }
@@ -32,7 +40,11 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		AppVersionTitle =
 			$"{TgConstants.AppTitleDesktop} " +
 			$"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+		IsConfirmed = LicenseManager.CurrentLicense.IsConfirmed.ToString();
+		LicenseKey = LicenseManager.CurrentLicense.GetLicenseKeyString();
 		LicenseDescription = LicenseManager.CurrentLicense.Description;
+		UserId = LicenseManager.CurrentLicense.GetUserIdString();
+		Expiration = LicenseManager.CurrentLicense.GetValidToString();
 		// Commands
 		CheckLicenseOnlineCommand = new AsyncRelayCommand(CheckLicenseOnlineAsync);
 		ChangeLicenseOnlineCommand = new AsyncRelayCommand(ChangeLicenseOnlineAsync);

@@ -30,14 +30,79 @@
 					HorizontalContentAlignment="Stretch"
 					IsExpanded="True">
 					<StackPanel Margin="0,-10,0,-5">
-						<TextBlock
-							Margin="10,5,0,0"
-							Style="{ThemeResource SubtitleTextBlockStyle}"
-							Text="{x:Bind ViewModel.AppVersionFull, Mode=OneWay}" />
-						<TextBlock
-							Margin="10,0,0,0"
-							Style="{ThemeResource SubtitleTextBlockStyle}"
-							Text="{x:Bind ViewModel.LicenseDescription, Mode=OneWay}" />
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<TextBlock
+								x:Uid="TextBlockIsConfirmed"
+								Grid.Row="0"
+								Grid.Column="0"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}" />
+							<TextBlock
+								Grid.Row="0"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.IsConfirmed, Mode=OneWay}" />
+							<TextBlock
+								x:Uid="TextBlockLicenseKey"
+								Grid.Row="1"
+								Grid.Column="0"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}" />
+							<TextBlock
+								Grid.Row="1"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}" />
+							<TextBlock
+								x:Uid="TextBlockLicenseDescription"
+								Grid.Row="2"
+								Grid.Column="0"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}" />
+							<TextBlock
+								Grid.Row="2"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.LicenseDescription, Mode=OneWay}" />
+							<TextBlock
+								x:Uid="TextBlockUserId"
+								Grid.Row="3"
+								Grid.Column="0"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}" />
+							<TextBlock
+								Grid.Row="3"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.UserId, Mode=OneWay}" />
+							<TextBlock
+								x:Uid="TextBlockExpiration"
+								Grid.Row="4"
+								Grid.Column="0"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}" />
+							<TextBlock
+								Grid.Row="4"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.Expiration, Mode=OneWay}" />
+						</Grid>
 						<Button
 							Margin="0,5,5,0"
 							HorizontalAlignment="Stretch"
@@ -45,7 +110,7 @@
 							Command="{x:Bind ViewModel.CheckLicenseOnlineCommand, Mode=OneWay}"
 							IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-								<FontIcon Margin="0,0,10,0" Glyph="&#xE719;" />
+								<FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
 								<TextBlock
 									x:Uid="ActionCheckLicenseOnline"
 									HorizontalAlignment="Left"
@@ -60,7 +125,7 @@
 							Command="{x:Bind ViewModel.ChangeLicenseOnlineCommand, Mode=OneWay}"
 							IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-								<FontIcon Margin="0,0,10,0" Glyph="&#xE719;" />
+								<FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
 								<TextBlock
 									x:Uid="ActionChangeLicenseOnline"
 									HorizontalAlignment="Left"

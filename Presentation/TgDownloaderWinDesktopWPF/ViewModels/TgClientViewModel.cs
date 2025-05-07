@@ -67,7 +67,8 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
 
     public TgClientViewModel()
     {
-        AppVm = new(AppRepository.GetFirstItem(isReadOnly: false));
+        //AppVm = new(AppRepository.GetFirstItem(isReadOnly: false));
+        AppVm = new(new());
         ProxyVm = new(new());
         ProxiesVms = [];
 
@@ -233,8 +234,8 @@ public sealed partial class TgClientViewModel : TgPageViewModelBase, INavigation
 	    await TgDesktopUtils.RunFuncAsync(this, async () =>
 	    {
 		    await Task.Delay(1);
-		    var app = await AppRepository.GetFirstItemAsync(isReadOnly: false);
-		    AppVm.Dto = new TgEfAppDto().GetNewDto(app);
+		    //var app = await AppRepository.GetFirstItemAsync(isReadOnly: false);
+		    //AppVm.Dto = new TgEfAppDto().GetNewDto(app);
 	    }, false).ConfigureAwait(false);
     }
 

@@ -403,6 +403,8 @@ FodyWeavers.xsd
 # Sensitive project files
 *.session
 *.db
+*.db-shm
+*.db-wal
 /Core/*.json
 /Presentation/*.json
 /Tests/*.json

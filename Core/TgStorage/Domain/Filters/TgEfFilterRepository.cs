@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Filters;
 /// <summary> Filter repository </summary>
 public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, TgEfFilterDto>, ITgEfFilterRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfFilterRepository() : base() { }
+
+	public TgEfFilterRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfFilterRepository)}";

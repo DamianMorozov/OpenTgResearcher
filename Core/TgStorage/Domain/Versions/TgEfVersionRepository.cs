@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Versions;
 /// <summary> Version repository </summary>
 public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity, TgEfVersionDto>, ITgEfVersionRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfVersionRepository() : base() { }
+
+	public TgEfVersionRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfVersionRepository)}";

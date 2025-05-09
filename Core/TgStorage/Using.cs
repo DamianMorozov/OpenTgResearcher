@@ -5,6 +5,7 @@ global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using FluentValidation.Results;
 global using FluentValidation;
+global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
 global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Migrations;

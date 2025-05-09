@@ -5,7 +5,15 @@ namespace TgStorage.Domain.Messages;
 
 /// <summary> Message repository </summary>
 public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity, TgEfMessageDto>, ITgEfMessageRepository
-{
+{	
+	#region Public and private fields, properties, constructor
+
+	public TgEfMessageRepository() : base() { }
+
+	public TgEfMessageRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfMessageRepository)}";

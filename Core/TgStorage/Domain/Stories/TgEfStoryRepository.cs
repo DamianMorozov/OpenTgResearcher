@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Stories;
 /// <summary> Story repository </summary>
 public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, TgEfStoryDto>, ITgEfStoryRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfStoryRepository() : base() { }
+
+	public TgEfStoryRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfStoryRepository)}";

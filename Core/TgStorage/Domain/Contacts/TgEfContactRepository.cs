@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Contacts;
 /// <summary> Contact repository </summary>
 public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity, TgEfContactDto>, ITgEfContactRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfContactRepository() : base() { }
+
+	public TgEfContactRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfContactRepository)}";

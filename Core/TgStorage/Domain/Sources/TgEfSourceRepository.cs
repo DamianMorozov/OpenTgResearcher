@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Sources;
 /// <summary> Source repository </summary>
 public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, TgEfSourceDto>, ITgEfSourceRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfSourceRepository() : base() { }
+
+	public TgEfSourceRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfSourceRepository)}";

@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Documents;
 /// <summary> Document repository </summary>
 public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEntity, TgEfDocumentDto>, ITgEfDocumentRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfDocumentRepository() : base() { }
+
+	public TgEfDocumentRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfDocumentRepository)}";

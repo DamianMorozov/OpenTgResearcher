@@ -20,6 +20,12 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 		EfContext = Scope.Resolve<ITgEfContext>();
 	}
 
+	public TgEfRepositoryBase(IWebHostEnvironment webHostEnvironment)
+	{
+		Scope = TgGlobalTools.Container.BeginLifetimeScope();
+		EfContext = Scope.Resolve<ITgEfContext>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+	}
+
 	#endregion
 
 	#region IDisposable

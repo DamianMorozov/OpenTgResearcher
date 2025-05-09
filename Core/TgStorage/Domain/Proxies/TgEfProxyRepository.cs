@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Proxies;
 /// <summary> Proxy repository </summary>
 public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfProxyRepository() : base() { }
+
+	public TgEfProxyRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfProxyRepository)}";

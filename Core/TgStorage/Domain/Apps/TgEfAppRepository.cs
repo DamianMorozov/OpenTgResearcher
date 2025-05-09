@@ -6,6 +6,14 @@ namespace TgStorage.Domain.Apps;
 /// <summary> App repository </summary>
 public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAppDto>, ITgEfAppRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfAppRepository() : base() { }
+
+	public TgEfAppRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
 
 	public override string ToDebugString() => $"{nameof(TgEfAppRepository)}";

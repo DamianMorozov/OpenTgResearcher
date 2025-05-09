@@ -77,8 +77,7 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
-		if (LicenseKey == this.GetDefaultPropertyGuid(nameof(LicenseKey)))
-			LicenseKey = item.LicenseKey;
+		LicenseKey = item.LicenseKey;
 		UserId = item.UserId;
 		LicenseType = item.LicenseType;
 		ValidTo = item.ValidTo;

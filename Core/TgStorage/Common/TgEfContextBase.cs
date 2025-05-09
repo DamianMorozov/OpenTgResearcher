@@ -81,14 +81,15 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 	#region Public and private methods
 
 	/// <inheritdoc />
-	public string GetStoragePath(TgEnumAppType appType)
+	public string GetStoragePath(TgEnumAppType appType, string contentRootPath = "")
 	{
 		var storagePath = appType switch
 		{
 			TgEnumAppType.Memory => ":memory:", // In-memory database
-			TgEnumAppType.Console or TgEnumAppType.Blazor =>
+			TgEnumAppType.Console =>
 				File.Exists(TgAppSettingsHelper.Instance.AppXml.XmlEfStorage) 
 				? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgEfUtils.FileEfStorage,
+			TgEnumAppType.Blazor => Path.Combine(contentRootPath, TgEfUtils.FileEfStorage),
 			TgEnumAppType.Desktop => File.Exists(TgEfUtils.AppStorage) ? TgEfUtils.AppStorage : TgEfUtils.FileEfStorage,
 			TgEnumAppType.Test => @"d:\DATABASES\SQLITE\TgStorageTest.db",
 			_ => throw new ArgumentOutOfRangeException(nameof(appType), appType, null)

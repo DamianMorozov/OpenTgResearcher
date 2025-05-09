@@ -5,8 +5,16 @@ namespace TgStorage.Domain.Licenses;
 
 public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity, TgEfLicenseDto>, ITgEfLicenseRepository
 {
+	#region Public and private fields, properties, constructor
+
+	public TgEfLicenseRepository() : base() { }
+
+	public TgEfLicenseRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+
+	#endregion
+
 	#region Public and private methods
-	
+
 	public override string ToDebugString() => $"{nameof(TgEfLicenseRepository)}";
 
 	public override IQueryable<TgEfLicenseEntity> GetQuery(bool isReadOnly = true) =>

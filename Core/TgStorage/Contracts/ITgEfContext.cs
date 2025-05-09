@@ -44,7 +44,7 @@ public interface ITgEfContext : IDisposable
 	public DbSet<TgEfVersionEntity> Versions { get; set; }
 
 	/// <summary> Get storage path </summary>
-	protected string GetStoragePath(TgEnumAppType appType);
+	protected string GetStoragePath(TgEnumAppType appType, string contentRootPath = "");
 
 	/// <summary> Backup storage </summary>
 	public (bool IsSuccess, string FileName) BackupDb();

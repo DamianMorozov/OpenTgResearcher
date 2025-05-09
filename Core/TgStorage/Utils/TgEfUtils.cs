@@ -116,6 +116,17 @@ public static class TgEfUtils
 		await efContext.ShrinkDbAsync();
 	}
 
+	/// <summary> Create and update storage </summary>
+	public static async Task CreateAndUpdateDbAsync(IWebHostEnvironment webHostEnvironment)
+	{
+		await using var scope = TgGlobalTools.Container.BeginLifetimeScope();
+		using var efContext = scope.Resolve<ITgEfContext>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+		await efContext.MigrateDbAsync();
+		TgEfVersionRepository versionRepository = new(webHostEnvironment);
+		await versionRepository.FillTableVersionsAsync();
+		await efContext.ShrinkDbAsync();
+	}
+
 	/// <summary> Shrink storage </summary>
 	public static async Task ShrinkDbAsync()
 	{

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.160] - 2025-05-07
+## [0.6.160] - 2025-05-09
 ### Changed
 - Updated the menu in TgDownloaderConsole
 - Updated license view in TgDownloaderConsole
@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added methods to memorize window size and position between sessions in OpenTgResearcherDesktop
 - Added license request to TgDownloaderConsole
+- Added license request to OpenTgResearcherDesktop
 
 ## [0.6.140] - 2025-04-26
 ### Fixed

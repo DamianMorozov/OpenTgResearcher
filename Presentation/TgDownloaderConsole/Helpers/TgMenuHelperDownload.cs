@@ -17,7 +17,7 @@ internal partial class TgMenuHelper
 			case TgEnumLicenseType.Test:
 			case TgEnumLicenseType.Paid:
 			case TgEnumLicenseType.Premium:
-				menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByTestLicense;
+				menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByPaidLicense;
 				break;
 			case TgEnumLicenseType.Free:
 				break;
@@ -248,8 +248,8 @@ internal partial class TgMenuHelper
 				case TgEnumLicenseType.Test:
 				case TgEnumLicenseType.Paid:
 				case TgEnumLicenseType.Premium:
-					if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitTest)
-						tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimitTest;
+					if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitPaid)
+						tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimitPaid;
 					break;
 				default:
 					if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitFree)

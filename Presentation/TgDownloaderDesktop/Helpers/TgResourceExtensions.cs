@@ -56,6 +56,11 @@ public static class TgResourceExtensions
 	public static string GetLicenseTestDescription() => "LicenseTestDescription".GetLocalized();
 	public static string GetLoggerLoading() => "LoggerLoading".GetLocalized();
 	public static string GetMenuClientIsQuery() => "MenuClientIsQuery".GetLocalized();
+	public static string GetMenuLicenseCheckServer() => "MenuLicenseCheckServer".GetLocalized();
+	public static string GetMenuLicenseIsNotCofirmed() => "MenuLicenseIsNotCofirmed".GetLocalized();
+	public static string GetMenuLicenseResponseStatusCode() => "MenuLicenseResponseStatusCode".GetLocalized();
+	public static string GetMenuLicenseUpdatedSuccessfully() => "MenuLicenseUpdatedSuccessfully".GetLocalized();
+	public static string GetMenuLicenseUserNotLoggedIn() => "MenuLicenseUserNotLoggedIn".GetLocalized();
 	public static string GetNoButton() => "NoButton".GetLocalized();
 	public static string GetNotificationLoading() => "NotificationLoading".GetLocalized();
 	public static string GetOkButton() => "OkButton".GetLocalized();

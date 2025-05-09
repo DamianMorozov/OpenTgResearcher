@@ -209,15 +209,19 @@ internal partial class TgMenuHelper
 
 	public async Task ConnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
-		await ShowTableClientAsync(tgDownloadSettings);
+		if (!isSilent)
+			await ShowTableClientAsync(tgDownloadSettings);
 		var app = (await AppRepository.GetCurrentAppAsync()).Item;
 		var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
 		var proxy = proxyResult.Item;
 		await TgGlobalTools.ConnectClient.ConnectSessionConsoleAsync(ConfigClientConsole, proxy);
-		if (TgGlobalTools.ConnectClient.ClientException.IsExist || TgGlobalTools.ConnectClient.ProxyException.IsExist)
-			TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
-		else
-			TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
+		if (!isSilent)
+		{
+			if (TgGlobalTools.ConnectClient.ClientException.IsExist || TgGlobalTools.ConnectClient.ProxyException.IsExist)
+				TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
+			else
+				TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
+		}
 		if (!isSilent)
 		    Console.ReadKey();
 	}

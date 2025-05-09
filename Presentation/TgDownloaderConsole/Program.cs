@@ -11,16 +11,22 @@ TgGlobalTools.Container = containerBuilder.Build();
 var scope = TgGlobalTools.Container.BeginLifetimeScope();
 TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
 
-TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
-var menu = new TgMenuHelper();
+// Helpers
+var tgLocale = TgLocaleHelper.Instance;
+var tgLog = TgLogHelper.Instance;
+var tgDownloadSettings = new TgDownloadSettingsViewModel();
+var tgAppSettings = TgAppSettingsHelper.Instance;
+tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
+var tgMenu = new TgMenuHelper();
+var tgLicenseManager = TgLicenseManagerHelper.Instance;
 
 // Console loading
 Console.OutputEncoding = Encoding.UTF8;
 Console.Title = TgConstants.AppTitleConsoleShort;
-TgLogHelper.Instance.SetMarkupLine(AnsiConsole.WriteLine);
-TgLogHelper.Instance.SetMarkupLineStamp(AnsiConsole.MarkupLine);
-TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
-TgLogHelper.Instance.WriteLine($"{TgConstants.AppTitleConsole} {TgAppSettingsHelper.Instance.AppVersion}");
+tgLog.SetMarkupLine(AnsiConsole.WriteLine);
+tgLog.SetMarkupLineStamp(AnsiConsole.MarkupLine);
+tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
+tgLog.WriteLine($"{TgConstants.AppTitleConsole} {tgAppSettings.AppVersion}");
 
 // Velopack installer update
 //await menu.VelopackUpdateAsync(isWait: false, isRelease: true);
@@ -32,16 +38,9 @@ VelopackApp.Build()
 		})
 #endif
 	.WithFirstRun((v) => {
-		TgLogHelper.Instance.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
+		tgLog.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
 	})
 	.Run();
-
-var tgLocale = TgLocaleHelper.Instance;
-// License
-TgLicenseManagerHelper.Instance.ActivateDefaultLicense();
-
-var tgLog = TgLogHelper.Instance;
-var tgDownloadSettings = new TgDownloadSettingsViewModel();
 
 // Create and update storage
 tgLog.WriteLine("Storage loading...");
@@ -54,17 +53,27 @@ tgLog.WriteLine("Menu loading ...");
 await Task.Delay(250);
 TgGlobalTools.SetAppType(TgEnumAppType.Console);
 tgLog.WriteLine("Menu loading complete");
-await menu.SetStorageVersionAsync();
+await tgMenu.SetStorageVersionAsync();
 
 // TG Connection
 if (File.Exists(TgFileUtils.FileTgSession))
-	await menu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
+{
+	tgLog.WriteLine("Connection loading ...");
+	await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
+	tgLog.WriteLine("Connection loading complete");
+}
+
+// License
+tgLog.WriteLine("License loading ...");
+tgLicenseManager.ActivateDefaultLicense();
+await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
+tgLog.WriteLine("License loading complete");
 
 do
 {
 	try
 	{
-		await menu.ShowTableMainAsync(tgDownloadSettings);
+		await tgMenu.ShowTableMainAsync(tgDownloadSettings);
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
 			.Title($"  {tgLocale.MenuSwitchNumber}")
@@ -74,46 +83,46 @@ do
 				tgLocale.MenuMainExit, tgLocale.MenuMainApp, tgLocale.MenuMainConnection, tgLocale.MenuMainStorage,
 				tgLocale.MenuMainFilters, tgLocale.MenuMainDownload, tgLocale.MenuMainAdvanced, tgLocale.MenuMainUpdate, tgLocale.MenuMainLicense));
 		if (prompt.Equals(tgLocale.MenuMainExit))
-			menu.Value = TgEnumMenuMain.Exit;
+			tgMenu.Value = TgEnumMenuMain.Exit;
 		if (prompt.Equals(tgLocale.MenuMainApp))
 		{
-			menu.Value = TgEnumMenuMain.AppSettings;
-			await menu.SetupAppSettingsAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.AppSettings;
+			await tgMenu.SetupAppSettingsAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainConnection))
 		{
-			menu.Value = TgEnumMenuMain.Connection;
-			await menu.SetupConnectionAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.Connection;
+			await tgMenu.SetupConnectionAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainStorage))
 		{
-			menu.Value = TgEnumMenuMain.Storage;
-			await menu.SetupStorageAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.Storage;
+			await tgMenu.SetupStorageAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainFilters))
 		{
-			menu.Value = TgEnumMenuMain.Filters;
-			await menu.SetupFiltersAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.Filters;
+			await tgMenu.SetupFiltersAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainDownload))
 		{
-			menu.Value = TgEnumMenuMain.Download;
-			await menu.SetupDownloadAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.Download;
+			await tgMenu.SetupDownloadAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainAdvanced))
 		{
-			menu.Value = TgEnumMenuMain.Advanced;
-			await menu.SetupAdvancedAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.Advanced;
+			await tgMenu.SetupAdvancedAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainUpdate))
 		{
-			menu.Value = TgEnumMenuMain.Update;
-			await menu.SetupUpdateAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.Update;
+			await tgMenu.SetupUpdateAsync(tgDownloadSettings);
 		}
 		if (prompt.Equals(tgLocale.MenuMainLicense))
 		{
-			menu.Value = TgEnumMenuMain.License;
-			await menu.SetupLicenseAsync(tgDownloadSettings);
+			tgMenu.Value = TgEnumMenuMain.License;
+			await tgMenu.SetupLicenseAsync(tgDownloadSettings);
 		}
 	}
 	catch (Exception ex)
@@ -124,4 +133,4 @@ do
 		tgLog.WriteLine(tgLocale.TypeAnyKeyForReturn);
 		Console.ReadKey();
 	}
-} while (menu.Value is not TgEnumMenuMain.Exit);
+} while (tgMenu.Value is not TgEnumMenuMain.Exit);

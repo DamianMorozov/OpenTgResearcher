@@ -18,7 +18,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	private TgEfAppRepository AppRepository { get; } = new();
 	private TgEfContactRepository ContactRepository { get; } = new();
 	private TgEfFilterRepository FilterRepository { get; } = new();
-	private TgEfLicenseRepository LicenseRepository { get; } = new();
+	private ITgEfLicenseRepository LicenseRepository { get; } = new TgEfLicenseRepository();
 	private TgEfProxyRepository ProxyRepository { get; } = new();
 	private TgEfSourceRepository SourceRepository { get; } = new();
 	private TgEfStoryRepository StoryRepository { get; } = new();
@@ -49,7 +49,8 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			ShowHeaders = false,
 			Border = TableBorder.Rounded,
 			// App version + Storage version + License
-			Title = new($"{TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / {TgLicense.CurrentLicense.Description}", Style.Plain),
+			Title = new($"{TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / " +
+				$"{TgLicense.CurrentLicense?.Description ?? string.Empty}", Style.Plain),
 		};
 		fillTableColumns(table);
 		await fillTableRowsAsync(tgDownloadSettings, table);
@@ -65,9 +66,6 @@ internal sealed partial class TgMenuHelper : ITgHelper
 
 	internal async Task ShowTableFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsFiltersAsync);
-
-	internal async Task ShowTableLicenseShortInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseShortInfoAsync);
 
 	internal async Task ShowTableLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseFullInfoAsync);
@@ -197,13 +195,6 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		var filters = (await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuFiltersAllCount)),
 			GetMarkup($"{filters.Count()}"));
-	}
-
-	/// <summary> License version </summary>
-	internal async Task FillTableRowsLicenseShortInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
-	{
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), GetMarkup(TgLicense.CurrentLicense.Description));
-		await Task.CompletedTask;
 	}
 
 	/// <summary> License view info </summary>
@@ -396,9 +387,10 @@ internal sealed partial class TgMenuHelper : ITgHelper
         // Count of threads
         switch (TgLicense.CurrentLicense.LicenseType)
         {
+	        case TgEnumLicenseType.Test:
 	        case TgEnumLicenseType.Paid:
 	        case TgEnumLicenseType.Premium:
-		        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByTestLicense)), GetMarkup($"{tgDownloadSettings.CountThreads}"));
+		        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByPaidLicense)), GetMarkup($"{tgDownloadSettings.CountThreads}"));
 		        break;
 	        default:
 		        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByFreeLicense)), GetMarkup($"{tgDownloadSettings.CountThreads}"));

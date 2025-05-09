@@ -33,9 +33,8 @@ public partial class TgLicense : ObservableRecipient
 				return true;
 			case TgEnumLicenseType.Test:
 			case TgEnumLicenseType.Paid:
-				return IsConfirmed && DateTime.Now < ValidTo;
 			case TgEnumLicenseType.Premium:
-				break;
+				return IsConfirmed && DateTime.Now <= ValidTo;
 		}
 		return false;
 	}

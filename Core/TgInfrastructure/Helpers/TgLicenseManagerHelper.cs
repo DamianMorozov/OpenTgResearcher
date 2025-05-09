@@ -14,20 +14,22 @@ public sealed class TgLicenseManagerHelper
 
 	#region Public and private methods
 
+	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
+	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
 	public TgLicense CurrentLicense { get; private set; } = null!;
 
-	public void ActivateDefaultLicense() => ActivateLicense(Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue);
+	public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue);
 
 	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription, 
 		string licensePaidDescription, string licensePremiumDescription) => 
-		ActivateLicense(Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue, 
+		ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue, 
 		licenseFreeDescription, licenseTestDescription, licensePaidDescription, licensePremiumDescription);
 
-	public void ActivateLicense(Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo, 
+	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo, 
 		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
 		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license")
 	{
-		CurrentLicense = new TgLicense() { LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
+		CurrentLicense = new TgLicense() { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
 		switch (licenseType)
 		{
 			case TgEnumLicenseType.Free:
@@ -44,8 +46,6 @@ public sealed class TgLicenseManagerHelper
 				break;
 		}
 	}
-
-	public bool IsLicenseValid() => CurrentLicense.IsValid();
 
 	#endregion
 }

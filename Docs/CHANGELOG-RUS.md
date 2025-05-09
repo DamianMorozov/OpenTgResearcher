@@ -4,7 +4,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.160] - 2025-05-07
+## [0.6.160] - 2025-05-09
 ### Изменено
 - Обновлено меню в TgDownloaderConsole
 - Обновлён просмотр лицензии в TgDownloaderConsole
@@ -12,6 +12,7 @@
 ### Добавлено
 - Добавлены методы запоминания размера и положения окна между сессиями в OpenTgResearcherDesktop
 - Добавлен запрос лицензии в TgDownloaderConsole
+- Добавлен запрос лицензии в OpenTgResearcherDesktop
 
 ## [0.6.140] - 2025-04-26
 ### Исправлено

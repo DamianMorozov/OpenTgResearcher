@@ -79,7 +79,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClearChats => "Clear all chats (delete from storage)";
 	public string MenuClearConnectionData => "Clear connection data";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
-	public string MenuDownloadSetCountThreadsByTestLicense => "Count of threads (1-100)";
+	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
 	public string MenuDownloadSetIsAddMessageId => "Enable join message ID with file";
 	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
@@ -137,8 +137,8 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#region License
 
-	public string MenuLicenseChange => "Change license online";
-	public string MenuLicenseCheck => "Check license online";
+	public string MenuLicenseChange => "Change license";
+	public string MenuLicenseCheck => "Check license";
 	public string MenuLicenseCheckServer => "Check license server";
 	public string MenuLicenseCheckUrl => "Check URL";
 	public string MenuLicenseCurrent => "Current license";
@@ -155,11 +155,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseUpdatedSuccessfully => "License updated successfully";
 	public string MenuLicenseUserNotLoggedIn => "User is not logged in";
 	public string MenuUserId => "User ID";
-	public string MenuWebSiteGlobalTitle => "opentgresearcher.online";
-	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
-	public string MenuWebSiteOpen => "Open the website to donate";
-	public string MenuWebSiteRussianTitle => "opentgresearcher.ru";
-	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
 
 	#endregion
 

@@ -57,6 +57,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	public partial bool IsDownloading { get; set; }
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
+	public static TgLicenseManagerHelper TgLicense => TgLicenseManagerHelper.Instance;
 
 	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{

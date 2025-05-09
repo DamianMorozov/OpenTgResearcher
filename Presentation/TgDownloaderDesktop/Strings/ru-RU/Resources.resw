@@ -1035,4 +1035,19 @@
   <data name="TextBlockExpiration.Text" xml:space="preserve">
     <value>Срок действия</value>
   </data>
+  <data name="MenuLicenseCheckServer" xml:space="preserve">
+    <value>Проверка сервера лицензий</value>
+  </data>
+  <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
+    <value>Код состояния</value>
+  </data>
+  <data name="MenuLicenseIsNotCofirmed" xml:space="preserve">
+    <value>Не подтверждено</value>
+  </data>
+  <data name="MenuLicenseUpdatedSuccessfully" xml:space="preserve">
+    <value>Лицензия успешно обновлена</value>
+  </data>
+  <data name="MenuLicenseUserNotLoggedIn" xml:space="preserve">
+    <value>Пользователь не авторизован</value>
+  </data>
 </root>

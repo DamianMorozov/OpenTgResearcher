@@ -19,7 +19,7 @@ public static class TgGlobalTools
 	/// <summary> Limit count of download threads by free license </summary>
 	public static int DownloadCountThreadsLimitFree => 10;
 	/// <summary> Limit count of download threads by test license </summary>
-	public static int DownloadCountThreadsLimitTest => 100;
+	public static int DownloadCountThreadsLimitPaid => 100;
 	/// <summary> Limit batch of saving messages </summary>
 	public static int BatchMessagesLimit => 100;
 

@@ -343,16 +343,16 @@
     <value>Checking for preview updates</value>
   </data>
   <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
-    <value>Check license online</value>
+    <value>Check license</value>
   </data>
   <data name="ActionCheckLicenseOnlineMsg" xml:space="preserve">
-    <value>Check license online</value>
+    <value>Check license</value>
   </data>
   <data name="ActionChangeLicenseOnline.Text" xml:space="preserve">
-    <value>Change license online</value>
+    <value>Change license</value>
   </data>
   <data name="ActionChangeLicenseOnlineMsg" xml:space="preserve">
-    <value>Change license online</value>
+    <value>Change license</value>
   </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>
@@ -972,5 +972,20 @@
   </data>
   <data name="TextBlockExpiration.Text" xml:space="preserve">
     <value>Expiration</value>
+  </data>
+  <data name="MenuLicenseCheckServer" xml:space="preserve">
+    <value>Check license server</value>
+  </data>
+  <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
+    <value>Status code</value>
+  </data>
+  <data name="MenuLicenseIsNotCofirmed" xml:space="preserve">
+    <value>Is not cofirmed</value>
+  </data>
+  <data name="MenuLicenseUpdatedSuccessfully" xml:space="preserve">
+    <value>License updated successfully</value>
+  </data>
+  <data name="MenuLicenseUserNotLoggedIn" xml:space="preserve">
+    <value>User is not logged in</value>
   </data>
 </root>

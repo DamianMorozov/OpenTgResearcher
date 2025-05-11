@@ -318,7 +318,7 @@
 							Margin="2,7,2,2"
 							FontWeight="Bold"
 							TextAlignment="Left"
-							Visibility="{x:Bind ViewModel.LicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.TgLicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
 						<ToggleSwitch
 							Grid.Row="3"
 							Grid.Column="1"
@@ -328,7 +328,7 @@
 							HorizontalContentAlignment="Left"
 							IsEnabled="False"
 							IsOn="{x:Bind ViewModel.IsBot, Mode=TwoWay}"
-							Visibility="{x:Bind ViewModel.LicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.TgLicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
 						<!--  BotToken  -->
 						<TextBlock
 							x:Uid="FieldBotToken"
@@ -337,7 +337,7 @@
 							Margin="12,7,2,2"
 							FontWeight="Bold"
 							TextAlignment="Left"
-							Visibility="{x:Bind ViewModel.LicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.TgLicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
 						<TextBox
 							Grid.Row="3"
 							Grid.Column="3"
@@ -347,7 +347,7 @@
 							IsEnabled="False"
 							Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
 							TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
-							Visibility="{x:Bind ViewModel.LicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.TgLicenseManager.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
 					</Grid>
 				</ScrollView>
 			</Expander>

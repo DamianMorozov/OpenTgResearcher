@@ -12,7 +12,7 @@ internal partial class TgMenuHelper
 	{
 		// License options
 		var menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByFreeLicense;
-		switch (TgLicense.CurrentLicense.LicenseType)
+		switch (TgLicenseManager.CurrentLicense.LicenseType)
 		{
 			case TgEnumLicenseType.Test:
 			case TgEnumLicenseType.Paid:
@@ -243,7 +243,7 @@ internal partial class TgMenuHelper
 			tgDownloadSettings.CountThreads = 1;
 		else
 		{
-			switch (TgLicense.CurrentLicense.LicenseType)
+			switch (TgLicenseManager.CurrentLicense.LicenseType)
 			{
 				case TgEnumLicenseType.Test:
 				case TgEnumLicenseType.Paid:

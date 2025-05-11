@@ -35,7 +35,7 @@
 	  <None Remove="TgLocale\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Include="..\..\..\TgDownloader-Helpers\TgDownloader.xml" Link="TgDownloader.xml">
+	  <Content Include="..\..\..\Helpers\TgDownloader.xml" Link="TgDownloader.xml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="applicationIcon.ico" />
@@ -63,7 +63,7 @@
 	  <Folder Include="Docs\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="..\..\..\TgDownloader-Helpers\TgDownloader.session" Link="TgDownloader.session">
+	  <None Include="..\..\..\Helpers\TgDownloader.session" Link="TgDownloader.session">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Include="..\..\Docs\CHANGELOG-RUS.md" Link="Docs\CHANGELOG-RUS.md">

@@ -57,6 +57,7 @@ public partial class App : Application
 				services.AddSingleton<INavigationService, NavigationService>();
 				// Core Services
 				services.AddSingleton<ISampleDataService, SampleDataService>();
+				services.AddSingleton<ILicenseService, LicenseService>();
 				services.AddSingleton<IFileService, FileService>();
 				services.AddTransient<ITgEfContext, TgEfDesktopContext>();
 				// Views and ViewModels
@@ -215,6 +216,9 @@ public partial class App : Application
 				var versionsResult = await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 				var version = versionsResult.Items.Single(x => x.Version == versionRepository.LastVersion);
 				TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
+				// License loading
+				textBlock.Text = $"{TgResourceExtensions.GetLicenseLoading()}...  90%";
+				await GetService<ILicenseService>().LicenseActivateAsync();
 			}, "Application launched");
 		}
 		catch (Exception ex)

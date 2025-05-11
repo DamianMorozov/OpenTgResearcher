@@ -54,6 +54,7 @@ global using TgInfrastructure.Common;
 global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.Helpers;
+global using TgInfrastructure.License;
 global using TgInfrastructure.Utils;
 global using TgInfrastructure.ViewModels;
 global using TgStorage.Connect;

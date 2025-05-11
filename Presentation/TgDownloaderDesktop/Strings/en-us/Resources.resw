@@ -988,4 +988,7 @@
   <data name="MenuLicenseUserNotLoggedIn" xml:space="preserve">
     <value>User is not logged in</value>
   </data>
+  <data name="LicenseLoading" xml:space="preserve">
+    <value>License loading</value>
+  </data>
 </root>

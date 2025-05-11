@@ -12,7 +12,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 	internal static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
 	internal static TgLogHelper TgLog => TgLogHelper.Instance;
-	internal static TgLicenseManagerHelper TgLicense => TgLicenseManagerHelper.Instance;
+	internal static TgLicenseManagerHelper TgLicenseManager => TgLicenseManagerHelper.Instance;
 	internal Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
 	internal TgEnumMenuMain Value { get; set; }
 	private TgEfAppRepository AppRepository { get; } = new();
@@ -50,7 +50,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			Border = TableBorder.Rounded,
 			// App version + Storage version + License
 			Title = new($"{TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / " +
-				$"{TgLicense.CurrentLicense?.Description ?? string.Empty}", Style.Plain),
+				$"{TgLicenseManager.CurrentLicense?.Description ?? string.Empty}", Style.Plain),
 		};
 		fillTableColumns(table);
 		await fillTableRowsAsync(tgDownloadSettings, table);
@@ -76,8 +76,8 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal async Task ShowTableApplicationAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsApplicationAsync);
 
-	internal async Task ShowTableClientAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientAsync);
+	internal async Task ShowTableConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsConnectionAsync);
 
 	internal async Task ShowTableDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
 		await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsDownloadAsync);
@@ -124,7 +124,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		// Storage version
 		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.StorageVersionShort)), GetMarkup(TgAppSettings.StorageVersion));
 		// License version
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.LicenseVersionShort)), GetMarkup(TgLicense.CurrentLicense.Description));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.LicenseVersionShort)), GetMarkup(TgLicenseManager.CurrentLicense.Description));
 
 		// App settings
 		var isReady = TgAppSettings.AppXml.IsExistsFileSession && TgAppSettings.AppXml.IsExistsEfStorage;
@@ -200,11 +200,11 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	/// <summary> License view info </summary>
 	internal async Task FillTableRowsLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseIsConfirmed)), GetMarkup(TgLicense.CurrentLicense.IsConfirmed.ToString()));
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), GetMarkup(TgLicense.CurrentLicense.GetLicenseKeyString()));
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), GetMarkup(TgLicense.CurrentLicense.Description));
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuUserId)), GetMarkup(TgLicense.CurrentLicense.GetUserIdString()));
-		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseExpiration)), GetMarkup(TgLicense.CurrentLicense.GetValidToString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseIsConfirmed)), GetMarkup(TgLicenseManager.CurrentLicense.IsConfirmed.ToString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), GetMarkup(TgLicenseManager.CurrentLicense.GetLicenseKeyString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), GetMarkup(TgLicenseManager.CurrentLicense.Description));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuUserId)), GetMarkup(TgLicenseManager.CurrentLicense.GetUserIdString()));
+		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseExpiration)), GetMarkup(TgLicenseManager.CurrentLicense.GetValidToString()));
 		await Task.CompletedTask;
 	}
 
@@ -216,7 +216,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		await Task.CompletedTask;
 	}
 
-	internal async Task FillTableRowsClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+	internal async Task FillTableRowsConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
 	{
 		// TG client settings
 		table.AddRow(GetMarkup(TgGlobalTools.ConnectClient.IsReady ?
@@ -385,7 +385,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuFiltersEnabledCount)), GetMarkup($"{filters.Count()}"));
 
         // Count of threads
-        switch (TgLicense.CurrentLicense.LicenseType)
+        switch (TgLicenseManager.CurrentLicense.LicenseType)
         {
 	        case TgEnumLicenseType.Test:
 	        case TgEnumLicenseType.Paid:

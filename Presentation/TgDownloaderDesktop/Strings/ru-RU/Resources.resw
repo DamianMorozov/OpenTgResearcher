@@ -1050,4 +1050,7 @@
   <data name="MenuLicenseUserNotLoggedIn" xml:space="preserve">
     <value>Пользователь не авторизован</value>
   </data>
+  <data name="LicenseLoading" xml:space="preserve">
+    <value>Загрузка лицензии</value>
+  </data>
 </root>

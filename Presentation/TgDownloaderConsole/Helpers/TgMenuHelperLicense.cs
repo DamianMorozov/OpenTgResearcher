@@ -18,7 +18,7 @@ internal sealed partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(TgLocale.MenuMainReturn,
 					TgLocale.MenuLicenseCheck,
-					TgLocale.MenuLicenseChange,
+					TgLocale.MenuLicenseChange
 				));
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
 			return TgEnumMenuLicense.LicenseCheck;
@@ -40,7 +40,7 @@ internal sealed partial class TgMenuHelper
 					await LicenseCheckAsync(tgDownloadSettings, isSilent: false);
 					break;
 				case TgEnumMenuLicense.LicenseChange:
-					await WebSiteOpenAsync(TgLicense.MenuWebSiteGlobalUrl);
+					await WebSiteOpenAsync(TgLicenseManager.MenuWebSiteGlobalUrl);
 					break;
 				case TgEnumMenuLicense.Return:
 					break;
@@ -57,7 +57,7 @@ internal sealed partial class TgMenuHelper
 			if (userId == 0)
 				return;
 
-			var apiUrls = new[] { TgLicense.MenuWebSiteGlobalUrl, TgLicense.MenuWebSiteRussianUrl };
+			var apiUrls = new[] { TgLicenseManager.MenuWebSiteGlobalUrl, TgLicenseManager.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
 
@@ -198,9 +198,9 @@ internal sealed partial class TgMenuHelper
 	private async Task LicenseActivateAsync()
 	{
 		var licenseDtos = await LicenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed);
+		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
 		if (currentLicenseDto is not null)
-			TgLicense.ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey, 
+			TgLicenseManager.ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey, 
 				currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
 	}
 

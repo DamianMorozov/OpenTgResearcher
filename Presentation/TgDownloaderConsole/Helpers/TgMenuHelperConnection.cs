@@ -40,7 +40,7 @@ internal partial class TgMenuHelper
 		TgEnumMenuClient menu;
 		do
 		{
-			await ShowTableClientAsync(tgDownloadSettings);
+			await ShowTableConnectionAsync(tgDownloadSettings);
 			menu = SetMenuConnection();
 			switch (menu)
 			{
@@ -80,27 +80,18 @@ internal partial class TgMenuHelper
 					nameof(TgEnumProxyType.Http),
 					nameof(TgEnumProxyType.Socks),
 					nameof(TgEnumProxyType.MtProto)));
-		TgEfProxyEntity proxy = new()
-		{
-			Type = prompt switch
-			{
-				nameof(TgEnumProxyType.Http) => TgEnumProxyType.Http,
-				nameof(TgEnumProxyType.Socks) => TgEnumProxyType.Socks,
-				nameof(TgEnumProxyType.MtProto) => TgEnumProxyType.MtProto,
-				_ => TgEnumProxyType.None
-			},
-		};
+		var proxy = GetProxyFromPrompt(prompt);
 		if (!Equals(proxy.Type, TgEnumProxyType.None))
 		{
 			proxy.HostName = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyHostName}:"));
 			proxy.Port = AnsiConsole.Ask<ushort>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyPort}:"));
 		}
 		var storageResult = await ProxyRepository.GetAsync(
-			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port}, isReadOnly: false);
+			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false);
 		if (!storageResult.IsExists)
 			await ProxyRepository.SaveAsync(proxy);
 		proxy = (await ProxyRepository.GetAsync(
-			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port}, isReadOnly: false)).Item;
+			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false)).Item;
 
 		var app = (await AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
 		app.ProxyUid = proxy.Uid;
@@ -108,6 +99,17 @@ internal partial class TgMenuHelper
 
 		return proxy;
 	}
+
+	private static TgEfProxyEntity GetProxyFromPrompt(string prompt) => new()
+	{
+		Type = prompt switch
+		{
+			nameof(TgEnumProxyType.Http) => TgEnumProxyType.Http,
+			nameof(TgEnumProxyType.Socks) => TgEnumProxyType.Socks,
+			nameof(TgEnumProxyType.MtProto) => TgEnumProxyType.MtProto,
+			_ => TgEnumProxyType.None
+		},
+	};
 
 	private async Task SetupClientProxyAsync()
 	{
@@ -210,7 +212,7 @@ internal partial class TgMenuHelper
 	public async Task ConnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
 		if (!isSilent)
-			await ShowTableClientAsync(tgDownloadSettings);
+			await ShowTableConnectionAsync(tgDownloadSettings);
 		var app = (await AppRepository.GetCurrentAppAsync()).Item;
 		var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
 		var proxy = proxyResult.Item;
@@ -228,7 +230,7 @@ internal partial class TgMenuHelper
 
 	public async Task DisconnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		await ShowTableClientAsync(tgDownloadSettings);
+		await ShowTableConnectionAsync(tgDownloadSettings);
 		await TgGlobalTools.ConnectClient.DisconnectAsync();
 	}
 
@@ -236,7 +238,7 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearConnectionData)) return;
 
-		await ShowTableClientAsync(tgDownloadSettings);
+		await ShowTableConnectionAsync(tgDownloadSettings);
 		await AppRepository.DeleteAllAsync();
 		await TgGlobalTools.ConnectClient.DisconnectAsync();
 	}

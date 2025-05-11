@@ -63,7 +63,7 @@ if (File.Exists(TgFileUtils.FileTgSession))
 	tgLog.WriteLine("Connection loading complete");
 }
 
-// License
+// License loading
 tgLog.WriteLine("License loading ...");
 tgLicenseManager.ActivateDefaultLicense();
 await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);

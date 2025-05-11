@@ -520,7 +520,7 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<!--  CountThreads  -->
+						<!--  Threads count  -->
 						<TextBlock
 							x:Uid="FieldCountThreads"
 							Grid.Row="0"
@@ -534,7 +534,7 @@
 							HorizontalAlignment="Stretch"
 							HorizontalContentAlignment="Left"
 							LargeChange="10"
-							Maximum="10"
+							Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=TwoWay}"
 							Minimum="1"
 							SmallChange="1"
 							SpinButtonPlacementMode="Compact"

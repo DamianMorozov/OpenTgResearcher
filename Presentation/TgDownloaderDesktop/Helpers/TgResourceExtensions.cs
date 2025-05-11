@@ -51,6 +51,7 @@ public static class TgResourceExtensions
 	public static string GetInDevelopment() => "InDevelopment".GetLocalized();
 	public static string GetInstallerLoading() => "InstallerLoading".GetLocalized();
 	public static string GetLicenseFreeDescription() => "LicenseFreeDescription".GetLocalized();
+	public static string GetLicenseLoading() => "LicenseLoading".GetLocalized();
 	public static string GetLicensePaidDescription() => "LicensePaidDescription".GetLocalized();
 	public static string GetLicensePremiumDescription() => "LicensePremiumDescription".GetLocalized();
 	public static string GetLicenseTestDescription() => "LicenseTestDescription".GetLocalized();

@@ -20,7 +20,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	public partial string Name { get; private set; }
 
 	[ObservableProperty]
-	public partial TgLicenseManagerHelper LicenseManager { get; set; } = TgLicenseManagerHelper.Instance;
+	public partial TgLicenseManagerHelper TgLicenseManager { get; set; } = TgLicenseManagerHelper.Instance;
 	[ObservableProperty]
 	public partial TgExceptionViewModel Exception { get; set; } = new();
 	[ObservableProperty]
@@ -57,7 +57,6 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	public partial bool IsDownloading { get; set; }
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
-	public static TgLicenseManagerHelper TgLicense => TgLicenseManagerHelper.Instance;
 
 	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{
@@ -84,7 +83,11 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 			Logger.LogInformation("Page loaded without XamlRoot.");
 	}
 
-	public virtual async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(async () => await Task.CompletedTask);
+	public virtual async Task OnNavigatedToAsync(NavigationEventArgs e) => 
+		await LoadDataAsync(async () =>
+		{
+			await Task.CompletedTask;
+		});
 
 	protected virtual async Task ReloadUiAsync()
 	{
@@ -224,7 +227,21 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		{
 			IsEnabledContent = false;
 			IsPageLoad = true;
-			await Task.Delay(250);
+			if (TgLicenseManager.CurrentLicense is not null)
+			{
+				switch (TgLicenseManager.CurrentLicense.LicenseType)
+				{
+					case TgEnumLicenseType.Test:
+					case TgEnumLicenseType.Paid:
+					case TgEnumLicenseType.Premium:
+						DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimitPaid;
+						break;
+					default:
+						DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimitFree;
+						break;
+				}
+			}
+			await Task.Delay(50);
 			await task();
 		}
 		finally

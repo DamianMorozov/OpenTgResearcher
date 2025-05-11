@@ -6,12 +6,12 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 ## Official site
 ### <div align="center"><b><a href="http://opentgresearcher.online">opentgresearcher.online</a></b></div>
 ### <div align="center"><b><a href="README.md">Readme</a> | <a href="Docs/CHANGELOG.md">Changelog</a> | <a href="Docs/RELEASES.md">Statistics</a></b></div>
-### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Screenshots</a> | <a href="Docs/GUIDES.md">Guides</a> | <a href="LICENSE.md">License</a></b></div>
+### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Screenshots</a> | <a href="Docs/GUIDES.md">Guides</a> | <a href="BUY-LICENSE.md">Buy license</a></b></div>
 
 ## Официальный сайт
 ### <div align="center"><b><a href="http://opentgresearcher.ru">opentgresearcher.ru</a></b></div>
 ### <div align="center"><b><a href="README-RUS.md">Прочти меня</a> | <a href="Docs/CHANGELOG-RUS.md">История версий</a> | <a href="Docs/RELEASES-RUS.md">Статистика</a></b></div>
-### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
+### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="BUY-LICENSE-RUS.md">Купить лицензию</a></b></div>
 
 ## Download
 - [Releases](https://github.com/DamianMorozov/OpenTgResearcher/releases)

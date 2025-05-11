@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgInfrastructure", "Core\Tg
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{49FCA776-C63B-4C0C-B2B2-E9CA0E5949ED}"
 	ProjectSection(SolutionItems) = preProject
+		Docs\BUY-LICENSE-RUS.md = Docs\BUY-LICENSE-RUS.md
+		Docs\BUY-LICENSE.md = Docs\BUY-LICENSE.md
 		Docs\CHANGELOG-RUS.md = Docs\CHANGELOG-RUS.md
 		Docs\CHANGELOG.md = Docs\CHANGELOG.md
 		Docs\GUIDE-SETUP-CONSOLE-RUS.md = Docs\GUIDE-SETUP-CONSOLE-RUS.md

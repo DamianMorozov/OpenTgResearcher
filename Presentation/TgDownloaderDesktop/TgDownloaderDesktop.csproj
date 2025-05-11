@@ -14,7 +14,7 @@
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <Version>0.6.150.0</Version>
+    <Version>0.6.170.0</Version>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
@@ -26,7 +26,7 @@
     <AppxBundle>Auto</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUri>c:\TgDownloader-Releases\</AppInstallerUri>
-    <PackageCertificateThumbprint>12ADC21F87DF252CACA6ACA3440704BA8FA91CEA</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>1B8946F76760ABE06A8156673BEB4671213357E7</PackageCertificateThumbprint>
   </PropertyGroup>
 
   <ItemGroup>

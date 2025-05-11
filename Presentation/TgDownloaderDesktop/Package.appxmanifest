@@ -11,15 +11,15 @@
   IgnorableNamespaces="uap rescap genTemplate">
 
   <Identity
-    Name="d0c48b6b-afe7-46b5-a630-2afcd7e2e083"
-    Publisher="CN=TgDownloader"
-    Version="0.5.370.0" />
+    Name="d0c48b6b-afe7-46b5-a630-2afcd7e2e085"
+    Publisher="CN=OpenTgResearcher"
+    Version="0.6.170.0" />
     
-  <mp:PhoneIdentity PhoneProductId="d0c48b6b-afe7-46b5-a630-2afcd7e2e083" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="d0c48b6b-afe7-46b5-a630-2afcd7e2e085" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     
   <Properties>
-    <DisplayName>TgDownloaderDesktop</DisplayName>
-    <PublisherDisplayName>TgDownloader</PublisherDisplayName>
+    <DisplayName>OpenTgResearcherDesktop</DisplayName>
+    <PublisherDisplayName>OpenTgResearcher</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

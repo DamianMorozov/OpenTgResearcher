@@ -2,19 +2,19 @@
 
 ## [0.6.170] - 2025-05-11
 ### OpenTgResearcherDesktop
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopHome.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopConnection.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopFilters.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopProxies.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopContacts.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopContactDetails.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopStories.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopChats.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopChatDetails.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopLogs.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopUpdate.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopLicense.png"></p>
-<p align="center"><img src="Assets/v0.6.050/TgDownloaderDesktopSettings.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopHome.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopConnection.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopFilters.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopProxies.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopContacts.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopContactDetails.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopStories.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopChats.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopChatDetails.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopLogs.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopUpdate.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopLicense.png"></p>
+<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopSettings.png"></p>
 ### OpenTgResearcherConsole
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderConsoleHome.png"></p>
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderConsoleApplication.png"></p>

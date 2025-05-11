@@ -35,6 +35,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	private ITgEfLicenseRepository LicenseRepository { get; } = new TgEfLicenseRepository();
 
 	public IRelayCommand LicenseShowInfoCommand { get; }
+	public IRelayCommand LicenseClearCommand { get; }
 	public IRelayCommand LicenseCheckCommand { get; }
 	public IRelayCommand LicenseChangeCommand { get; }
 
@@ -52,6 +53,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 			$"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		// Commands
 		LicenseShowInfoCommand = new AsyncRelayCommand(LicenseShowInfoAsync);
+		LicenseClearCommand = new AsyncRelayCommand(LicenseClearAsync);
 		LicenseCheckCommand = new AsyncRelayCommand(LicenseCheckAsync);
 		LicenseChangeCommand = new AsyncRelayCommand(LicenseChangeAsync);
 	}
@@ -98,6 +100,15 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 			TgLogUtils.LogFatal(ex);
 		}
 		await Task.CompletedTask;
+	}
+
+	private async Task LicenseClearAsync() => await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskDataClear());
+
+	private async Task LicenseClearCoreAsync()
+	{
+		await LicenseRepository.DeleteAllAsync();
+		await LicenseService.LicenseActivateAsync();
+		await LicenseShowInfoAsync();
 	}
 
 	private async Task LicenseCheckAsync()

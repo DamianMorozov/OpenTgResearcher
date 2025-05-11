@@ -6,6 +6,7 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuLicense
 {
 	Return,
+	LicenseClear,
 	LicenseCheck,
 	LicenseChange,
 }

@@ -68,6 +68,7 @@ internal partial class TgMenuHelper
 	private void TgStorageBackupDb()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbBackup)) return;
+
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
 		var backupResult = TgEfUtils.BackupDbAsync();
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
@@ -79,6 +80,7 @@ internal partial class TgMenuHelper
 	private async Task TgStorageCreateNewDbAsync()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbCreateNew)) return;
+
 		// Create and update storage
 		await TgEfUtils.CreateAndUpdateDbAsync();
 	}

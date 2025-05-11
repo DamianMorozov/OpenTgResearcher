@@ -17,9 +17,12 @@ internal sealed partial class TgMenuHelper
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(TgLocale.MenuMainReturn,
+					TgLocale.MenuLicenseClear,
 					TgLocale.MenuLicenseCheck,
 					TgLocale.MenuLicenseChange
 				));
+		if (prompt.Equals(TgLocale.MenuLicenseClear))
+			return TgEnumMenuLicense.LicenseClear;
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
 			return TgEnumMenuLicense.LicenseCheck;
 		if (prompt.Equals(TgLocale.MenuLicenseChange))
@@ -36,6 +39,9 @@ internal sealed partial class TgMenuHelper
 			menu = SetMenuLicense();
 			switch (menu)
 			{
+				case TgEnumMenuLicense.LicenseClear:
+					await LicenseClearAsync(tgDownloadSettings, isSilent: false);
+					break;
 				case TgEnumMenuLicense.LicenseCheck:
 					await LicenseCheckAsync(tgDownloadSettings, isSilent: false);
 					break;
@@ -46,6 +52,15 @@ internal sealed partial class TgMenuHelper
 					break;
 			}
 		} while (menu is not TgEnumMenuLicense.Return);
+	}
+
+	/// <summary> Clear license </summary>
+	internal async Task LicenseClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+	{
+		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseClear)) return;
+
+		await LicenseRepository.DeleteAllAsync();
+		await LicenseShowInfoAsync(tgDownloadSettings, [], isWait: false);
 	}
 
 	/// <summary> Check license </summary>
@@ -202,6 +217,8 @@ internal sealed partial class TgMenuHelper
 		if (currentLicenseDto is not null)
 			TgLicenseManager.ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey, 
 				currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
+		else
+			TgLicenseManager.ActivateDefaultLicense();
 	}
 
 	/// <summary> Open a web-site </summary>

@@ -141,6 +141,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseCheck => "Check license";
 	public string MenuLicenseCheckServer => "Check license server";
 	public string MenuLicenseCheckUrl => "Check URL";
+	public string MenuLicenseClear => "Clear license";
 	public string MenuLicenseCurrent => "Current license";
 	public string MenuLicenseDescription => "License description";
 	public string MenuLicenseEndpoint => "Endpoint";

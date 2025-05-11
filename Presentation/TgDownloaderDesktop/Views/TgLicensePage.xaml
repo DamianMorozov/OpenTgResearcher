@@ -103,6 +103,23 @@
 								Style="{ThemeResource BodyTextBlockStyle}"
 								Text="{x:Bind ViewModel.Expiration, Mode=OneWay}" />
 						</Grid>
+						<!--  Clear license  -->
+						<Button
+							Margin="0,5,5,0"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							Command="{x:Bind ViewModel.LicenseClearCommand, Mode=OneWay}"
+							IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+								<FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
+								<TextBlock
+									x:Uid="ActionClearLicenseOnline"
+									HorizontalAlignment="Left"
+									VerticalAlignment="Center"
+									HorizontalTextAlignment="Left" />
+							</StackPanel>
+						</Button>
+						<!--  Check license  -->
 						<Button
 							Margin="0,5,5,0"
 							HorizontalAlignment="Stretch"
@@ -118,6 +135,7 @@
 									HorizontalTextAlignment="Left" />
 							</StackPanel>
 						</Button>
+						<!--  Change license  -->
 						<Button
 							Margin="0,5,5,0"
 							HorizontalAlignment="Stretch"

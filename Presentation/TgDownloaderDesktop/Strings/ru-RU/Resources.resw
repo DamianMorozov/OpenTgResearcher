@@ -401,17 +401,20 @@
   <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
     <value>Проверка обновлений предварительного просмотра</value>
   </data>
+  <data name="ActionClearLicenseOnline.Text" xml:space="preserve">
+    <value>Очистить лицензию</value>
+  </data>
   <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
-    <value>Проверить лицензию онлайн</value>
+    <value>Проверить лицензию</value>
   </data>
   <data name="ActionCheckLicenseOnlineMsg" xml:space="preserve">
-    <value>Проверить лицензию онлайн</value>
+    <value>Проверить лицензию</value>
   </data>
   <data name="ActionChangeLicenseOnline.Text" xml:space="preserve">
-    <value>Сменить лицензию онлайн</value>
+    <value>Сменить лицензию</value>
   </data>
   <data name="ActionChangeLicenseOnlineMsg" xml:space="preserve">
-    <value>Сменить лицензию онлайн</value>
+    <value>Сменить лицензию</value>
   </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>ГитХаб сообщество</value>

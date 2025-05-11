@@ -342,6 +342,9 @@
   <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
     <value>Checking for preview updates</value>
   </data>
+  <data name="ActionClearLicenseOnline.Text" xml:space="preserve">
+    <value>Clear license</value>
+  </data>
   <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
     <value>Check license</value>
   </data>

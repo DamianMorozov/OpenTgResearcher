@@ -307,8 +307,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task AppClearCoreAsync()
 	{
-		var storageResult = await AppRepository.GetCurrentAppAsync(isReadOnly: false);
-		App = storageResult.IsExists ? storageResult.Item : new();
+		App = new();
 		ProxiesVms.Clear();
 		if (ProxyVm is not null)
 			ProxyVm.Dto = new();

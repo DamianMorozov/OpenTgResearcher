@@ -7,7 +7,7 @@ namespace TgDownloaderConsole.Helpers;
 [DebuggerDisplay("{ToDebugString()}")]
 internal sealed partial class TgMenuHelper
 {
-	#region Public and internal methods
+	#region Public and private methods
 
 	private static TgEnumMenuLicense SetMenuLicense()
 	{
@@ -57,7 +57,8 @@ internal sealed partial class TgMenuHelper
 	/// <summary> Clear license </summary>
 	internal async Task LicenseClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
-		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseClear)) return;
+		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseClear))
+			return;
 
 		await LicenseRepository.DeleteAllAsync();
 		await LicenseShowInfoAsync(tgDownloadSettings, [], isWait: false);
@@ -127,14 +128,11 @@ internal sealed partial class TgMenuHelper
 						await LicenseActivateAsync();
 					return;
 				}
-#if DEBUG
 				catch (Exception ex)
 				{
+#if DEBUG
 					Debug.WriteLine(ex);
 					Debug.WriteLine(ex.StackTrace);
-#else
-				catch (Exception)
-				{
 #endif
 					if (!isSilent)
 					{
@@ -146,16 +144,13 @@ internal sealed partial class TgMenuHelper
 			if (!isSilent)
 				await LicenseShowInfoAsync(tgDownloadSettings, []);
 		}
-#if DEBUG
 		catch (Exception ex)
 		{
+#if DEBUG
 			Debug.WriteLine(ex);
 			Debug.WriteLine(ex.StackTrace);
 			if (!isSilent)
 				AnsiConsole.WriteLine(ex.Message);
-#else
-		catch (Exception)
-		{
 #endif
 			if (!isSilent)
 			{
@@ -215,7 +210,7 @@ internal sealed partial class TgMenuHelper
 		var licenseDtos = await LicenseRepository.GetListDtosAsync();
 		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
 		if (currentLicenseDto is not null)
-			TgLicenseManager.ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey, 
+			TgLicenseManager.ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey,
 				currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
 		else
 			TgLicenseManager.ActivateDefaultLicense();
@@ -228,14 +223,11 @@ internal sealed partial class TgMenuHelper
 		{
 			Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 		}
-#if DEBUG
 		catch (Exception ex)
 		{
+#if DEBUG
 			Debug.WriteLine(ex, TgConstants.LogTypeConsole);
 			Debug.WriteLine(ex.StackTrace);
-#else
-		catch (Exception)
-		{
 #endif
 			AnsiConsole.WriteLine($"Opening error URL: {ex.Message}");
 		}

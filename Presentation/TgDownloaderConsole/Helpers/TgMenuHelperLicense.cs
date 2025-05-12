@@ -92,7 +92,7 @@ internal sealed partial class TgMenuHelper
 					}
 
 					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var licenseData = JsonSerializer.Deserialize<TgLicenseApiResponse>(jsonResponse, GetJsonOptions());
+					var licenseData = JsonSerializer.Deserialize<TgLicenseApiResponse>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
 					if (licenseData?.IsConfirmed != true)
 					{
 						if (!isSilent)
@@ -163,12 +163,6 @@ internal sealed partial class TgMenuHelper
 			await Task.CompletedTask;
 		}
 	}
-
-	private static JsonSerializerOptions GetJsonOptions() => new()
-	{
-		PropertyNameCaseInsensitive = true,
-		Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() }
-	};
 
 	private async Task<long> GetUserIdAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{

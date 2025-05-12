@@ -4,7 +4,7 @@
 namespace TgInfrastructure.License;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public partial class TgLicense : ObservableRecipient
+public sealed partial class TgLicense : ObservableRecipient
 {
 	#region Public and private fields, properties, constructor
 

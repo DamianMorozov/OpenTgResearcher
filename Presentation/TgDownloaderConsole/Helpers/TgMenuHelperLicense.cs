@@ -92,7 +92,7 @@ internal sealed partial class TgMenuHelper
 					}
 
 					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var licenseData = JsonSerializer.Deserialize<TgLicenseApiResponse>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+					var licenseData = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
 					if (licenseData?.IsConfirmed != true)
 					{
 						if (!isSilent)

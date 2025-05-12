@@ -16,20 +16,26 @@ public sealed class TgLicenseManagerHelper
 
 	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
 	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
-	public TgLicense CurrentLicense { get; private set; } = null!;
+	public TgLicenseDto CurrentLicense { get; private set; } = null!;
 
-	public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue);
+	public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);
 
 	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription, 
 		string licensePaidDescription, string licensePremiumDescription) => 
-		ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateTime.MinValue, 
+		ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue, 
 		licenseFreeDescription, licenseTestDescription, licensePaidDescription, licensePremiumDescription);
 
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo, 
 		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
+		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license") =>
+		ActivateLicense(isConfirmed, licenseKey, licenseType, userId, DateOnly.FromDateTime(validTo), licenseFreeDescription,
+		licenseTestDescription, licensePaidDescription, licensePremiumDescription);
+
+	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateOnly validTo, 
+		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
 		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license")
 	{
-		CurrentLicense = new TgLicense() { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
+		CurrentLicense = new TgLicenseDto() { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
 		switch (licenseType)
 		{
 			case TgEnumLicenseType.Free:

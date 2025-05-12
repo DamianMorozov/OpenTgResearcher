@@ -12,6 +12,7 @@ global using TgDownloaderConsole.Helpers;
 global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.Helpers;
+global using TgInfrastructure.License;
 global using TgInfrastructure.Utils;
 global using TgStorage.Common;
 global using TgStorage.Connect;

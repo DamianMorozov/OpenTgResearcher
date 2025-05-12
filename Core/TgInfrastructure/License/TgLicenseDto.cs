@@ -4,12 +4,12 @@
 namespace TgInfrastructure.License;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgLicense : ObservableRecipient
+public sealed partial class TgLicenseDto : ObservableRecipient
 {
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial string Description { get; private set; } = "Empty license";
+	public partial string Description { get; private set; } = string.Empty;
 	[ObservableProperty]
 	public partial Guid LicenseKey { get; set; } = Guid.Empty;
 	[ObservableProperty]
@@ -17,7 +17,7 @@ public sealed partial class TgLicense : ObservableRecipient
 	[ObservableProperty]
 	public partial long UserId { get; set; }
 	[ObservableProperty]
-	public partial DateTime ValidTo { get; set; } = DateTime.MinValue;
+	public partial DateOnly ValidTo { get; set; } = DateOnly.MinValue;
 	[ObservableProperty]
 	public partial bool IsConfirmed { get; set; }
 
@@ -25,32 +25,22 @@ public sealed partial class TgLicense : ObservableRecipient
 
 	#region Public and private methods
 
-	public bool IsValid()
+	public bool IsValid() => LicenseType switch
 	{
-		switch (LicenseType)
-		{
-			case TgEnumLicenseType.Free:
-				return true;
-			case TgEnumLicenseType.Test:
-			case TgEnumLicenseType.Paid:
-			case TgEnumLicenseType.Premium:
-				return IsConfirmed && DateTime.Now <= ValidTo;
-		}
-		return false;
-	}
+		TgEnumLicenseType.Free => true,
+		TgEnumLicenseType.Test or TgEnumLicenseType.Paid or TgEnumLicenseType.Premium => IsConfirmed && DateOnly.FromDateTime(DateTime.UtcNow) <= ValidTo,
+		_ => false,
+	};
 
 	public string ToDebugString() => Description;
 
-	public void SetDescription(string description)
-	{
-		Description = description;
-	}
+	public void SetDescription(string description) => Description = description;
 
 	public string GetLicenseKeyString() => LicenseKey == Guid.Empty ? "-" : $"{LicenseKey:D}";
 
 	public string GetUserIdString() => UserId == 0 ? "-" : $"{UserId}";
 
-	public string GetValidToString() => ValidTo <= DateTime.MinValue ? "-" : $"{ValidTo:yyyy-MM-dd}";
+	public string GetValidToString() => ValidTo <= DateOnly.MinValue ? "-" : $"{ValidTo:yyyy-MM-dd}";
 
 	#endregion
 }

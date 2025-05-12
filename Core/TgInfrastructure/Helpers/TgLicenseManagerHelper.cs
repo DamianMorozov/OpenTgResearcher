@@ -15,7 +15,9 @@ public sealed class TgLicenseManagerHelper
 	#region Public and private methods
 
 	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
+	public string MenuWebSiteGlobalLicenseBuyUrl => "http://opentgresearcher.online/licenses/";
 	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
+	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = null!;
 
 	public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);

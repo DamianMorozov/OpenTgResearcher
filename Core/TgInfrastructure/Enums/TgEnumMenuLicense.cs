@@ -8,5 +8,5 @@ public enum TgEnumMenuLicense
 	Return,
 	LicenseClear,
 	LicenseCheck,
-	LicenseChange,
+	LicenseBuy,
 }

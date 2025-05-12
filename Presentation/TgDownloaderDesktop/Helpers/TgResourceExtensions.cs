@@ -33,8 +33,8 @@ public static class TgResourceExtensions
 	public static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalized();
 	public static string AssertionRestartApp() => "AssertionRestartApp".GetLocalized();
 	public static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalized();
-	public static string GetActionChangeLicenseOnlineMsg() => "ActionChangeLicenseOnlineMsg".GetLocalized();
-	public static string GetActionCheckLicenseOnlineMsg() => "ActionCheckLicenseOnlineMsg".GetLocalized();
+	public static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalized();
+	public static string GetActionCheckLicenseMsg() => "ActionLicenseCheckMsg".GetLocalized();
 	public static string GetAppDisplayName() => "AppDisplayName".GetLocalized();
 	public static string GetAppLoading() => "AppLoading".GetLocalized();
 	public static string GetAppVersion() => "AppVersion".GetLocalized();

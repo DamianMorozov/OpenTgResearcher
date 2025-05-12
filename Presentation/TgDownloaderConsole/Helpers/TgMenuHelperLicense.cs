@@ -19,14 +19,14 @@ internal sealed partial class TgMenuHelper
 				.AddChoices(TgLocale.MenuMainReturn,
 					TgLocale.MenuLicenseClear,
 					TgLocale.MenuLicenseCheck,
-					TgLocale.MenuLicenseChange
+					TgLocale.MenuLicenseBuy
 				));
 		if (prompt.Equals(TgLocale.MenuLicenseClear))
 			return TgEnumMenuLicense.LicenseClear;
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
 			return TgEnumMenuLicense.LicenseCheck;
-		if (prompt.Equals(TgLocale.MenuLicenseChange))
-			return TgEnumMenuLicense.LicenseChange;
+		if (prompt.Equals(TgLocale.MenuLicenseBuy))
+			return TgEnumMenuLicense.LicenseBuy;
 		return TgEnumMenuLicense.Return;
 	}
 
@@ -45,8 +45,8 @@ internal sealed partial class TgMenuHelper
 				case TgEnumMenuLicense.LicenseCheck:
 					await LicenseCheckAsync(tgDownloadSettings, isSilent: false);
 					break;
-				case TgEnumMenuLicense.LicenseChange:
-					await WebSiteOpenAsync(TgLicenseManager.MenuWebSiteGlobalUrl);
+				case TgEnumMenuLicense.LicenseBuy:
+					await LicenseBuyAsync();
 					break;
 				case TgEnumMenuLicense.Return:
 					break;
@@ -176,6 +176,9 @@ internal sealed partial class TgMenuHelper
 		return userId;
 	}
 
+	/// <summary>
+	/// Show license
+	/// </summary>
 	private async Task LicenseShowInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<string> messages, bool isWait = true)
 	{
 		try
@@ -210,7 +213,10 @@ internal sealed partial class TgMenuHelper
 			TgLicenseManager.ActivateDefaultLicense();
 	}
 
-	/// <summary> Open a web-site </summary>
+	/// <summary> Buy license </summary>
+	private async Task LicenseBuyAsync() => await WebSiteOpenAsync(TgLicenseManager.MenuWebSiteGlobalLicenseBuyUrl);
+
+	/// <summary> Open web-site </summary>
 	private async Task WebSiteOpenAsync(string url)
 	{
 		try

@@ -113,7 +113,7 @@
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 								<FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
 								<TextBlock
-									x:Uid="ActionClearLicenseOnline"
+									x:Uid="ActionLicenseClear"
 									HorizontalAlignment="Left"
 									VerticalAlignment="Center"
 									HorizontalTextAlignment="Left" />
@@ -129,13 +129,13 @@
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 								<FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
 								<TextBlock
-									x:Uid="ActionCheckLicenseOnline"
+									x:Uid="ActionLicenseCheck"
 									HorizontalAlignment="Left"
 									VerticalAlignment="Center"
 									HorizontalTextAlignment="Left" />
 							</StackPanel>
 						</Button>
-						<!--  Change license  -->
+						<!--  Buy license  -->
 						<Button
 							Margin="0,5,5,0"
 							HorizontalAlignment="Stretch"
@@ -145,7 +145,7 @@
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 								<FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
 								<TextBlock
-									x:Uid="ActionChangeLicenseOnline"
+									x:Uid="ActionLicenseBuy"
 									HorizontalAlignment="Left"
 									VerticalAlignment="Center" />
 							</StackPanel>

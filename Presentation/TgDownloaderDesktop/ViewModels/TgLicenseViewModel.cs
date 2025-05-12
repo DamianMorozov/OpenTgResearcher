@@ -115,7 +115,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		try
 		{
-			LicenseLog = TgResourceExtensions.GetActionCheckLicenseOnlineMsg() + Environment.NewLine;
+			LicenseLog = TgResourceExtensions.GetActionCheckLicenseMsg() + Environment.NewLine;
 			var userId = await GetUserIdAsync();
 			if (userId == 0)
 				return;
@@ -200,7 +200,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		try
 		{
-			Process.Start(new ProcessStartInfo(TgLicenseManager.MenuWebSiteGlobalUrl) { UseShellExecute = true });
+			Process.Start(new ProcessStartInfo(TgLicenseManager.MenuWebSiteGlobalLicenseBuyUrl) { UseShellExecute = true });
 		}
 		catch (Exception ex)
 		{

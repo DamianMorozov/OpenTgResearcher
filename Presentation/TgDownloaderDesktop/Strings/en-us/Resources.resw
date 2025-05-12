@@ -342,20 +342,20 @@
   <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
     <value>Checking for preview updates</value>
   </data>
-  <data name="ActionClearLicenseOnline.Text" xml:space="preserve">
+  <data name="ActionLicenseClear.Text" xml:space="preserve">
     <value>Clear license</value>
   </data>
-  <data name="ActionCheckLicenseOnline.Text" xml:space="preserve">
+  <data name="ActionLicenseCheck.Text" xml:space="preserve">
     <value>Check license</value>
   </data>
-  <data name="ActionCheckLicenseOnlineMsg" xml:space="preserve">
+  <data name="ActionLicenseCheckMsg" xml:space="preserve">
     <value>Check license</value>
   </data>
-  <data name="ActionChangeLicenseOnline.Text" xml:space="preserve">
-    <value>Change license</value>
+  <data name="ActionLicenseBuy.Text" xml:space="preserve">
+    <value>Buy license</value>
   </data>
-  <data name="ActionChangeLicenseOnlineMsg" xml:space="preserve">
-    <value>Change license</value>
+  <data name="ActionLicenseBuyMsg" xml:space="preserve">
+    <value>Buy license</value>
   </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>

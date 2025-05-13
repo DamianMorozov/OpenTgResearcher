@@ -8,6 +8,8 @@ global using System.Globalization;
 global using System.Reflection;
 global using System.Text.Json;
 global using System.Text;
+global using TgBusinessLogic.Contracts;
+global using TgBusinessLogic.Services;
 global using TgDownloaderConsole.Helpers;
 global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Enums;

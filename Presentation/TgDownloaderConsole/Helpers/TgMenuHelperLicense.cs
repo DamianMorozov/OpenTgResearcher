@@ -60,7 +60,7 @@ internal sealed partial class TgMenuHelper
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseClear))
 			return;
 
-		await LicenseRepository.DeleteAllAsync();
+		await LicenseService.LicenseClearAsync();
 		await LicenseShowInfoAsync(tgDownloadSettings, [], isWait: false);
 	}
 
@@ -73,7 +73,7 @@ internal sealed partial class TgMenuHelper
 			if (userId == 0)
 				return;
 
-			var apiUrls = new[] { TgLicenseManager.MenuWebSiteGlobalUrl, TgLicenseManager.MenuWebSiteRussianUrl };
+			var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
 
@@ -92,8 +92,8 @@ internal sealed partial class TgMenuHelper
 					}
 
 					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var licenseData = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
-					if (licenseData?.IsConfirmed != true)
+					var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+					if (licenseDto?.IsConfirmed != true)
 					{
 						if (!isSilent)
 							await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseIsNotCofirmed}: {response.StatusCode}"]);
@@ -101,31 +101,12 @@ internal sealed partial class TgMenuHelper
 					}
 
 					// Updating an existing license or creating a new license
-					var licenseEntity = new TgEfLicenseEntity
-					{
-						IsConfirmed = licenseData.IsConfirmed,
-						LicenseKey = licenseData.LicenseKey,
-						LicenseType = licenseData.LicenseType,
-						UserId = licenseData.UserId,
-						ValidTo = DateTime.Parse($"{licenseData.ValidTo:yyyy-MM-dd}")
-					};
+					await LicenseService.LicenseUpdateAsync(licenseDto);
 
-					var licenseDtos = await LicenseRepository.GetListDtosAsync();
-					var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
-					if (currentLicenseDto is null)
-					{
-						await LicenseRepository.SaveAsync(licenseEntity);
-					}
-					else
-					{
-						var licenseExists = await LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-						licenseExists.Copy(licenseEntity, isUidCopy: false);
-						await LicenseRepository.SaveAsync(licenseEntity);
-					}
 					if (!isSilent)
 						await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, TgLocale.MenuLicenseUpdatedSuccessfully]);
 					else
-						await LicenseActivateAsync();
+						await LicenseService.LicenseActivateAsync();
 					return;
 				}
 				catch (Exception ex)
@@ -183,7 +164,7 @@ internal sealed partial class TgMenuHelper
 	{
 		try
 		{
-			await LicenseActivateAsync();
+			await LicenseService.LicenseActivateAsync();
 
 			await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
 			if (messages.Any())
@@ -202,19 +183,8 @@ internal sealed partial class TgMenuHelper
 		}
 	}
 
-	private async Task LicenseActivateAsync()
-	{
-		var licenseDtos = await LicenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
-		if (currentLicenseDto is not null)
-			TgLicenseManager.ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey,
-				currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
-		else
-			TgLicenseManager.ActivateDefaultLicense();
-	}
-
 	/// <summary> Buy license </summary>
-	private async Task LicenseBuyAsync() => await WebSiteOpenAsync(TgLicenseManager.MenuWebSiteGlobalLicenseBuyUrl);
+	private async Task LicenseBuyAsync() => await WebSiteOpenAsync(LicenseService.MenuWebSiteGlobalLicenseBuyUrl);
 
 	/// <summary> Open web-site </summary>
 	private async Task WebSiteOpenAsync(string url)

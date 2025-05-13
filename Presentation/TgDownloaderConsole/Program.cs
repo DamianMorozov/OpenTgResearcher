@@ -1,10 +1,11 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-// DI
+// DI register
 var containerBuilder = new ContainerBuilder();
 containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
 containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClient>();
+containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
 TgGlobalTools.Container = containerBuilder.Build();
 
 // TgGlobalTools
@@ -18,7 +19,6 @@ var tgDownloadSettings = new TgDownloadSettingsViewModel();
 var tgAppSettings = TgAppSettingsHelper.Instance;
 tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
 var tgMenu = new TgMenuHelper();
-var tgLicenseManager = TgLicenseManagerHelper.Instance;
 
 // Console loading
 Console.OutputEncoding = Encoding.UTF8;
@@ -65,7 +65,7 @@ if (File.Exists(TgFileUtils.FileTgSession))
 
 // License loading
 tgLog.WriteLine("License loading ...");
-tgLicenseManager.ActivateDefaultLicense();
+tgMenu.LicenseService.ActivateDefaultLicense();
 await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
 tgLog.WriteLine("License loading complete");
 

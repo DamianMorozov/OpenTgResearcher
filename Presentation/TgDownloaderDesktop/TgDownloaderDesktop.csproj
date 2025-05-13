@@ -52,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\TgBusinessLogic\TgBusinessLogic.csproj" />
     <ProjectReference Include="..\..\Core\TgDownloaderDesktop.Core\TgDownloaderDesktop.Core.csproj" />
     <ProjectReference Include="..\..\Core\TgInfrastructure\TgInfrastructure.csproj" />
     <ProjectReference Include="..\..\Core\TgStorage\TgStorage.csproj" />

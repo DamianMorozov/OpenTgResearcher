@@ -35,6 +35,8 @@ global using System.Text.Json;
 global using System.Text;
 global using System.Web;
 global using System;
+global using TgBusinessLogic.Contracts;
+global using TgBusinessLogic.Services;
 global using TgDownloaderConsole.Helpers;
 global using TgDownloaderDesktop.Activation;
 global using TgDownloaderDesktop.Common;

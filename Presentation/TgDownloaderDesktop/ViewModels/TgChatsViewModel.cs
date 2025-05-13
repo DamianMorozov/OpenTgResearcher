@@ -21,8 +21,8 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	public IRelayCommand UpdateOnlineCommand { get; }
 	public IRelayCommand SearchCommand { get; }
 
-	public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger) 
-		: base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
+	public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, ILogger<TgChatsViewModel> logger) 
+		: base(settingsService, navigationService, licenseService, logger, nameof(TgChatsViewModel))
 	{
 		// Commands
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);

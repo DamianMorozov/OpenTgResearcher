@@ -13,8 +13,8 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 	public IRelayCommand LoadLogsCommand { get; }
 	public IRelayCommand DeleteLogFileCommand { get; }
 
-	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLogsViewModel> logger)
-		: base(settingsService, navigationService, logger, nameof(TgLogsViewModel))
+	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, ILogger<TgLogsViewModel> logger)
+		: base(settingsService, navigationService, licenseService, logger, nameof(TgLogsViewModel))
 	{
 		// Commands
 		LoadLogsCommand = new AsyncRelayCommand(LoadLogsAsync);

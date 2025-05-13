@@ -8,6 +8,8 @@ public partial class ShellViewModel : ObservableRecipient
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
+	public partial ITgLicenseService LicenseService { get; set; } = default!;
+	[ObservableProperty]
 	public partial bool IsBackEnabled { get; set; }
 	[ObservableProperty]
 	public partial object? Selected { get; set; }
@@ -27,13 +29,16 @@ public partial class ShellViewModel : ObservableRecipient
 	public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
 
-	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
+	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService,
+		ITgLicenseService licenseService)
 	{
 		AppNotificationService = appNotificationService;
 		AppNotificationService.ClientConnectionChanged += OnClientConnectionChanged;
 		NavigationService = navigationService;
 		NavigationService.Navigated += OnNavigated;
 		NavigationViewService = navigationViewService;
+		LicenseService = licenseService;
+
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
 	}
@@ -59,8 +64,8 @@ public partial class ShellViewModel : ObservableRecipient
 		// App version + Storage version + License
 		AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		StorageVersion = $"{TgResourceExtensions.GetStorage()} {TgAppSettingsHelper.Instance.StorageVersion}";
-		if (TgLicenseManagerHelper.Instance.CurrentLicense is not null)
-			License = TgLicenseManagerHelper.Instance.CurrentLicense.Description;
+		if (LicenseService.CurrentLicense is not null)
+			License = LicenseService.CurrentLicense.Description;
 	}
 
 	private void OnClientConnectionChanged(object? sender, bool isClientConnected)

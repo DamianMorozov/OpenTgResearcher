@@ -57,7 +57,7 @@ public partial class App : Application
 				services.AddSingleton<INavigationService, NavigationService>();
 				// Core Services
 				services.AddSingleton<ISampleDataService, SampleDataService>();
-				services.AddSingleton<ILicenseService, LicenseService>();
+				services.AddSingleton<ITgLicenseService, TgLicenseService>();
 				services.AddSingleton<IFileService, FileService>();
 				services.AddTransient<ITgEfContext, TgEfDesktopContext>();
 				// Views and ViewModels
@@ -197,7 +197,7 @@ public partial class App : Application
 					//})
 					.Run();
 				// License
-				TgLicenseManagerHelper.Instance.ActivateLicenseWithDescriptions(
+				GetService<ITgLicenseService>().ActivateLicenseWithDescriptions(
 					TgResourceExtensions.GetLicenseFreeDescription(), TgResourceExtensions.GetLicenseTestDescription(), 
 					TgResourceExtensions.GetLicensePaidDescription(), TgResourceExtensions.GetLicensePremiumDescription());
 				// Register TgEfContext as the DbContext for EF Core
@@ -218,7 +218,7 @@ public partial class App : Application
 				TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
 				// License loading
 				textBlock.Text = $"{TgResourceExtensions.GetLicenseLoading()}...  90%";
-				await GetService<ILicenseService>().LicenseActivateAsync();
+				await GetService<ITgLicenseService>().LicenseActivateAsync();
 			}, "Application launched");
 		}
 		catch (Exception ex)

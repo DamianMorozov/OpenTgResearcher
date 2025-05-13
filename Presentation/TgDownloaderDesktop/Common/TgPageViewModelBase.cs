@@ -14,13 +14,13 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	[ObservableProperty]
 	public partial INavigationService NavigationService { get; private set; }
 	[ObservableProperty]
+	public partial ITgLicenseService LicenseService { get; set; } = default!;
+	[ObservableProperty]
 	public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
 
 	[ObservableProperty]
 	public partial string Name { get; private set; }
 
-	[ObservableProperty]
-	public partial TgLicenseManagerHelper TgLicenseManager { get; set; } = TgLicenseManagerHelper.Instance;
 	[ObservableProperty]
 	public partial TgExceptionViewModel Exception { get; set; } = new();
 	[ObservableProperty]
@@ -58,10 +58,12 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
 
-	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
+	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, 
+		ILogger<TgPageViewModelBase> logger, string name)
 	{
 		SettingsService = settingsService;
 		NavigationService = navigationService;
+		LicenseService = licenseService;
 		Logger = logger;
 		Name = name;
 	}
@@ -227,9 +229,9 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		{
 			IsEnabledContent = false;
 			IsPageLoad = true;
-			if (TgLicenseManager.CurrentLicense is not null)
+			if (LicenseService.CurrentLicense is not null)
 			{
-				switch (TgLicenseManager.CurrentLicense.LicenseType)
+				switch (LicenseService.CurrentLicense.LicenseType)
 				{
 					case TgEnumLicenseType.Test:
 					case TgEnumLicenseType.Paid:

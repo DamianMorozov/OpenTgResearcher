@@ -9,12 +9,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial ILicenseService LicenseService { get; private set; } = default!;
-
-	[ObservableProperty]
 	public partial string AppVersionFull { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string VersionDescription { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string AppVersionTitle { get; set; } = string.Empty;
 	[ObservableProperty]
@@ -32,22 +27,16 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial string LicenseLog { get; set; } = string.Empty;
 
-	private ITgEfLicenseRepository LicenseRepository { get; } = new TgEfLicenseRepository();
-
 	public IRelayCommand LicenseShowInfoCommand { get; }
 	public IRelayCommand LicenseClearCommand { get; }
 	public IRelayCommand LicenseCheckCommand { get; }
 	public IRelayCommand LicenseChangeCommand { get; }
 
-	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger,
-		ILicenseService licenseService) 
-		: base(settingsService, navigationService, logger, nameof(TgLicenseViewModel))
+	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, ILogger<TgLicenseViewModel> logger) 
+		: base(settingsService, navigationService, licenseService, logger, nameof(TgLicenseViewModel))
 	{
-		LicenseService = licenseService;
-		
 		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";
-		VersionDescription = GetVersionDescription();
 		AppVersionTitle =
 			$"{TgConstants.AppTitleDesktop} " +
 			$"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
@@ -70,30 +59,30 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		await LicenseShowInfoAsync();
 	});
 
-	private static string GetVersionDescription()
-	{
-		Version version;
-		if (TgRuntimeHelper.IsMSIX)
-		{
-			var packageVersion = Package.Current.Id.Version;
-			version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
-		}
-		else
-		{
-			version = Assembly.GetExecutingAssembly().GetName().Version!;
-		}
-		return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
-	}
+	//private static string GetVersionDescription()
+	//{
+	//	Version version;
+	//	if (TgRuntimeHelper.IsMSIX)
+	//	{
+	//		var packageVersion = Package.Current.Id.Version;
+	//		version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
+	//	}
+	//	else
+	//	{
+	//		version = Assembly.GetExecutingAssembly().GetName().Version!;
+	//	}
+	//	return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+	//}
 
 	private async Task LicenseShowInfoAsync() 
 	{
 		try
 		{
-			IsConfirmed = TgLicenseManager.CurrentLicense.IsConfirmed.ToString();
-			LicenseKey = TgLicenseManager.CurrentLicense.GetLicenseKeyString();
-			LicenseDescription = TgLicenseManager.CurrentLicense.Description;
-			UserId = TgLicenseManager.CurrentLicense.GetUserIdString();
-			Expiration = TgLicenseManager.CurrentLicense.GetValidToString();
+			IsConfirmed = LicenseService.CurrentLicense.IsConfirmed.ToString();
+			LicenseKey = LicenseService.CurrentLicense.GetLicenseKeyString();
+			LicenseDescription = LicenseService.CurrentLicense.Description;
+			UserId = LicenseService.CurrentLicense.GetUserIdString();
+			Expiration = LicenseService.CurrentLicense.GetValidToString();
 		}
 		catch (Exception ex)
 		{
@@ -106,7 +95,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	private async Task LicenseClearCoreAsync()
 	{
-		await LicenseRepository.DeleteAllAsync();
+		await LicenseService.LicenseClearAsync();
 		await LicenseService.LicenseActivateAsync();
 		await LicenseShowInfoAsync();
 	}
@@ -120,7 +109,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 			if (userId == 0)
 				return;
 
-			var apiUrls = new[] { TgLicenseManager.MenuWebSiteGlobalUrl, TgLicenseManager.MenuWebSiteRussianUrl };
+			var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
 
@@ -138,35 +127,16 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 					}
 
 					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var licenseData = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
-					if (licenseData?.IsConfirmed != true)
+					var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+					if (licenseDto?.IsConfirmed != true)
 					{
 						LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotCofirmed()}: {response.StatusCode}" + Environment.NewLine;
 						continue;
 					}
 
 					// Updating an existing license or creating a new license
-					var licenseEntity = new TgEfLicenseEntity
-					{
-						IsConfirmed = licenseData.IsConfirmed,
-						LicenseKey = licenseData.LicenseKey,
-						LicenseType = licenseData.LicenseType,
-						UserId = licenseData.UserId,
-						ValidTo = DateTime.Parse($"{licenseData.ValidTo:yyyy-MM-dd}")
-					};
+					await LicenseService.LicenseUpdateAsync(licenseDto);
 
-					var licenseDtos = await LicenseRepository.GetListDtosAsync();
-					var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
-					if (currentLicenseDto is null)
-					{
-						await LicenseRepository.SaveAsync(licenseEntity);
-					}
-					else
-					{
-						var licenseExists = await LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-						licenseExists.Copy(licenseEntity, isUidCopy: false);
-						await LicenseRepository.SaveAsync(licenseEntity);
-					}
 					LicenseLog += TgResourceExtensions.GetMenuLicenseUpdatedSuccessfully() + Environment.NewLine;
 					return;
 				}
@@ -200,7 +170,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		try
 		{
-			Process.Start(new ProcessStartInfo(TgLicenseManager.MenuWebSiteGlobalLicenseBuyUrl) { UseShellExecute = true });
+			Process.Start(new ProcessStartInfo(LicenseService.MenuWebSiteGlobalLicenseBuyUrl) { UseShellExecute = true });
 		}
 		catch (Exception ex)
 		{

@@ -266,6 +266,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgClientException => "Client exception";
 	public string TgClientFix => "Client fix";
 	public string TgClientFixTryToDeleteSession => "Try to delete session file";
+	public string TgClientIsBot => "Is bot";
 	public string TgClientProxyException => "Proxy exception";
 	public string TgClientProxyHostName => "Proxy hostname";
 	public string TgClientProxyPort => "Proxy port";
@@ -274,6 +275,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgClientProxyType => "Proxy type";
 	public string TgClientSetupCompleteError => "The TG client setup was completed with errors";
 	public string TgClientSetupCompleteSuccess => "The TG client setup was completed successfully";
+	public string TgClientUseBot => "Use bot";
 	public string TgClientUserId => "User ID";
 	public string TgClientUserIsActive => "User active";
 	public string TgClientUserName => "User name";

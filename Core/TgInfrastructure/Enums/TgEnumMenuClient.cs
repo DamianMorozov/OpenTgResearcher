@@ -7,6 +7,7 @@ public enum TgEnumMenuClient
 {
 	Return,
 	ClearConnectionData,
+	UseBot,
 	RegisterTelegramApp,
 	SetProxy,
 	Connect,

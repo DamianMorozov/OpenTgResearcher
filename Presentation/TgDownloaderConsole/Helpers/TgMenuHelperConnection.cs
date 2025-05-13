@@ -18,12 +18,15 @@ internal partial class TgMenuHelper
 				.AddChoices(
 					TgLocale.MenuMainReturn,
 					TgLocale.MenuClearConnectionData,
+					TgLocale.TgClientUseBot,
 					TgLocale.MenuRegisterTelegramApp,
 					TgLocale.MenuSetProxy,
 					TgLocale.MenuClientConnect,
 					TgLocale.MenuClientDisconnect));
 		if (prompt.Equals(TgLocale.MenuClearConnectionData))
 			return TgEnumMenuClient.ClearConnectionData;
+		if (prompt.Equals(TgLocale.TgClientUseBot))
+			return TgEnumMenuClient.UseBot;
 		if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
 			return TgEnumMenuClient.RegisterTelegramApp;
 		if (prompt.Equals(TgLocale.MenuSetProxy))
@@ -45,7 +48,10 @@ internal partial class TgMenuHelper
 			switch (menu)
 			{
 				case TgEnumMenuClient.ClearConnectionData:
-					await ResetClientAsync(tgDownloadSettings);
+					await ClientClearAsync(tgDownloadSettings);
+					break;
+				case TgEnumMenuClient.UseBot:
+					await ClientUseBotAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuClient.RegisterTelegramApp:
 					await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
@@ -234,13 +240,25 @@ internal partial class TgMenuHelper
 		await TgGlobalTools.ConnectClient.DisconnectAsync();
 	}
 
-	public async Task ResetClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	public async Task ClientClearAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearConnectionData)) return;
 
 		await ShowTableConnectionAsync(tgDownloadSettings);
 		await AppRepository.DeleteAllAsync();
 		await TgGlobalTools.ConnectClient.DisconnectAsync();
+	}
+
+	public async Task ClientUseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		var useBot = AskQuestionYesNoReturnPositive(TgLocale.TgClientUseBot);
+
+		var storageResult = await AppRepository.GetCurrentAppAsync();
+		if (storageResult.IsExists)
+		{
+			storageResult.Item.UseBot = useBot;
+			await AppRepository.SaveAsync(storageResult.Item);
+		}
 	}
 
 	#endregion

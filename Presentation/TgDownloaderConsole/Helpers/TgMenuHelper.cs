@@ -283,15 +283,25 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		// Exceptions
 		if (TgGlobalTools.ConnectClient.ProxyException.IsExist)
 		{
-			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)),
-				GetMarkup(TgGlobalTools.ConnectClient.ProxyException.Message));
+			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)), GetMarkup(TgGlobalTools.ConnectClient.ProxyException.Message));
 		}
 		if (TgGlobalTools.ConnectClient.ClientException.IsExist)
 		{
-			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientException)),
-				GetMarkup(TgGlobalTools.ConnectClient.ClientException.Message));
-			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)),
-				GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
+			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientException)), GetMarkup(TgGlobalTools.ConnectClient.ClientException.Message));
+			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)), GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
+		}
+
+		// Use bot
+		switch (TgLicenseManager.CurrentLicense.LicenseType)
+		{
+			case TgEnumLicenseType.Free:
+				break;
+			case TgEnumLicenseType.Test:
+			case TgEnumLicenseType.Paid:
+			case TgEnumLicenseType.Premium:
+				var appDto = await AppRepository.GetCurrentAppDtoAsync();
+				table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUseBot)), GetMarkup(appDto.UseBot.ToString()));
+				break;
 		}
 
 		await Task.CompletedTask;

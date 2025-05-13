@@ -133,6 +133,21 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 			: new TgEfStorageResult<TgEfAppEntity>(TgEnumEntityState.NotExists, new TgEfAppEntity());
 	}
 
+	public TgEfAppDto GetCurrentAppDto()
+	{
+		var task = GetCurrentAppDtoAsync();
+		task.Wait();
+		return task.Result;
+	}
+
+	public async Task<TgEfAppDto> GetCurrentAppDtoAsync() => await
+		EfContext.Apps.AsTracking()
+			.Where(x => x.Uid != Guid.Empty)
+			.Select(x => new TgEfAppDto() { ApiHash = x.ApiHash, ApiId = x.ApiId, FirstName = x.FirstName, LastName = x.LastName, PhoneNumber = x.PhoneNumber,
+				ProxyUid = x.ProxyUid ?? Guid.Empty, BotTokenKey = x.BotTokenKey, UseBot = x.UseBot })
+			.FirstOrDefaultAsync()
+		?? new();
+
 	public TgEfStorageResult<TgEfAppEntity> GetCurrentApp(bool isReadOnly = true)
 	{
 		var task = GetCurrentAppAsync(isReadOnly);

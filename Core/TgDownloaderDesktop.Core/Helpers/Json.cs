@@ -9,7 +9,7 @@ public static class Json
     {
         return await Task.Run<T>(() =>
         {
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonSerializer.Deserialize<T>(value, TgJsonSerializerUtils.GetJsonOptions());
         });
     }
 
@@ -17,7 +17,7 @@ public static class Json
     {
         return await Task.Run<string>(() =>
         {
-            return JsonConvert.SerializeObject(value);
+            return JsonSerializer.Serialize(value);
         });
     }
 }

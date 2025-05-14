@@ -16,6 +16,7 @@ global using TgInfrastructure.Helpers;
 global using TgInfrastructure.Utils;
 global using TgSharedData.Dtos;
 global using TgSharedData.Enums;
+global using TgSharedData.Helpers;
 global using TgStorage.Connect;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Apps;

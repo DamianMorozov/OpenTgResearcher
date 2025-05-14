@@ -3,4 +3,5 @@
 
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using System.Diagnostics;
+global using System.Text.Json;
 global using TgSharedData.Enums;

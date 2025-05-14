@@ -17,4 +17,5 @@ global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Helpers;
 global using TgInfrastructure.Utils;
 global using TgInfrastructure.ViewModels;
+global using TgSharedData.Dtos;
 global using TgSharedData.Enums;

@@ -5,4 +5,4 @@ global using System.Text.Json;
 global using System.Text;
 global using TgDownloaderDesktop.Core.Contracts.Services;
 global using TgDownloaderDesktop.Core.Models;
-global using TgInfrastructure.Helpers;
+global using TgSharedData.Helpers;

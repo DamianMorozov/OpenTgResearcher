@@ -6,5 +6,6 @@ global using TgBusinessLogic.Contracts;
 global using TgDownloaderConsole.Helpers;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.License;
+global using TgInfrastructure.Models;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Licenses;

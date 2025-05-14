@@ -168,9 +168,14 @@
 				<behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
 					<behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
 						<DataTemplate>
-							<Grid>
+							<StackPanel Margin="{StaticResource NavigationViewHeaderMargin}" Orientation="Horizontal">
 								<TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{Binding}" />
-							</Grid>
+								<ToggleSwitch
+									x:Uid="ToggleSwitchShowSecretFields"
+									Margin="20,5,0,-5"
+									IsOn="False"
+									Toggled="ToggleSwitchShowSecretFields_Toggled" />
+							</StackPanel>
 						</DataTemplate>
 					</behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
 				</behaviors:NavigationViewHeaderBehavior>

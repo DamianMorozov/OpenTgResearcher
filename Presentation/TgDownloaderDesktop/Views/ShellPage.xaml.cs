@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.UI.Xaml.Controls.Primitives;
+
 namespace TgDownloaderDesktop.Views;
 
 public sealed partial class ShellPage
@@ -8,6 +10,7 @@ public sealed partial class ShellPage
 	#region Public and private fields, properties, constructor
 
 	public ShellViewModel ViewModel { get; }
+	private bool _isHandlingToggle = false;
 
 	public ShellPage(ShellViewModel viewModel)
 	{
@@ -68,6 +71,39 @@ public sealed partial class ShellPage
 		var navigationService = App.GetService<INavigationService>();
 		var result = navigationService.GoBack();
 		args.Handled = result;
+	}
+
+	private void ToggleSwitchShowSecretFields_Toggled(object sender, RoutedEventArgs e)
+	{
+		if (_isHandlingToggle)
+			return;
+
+		if (sender is not ToggleSwitch toggleSwitch)
+			return;
+		if (NavigationFrame.Content is not TgPageBase pageBase)
+		{
+			DefaultToggleSwitch(toggleSwitch);
+			return;
+		}
+		if (pageBase.ViewModel is not TgPageViewModelBase viewModelBase)
+		{
+			DefaultToggleSwitch(toggleSwitch);
+			return;
+		}
+		viewModelBase.IsDisplaySensitiveField = toggleSwitch.IsOn;
+	}
+
+	private void DefaultToggleSwitch(ToggleSwitch toggleSwitch)
+	{
+		try
+		{
+			_isHandlingToggle = true;
+			toggleSwitch.IsOn = false;
+		}
+		finally
+		{
+			_isHandlingToggle = false;
+		}
 	}
 
 	#endregion

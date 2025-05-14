@@ -960,6 +960,12 @@
   <data name="Storage" xml:space="preserve">
     <value>Storage</value>
   </data>
+  <data name="ToggleSwitchShowSecretFields.OffContent" xml:space="preserve">
+    <value>Hide sensitive fields</value>
+  </data>
+  <data name="ToggleSwitchShowSecretFields.OnContent" xml:space="preserve">
+    <value>Display sensitive fields</value>
+  </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">
     <value>Confirmed</value>

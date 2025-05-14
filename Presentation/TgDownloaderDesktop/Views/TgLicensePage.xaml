@@ -13,6 +13,7 @@
 	<common:TgPageBase.Resources>
 		<helpers:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
 		<helpers:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+		<helpers:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</common:TgPageBase.Resources>
 
 	<ScrollView VerticalScrollMode="Auto">
@@ -60,12 +61,22 @@
 								Grid.Column="0"
 								Margin="10,0,10,0"
 								Style="{ThemeResource BodyTextBlockStyle}" />
+							<!--  SensitiveField  -->
 							<TextBlock
 								Grid.Row="1"
 								Grid.Column="1"
 								Margin="10,0,10,0"
 								Style="{ThemeResource BodyTextBlockStyle}"
-								Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}" />
+								Text="{x:Bind ViewModel.SensitiveField, Mode=OneWay}"
+								Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+							<!--  LicenseKey  -->
+							<TextBlock
+								Grid.Row="1"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}"
+								Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 							<TextBlock
 								x:Uid="TextBlockLicenseDescription"
 								Grid.Row="2"
@@ -84,12 +95,22 @@
 								Grid.Column="0"
 								Margin="10,0,10,0"
 								Style="{ThemeResource BodyTextBlockStyle}" />
+							<!--  SensitiveField  -->
 							<TextBlock
 								Grid.Row="3"
 								Grid.Column="1"
 								Margin="10,0,10,0"
 								Style="{ThemeResource BodyTextBlockStyle}"
-								Text="{x:Bind ViewModel.UserId, Mode=OneWay}" />
+								Text="{x:Bind ViewModel.SensitiveField, Mode=OneWay}"
+								Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+							<!--  UserId  -->
+							<TextBlock
+								Grid.Row="3"
+								Grid.Column="1"
+								Margin="10,0,10,0"
+								Style="{ThemeResource BodyTextBlockStyle}"
+								Text="{x:Bind ViewModel.UserId, Mode=OneWay}"
+								Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 							<TextBlock
 								x:Uid="TextBlockExpiration"
 								Grid.Row="4"

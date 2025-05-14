@@ -1,9 +1,11 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgInfrastructure.Models;
+
 namespace TgBusinessLogic.Services;
 
-public sealed class TgLicenseService() : ITgLicenseService
+public sealed class TgLicenseService : ITgLicenseService
 {
 	#region Public and private fields, properties, constructor
 
@@ -13,7 +15,17 @@ public sealed class TgLicenseService() : ITgLicenseService
 	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = null!;
 
-	private ITgEfLicenseRepository LicenseRepository { get; } = new TgEfLicenseRepository();
+	private ITgEfLicenseRepository LicenseRepository { get; }
+
+	public TgLicenseService()
+	{
+		LicenseRepository = new TgEfLicenseRepository();
+	}
+
+	public TgLicenseService(IWebHostEnvironment webHostEnvironment)
+	{
+		LicenseRepository = new TgEfLicenseRepository(webHostEnvironment);
+	}
 
 	#endregion
 
@@ -93,6 +105,23 @@ public sealed class TgLicenseService() : ITgLicenseService
 			licenseExists.Copy(licenseEntity, isUidCopy: false);
 			await LicenseRepository.SaveAsync(licenseEntity);
 		}
+	}
+
+	public async Task<TgApiResult> GetApiCreatedAsync()
+	{
+		var result = new TgApiResult();
+		var licenseCountDto = new TgLicenseCountDto();
+		// Search license
+		var licenseDtos = await LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow);
+		if (licenseDtos.Any())
+		{
+			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
+			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
+			licenseCountDto.PreimumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
+			result.IsOk = true;
+		}
+		result.Value = licenseCountDto;
+		return result;
 	}
 
 	#endregion

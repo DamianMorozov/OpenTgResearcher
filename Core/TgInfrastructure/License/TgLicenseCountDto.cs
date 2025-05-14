@@ -10,10 +10,10 @@ public sealed class TgLicenseCountDto
 	public int TestCount { get; set; }
 	public int PaidCount { get; set; }
 	public int PreimumCount { get; set; }
-
-	#endregion
-
-	#region Public and private methods
+	public string Description =>
+		$"Test licenses: {TestCount} pcs." + Environment.NewLine +
+		$"Paid licenses: {PaidCount} pcs." + Environment.NewLine +
+		$"Premium licenses: {PreimumCount} pcs.";
 
 	public TgLicenseCountDto(int testCount, int paidCount, int preimumCount)
 	{

@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgInfrastructure.Models;
+
 namespace TgBusinessLogic.Contracts;
 
 public interface ITgLicenseService
@@ -20,4 +22,5 @@ public interface ITgLicenseService
 	public Task LicenseActivateAsync();
 	public Task LicenseClearAsync();
 	public Task LicenseUpdateAsync(TgLicenseDto licenseDto);
+	public Task<TgApiResult> GetApiCreatedAsync();
 }

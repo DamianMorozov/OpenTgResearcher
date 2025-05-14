@@ -3,9 +3,8 @@
 
 global using Microsoft.AspNetCore.Hosting;
 global using TgBusinessLogic.Contracts;
-global using TgDownloaderConsole.Helpers;
-global using TgInfrastructure.Enums;
-global using TgInfrastructure.License;
-global using TgInfrastructure.Models;
+global using TgSharedData.Api;
+global using TgSharedData.Dtos;
+global using TgSharedData.Enums;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Licenses;

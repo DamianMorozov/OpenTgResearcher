@@ -7,7 +7,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using NUnit.Framework;
 global using TgInfrastructure.Contracts;
-global using TgInfrastructure.Enums;
+global using TgSharedData.Enums;
 global using TgInfrastructure.Utils;
 global using TgStorage.Common;
 global using TgStorage.Connect;

@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Microsoft.UI.Xaml.Controls.Primitives;
-
 namespace TgDownloaderDesktop.Views;
 
 public sealed partial class ShellPage

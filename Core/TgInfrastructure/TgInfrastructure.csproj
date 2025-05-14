@@ -22,4 +22,10 @@
     <PackageReference Include="WTelegramBot" Version="9.0.1" />
     <PackageReference Include="WTelegramClient" Version="4.3.4" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TgSharedData\TgSharedData.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="License\" />
+  </ItemGroup>
 </Project>

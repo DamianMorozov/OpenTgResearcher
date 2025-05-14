@@ -13,20 +13,21 @@ public sealed class PageService : IPageService
 		Configure<ContentGridViewModel, ContentGridPage>();
 		Configure<DataGridViewModel, DataGridPage>();
 		Configure<ListDetailsViewModel, ListDetailsPage>();
+		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();
+		Configure<TgChatsViewModel, TgChatsPage>();
 		Configure<TgConnectViewModel, TgConnectPage>();
 		Configure<TgContactDetailsViewModel, TgContactDetailsPage>();
 		Configure<TgContactsViewModel, TgContactsPage>();
 		Configure<TgFiltersViewModel, TgFiltersPage>();
-		Configure<TgLogsViewModel, TgLogsPage>();
-		Configure<TgLoadDataViewModel, TgLoadDataPage>();
-		Configure<TgMainViewModel, TgMainPage>();
-		Configure<TgUpdateViewModel, TgUpdatePage>();
 		Configure<TgLicenseViewModel, TgLicensePage>();
+		Configure<TgLoadDataViewModel, TgLoadDataPage>();
+		Configure<TgLogsViewModel, TgLogsPage>();
+		Configure<TgMainViewModel, TgMainPage>();
 		Configure<TgProxiesViewModel, TgProxiesPage>();
 		Configure<TgSettingsViewModel, TgSettingsPage>();
-		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();
-		Configure<TgChatsViewModel, TgChatsPage>();
+		Configure<TgSplashScreenViewModel, TgSplashScreenPage>();
 		Configure<TgStoriesViewModel, TgStoriesPage>();
+		Configure<TgUpdateViewModel, TgUpdatePage>();
 		Configure<WebViewViewModel, WebViewPage>();
 	}
 

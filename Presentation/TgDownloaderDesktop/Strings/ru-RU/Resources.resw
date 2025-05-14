@@ -839,6 +839,9 @@
   <data name="TextBlockMark.Text" xml:space="preserve">
     <value>Пометить</value>
   </data>
+  <data name="TextBlockLoading.Text" xml:space="preserve">
+    <value>Загрузка...</value>
+  </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Буфер обмена</value>
   </data>

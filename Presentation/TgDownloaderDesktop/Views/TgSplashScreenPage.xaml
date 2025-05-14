@@ -1,0 +1,50 @@
+﻿<common:TgPageBase
+    x:Class="TgDownloaderDesktop.Views.TgSplashScreenPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:TgDownloaderDesktop.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:TgDownloaderDesktop.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgSplashScreenViewModel}"
+    mc:Ignorable="d">
+
+    <!--<ScrollView VerticalScrollMode="Auto">
+        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">-->
+    <Grid
+        Padding="20"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!--<TextBlock
+            x:Uid="TextBlockLoading"
+            Grid.Row="1"
+            Margin="50,10,50,10"
+            HorizontalAlignment="Center"
+            Style="{StaticResource TitleTextBlockStyle}"
+            TextAlignment="Center" />-->
+        <TextBlock
+            Grid.Row="2"
+            Margin="50,10,50,10"
+            HorizontalAlignment="Center"
+            Style="{StaticResource TitleTextBlockStyle}"
+            Text="{x:Bind ViewModel.LoadingText, Mode=OneWay}"
+            TextAlignment="Center" />
+        <ProgressBar
+            Grid.Row="3"
+            Height="40"
+            Margin="50,10,50,10"
+            Maximum="100"
+            Minimum="0"
+            Value="{x:Bind ViewModel.LoadingProgress, Mode=OneWay}" />
+    </Grid>
+    <!--</ContentControl>
+    </ScrollView>-->
+</common:TgPageBase>

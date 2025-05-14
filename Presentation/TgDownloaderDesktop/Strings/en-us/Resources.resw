@@ -777,6 +777,9 @@
   <data name="TextBlockMark.Text" xml:space="preserve">
     <value>Mark</value>
   </data>
+  <data name="TextBlockLoading.Text" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>
   </data>

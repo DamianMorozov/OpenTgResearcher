@@ -29,7 +29,6 @@ public sealed partial class MainWindow : WindowEx
 	private void LoadWindowState()
 	{
 		var localSettings = ApplicationData.Current.LocalSettings;
-
 		if (localSettings.Values.TryGetValue("WindowWidth", out var width) &&
 			localSettings.Values.TryGetValue("WindowHeight", out var height) &&
 			localSettings.Values.TryGetValue("WindowX", out var x) &&
@@ -38,10 +37,10 @@ public sealed partial class MainWindow : WindowEx
 			AppWindow.Resize(new Windows.Graphics.SizeInt32((int)width, (int)height));
 			AppWindow.Move(new Windows.Graphics.PointInt32((int)x, (int)y));
 		}
-		else
-		{
-			// Default
-			AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 600));
+        else
+        {
+            // Default
+            AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 600));
 			AppWindow.Move(new Windows.Graphics.PointInt32(0, 0));
 		}
 	}
@@ -49,12 +48,10 @@ public sealed partial class MainWindow : WindowEx
 	private void SaveWindowState()
 	{
 		var localSettings = ApplicationData.Current.LocalSettings;
-
-		var appWindow = AppWindow;
-		localSettings.Values["WindowWidth"] = appWindow.Size.Width;
-		localSettings.Values["WindowHeight"] = appWindow.Size.Height;
-		localSettings.Values["WindowX"] = appWindow.Position.X;
-		localSettings.Values["WindowY"] = appWindow.Position.Y;
+		localSettings.Values["WindowWidth"] = AppWindow.Size.Width;
+		localSettings.Values["WindowHeight"] = AppWindow.Size.Height;
+		localSettings.Values["WindowX"] = AppWindow.Position.X;
+		localSettings.Values["WindowY"] = AppWindow.Position.Y;
 	}
 
 	private void MainWindow_Closed(object sender, WindowEventArgs args) => SaveWindowState();

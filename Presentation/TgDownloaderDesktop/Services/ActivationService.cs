@@ -15,16 +15,31 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
 		// Set the MainWindow Content
 		if (App.MainWindow.Content == null)
 		{
-			_shell = App.GetService<ShellPage>();
+            // ShellPage loading
+            _shell = App.GetService<ShellPage>();
 			App.MainWindow.Content = _shell ?? new Frame();
-		}
-		// Handle activation via ActivationHandlers
-		await HandleActivationAsync(activationArgs);
+        }
+        // Handle activation via ActivationHandlers
+        await HandleActivationAsync(activationArgs);
 		// Activate the MainWindow
 		App.MainWindow.Activate();
-	}
 
-	private async Task HandleActivationAsync(object activationArgs)
+        // SplashScreen loading
+        var content = App.MainWindow.Content;
+        var splashScreenPage = App.GetService<TgSplashScreenPage>();
+        if (splashScreenPage is not null)
+        {
+            App.MainWindow.Content = splashScreenPage;
+            if (splashScreenPage.ViewModel is TgSplashScreenViewModel splashScreenViewModel)
+            {
+                await splashScreenViewModel.LoadAsync();
+            }
+        }
+        // Back to ShellPage
+        App.MainWindow.Content = content;
+    }
+
+    private async Task HandleActivationAsync(object activationArgs)
 	{
 		var activationHandler = activationHandlers.FirstOrDefault(h => h.CanHandle(activationArgs));
 		if (activationHandler != null)

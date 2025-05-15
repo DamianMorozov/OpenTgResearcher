@@ -41,6 +41,7 @@ public static class TgGlobalTools
 	public const string RouteChangeLog = "ChangeLog";
 	public const string RouteController = "[controller]";
 	public const string RouteCreated = "Created";
+	public const string RouteValid = "Valid";
 	public const string RouteGet = "Get";
 	public const string RoutePost = "Post";
 	public const string RouteRoot = "";

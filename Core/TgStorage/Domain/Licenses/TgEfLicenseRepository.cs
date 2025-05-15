@@ -35,7 +35,7 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 			// Find by UserId
-			itemFind = await GetQuery(isReadOnly).Where(x => x.UserId == item.UserId).SingleOrDefaultAsync();
+			//itemFind = await GetQuery(isReadOnly).Where(x => x.UserId == item.UserId).SingleOrDefaultAsync();
 			return itemFind is not null
 				? new(TgEnumEntityState.IsExists, itemFind)
 				: new TgEfStorageResult<TgEfLicenseEntity>(TgEnumEntityState.NotExists, item);

@@ -1,9 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgStorage.Models;
-using TgStorage.Utils;
-
 namespace TgBusinessLogic.Services;
 
 public sealed class TgLicenseService : ITgLicenseService
@@ -119,6 +116,23 @@ public sealed class TgLicenseService : ITgLicenseService
 	}
 
 	public async Task<TgApiResult> GetApiCreatedAsync()
+	{
+		var result = new TgApiResult();
+		var licenseCountDto = new TgLicenseCountDto();
+		// Search license
+		var licenseDtos = await LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
+		if (licenseDtos.Any())
+		{
+			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
+			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
+			licenseCountDto.PreimumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
+			result.IsOk = true;
+		}
+		result.Value = licenseCountDto;
+		return result;
+	}
+
+	public async Task<TgApiResult> GetApiValidAsync()
 	{
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();

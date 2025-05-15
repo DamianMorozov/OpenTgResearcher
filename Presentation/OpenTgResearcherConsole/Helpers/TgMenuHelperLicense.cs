@@ -67,8 +67,11 @@ internal sealed partial class TgMenuHelper
 	/// <summary> Check license </summary>
 	internal async Task LicenseCheckAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
-		try
-		{
+        if (!isSilent && AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseCheckWithUserId))
+            return;
+
+        try
+        {
 			var userId = await LicenseService.GetUserIdAsync();
             if (userId == 0)
             {

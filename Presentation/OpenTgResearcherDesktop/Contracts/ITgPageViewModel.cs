@@ -7,7 +7,7 @@ public interface ITgPageViewModel
 {
 	public string Name { get; }
 
-	public Task OnNavigatedToAsync(NavigationEventArgs e);
+	public Task OnNavigatedToAsync(NavigationEventArgs? e);
 	public void OnLoaded(object parameter);
 	public void OnClipboardWriteClick(object sender, RoutedEventArgs e);
 	public void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e);

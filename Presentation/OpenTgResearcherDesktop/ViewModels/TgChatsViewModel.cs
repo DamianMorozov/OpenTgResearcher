@@ -45,7 +45,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
 	#region Public and private methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 		{
 			await LoadDataStorageCoreAsync();
 			await ReloadUiAsync();

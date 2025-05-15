@@ -89,7 +89,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 			Logger.LogInformation("Page loaded without XamlRoot.");
 	}
 
-	public virtual async Task OnNavigatedToAsync(NavigationEventArgs e) => 
+	public virtual async Task OnNavigatedToAsync(NavigationEventArgs? e) => 
 		await LoadDataAsync(async () =>
 		{
 			await Task.CompletedTask;

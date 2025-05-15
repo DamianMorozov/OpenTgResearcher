@@ -42,9 +42,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
 	#region Public and private methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 		{
-			Uid = e.Parameter is Guid uid ? uid : Guid.Empty;
+			Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
 			await LoadDataStorageCoreAsync();
 			await ReloadUiAsync();
 		});

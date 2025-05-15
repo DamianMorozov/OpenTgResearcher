@@ -53,7 +53,7 @@
                         VerticalAlignment="Stretch"
                         Command="{x:Bind Path=ViewModel.SettingsDefaultCommand, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="10,0,20,0" Glyph="&#xE777;" />
+                            <FontIcon Margin="10,0,20,0" Glyph="&#xE72C;" />
                             <TextBlock
                                 x:Uid="ActionResetToDefault"
                                 HorizontalAlignment="Center"

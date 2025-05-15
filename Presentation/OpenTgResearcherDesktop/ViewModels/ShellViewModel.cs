@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
 namespace OpenTgResearcherDesktop.ViewModels;
 
 public partial class ShellViewModel : ObservableRecipient
@@ -31,6 +33,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
+	public IRelayCommand UpdatePageCommand { get; }
 
 	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService,
 		ITgLicenseService licenseService)
@@ -42,8 +45,10 @@ public partial class ShellViewModel : ObservableRecipient
 		NavigationViewService = navigationViewService;
 		LicenseService = licenseService;
 
+		// Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
+		UpdatePageCommand = new AsyncRelayCommand(UpdatePageAsync);
 	}
 
 	#endregion
@@ -60,7 +65,7 @@ public partial class ShellViewModel : ObservableRecipient
 			return;
 		}
 		var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-		if (selectedItem != null)
+		if (selectedItem is not null)
 		{
 			Selected = selectedItem;
 		}
@@ -104,5 +109,11 @@ public partial class ShellViewModel : ObservableRecipient
 		});
 	}
 
-	#endregion
+    private async Task UpdatePageAsync()
+	{
+		if (_eventArgs?.Content is not TgPageBase pageBase) return;
+        await pageBase.ViewModel.OnNavigatedToAsync(_eventArgs);
+    }
+
+    #endregion
 }

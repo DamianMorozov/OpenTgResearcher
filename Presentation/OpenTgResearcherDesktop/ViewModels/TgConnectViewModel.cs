@@ -95,7 +95,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	#region Public and private methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(AppLoadCoreAsync);
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(AppLoadCoreAsync);
 
 	private async Task AfterClientConnectAsync()
 	{

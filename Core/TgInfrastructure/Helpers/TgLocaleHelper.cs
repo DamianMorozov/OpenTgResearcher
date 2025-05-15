@@ -141,6 +141,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseCheck => "Check license";
 	public string MenuLicenseCheckServer => "Check license server";
 	public string MenuLicenseCheckUrl => "Check URL";
+	public string MenuLicenseCheckWithUserId => "To verify the license, the user ID is passed, continue";
 	public string MenuLicenseClear => "Clear license";
 	public string MenuLicenseCurrent => "Current license";
 	public string MenuLicenseDescription => "License description";
@@ -154,7 +155,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseRequestError => "Request error";
 	public string MenuLicenseResponseStatusCode => "Status code";
 	public string MenuLicenseUpdatedSuccessfully => "License updated successfully";
-	public string MenuLicenseUserNotLoggedIn => "User is not logged in";
+	public string MenuLicenseUserNotLoggedIn => "User is not authorized, try connecting again";
 	public string MenuUserId => "User ID";
 
 	#endregion

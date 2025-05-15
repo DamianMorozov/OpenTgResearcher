@@ -51,7 +51,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	#region Public and private methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 	{
 		await ReloadUiAsync();
 
@@ -87,8 +87,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	private async Task LicenseCheckAsync() => await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck());
 
-
-    private async Task LicenseCheckCoreAsync()
+	private async Task LicenseCheckCoreAsync()
 	{
         try
 		{

@@ -34,6 +34,70 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <!--  Clear license  -->
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,5,5,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.LicenseClearCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                    <TextBlock
+                                        x:Uid="ActionLicenseClear"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        HorizontalTextAlignment="Left" />
+                                </StackPanel>
+                            </Button>
+                            <!--  Check license  -->
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="0,5,5,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.LicenseCheckCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                    <TextBlock
+                                        x:Uid="ActionLicenseCheck"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        HorizontalTextAlignment="Left" />
+                                </StackPanel>
+                            </Button>
+                            <!--  Buy license  -->
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="0,5,5,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.LicenseChangeCommand, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                    <TextBlock
+                                        x:Uid="ActionLicenseBuy"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <!--  License data  -->
+                        <Grid Margin="0,20,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -124,55 +188,8 @@
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 Text="{x:Bind ViewModel.Expiration, Mode=OneWay}" />
                         </Grid>
-                        <!--  Clear license  -->
-                        <Button
-                            Margin="0,5,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.LicenseClearCommand, Mode=OneWay}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
-                                <TextBlock
-                                    x:Uid="ActionLicenseClear"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    HorizontalTextAlignment="Left" />
-                            </StackPanel>
-                        </Button>
-                        <!--  Check license  -->
-                        <Button
-                            Margin="0,5,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.LicenseCheckCommand, Mode=OneWay}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
-                                <TextBlock
-                                    x:Uid="ActionLicenseCheck"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    HorizontalTextAlignment="Left" />
-                            </StackPanel>
-                        </Button>
-                        <!--  Buy license  -->
-                        <Button
-                            Margin="0,5,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.LicenseChangeCommand, Mode=OneWay}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xE777;" />
-                                <TextBlock
-                                    x:Uid="ActionLicenseBuy"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
                         <TextBlock
-                            Margin="10,5,0,0"
+                            Margin="10,20,0,0"
                             Style="{ThemeResource BodyStrongTextBlockStyle}"
                             Text="{x:Bind ViewModel.LicenseLog, Mode=OneWay}" />
                     </StackPanel>

@@ -25,7 +25,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 
 	#region Public and private methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 	{
 		await LoadLogsCoreAsync();
 		await ReloadUiAsync();

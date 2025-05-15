@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>OpenTgResearcher</value>
+    <value>OpenTgResearcherDesktop</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
     <value>OpenTgResearcher</value>
@@ -418,6 +418,9 @@
   </data>
   <data name="ActionContinue.Text" xml:space="preserve">
     <value>Продолжить</value>
+  </data>
+  <data name="ActionUpdatePage.Text" xml:space="preserve">
+    <value>Обновить страницу</value>
   </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>ГитХаб сообщество</value>
@@ -1043,6 +1046,9 @@
   <data name="ToggleSwitchShowSecretFields.OnContent" xml:space="preserve">
     <value>Отображать конфиденциальные поля</value>
   </data>
+  <data name="AskUpdatePage" xml:space="preserve">
+    <value>Обновить страницу?</value>
+  </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">
     <value>Подтверждение</value>
@@ -1072,7 +1078,7 @@
     <value>Лицензия успешно обновлена</value>
   </data>
   <data name="MenuLicenseUserNotLoggedIn" xml:space="preserve">
-    <value>Пользователь не авторизован</value>
+    <value>Пользователь не авторизован, попробуйте подключиться ещё раз</value>
   </data>
   <data name="LicenseLoading" xml:space="preserve">
     <value>Загрузка лицензии</value>

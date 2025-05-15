@@ -1,7 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-
 namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ShellPage
@@ -14,7 +13,8 @@ public sealed partial class ShellPage
 	public ShellPage(ShellViewModel viewModel)
 	{
 		ViewModel = viewModel;
-		InitializeComponent();
+		DataContext = ViewModel;
+        InitializeComponent();
 
 		ViewModel.NavigationService.Frame = NavigationFrame;
 		ViewModel.NavigationViewService.Initialize(NavigationViewControl);

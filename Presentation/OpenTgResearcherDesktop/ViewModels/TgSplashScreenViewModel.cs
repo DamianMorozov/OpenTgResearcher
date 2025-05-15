@@ -11,6 +11,8 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string AppVersion { get; set; } = string.Empty;
     [ObservableProperty]
+    public partial bool IsLoadVelopack { get; set; }
+    [ObservableProperty]
     public partial bool IsLoadNotifications { get; set; }
     [ObservableProperty]
     public partial bool IsLoadLogging { get; set; }
@@ -38,6 +40,27 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     #region Public and private methods
 
     private Action ContinueAction => () => BackToMainWindow.Invoke();
+
+    public async Task LoadingVelopackInstallAsync()
+    {
+        await Task.Delay(250);
+        // Velopack
+        //textBlock.Text = $"{TgResourceExtensions.GetInstallerLoading()}...  30%";
+        //TgLogUtils.LogInformation(textBlock.Text);
+        //await Task.Delay(50);
+        VelopackApp.Build()
+            //.WithBeforeUninstallFastCallback((v) =>
+            //{
+            //	delete / clean up some files before uninstallation
+            //   UpdateLog += $"Uninstalling the {TgConstants.AppTitleConsole}!";
+            //})
+            //.OnFirstRun((v) =>
+            //{
+            //	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
+            //})
+            .Run();
+        IsLoadVelopack = true;
+    }
 
     public async Task LoadingNotificationsAsync()
     {

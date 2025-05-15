@@ -32,9 +32,6 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-        // Check and update Velopack
-        CheckVelopackInstallAndUpdate();
-
         // DI
         var containerBuilder = new ContainerBuilder();
 		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
@@ -130,26 +127,6 @@ public partial class App : Application
 
     #region Public and private methods
 
-    /// <summary> Check and update Velopack </summary>
-    public static void CheckVelopackInstallAndUpdate()
-    {
-        // Velopack
-        //textBlock.Text = $"{TgResourceExtensions.GetInstallerLoading()}...  30%";
-        //TgLogUtils.LogInformation(textBlock.Text);
-        //await Task.Delay(50);
-        VelopackApp.Build()
-            //.WithBeforeUninstallFastCallback((v) =>
-            //{
-            //	delete / clean up some files before uninstallation
-            //   UpdateLog += $"Uninstalling the {TgConstants.AppTitleConsole}!";
-            //})
-            //.OnFirstRun((v) =>
-            //{
-            //	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
-            //})
-            .Run();
-    }
-
     private static void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
 		// TODO: Log and handle exceptions as appropriate.
@@ -184,8 +161,8 @@ public partial class App : Application
 
 			await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 			{
-				// Activate the app
-				await GetService<IActivationService>().ActivateAsync(args);
+                // Activate the app
+                await GetService<IActivationService>().ActivateAsync(args);
 				
 			}, "Application launched");
 		}

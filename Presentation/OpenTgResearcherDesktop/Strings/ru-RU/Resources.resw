@@ -845,6 +845,9 @@
   <data name="TextBlockMark.Text" xml:space="preserve">
     <value>Пометить</value>
   </data>
+  <data name="TextBlockLoadingVelopack.Text" xml:space="preserve">
+    <value>Загрузка инсталлятора</value>
+  </data>
   <data name="TextBlockLoadingNotifications.Text" xml:space="preserve">
     <value>Загрузка уведомлений</value>
   </data>

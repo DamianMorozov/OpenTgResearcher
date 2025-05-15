@@ -34,8 +34,8 @@ jobs:
       - name: Install dependencies
         run: nuget restore OpenTgResearcher.sln
 
-      - name: Build app for Release TgDownloaderConsole
-        run: msbuild Presentation\TgDownloaderConsole\TgDownloaderConsole.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"
+      - name: Build app for Release OpenTgResearcherConsole
+        run: msbuild Presentation\OpenTgResearcherConsole\OpenTgResearcherConsole.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"
 
-      - name: Build app for Release TgDownloaderConsole
-        run: msbuild Presentation\TgDownloaderDesktop\TgDownloaderDesktop.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"
+      - name: Build app for Release OpenTgResearcherConsole
+        run: msbuild Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"

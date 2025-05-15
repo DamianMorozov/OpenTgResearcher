@@ -1,5 +1,22 @@
 # Screenshots
 
+## [0.6.220] - 2025-05-15
+### OpenTgResearcherDesktop
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_SplashScreen.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Main.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Connection.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Filters.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Proxies.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Contacts.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_ContactDetails.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Stories.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Chats.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_ChatDetails.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Logs.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Update.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_License.png"></p>
+<p align="center"><img src="Assets/v0.6.170/OpenTgResearcherDesktop_Settings.png"></p>
+
 ## [0.6.170] - 2025-05-11
 ### OpenTgResearcherDesktop
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopHome.png"></p>
@@ -10,7 +27,6 @@
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopContactDetails.png"></p>
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopStories.png"></p>
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopChats.png"></p>
-<p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopChatDetails.png"></p>
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopLogs.png"></p>
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopUpdate.png"></p>
 <p align="center"><img src="Assets/v0.6.170/TgDownloaderDesktopLicense.png"></p>

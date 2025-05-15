@@ -1,6 +1,9 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgStorage.Models;
+using TgStorage.Utils;
+
 namespace TgBusinessLogic.Services;
 
 public sealed class TgLicenseService : ITgLicenseService
@@ -13,16 +16,19 @@ public sealed class TgLicenseService : ITgLicenseService
 	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = null!;
 
+	private ITgEfAppRepository AppRepository { get; }
 	private ITgEfLicenseRepository LicenseRepository { get; }
 
 	public TgLicenseService()
 	{
+        AppRepository = new TgEfAppRepository();
 		LicenseRepository = new TgEfLicenseRepository();
 	}
 
 	public TgLicenseService(IWebHostEnvironment webHostEnvironment)
 	{
-		LicenseRepository = new TgEfLicenseRepository(webHostEnvironment);
+		AppRepository = new TgEfAppRepository(webHostEnvironment);
+        LicenseRepository = new TgEfLicenseRepository(webHostEnvironment);
 	}
 
 	#endregion
@@ -66,16 +72,22 @@ public sealed class TgLicenseService : ITgLicenseService
 
 	public async Task LicenseActivateAsync()
 	{
-		var licenseDtos = await LicenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
-		if (currentLicenseDto is not null)
-			ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey,
-				currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
-		else
-			ActivateDefaultLicense();
-	}
+		var userId = await GetUserIdAsync();
+        if (userId > 0)
+		{
+            var licenseDtos = await LicenseRepository.GetListDtosAsync();
+            var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow.Date && x.UserId == userId);
+            if (currentLicenseDto is not null)
+			{
+				ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey,
+					currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
+				return;
+			}
+        }
+        ActivateDefaultLicense();
+    }
 
-	public async Task LicenseClearAsync()
+    public async Task LicenseClearAsync()
 	{
 		await LicenseRepository.DeleteAllAsync();
 	}
@@ -91,9 +103,10 @@ public sealed class TgLicenseService : ITgLicenseService
 			ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
 		};
 
-		var licenseDtos = await LicenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow);
-		if (currentLicenseDto is null)
+        var userId = await GetUserIdAsync();
+        var licenseDtos = await LicenseRepository.GetListDtosAsync();
+		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow.Date && x.UserId == userId);
+        if (currentLicenseDto is null)
 		{
 			await LicenseRepository.SaveAsync(licenseEntity);
 		}
@@ -110,7 +123,7 @@ public sealed class TgLicenseService : ITgLicenseService
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow);
+		var licenseDtos = await LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
@@ -122,5 +135,13 @@ public sealed class TgLicenseService : ITgLicenseService
 		return result;
 	}
 
-	#endregion
+    public async Task<long> GetUserIdAsync()
+    {
+        if (TgGlobalTools.ConnectClient.Me is null)
+            await TgGlobalTools.ConnectClient.LoginUserAsync(isProxyUpdate: false);
+        var userId = TgGlobalTools.ConnectClient.Me?.ID ?? 0;
+        return userId;
+    }
+
+    #endregion
 }

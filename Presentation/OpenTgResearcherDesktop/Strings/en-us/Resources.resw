@@ -1015,4 +1015,10 @@
   <data name="LicenseLoading" xml:space="preserve">
     <value>License loading</value>
   </data>
+  <data name="AskLicenseClear" xml:space="preserve">
+    <value>Remove license?</value>
+  </data>
+  <data name="AskLicenseCheck" xml:space="preserve">
+    <value>To verify the license, the user ID is passed, continue?</value>
+  </data>
 </root>

@@ -21,6 +21,8 @@ public static class TgResourceExtensions
 	public static string AskDataClear() => "AskDataClear".GetLocalized();
 	public static string AskDataLoad() => "AskDataLoad".GetLocalized();
 	public static string AskDeleteFile() => "AskDeleteFile".GetLocalized();
+	public static string AskLicenseCheck() => "AskLicenseCheck".GetLocalized();
+	public static string AskLicenseClear() => "AskLicenseClear".GetLocalized();
 	public static string AskRestartApp() => "AskRestartApp".GetLocalized();
 	public static string AskSettingsClear() => "AskSettingsClear".GetLocalized();
 	public static string AskSettingsDefault() => "AskSettingsDefault".GetLocalized();
@@ -33,8 +35,8 @@ public static class TgResourceExtensions
 	public static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalized();
 	public static string AssertionRestartApp() => "AssertionRestartApp".GetLocalized();
 	public static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalized();
-	public static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalized();
 	public static string GetActionCheckLicenseMsg() => "ActionLicenseCheckMsg".GetLocalized();
+	public static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalized();
 	public static string GetAppDisplayName() => "AppDisplayName".GetLocalized();
 	public static string GetAppLoading() => "AppLoading".GetLocalized();
 	public static string GetAppVersion() => "AppVersion".GetLocalized();

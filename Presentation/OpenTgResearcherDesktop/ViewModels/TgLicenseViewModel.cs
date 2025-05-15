@@ -55,24 +55,9 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		await ReloadUiAsync();
 
-		await LicenseService.LicenseActivateAsync();
+        await LicenseService.LicenseActivateAsync();
 		await LicenseShowInfoAsync();
 	});
-
-	//private static string GetVersionDescription()
-	//{
-	//	Version version;
-	//	if (TgRuntimeHelper.IsMSIX)
-	//	{
-	//		var packageVersion = Package.Current.Id.Version;
-	//		version = new(packageVersion.Major, packageVersion.Minor, packageVersion.Build, packageVersion.Revision);
-	//	}
-	//	else
-	//	{
-	//		version = Assembly.GetExecutingAssembly().GetName().Version!;
-	//	}
-	//	return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
-	//}
 
 	private async Task LicenseShowInfoAsync() 
 	{
@@ -91,25 +76,32 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task LicenseClearAsync() => await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskDataClear());
+	private async Task LicenseClearAsync() => await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskLicenseClear());
 
 	private async Task LicenseClearCoreAsync()
 	{
 		await LicenseService.LicenseClearAsync();
-		await LicenseService.LicenseActivateAsync();
+        await LicenseService.LicenseActivateAsync();
 		await LicenseShowInfoAsync();
 	}
 
-	private async Task LicenseCheckAsync()
+	private async Task LicenseCheckAsync() => await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck());
+
+
+    private async Task LicenseCheckCoreAsync()
 	{
-		try
+        try
 		{
 			LicenseLog = TgResourceExtensions.GetActionCheckLicenseMsg() + Environment.NewLine;
-			var userId = await GetUserIdAsync();
-			if (userId == 0)
-				return;
+            var userId = await LicenseService.GetUserIdAsync();
+            if (userId == 0)
+            {
+                await LicenseShowInfoAsync();
+                LicenseLog += TgResourceExtensions.GetMenuLicenseUserNotLoggedIn();
+                return;
+            }
 
-			var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
+            var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
 
@@ -151,19 +143,6 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 			await LicenseService.LicenseActivateAsync();
 			await LicenseShowInfoAsync();
 		}
-	}
-
-	private async Task<long> GetUserIdAsync()
-	{
-		if (TgGlobalTools.ConnectClient.Me is null)
-			await TgGlobalTools.ConnectClient.LoginUserAsync(isProxyUpdate: false);
-		var userId = TgGlobalTools.ConnectClient.Me?.ID ?? 0;
-		if (userId == 0)
-		{
-			await LicenseShowInfoAsync();
-			LicenseLog += TgResourceExtensions.GetMenuLicenseUserNotLoggedIn();
-		}
-		return userId;
 	}
 
 	private async Task LicenseChangeAsync()

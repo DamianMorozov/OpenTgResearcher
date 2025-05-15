@@ -20,7 +20,8 @@
         x:Name="MainContent"
         Padding="10"
         HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
+        VerticalAlignment="Stretch"
+        Visibility="Collapsed">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="Auto" />

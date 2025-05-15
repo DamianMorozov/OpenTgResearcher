@@ -304,7 +304,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			case TgEnumLicenseType.Test:
 			case TgEnumLicenseType.Paid:
 			case TgEnumLicenseType.Premium:
-				var appDto = await AppRepository.GetCurrentAppDtoAsync();
+				var appDto = await AppRepository.GetCurrentDtoAsync();
 				table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUseBot)), GetMarkup(appDto.UseBot.ToString()));
 				break;
 		}

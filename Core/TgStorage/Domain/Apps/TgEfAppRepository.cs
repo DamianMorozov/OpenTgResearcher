@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System.Linq;
+
 namespace TgStorage.Domain.Apps;
 
 /// <summary> App repository </summary>
@@ -66,13 +68,13 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 		return dtos;
 	}
 
-	public async Task<List<TgEfAppDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
+    public async Task<List<TgEfAppDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where)
+    {
+        var dtos = take > 0
+            ? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+            : await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
+        return dtos;
+    }
 
 	public override async Task<TgEfStorageResult<TgEfAppEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
@@ -135,12 +137,12 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
 	public TgEfAppDto GetCurrentAppDto()
 	{
-		var task = GetCurrentAppDtoAsync();
+		var task = GetCurrentDtoAsync();
 		task.Wait();
 		return task.Result;
 	}
 
-	public async Task<TgEfAppDto> GetCurrentAppDtoAsync() => await
+	public async Task<TgEfAppDto> GetCurrentDtoAsync() => await
 		EfContext.Apps.AsTracking()
 			.Where(x => x.Uid != Guid.Empty)
 			.Select(x => new TgEfAppDto() { ApiHash = x.ApiHash, ApiId = x.ApiId, FirstName = x.FirstName, LastName = x.LastName, PhoneNumber = x.PhoneNumber,

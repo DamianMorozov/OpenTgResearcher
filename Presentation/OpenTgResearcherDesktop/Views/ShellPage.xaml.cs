@@ -1,6 +1,7 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+
 namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ShellPage
@@ -40,6 +41,12 @@ public sealed partial class ShellPage
 		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
 		KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
 	}
+
+    //protected override void OnNavigatedTo(NavigationEventArgs e)
+    //{
+    //    base.OnNavigatedTo(e);
+    //    ViewModel.IsShowSecretFields = false;
+    //}
 
 	private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
 	{

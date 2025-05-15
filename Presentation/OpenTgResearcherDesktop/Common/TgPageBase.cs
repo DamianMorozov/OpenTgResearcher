@@ -39,10 +39,9 @@ public abstract class TgPageBase : Page
         if (GridContent is null) return;
 
         var visual = ElementCompositionPreview.GetElementVisual(GridContent);
-
-        // Устанавливаем начальные значения
         visual.Opacity = 0;
         visual.Offset = new System.Numerics.Vector3(0, 200, 0);
+        GridContent.Visibility = Visibility.Visible;
 
         var compositor = visual.Compositor;
 

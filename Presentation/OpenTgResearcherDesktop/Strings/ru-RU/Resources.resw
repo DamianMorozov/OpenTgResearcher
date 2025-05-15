@@ -1077,4 +1077,10 @@
   <data name="LicenseLoading" xml:space="preserve">
     <value>Загрузка лицензии</value>
   </data>
+  <data name="AskLicenseClear" xml:space="preserve">
+    <value>Удалить лицензию?</value>
+  </data>
+  <data name="AskLicenseCheck" xml:space="preserve">
+    <value>Для проверки лицензии передаётся ID пользователя, продолжить?</value>
+  </data>
 </root>

@@ -7,4 +7,5 @@ global using TgSharedData.Api;
 global using TgSharedData.Dtos;
 global using TgSharedData.Enums;
 global using TgStorage.Contracts;
+global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Licenses;

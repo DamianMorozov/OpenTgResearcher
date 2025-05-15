@@ -21,4 +21,5 @@ public interface ITgLicenseService
 	public Task LicenseClearAsync();
 	public Task LicenseUpdateAsync(TgLicenseDto licenseDto);
 	public Task<TgApiResult> GetApiCreatedAsync();
+	public Task<long> GetUserIdAsync();
 }

@@ -69,11 +69,15 @@ internal sealed partial class TgMenuHelper
 	{
 		try
 		{
-			var userId = await GetUserIdAsync(tgDownloadSettings, isSilent);
-			if (userId == 0)
-				return;
+			var userId = await LicenseService.GetUserIdAsync();
+            if (userId == 0)
+            {
+				if (!isSilent)
+					await LicenseShowInfoAsync(tgDownloadSettings, [TgLocale.MenuLicenseUserNotLoggedIn]);
+                return;
+            }
 
-			var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
+            var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
 
@@ -145,18 +149,6 @@ internal sealed partial class TgMenuHelper
 		}
 	}
 
-	private async Task<long> GetUserIdAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
-	{
-		if (TgGlobalTools.ConnectClient.Me is null)
-			await TgGlobalTools.ConnectClient.LoginUserAsync(isProxyUpdate: false);
-		var userId = TgGlobalTools.ConnectClient.Me?.ID ?? 0;
-		if (userId == 0 && !isSilent)
-		{
-			await LicenseShowInfoAsync(tgDownloadSettings, [TgLocale.MenuLicenseUserNotLoggedIn]);
-		}
-		return userId;
-	}
-
 	/// <summary>
 	/// Show license
 	/// </summary>
@@ -164,7 +156,7 @@ internal sealed partial class TgMenuHelper
 	{
 		try
 		{
-			await LicenseService.LicenseActivateAsync();
+            await LicenseService.LicenseActivateAsync();
 
 			await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
 			if (messages.Any())

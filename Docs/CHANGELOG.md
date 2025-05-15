@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated license view
 - Updated NuGet packages
 - Updated Velopack installer
-- Updated splash screen, added animation to OpenTgResearcherDesktop
+- Updated splash screen and added animation in OpenTgResearcherDesktop
 - Fix loading and saving settings in OpenTgResearcherDesktop
 ### Added
 - Added methods to memorize window size and position between sessions in OpenTgResearcherDesktop

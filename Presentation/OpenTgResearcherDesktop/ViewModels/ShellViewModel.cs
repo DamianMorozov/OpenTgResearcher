@@ -8,8 +8,6 @@ public partial class ShellViewModel : ObservableRecipient
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial ITgLicenseService LicenseService { get; set; } = default!;
-	[ObservableProperty]
 	public partial bool IsBackEnabled { get; set; }
 	[ObservableProperty]
 	public partial object? Selected { get; set; }
@@ -21,12 +19,17 @@ public partial class ShellViewModel : ObservableRecipient
 	public partial string License { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial bool IsClientConnected { get; set; }
+	[ObservableProperty]
+	public partial bool IsShowSecretFields { get; set; }
+	
 	private NavigationEventArgs? _eventArgs;
 
-	public IAppNotificationService AppNotificationService { get; }
-	public INavigationService NavigationService { get; }
+    public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
-	public IRelayCommand ClientConnectCommand { get; }
+    public IAppNotificationService AppNotificationService { get; }
+    public ITgLicenseService LicenseService { get; }
+
+    public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
 
 	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService,

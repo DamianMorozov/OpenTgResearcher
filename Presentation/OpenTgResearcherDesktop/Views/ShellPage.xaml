@@ -169,11 +169,14 @@
                     <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                         <DataTemplate>
                             <StackPanel Margin="{StaticResource NavigationViewHeaderMargin}" Orientation="Horizontal">
+                                <!--  Page title  -->
                                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{Binding}" />
+                                <!--  Show secret fields  -->
                                 <ToggleSwitch
+                                    x:Name="ToggleSwitchShowSecretFields"
                                     x:Uid="ToggleSwitchShowSecretFields"
                                     Margin="20,5,0,-5"
-                                    IsOn="False"
+                                    IsOn="{Binding DataContext.IsShowSecretFields, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay}"
                                     Toggled="ToggleSwitchShowSecretFields_Toggled" />
                             </StackPanel>
                         </DataTemplate>

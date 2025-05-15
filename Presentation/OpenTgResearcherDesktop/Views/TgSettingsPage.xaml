@@ -191,7 +191,7 @@
 						HorizontalAlignment="Center">
 						<CheckBox
 							Margin="5,0,0,0"
-							IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay}"
+							IsChecked="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay}"
 							IsEnabled="False" />
 					</StackPanel>
 					<TextBox
@@ -199,7 +199,7 @@
 						Grid.Column="2"
 						Margin="2"
 						HorizontalAlignment="Stretch"
-						Text="{x:Bind ViewModel.SettingsService.AppStorage, Mode=TwoWay}" />
+						Text="{x:Bind ViewModel.AppStorage, Mode=TwoWay}" />
 					<Button
 						Grid.Row="1"
 						Grid.Column="3"
@@ -207,7 +207,7 @@
 						HorizontalContentAlignment="Left"
 						Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
 						CornerRadius="10"
-						Tag="{x:Bind ViewModel.SettingsService.AppStorage, Mode=OneWay}">
+						Tag="{x:Bind ViewModel.AppStorage, Mode=OneWay}">
 						<SymbolIcon Symbol="Copy" />
 					</Button>
 					<!--  Session  -->
@@ -224,7 +224,7 @@
 						HorizontalAlignment="Center">
 						<CheckBox
 							Margin="5,0,0,0"
-							IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppSession, Mode=OneWay}"
+							IsChecked="{x:Bind ViewModel.IsExistsAppSession, Mode=OneWay}"
 							IsEnabled="False" />
 					</StackPanel>
 					<TextBox
@@ -232,7 +232,7 @@
 						Grid.Column="2"
 						Margin="2"
 						HorizontalAlignment="Stretch"
-						Text="{x:Bind ViewModel.SettingsService.AppSession, Mode=TwoWay}" />
+						Text="{x:Bind ViewModel.AppSession, Mode=TwoWay}" />
 					<Button
 						Grid.Row="2"
 						Grid.Column="3"
@@ -240,7 +240,7 @@
 						HorizontalContentAlignment="Left"
 						Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
 						CornerRadius="10"
-						Tag="{x:Bind ViewModel.SettingsService.AppSession, Mode=OneWay}">
+						Tag="{x:Bind ViewModel.AppSession, Mode=OneWay}">
 						<SymbolIcon Symbol="Copy" />
 					</Button>
 				</Grid>

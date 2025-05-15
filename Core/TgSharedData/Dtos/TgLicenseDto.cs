@@ -17,8 +17,9 @@ public sealed partial class TgLicenseDto : ObservableRecipient
 	[ObservableProperty]
 	public partial long UserId { get; set; }
 	[ObservableProperty]
-	public partial DateOnly ValidTo { get; set; } = DateOnly.MinValue;
-	[ObservableProperty]
+    [JsonConverter(typeof(TgDateOnlyJsonConverter))]
+    public partial DateOnly ValidTo { get; set; } = DateOnly.MinValue;
+    [ObservableProperty]
 	public partial bool IsConfirmed { get; set; }
 
 	#endregion

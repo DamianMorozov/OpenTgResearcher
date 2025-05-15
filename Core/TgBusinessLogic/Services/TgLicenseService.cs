@@ -73,7 +73,7 @@ public sealed class TgLicenseService : ITgLicenseService
         if (userId > 0)
 		{
             var licenseDtos = await LicenseRepository.GetListDtosAsync();
-            var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow.Date && x.UserId == userId);
+            var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date && x.UserId == userId);
             if (currentLicenseDto is not null)
 			{
 				ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey,
@@ -102,7 +102,7 @@ public sealed class TgLicenseService : ITgLicenseService
 
         var userId = await GetUserIdAsync();
         var licenseDtos = await LicenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && x.ValidTo >= DateTime.UtcNow.Date && x.UserId == userId);
+		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date && x.UserId == userId);
         if (currentLicenseDto is null)
 		{
 			await LicenseRepository.SaveAsync(licenseEntity);

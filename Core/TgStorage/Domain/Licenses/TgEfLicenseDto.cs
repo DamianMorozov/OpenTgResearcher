@@ -15,7 +15,8 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 	[ObservableProperty]
 	public partial TgEnumLicenseType LicenseType { get; set; }
 	[ObservableProperty]
-	public partial DateTime ValidTo { get; set; }
+    [JsonConverter(typeof(TgDateOnlyJsonConverter))]
+    public partial DateOnly ValidTo { get; set; }
 	[ObservableProperty]
 	public partial bool IsConfirmed { get; set; }
 
@@ -36,7 +37,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 		LicenseKey = Guid.Empty;
 		UserId = 0;
 		LicenseType = TgEnumLicenseType.Free;
-		ValidTo = DateTime.MinValue;
+		ValidTo = DateOnly.MinValue;
 		IsConfirmed = false;
 	}
 
@@ -64,7 +65,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 		LicenseKey = item.LicenseKey;
 		UserId = item.UserId;
 		LicenseType = item.LicenseType;
-		ValidTo = item.ValidTo;
+		ValidTo = DateOnly.FromDateTime(item.ValidTo);
 		IsConfirmed = item.IsConfirmed;
 		return this;
 	}
@@ -77,7 +78,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 		LicenseKey = dto.LicenseKey,
 		UserId = dto.UserId,
 		LicenseType = dto.LicenseType,
-		ValidTo = dto.ValidTo,
+		ValidTo = DateTime.Parse($"{dto.ValidTo:yyyy-MM-d}"),
 		IsConfirmed = dto.IsConfirmed,
 	};
 
@@ -87,7 +88,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 		LicenseKey = LicenseKey,
 		UserId = UserId,
 		LicenseType = LicenseType,
-		ValidTo = ValidTo,
+		ValidTo = DateTime.Parse($"{ValidTo:yyyy-MM-d}"),
 		IsConfirmed = IsConfirmed,
 	};
 

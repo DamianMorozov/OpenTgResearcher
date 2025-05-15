@@ -1,6 +1,6 @@
 # Issue template
 
 - Operating system
-- TgDownloaderConsole / TgDownloaderDesktop version
+- OpenTgResearcherConsole / OpenTgResearcherDesktop version
 - Test-case steps
 - Screenshots

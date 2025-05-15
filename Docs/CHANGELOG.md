@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.200] - 2025-05-14
 ### Changed
-- Updated the menu in TgDownloaderConsole
+- Updated the menu in OpenTgResearcherConsole
 - Updated license view
 - Updated NuGet packages
 ### Added

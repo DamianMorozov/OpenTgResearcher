@@ -19,8 +19,8 @@ services:
      - TZ=Europe/Rome
     volumes:
      - .\TgStorage.db:/app/TgStorage.db:rw # optional
-     - .\TgDownloader.xml:/app/TgDownloader.xml:rw # optional
-     - .\TgDownloader.session:/app/TgDownloader.session:rw # optional
+     - .\OpenTgResearcher.xml:/app/OpenTgResearcher.xml:rw # optional
+     - .\OpenTgResearcher.session:/app/OpenTgResearcher.session:rw # optional
     container_name: tgdownloader-console
     restart: on-failure
 ```
@@ -28,5 +28,5 @@ services:
 ## Использование в веб-браузере
 http://localhost:7681
 ```
-dotnet TgDownloaderConsole.dll
+dotnet OpenTgResearcherConsole.dll
 ```

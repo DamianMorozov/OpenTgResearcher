@@ -25,13 +25,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgStorage", "Core\TgStorage
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgAssertCoreTests", "Tests\TgAssertCoreTests\TgAssertCoreTests.csproj", "{66FF43B1-B16B-48FA-B371-C2D0787D36C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderConsoleTest", "Tests\TgDownloaderConsoleTest\TgDownloaderConsoleTest.csproj", "{AF806805-F79B-4BA0-8E26-EE03B54DE63C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherConsoleTest", "Tests\OpenTgResearcherConsoleTest\OpenTgResearcherConsoleTest.csproj", "{AF806805-F79B-4BA0-8E26-EE03B54DE63C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderTest", "Tests\TgDownloaderTest\TgDownloaderTest.csproj", "{1758339F-22AB-4EA2-B577-4662A8663FB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgStorageTest", "Tests\TgStorageTest\TgStorageTest.csproj", "{17CE2A7E-AE56-43E8-AB4B-6504B3484167}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderConsole", "Presentation\TgDownloaderConsole\TgDownloaderConsole.csproj", "{5A12C18B-8DA6-4D47-93D3-9D1AA49BEF62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherConsole", "Presentation\OpenTgResearcherConsole\OpenTgResearcherConsole.csproj", "{5A12C18B-8DA6-4D47-93D3-9D1AA49BEF62}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgInfrastructure", "Core\TgInfrastructure\TgInfrastructure.csproj", "{FC689594-30C9-45D2-B8DB-7079E752984B}"
 EndProject
@@ -69,11 +69,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\branch_preview_build.yml = .github\workflows\branch_preview_build.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderDesktop", "Presentation\TgDownloaderDesktop\TgDownloaderDesktop.csproj", "{FB756D71-7AA6-4BAB-93BD-28B30B0EF1FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop", "Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj", "{FB756D71-7AA6-4BAB-93BD-28B30B0EF1FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderDesktop.Core", "Core\TgDownloaderDesktop.Core\TgDownloaderDesktop.Core.csproj", "{F6A1AA94-9746-4F2A-9B1D-7A70F3F12E1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Core", "Core\OpenTgResearcherDesktop.Core\OpenTgResearcherDesktop.Core.csproj", "{F6A1AA94-9746-4F2A-9B1D-7A70F3F12E1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderDesktop.Tests.MSTest", "Tests\TgDownloaderDesktop.Tests.MSTest\TgDownloaderDesktop.Tests.MSTest.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests.MSTest", "Tests\OpenTgResearcherDesktop.Tests.MSTest\OpenTgResearcherDesktop.Tests.MSTest.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{D1DB4BDE-5AA3-4A23-BE99-85AAADF0624A}"
 	ProjectSection(SolutionItems) = preProject

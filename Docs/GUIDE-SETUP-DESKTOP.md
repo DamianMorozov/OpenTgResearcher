@@ -1,8 +1,8 @@
 # Guide to setup the Desktop version
 
 ## Setup and run OpenTgResearcherDesktop under Windows OS
-- Download and run the installer [TgDownloaderDesktop-win-x64-Setup.exe](https://github.com/DamianMorozov/OpenTgResearcher/releases)
-- Click the `Start` button, then type and execute `TgDownloaderDesktop`
+- Download and run the installer [OpenTgResearcherDesktop-win-x64-Setup.exe](https://github.com/DamianMorozov/OpenTgResearcher/releases)
+- Click the `Start` button, then type and execute `OpenTgResearcherDesktop`
 
 ## Connection setup
 Click on the link on the right: https://my.telegram.org/auth?to=apps

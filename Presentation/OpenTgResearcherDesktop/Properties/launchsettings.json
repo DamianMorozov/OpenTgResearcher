@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "OpenTgResearcherDesktop (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "OpenTgResearcherDesktop (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

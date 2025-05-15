@@ -1,0 +1,1006 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>OpenTgResearcher</value>
+  </data>
+	<data name="AppDescription" xml:space="preserve">
+		<value>OpenTgResearcher</value>
+  	</data>
+  <data name="Shell_Main.Content" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="Shell_Home.Content" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Shell_Dashboard.Content" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Shell_Connect.Content" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="Shell_Contacts.Content" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Shell_ContactDetails.Content" xml:space="preserve">
+    <value>Edit contact</value>
+  </data>
+  <data name="Shell_Filters.Content" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="Shell_Proxies.Content" xml:space="preserve">
+    <value>Proxies</value>
+  </data>
+  <data name="Shell_Sources.Content" xml:space="preserve">
+    <value>Sources</value>
+  </data>
+  <data name="Shell_Stories.Content" xml:space="preserve">
+    <value>Stories</value>
+  </data>
+  <data name="Shell_Chats.Content" xml:space="preserve">
+    <value>Chats</value>
+  </data>
+  <data name="Shell_Update.Content" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Shell_Bots.Content" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="Shell_License.Content" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="Shell_ErrorsLogs.Content" xml:space="preserve">
+    <value>Errors log</value>
+  </data>
+  <data name="Shell_Logs.Content" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="WebView_Loading.Text" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="WebView_FailedMessage.Text" xml:space="preserve">
+    <value>Page failed to load. Check connection and reload.</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Browser back</value>
+  </data>
+  <data name="BrowserBackButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Browser back</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Browser forward</value>
+  </data>
+  <data name="BrowserForwardButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Browser forward</value>
+  </data>
+  <data name="WebView_Reload.Content" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ReloadButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
+  <data name="OpenInBrowserButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
+  <data name="Shell_WebView.Content" xml:space="preserve">
+    <value>WebView</value>
+  </data>
+  <data name="ListDetails_NoSelection.Text" xml:space="preserve">
+    <value>Select an item from the list.</value>
+  </data>
+  <data name="Shell_ListDetails.Content" xml:space="preserve">
+    <value>ListDetails</value>
+  </data>
+  <data name="Shell_ContentGrid.Content" xml:space="preserve">
+    <value>ContentGrid</value>
+  </data>
+  <data name="Shell_DataGrid.Content" xml:space="preserve">
+    <value>DataGrid</value>
+  </data>
+  <data name="Settings_Personalization.Text" xml:space="preserve">
+    <value>Personalization</value>
+  </data>
+  <data name="Settings_Theme.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="SettingsThemeDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ExpanderAbout.Header" xml:space="preserve">
+    <value>OpenTgResearcher - Open Telegram Researcher</value>
+  </data>
+  <data name="ExpanderLicense.Header" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="ExpanderUpdate.Header" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="SettingsPage_GitHub_Link.Content" xml:space="preserve">
+    <value>GitHub repository</value>
+  </data>
+  <data name="SettingsPage_GitHub_Link.Tag" xml:space="preserve">
+    <value>https://github.com/DamianMorozov/OpenTgResearcher/</value>
+  </data>
+  <data name="SettingsPage_GitHub_IssueTemplate.Content" xml:space="preserve">
+    <value>Issue template</value>
+  </data>
+  <data name="SettingsPage_GitHub_IssueTemplate.Tag" xml:space="preserve">
+    <value>https://github.com/DamianMorozov/OpenTgResearcher/issues</value>
+  </data>
+  <data name="SettingsPage_GitHub_ReportBug.Content" xml:space="preserve">
+    <value>Report a bug</value>
+  </data>
+  <data name="SettingsPage_GitHub_ReportBug.Tag" xml:space="preserve">
+    <value>https://github.com/DamianMorozov/OpenTgResearcher/issues</value>
+  </data>
+  <data name="SettingsPage_GitHub_Discussions.Content" xml:space="preserve">
+    <value>Discussions</value>
+  </data>
+  <data name="SettingsPage_GitHub_Discussions.Tag" xml:space="preserve">
+    <value>https://github.com/DamianMorozov/OpenTgResearcher/discussions</value>
+  </data>
+  <data name="SettingsPage_GitHub_Ideas.Content" xml:space="preserve">
+    <value>Ideas</value>
+  </data>
+  <data name="SettingsPage_GitHub_Ideas.Tag" xml:space="preserve">
+    <value>https://github.com/DamianMorozov/OpenTgResearcher/discussions/categories/ideas</value>
+  </data>
+  <data name="SettingsPage_GitHub_OpenTgResearcher.Content" xml:space="preserve">
+    <value>OpenTgResearcher</value>
+  </data>
+  <data name="SettingsPage_GitHub_OpenTgResearcher.Tag" xml:space="preserve">
+    <value>https://t.me/OpenTgResearcher</value>
+  </data>
+  <data name="ClientPage_MyTelegram.Content" xml:space="preserve">
+    <value>my.telegram.org</value>
+  </data>
+  <data name="ClientPage_MyTelegram.Tag" xml:space="preserve">
+    <value>"https://my.telegram.org/auth?to=apps"</value>
+  </data>
+  <data name="SettingsPage_OfficialSite_OpenTgResearcher.Content" xml:space="preserve">
+    <value>opentgresearcher.online</value>
+  </data>
+  <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
+    <value>"http://opentgresearcher.online"</value>
+  </data>
+  <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
+    <value>Releases</value>
+  </data>
+  <data name="SettingsPage_Releases_Latest.Tag" xml:space="preserve">
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher/releases"</value>
+  </data>
+  <data name="SettingsPage_DownloadStatistics.Content" xml:space="preserve">
+    <value>Download statistics</value>
+  </data>
+  <data name="SettingsPage_DownloadStatistics.Tag" xml:space="preserve">
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/Docs/RELEASES.md"</value>
+  </data>
+  <data name="SettingsPage_GitHub_DockerConsole.Content" xml:space="preserve">
+    <value>Docker image</value>
+  </data>
+  <data name="SettingsPage_GitHub_DockerConsole.Tag" xml:space="preserve">
+    <value>"https://hub.docker.com/repository/docker/damianmorozov/tgdownloader-console"</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet8.Content" xml:space="preserve">
+    <value>Download .NET 8.0</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet8.Tag" xml:space="preserve">
+    <value>"https://dotnet.microsoft.com/en-us/download/dotnet/8.0"</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet9.Content" xml:space="preserve">
+    <value>Download .NET 9.0</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet9.Tag" xml:space="preserve">
+    <value>"https://dotnet.microsoft.com/en-us/download/dotnet/9.0"</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsRegisterTelegram.Content" xml:space="preserve">
+    <value>Register Telegram app</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsRegisterTelegram.Tag" xml:space="preserve">
+    <value>"https://my.telegram.org/apps"</value>
+  </data>
+  <data name="SettingsPage_GitHub_ProjectSupportGitHubStar.Content" xml:space="preserve">
+    <value>GitHub star</value>
+  </data>
+  <data name="SettingsPage_GitHub_ProjectSupportGitHubStar.Tag" xml:space="preserve">
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher"</value>
+  </data>
+  <data name="AppNotificationSamplePayload" xml:space="preserve">
+    <value>&lt;toast launch="action=ToastClick"&gt;
+  &lt;visual&gt;
+    &lt;binding template="ToastGeneric"&gt;
+      &lt;text&gt;OpenTgResearcher launched&lt;/text&gt;
+      &lt;text&gt;&lt;/text&gt;
+      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/applicationIcon.ico"/&gt;
+    &lt;/binding&gt;
+  &lt;/visual&gt;
+  &lt;actions&gt;
+    &lt;action content="Settings" arguments="action=Settings"/&gt;
+  &lt;/actions&gt;
+&lt;/toast&gt;</value>
+  </data>
+  <data name="ActionResetToDefault.Text" xml:space="preserve">
+    <value>Reset to default</value>
+  </data>
+  <data name="ActionSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ActionLoad.Text" xml:space="preserve">
+    <value>Load</value>
+  </data>
+  <data name="ActionLoadFromStorage.Text" xml:space="preserve">
+    <value>Loading storage</value>
+  </data>
+  <data name="ActionUpdateFromFile.Text" xml:space="preserve">
+    <value>Update from file</value>
+  </data>
+  <data name="ActionLogsLoading.Text" xml:space="preserve">
+    <value>Logs loading</value>
+  </data>
+  <data name="ActionDeleteFile.Content" xml:space="preserve">
+    <value>Delete file</value>
+  </data>
+  <data name="ActionCopy.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
+    <value>Add record</value>
+  </data>
+  <data name="ActionClear.Text" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="ActionClearView.Text" xml:space="preserve">
+    <value>Clear viewing</value>
+  </data>
+  <data name="ActionDelete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ActionSearch.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
+    <value>Checking for release updates</value>
+  </data>
+  <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
+    <value>Checking for preview updates</value>
+  </data>
+  <data name="ActionLicenseClear.Text" xml:space="preserve">
+    <value>Clear license</value>
+  </data>
+  <data name="ActionLicenseCheck.Text" xml:space="preserve">
+    <value>Check license</value>
+  </data>
+  <data name="ActionLicenseCheckMsg" xml:space="preserve">
+    <value>Check license</value>
+  </data>
+  <data name="ActionLicenseBuy.Text" xml:space="preserve">
+    <value>Buy license</value>
+  </data>
+  <data name="ActionLicenseBuyMsg" xml:space="preserve">
+    <value>Buy license</value>
+  </data>
+  <data name="ExpanderGitHub.Header" xml:space="preserve">
+    <value>GitHub community</value>
+  </data>
+  <data name="ExpanderOfficialSite.Header" xml:space="preserve">
+    <value>Official site</value>
+  </data>
+  <data name="TextOfficialWebsiteGlobal.Text" xml:space="preserve">
+    <value>Official website (global version)</value>
+  </data>
+  <data name="TextOfficialWebsiteRu.Text" xml:space="preserve">
+    <value>Official website (russian version)</value>
+  </data>
+  <data name="ExpanderDownload.Header" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="ExpanderUserSupport.Header" xml:space="preserve">
+    <value>User support</value>
+  </data>
+  <data name="ExpanderProjectSupport.Header" xml:space="preserve">
+    <value>Project support</value>
+  </data>
+  <data name="ExpanderDocker.Header" xml:space="preserve">
+    <value>Docker</value>
+  </data>
+  <data name="ExpanderInstallRequirements.Header" xml:space="preserve">
+    <value>Install Requirements</value>
+  </data>
+  <data name="SettingsPage_GitHub_InstallRequirementsSaveValues.Text" xml:space="preserve">
+    <value>Save the values of the fields by App configuration section: `App api_id` / `App api_hash`</value>
+  </data>
+  <data name="SettingName.Text" xml:space="preserve">
+    <value>Setting</value>
+  </data>
+  <data name="SettingInStorage.Text" xml:space="preserve">
+    <value>Settings in storage</value>
+  </data>
+  <data name="SettingWithoutSaving.Text" xml:space="preserve">
+    <value>Settings without saving</value>
+  </data>
+  <data name="SettingCheck.Text" xml:space="preserve">
+    <value>Check</value>
+  </data>
+  <data name="SettingValue.Text" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="SettingEfStorage.Text" xml:space="preserve">
+    <value>EF storage</value>
+  </data>
+  <data name="SettingStorage.Text" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="SettingTgSession.Text" xml:space="preserve">
+    <value>TG session</value>
+  </data>
+  <data name="SettingSession.Text" xml:space="preserve">
+    <value>Session</value>
+  </data>
+  <data name="ExpanderSettingApp.Header" xml:space="preserve">
+    <value>App</value>
+  </data>
+  <data name="ExpanderSettingInStorage.Header" xml:space="preserve">
+    <value>Settings in storage</value>
+  </data>
+  <data name="ExpanderDataInStorage.Header" xml:space="preserve">
+    <value>Data in storage</value>
+  </data>
+  <data name="ExpanderSettingWithoutSaving.Header" xml:space="preserve">
+    <value>Settings without saving</value>
+  </data>
+  <data name="ExpanderContent.Header" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="ExpanderDownloading.Header" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="SettingAppFiles.Header" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="SettingAppActions.Header" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SettingAppTheme.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingAppThemeTooltip" xml:space="preserve">
+    <value>Select the theme for the application.</value>
+  </data>
+  <data name="SettingAppLanguage.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettingAppLanguageTooltip" xml:space="preserve">
+    <value>Select the language for the application.</value>
+  </data>
+  <data name="SettingFolder.Text" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="AskSettingsDefault" xml:space="preserve">
+    <value>Reset the settings to default?</value>
+  </data>
+  <data name="AskSettingsSave" xml:space="preserve">
+    <value>Save the settings?</value>
+  </data>
+  <data name="AskSettingsLoad" xml:space="preserve">
+    <value>Load the settings?</value>
+  </data>
+  <data name="AskSettingsClear" xml:space="preserve">
+    <value>Clear the settings?</value>
+  </data>
+  <data name="AskSettingsDelete" xml:space="preserve">
+    <value>Delete the settings?</value>
+  </data>
+  <data name="AskDeleteFile" xml:space="preserve">
+    <value>Delete the file?</value>
+  </data>
+  <data name="AskClientConnect" xml:space="preserve">
+    <value>Connect the client?</value>
+  </data>
+  <data name="AskClientDisconnect" xml:space="preserve">
+    <value>Disconnect the client?</value>
+  </data>
+  <data name="AskDataClear" xml:space="preserve">
+    <value>Clear the data?</value>
+  </data>
+  <data name="AskDataLoad" xml:space="preserve">
+    <value>Load the data?</value>
+  </data>
+  <data name="AskAddRecord" xml:space="preserve">
+    <value>Add record?</value>
+  </data>
+  <data name="AskUpdateOnline" xml:space="preserve">
+    <value>Update online?</value>
+  </data>
+  <data name="AskStopDownloading" xml:space="preserve">
+    <value>Stop downloading?</value>
+  </data>
+  <data name="AskRestartApp" xml:space="preserve">
+    <value>Restart the application?</value>
+  </data>
+  <data name="AskUpdateReleaseApp" xml:space="preserve">
+    <value>Check for release updates of the application?</value>
+  </data>
+  <data name="AskUpdatePreviewApp" xml:space="preserve">
+    <value>Check for preview updates of the application?</value>
+  </data>
+  <data name="AssertionRestartApp" xml:space="preserve">
+    <value>Restart the application.</value>
+  </data>
+  <data name="YesButton" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="NoButton" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OkButton" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="ClientConnect.Text" xml:space="preserve">
+    <value>Connect to TG server</value>
+  </data>
+  <data name="ButtonConnect.Content" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="ButtonDisconnect.Content" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="ClientDisconnect.Text" xml:space="preserve">
+    <value>Disconnect from TG server</value>
+  </data>
+  <data name="MenuClientIsQuery" xml:space="preserve">
+    <value>Client requests data</value>
+  </data>
+  <data name="AppVersion" xml:space="preserve">
+    <value>App version</value>
+  </data>
+  <data name="ClientTgSession.Content" xml:space="preserve">
+    <value>TG session</value>
+  </data>
+  <data name="ClientApiHash.Text" xml:space="preserve">
+    <value>API hash</value>
+  </data>
+  <data name="ClientApiId.Text" xml:space="preserve">
+    <value>API ID</value>
+  </data>
+  <data name="ClientPhoneNumber.Text" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="ClientProxy.Text" xml:space="preserve">
+    <value>Proxy</value>
+  </data>
+  <data name="ClientPassword.Text" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ClientVerificationCode.Text" xml:space="preserve">
+    <value>Verification code</value>
+  </data>
+  <data name="ClientLoginCode.Text" xml:space="preserve">
+    <value>Login code</value>
+  </data>
+  <data name="ClientFirstName.Text" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="ClientLastName.Text" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="ClientServerMessage.Text" xml:space="preserve">
+    <value>Server message</value>
+  </data>
+  <data name="ClientSettingsAreNotValid" xml:space="preserve">
+    <value>Client settings are not valid</value>
+  </data>
+  <data name="ClientIsConnected" xml:space="preserve">
+    <value>Client is connected</value>
+  </data>
+  <data name="ClientIsDisconnected" xml:space="preserve">
+    <value>Client is disconnected</value>
+  </data>
+  <data name="ClientEnterLoginCode" xml:space="preserve">
+    <value>Enter login code from the Telegram message</value>
+  </data>
+  <data name="ClientEnterPassword" xml:space="preserve">
+    <value>Enter the login password</value>
+  </data>
+  <data name="ClientFloodWait" xml:space="preserve">
+    <value>Flood defense has kicked in, stand by</value>
+  </data>
+  <data name="ClientConnectionState.Text" xml:space="preserve">
+    <value>Connection state</value>
+  </data>
+  <data name="ClientConnectionDt.Text" xml:space="preserve">
+    <value>Connection date time</value>
+  </data>
+  <data name="ClientDataRequest.Text" xml:space="preserve">
+    <value>Data request</value>
+  </data>
+  <data name="ClientConnectionException.Text" xml:space="preserve">
+    <value>Connection exception</value>
+  </data>
+  <data name="ClientUserName.Text" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="ClientMtProxyUrl.Text" xml:space="preserve">
+    <value>MT proxy url</value>
+  </data>
+  <data name="ClientMaxAutoReconnects.Text" xml:space="preserve">
+    <value>Max auto reconnects</value>
+  </data>
+  <data name="ClientFloodRetryThreshold.Text" xml:space="preserve">
+    <value>Flood retry threshold</value>
+  </data>
+  <data name="ClientPingInterval.Text" xml:space="preserve">
+    <value>Ping interval</value>
+  </data>
+  <data name="ClientMaxCodePwdAttempts.Text" xml:space="preserve">
+    <value>Max code pwd attempts</value>
+  </data>
+  <data name="ClientDataRequestEmptyResponse" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="LicenseFreeDescription" xml:space="preserve">
+    <value>Free license</value>
+  </data>
+  <data name="LicensePaidDescription" xml:space="preserve">
+    <value>Paid license</value>
+  </data>
+  <data name="LicenseTestDescription" xml:space="preserve">
+    <value>Test license</value>
+  </data>
+  <data name="LicensePremiumDescription" xml:space="preserve">
+    <value>Premium license</value>
+  </data>
+  <data name="AppStorageNeedToCreate.Text" xml:space="preserve">
+    <value>You need to create a storage (check the settings)!</value>
+  </data>
+  <data name="ProductAssignment.Text" xml:space="preserve">
+    <value>Product assignment</value>
+  </data>
+  <data name="ProductAssignmentDescription.Text" xml:space="preserve">
+    <value>Telegram's open researcher and search engine. Download chats by catalogs. </value>
+  </data>
+  <data name="TemplateColumnEdit.Header" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TemplateColumnUpdate.Header" xml:space="preserve">
+    <value>Update from TG</value>
+  </data>
+  <data name="TemplateColumnUpd.Header" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="TemplateColumnAutoUpd.Header" xml:space="preserve">
+    <value>Auto-update</value>
+  </data>
+  <data name="TemplateColumnDownload.Header" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="TemplateColumnComplete.Header" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="TemplateColumnId.Header" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="TemplateColumnChanged.Header" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="TemplateColumnUpdated.Header" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="TemplateColumnDate.Header" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="TemplateColumnExpireDate.Header" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="TemplateColumnUserName.Header" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="TemplateColumnTitle.Header" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TemplateColumnFirstId.Header" xml:space="preserve">
+    <value>First ID</value>
+  </data>
+  <data name="TemplateColumnCount.Header" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="TemplateColumnProgress.Header" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="TemplateColumnIsActive.Header" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="TemplateColumnIsAccess.Header" xml:space="preserve">
+    <value>Access</value>
+  </data>
+  <data name="TemplateColumnIsBot.Header" xml:space="preserve">
+    <value>Bot</value>
+  </data>
+  <data name="TemplateColumnFirstName.Header" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="TemplateColumnLastName.Header" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="TemplateColumnPhone.Header" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="TemplateColumnStatus.Header" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TemplateColumnIsEnabled.Header" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="TemplateColumnType.Header" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TemplateColumnName.Header" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TemplateColumnMask.Header" xml:space="preserve">
+    <value>Mask</value>
+  </data>
+  <data name="TemplateColumnSize.Header" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="TemplateColumnCaption.Header" xml:space="preserve">
+    <value>Caption</value>
+  </data>
+  <data name="TemplateColumnHostName.Header" xml:space="preserve">
+    <value>Host name</value>
+  </data>
+  <data name="TemplateColumnPort.Header" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="TemplateColumnUserName.Header" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="TemplateColumnPassword.Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="TemplateColumnBotToken.Header" xml:space="preserve">
+    <value>Bot token</value>
+  </data>
+  <data name="DataLoadWait.Text" xml:space="preserve">
+    <value>Wait until the data download is complete</value>
+  </data>
+  <data name="TextBlockCount.Text" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="TextBlockLoad.Text" xml:space="preserve">
+    <value>Load</value>
+  </data>
+  <data name="TextBlockClear.Text" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="TextBlockSort.Text" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="TextBlockDefaultSort.Text" xml:space="preserve">
+    <value>Default sort</value>
+  </data>
+  <data name="TextBlockSave.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TextBlockUpdate.Text" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="TextBlockUpdateOnline.Text" xml:space="preserve">
+    <value>Online update</value>
+  </data>
+  <data name="TextBlockStopDownloading.Text" xml:space="preserve">
+    <value>Stop downloading</value>
+  </data>
+  <data name="TextBlockGet.Text" xml:space="preserve">
+    <value>Get</value>
+  </data>
+  <data name="TextBlockMark.Text" xml:space="preserve">
+    <value>Mark</value>
+  </data>
+  <data name="TextBlockLoading.Text" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Clipboard" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
+  <data name="DonateUsdtTrc20.Text" xml:space="preserve">
+    <value>Donate through USDT TRC20</value>
+  </data>
+  <data name="DonateUsdtTon.Text" xml:space="preserve">
+    <value>Donate through USDT TON</value>
+  </data>
+  <data name="DonateToncoin.Text" xml:space="preserve">
+    <value>Donate through Toncoin</value>
+  </data>
+  <data name="DonateBitcoin.Text" xml:space="preserve">
+    <value>Donate through Bitcoin</value>
+  </data>
+  <data name="DonateNotcoin.Text" xml:space="preserve">
+    <value>Donate through Notcoin</value>
+  </data>
+  <data name="DonateDogs.Text" xml:space="preserve">
+    <value>Donate through Dogs</value>
+  </data>
+  <data name="DonateHmstr.Text" xml:space="preserve">
+    <value>Donate through Hamster Kombat</value>
+  </data>
+  <data name="DonateX.Text" xml:space="preserve">
+    <value>Donate through X Empire</value>
+  </data>
+  <data name="DonateCatizen.Text" xml:space="preserve">
+    <value>Donate through Catizen</value>
+  </data>
+  <data name="DonateMajor.Text" xml:space="preserve">
+    <value>Donate through Major</value>
+  </data>
+  <data name="RpcErrorPhonePasswordFlood" xml:space="preserve">
+    <value>You have tried logging in too many times</value>
+  </data>
+  <data name="RpcErrorPhoneCodeInvalid" xml:space="preserve">
+    <value>The phone code entered was invalid</value>
+  </data>
+  <data name="RpcErrorPasswordHashInvalid" xml:space="preserve">
+    <value>The password (and thus its hash value) you entered is invalid</value>
+  </data>
+  <data name="RpcErrorFloodWait" xml:space="preserve">
+    <value>A wait is required</value>
+  </data>
+  <data name="FieldUid.Text" xml:space="preserve">
+    <value>UID</value>
+  </data>
+  <data name="FieldId.Text" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="ButtonId.Content" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="FieldDtChanged.Text" xml:space="preserve">
+    <value>Changed</value>
+  </data>
+  <data name="FieldAccessHash.Text" xml:space="preserve">
+    <value>Access hash</value>
+  </data>
+  <data name="FieldIsActive.Text" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="FieldIsBot.Text" xml:space="preserve">
+    <value>Bot</value>
+  </data>
+  <data name="FieldIsAutoUpdate.Text" xml:space="preserve">
+    <value>Auto-update</value>
+  </data>
+  <data name="FieldFirstName.Text" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="FieldLastName.Text" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="FieldUserName.Text" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="FieldUserNames.Text" xml:space="preserve">
+    <value>User names</value>
+  </data>
+  <data name="FieldPhoneNumber.Text" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="FieldStatus.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="FieldRestrictionReason.Text" xml:space="preserve">
+    <value>Restriction reason</value>
+  </data>
+  <data name="FieldLangCode.Text" xml:space="preserve">
+    <value>Language code</value>
+  </data>
+  <data name="FieldStoriesMaxId.Text" xml:space="preserve">
+    <value>Maximum Id storis</value>
+  </data>
+  <data name="FieldTitle.Text" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="FieldAbout.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="FieldDirectory.Text" xml:space="preserve">
+    <value>Directory</value>
+  </data>
+  <data name="FieldFirstId.Text" xml:space="preserve">
+    <value>First ID</value>
+  </data>
+  <data name="FieldCount.Text" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="FieldEmptyData.Text" xml:space="preserve">
+    <value>Empty data</value>
+  </data>
+  <data name="FieldMessage.Text" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="FieldProgress.Text" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="FieldPercent.Text" xml:space="preserve">
+    <value>Percent</value>
+  </data>
+  <data name="FieldSize.Text" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="FieldBotToken.Text" xml:space="preserve">
+    <value>Bot token</value>
+  </data>
+  <data name="FieldCountThreads.Text" xml:space="preserve">
+    <value>Threads count</value>
+  </data>
+  <data name="FieldIsRewriteFiles.Text" xml:space="preserve">
+    <value>Overwriting files</value>
+  </data>
+  <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
+    <value>Overwriting messages</value>
+  </data>
+  <data name="FieldIsJoinFileNameWithMessageId.Text" xml:space="preserve">
+    <value>Joining message ID with file</value>
+  </data>
+  <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
+    <value>Creating subdirectories</value>
+  </data>
+  <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
+    <value>Naming media files by message</value>
+  </data>
+  <data name="FieldFilter.PlaceholderText" xml:space="preserve">
+    <value>Enter the text to filter</value>
+  </data>
+  <data name="ButtonFilter.Content" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="InDevelopment" xml:space="preserve">
+    <value>In development</value>
+  </data>
+  <data name="ErrorOccurredWhileLoadingLogs" xml:space="preserve">
+    <value>При загрузке логов произошла ошибка!</value>
+  </data>
+  <data name="AppLoading" xml:space="preserve">
+    <value>Application loading</value>
+  </data>
+  <data name="StorageLoading" xml:space="preserve">
+    <value>Loading storage</value>
+  </data>
+  <data name="LoggerLoading" xml:space="preserve">
+    <value>Logger loading</value>
+  </data>
+  <data name="NotificationLoading" xml:space="preserve">
+    <value>Notification loading</value>
+  </data>
+  <data name="TgClientLoading" xml:space="preserve">
+    <value>Telegram client loading</value>
+  </data>
+  <data name="InstallerLoading" xml:space="preserve">
+    <value>Installer loading</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="ToggleSwitchShowSecretFields.OffContent" xml:space="preserve">
+    <value>Hide sensitive fields</value>
+  </data>
+  <data name="ToggleSwitchShowSecretFields.OnContent" xml:space="preserve">
+    <value>Display sensitive fields</value>
+  </data>
+  <!--License-->
+  <data name="TextBlockIsConfirmed.Text" xml:space="preserve">
+    <value>Confirmed</value>
+  </data>
+  <data name="TextBlockLicenseKey.Text" xml:space="preserve">
+    <value>License key</value>
+  </data>
+  <data name="TextBlockLicenseDescription.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="TextBlockUserId.Text" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="TextBlockExpiration.Text" xml:space="preserve">
+    <value>Expiration</value>
+  </data>
+  <data name="MenuLicenseCheckServer" xml:space="preserve">
+    <value>Check license server</value>
+  </data>
+  <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
+    <value>Status code</value>
+  </data>
+  <data name="MenuLicenseIsNotCofirmed" xml:space="preserve">
+    <value>Is not cofirmed</value>
+  </data>
+  <data name="MenuLicenseUpdatedSuccessfully" xml:space="preserve">
+    <value>License updated successfully</value>
+  </data>
+  <data name="MenuLicenseUserNotLoggedIn" xml:space="preserve">
+    <value>User is not logged in</value>
+  </data>
+  <data name="LicenseLoading" xml:space="preserve">
+    <value>License loading</value>
+  </data>
+</root>

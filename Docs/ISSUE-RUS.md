@@ -1,6 +1,6 @@
 # Шаблон проблемы
 
 - Операционная система
-- Версия TgDownloaderConsole / TgDownloaderDesktop
+- Версия OpenTgResearcherConsole / OpenTgResearcherDesktop
 - Шаги тестового примера
 - Скриншоты

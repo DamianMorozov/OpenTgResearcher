@@ -416,6 +416,9 @@
   <data name="ActionLicenseBuyMsg" xml:space="preserve">
     <value>Сменить лицензию</value>
   </data>
+  <data name="ActionContinue.Text" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>ГитХаб сообщество</value>
   </data>
@@ -839,8 +842,17 @@
   <data name="TextBlockMark.Text" xml:space="preserve">
     <value>Пометить</value>
   </data>
-  <data name="TextBlockLoading.Text" xml:space="preserve">
-    <value>Загрузка...</value>
+  <data name="TextBlockLoadingNotifications.Text" xml:space="preserve">
+    <value>Загрузка уведомлений</value>
+  </data>
+  <data name="TextBlockLoadingLogging.Text" xml:space="preserve">
+    <value>Загрузка логирования</value>
+  </data>
+  <data name="TextBlockLoadingStorage.Text" xml:space="preserve">
+    <value>Загрузка хранилища</value>
+  </data>
+  <data name="TextBlockLoadingLicense.Text" xml:space="preserve">
+    <value>Загрузка лицензии</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Буфер обмена</value>

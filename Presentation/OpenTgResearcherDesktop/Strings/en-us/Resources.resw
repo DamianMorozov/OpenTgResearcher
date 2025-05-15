@@ -357,6 +357,9 @@
   <data name="ActionLicenseBuyMsg" xml:space="preserve">
     <value>Buy license</value>
   </data>
+  <data name="ActionContinue.Text" xml:space="preserve">
+    <value>Continue</value>
+  </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>
   </data>
@@ -777,8 +780,17 @@
   <data name="TextBlockMark.Text" xml:space="preserve">
     <value>Mark</value>
   </data>
-  <data name="TextBlockLoading.Text" xml:space="preserve">
-    <value>Loading...</value>
+  <data name="TextBlockLoadingNotifications.Text" xml:space="preserve">
+    <value>Loading notifications</value>
+  </data>
+  <data name="TextBlockLoadingLogging.Text" xml:space="preserve">
+    <value>Loading logging</value>
+  </data>
+  <data name="TextBlockLoadingStorage.Text" xml:space="preserve">
+    <value>Loading storage</value>
+  </data>
+  <data name="TextBlockLoadingLicense.Text" xml:space="preserve">
+    <value>Loading license</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>

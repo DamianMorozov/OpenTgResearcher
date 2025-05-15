@@ -172,7 +172,7 @@
 						Grid.Column="3"
 						Margin="10,0,0,0"
 						HorizontalContentAlignment="Left"
-						Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+						Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
 						CornerRadius="10"
 						Tag="{x:Bind ViewModel.SettingsService.AppFolder, Mode=OneWay}">
 						<SymbolIcon Symbol="Copy" />
@@ -205,7 +205,7 @@
 						Grid.Column="3"
 						Margin="10,0,0,0"
 						HorizontalContentAlignment="Left"
-						Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+						Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
 						CornerRadius="10"
 						Tag="{x:Bind ViewModel.SettingsService.AppStorage, Mode=OneWay}">
 						<SymbolIcon Symbol="Copy" />
@@ -238,7 +238,7 @@
 						Grid.Column="3"
 						Margin="10,0,0,0"
 						HorizontalContentAlignment="Left"
-						Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+						Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
 						CornerRadius="10"
 						Tag="{x:Bind ViewModel.SettingsService.AppSession, Mode=OneWay}">
 						<SymbolIcon Symbol="Copy" />

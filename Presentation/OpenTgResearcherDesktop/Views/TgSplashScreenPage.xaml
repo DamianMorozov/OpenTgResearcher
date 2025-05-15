@@ -4,47 +4,165 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgSplashScreenViewModel}"
     mc:Ignorable="d">
 
-    <!--<ScrollView VerticalScrollMode="Auto">
-        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">-->
+    <common:TgPageBase.Resources>
+        <x:Double x:Key="ProgressBarTrackHeight">30</x:Double>
+        <helpers:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <helpers:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <helpers:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </common:TgPageBase.Resources>
+
     <Grid
-        Padding="20"
+        x:Name="MainContent"
+        Padding="10"
         HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="1*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <!--<TextBlock
-            x:Uid="TextBlockLoading"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <!--  App logo  -->
+        <Image
             Grid.Row="1"
-            Margin="50,10,50,10"
-            HorizontalAlignment="Center"
-            Style="{StaticResource TitleTextBlockStyle}"
-            TextAlignment="Center" />-->
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Width="50"
+            Height="50"
+            Margin="10,10,10,10"
+            HorizontalAlignment="Stretch"
+            Source="/Assets/StoreLogo.png"
+            Stretch="Uniform" />
+        <!--  App version  -->
         <TextBlock
             Grid.Row="2"
-            Margin="50,10,50,10"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Margin="0,0,0,30"
             HorizontalAlignment="Center"
             Style="{StaticResource TitleTextBlockStyle}"
-            Text="{x:Bind ViewModel.LoadingText, Mode=OneWay}"
-            TextAlignment="Center" />
-        <ProgressBar
+            Text="{x:Bind ViewModel.AppVersion}" />
+        <!--  Loading notifications  -->
+        <TextBlock
+            x:Uid="TextBlockLoadingNotifications"
             Grid.Row="3"
+            Grid.Column="1"
+            Margin="10"
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource SubtitleTextBlockStyle}"
+            TextAlignment="Right" />
+        <FontIcon
+            Grid.Row="3"
+            Grid.Column="2"
+            Margin="50,0,10,0"
+            HorizontalAlignment="Left"
+            Glyph="&#xE73E;"
+            Visibility="{x:Bind ViewModel.IsLoadNotifications, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <!--  Loading logging  -->
+        <TextBlock
+            x:Uid="TextBlockLoadingLogging"
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="10"
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource SubtitleTextBlockStyle}"
+            TextAlignment="Right" />
+        <FontIcon
+            Grid.Row="4"
+            Grid.Column="2"
+            Margin="50,0,10,0"
+            HorizontalAlignment="Left"
+            Glyph="&#xE73E;"
+            Visibility="{x:Bind ViewModel.IsLoadLogging, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <!--  Loading storage  -->
+        <TextBlock
+            x:Uid="TextBlockLoadingStorage"
+            Grid.Row="5"
+            Grid.Column="1"
+            Margin="10"
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource SubtitleTextBlockStyle}"
+            TextAlignment="Right" />
+        <FontIcon
+            Grid.Row="5"
+            Grid.Column="2"
+            Margin="50,0,10,0"
+            HorizontalAlignment="Left"
+            Glyph="&#xE73E;"
+            Visibility="{x:Bind ViewModel.IsLoadStorage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <!--  Loading license  -->
+        <TextBlock
+            x:Uid="TextBlockLoadingLicense"
+            Grid.Row="6"
+            Grid.Column="1"
+            Margin="10"
+            HorizontalAlignment="Stretch"
+            Style="{StaticResource SubtitleTextBlockStyle}"
+            TextAlignment="Right" />
+        <FontIcon
+            Grid.Row="6"
+            Grid.Column="2"
+            Margin="50,0,10,0"
+            HorizontalAlignment="Left"
+            Glyph="&#xE73E;"
+            Visibility="{x:Bind ViewModel.IsLoadLicense, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <!--  Progress ring  -->
+        <ProgressRing
+            Grid.Row="7"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Width="40"
             Height="40"
-            Margin="50,10,50,10"
-            Maximum="100"
-            Minimum="0"
-            Value="{x:Bind ViewModel.LoadingProgress, Mode=OneWay}" />
+            Margin="50,50,50,50"
+            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+        <!--  Back to main window  -->
+        <Button
+            Grid.Row="8"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Width="500"
+            Margin="50,50,50,50"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Command="{x:Bind ViewModel.ContinueCommand, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock
+                    x:Uid="ActionContinue"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    HorizontalTextAlignment="Left" />
+                <FontIcon Margin="30,0,10,0" Glyph="&#xE768;" />
+            </StackPanel>
+        </Button>
+        <!--<VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainContent.Width" Value="400" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>-->
     </Grid>
-    <!--</ContentControl>
-    </ScrollView>-->
 </common:TgPageBase>

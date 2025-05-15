@@ -8,12 +8,15 @@ public abstract class TgPageBase : Page
 	#region Public and private fields, properties, constructor
 
 	public virtual ITgPageViewModel ViewModel => null!;
+    public Grid? GridContent { get; set; }
+    public double FadeAnimationDuration { get; private set; } = 10.0;
+    public double OffsetAnimationDuration { get; private set; } = 10.0;
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
 		base.OnNavigatedTo(e);
 		App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
@@ -24,5 +27,38 @@ public abstract class TgPageBase : Page
 
 	protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
-	#endregion
+    protected void PageLoadedWithAnimation(object sender, RoutedEventArgs e)
+    {
+        StartEntranceAnimation();
+        ViewModel.OnLoaded(XamlRoot);
+    }
+
+    private async void StartEntranceAnimation()
+    {
+        await Task.Delay(50);
+        if (GridContent is null) return;
+
+        var visual = ElementCompositionPreview.GetElementVisual(GridContent);
+
+        // Устанавливаем начальные значения
+        visual.Opacity = 0;
+        visual.Offset = new System.Numerics.Vector3(0, 200, 0);
+
+        var compositor = visual.Compositor;
+
+        var fadeAnimation = compositor.CreateScalarKeyFrameAnimation();
+        fadeAnimation.Duration = TimeSpan.FromSeconds(FadeAnimationDuration);
+        fadeAnimation.InsertKeyFrame(0, 0);
+        fadeAnimation.InsertKeyFrame(1, 1);
+
+        var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+        offsetAnimation.Duration = TimeSpan.FromSeconds(OffsetAnimationDuration);
+        offsetAnimation.InsertKeyFrame(0, new System.Numerics.Vector3(0, 200, 0));
+        offsetAnimation.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0));
+
+        visual.StartAnimation("Opacity", fadeAnimation);
+        visual.StartAnimation("Offset", offsetAnimation);
+    }
+
+    #endregion
 }

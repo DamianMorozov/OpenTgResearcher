@@ -7,8 +7,9 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
 	ITgSettingsService settingsService) : IActivationService
 {
 	private UIElement? _shell;
+    private UIElement? _content;
 
-	public async Task ActivateAsync(object activationArgs)
+    public async Task ActivateAsync(object activationArgs)
 	{
 		// Execute tasks before activation
 		await settingsService.LoadAsync();
@@ -25,18 +26,20 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
 		App.MainWindow.Activate();
 
         // SplashScreen loading
-        var content = App.MainWindow.Content;
+        _content = App.MainWindow.Content;
         var splashScreenPage = App.GetService<TgSplashScreenPage>();
         if (splashScreenPage is not null)
         {
             App.MainWindow.Content = splashScreenPage;
-            if (splashScreenPage.ViewModel is TgSplashScreenViewModel splashScreenViewModel)
-            {
-                await splashScreenViewModel.LoadAsync();
-            }
+            await splashScreenPage.LoadSplashScreenAsync(BackToMainWindow);
         }
-        // Back to ShellPage
-        App.MainWindow.Content = content;
+    }
+
+    /// <summary> Back to ShellPage </summary>
+    private void BackToMainWindow()
+    {
+        if (_content is null) return;
+        App.MainWindow.Content = _content;
     }
 
     private async Task HandleActivationAsync(object activationArgs)

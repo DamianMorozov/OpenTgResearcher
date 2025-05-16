@@ -5,11 +5,6 @@ namespace TgSharedData.Helpers;
 
 public sealed class TgConstants
 {
-	public static string AppTitle => "OpenTgResearcher";
-	public static string AppTitleBlazor => "OpenTgResearcherBlazor";
-	public static string AppTitleConsole => "OpenTgResearcherConsole";
-	public static string AppTitleConsoleShort => "OTR";
-	public static string AppTitleDesktop => "OpenTgResearcherDesktop";
 	public static string LinkDockerHub => "https://hub.docker.com/r/damianmorozov/tgdownloader-blazor";
 	public static string LinkDockerHubTitle => "DockerHub";
 	public static string LinkGitHub => "https://github.com/DamianMorozov/OpenTgResearcher";
@@ -20,4 +15,9 @@ public sealed class TgConstants
 	public static string LogTypeNetwork = "Network";
 	public static string LogTypeStorage= "Storage";
 	public static string LogTypeSystem = "System";
+	public static string OpenTgResearcher => "OpenTgResearcher";
+	public static string OpenTgResearcherBlazor => "OpenTgResearcherBlazor";
+	public static string OpenTgResearcherConsole => "OpenTgResearcherConsole";
+	public static string OpenTgResearcherDesktop => "OpenTgResearcherDesktop";
+	public static string OTR => "OTR";
 }

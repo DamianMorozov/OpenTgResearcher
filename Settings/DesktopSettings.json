@@ -1,10 +1,14 @@
 ﻿{
-    "LocalSettingsOptions": {
-      "ApplicationDataFolder": "OpenTgResearcherDesktop/ApplicationData",
-      "LocalSettingsFile": "TgLocalSettings.json",
-      "AppTheme": "Default",
-      "AppLanguage": "Default",
-      "AppStorage": "",
-      "AppSession": ""
-    }
+  "LocalSettingsOptions": {
+    "ApplicationDataFolder": "OpenTgResearcherDesktop/ApplicationData",
+    "LocalSettingsFile": "TgLocalSettings.json",
+    "AppTheme": "Default",
+    "AppLanguage": "Default",
+    "AppStorage": "",
+    "AppSession": "",
+    "WindowWidth": "0",
+    "WindowHeight": "0",
+    "WindowX": "0",
+    "WindowY": "0"
+  }
 }

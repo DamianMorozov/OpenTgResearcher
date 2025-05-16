@@ -28,11 +28,11 @@ public static class Program
 
         // Console loading
         Console.OutputEncoding = Encoding.UTF8;
-        Console.Title = TgConstants.AppTitleConsoleShort;
+        Console.Title = TgConstants.OTR;
         tgLog.SetMarkupLine(AnsiConsole.WriteLine);
         tgLog.SetMarkupLineStamp(AnsiConsole.MarkupLine);
         tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
-        tgLog.WriteLine($"{TgConstants.AppTitleConsole} {tgAppSettings.AppVersion}");
+        tgLog.WriteLine($"{TgConstants.OpenTgResearcherConsole} {tgAppSettings.AppVersion}");
 
         // Check and update Velopack
         CheckVelopackInstallAndUpdate(tgLog);
@@ -149,7 +149,7 @@ public static class Program
 		})
 #endif
             .OnFirstRun((v) => {
-                tgLog.WriteLine($"Thanks for installing the {TgConstants.AppTitleConsole}!");
+                tgLog.WriteLine($"Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
             })
             .Run();
         tgLog.WriteLine("Verification of the installation and update is complete");

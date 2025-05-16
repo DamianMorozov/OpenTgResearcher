@@ -96,7 +96,7 @@ internal partial class TgMenuHelper
 		// Update console title
 		async Task UpdateConsoleTitleAsync(string title)
 		{
-			Console.Title = string.IsNullOrEmpty(title) ? $"{TgConstants.AppTitleConsoleShort}" : $"{TgConstants.AppTitleConsoleShort} {title}";
+			Console.Title = string.IsNullOrEmpty(title) ? $"{TgConstants.OTR}" : $"{TgConstants.OTR} {title}";
 			await Task.CompletedTask;
 		}
 		// Update source
@@ -265,7 +265,7 @@ internal partial class TgMenuHelper
 		// Update console title
 		async Task UpdateConsoleTitleAsync(string title)
 		{
-			Console.Title = string.IsNullOrEmpty(title) ? $"{TgConstants.AppTitleConsoleShort}" : $"{TgConstants.AppTitleConsoleShort} {title}";
+			Console.Title = string.IsNullOrEmpty(title) ? $"{TgConstants.OTR}" : $"{TgConstants.OTR} {title}";
 			await Task.CompletedTask;
 		}
 		// Update source

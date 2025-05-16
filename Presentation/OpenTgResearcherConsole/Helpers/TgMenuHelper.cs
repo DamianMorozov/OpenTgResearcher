@@ -48,7 +48,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 		Func<TgDownloadSettingsViewModel, Table, Task> fillTableRowsAsync)
 	{
 		AnsiConsole.Clear();
-		AnsiConsole.Write(new FigletText(TgConstants.AppTitle).Centered().Color(Color.Yellow));
+		AnsiConsole.Write(new FigletText(TgConstants.OpenTgResearcher).Centered().Color(Color.Yellow));
 		Table table = new()
 		{
 			ShowHeaders = false,

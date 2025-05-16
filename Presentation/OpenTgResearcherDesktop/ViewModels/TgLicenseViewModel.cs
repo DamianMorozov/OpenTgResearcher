@@ -38,7 +38,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";
 		AppVersionTitle =
-			$"{TgConstants.AppTitleDesktop} " +
+			$"{TgConstants.OpenTgResearcherDesktop} " +
 			$"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		// Commands
 		LicenseShowInfoCommand = new AsyncRelayCommand(LicenseShowInfoAsync);

@@ -36,7 +36,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.SettingsLoadCommand, Mode=OneWay}">
+                        Command="{x:Bind Path=ViewModel.SettingsLoadCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="10,0,20,0" Glyph="&#xE896;" />
                             <TextBlock
@@ -51,7 +51,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.SettingsDefaultCommand, Mode=OneWay}">
+                        Command="{x:Bind Path=ViewModel.SettingsDefaultCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="10,0,20,0" Glyph="&#xE72C;" />
                             <TextBlock
@@ -66,7 +66,7 @@
                         Margin="5,0,0,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.SettingsSaveCommand, Mode=OneWay}">
+                        Command="{x:Bind Path=ViewModel.SettingsSaveCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="10,0,20,0" Glyph="&#xE74E;" />
                             <TextBlock

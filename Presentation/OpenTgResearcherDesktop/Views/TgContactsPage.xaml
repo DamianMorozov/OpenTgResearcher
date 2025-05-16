@@ -54,7 +54,7 @@
 						Margin="0,0,5,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind ViewModel.LoadDataStorageCommand, Mode=OneWay}">
+						Command="{x:Bind ViewModel.LoadDataStorageCommand}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
 							<TextBlock
@@ -69,7 +69,7 @@
 						Margin="0,0,5,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind ViewModel.UpdateOnlineCommand, Mode=OneWay}"
+						Command="{x:Bind ViewModel.UpdateOnlineCommand}"
 						IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
@@ -85,7 +85,7 @@
 						Margin="0,0,5,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind ViewModel.ClearDataStorageCommand, Mode=OneWay}">
+						Command="{x:Bind ViewModel.ClearDataStorageCommand}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
 							<TextBlock

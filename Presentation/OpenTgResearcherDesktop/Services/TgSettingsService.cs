@@ -13,6 +13,10 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 	private const string SettingsKeyAppLanguage = nameof(LocalSettingsOptions.AppLanguage);
 	private const string SettingsKeyAppStorage = nameof(LocalSettingsOptions.AppStorage);
 	private const string SettingsKeyAppSession = nameof(LocalSettingsOptions.AppSession);
+	private const string SettingsKeyWindowWidth = nameof(LocalSettingsOptions.WindowWidth);
+	private const string SettingsKeyWindowHeight = nameof(LocalSettingsOptions.WindowHeight);
+	private const string SettingsKeyWindowX = nameof(LocalSettingsOptions.WindowX);
+	private const string SettingsKeyWindowY = nameof(LocalSettingsOptions.WindowY);
 	[ObservableProperty]
 	public partial ObservableCollection<TgEnumTheme> AppThemes { get; set; } = null!;
 	[ObservableProperty]
@@ -31,8 +35,16 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 	public partial bool IsExistsAppStorage { get; set; }
 	[ObservableProperty]
 	public partial bool IsExistsAppSession { get; set; }
+    [ObservableProperty]
+    public partial int WindowWidth { get; set; }
+    [ObservableProperty]
+    public partial int WindowHeight { get; set; }
+    [ObservableProperty]
+    public partial int WindowX { get; set; }
+    [ObservableProperty]
+    public partial int WindowY { get; set; }
 
-	private const string DefaultApplicationDataFolder = "OpenTgResearcherDesktop/ApplicationData";
+    private const string DefaultApplicationDataFolder = "OpenTgResearcherDesktop/ApplicationData";
 	private const string DefaultLocalSettingsFile = "TgLocalSettings.json";
 	private readonly IFileService _fileService;
 	private readonly string _localApplicationData = string.Empty;
@@ -97,23 +109,47 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		await Task.CompletedTask;
 	}
 
-	private async Task<TgEnumTheme> LoadAppThemeFromSettingsAsync()
+	private async Task<TgEnumTheme> LoadAppThemeAsync()
 	{
 		var themeName = await ReadSettingAsync<string>(SettingsKeyAppTheme);
 		return Enum.TryParse(themeName, out TgEnumTheme cacheTheme) ? cacheTheme : TgEnumTheme.Default;
 	}
 
-	private async Task<string> LoadAppStorageFromSettingsAsync() => await ReadSettingAsync<string>(SettingsKeyAppStorage) ?? TgEfUtils.FileEfStorage;
+	private async Task<string> LoadAppStorageAsync() => await ReadSettingAsync<string>(SettingsKeyAppStorage) ?? TgEfUtils.FileEfStorage;
 
-	private async Task<string> LoadAppSessionFromSettingsAsync() => await ReadSettingAsync<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
+	private async Task<string> LoadAppSessionAsync() => await ReadSettingAsync<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
 
-	private async Task<TgEnumLanguage> LoadAppLanguageFromSettingsAsync()
+    private async Task<TgEnumLanguage> LoadAppLanguageAsync()
 	{
 		var appLanguage = await ReadSettingAsync<string>(SettingsKeyAppLanguage) ?? nameof(TgEnumLanguage.Default);
 		return TgEnumUtils.GetLanguageAsEnum(appLanguage);
 	}
 
-	public void ApplyTheme(TgEnumTheme appTheme)
+    private async Task<int> LoadWindowWidthAsync()
+    {
+        var str = await ReadSettingAsIntAsync<string>(SettingsKeyWindowWidth) ?? string.Empty;
+        return string.IsNullOrEmpty(str) ? 0 : int.TryParse(str, out var width) ? width : 0;
+    }
+
+    private async Task<int> LoadWindowHeightAsync()
+    {
+        var str = await ReadSettingAsIntAsync<string>(SettingsKeyWindowHeight) ?? string.Empty;
+        return string.IsNullOrEmpty(str) ? 0 : int.TryParse(str, out var width) ? width : 0;
+    }
+
+    private async Task<int> LoadWindowXAsync()
+    {
+        var str = await ReadSettingAsIntAsync<string>(SettingsKeyWindowX) ?? string.Empty;
+        return string.IsNullOrEmpty(str) ? 0 : int.TryParse(str, out var width) ? width : 0;
+    }
+
+    private async Task<int> LoadWindowYAsync()
+    {
+        var str = await ReadSettingAsIntAsync<string>(SettingsKeyWindowY) ?? string.Empty;
+        return string.IsNullOrEmpty(str) ? 0 : int.TryParse(str, out var width) ? width : 0;
+    }
+
+    public void ApplyTheme(TgEnumTheme appTheme)
 	{
 		if (App.MainWindow.Content is FrameworkElement rootElement)
 		{
@@ -122,20 +158,25 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 	}
 
-	private async Task SaveAppThemeInSettingsAsync(TgEnumTheme appTheme)
+	private async Task SaveAppThemeAsync(TgEnumTheme appTheme)
 	{
 		ApplyTheme(appTheme);
 		await SaveSettingAsync(SettingsKeyAppTheme, appTheme.ToString());
 	}
 
-	private async Task SaveAppLanguageInSettingsAsync(TgEnumLanguage appLanguage)
-	{
-		await SaveSettingAsync(SettingsKeyAppLanguage, appLanguage.ToString());
-	}
+    private async Task SaveAppLanguageAsync(TgEnumLanguage appLanguage) => await SaveSettingAsync(SettingsKeyAppLanguage, appLanguage.ToString());
 
-	private async Task SaveAppStorageInSettingsAsync(string appStorage) => await SaveSettingAsync(SettingsKeyAppStorage, appStorage);
+    private async Task SaveAppStorageAsync(string appStorage) => await SaveSettingAsync(SettingsKeyAppStorage, appStorage);
 
-	private async Task SaveAppSessionInSettingsAsync(string appSession) => await SaveSettingAsync(SettingsKeyAppSession, appSession);
+	private async Task SaveAppSessionAsync(string appSession) => await SaveSettingAsync(SettingsKeyAppSession, appSession);
+
+	private async Task SaveWindowWidthAsync(int value) => await SaveSettingAsync(SettingsKeyWindowWidth, value);
+
+	private async Task SaveWindowHeightAsync(int value) => await SaveSettingAsync(SettingsKeyWindowHeight, value);
+
+    private async Task SaveWindowXAsync(int value) => await SaveSettingAsync(SettingsKeyWindowX, value);
+
+	private async Task SaveWindowYAsync(int value) => await SaveSettingAsync(SettingsKeyWindowY, value);
 
 	private void SetAppFolder()
 	{
@@ -217,26 +258,38 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
 	public async Task LoadAsync()
 	{
-		var appTheme = await LoadAppThemeFromSettingsAsync();
+		var appTheme = await LoadAppThemeAsync();
 		AppTheme = AppThemes.First(x => x == appTheme);
-		var appLanguage = await LoadAppLanguageFromSettingsAsync();
+		var appLanguage = await LoadAppLanguageAsync();
 		AppLanguage = AppLanguages.First(x => x == appLanguage);
-		AppStorage = await LoadAppStorageFromSettingsAsync();
-		//if (!File.Exists(AppStorage))
-		//	AppStorage = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgEfUtils.FileEfStorage) : string.Empty;
+		AppStorage = await LoadAppStorageAsync();
 		IsExistsAppStorage = File.Exists(AppStorage);
-		AppSession = await LoadAppSessionFromSettingsAsync();
-		//if (!File.Exists(AppSession))
-		//	AppSession = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgFileUtils.FileTgSession) : string.Empty;
+		AppSession = await LoadAppSessionAsync();
 		IsExistsAppSession = File.Exists(AppSession);
+	}
+
+	public async Task LoadWindowAsync()
+	{
+        WindowWidth = await LoadWindowWidthAsync();
+		WindowHeight = await LoadWindowHeightAsync();
+        WindowX = await LoadWindowXAsync();
+        WindowY = await LoadWindowYAsync();
 	}
 
 	public async Task SaveAsync()
 	{
-		await SaveAppThemeInSettingsAsync(AppTheme);
-		await SaveAppLanguageInSettingsAsync(AppLanguage);
-		await SaveAppStorageInSettingsAsync(AppStorage);
-		await SaveAppSessionInSettingsAsync(AppSession);
+		await SaveAppThemeAsync(AppTheme);
+		await SaveAppLanguageAsync(AppLanguage);
+		await SaveAppStorageAsync(AppStorage);
+		await SaveAppSessionAsync(AppSession);
+	}
+
+	public async Task SaveWindowAsync(int width, int height, int x, int y)
+	{
+		await SaveWindowWidthAsync(WindowWidth = width);
+		await SaveWindowHeightAsync(WindowHeight = height);
+		await SaveWindowXAsync(WindowX = x);
+		await SaveWindowYAsync(WindowY = y);
 	}
 
 	private async Task InitializeAsync()
@@ -274,6 +327,47 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		return default;
 	}
+
+	public async Task<T?> ReadSettingAsIntAsync<T>(string key)
+	{
+        try
+        {
+            string value = string.Empty;
+            if (TgRuntimeHelper.IsMSIX)
+            {
+                if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
+                {
+                    value = obj.ToString() ?? string.Empty;
+                }
+            }
+            else
+            {
+                await InitializeAsync();
+                if (_settings != null && _settings.TryGetValue(key, out var obj))
+                {
+                    value = obj.ToString() ?? string.Empty;
+                }
+            }
+
+            if (typeof(T) == typeof(JsonElement))
+            {
+                return JsonSerializer.Deserialize<T>(value, TgJsonSerializerUtils.GetJsonOptions());
+            }
+            else if (typeof(T) == typeof(string))
+            {
+                return (T)(object)value;
+            }
+            else
+            {
+                return JsonSerializer.Deserialize<T>(value, TgJsonSerializerUtils.GetJsonOptions());
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.LogFatal(ex);
+        }
+        return default;
+    }
 
 	public async Task SaveSettingAsync<T>(string key, T value)
 	{

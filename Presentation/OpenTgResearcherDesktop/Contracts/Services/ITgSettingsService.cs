@@ -14,13 +14,19 @@ public interface ITgSettingsService
 	string AppFolder { get; }
 	bool IsExistsAppStorage { get; }
 	bool IsExistsAppSession { get; }
+	int WindowWidth { get; }
+	int WindowHeight { get; }
+	int WindowX { get; }
+	int WindowY { get; }
 
-	Task SetAppThemeAsync();
+    Task SetAppThemeAsync();
 	Task SetAppLanguageAsync();
 	void Default();
 	Task LoadAsync();
+	Task LoadWindowAsync();
 	Task SaveAsync();
-	void ApplyTheme(TgEnumTheme appTheme);
+	Task SaveWindowAsync(int width, int height, int x, int y);
+    void ApplyTheme(TgEnumTheme appTheme);
 	Task<T?> ReadSettingAsync<T>(string key);
 	Task SaveSettingAsync<T>(string key, T value);
 }

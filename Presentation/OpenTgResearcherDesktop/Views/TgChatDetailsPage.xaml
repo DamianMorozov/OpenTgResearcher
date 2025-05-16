@@ -88,7 +88,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.LoadDataStorageCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.LoadDataStorageCommand}"
                         IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
@@ -104,7 +104,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.UpdateOnlineCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.UpdateOnlineCommand}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -121,7 +121,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.StopDownloadingCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.StopDownloadingCommand}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -138,7 +138,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.ClearDataStorageCommand, Mode=OneWay}"
+                        Command="{x:Bind ViewModel.ClearDataStorageCommand}"
                         IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />

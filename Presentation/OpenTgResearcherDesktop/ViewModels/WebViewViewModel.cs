@@ -31,7 +31,7 @@ public partial class WebViewViewModel : ObservableRecipient, INavigationAware
 	{
 		if (WebViewService.Source != null)
 		{
-			await Windows.System.Launcher.LaunchUriAsync(WebViewService.Source);
+			await Launcher.LaunchUriAsync(WebViewService.Source);
 		}
 	}
 

@@ -46,14 +46,14 @@
 					x:Uid="BrowserBackButton"
 					Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
 					Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
-					Command="{x:Bind ViewModel.BrowserBackCommand, Mode=OneWay}">
+					Command="{x:Bind ViewModel.BrowserBackCommand}">
 					<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72B;" />
 				</Button>
 				<Button
 					x:Uid="BrowserForwardButton"
 					Margin="{StaticResource XSmallLeftTopRightBottomMargin}"
 					Padding="{StaticResource XXSmallLeftTopRightBottomMargin}"
-					Command="{x:Bind ViewModel.BrowserForwardCommand, Mode=OneWay}">
+					Command="{x:Bind ViewModel.BrowserForwardCommand}">
 					<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72A;" />
 				</Button>
 			</StackPanel>

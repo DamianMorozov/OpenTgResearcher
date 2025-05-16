@@ -16,7 +16,7 @@ public class AppNotificationActivationHandler : ActivationHandler<LaunchActivate
 
 	protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
 	{
-		return Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
+		return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
 	}
 
 	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)

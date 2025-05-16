@@ -159,7 +159,7 @@
             Margin="50,50,50,50"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Command="{x:Bind ViewModel.ContinueCommand, Mode=OneWay}"
+            Command="{x:Bind ViewModel.ContinueCommand}"
             Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock

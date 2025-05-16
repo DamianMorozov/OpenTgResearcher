@@ -58,7 +58,7 @@ public sealed class AppNotificationService : IAppNotificationService
 		{
 			App.MainWindow.ShowMessageDialogAsync(
 				$"{TgLocaleHelper.Instance.AppVersion}: v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}",
-				TgConstants.AppTitleDesktop);
+				TgConstants.OpenTgResearcherDesktop);
 			App.MainWindow.BringToFront();
 		});
 	}

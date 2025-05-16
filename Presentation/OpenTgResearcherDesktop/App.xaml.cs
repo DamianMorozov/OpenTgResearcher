@@ -17,7 +17,7 @@ public partial class App : Application
 
 	public static T GetService<T>() where T : class
 	{
-		if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
+		if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
 		{
 			throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
 		}
@@ -31,6 +31,10 @@ public partial class App : Application
 	public App()
 	{
 		InitializeComponent();
+
+        // Logging to the application directory
+        TgLogUtils.InitStartupLog();
+        TgLogUtils.WriteToLog($"App started");
 
         // DI
         var containerBuilder = new ContainerBuilder();
@@ -110,8 +114,10 @@ public partial class App : Application
 				services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
 			})
 			.Build();
+		
 		// Exceptions
 		UnhandledException += App_UnhandledException;
+		
 		// TG client loading
 		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
 		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
@@ -129,28 +135,12 @@ public partial class App : Application
 
     private static void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
 	{
-		// TODO: Log and handle exceptions as appropriate.
-		// https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
-		var message = e.Exception.Message;
-		if (e.Exception.InnerException is not null)
-			message += Environment.NewLine + e.Exception.InnerException.Message;
-		GetService<IAppNotificationService>().Show(message);
-		try
-		{
-			TgLogUtils.LogFatal(e.Exception, sender.ToString() ?? string.Empty);
-		}
-#if DEBUG
-		catch (Exception ex)
-		{
-			Debug.WriteLine(ex);
-#else
-		catch (Exception)
-		{
-			//
-#endif
-		}
-		// Set a handled exception to prevent the application from terminating
-		e.Handled = true;
+        // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
+        TgLogUtils.WriteException(e.Exception);
+        //GetService<IAppNotificationService>().Show(message);
+
+        // Set a handled exception to prevent the application from terminating
+        e.Handled = true;
 	}
 
 	protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -163,12 +153,11 @@ public partial class App : Application
 			{
                 // Activate the app
                 await GetService<IActivationService>().ActivateAsync(args);
-				
-			}, "Application launched");
+            }, "Application launched");
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex, "Application launched");
+            TgLogUtils.WriteException(ex);
 		}
 	}
 

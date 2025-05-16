@@ -73,7 +73,7 @@
 						Margin="0,0,5,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind Path=ViewModel.AppLoadCommand, Mode=OneWay}">
+						Command="{x:Bind Path=ViewModel.AppLoadCommand}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xE896;" />
 							<TextBlock
@@ -89,7 +89,7 @@
 						Margin="5,0,5,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind Path=ViewModel.AppSaveCommand, Mode=OneWay}">
+						Command="{x:Bind Path=ViewModel.AppSaveCommand}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
 							<TextBlock
@@ -105,7 +105,7 @@
 						Margin="5,0,5,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind Path=ViewModel.AppClearCommand, Mode=OneWay}">
+						Command="{x:Bind Path=ViewModel.AppClearCommand}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
 							<TextBlock
@@ -121,7 +121,7 @@
 						Margin="5,0,0,0"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
-						Command="{x:Bind Path=ViewModel.AppDeleteCommand, Mode=OneWay}">
+						Command="{x:Bind Path=ViewModel.AppDeleteCommand}">
 						<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 							<FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
 							<TextBlock
@@ -154,7 +154,7 @@
 							Margin="0,0,5,0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
-							Command="{x:Bind ViewModel.ClientConnectCommand, Mode=OneWay}"
+							Command="{x:Bind ViewModel.ClientConnectCommand}"
 							FontWeight="Bold"
 							IsEnabled="{x:Bind ViewModel.IsFieldsCheck, Mode=OneWay}">
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -171,7 +171,7 @@
 							Margin="5,0,0,0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
-							Command="{x:Bind ViewModel.ClientDisconnectCommand, Mode=OneWay}"
+							Command="{x:Bind ViewModel.ClientDisconnectCommand}"
 							FontWeight="Bold"
 							IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">

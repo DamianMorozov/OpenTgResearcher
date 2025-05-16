@@ -11,22 +11,29 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
 
     public async Task ActivateAsync(object activationArgs)
     {
-        // Execute tasks before activation
-        await settingsService.LoadAsync();
-        // Set the MainWindow Content
-        if (App.MainWindow.Content == null)
+        try
         {
-            // ShellPage loading
-            _shell = App.GetService<ShellPage>();
-            App.MainWindow.Content = _shell ?? new Frame();
-        }
-        // Handle activation via ActivationHandlers
-        await HandleActivationAsync(activationArgs);
-        // Activate the MainWindow
-        App.MainWindow.Activate();
+            // Execute tasks before activation
+            await settingsService.LoadAsync();
+            // Set the MainWindow Content
+            if (App.MainWindow.Content == null)
+            {
+                // ShellPage loading
+                _shell = App.GetService<ShellPage>();
+                App.MainWindow.Content = _shell ?? new Frame();
+            }
+            // Handle activation via ActivationHandlers
+            await HandleActivationAsync(activationArgs);
+            // Activate the MainWindow
+            App.MainWindow.Activate();
 
-        // Loading SplashScreen
-        await LoadingSplashScreen();
+            // Loading SplashScreen
+            await LoadingSplashScreen();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
     }
 
     /// <summary> Loading SplashScreen </summary>

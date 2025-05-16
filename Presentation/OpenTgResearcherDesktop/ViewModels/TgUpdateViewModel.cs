@@ -43,7 +43,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 		{
 			log.AppendLine("Update started");
 			TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
-			log.AppendLine($"{TgConstants.AppTitleDesktop} {TgAppSettingsHelper.Instance.AppVersion}");
+			log.AppendLine($"{TgConstants.OpenTgResearcherDesktop} {TgAppSettingsHelper.Instance.AppVersion}");
 			log.AppendLine("Checking updates on the link github.com");
 			var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
 			// Check for new version

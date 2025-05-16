@@ -29,7 +29,7 @@
 							Margin="0,-10,5,0"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
-							Command="{x:Bind ViewModel.LoadLogsCommand, Mode=OneWay}">
+							Command="{x:Bind ViewModel.LoadLogsCommand}">
 							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 								<FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
 								<TextBlock
@@ -63,7 +63,7 @@
 												Grid.Row="0"
 												Grid.Column="0"
 												Margin="0,-10,0,0"
-												Command="{x:Bind Path=ViewModel.DeleteLogFileCommand, Mode=OneWay}"
+												Command="{x:Bind Path=ViewModel.DeleteLogFileCommand}"
 												CommandParameter="{x:Bind}" />
 											<Button
 												Grid.Row="0"

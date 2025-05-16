@@ -11,4 +11,8 @@ public sealed class LocalSettingsOptions
 	public string? AppLanguage { get; set; }
     public string? AppStorage { get; set; }
     public string? AppSession { get; set; }
+    public string? WindowWidth { get; set; }
+    public string? WindowHeight { get; set; }
+    public string? WindowX { get; set; }
+    public string? WindowY { get; set; }
 }

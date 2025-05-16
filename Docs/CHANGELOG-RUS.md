@@ -4,7 +4,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.230] - 2025-05-15
+## [0.6.240] - 2025-05-16
 ### Изменено
 - Обновлено меню в OpenTgResearcherConsole
 - Обновлён просмотр лицензии
@@ -13,6 +13,7 @@
 - Обновлена заставка и добавлена анимация в OpenTgResearcherDesktop
 - Исправление загрузки и сохранения настроек в OpenTgResearcherDesktop
 - Изменена загрузка инсталлера в OpenTgResearcherDesktop
+- Улучшение ведения журнала и управления состоянием окна в OpenTgResearcherDesktop
 ### Добавлено
 - Добавлены методы запоминания размера и положения окна между сессиями в OpenTgResearcherDesktop
 - Добавлено удаление лицензии

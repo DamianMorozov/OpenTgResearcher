@@ -47,7 +47,7 @@
                                 Margin="0,5,5,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.LicenseClearCommand, Mode=OneWay}"
+                                Command="{x:Bind ViewModel.LicenseClearCommand}"
                                 IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
@@ -65,7 +65,7 @@
                                 Margin="0,5,5,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.LicenseCheckCommand, Mode=OneWay}"
+                                Command="{x:Bind ViewModel.LicenseCheckCommand}"
                                 IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
@@ -83,7 +83,7 @@
                                 Margin="0,5,5,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.LicenseChangeCommand, Mode=OneWay}"
+                                Command="{x:Bind ViewModel.LicenseChangeCommand}"
                                 IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />

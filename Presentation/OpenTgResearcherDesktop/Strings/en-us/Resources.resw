@@ -257,7 +257,7 @@
     <value>Docker image</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Tag" xml:space="preserve">
-    <value>"https://hub.docker.com/repository/docker/damianmorozov/tgdownloader-console"</value>
+    <value>"https://hub.docker.com/repository/docker/damianmorozov/opentgresearcher-console"</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsNet8.Content" xml:space="preserve">
     <value>Download .NET 8.0</value>

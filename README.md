@@ -25,7 +25,7 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 - [OpenTgResearcher group](https://t.me/OpenTgResearcher)
 
 ## Docker
-- [Docker image](https://hub.docker.com/repository/docker/damianmorozov/tgdownloader-console)
+- [Docker image](https://hub.docker.com/repository/docker/damianmorozov/opentgresearcher-console)
 
 ## Install Requirements
 - [Register Telegram app](https://my.telegram.org/apps)

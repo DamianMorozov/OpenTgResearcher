@@ -2,17 +2,19 @@
 
 ## Docker compose usage
 ```
-docker pull damianmorozov/tgdownloader-console:latest
-d: && cd d:\Dockers\tgdownloader-console
-docker-compose down tgdownloader-console
-docker-compose up -d tgdownloader-console
+docker pull damianmorozov/opentgresearcher-console:latest
+d: && cd d:\Dockers\opentgresearcher-console
+docker compose down
+docker image rm opentgresearcher-console
+docker compose up --build -d
+docker compose logs
 ```
 
 ## Файл docker-compose.yml
 ```
 services:
-  tgdownloader-console:
-    image: damianmorozov/tgdownloader-console:latest
+  opentgresearcher-console:
+    image: damianmorozov/opentgresearcher-console:latest
     ports:
      - "7681:7681"
     environment:
@@ -21,7 +23,7 @@ services:
      - .\TgStorage.db:/app/TgStorage.db:rw # optional
      - .\OpenTgResearcher.xml:/app/OpenTgResearcher.xml:rw # optional
      - .\OpenTgResearcher.session:/app/OpenTgResearcher.session:rw # optional
-    container_name: tgdownloader-console
+    container_name: opentgresearcher-console
     restart: on-failure
 ```
 

@@ -25,7 +25,7 @@
 - [OpenTgResearcher группа](https://t.me/OpenTgResearcher)
 
 ## Docker
-- [Докер образ](https://hub.docker.com/repository/docker/damianmorozov/tgdownloader-console)
+- [Докер образ](https://hub.docker.com/repository/docker/damianmorozov/opentgresearcher-console)
 
 ## Требования к установке
 - [Зарегистрируйте Telegram приложение](https://my.telegram.org/apps)

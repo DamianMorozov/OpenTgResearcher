@@ -22,6 +22,7 @@ public interface ITgEfRepository<TEfEntity> where TEfEntity : class, ITgEfEntity
 	public TEfEntity GetItem(TEfEntity item, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetNewAsync(bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetNew(bool isReadOnly = true);
+    public TEfEntity GetNewItem(bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);

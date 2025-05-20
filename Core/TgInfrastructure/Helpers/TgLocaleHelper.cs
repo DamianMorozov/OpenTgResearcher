@@ -138,7 +138,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	#region License
 
 	public string MenuLicenseBuy => "Buy license";
-	public string MenuLicenseCheck => "Check license";
+	public string MenuLicenseCheck => "Check current or get test license";
 	public string MenuLicenseCheckServer => "Check license server";
 	public string MenuLicenseCheckUrl => "Check URL";
 	public string MenuLicenseCheckWithUserId => "To verify the license, the user ID is passed, continue";
@@ -277,6 +277,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgClientSetupCompleteError => "The TG client setup was completed with errors";
 	public string TgClientSetupCompleteSuccess => "The TG client setup was completed successfully";
 	public string TgClientUseBot => "Use bot";
+	public string TgClientBotToken => "Bot token";
 	public string TgClientUserId => "User ID";
 	public string TgClientUserIsActive => "User active";
 	public string TgClientUserName => "User name";

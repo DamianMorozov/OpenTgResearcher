@@ -87,9 +87,15 @@ public sealed class TgLicenseService : ITgLicenseService
     public async Task LicenseClearAsync()
 	{
 		await LicenseRepository.DeleteAllAsync();
-	}
+        var app = (await AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
+		if (app.UseBot)
+		{
+			app.UseBot = false;
+			await AppRepository.SaveAsync(app);
+		}
+    }
 
-	public async Task LicenseUpdateAsync(TgLicenseDto licenseDto)
+    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto)
 	{
 		var licenseEntity = new TgEfLicenseEntity
 		{

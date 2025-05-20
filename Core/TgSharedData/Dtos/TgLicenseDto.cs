@@ -22,13 +22,13 @@ public sealed partial class TgLicenseDto : ObservableRecipient
     [ObservableProperty]
 	public partial bool IsConfirmed { get; set; }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public bool IsValid() => LicenseType switch
+    /// <summary> Check paid license </summary>
+    public bool CheckPaidLicense() => LicenseType switch
 	{
-		TgEnumLicenseType.Free => true,
 		TgEnumLicenseType.Test or TgEnumLicenseType.Paid or TgEnumLicenseType.Premium => IsConfirmed && DateOnly.FromDateTime(DateTime.UtcNow) <= ValidTo,
 		_ => false,
 	};

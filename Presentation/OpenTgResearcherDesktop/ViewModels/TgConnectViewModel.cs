@@ -52,7 +52,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial bool IsFieldsCheck { get; set; }
 	[ObservableProperty]
-	public partial bool IsBot { get; set; }
+	public partial bool UseBot { get; set; }
 	[ObservableProperty]
 	public partial string BotTokenKey { get; set; } = string.Empty;
 
@@ -101,7 +101,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	{
 		ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 		IsClientConnected = false;
-		if (!IsBot)
+		if (!UseBot)
 		{
 			var client = TgGlobalTools.ConnectClient.Client;
 			// Check exceptions
@@ -193,10 +193,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		{
 			Exception.Default();
 			DataRequest = string.Empty;
-			if (!IsBot)
+			//if (!UseBot)
 				await TgGlobalTools.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
-			else
-				await TgGlobalTools.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
+			//else
+			//	await TgGlobalTools.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
 		}
 		catch (Exception ex)
 		{
@@ -233,7 +233,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		PhoneNumber = App.PhoneNumber;
 		FirstName = App.FirstName;
 		LastName = App.LastName;
-		IsBot = App.UseBot;
+		UseBot = App.UseBot;
 		BotTokenKey = App.BotTokenKey;
 
 		UserName = string.Empty;
@@ -295,7 +295,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		App.LastName = LastName;
 		App.PhoneNumber = PhoneNumber;
 		App.ProxyUid = ProxyVm?.Dto.Uid;
-		App.UseBot = IsBot;
+		App.UseBot = UseBot;
 		App.BotTokenKey = BotTokenKey;
 		if (App.ProxyUid is null || App.ProxyUid == Guid.Empty)
 			App.Proxy = null;

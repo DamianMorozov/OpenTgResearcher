@@ -405,10 +405,10 @@
     <value>Очистить лицензию</value>
   </data>
   <data name="ActionLicenseCheck.Text" xml:space="preserve">
-    <value>Проверить лицензию</value>
+    <value>Проверить текущую или получить тестовую лицензию</value>
   </data>
   <data name="ActionLicenseCheckMsg" xml:space="preserve">
-    <value>Проверить лицензию</value>
+    <value>Проверить текущую или получить тестовую лицензию</value>
   </data>
   <data name="ActionLicenseBuy.Text" xml:space="preserve">
     <value>Сменить лицензию</value>
@@ -924,6 +924,9 @@
     <value>Активно</value>
   </data>
   <data name="FieldIsBot.Text" xml:space="preserve">
+    <value>Бот</value>
+  </data>
+  <data name="FieldUseBot.Text" xml:space="preserve">
     <value>Бот</value>
   </data>
   <data name="FieldIsAutoUpdate.Text" xml:space="preserve">

@@ -346,10 +346,10 @@
     <value>Clear license</value>
   </data>
   <data name="ActionLicenseCheck.Text" xml:space="preserve">
-    <value>Check license</value>
+    <value>Check current or get test license</value>
   </data>
   <data name="ActionLicenseCheckMsg" xml:space="preserve">
-    <value>Check license</value>
+    <value>Check current or get test license</value>
   </data>
   <data name="ActionLicenseBuy.Text" xml:space="preserve">
     <value>Buy license</value>
@@ -862,6 +862,9 @@
     <value>Active</value>
   </data>
   <data name="FieldIsBot.Text" xml:space="preserve">
+    <value>Bot</value>
+  </data>
+  <data name="FieldUseBot.Text" xml:space="preserve">
     <value>Bot</value>
   </data>
   <data name="FieldIsAutoUpdate.Text" xml:space="preserve">

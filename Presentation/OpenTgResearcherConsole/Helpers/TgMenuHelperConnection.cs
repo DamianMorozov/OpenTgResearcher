@@ -8,25 +8,29 @@ internal partial class TgMenuHelper
 {
 	#region Public and private methods
 
-	private static TgEnumMenuClient SetMenuConnection()
+	private TgEnumMenuClient SetMenuConnection()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
+		var selectionPrompt = new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(
 					TgLocale.MenuMainReturn,
 					TgLocale.MenuClearConnectionData,
-					TgLocale.TgClientUseBot,
 					TgLocale.MenuRegisterTelegramApp,
 					TgLocale.MenuSetProxy,
 					TgLocale.MenuClientConnect,
-					TgLocale.MenuClientDisconnect));
+					TgLocale.MenuClientDisconnect);
+        // Check paid license
+        if (LicenseService.CurrentLicense.CheckPaidLicense())
+		{
+			selectionPrompt.AddChoice(TgLocale.TgClientUseBot);
+			selectionPrompt.AddChoice(TgLocale.TgClientBotToken);
+		}
+
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
 		if (prompt.Equals(TgLocale.MenuClearConnectionData))
 			return TgEnumMenuClient.ClearConnectionData;
-		if (prompt.Equals(TgLocale.TgClientUseBot))
-			return TgEnumMenuClient.UseBot;
 		if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
 			return TgEnumMenuClient.RegisterTelegramApp;
 		if (prompt.Equals(TgLocale.MenuSetProxy))
@@ -35,10 +39,20 @@ internal partial class TgMenuHelper
 			return TgEnumMenuClient.Connect;
 		if (prompt.Equals(TgLocale.MenuClientDisconnect))
 			return TgEnumMenuClient.Disconnect;
-		return TgEnumMenuClient.Return;
-	}
 
-	public async Task SetupConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+        // Check paid license
+        if (LicenseService.CurrentLicense.CheckPaidLicense())
+		{
+			if (prompt.Equals(TgLocale.TgClientUseBot))
+				return TgEnumMenuClient.UseBot;
+			if (prompt.Equals(TgLocale.TgClientBotToken))
+				return TgEnumMenuClient.BotToken;
+		}
+
+        return TgEnumMenuClient.Return;
+    }
+
+    public async Task SetupConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		TgEnumMenuClient menu;
 		do
@@ -49,9 +63,6 @@ internal partial class TgMenuHelper
 			{
 				case TgEnumMenuClient.ClearConnectionData:
 					await ClientClearAsync(tgDownloadSettings);
-					break;
-				case TgEnumMenuClient.UseBot:
-					await ClientUseBotAsync(tgDownloadSettings);
 					break;
 				case TgEnumMenuClient.RegisterTelegramApp:
 					await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
@@ -68,7 +79,13 @@ internal partial class TgMenuHelper
 				case TgEnumMenuClient.Disconnect:
 					await DisconnectClientAsync(tgDownloadSettings);
 					break;
-				case TgEnumMenuClient.Return:
+                case TgEnumMenuClient.UseBot:
+                    await ClientUseBotAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuClient.BotToken:
+                    await ClientBotTokenAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuClient.Return:
 					break;
 			}
 		} while (menu is not TgEnumMenuClient.Return);
@@ -251,7 +268,10 @@ internal partial class TgMenuHelper
 
 	public async Task ClientUseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		var useBot = AskQuestionYesNoReturnPositive(TgLocale.TgClientUseBot);
+		// Check paid license
+		if (!LicenseService.CurrentLicense.CheckPaidLicense()) return;
+
+        var useBot = AskQuestionYesNoReturnPositive(TgLocale.TgClientUseBot);
 
 		var storageResult = await AppRepository.GetCurrentAppAsync();
 		if (storageResult.IsExists)
@@ -261,5 +281,22 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	#endregion
+	public async Task ClientBotTokenAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+        // Check paid license
+        if (!LicenseService.CurrentLicense.CheckPaidLicense()) return;
+
+        var input = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TgClientBotToken}:"));
+		if (!string.IsNullOrEmpty(input))
+		{
+            var storageResult = await AppRepository.GetCurrentAppAsync();
+            if (storageResult.IsExists)
+            {
+                storageResult.Item.BotTokenKey = input;
+                await AppRepository.SaveAsync(storageResult.Item);
+            }
+        }
+    }
+
+    #endregion
 }

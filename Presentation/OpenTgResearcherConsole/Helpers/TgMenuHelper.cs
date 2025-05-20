@@ -15,7 +15,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	public ITgLicenseService LicenseService { get; private set; } = default!;
 	internal Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
 	internal TgEnumMenuMain Value { get; set; }
-	private TgEfAppRepository AppRepository { get; } = new();
+	private ITgEfAppRepository AppRepository { get; } = new TgEfAppRepository();
 	private TgEfContactRepository ContactRepository { get; } = new();
 	private TgEfFilterRepository FilterRepository { get; } = new();
 	private TgEfProxyRepository ProxyRepository { get; } = new();
@@ -55,7 +55,7 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			Border = TableBorder.Rounded,
 			// App version + Storage version + License
 			Title = new($"{TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / " +
-				$"{LicenseService.CurrentLicense?.Description ?? string.Empty}", Style.Plain),
+				$"{LicenseService.CurrentLicense.Description ?? string.Empty}", Style.Plain),
 		};
 		fillTableColumns(table);
 		await fillTableRowsAsync(tgDownloadSettings, table);
@@ -296,20 +296,17 @@ internal sealed partial class TgMenuHelper : ITgHelper
 			table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)), GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
 		}
 
-		// Use bot
-		switch (LicenseService.CurrentLicense.LicenseType)
+		// Check paid license
+		if (LicenseService.CurrentLicense.CheckPaidLicense())
 		{
-			case TgEnumLicenseType.Free:
-				break;
-			case TgEnumLicenseType.Test:
-			case TgEnumLicenseType.Paid:
-			case TgEnumLicenseType.Premium:
-				var appDto = await AppRepository.GetCurrentDtoAsync();
-				table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUseBot)), GetMarkup(appDto.UseBot.ToString()));
-				break;
-		}
+            var appDto = await AppRepository.GetCurrentDtoAsync();
+            // Use bot
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUseBot)), GetMarkup(appDto.UseBot.ToString()));
+            // Bot token
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientBotToken)), GetMarkup(appDto.BotTokenKey));
+        }
 
-		await Task.CompletedTask;
+        await Task.CompletedTask;
 	}
 
 	/// <summary> Chat info </summary>

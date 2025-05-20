@@ -8,6 +8,7 @@ public enum TgEnumMenuClient
 	Return,
 	ClearConnectionData,
 	UseBot,
+	BotToken,
 	RegisterTelegramApp,
 	SetProxy,
 	Connect,

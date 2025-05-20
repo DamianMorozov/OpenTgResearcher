@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
+using Spectre.Console;
+
 namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
@@ -10,20 +12,7 @@ internal partial class TgMenuHelper
 
 	private TgEnumMenuDownload SetMenuDownload()
 	{
-		// License options
-		var menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByFreeLicense;
-		switch (LicenseService.CurrentLicense.LicenseType)
-		{
-			case TgEnumLicenseType.Test:
-			case TgEnumLicenseType.Paid:
-			case TgEnumLicenseType.Premium:
-				menuDownloadSetCountThreads = TgLocale.MenuDownloadSetCountThreadsByPaidLicense;
-				break;
-			case TgEnumLicenseType.Free:
-				break;
-		}
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
+		var selectionPrompt = new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
@@ -39,11 +28,18 @@ internal partial class TgMenuHelper
 					TgLocale.MenuDownloadSetIsAddMessageId,
 					TgLocale.MenuDownloadSetIsAutoUpdate,
 					TgLocale.MenuDownloadSetIsCreatingSubdirectories,
-					TgLocale.MenuDownloadSetIsFileNamingByMessage,
-					menuDownloadSetCountThreads,
-					TgLocale.MenuSaveSettings,
-					TgLocale.MenuManualDownload
-				));
+					TgLocale.MenuDownloadSetIsFileNamingByMessage);
+		// Check paid license
+		if (LicenseService.CurrentLicense.CheckPaidLicense())
+		{
+			selectionPrompt.AddChoice(TgLocale.MenuDownloadSetCountThreadsByPaidLicense);
+		}
+		else
+        {
+            selectionPrompt.AddChoice(TgLocale.MenuDownloadSetCountThreadsByFreeLicense);
+        }
+		selectionPrompt.AddChoices(TgLocale.MenuSaveSettings, TgLocale.MenuManualDownload);
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
 		if (prompt.Equals(TgLocale.MenuDownloadSetSource))
 			return TgEnumMenuDownload.SetSource;
 		if (prompt.Equals(TgLocale.MenuDownloadSetFolder))
@@ -66,7 +62,9 @@ internal partial class TgMenuHelper
 			return TgEnumMenuDownload.SetIsCreatingSubdirectories;
 		if (prompt.Equals(TgLocale.MenuDownloadSetIsFileNamingByMessage))
 			return TgEnumMenuDownload.SetIsFileNamingByMessage;
-		if (prompt.Equals(menuDownloadSetCountThreads))
+		if (prompt.Equals(TgLocale.MenuDownloadSetCountThreadsByFreeLicense))
+			return TgEnumMenuDownload.SetCountThreads;
+		if (prompt.Equals(TgLocale.MenuDownloadSetCountThreadsByPaidLicense))
 			return TgEnumMenuDownload.SetCountThreads;
 		if (prompt.Equals(TgLocale.MenuSaveSettings))
 			return TgEnumMenuDownload.SettingsSave;

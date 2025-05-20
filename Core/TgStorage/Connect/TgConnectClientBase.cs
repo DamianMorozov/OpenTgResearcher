@@ -255,6 +255,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	}
 
 	public async Task ConnectSessionDesktopAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, Func<string, string?> config)
+
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		if (IsReady)

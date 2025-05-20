@@ -3,6 +3,6 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfDocumentRepository
+public interface ITgEfDocumentRepository : ITgEfRepository<TgEfDocumentEntity>
 {
 }

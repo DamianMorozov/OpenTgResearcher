@@ -13,19 +13,19 @@ public sealed class TgLicenseService : ITgLicenseService
 	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = null!;
 
-	private ITgEfAppRepository AppRepository { get; }
-	private ITgEfLicenseRepository LicenseRepository { get; }
+	private readonly ITgEfAppRepository _appRepository;
+	private readonly ITgEfLicenseRepository _licenseRepository;
 
 	public TgLicenseService()
 	{
-        AppRepository = new TgEfAppRepository();
-		LicenseRepository = new TgEfLicenseRepository();
+        _appRepository = new TgEfAppRepository();
+		_licenseRepository = new TgEfLicenseRepository();
 	}
 
 	public TgLicenseService(IWebHostEnvironment webHostEnvironment)
 	{
-		AppRepository = new TgEfAppRepository(webHostEnvironment);
-        LicenseRepository = new TgEfLicenseRepository(webHostEnvironment);
+		_appRepository = new TgEfAppRepository(webHostEnvironment);
+        _licenseRepository = new TgEfLicenseRepository(webHostEnvironment);
 	}
 
 	#endregion
@@ -72,7 +72,7 @@ public sealed class TgLicenseService : ITgLicenseService
 		var userId = await GetUserIdAsync();
         if (userId > 0)
 		{
-            var licenseDtos = await LicenseRepository.GetListDtosAsync();
+            var licenseDtos = await _licenseRepository.GetListDtosAsync();
             var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date && x.UserId == userId);
             if (currentLicenseDto is not null)
 			{
@@ -86,12 +86,12 @@ public sealed class TgLicenseService : ITgLicenseService
 
     public async Task LicenseClearAsync()
 	{
-		await LicenseRepository.DeleteAllAsync();
-        var app = (await AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
+		await _licenseRepository.DeleteAllAsync();
+        var app = (await _appRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
 		if (app.UseBot)
 		{
 			app.UseBot = false;
-			await AppRepository.SaveAsync(app);
+			await _appRepository.SaveAsync(app);
 		}
     }
 
@@ -107,17 +107,17 @@ public sealed class TgLicenseService : ITgLicenseService
 		};
 
         var userId = await GetUserIdAsync();
-        var licenseDtos = await LicenseRepository.GetListDtosAsync();
+        var licenseDtos = await _licenseRepository.GetListDtosAsync();
 		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date && x.UserId == userId);
         if (currentLicenseDto is null)
 		{
-			await LicenseRepository.SaveAsync(licenseEntity);
+			await _licenseRepository.SaveAsync(licenseEntity);
 		}
 		else
 		{
-			var licenseExists = await LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
+			var licenseExists = await _licenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
 			licenseExists.Copy(licenseEntity, isUidCopy: false);
-			await LicenseRepository.SaveAsync(licenseEntity);
+			await _licenseRepository.SaveAsync(licenseEntity);
 		}
 	}
 
@@ -126,7 +126,7 @@ public sealed class TgLicenseService : ITgLicenseService
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
+		var licenseDtos = await _licenseRepository.GetListDtosAsync(take: 0, skip: 0);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
@@ -143,7 +143,7 @@ public sealed class TgLicenseService : ITgLicenseService
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
+		var licenseDtos = await _licenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();

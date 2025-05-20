@@ -3,7 +3,7 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfBotRepository
+public interface ITgEfBotRepository// : ITgEfRepository<TgEfBotEntity>
 {
 	//
 }

@@ -3,6 +3,6 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfMessageRepository
+public interface ITgEfMessageRepository : ITgEfRepository<TgEfMessageEntity>
 {
 }

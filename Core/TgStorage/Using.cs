@@ -48,4 +48,6 @@ global using TgStorage.Domain.Versions;
 global using TgStorage.Domain;
 global using TgStorage.Helpers;
 global using TgStorage.Models;
+global using TgStorage.Repositories;
 global using TgStorage.Utils;
+global using TgStorage.Validators;

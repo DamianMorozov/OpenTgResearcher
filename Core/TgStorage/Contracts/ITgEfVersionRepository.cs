@@ -3,9 +3,9 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfVersionRepository
+public interface ITgEfVersionRepository : ITgEfRepository<TgEfVersionEntity>
 {
 	short LastVersion { get; }
 	Task<TgEfVersionEntity> GetLastVersionAsync();
-	Task FillTableVersionsAsync();
+    Task FillTableVersionsAsync();
 }

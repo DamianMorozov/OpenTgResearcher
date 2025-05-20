@@ -1,27 +1,27 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgStorage.Domain.Contacts;
+namespace TgStorage.Repositories;
 
-/// <summary> Contact repository </summary>
-public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity, TgEfContactDto>, ITgEfContactRepository
+/// <summary> Story repository </summary>
+public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, TgEfStoryDto>, ITgEfStoryRepository
 {
 	#region Public and private fields, properties, constructor
 
-	public TgEfContactRepository() : base() { }
+	public TgEfStoryRepository() : base() { }
 
-	public TgEfContactRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
+	public TgEfStoryRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
 
 	#endregion
 
 	#region Public and private methods
 
-	public override string ToDebugString() => $"{nameof(TgEfContactRepository)}";
+	public override string ToDebugString() => $"{nameof(TgEfStoryRepository)}";
 
-	public override IQueryable<TgEfContactEntity> GetQuery(bool isReadOnly = true) => 
-		isReadOnly ? EfContext.Contacts.AsNoTracking() : EfContext.Contacts.AsTracking();
+	public override IQueryable<TgEfStoryEntity> GetQuery(bool isReadOnly = true) => 
+		isReadOnly ? EfContext.Stories.AsNoTracking() : EfContext.Stories.AsTracking();
 
-	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetAsync(TgEfContactEntity item, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfStoryEntity>> GetAsync(TgEfStoryEntity item, bool isReadOnly = true)
 	{
 		try
 		{
@@ -35,7 +35,7 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 			itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id);
 			return itemFind is not null
 				? new(TgEnumEntityState.IsExists, itemFind)
-				: new TgEfStorageResult<TgEfContactEntity>(TgEnumEntityState.NotExists, item);
+				: new TgEfStorageResult<TgEfStoryEntity>(TgEnumEntityState.NotExists, item);
 		}
 #if DEBUG
 		catch (Exception ex)
@@ -50,15 +50,15 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		}
 	}
 
-	private static Expression<Func<TgEfContactEntity, TgEfContactDto>> SelectDto() => item => new TgEfContactDto().GetNewDto(item);
+	private static Expression<Func<TgEfStoryEntity, TgEfStoryDto>> SelectDto() => item => new TgEfStoryDto().GetNewDto(item);
 
-	public async Task<TgEfContactDto> GetDtoAsync(Expression<Func<TgEfContactEntity, bool>> where)
+	public async Task<TgEfStoryDto> GetDtoAsync(Expression<Func<TgEfStoryEntity, bool>> where)
 	{
-		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfContactDto();
+		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfStoryDto();
 		return dto;
 	}
 
-	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take = 0, int skip = 0)
+	public async Task<List<TgEfStoryDto>> GetListDtosAsync(int take = 0, int skip = 0)
 	{
 		var dtos = take > 0
 			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
@@ -66,7 +66,7 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		return dtos;
 	}
 
-	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfContactEntity, bool>> where)
+	public async Task<List<TgEfStoryDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfStoryEntity, bool>> where)
 	{
 		var dtos = take > 0
 			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
@@ -74,17 +74,17 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		return dtos;
 	}
 
-	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfStoryEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
-		IList<TgEfContactEntity> items = take > 0 
+		IList<TgEfStoryEntity> items = take > 0 
 			? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync() 
 			: await GetQuery(isReadOnly).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfContactEntity, bool>> where, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfStoryEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfStoryEntity, bool>> where, bool isReadOnly = true)
 	{
-		IList<TgEfContactEntity> items = take > 0
+		IList<TgEfStoryEntity> items = take > 0
 			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync()
 			: await GetQuery(isReadOnly).Where(where).ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
@@ -92,19 +92,19 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 
 	public override async Task<int> GetCountAsync()
 	{
-		return await EfContext.Contacts.AsNoTracking().CountAsync();
+		return await EfContext.Stories.AsNoTracking().CountAsync();
 	}
 
-	public override async Task<int> GetCountAsync(Expression<Func<TgEfContactEntity, bool>> where)
+	public override async Task<int> GetCountAsync(Expression<Func<TgEfStoryEntity, bool>> where)
 	{
-		return await EfContext.Contacts.AsNoTracking().Where(where).CountAsync();
+		return await EfContext.Stories.AsNoTracking().Where(where).CountAsync();
 	}
 
 	#endregion
 
 	#region Public and private methods - Delete
 
-	public override async Task<TgEfStorageResult<TgEfContactEntity>> DeleteAllAsync()
+	public override async Task<TgEfStorageResult<TgEfStoryEntity>> DeleteAllAsync()
 	{
 		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
 		if (storageResult.IsExists)

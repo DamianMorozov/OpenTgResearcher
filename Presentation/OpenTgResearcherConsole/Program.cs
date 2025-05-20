@@ -12,6 +12,16 @@ public static class Program
         containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
         containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClient>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
+        containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
+        containerBuilder.RegisterType<TgEfContactRepository>().As<ITgEfContactRepository>();
+        containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
+        containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
+        containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
+        containerBuilder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
+        containerBuilder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
+        containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
+        containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
+        containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
         TgGlobalTools.Container = containerBuilder.Build();
 
         // TgGlobalTools

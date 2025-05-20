@@ -13,21 +13,29 @@ internal sealed partial class TgMenuHelper : ITgHelper
 	internal static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
 	internal static TgLogHelper TgLog => TgLogHelper.Instance;
 	public ITgLicenseService LicenseService { get; private set; } = default!;
-	internal Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
+	internal static Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
 	internal TgEnumMenuMain Value { get; set; }
-	private ITgEfAppRepository AppRepository { get; } = new TgEfAppRepository();
-	private TgEfContactRepository ContactRepository { get; } = new();
-	private TgEfFilterRepository FilterRepository { get; } = new();
-	private TgEfProxyRepository ProxyRepository { get; } = new();
-	private TgEfSourceRepository SourceRepository { get; } = new();
-	private TgEfStoryRepository StoryRepository { get; } = new();
-	private TgEfVersionRepository VersionRepository { get; } = new();
+	private ITgEfAppRepository AppRepository { get; }
+	private ITgEfContactRepository ContactRepository { get; }
+	private ITgEfFilterRepository FilterRepository { get; }
+	private ITgEfProxyRepository ProxyRepository { get; }
+	private ITgEfSourceRepository SourceRepository { get; }
+	private ITgEfStoryRepository StoryRepository { get; }
+	private ITgEfVersionRepository VersionRepository { get; }
 
 	public TgMenuHelper()
 	{
 		var scope = TgGlobalTools.Container.BeginLifetimeScope();
+
 		LicenseService = scope.Resolve<ITgLicenseService>();
-	}
+		AppRepository = scope.Resolve<ITgEfAppRepository>();
+		ContactRepository = scope.Resolve<ITgEfContactRepository>();
+		FilterRepository = scope.Resolve<ITgEfFilterRepository>();
+		ProxyRepository = scope.Resolve<ITgEfProxyRepository>();
+		SourceRepository = scope.Resolve<ITgEfSourceRepository>();
+		StoryRepository = scope.Resolve<ITgEfStoryRepository>();
+		VersionRepository = scope.Resolve<ITgEfVersionRepository>();
+    }
 
 	#endregion
 

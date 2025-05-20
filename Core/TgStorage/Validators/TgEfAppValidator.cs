@@ -1,22 +1,22 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgStorage.Domain.Messages;
+namespace TgStorage.Validators;
 
-/// <summary> Message validator </summary>
+/// <summary> App validator </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed class TgEfMessageValidator : TgEfValidatorBase<TgEfMessageEntity>
+public sealed class TgEfAppValidator : TgEfValidatorBase<TgEfAppEntity>
 {
 	#region Public and private fields, properties, constructor
 
-	public TgEfMessageValidator()
+	public TgEfAppValidator()
 	{
-		RuleFor(item => item.Id)
-			.NotNull()
-			.GreaterThanOrEqualTo(0);
-		RuleFor(item => item.DtCreated)
+		RuleFor(item => item.ApiHash)
 			.NotNull();
-		RuleFor(item => item.Message)
+		RuleFor(item => item.ApiId)
+			.NotNull();
+		RuleFor(item => item.PhoneNumber)
+			.NotEmpty()
 			.NotNull();
 	}
 

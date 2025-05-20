@@ -39,7 +39,7 @@ public partial class App : Application
         // DI
         var containerBuilder = new ContainerBuilder();
 		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
-		containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClient>();
+		containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>();
 		TgGlobalTools.Container = containerBuilder.Build();
 		// Host
 		Host = Microsoft.Extensions.Hosting.Host
@@ -120,7 +120,7 @@ public partial class App : Application
 		
 		// TG client loading
 		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
+		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClientDesktop>();
 	}
 
 	~App()

@@ -10,7 +10,7 @@ public static class Program
         // DI register
         var containerBuilder = new ContainerBuilder();
         containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
-        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClient>();
+        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         containerBuilder.RegisterType<TgEfContactRepository>().As<ITgEfContactRepository>();
@@ -26,7 +26,7 @@ public static class Program
 
         // TgGlobalTools
         var scope = TgGlobalTools.Container.BeginLifetimeScope();
-        TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
+        TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClientConsole>();
 
         // Helpers
         var tgLocale = TgLocaleHelper.Instance;

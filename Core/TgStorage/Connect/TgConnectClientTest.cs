@@ -8,7 +8,7 @@
 namespace TgStorage.Connect;
 
 /// <summary> Test connection client </summary>
-public sealed partial class TgConnectClientTest : TgConnectClientConsole
+public sealed partial class TgConnectClientTest : TgConnectClientBase, ITgConnectClientTest
 {
 	//
 }

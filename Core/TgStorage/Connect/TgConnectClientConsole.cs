@@ -4,7 +4,7 @@
 namespace TgStorage.Connect;
 
 /// <summary> Console connection client </summary>
-public partial class TgConnectClientConsole : TgConnectClientBase
+public partial class TgConnectClientConsole : TgConnectClientBase, ITgConnectClientConsole
 {
 	public override async Task LoginUserAsync(bool isProxyUpdate)
 	{

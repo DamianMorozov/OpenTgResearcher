@@ -13,11 +13,11 @@ internal abstract class TgDbContextTestsBase
 		// DI
 		var containerBuilder = new ContainerBuilder();
 		containerBuilder.RegisterType<TgEfTestContext>().As<ITgEfContext>();
-		containerBuilder.RegisterType<TgConnectClientTest>().As<ITgConnectClient>();
+		containerBuilder.RegisterType<TgConnectClientTest>().As<ITgConnectClientTest>();
 		TgGlobalTools.Container = containerBuilder.Build();
 		// TgGlobalTools
 		var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClient>();
+		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClientTest>();
 		// Create and update storage
 		var task = TgEfUtils.CreateAndUpdateDbAsync();
 		task.Wait();

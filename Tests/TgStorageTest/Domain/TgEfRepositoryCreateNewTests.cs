@@ -14,7 +14,7 @@
 //    {
 //        Assert.DoesNotThrow(() =>
 //        {
-//            var sqlTables = TgEfUtils.GetTableModels();
+//            var sqlTables = TgGlobalTools.GetTableModels();
 //            foreach (var sqlTable in sqlTables)
 //            {
 //                TestContext.WriteLine(sqlTable.GetType());
@@ -27,7 +27,6 @@
 //    {
 //        Assert.DoesNotThrowAsync(async () =>
 //        {
-//			var sqlTypes = TgEfUtils.GetTableTypes();
 //            foreach (var sqlType in sqlTypes)
 //            {
 //                switch (sqlType)
@@ -79,7 +78,6 @@
 //    {
 //        Assert.DoesNotThrowAsync(async () =>
 //        {
-//			var sqlTypes = TgEfUtils.GetTableTypes();
 //            foreach (var sqlType in sqlTypes)
 //            {
 //				switch (sqlType)

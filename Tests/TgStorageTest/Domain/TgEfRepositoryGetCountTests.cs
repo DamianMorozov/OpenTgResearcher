@@ -9,9 +9,10 @@ internal sealed class TgEfRepositoryGetCountTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetCountAsync<TEfEntity>(ITgEfRepository<TEfEntity> repo)
+	private void GetCountAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo)
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-	{
+        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+    {
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			var count = await repo.GetCountAsync();

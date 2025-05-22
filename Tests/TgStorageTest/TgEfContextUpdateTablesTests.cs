@@ -13,7 +13,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfAppEntity> storageResult = await new TgEfAppRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfAppEntity> storageResult = await new TgEfAppRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfAppEntity>(storageResult.Item.Uid);
@@ -27,7 +27,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfDocumentEntity> storageResult = await new TgEfDocumentRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfDocumentEntity> storageResult = await new TgEfDocumentRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfDocumentEntity>(storageResult.Item.Uid);
@@ -41,7 +41,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfFilterEntity> storageResult = await new TgEfFilterRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfFilterEntity> storageResult = await new TgEfFilterRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfFilterEntity>(storageResult.Item.Uid);
@@ -55,7 +55,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfMessageEntity> storageResult = await new TgEfMessageRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfMessageEntity> storageResult = await new TgEfMessageRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfMessageEntity>(storageResult.Item.Uid);
@@ -69,7 +69,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfProxyEntity> storageResult = await new TgEfProxyRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfProxyEntity> storageResult = await new TgEfProxyRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfProxyEntity>(storageResult.Item.Uid);
@@ -83,7 +83,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfSourceEntity> storageResult = await new TgEfSourceRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfSourceEntity> storageResult = await new TgEfSourceRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfSourceEntity>(storageResult.Item.Uid);
@@ -97,7 +97,7 @@
 //	{
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
-//			TgEfStorageResult<TgEfVersionEntity> storageResult = await new TgEfVersionRepository(TgEfUtils.EfContext).GetFirstAsync();
+//			TgEfStorageResult<TgEfVersionEntity> storageResult = await new TgEfVersionRepository(TgGlobalTools.EfContext).GetFirstAsync();
 //			if (storageResult.IsExists)
 //			{
 //				storageResult = await CreateEfContext().UpdateTableUidUpperCaseAsync<TgEfVersionEntity>(storageResult.Item.Uid);

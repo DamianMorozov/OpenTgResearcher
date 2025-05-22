@@ -9,11 +9,13 @@ internal sealed class TgEfRepositoryGetCountWhereTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetCountWhereAsync<TEfEntity>(ITgEfRepository<TEfEntity> repo) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-	{
+	private void GetCountWhereAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+    {
 		Assert.DoesNotThrowAsync(async () =>
 		{
-			var count = await repo.GetCountAsync(TgEfUtils.WhereUidNotEmpty<TEfEntity>());
+			var count = await repo.GetCountAsync(TgGlobalTools.WhereUidNotEmpty<TEfEntity>());
 			TestContext.WriteLine($"Found {count} items.");
 		});
 	}

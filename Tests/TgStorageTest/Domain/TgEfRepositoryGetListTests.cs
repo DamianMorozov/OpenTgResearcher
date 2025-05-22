@@ -9,9 +9,10 @@ internal sealed class TgEfRepositoryGetListTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetListAsync<TEfEntity>(ITgEfRepository<TEfEntity> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
+	private void GetListAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-	{
+        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+    {
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfStorageResult<TEfEntity> storageResult = await repo.GetListAsync(count, 0);

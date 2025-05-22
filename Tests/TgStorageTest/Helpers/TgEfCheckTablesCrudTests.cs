@@ -14,8 +14,8 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableProxiesCrudAsync(efContext));
-//			Assert.That(await TgEfUtils.CheckTableAppsCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableProxiesCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableAppsCrudAsync(efContext));
 //		});
 //	}
 
@@ -25,7 +25,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableContactsCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableContactsCrudAsync(efContext));
 //		});
 //	}
 
@@ -35,7 +35,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableDocumentsCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableDocumentsCrudAsync(efContext));
 //		});
 //	}
 
@@ -45,7 +45,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableFiltersCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableFiltersCrudAsync(efContext));
 //		});
 //	}
 
@@ -55,7 +55,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableMessagesCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableMessagesCrudAsync(efContext));
 //		});
 //	}
 
@@ -65,7 +65,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableProxiesCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableProxiesCrudAsync(efContext));
 //		});
 //	}
 
@@ -75,7 +75,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableSourcesCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableSourcesCrudAsync(efContext));
 //		});
 //	}
 
@@ -85,7 +85,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableStoriesCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableStoriesCrudAsync(efContext));
 //		});
 //	}
 
@@ -95,7 +95,7 @@
 //		Assert.DoesNotThrowAsync(async () =>
 //		{
 //			using var efContext = CreateEfTestContext();
-//			Assert.That(await TgEfUtils.CheckTableVersionsCrudAsync(efContext));
+//			Assert.That(await TgGlobalTools.CheckTableVersionsCrudAsync(efContext));
 //		});
 //	}
 

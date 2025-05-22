@@ -9,8 +9,10 @@ internal sealed class TgEfRepositoryGetFirstTests : TgDbContextTestsBase
 {
 	#region Public and private methods
 
-	private void GetFirst<TEfEntity>(ITgEfRepository<TEfEntity> repo) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-	{
+	private void GetFirst<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
+		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+    {
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			var item = (await repo.GetListAsync(TgEnumTableTopRecords.Top1, isReadOnly: true, skip: 0)).Items.FirstOrDefault();

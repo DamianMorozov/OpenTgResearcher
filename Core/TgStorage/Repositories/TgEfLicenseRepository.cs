@@ -53,30 +53,6 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 		}
 	}
 
-	private static Expression<Func<TgEfLicenseEntity, TgEfLicenseDto>> SelectDto() => item => new TgEfLicenseDto().GetNewDto(item);
-
-	public async Task<TgEfLicenseDto> GetDtoAsync(Expression<Func<TgEfLicenseEntity, bool>> where)
-	{
-		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfLicenseDto();
-		return dto;
-	}
-
-	public async Task<List<TgEfLicenseDto>> GetListDtosAsync(int take = 0, int skip = 0)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
-
-	public async Task<List<TgEfLicenseDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfLicenseEntity, bool>> where)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
-
 	public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
 		IList<TgEfLicenseEntity> items = take > 0

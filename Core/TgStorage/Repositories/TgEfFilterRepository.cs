@@ -50,30 +50,6 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 		}
 	}
 
-	private static Expression<Func<TgEfFilterEntity, TgEfFilterDto>> SelectDto() => item => new TgEfFilterDto().GetNewDto(item);
-
-	public async Task<TgEfFilterDto> GetDtoAsync(Expression<Func<TgEfFilterEntity, bool>> where)
-	{
-		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfFilterDto();
-		return dto;
-	}
-
-	public async Task<List<TgEfFilterDto>> GetListDtosAsync(int take = 0, int skip = 0)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
-
-	public async Task<List<TgEfFilterDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfFilterEntity, bool>> where)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
-
 	public override async Task<TgEfStorageResult<TgEfFilterEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
 		IList<TgEfFilterEntity> items = take > 0 

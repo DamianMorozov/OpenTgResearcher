@@ -1,12 +1,18 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgStorage.Connect;
+
+namespace TgBusinessLogic.Services;
 
 /// <summary> Console connection client </summary>
 public partial class TgConnectClientConsole : TgConnectClientBase, ITgConnectClientConsole
 {
-	public override async Task LoginUserAsync(bool isProxyUpdate)
+    public TgConnectClientConsole(TgStorageManager storageManager) : base(storageManager)
+    {
+		//
+    }
+
+    public override async Task LoginUserAsync(bool isProxyUpdate)
 	{
 		ClientException = new();
 		if (Client is null)

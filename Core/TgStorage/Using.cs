@@ -30,6 +30,7 @@ global using TgInfrastructure.Contracts;
 global using TgInfrastructure.Helpers;
 global using TgInfrastructure.Utils;
 global using TgInfrastructure.ViewModels;
+global using TgSharedData.Contracts;
 global using TgSharedData.Dtos;
 global using TgSharedData.Enums;
 global using TgSharedData.Helpers;

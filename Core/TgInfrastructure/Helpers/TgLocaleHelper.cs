@@ -243,7 +243,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string InDevelopment => "In development";
 	public string Load=> "Load";
 	public string MoveUpDown => "(Move up and down to switch select)";
-	public string ObjectHasBeenDisposedOff => "object has been disposed off";
 	public string Save => "Save";
 	public string SettingCheck => "Check";
 	public string SettingName => "Setting";
@@ -342,12 +341,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string FieldTitle => "Title";
 
     #endregion
-
-	#region System
-
-    public string UseOverrideMethod => "Use override method!";
-
-	#endregion
 
 	#region Proxies
 

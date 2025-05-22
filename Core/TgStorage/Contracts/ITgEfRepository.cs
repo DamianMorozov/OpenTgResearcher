@@ -3,7 +3,9 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfRepository<TEfEntity> where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+public interface ITgEfRepository<TEfEntity, TDto> 
+	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+    where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
 	#region Public and private methods
 
@@ -39,6 +41,15 @@ public interface ITgEfRepository<TEfEntity> where TEfEntity : class, ITgEfEntity
 	public int GetCount();
 	public Task<int> GetCountAsync(Expression<Func<TEfEntity, bool>> where);
 	public int GetCount(Expression<Func<TEfEntity, bool>> where);
+
+	#endregion
+
+	#region Public and private methods - Read DTO
+
+	public Expression<Func<TEfEntity, TDto>> SelectDto();
+	public Task<TDto> GetDtoAsync(Expression<Func<TEfEntity, bool>> where);
+    public Task<List<TDto>> GetListDtosAsync(int take = 0, int skip = 0);
+	public Task<List<TDto>> GetListDtosAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where);
 
 	#endregion
 

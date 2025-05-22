@@ -3,6 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
+// TODO: Remove this file if not needed
 /// <summary> Common </summary>
 public interface ITgCommon
 {

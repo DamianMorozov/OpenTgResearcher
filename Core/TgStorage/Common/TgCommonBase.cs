@@ -9,7 +9,7 @@ public abstract class TgCommonBase : ITgCommon
 {
     #region Public and private methods
 
-    public virtual string ToDebugString() => throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
+    public virtual string ToDebugString() => throw new NotImplementedException(TgConstants.UseOverrideMethod);
 
     #endregion
 }

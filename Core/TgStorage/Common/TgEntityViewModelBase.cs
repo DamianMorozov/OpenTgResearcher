@@ -6,18 +6,18 @@ namespace TgStorage.Common;
 /// <summary> Base class for TgMvvmModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public abstract partial class TgEntityViewModelBase<TEfEntity, TDto> : TgViewModelBase
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-	where TDto : class, new()
+    where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+    where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
-	public virtual TgEfRepositoryBase<TEfEntity, TDto> Repository { get; } = null!;
+    public virtual TgEfRepositoryBase<TEfEntity, TDto> Repository { get; } = null!;
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public override string ToDebugString() => $"{TgCommonUtils.GetIsLoad(IsLoad)}";
+    public override string ToDebugString() => $"{TgCommonUtils.GetIsLoad(IsLoad)}";
 
     #endregion
 }

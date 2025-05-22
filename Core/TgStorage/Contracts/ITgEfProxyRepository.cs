@@ -3,7 +3,7 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfProxyRepository : ITgEfRepository<TgEfProxyEntity>
+public interface ITgEfProxyRepository : ITgEfRepository<TgEfProxyEntity, TgEfProxyDto>, IDisposable
 {
     Task<TgEfStorageResult<TgEfProxyEntity>> GetCurrentProxyAsync(Guid? proxyUid);
     Task<Guid> GetCurrentProxyUidAsync(TgEfStorageResult<TgEfAppEntity> storageResult);

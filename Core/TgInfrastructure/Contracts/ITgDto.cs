@@ -6,7 +6,7 @@ namespace TgInfrastructure.Contracts;
 /// <summary> DTO </summary>
 public interface ITgDto<TEfEntity, TDto> : ITgCommon
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-	where TDto : class, new()
+    where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
 	#region Public and private fields, properties, constructor
 
@@ -22,8 +22,8 @@ public interface ITgDto<TEfEntity, TDto> : ITgCommon
 	public TDto Copy(TDto dto, bool isUidCopy);
 	public TDto Copy(TEfEntity item, bool isUidCopy);
 	public TDto GetNewDto(TEfEntity item);
-	public TEfEntity GetNewEntity(TDto dto);
+    public TEfEntity GetNewEntity(TDto dto);
 	public TEfEntity GetNewEntity();
 
-	#endregion
+    #endregion
 }

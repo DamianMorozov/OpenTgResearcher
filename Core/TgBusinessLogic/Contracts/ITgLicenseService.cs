@@ -3,7 +3,7 @@
 
 namespace TgBusinessLogic.Contracts;
 
-public interface ITgLicenseService
+public interface ITgLicenseService : IDisposable
 {
 	public string MenuWebSiteGlobalUrl { get; }
 	public string MenuWebSiteGlobalLicenseBuyUrl { get; }
@@ -22,5 +22,4 @@ public interface ITgLicenseService
 	public Task LicenseUpdateAsync(TgLicenseDto licenseDto);
 	public Task<TgApiResult> GetApiCreatedAsync();
 	public Task<TgApiResult> GetApiValidAsync();
-	public Task<long> GetUserIdAsync();
 }

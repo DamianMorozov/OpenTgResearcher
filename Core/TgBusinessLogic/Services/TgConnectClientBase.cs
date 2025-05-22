@@ -3,127 +3,142 @@
 
 using TL;
 
-namespace TgStorage.Connect;
+namespace TgBusinessLogic.Services;
 
 /// <summary> Base connection client </summary>
-public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConnectClient
+public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
 {
-	#region Public and private fields, properties, constructor
-	
-	private static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
+    #region Public and private fields, properties, constructor
+
+    private static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 	private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
-	protected TgEfAppRepository AppRepository { get; } = new();
-	protected TgEfContactRepository ContactRepository { get; } = new();
-	protected TgEfDocumentRepository DocumentRepository { get; } = new();
-	protected TgEfFilterRepository FilterRepository { get; } = new();
-	protected TgEfMessageRepository MessageRepository { get; } = new();
-	protected TgEfProxyRepository ProxyRepository { get; } = new();
-	protected TgEfSourceRepository SourceRepository { get; } = new();
-	protected TgEfStoryRepository StoryRepository { get; } = new();
-
 	private static TgLogHelper TgLog => TgLogHelper.Instance;
-	public WTelegram.Client? Client { get; set; }
-	public TgExceptionViewModel ClientException { get; set; }
-	public TgExceptionViewModel ProxyException { get; set; }
-	public bool IsReady { get; private set; }
-	public bool IsNotReady => !IsReady;
-	public bool IsProxyUsage { get; private set; }
-	public User? Me { get; protected set; }
-	public Dictionary<long, ChatBase> DicChatsAll { get; private set; }
-	public Dictionary<long, User> DicContactsAll { get; private set; }
-	public Dictionary<long, StoryItem> DicStoriesAll { get; private set; }
-	public Dictionary<long, ChatBase> DicChatsUpdated { get; }
-	public Dictionary<long, User> DicContactsUpdated { get; }
-	public IEnumerable<Channel> EnumerableChannels { get; set; }
-	public IEnumerable<Channel> EnumerableGroups { get; set; }
-	public IEnumerable<ChatBase> EnumerableChats { get; set; }
-	public IEnumerable<ChatBase> EnumerableSmallGroups { get; set; }
-	public IEnumerable<User> EnumerableContacts { get; set; }
-	public IEnumerable<StoryItem> EnumerableStories { get; set; }
-	public bool IsUpdateStatus { get; set; }
-	public bool IsForceStopDownloading { get; set; }
-	private IEnumerable<TgEfFilterDto> Filters { get; set; }
-	public Func<string, Task> UpdateTitleAsync { get; private set; }
-	public Func<string, Task> UpdateStateConnectAsync { get; private set; }
-	public Func<string, Task> UpdateStateProxyAsync { get; private set; }
-	public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; private set; }
-	public Func<long, string, string, string, Task> UpdateStateContactAsync { get; private set; }
-	public Func<long, int, int, string, Task> UpdateStateStoryAsync { get; private set; }
-	public Func<string, int, string, string, Task> UpdateStateExceptionAsync { get; private set; }
-	public Func<Exception, Task> UpdateExceptionAsync { get; private set; }
-	public Func<string, Task> UpdateStateExceptionShortAsync { get; private set; }
-	public Func<Task> AfterClientConnectAsync { get; private set; }
-	public Func<string, string?> ConfigClientDesktop { get; private set; }
-	public Func<long, Task> UpdateStateItemSourceAsync { get; private set; }
-	public Func<long, int, string, long, long, long, bool, int, Task> UpdateStateFileAsync { get; private set; }
-	public Func<string, Task> UpdateStateMessageAsync { get; private set; }
-	public Func<long, int, string, bool, int, Task> UpdateStateMessageThreadAsync { get; private set; }
+	public WTelegram.Client? Client { get; set; } = default!;
+    public TgExceptionViewModel ClientException { get; set; } = default!;
+    public TgExceptionViewModel ProxyException { get; set; } = default!;
+    public bool IsReady { get; private set; } = default!;
+    public bool IsNotReady => !IsReady;
+	public bool IsProxyUsage { get; private set; } = default!;
+    public User? Me { get; protected set; } = default!;
+    public Dictionary<long, ChatBase> DicChatsAll { get; private set; } = default!;
+    public Dictionary<long, User> DicContactsAll { get; private set; } = default!;
+    public Dictionary<long, StoryItem> DicStoriesAll { get; private set; } = default!;
+    public Dictionary<long, ChatBase> DicChatsUpdated { get; private set; } = default!;
+    public Dictionary<long, User> DicContactsUpdated { get; private set; } = default!;
+    public IEnumerable<Channel> EnumerableChannels { get; set; } = default!;
+    public IEnumerable<Channel> EnumerableGroups { get; set; } = default!;
+    public IEnumerable<ChatBase> EnumerableChats { get; set; } = default!;
+    public IEnumerable<ChatBase> EnumerableSmallGroups { get; set; } = default!;
+    public IEnumerable<User> EnumerableContacts { get; set; } = default!;
+    public IEnumerable<StoryItem> EnumerableStories { get; set; } = default!;
+    public bool IsUpdateStatus { get; set; } = default!;
+    public bool IsForceStopDownloading { get; set; } = default!;
+    private IEnumerable<TgEfFilterDto> Filters { get; set; } = default!;
+    public Func<string, Task> UpdateTitleAsync { get; private set; } = default!;
+    public Func<string, Task> UpdateStateConnectAsync { get; private set; } = default!;
+    public Func<string, Task> UpdateStateProxyAsync { get; private set; } = default!;
+    public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; private set; } = default!;
+    public Func<long, string, string, string, Task> UpdateStateContactAsync { get; private set; } = default!;
+    public Func<long, int, int, string, Task> UpdateStateStoryAsync { get; private set; } = default!;
+    public Func<string, int, string, string, Task> UpdateStateExceptionAsync { get; private set; } = default!;
+    public Func<Exception, Task> UpdateExceptionAsync { get; private set; } = default!;
+    public Func<string, Task> UpdateStateExceptionShortAsync { get; private set; } = default!;
+    public Func<Task> AfterClientConnectAsync { get; private set; } = default!;
+    public Func<string, string?> ConfigClientDesktop { get; private set; } = default!;
+    public Func<long, Task> UpdateStateItemSourceAsync { get; private set; } = default!;
+    public Func<long, int, string, long, long, long, bool, int, Task> UpdateStateFileAsync { get; private set; } = default!;
+    public Func<string, Task> UpdateStateMessageAsync { get; private set; } = default!;
+    public Func<long, int, string, bool, int, Task> UpdateStateMessageThreadAsync { get; private set; } = default!;
 
-	public Microsoft.Data.Sqlite.SqliteConnection? BotSqlConnection { get; private set; }
-	public WTelegram.Bot? Bot { get; private set; }
+    public Microsoft.Data.Sqlite.SqliteConnection? BotSqlConnection { get; private set; } = default!;
+    public WTelegram.Bot? Bot { get; private set; } = default!;
 
-	private List<TgEfMessageEntity> MessageEntities { get; }
-	private int BatchMessagesCount { get; set; }
+    private List<TgEfMessageEntity> MessageEntities { get; set; } = default!;
+    private int BatchMessagesCount { get; set; } = default!;
 
-	protected TgConnectClientBase()
+    private readonly TgStorageManager _storageManager = default!;
+
+    protected TgConnectClientBase(TgStorageManager storageManager) : base()
 	{
-		DicChatsAll = [];
-		DicContactsAll = [];
-		DicStoriesAll = [];
-		DicChatsUpdated = [];
-		DicContactsUpdated = [];
-		EnumerableChannels = [];
-		EnumerableChats = [];
-		EnumerableGroups = [];
-		EnumerableSmallGroups = [];
-		EnumerableContacts = [];
-		EnumerableStories = [];
-		ClientException = new();
-		ProxyException = new();
-		Filters = [];
-		MessageEntities = new();
+		InitializeClient();
+		_storageManager = storageManager;
+    }
 
-		UpdateTitleAsync = _ => Task.CompletedTask;
-		UpdateStateConnectAsync = _ => Task.CompletedTask;
-		UpdateStateProxyAsync = _ => Task.CompletedTask;
-		UpdateStateExceptionAsync = (_, _, _, _) => Task.CompletedTask;
-		UpdateExceptionAsync = _ => Task.CompletedTask;
-		UpdateStateExceptionShortAsync = _ => Task.CompletedTask;
-		UpdateStateSourceAsync = (_, _, _, _) => Task.CompletedTask;
-		UpdateStateContactAsync = (_, _, _, _) => Task.CompletedTask;
-		UpdateStateStoryAsync = (_, _, _, _) => Task.CompletedTask;
-		AfterClientConnectAsync = () => Task.CompletedTask;
-		ConfigClientDesktop = _ => string.Empty;
-		UpdateStateItemSourceAsync = _ => Task.CompletedTask;
-		UpdateStateFileAsync = (_, _, _, _, _, _, _, _) => Task.CompletedTask;
-		UpdateStateMessageAsync = _ => Task.CompletedTask;
-		UpdateStateMessageThreadAsync = (_, _, _, _, _) => Task.CompletedTask;
+    #endregion
+
+    #region IDisposable
+
+    /// <summary> Release managed resources </summary>
+    public override void ReleaseManagedResources()
+    {
+        //
+    }
+
+    /// <summary> Release unmanaged resources </summary>
+    public override void ReleaseUnmanagedResources()
+    {
+        Client?.Dispose();
+        BotSqlConnection?.Dispose();
+        Bot?.Dispose();
+		_storageManager.Dispose();
+    }
+
+    #endregion
+
+    #region Public and private methods
+
+    public string ToDebugString() => $"{TgCommonUtils.GetIsReady(IsReady)} | {Me}";
+
+	private void InitializeClient()
+	{
+        DicChatsAll = [];
+        DicContactsAll = [];
+        DicStoriesAll = [];
+        DicChatsUpdated = [];
+        DicContactsUpdated = [];
+        EnumerableChannels = [];
+        EnumerableChats = [];
+        EnumerableGroups = [];
+        EnumerableSmallGroups = [];
+        EnumerableContacts = [];
+        EnumerableStories = [];
+        ClientException = new();
+        ProxyException = new();
+        Filters = [];
+        MessageEntities = new();
+
+        UpdateTitleAsync = _ => Task.CompletedTask;
+        UpdateStateConnectAsync = _ => Task.CompletedTask;
+        UpdateStateProxyAsync = _ => Task.CompletedTask;
+        UpdateStateExceptionAsync = (_, _, _, _) => Task.CompletedTask;
+        UpdateExceptionAsync = _ => Task.CompletedTask;
+        UpdateStateExceptionShortAsync = _ => Task.CompletedTask;
+        UpdateStateSourceAsync = (_, _, _, _) => Task.CompletedTask;
+        UpdateStateContactAsync = (_, _, _, _) => Task.CompletedTask;
+        UpdateStateStoryAsync = (_, _, _, _) => Task.CompletedTask;
+        AfterClientConnectAsync = () => Task.CompletedTask;
+        ConfigClientDesktop = _ => string.Empty;
+        UpdateStateItemSourceAsync = _ => Task.CompletedTask;
+        UpdateStateFileAsync = (_, _, _, _, _, _, _, _) => Task.CompletedTask;
+        UpdateStateMessageAsync = _ => Task.CompletedTask;
+        UpdateStateMessageThreadAsync = (_, _, _, _, _) => Task.CompletedTask;
 
 #if DEBUG
-		// TgLog to VS Output debugging pane in addition.
-		WTelegram.Helpers.Log = (i, str) => Debug.WriteLine($"{i} | {str}", TgConstants.LogTypeNetwork);
+        // TgLog to VS Output debugging pane in addition.
+        WTelegram.Helpers.Log = (i, str) => Debug.WriteLine($"{i} | {str}", TgConstants.LogTypeNetwork);
 #else
         // Disable logging in Console.
         WTelegram.Helpers.Log = (_, _) => { };
 #endif
-	}
+    }
 
-	#endregion
-
-	#region IDisposable
-
-	public void Dispose()
+	public async Task<long> GetUserIdAsync()
 	{
-		Client?.Dispose();
-		BotSqlConnection?.Dispose();
-		Bot?.Dispose();
+		if (Me is null)
+			await LoginUserAsync(isProxyUpdate: false);
+		var userId = Me?.ID ?? 0;
+		return userId;
 	}
-
-	#endregion
-
-	#region Public and private methods
-
-	public string ToDebugString() => $"{TgCommonUtils.GetIsReady(IsReady)} | {Me}";
 
 	public void SetupUpdateStateConnect(Func<string, Task> updateStateConnectAsync) =>
 		UpdateStateConnectAsync = updateStateConnectAsync;
@@ -184,8 +199,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 						return ClientResultDisconnected();
 					break;
 			}
-			var app = (await AppRepository.GetCurrentAppAsync()).Item;
-			var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+			var app = (await _storageManager.AppRepository.GetCurrentAppAsync()).Item;
+			var proxyResult = await _storageManager.ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
 			if (TgAppSettings.IsUseProxy && !proxyResult.IsExists)
 				return ClientResultDisconnected();
 			if (ProxyException.IsExist || ClientException.IsExist)
@@ -204,8 +219,8 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 			//			return ClientResultDisconnected();
 			//		break;
 			//}
-			var app = (await AppRepository.GetCurrentAppAsync()).Item;
-			var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+			var app = (await _storageManager.AppRepository.GetCurrentAppAsync()).Item;
+			var proxyResult = await _storageManager.ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
 			if (TgAppSettings.IsUseProxy && !proxyResult.IsExists)
 				return ClientResultDisconnected();
 			if (ProxyException.IsExist || ClientException.IsExist)
@@ -283,7 +298,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		if (Equals(proxy?.Type, TgEnumProxyType.None))
 			return;
 		if (proxy is TgEfProxyEntity efProxy)
-			if (!TgEfUtils.GetEfValid(efProxy).IsValid)
+			if (!TgGlobalTools.GetEfValid(efProxy).IsValid)
 				return;
 
 		try
@@ -609,7 +624,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		DicStoriesAll = [];
 		var listStories = new List<StoryItem>();
 		// Sort
-		var peerStoriesSorted = peerStories.OrderBy(i => i.stories.Rank);
+		var peerStoriesSorted = peerStories.OrderBy(i => i.stories.Rank).ToArray();
 		foreach (var peerStory in peerStories)
 		{
 			foreach (var storyBase in peerStory.stories)
@@ -961,7 +976,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		{
 			fullChannel = await Client.Channels_GetFullChannel(channel);
 			if (isSave)
-				await SourceRepository.SaveAsync(new() { Id = channel.id, UserName = channel.username, Title = channel.title });
+				await _storageManager.SourceRepository.SaveAsync(new() { Id = channel.id, UserName = channel.username, Title = channel.title });
 			if (!isSilent)
 			{
 				if (fullChannel is not null)
@@ -1175,7 +1190,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	{
 		if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
 		var dto = tgDownloadSettings2.SourceVm.Dto;
-		var source = await SourceRepository.GetItemAsync(new() { Id = dto.Id }, isReadOnly: false);
+		var source = await _storageManager.SourceRepository.GetItemAsync(new() { Id = dto.Id }, isReadOnly: false);
 		await CreateChatBaseCoreAsync(tgDownloadSettings2);
 
 		if (Bot is not null)
@@ -1227,7 +1242,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		source.Directory = dto.Directory;
 		source.FirstId = dto.FirstId;
 
-		await SourceRepository.SaveAsync(source);
+		await _storageManager.SourceRepository.SaveAsync(source);
 		tgDownloadSettings2.SourceVm.Fill(source);
 	}
 
@@ -1278,7 +1293,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 
 	private async Task UpdateSourceTgCoreAsync(Channel channel, string about, int count, bool isUserAccess)
 	{
-		var storageResult = await SourceRepository.GetAsync(new() { Id = channel.id });
+		var storageResult = await _storageManager.SourceRepository.GetAsync(new() { Id = channel.id });
 		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
 		sourceNew.Id = channel.id;
 		sourceNew.AccessHash = channel.access_hash;
@@ -1289,12 +1304,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		sourceNew.Count = count;
 		sourceNew.IsUserAccess = isUserAccess;
 		// Save
-		await SourceRepository.SaveAsync(sourceNew);
+		await _storageManager.SourceRepository.SaveAsync(sourceNew);
 	}
 
 	private async Task UpdateSourceTgCoreAsync(ChatBase chatBase, string about, int count, bool isUserAccess)
 	{
-		var storageResult = await SourceRepository.GetAsync(new() { Id = chatBase.ID });
+		var storageResult = await _storageManager.SourceRepository.GetAsync(new() { Id = chatBase.ID });
 		var sourceNew = storageResult.IsExists ? storageResult.Item : new();
 		sourceNew.Id = chatBase.ID;
 		sourceNew.AccessHash = 0;
@@ -1305,12 +1320,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		sourceNew.Count = count;
 		sourceNew.IsUserAccess = isUserAccess;
 		// Save
-		await SourceRepository.SaveAsync(sourceNew);
+		await _storageManager.SourceRepository.SaveAsync(sourceNew);
 	}
 
 	private async Task UpdateContactTgAsync(User user)
 	{
-		var storageResult = await ContactRepository.GetAsync(new() { Id = user.id });
+		var storageResult = await _storageManager.ContactRepository.GetAsync(new() { Id = user.id });
 		var contactNew = storageResult.IsExists ? storageResult.Item : new();
 		contactNew.DtChanged = DateTime.UtcNow;
 		contactNew.Id = user.id;
@@ -1330,7 +1345,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		contactNew.BotInlinePlaceholder = user.bot_inline_placeholder is null ? string.Empty : user.bot_inline_placeholder.ToString();
 		contactNew.BotActiveUsers = user.bot_active_users;
 		// Save
-		await ContactRepository.SaveAsync(contactNew);
+		await _storageManager.ContactRepository.SaveAsync(contactNew);
 	}
 
 	private async Task UpdateStoryTgAsync(StoryItem story)
@@ -1350,7 +1365,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 
 	private async Task UpdateStoryItemTgAsync(StoryItem story, MessageEntity? message)
 	{
-		var storageResult = await StoryRepository.GetAsync(new() { Id = story.id });
+		var storageResult = await _storageManager.StoryRepository.GetAsync(new() { Id = story.id });
 		var storyNew = storageResult.IsExists ? storageResult.Item : new();
 		storyNew.DtChanged = DateTime.UtcNow;
 		storyNew.Id = story.id;
@@ -1371,7 +1386,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		// Switch media type
 		TgEfStoryEntityByMediaType(storyNew, story.media);
 		// Save
-		await StoryRepository.SaveAsync(storyNew);
+		await _storageManager.StoryRepository.SaveAsync(storyNew);
 	}
 
 	private void TgEfStoryEntityByMessageType(TgEfStoryEntity storyNew, MessageEntity message)
@@ -1526,12 +1541,12 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 
 	private async Task DisableUserAccessForAllChatsAsync()
 	{
-		var chats = (await SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false)).ToArray();
+		var chats = (await _storageManager.SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false)).ToArray();
 		foreach (var chat in chats)
 		{
 			chat.IsUserAccess = false;
 		}
-		await SourceRepository.SaveListAsync(chats);
+		await _storageManager.SourceRepository.SaveListAsync(chats);
 	}
 
 	private async Task SearchSourcesTgConsoleForChannelsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -1733,7 +1748,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await TryCatchFuncAsync(async () =>
 		{
 			// Filters
-			Filters = await FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled);
+			Filters = await _storageManager.FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled);
 
 			await LoginUserAsync(isProxyUpdate: false);
 
@@ -1851,7 +1866,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					{
 						counterForSave = 0;
 						tgDownloadSettings2.SourceVm.Dto.FirstId = sourceFirstId;
-						await SourceRepository.SaveAsync(tgDownloadSettings2.SourceVm.Dto.GetNewEntity());
+						await _storageManager.SourceRepository.SaveAsync(tgDownloadSettings2.SourceVm.Dto.GetNewEntity());
 					}
 				}
 				tgDownloadSettings2.SourceVm.Dto.FirstId = sourceFirstId > sourceLastId ? sourceLastId : sourceFirstId;
@@ -1953,7 +1968,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 				{
 					if (!string.IsNullOrEmpty(document.Filename) && Path.GetExtension(document.Filename).TrimStart('.') is { } str)
 						extensionName = str;
-					var fileName = tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage && messageBase is TL.Message message 
+					var fileName = tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage && messageBase is Message message 
 						? $"{message.message}.{extensionName}" : document.Filename;
 					if (!string.IsNullOrEmpty(document.Filename) && CheckFileAtFilter(document.Filename, extensionName, document.size))
 					{
@@ -2126,7 +2141,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 								FileSize = mediaInfo.RemoteSize,
 								AccessHash = document.access_hash
 							};
-							await DocumentRepository.SaveAsync(doc);
+							await _storageManager.DocumentRepository.SaveAsync(doc);
 						}
 						break;
 					case MessageMediaPhoto mediaPhoto:
@@ -2198,11 +2213,11 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		try
 		{
 			await ClientProgressForMessageThreadAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, message, isStartTask: true, threadNumber);
-			var storageResult = await MessageRepository.GetAsync(
+			var storageResult = await _storageManager.MessageRepository.GetAsync(
 				new() { SourceId = tgDownloadSettings.SourceVm.Dto.Id, Id = tgDownloadSettings.SourceVm.Dto.FirstId }, isReadOnly: true);
 			if (!storageResult.IsExists || storageResult.IsExists && tgDownloadSettings.IsRewriteMessages)
 			{
-				var sourceItem = await SourceRepository.GetItemAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id }, isReadOnly: true);
+				var sourceItem = await _storageManager.SourceRepository.GetItemAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id }, isReadOnly: true);
 				var messageItem = new TgEfMessageEntity
 				{
 					Id = messageId,
@@ -2226,7 +2241,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 					}
 					else
 					{
-						await MessageRepository.SaveListAsync(MessageEntities);
+						await _storageManager.MessageRepository.SaveListAsync(MessageEntities);
 						BatchMessagesCount = 0;
 						MessageEntities.Clear();
 					}
@@ -2264,7 +2279,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		BatchMessagesCount = 0;
 		if (!MessageEntities.Any()) return;
 		if (tgDownloadSettings.IsSaveMessages)
-			await MessageRepository.SaveListAsync(MessageEntities);
+			await _storageManager.MessageRepository.SaveListAsync(MessageEntities);
 		MessageEntities.Clear();
 	}
 
@@ -2386,12 +2401,6 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 		await UpdateExceptionAsync(ex);
 		await UpdateStateExceptionAsync(TgFileUtils.GetShortFilePath(filePath), lineNumber, memberName, ClientException.Message);
 	}
-
-	//private void SetClientExceptionShort(Exception ex)
-	//{
-	//	ClientException.Set(ex);
-	//	UpdateStateExceptionShortAsync(ClientException.Message);
-	//}
 
 	private async Task SetClientExceptionShortAsync(Exception ex)
 	{
@@ -2563,7 +2572,7 @@ public abstract partial class TgConnectClientBase : ObservableRecipient, ITgConn
 	private static async Task UseOverrideMethodAsync()
 	{
 		await Task.CompletedTask;
-		throw new NotImplementedException(TgLocaleHelper.Instance.UseOverrideMethod);
+		throw new NotImplementedException(TgConstants.UseOverrideMethod);
 	}
 
 	#endregion

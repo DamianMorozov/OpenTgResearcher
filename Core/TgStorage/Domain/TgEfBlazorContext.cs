@@ -4,22 +4,15 @@
 namespace TgStorage.Domain;
 
 /// <summary> Blazor DB context </summary>
-public sealed class TgEfBlazorContext : TgEfContextBase, ITgEfContext
+public sealed class TgEfBlazorContext(IWebHostEnvironment webHostEnvironment) : TgEfContextBase, ITgEfContext
 {
-	private readonly IWebHostEnvironment _webHostEnvironment;
+    #region Public and private methods
 
-	#region Public and private methods
-
-	public TgEfBlazorContext(IWebHostEnvironment webHostEnvironment)
-	{
-		_webHostEnvironment = webHostEnvironment;
-	}
-
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-		TgGlobalTools.SetAppType(TgEnumAppType.Blazor);
-		optionsBuilder.UseSqlite(GetStoragePath(TgGlobalTools.AppType, _webHostEnvironment.ContentRootPath));
+
+		optionsBuilder.UseSqlite(GetStoragePath(webHostEnvironment.ContentRootPath));
     }
 
 	#endregion

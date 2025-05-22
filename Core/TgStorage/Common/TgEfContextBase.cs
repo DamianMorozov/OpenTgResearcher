@@ -4,7 +4,7 @@
 namespace TgStorage.Common;
 
 /// <summary> Base DB context </summary>
-public abstract class TgEfContextBase : DbContext, ITgEfContext
+public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 {
 	#region Public and private fields, properties, constructor
 
@@ -57,11 +57,68 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 #endif
 	}
 
-	#endregion
+    #endregion
 
-	#region Public and private methods - EF Core
+    #region IDisposable
 
-	public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
+    /// <summary> Locker object </summary>
+    public object Locker { get; } = new();
+    /// <summary> To detect redundant calls </summary>
+    private bool _disposed;
+
+    /// <summary> Finalizer </summary>
+	~TgEfContextBase() => Dispose(false);
+
+    /// <summary> Throw exception if disposed </summary>
+    public void CheckIfDisposed()
+    {
+        if (_disposed)
+            throw new ObjectDisposedException($"{nameof(TgEfContextBase)}: {TgConstants.ObjectHasBeenDisposedOff}!");
+    }
+
+	/// <summary> Release managed resources </summary>
+	public virtual void ReleaseManagedResources()
+	{
+		//
+	}
+
+    /// <summary> Release unmanaged resources </summary>
+    public virtual void ReleaseUnmanagedResources()
+    {
+        //
+    }
+
+    /// <summary> Dispose pattern </summary>
+    public override void Dispose()
+    {
+		base.Dispose();
+        // Dispose of unmanaged resources
+        Dispose(true);
+        // Suppress finalization
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary> Dispose pattern </summary>
+    protected void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        lock (Locker)
+        {
+            // Release managed resources
+            if (disposing)
+                ReleaseManagedResources();
+            // Release unmanaged resources
+            ReleaseUnmanagedResources();
+            // Flag
+            _disposed = true;
+        }
+    }
+
+    #endregion
+
+    #region Public and private methods - EF Core
+
+    public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => 
 		await AddAsync(entity, cancellationToken);
 
@@ -81,18 +138,18 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 	#region Public and private methods
 
 	/// <inheritdoc />
-	public string GetStoragePath(TgEnumAppType appType, string contentRootPath = "")
+	public string GetStoragePath(string contentRootPath = "")
 	{
-		var storagePath = appType switch
+		var storagePath = TgGlobalTools.AppType switch
 		{
 			TgEnumAppType.Memory => ":memory:", // In-memory database
 			TgEnumAppType.Console =>
 				File.Exists(TgAppSettingsHelper.Instance.AppXml.XmlEfStorage) 
-				? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgEfUtils.FileEfStorage,
-			TgEnumAppType.Blazor => Path.Combine(contentRootPath, TgEfUtils.FileEfStorage),
-			TgEnumAppType.Desktop => File.Exists(TgEfUtils.AppStorage) ? TgEfUtils.AppStorage : TgEfUtils.FileEfStorage,
+				? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgGlobalTools.FileEfStorage,
+			TgEnumAppType.Blazor => Path.Combine(contentRootPath, TgGlobalTools.FileEfStorage),
+			TgEnumAppType.Desktop => File.Exists(TgGlobalTools.AppStorage) ? TgGlobalTools.AppStorage : TgGlobalTools.FileEfStorage,
 			TgEnumAppType.Test => @"d:\DATABASES\SQLITE\TgStorageTest.db",
-			_ => throw new ArgumentOutOfRangeException(nameof(appType), appType, null)
+			_ => throw new ArgumentOutOfRangeException(nameof(TgGlobalTools.AppType), TgGlobalTools.AppType, null)
 		};
 		// Concatenation
 		storagePath = $"{TgLocaleHelper.Instance.SqliteDataSource}={storagePath}";
@@ -115,8 +172,6 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext
 			.UseLoggerFactory(factory)
 		;
 		// This type need for resolve: The exception 'No database provider has been configured for this DbContext.
-		//TgGlobalTools.SetAppType(TgEnumAppType.Memory);
-		//optionsBuilder.UseSqlite(GetStoragePath(TgGlobalTools.AppType));
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)

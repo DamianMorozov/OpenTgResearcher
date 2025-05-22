@@ -50,30 +50,6 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 		}
 	}
 
-	private static Expression<Func<TgEfContactEntity, TgEfContactDto>> SelectDto() => item => new TgEfContactDto().GetNewDto(item);
-
-	public async Task<TgEfContactDto> GetDtoAsync(Expression<Func<TgEfContactEntity, bool>> where)
-	{
-		var dto = await GetQuery().Where(where).Select(SelectDto()).SingleOrDefaultAsync() ?? new TgEfContactDto();
-		return dto;
-	}
-
-	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take = 0, int skip = 0)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
-
-	public async Task<List<TgEfContactDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfContactEntity, bool>> where)
-	{
-		var dtos = take > 0
-			? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-			: await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
-		return dtos;
-	}
-
 	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
 		IList<TgEfContactEntity> items = take > 0 

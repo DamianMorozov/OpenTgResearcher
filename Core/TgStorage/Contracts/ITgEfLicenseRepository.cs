@@ -4,8 +4,7 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfLicenseRepository : ITgEfRepository<TgEfLicenseEntity>
+public interface ITgEfLicenseRepository : ITgEfRepository<TgEfLicenseEntity, TgEfLicenseDto>, IDisposable
 {
-	public Task<List<TgEfLicenseDto>> GetListDtosAsync(int take = 0, int skip = 0);
-	public Task<List<TgEfLicenseDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfLicenseEntity, bool>> where);
+	//
 }

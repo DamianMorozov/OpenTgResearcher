@@ -11,8 +11,8 @@ public sealed class TgEfDesktopContext : TgEfContextBase, ITgEfContext
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 	    base.OnConfiguring(optionsBuilder);
-		TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
-		optionsBuilder.UseSqlite(GetStoragePath(TgGlobalTools.AppType));
+
+		optionsBuilder.UseSqlite(GetStoragePath());
     }
 
 	#endregion

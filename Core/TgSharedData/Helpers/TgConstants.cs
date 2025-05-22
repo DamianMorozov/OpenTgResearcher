@@ -5,6 +5,8 @@ namespace TgSharedData.Helpers;
 
 public sealed class TgConstants
 {
+    public static string ObjectHasBeenDisposedOff => "Object has been disposed off!";
+    public static string UseOverrideMethod => "Use override method!";
 	public static string LinkDockerHub => "https://hub.docker.com/r/damianmorozov/tgdownloader-blazor";
 	public static string LinkDockerHubTitle => "DockerHub";
 	public static string LinkGitHub => "https://github.com/DamianMorozov/OpenTgResearcher";

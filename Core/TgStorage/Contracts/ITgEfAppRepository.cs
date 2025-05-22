@@ -3,13 +3,10 @@
 
 namespace TgStorage.Contracts;
 
-public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity>
+public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity, TgEfAppDto>, IDisposable
 {
     public Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync(bool isReadOnly = true);
     public Task<Guid> GetCurrentAppUidAsync();
     public TgEfStorageResult<TgEfAppEntity> GetCurrentApp(bool isReadOnly = true);
-
     public Task<TgEfAppDto> GetCurrentDtoAsync();
-    public Task<List<TgEfAppDto>> GetListDtosAsync(int take = 0, int skip = 0);
-    public Task<List<TgEfAppDto>> GetListDtosAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where);
 }

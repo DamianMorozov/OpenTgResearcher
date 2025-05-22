@@ -3,7 +3,7 @@
 
 using TL;
 
-namespace TgInfrastructure.Contracts;
+namespace TgBusinessLogic.Contracts;
 
 /// <summary> Telegram client </summary>
 public interface ITgConnectClient : ITgCommon, IDisposable
@@ -51,4 +51,5 @@ public interface ITgConnectClient : ITgCommon, IDisposable
 	public void SetForceStopDownloading();
 	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings);
 	public Task ScanSourcesTgDesktopAsync(TgEnumSourceType sourceType, Func<ITgEfSourceViewModel, Task> afterScanAsync);
+    Task<long> GetUserIdAsync();
 }

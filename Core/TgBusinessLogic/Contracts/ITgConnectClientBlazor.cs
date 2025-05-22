@@ -1,10 +1,10 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgInfrastructure.Contracts;
+namespace TgBusinessLogic.Contracts;
 
-/// <summary> Telegram client Desktop </summary>
-public interface ITgConnectClientDesktop : ITgConnectClient
+/// <summary> Telegram client Blazor </summary>
+public interface ITgConnectClientBlazor : ITgConnectClient
 {
 	//
 }

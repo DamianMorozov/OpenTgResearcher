@@ -3,7 +3,7 @@
 
 namespace TgBusinessLogic.Services;
 
-public sealed class TgLicenseService : ITgLicenseService
+public sealed class TgLicenseService(TgStorageManager storageManager) : TgWebDisposable(), ITgLicenseService
 {
 	#region Public and private fields, properties, constructor
 
@@ -13,26 +13,27 @@ public sealed class TgLicenseService : ITgLicenseService
 	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = null!;
 
-	private readonly ITgEfAppRepository _appRepository;
-	private readonly ITgEfLicenseRepository _licenseRepository;
+    #endregion
 
-	public TgLicenseService()
-	{
-        _appRepository = new TgEfAppRepository();
-		_licenseRepository = new TgEfLicenseRepository();
-	}
+    #region TgDisposable
 
-	public TgLicenseService(IWebHostEnvironment webHostEnvironment)
-	{
-		_appRepository = new TgEfAppRepository(webHostEnvironment);
-        _licenseRepository = new TgEfLicenseRepository(webHostEnvironment);
-	}
+    /// <summary> Release managed resources </summary>
+    public override void ReleaseManagedResources()
+    {
+        //
+    }
 
-	#endregion
+    /// <summary> Release unmanaged resources </summary>
+    public override void ReleaseUnmanagedResources()
+    {
+		storageManager.Dispose();
+    }
 
-	#region Public and private methods
+    #endregion
 
-	public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);
+    #region Public and private methods
+
+    public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);
 
 	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription,
 		string licensePaidDescription, string licensePremiumDescription) =>
@@ -69,29 +70,24 @@ public sealed class TgLicenseService : ITgLicenseService
 
 	public async Task LicenseActivateAsync()
 	{
-		var userId = await GetUserIdAsync();
-        if (userId > 0)
+        var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync();
+        var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date);
+        if (currentLicenseDto is not null)
 		{
-            var licenseDtos = await _licenseRepository.GetListDtosAsync();
-            var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date && x.UserId == userId);
-            if (currentLicenseDto is not null)
-			{
-				ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey,
-					currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
-				return;
-			}
-        }
+			ActivateLicense(currentLicenseDto.IsConfirmed, currentLicenseDto.LicenseKey, currentLicenseDto.LicenseType, currentLicenseDto.UserId, currentLicenseDto.ValidTo);
+			return;
+		}
         ActivateDefaultLicense();
     }
 
     public async Task LicenseClearAsync()
 	{
-		await _licenseRepository.DeleteAllAsync();
-        var app = (await _appRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
+		await storageManager.LicenseRepository.DeleteAllAsync();
+        var app = (await storageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
 		if (app.UseBot)
 		{
 			app.UseBot = false;
-			await _appRepository.SaveAsync(app);
+			await storageManager.AppRepository.SaveAsync(app);
 		}
     }
 
@@ -106,18 +102,17 @@ public sealed class TgLicenseService : ITgLicenseService
 			ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
 		};
 
-        var userId = await GetUserIdAsync();
-        var licenseDtos = await _licenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date && x.UserId == userId);
+        var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync();
+		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date);
         if (currentLicenseDto is null)
 		{
-			await _licenseRepository.SaveAsync(licenseEntity);
+			await storageManager.LicenseRepository.SaveAsync(licenseEntity);
 		}
 		else
 		{
-			var licenseExists = await _licenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
+			var licenseExists = await storageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
 			licenseExists.Copy(licenseEntity, isUidCopy: false);
-			await _licenseRepository.SaveAsync(licenseEntity);
+			await storageManager.LicenseRepository.SaveAsync(licenseEntity);
 		}
 	}
 
@@ -126,7 +121,7 @@ public sealed class TgLicenseService : ITgLicenseService
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await _licenseRepository.GetListDtosAsync(take: 0, skip: 0);
+		var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
@@ -143,7 +138,7 @@ public sealed class TgLicenseService : ITgLicenseService
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await _licenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
+		var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
@@ -154,14 +149,6 @@ public sealed class TgLicenseService : ITgLicenseService
 		result.Value = licenseCountDto;
 		return result;
 	}
-
-    public async Task<long> GetUserIdAsync()
-    {
-        if (TgGlobalTools.ConnectClient.Me is null)
-            await TgGlobalTools.ConnectClient.LoginUserAsync(isProxyUpdate: false);
-        var userId = TgGlobalTools.ConnectClient.Me?.ID ?? 0;
-        return userId;
-    }
 
     #endregion
 }

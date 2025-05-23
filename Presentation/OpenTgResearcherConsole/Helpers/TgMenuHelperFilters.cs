@@ -68,7 +68,7 @@ internal partial class TgMenuHelper
 	/// <summary> View filters </summary>
 	private async Task FiltersViewAsync()
 	{
-		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+		var storageResult = await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		if (storageResult.IsExists)
 		{
 			foreach (var filter in storageResult.Items)
@@ -76,8 +76,7 @@ internal partial class TgMenuHelper
 				TgLog.WriteLine(filter.ToConsoleString());
 			}
 		}
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
+		TgLog.TypeAnyKeyForReturn();
 	}
 
 	private async Task SetFiltersAddAsync()
@@ -131,17 +130,17 @@ internal partial class TgMenuHelper
 				break;
 		}
 
-		await FilterRepository.SaveAsync(filter);
+		await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filter);
 		await FiltersViewAsync();
 	}
 
 	/// <summary> Edit filter </summary>
 	private async Task SetFiltersEditAsync()
 	{
-		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+		var storageResult = await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
 		filter.IsEnabled = AskQuestionTrueFalseReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
-		await FilterRepository.SaveAsync(filter);
+		await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filter);
 		await FiltersViewAsync();
 	}
 
@@ -158,9 +157,9 @@ internal partial class TgMenuHelper
 	/// <summary> Remove filter </summary>
 	private async Task SetFiltersRemoveAsync()
 	{
-		var storageResult = await FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+		var storageResult = await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
-		await FilterRepository.DeleteAsync(filter);
+		await BusinessLogicManager.StorageManager.FilterRepository.DeleteAsync(filter);
 		await FiltersViewAsync();
 	}
 
@@ -169,7 +168,7 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuFiltersClear)) return;
 
-		await FilterRepository.DeleteAllAsync();
+		await BusinessLogicManager.StorageManager.FilterRepository.DeleteAllAsync();
 		await FiltersViewAsync();
 	}
 

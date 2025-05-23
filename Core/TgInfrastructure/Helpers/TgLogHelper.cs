@@ -66,5 +66,11 @@ public sealed class TgLogHelper : ITgHelper
 		return $"[red] {GetDtStamp()} | x {message}[/]";
 	}
 
-	#endregion
+    public void TypeAnyKeyForReturn()
+    {
+        WriteLine(TgLocaleHelper.Instance.TypeAnyKeyForReturn);
+        Console.ReadKey();
+    }
+
+    #endregion
 }

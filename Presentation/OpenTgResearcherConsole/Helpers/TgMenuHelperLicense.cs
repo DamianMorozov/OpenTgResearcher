@@ -60,7 +60,7 @@ internal sealed partial class TgMenuHelper
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseClear))
 			return;
 
-		await LicenseService.LicenseClearAsync();
+		await BusinessLogicManager.LicenseService.LicenseClearAsync();
 		await LicenseShowInfoAsync(tgDownloadSettings, [], isWait: false);
 	}
 
@@ -72,23 +72,16 @@ internal sealed partial class TgMenuHelper
 
         try
         {
-			var userId = await LicenseService.GetUserIdAsync();
-            if (userId == 0)
-            {
-				if (!isSilent)
-					await LicenseShowInfoAsync(tgDownloadSettings, [TgLocale.MenuLicenseUserNotLoggedIn]);
-                return;
-            }
-
-            var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
+            var apiUrls = new[] { BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, BusinessLogicManager.LicenseService.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
+            var userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
 
-			foreach (var apiUrl in apiUrls)
+            foreach (var apiUrl in apiUrls)
 			{
 				try
 				{
-					var url = $"{apiUrl}License/Get?userId={userId}";
+                    var url = $"{apiUrl}License/Get?userId={userId}";
 					var response = await httpClient.GetAsync(url);
 					var checkUrl = $"{TgLocale.MenuLicenseCheckServer}: {apiUrl}";
 					if (!response.IsSuccessStatusCode)
@@ -108,12 +101,12 @@ internal sealed partial class TgMenuHelper
 					}
 
 					// Updating an existing license or creating a new license
-					await LicenseService.LicenseUpdateAsync(licenseDto);
+					await BusinessLogicManager.LicenseService.LicenseUpdateAsync(licenseDto);
 
 					if (!isSilent)
 						await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, TgLocale.MenuLicenseUpdatedSuccessfully]);
 					else
-						await LicenseService.LicenseActivateAsync();
+						await BusinessLogicManager.LicenseService.LicenseActivateAsync();
 					return;
 				}
 				catch (Exception ex)
@@ -159,7 +152,7 @@ internal sealed partial class TgMenuHelper
 	{
 		try
 		{
-            await LicenseService.LicenseActivateAsync();
+            await BusinessLogicManager.LicenseService.LicenseActivateAsync();
 
 			await ShowTableLicenseFullInfoAsync(tgDownloadSettings);
 			if (messages.Any())
@@ -168,9 +161,8 @@ internal sealed partial class TgMenuHelper
 
 			if (isWait)
 			{
-				TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-				Console.ReadKey();
-			}
+                TgLog.TypeAnyKeyForReturn();
+            }
 		}
 		finally
 		{
@@ -179,7 +171,7 @@ internal sealed partial class TgMenuHelper
 	}
 
 	/// <summary> Buy license </summary>
-	private async Task LicenseBuyAsync() => await WebSiteOpenAsync(LicenseService.MenuWebSiteGlobalLicenseBuyUrl);
+	private async Task LicenseBuyAsync() => await WebSiteOpenAsync(BusinessLogicManager.LicenseService.MenuWebSiteGlobalLicenseBuyUrl);
 
 	/// <summary> Open web-site </summary>
 	private async Task WebSiteOpenAsync(string url)

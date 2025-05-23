@@ -117,21 +117,21 @@ internal partial class TgMenuHelper
 	private async Task SearchSourcesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgEnumSourceType sourceType)
 	{
 		await ShowTableAdvancedAsync(tgDownloadSettings);
-		if (!TgGlobalTools.ConnectClient.IsReady)
+		if (!BusinessLogicManager.ConnectClient.IsReady)
 		{
 			TgLog.MarkupWarning(TgLocale.TgMustClientConnect);
 			Console.ReadKey();
 			return;
 		}
 
-		await RunTaskStatusAsync(tgDownloadSettings, async _ => { await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, sourceType); }, 
+		await RunTaskStatusAsync(tgDownloadSettings, async _ => { await BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, sourceType); }, 
 			isSkipCheckTgSettings: true, isScanCount: true, isWaitComplete: true);
 	}
 
 	private async Task ViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewContactsAsync(tgDownloadSettings);
-		var storageResult = await ContactRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+		var storageResult = await BusinessLogicManager.StorageManager.ContactRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var contact = await GetContactFromEnumerableAsync(TgLocale.MenuViewContacts, storageResult.Items);
 		if (contact.Uid != Guid.Empty)
 		{
@@ -144,7 +144,7 @@ internal partial class TgMenuHelper
 	private async Task ViewChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewChatsAsync(tgDownloadSettings);
-		var storageResult = await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+		var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var chat = await GetChatFromEnumerableAsync(TgLocale.MenuViewChats, storageResult.Items);
 		if (chat.Uid != Guid.Empty)
 		{
@@ -159,13 +159,13 @@ internal partial class TgMenuHelper
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearChats)) return;
 
 		await ShowTableViewChatsAsync(tgDownloadSettings);
-		await SourceRepository.DeleteAllAsync();
+		await BusinessLogicManager.StorageManager.SourceRepository.DeleteAllAsync();
 	}
 
 	private async Task ViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewStoriesAsync(tgDownloadSettings);
-		var storageResult = await StoryRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+		var storageResult = await BusinessLogicManager.StorageManager.StoryRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
 		var story = await GetStoryFromEnumerableAsync(TgLocale.MenuViewChats, storageResult.Items);
 		if (story.Uid != Guid.Empty)
 		{
@@ -178,7 +178,7 @@ internal partial class TgMenuHelper
 	private async Task ViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewVersionsAsync(tgDownloadSettings);
-		GetVersionFromEnumerable(TgLocale.MenuViewChats, (await VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
+		GetVersionFromEnumerable(TgLocale.MenuViewChats, (await BusinessLogicManager.StorageManager.VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
 	}
 
 	private async Task MarkHistoryReadAsync(TgDownloadSettingsViewModel tgDownloadSettings) => 
@@ -188,12 +188,12 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearAutoDownload)) return;
 
-		var chats = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+		var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
 		foreach (var chat in chats)
 		{
 			chat.IsAutoUpdate = false;
-			await SourceRepository.SaveAsync(chat);
+			await BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(chat);
 		}
 	}
 
@@ -201,14 +201,14 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStartAutoDownload)) return;
 
-		var chats = (await SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+		var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
 		foreach (var chat in chats)
 		{
 			var tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
 			var chatId = string.IsNullOrEmpty(chat.UserName) ? $"{chat.Id}" : $"{chat.Id} | @{chat.UserName}";
 			// StatusContext
-			await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(chat.Id, chat.FirstId, chat.Count,
+			await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(chat.Id, chat.FirstId, chat.Count,
 				chat.Count <= 0
 					? $"The source {chatId} hasn't any messages!"
 					: $"The source {chatId} has {chat.Count} messages.");
@@ -220,12 +220,11 @@ internal partial class TgMenuHelper
 
 	private async Task AutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		TgGlobalTools.ConnectClient.IsUpdateStatus = true;
-		await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
+		BusinessLogicManager.ConnectClient.IsUpdateStatus = true;
+		await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
 			tgDownloadSettings.SourceVm.Dto.Count, "Auto view updates is started");
-		TgLog.MarkupLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-		TgGlobalTools.ConnectClient.IsUpdateStatus = false;
+		TgLog.TypeAnyKeyForReturn();
+		BusinessLogicManager.ConnectClient.IsUpdateStatus = false;
 		await Task.CompletedTask;
 	}
 

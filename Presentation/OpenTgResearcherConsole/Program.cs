@@ -5,13 +5,14 @@ namespace OpenTgResearcherConsole;
 
 public static class Program
 {
-	public static async Task Main()
+    public static async Task Main()
 	{
+        // Set app type
+        TgGlobalTools.SetAppType(TgEnumAppType.Console);
+        
         // DI register
         var containerBuilder = new ContainerBuilder();
-        containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
-        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>();
-        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
+        // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         containerBuilder.RegisterType<TgEfContactRepository>().As<ITgEfContactRepository>();
         containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
@@ -22,11 +23,14 @@ public static class Program
         containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
         containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
         containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
+        // Registering services
+        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
+        containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
+        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>();
+        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
+        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
+        // Building the container
         TgGlobalTools.Container = containerBuilder.Build();
-
-        // TgGlobalTools
-        var scope = TgGlobalTools.Container.BeginLifetimeScope();
-        TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClientConsole>();
 
         // Helpers
         var tgLocale = TgLocaleHelper.Instance;
@@ -36,7 +40,7 @@ public static class Program
         tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
         var tgMenu = new TgMenuHelper();
 
-        // Console loading
+        // Loading Console
         Console.OutputEncoding = Encoding.UTF8;
         Console.Title = TgConstants.OTR;
         tgLog.SetMarkupLine(AnsiConsole.WriteLine);
@@ -44,39 +48,32 @@ public static class Program
         tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
         tgLog.WriteLine($"{TgConstants.OpenTgResearcherConsole} {tgAppSettings.AppVersion}");
 
-        // Check and update Velopack
-        CheckVelopackInstallAndUpdate(tgLog);
+        // Loading Velopack Installer
+        LoadingVelopackInstaller(tgLog);
 
-        // Create and update storage
+        // Loading License
+        tgLog.WriteLine("Loading license ...");
+        tgMenu.BusinessLogicManager.LicenseService.ActivateDefaultLicense();
+        await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
+        tgLog.WriteLine("Loading license - v");
+
+        // Loading storage
         tgLog.WriteLine("Loading storage ...");
         await Task.Delay(250);
-        await TgEfUtils.CreateAndUpdateDbAsync();
-        tgLog.WriteLine("Storage loading is complete");
-
-        // Menu
-        tgLog.WriteLine("Loading the menu ...");
-        await Task.Delay(250);
-        TgGlobalTools.SetAppType(TgEnumAppType.Console);
-        tgLog.WriteLine("Menu loading is complete");
+        await tgMenu.BusinessLogicManager.CreateAndUpdateDbAsync();
         await tgMenu.SetStorageVersionAsync();
+        tgLog.WriteLine("Loading storage - v");
 
-        // TG Connection
+        // Loading TG Connection
         if (File.Exists(TgFileUtils.FileTgSession))
         {
-            tgLog.WriteLine("Loading the connection ...");
+            tgLog.WriteLine("Loading connection ...");
             await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
-            tgLog.WriteLine("Connection loading is complete");
+            tgLog.WriteLine("Loading connection - v");
         }
 
-        // License loading
-        tgLog.WriteLine("Loading the license ...");
-        tgMenu.LicenseService.ActivateDefaultLicense();
-        await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
-        tgLog.WriteLine("License loading is complete");
-
         // Any key
-        tgLog.WriteLine(tgLocale.TypeAnyKeyForReturn);
-        Console.ReadKey();
+        tgLog.TypeAnyKeyForReturn();
 
         do
         {
@@ -139,16 +136,15 @@ public static class Program
                 tgLog.MarkupLine($"{tgLocale.StatusException}: " + tgLog.GetMarkupString(ex.Message));
                 if (ex.InnerException is not null)
                     tgLog.MarkupLine($"{tgLocale.StatusInnerException}: " + tgLog.GetMarkupString(ex.InnerException.Message));
-                tgLog.WriteLine(tgLocale.TypeAnyKeyForReturn);
-                Console.ReadKey();
+                tgLog.TypeAnyKeyForReturn();
             }
         } while (tgMenu.Value is not TgEnumMenuMain.Exit);
     }
 
-    /// <summary> Check and update Velopack </summary>
-    private static void CheckVelopackInstallAndUpdate(TgLogHelper tgLog)
+    /// <summary> Loading Velopack Installer </summary>
+    private static void LoadingVelopackInstaller(TgLogHelper tgLog)
 	{
-        tgLog.WriteLine("Checking for installation and updates...");
+        tgLog.WriteLine("Loading installer ...");
         // Velopack installer update
         //await menu.VelopackUpdateAsync(isWait: false, isRelease: true);
         VelopackApp.Build()
@@ -162,6 +158,6 @@ public static class Program
                 tgLog.WriteLine($"Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
             })
             .Run();
-        tgLog.WriteLine("Verification of the installation and update is complete");
+        tgLog.WriteLine("Loading installer - v");
     }
 }

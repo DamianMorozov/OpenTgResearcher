@@ -86,9 +86,8 @@ internal sealed partial class TgMenuHelper
 
 		if (isWait)
 		{
-			TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-			Console.ReadKey();
-		}
+            TgLog.TypeAnyKeyForReturn();
+        }
 	}
 
 	#endregion

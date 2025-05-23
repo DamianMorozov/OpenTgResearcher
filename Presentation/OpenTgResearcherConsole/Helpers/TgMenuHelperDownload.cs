@@ -2,8 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
-using Spectre.Console;
-
 namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
@@ -30,7 +28,7 @@ internal partial class TgMenuHelper
 					TgLocale.MenuDownloadSetIsCreatingSubdirectories,
 					TgLocale.MenuDownloadSetIsFileNamingByMessage);
 		// Check paid license
-		if (LicenseService.CurrentLicense.CheckPaidLicense())
+		if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
 		{
 			selectionPrompt.AddChoice(TgLocale.MenuDownloadSetCountThreadsByPaidLicense);
 		}
@@ -135,7 +133,7 @@ internal partial class TgMenuHelper
 	{
 		var tgDownloadSettings = SetupDownloadSourceByIdCore(id);
 		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
-		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
 
@@ -146,7 +144,7 @@ internal partial class TgMenuHelper
 			await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
 		else
 			await LoadTgClientSettingsByNameAsync(tgDownloadSettings);
-		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
 		return tgDownloadSettings;
 	}
 
@@ -176,8 +174,8 @@ internal partial class TgMenuHelper
 	private async Task SetupDownloadSourceFirstIdAutoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
-		await TgGlobalTools.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
-		await TgGlobalTools.ConnectClient.SetChannelMessageIdFirstAsync(tgDownloadSettings);
+		await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+		await BusinessLogicManager.ConnectClient.SetChannelMessageIdFirstAsync(tgDownloadSettings);
 	}
 
 	private async Task SetupDownloadSourceFirstIdManualAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -241,7 +239,7 @@ internal partial class TgMenuHelper
 			tgDownloadSettings.CountThreads = 1;
 		else
 		{
-			switch (LicenseService.CurrentLicense.LicenseType)
+			switch (BusinessLogicManager.LicenseService.CurrentLicense.LicenseType)
 			{
 				case TgEnumLicenseType.Test:
 				case TgEnumLicenseType.Paid:
@@ -260,7 +258,7 @@ internal partial class TgMenuHelper
 	private async Task UpdateSourceWithSettingsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await tgDownloadSettings.UpdateSourceWithSettingsAsync();
-		await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count, 
+		await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count, 
 			TgLocale.SettingsChat);
 	}
 
@@ -270,7 +268,7 @@ internal partial class TgMenuHelper
 		var directory = tgDownloadSettings.SourceVm.Dto.Directory;
 		var firstId = tgDownloadSettings.SourceVm.Dto.FirstId;
 		// Find by ID
-		var storageResult = await SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+		var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
 		if (storageResult.IsExists)
 		{
 			if (string.IsNullOrEmpty(directory))
@@ -288,7 +286,7 @@ internal partial class TgMenuHelper
 	{
 		var directory = tgDownloadSettings.SourceVm.Dto.Directory;
 		// Find by UserName
-		var storageResult = await SourceRepository.GetAsync(new() { UserName = tgDownloadSettings.SourceVm.Dto.UserName });
+		var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetAsync(new() { UserName = tgDownloadSettings.SourceVm.Dto.UserName });
 		if (storageResult.IsExists)
 		{
 			if (string.IsNullOrEmpty(directory))
@@ -306,12 +304,12 @@ internal partial class TgMenuHelper
 		await UpdateSourceWithSettingsAsync(tgDownloadSettings);
 		try
 		{
-			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(tgDownloadSettings);
+			await BusinessLogicManager.ConnectClient.DownloadAllDataAsync(tgDownloadSettings);
 		}
 		catch (Exception ex)
 		{
 			TgLog.MarkupWarning(ex.Message);
-			var floodWait = TgGlobalTools.ConnectClient.Client?.FloodRetryThreshold ?? 60;
+			var floodWait = BusinessLogicManager.ConnectClient.Client?.FloodRetryThreshold ?? 60;
 			TgLog.MarkupWarning($"Flood control: waiting {floodWait} seconds");
 			await Task.Delay(floodWait * 1_000);
 			// Repeat request after waiting
@@ -323,7 +321,7 @@ internal partial class TgMenuHelper
 	private async Task MarkHistoryReadCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableMarkHistoryReadProgressAsync(tgDownloadSettings);
-		await TgGlobalTools.ConnectClient.MarkHistoryReadAsync();
+		await BusinessLogicManager.ConnectClient.MarkHistoryReadAsync();
 		await ShowTableMarkHistoryReadCompleteAsync(tgDownloadSettings);
 	}
 

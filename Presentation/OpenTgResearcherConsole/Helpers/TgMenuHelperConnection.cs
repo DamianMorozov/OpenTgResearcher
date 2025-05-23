@@ -22,7 +22,7 @@ internal partial class TgMenuHelper
 					TgLocale.MenuClientConnect,
 					TgLocale.MenuClientDisconnect);
         // Check paid license
-        if (LicenseService.CurrentLicense.CheckPaidLicense())
+        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
 		{
 			selectionPrompt.AddChoice(TgLocale.TgClientUseBot);
 			selectionPrompt.AddChoice(TgLocale.TgClientBotToken);
@@ -41,7 +41,7 @@ internal partial class TgMenuHelper
 			return TgEnumMenuClient.Disconnect;
 
         // Check paid license
-        if (LicenseService.CurrentLicense.CheckPaidLicense())
+        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
 		{
 			if (prompt.Equals(TgLocale.TgClientUseBot))
 				return TgEnumMenuClient.UseBot;
@@ -109,16 +109,16 @@ internal partial class TgMenuHelper
 			proxy.HostName = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyHostName}:"));
 			proxy.Port = AnsiConsole.Ask<ushort>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyPort}:"));
 		}
-		var storageResult = await ProxyRepository.GetAsync(
+		var storageResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetAsync(
 			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false);
 		if (!storageResult.IsExists)
-			await ProxyRepository.SaveAsync(proxy);
-		proxy = (await ProxyRepository.GetAsync(
+			await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxy);
+		proxy = (await BusinessLogicManager.StorageManager.ProxyRepository.GetAsync(
 			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false)).Item;
 
-		var app = (await AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
+		var app = (await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
 		app.ProxyUid = proxy.Uid;
-		await AppRepository.SaveAsync(app);
+		await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(app);
 
 		return proxy;
 	}
@@ -154,14 +154,14 @@ internal partial class TgMenuHelper
 			if (isSecret)
 				proxy.Secret = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxySecret}:"));
 		}
-        await ProxyRepository.SaveAsync(proxy);
+        await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxy);
 		//SetupClientProxyCore();
 	}
 
 	private string? ConfigClientConsole(string what)
 	{
-		var appNew = AppRepository.GetNewItem();
-		var app = AppRepository.GetCurrentApp(isReadOnly: false).Item;
+		var appNew = BusinessLogicManager.StorageManager.AppRepository.GetNewItem();
+		var app = BusinessLogicManager.StorageManager.AppRepository.GetCurrentApp(isReadOnly: false).Item;
 		switch (what)
 		{
 			case "api_hash":
@@ -172,7 +172,7 @@ internal partial class TgMenuHelper
 				if (app.ApiHash != TgDataFormatUtils.ParseStringToGuid(apiHash))
 				{
 					app.ApiHash = TgDataFormatUtils.ParseStringToGuid(apiHash);
-					AppRepository.Save(app);
+					BusinessLogicManager.StorageManager.AppRepository.Save(app);
 				}
 				return apiHash;
 			case "api_id":
@@ -183,7 +183,7 @@ internal partial class TgMenuHelper
 				if (app.ApiId != int.Parse(apiId))
 				{
 					app.ApiId = int.Parse(apiId);
-					AppRepository.Save(app);
+					BusinessLogicManager.StorageManager.AppRepository.Save(app);
 				}
 				return apiId;
 			case "phone_number":
@@ -193,7 +193,7 @@ internal partial class TgMenuHelper
 				if (app.PhoneNumber != phoneNumber)
 				{
 					app.PhoneNumber = phoneNumber;
-					AppRepository.Save(app);
+					BusinessLogicManager.StorageManager.AppRepository.Save(app);
 				}
 				return phoneNumber;
 			case "verification_code":
@@ -236,13 +236,13 @@ internal partial class TgMenuHelper
 	{
 		if (!isSilent)
 			await ShowTableConnectionAsync(tgDownloadSettings);
-		var app = (await AppRepository.GetCurrentAppAsync()).Item;
-		var proxyResult = await ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+		var app = (await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync()).Item;
+		var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
 		var proxy = proxyResult.Item;
-		await TgGlobalTools.ConnectClient.ConnectSessionConsoleAsync(ConfigClientConsole, proxy);
+		await BusinessLogicManager.ConnectClient.ConnectSessionConsoleAsync(ConfigClientConsole, proxy);
 		if (!isSilent)
 		{
-			if (TgGlobalTools.ConnectClient.ClientException.IsExist || TgGlobalTools.ConnectClient.ProxyException.IsExist)
+			if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
 				TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
 			else
 				TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
@@ -254,7 +254,7 @@ internal partial class TgMenuHelper
 	public async Task DisconnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableConnectionAsync(tgDownloadSettings);
-		await TgGlobalTools.ConnectClient.DisconnectAsync();
+		await BusinessLogicManager.ConnectClient.DisconnectAsync();
 	}
 
 	public async Task ClientClearAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -262,38 +262,38 @@ internal partial class TgMenuHelper
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearConnectionData)) return;
 
 		await ShowTableConnectionAsync(tgDownloadSettings);
-		await AppRepository.DeleteAllAsync();
-		await TgGlobalTools.ConnectClient.DisconnectAsync();
+		await BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
+		await BusinessLogicManager.ConnectClient.DisconnectAsync();
 	}
 
 	public async Task ClientUseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		// Check paid license
-		if (!LicenseService.CurrentLicense.CheckPaidLicense()) return;
+		if (!BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense()) return;
 
         var useBot = AskQuestionYesNoReturnPositive(TgLocale.TgClientUseBot);
 
-		var storageResult = await AppRepository.GetCurrentAppAsync();
+		var storageResult = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync();
 		if (storageResult.IsExists)
 		{
 			storageResult.Item.UseBot = useBot;
-			await AppRepository.SaveAsync(storageResult.Item);
+			await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(storageResult.Item);
 		}
 	}
 
 	public async Task ClientBotTokenAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
         // Check paid license
-        if (!LicenseService.CurrentLicense.CheckPaidLicense()) return;
+        if (!BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense()) return;
 
         var input = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TgClientBotToken}:"));
 		if (!string.IsNullOrEmpty(input))
 		{
-            var storageResult = await AppRepository.GetCurrentAppAsync();
+            var storageResult = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync();
             if (storageResult.IsExists)
             {
                 storageResult.Item.BotTokenKey = input;
-                await AppRepository.SaveAsync(storageResult.Item);
+                await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(storageResult.Item);
             }
         }
     }

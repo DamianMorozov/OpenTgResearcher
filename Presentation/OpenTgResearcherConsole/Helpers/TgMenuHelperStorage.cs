@@ -70,19 +70,18 @@ internal partial class TgMenuHelper
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
-		var backupResult = TgEfUtils.BackupDbAsync();
+		var backupResult = BusinessLogicManager.BackupDbAsync();
 		TgLog.WriteLine($"{TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
 		TgLog.WriteLine(backupResult.IsSuccess ? TgLocale.MenuStorageBackupSuccess : TgLocale.MenuStorageBackupFailed);
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-	}
+        TgLog.TypeAnyKeyForReturn();
+    }
 
 	private async Task TgStorageCreateNewDbAsync()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbCreateNew)) return;
 
 		// Create and update storage
-		await TgEfUtils.CreateAndUpdateDbAsync();
+		await BusinessLogicManager.CreateAndUpdateDbAsync();
 	}
 
 	private void ClearStorageData()
@@ -90,22 +89,20 @@ internal partial class TgMenuHelper
 		AnsiConsole.WriteLine(TgLocale.MenuStoragePerformSteps);
 		AnsiConsole.WriteLine($"- {TgLocale.MenuStorageExitProgram}");
 		AnsiConsole.WriteLine($"- {TgLocale.MenuStorageDeleteExistsInfo(TgAppSettings.AppXml.XmlEfStorage)}");
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-	}
+        TgLog.TypeAnyKeyForReturn();
+    }
 
 	private void TgStorageTablesVersionsView()
 	{
-		TgEfUtils.VersionsView();
-		TgLog.WriteLine(TgLocale.TypeAnyKeyForReturn);
-		Console.ReadKey();
-	}
+		BusinessLogicManager.VersionsView();
+        TgLog.TypeAnyKeyForReturn();
+    }
 
 	private async Task TgStorageTablesCompactAsync()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageTablesCompact)) return;
 		// Shrink storage
-		await TgEfUtils.ShrinkDbAsync();
+		await BusinessLogicManager.ShrinkDbAsync();
 		TgLog.WriteLine(TgLocale.MenuStorageTablesCompactFinished);
 		Console.ReadKey();
 	}

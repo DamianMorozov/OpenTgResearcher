@@ -3,7 +3,7 @@
 
 namespace TgBusinessLogic.Services;
 
-public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDisposable(), ITgLicenseService
+public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 {
 	#region Public and private fields, properties, constructor
 
@@ -11,7 +11,19 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
 	public string MenuWebSiteGlobalLicenseBuyUrl => "http://opentgresearcher.online/licenses/";
 	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
 	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
-	public TgLicenseDto CurrentLicense { get; private set; } = null!;
+	public TgLicenseDto CurrentLicense { get; private set; } = default!;
+    
+    private ITgStorageManager StorageManager { get; } = default!;
+
+    public TgLicenseService(ITgStorageManager storageManager) : base()
+    {
+        StorageManager = storageManager;
+    }
+
+    public TgLicenseService(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager) : base(webHostEnvironment)
+    {
+        StorageManager = storageManager;
+    }
 
     #endregion
 
@@ -20,13 +32,13 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
     /// <summary> Release managed resources </summary>
     public override void ReleaseManagedResources()
     {
-        //
+        StorageManager.Dispose();
     }
 
     /// <summary> Release unmanaged resources </summary>
     public override void ReleaseUnmanagedResources()
     {
-		storageManager.Dispose();
+        //
     }
 
     #endregion
@@ -70,7 +82,7 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
 
 	public async Task LicenseActivateAsync()
 	{
-        var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync();
+        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync();
         var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date);
         if (currentLicenseDto is not null)
 		{
@@ -82,12 +94,12 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
 
     public async Task LicenseClearAsync()
 	{
-		await storageManager.LicenseRepository.DeleteAllAsync();
-        var app = (await storageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
+		await StorageManager.LicenseRepository.DeleteAllAsync();
+        var app = (await StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
 		if (app.UseBot)
 		{
 			app.UseBot = false;
-			await storageManager.AppRepository.SaveAsync(app);
+			await StorageManager.AppRepository.SaveAsync(app);
 		}
     }
 
@@ -102,17 +114,17 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
 			ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
 		};
 
-        var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync();
+        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync();
 		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date);
         if (currentLicenseDto is null)
 		{
-			await storageManager.LicenseRepository.SaveAsync(licenseEntity);
+			await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
 		}
 		else
 		{
-			var licenseExists = await storageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
+			var licenseExists = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
 			licenseExists.Copy(licenseEntity, isUidCopy: false);
-			await storageManager.LicenseRepository.SaveAsync(licenseEntity);
+			await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
 		}
 	}
 
@@ -121,7 +133,7 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
+		var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
@@ -138,7 +150,7 @@ public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDi
 		var result = new TgApiResult();
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
-		var licenseDtos = await storageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
+		var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
 		if (licenseDtos.Any())
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();

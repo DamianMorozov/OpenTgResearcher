@@ -61,7 +61,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     protected TgConnectClientBase(ITgStorageManager storageManager) : base()
 	{
 		InitializeClient();
-		StorageManager = storageManager;
+
+        StorageManager = storageManager;
+    }
+
+    protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager) : base(webHostEnvironment)
+	{
+		InitializeClient();
+
+        StorageManager = storageManager;
     }
 
     #endregion

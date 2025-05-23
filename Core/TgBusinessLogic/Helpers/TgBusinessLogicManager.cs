@@ -18,14 +18,14 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
 
         StorageManager = Scope.Resolve<ITgStorageManager>();
-        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(TgStorageManager), StorageManager));
+        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(ITgStorageManager), StorageManager));
         ConnectClient = TgGlobalTools.AppType switch
         {
-            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
+            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
         };
     }
 
@@ -34,14 +34,16 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
 
         StorageManager = Scope.Resolve<ITgStorageManager>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(TgStorageManager), StorageManager));
+        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
+            new TypedParameter(typeof(ITgStorageManager), StorageManager));
         ConnectClient = TgGlobalTools.AppType switch
         {
-            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
-            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(new TypedParameter(typeof(TgStorageManager), StorageManager)),
+            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
+                new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
         };
     }
 

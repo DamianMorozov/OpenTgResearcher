@@ -11,4 +11,9 @@ public sealed partial class TgConnectClientBlazor : TgConnectClientBase, ITgConn
     {
         //
     }
+
+    public TgConnectClientBlazor(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager) : base(webHostEnvironment, storageManager)
+    {
+        //
+    }
 }

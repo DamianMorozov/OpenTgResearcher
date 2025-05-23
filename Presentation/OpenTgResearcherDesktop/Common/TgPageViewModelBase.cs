@@ -14,11 +14,10 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	[ObservableProperty]
 	public partial INavigationService NavigationService { get; private set; }
 	[ObservableProperty]
-	public partial ITgLicenseService LicenseService { get; set; } = default!;
-	[ObservableProperty]
 	public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
+    public ITgLicenseService LicenseService => App.BusinessLogicManager.LicenseService;
 
-	[ObservableProperty]
+    [ObservableProperty]
 	public partial string Name { get; private set; }
 
 	[ObservableProperty]
@@ -62,12 +61,10 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	[ObservableProperty]
 	public partial string SensitiveField { get; set; } = "**********";
 
-	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, 
-		ILogger<TgPageViewModelBase> logger, string name)
+	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{
 		SettingsService = settingsService;
 		NavigationService = navigationService;
-		LicenseService = licenseService;
 		Logger = logger;
 		Name = name;
 	}
@@ -100,8 +97,8 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		ConnectionDt = string.Empty;
 		ConnectionMsg = string.Empty;
 		Exception.Default();
-		await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync();
-		IsOnlineReady = TgGlobalTools.ConnectClient.IsReady;
+        await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync();
+		IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
 	}
 
 	/// <summary> Open url </summary>
@@ -169,20 +166,6 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	//	}
 	//}
 
-	//protected async Task ContentDialogAsync(string title, ContentDialogButton defaultButton = ContentDialogButton.Close)
-	//{
-	//	if (XamlRootVm is null) return;
-	//	ContentDialog dialog = new()
-	//	{
-	//		XamlRoot = XamlRootVm,
-	//		Title = title,
-	//		PrimaryButtonText = TgResourceExtensions.GetYesButton(),
-	//		CloseButtonText = TgResourceExtensions.GetCancelButton(),
-	//		DefaultButton = defaultButton,
-	//	};
-	//	_ = await dialog.ShowAsync();
-	//}
-
 	protected async Task ContentDialogAsync(string title, string content)
 	{
 		if (XamlRootVm is null) return;
@@ -233,9 +216,9 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		{
 			IsEnabledContent = false;
 			IsPageLoad = true;
-			if (LicenseService.CurrentLicense is not null)
+			if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
 			{
-				switch (LicenseService.CurrentLicense.LicenseType)
+				switch (App.BusinessLogicManager.LicenseService.CurrentLicense.LicenseType)
 				{
 					case TgEnumLicenseType.Test:
 					case TgEnumLicenseType.Paid:

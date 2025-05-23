@@ -24,25 +24,47 @@ public partial class App : Application
 		return service;
 	}
 
-	public static WindowEx MainWindow { get; } = new MainWindow();
+	public static WindowEx MainWindow { get; private set; } = default!;
 
     public static UIElement? AppTitlebar { get; set; }
+    internal static ITgBusinessLogicManager BusinessLogicManager { get; private set; } = default!;
+    private static ILifetimeScope Scope { get; set; } = default!;
 
-	public App()
+    public App()
 	{
 		InitializeComponent();
 
-        // Logging to the application directory
+        // Set app type
+        TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
+        
+		// Logging to the application directory
         TgLogUtils.InitStartupLog();
         TgLogUtils.WriteToLog($"App started");
 
-        // DI
+        // DI register
         var containerBuilder = new ContainerBuilder();
-		containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
-		containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>();
-		TgGlobalTools.Container = containerBuilder.Build();
-		// Host
-		Host = Microsoft.Extensions.Hosting.Host
+        // Registering repositories
+        containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
+        containerBuilder.RegisterType<TgEfContactRepository>().As<ITgEfContactRepository>();
+        containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
+        containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
+        containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
+        containerBuilder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
+        containerBuilder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
+        containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
+        containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
+        containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
+        // Registering services
+        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
+        containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
+        containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>();
+        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
+        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
+        // Building the container
+        TgGlobalTools.Container = containerBuilder.Build();
+
+        // Host
+        Host = Microsoft.Extensions.Hosting.Host
 			.CreateDefaultBuilder()
 			.UseSerilog()
 			.UseContentRoot(AppContext.BaseDirectory)
@@ -62,9 +84,7 @@ public partial class App : Application
 				services.AddSingleton<INavigationService, NavigationService>();
 				// Core Services
 				services.AddSingleton<ISampleDataService, SampleDataService>();
-				services.AddSingleton<ITgLicenseService, TgLicenseService>();
 				services.AddSingleton<IFileService, FileService>();
-				services.AddTransient<ITgEfContext, TgEfDesktopContext>();
 				// Views and ViewModels
 				services.AddTransient<ShellViewModel>();
 				services.AddTransient<TgSettingsViewModel>();
@@ -117,17 +137,20 @@ public partial class App : Application
 		
 		// Exceptions
 		UnhandledException += App_UnhandledException;
-		
-		// TG client loading
-		using var scope = TgGlobalTools.Container.BeginLifetimeScope();
-		TgGlobalTools.ConnectClient = scope.Resolve<ITgConnectClientDesktop>();
-	}
 
-	~App()
+        AppDomain.CurrentDomain.ProcessExit += (s, e) => OnProcessExit();
+    }
+
+	public void OnProcessExit()
 	{
-		Host.Dispose();
-		Log.CloseAndFlush();
-	}
+        Host.Dispose();
+        Log.CloseAndFlush();
+
+        BusinessLogicManager.Dispose();
+        Scope.Dispose();
+
+        GC.SuppressFinalize(this);
+    }
 
     #endregion
 
@@ -149,7 +172,13 @@ public partial class App : Application
 		{
 			base.OnLaunched(args);
 
-			await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+            // TG client loading
+            Scope = TgGlobalTools.Container.BeginLifetimeScope();
+            BusinessLogicManager = Scope.Resolve<ITgBusinessLogicManager>();
+
+            // MainWindow
+            MainWindow ??= new MainWindow();
+            await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 			{
                 // Activate the app
                 await GetService<IActivationService>().ActivateAsync(args);

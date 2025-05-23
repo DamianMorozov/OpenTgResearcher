@@ -115,7 +115,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		return Enum.TryParse(themeName, out TgEnumTheme cacheTheme) ? cacheTheme : TgEnumTheme.Default;
 	}
 
-	private async Task<string> LoadAppStorageAsync() => await ReadSettingAsync<string>(SettingsKeyAppStorage) ?? TgEfUtils.FileEfStorage;
+	private async Task<string> LoadAppStorageAsync() => await ReadSettingAsync<string>(SettingsKeyAppStorage) ?? TgGlobalTools.FileEfStorage;
 
 	private async Task<string> LoadAppSessionAsync() => await ReadSettingAsync<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
 
@@ -242,7 +242,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		SetAppFolder();
 		if (Directory.Exists(AppFolder))
 		{
-			AppStorage = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgEfUtils.FileEfStorage) : string.Empty;
+			AppStorage = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgGlobalTools.FileEfStorage) : string.Empty;
 			IsExistsAppStorage = File.Exists(AppStorage);
 			AppSession = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgFileUtils.FileTgSession) : string.Empty;
 			IsExistsAppSession = File.Exists(AppSession);

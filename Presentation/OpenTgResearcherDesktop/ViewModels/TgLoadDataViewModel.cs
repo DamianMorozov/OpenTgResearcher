@@ -4,9 +4,9 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgLoadDataViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, 
+public sealed partial class TgLoadDataViewModel(ITgSettingsService settingsService, INavigationService navigationService, 
 	ILogger<TgLoadDataViewModel> logger)
-	: TgPageViewModelBase(settingsService, navigationService, licenseService, logger, nameof(TgLoadDataViewModel))
+	: TgPageViewModelBase(settingsService, navigationService, logger, nameof(TgLoadDataViewModel))
 {
     #region Public and private fields, properties, constructor
 

@@ -1,9 +1,9 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace OpenTgResearcherDesktop.Helpers;
+namespace OpenTgResearcherDesktop.Converters;
 
-public sealed partial class TgEnumToColumnSpanConverter : IValueConverter
+public sealed partial class TgEnumToColumnConverter : IValueConverter
 {
 	public object Convert(object value, Type targetType, object parameter, string language)
 	{
@@ -11,16 +11,13 @@ public sealed partial class TgEnumToColumnSpanConverter : IValueConverter
 		{
 			return align switch
 			{
-				TgEnumDirection.From => 2,
-				TgEnumDirection.To => 2,
-				_ => 3
+				TgEnumDirection.From => 0,
+				TgEnumDirection.To => 1,
+				_ => 0
 			};
 		}
-		return 3;
+		return 0;
 	}
 
-	public object ConvertBack(object value, Type targetType, object parameter, string language)
-	{
-		throw new NotImplementedException();
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
 }

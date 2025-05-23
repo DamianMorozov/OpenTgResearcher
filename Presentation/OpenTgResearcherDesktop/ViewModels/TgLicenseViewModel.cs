@@ -32,8 +32,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	public IRelayCommand LicenseCheckCommand { get; }
 	public IRelayCommand LicenseChangeCommand { get; }
 
-	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, ILogger<TgLicenseViewModel> logger) 
-		: base(settingsService, navigationService, licenseService, logger, nameof(TgLicenseViewModel))
+	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgLicenseViewModel))
 	{
 		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";
@@ -55,7 +55,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		await ReloadUiAsync();
 
-        await LicenseService.LicenseActivateAsync();
+        await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
 		await LicenseShowInfoAsync();
 	});
 
@@ -63,11 +63,11 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		try
 		{
-			IsConfirmed = LicenseService.CurrentLicense.IsConfirmed.ToString();
-			LicenseKey = LicenseService.CurrentLicense.GetLicenseKeyString();
-			LicenseDescription = LicenseService.CurrentLicense.Description;
-			UserId = LicenseService.CurrentLicense.GetUserIdString();
-			Expiration = LicenseService.CurrentLicense.GetValidToString();
+			IsConfirmed = App.BusinessLogicManager.LicenseService.CurrentLicense.IsConfirmed.ToString();
+			LicenseKey = App.BusinessLogicManager.LicenseService.CurrentLicense.GetLicenseKeyString();
+			LicenseDescription = App.BusinessLogicManager.LicenseService.CurrentLicense.Description;
+			UserId = App.BusinessLogicManager.LicenseService.CurrentLicense.GetUserIdString();
+			Expiration = App.BusinessLogicManager.LicenseService.CurrentLicense.GetValidToString();
 		}
 		catch (Exception ex)
 		{
@@ -80,8 +80,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	private async Task LicenseClearCoreAsync()
 	{
-		await LicenseService.LicenseClearAsync();
-        await LicenseService.LicenseActivateAsync();
+		await App.BusinessLogicManager.LicenseService.LicenseClearAsync();
+        await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
 		await LicenseShowInfoAsync();
 	}
 
@@ -92,19 +92,13 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
         try
 		{
 			LicenseLog = TgResourceExtensions.GetActionCheckLicenseMsg() + Environment.NewLine;
-            var userId = await LicenseService.GetUserIdAsync();
-            if (userId == 0)
-            {
-                await LicenseShowInfoAsync();
-                LicenseLog += TgResourceExtensions.GetMenuLicenseUserNotLoggedIn();
-                return;
-            }
 
-            var apiUrls = new[] { LicenseService.MenuWebSiteGlobalUrl, LicenseService.MenuWebSiteRussianUrl };
+            var apiUrls = new[] { App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, App.BusinessLogicManager.LicenseService.MenuWebSiteRussianUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
+            var userId = await App.BusinessLogicManager.ConnectClient.GetUserIdAsync();
 
-			foreach (var apiUrl in apiUrls)
+            foreach (var apiUrl in apiUrls)
 			{
 				try
 				{
@@ -126,7 +120,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 					}
 
 					// Updating an existing license or creating a new license
-					await LicenseService.LicenseUpdateAsync(licenseDto);
+					await App.BusinessLogicManager.LicenseService.LicenseUpdateAsync(licenseDto);
 
 					LicenseLog += TgResourceExtensions.GetMenuLicenseUpdatedSuccessfully() + Environment.NewLine;
 					return;
@@ -139,7 +133,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		finally
 		{
-			await LicenseService.LicenseActivateAsync();
+			await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
 			await LicenseShowInfoAsync();
 		}
 	}
@@ -148,7 +142,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	{
 		try
 		{
-			Process.Start(new ProcessStartInfo(LicenseService.MenuWebSiteGlobalLicenseBuyUrl) { UseShellExecute = true });
+			Process.Start(new ProcessStartInfo(App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalLicenseBuyUrl) { UseShellExecute = true });
 		}
 		catch (Exception ex)
 		{

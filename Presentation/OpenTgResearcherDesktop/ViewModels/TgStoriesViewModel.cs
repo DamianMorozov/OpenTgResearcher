@@ -16,8 +16,8 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	public IRelayCommand DefaultSortCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 
-	public TgStoriesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, ILogger<TgStoriesViewModel> logger) 
-		: base(settingsService, navigationService, licenseService, logger, nameof(TgStoriesViewModel))
+	public TgStoriesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStoriesViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgStoriesViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
@@ -70,8 +70,8 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
-			await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Story);
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Story);
 			await LoadDataStorageCoreAsync();
 		});
 	}

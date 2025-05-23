@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,9 +12,9 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <helpers:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <helpers:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <helpers:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </common:TgPageBase.Resources>
 
     <ScrollView VerticalScrollMode="Auto">

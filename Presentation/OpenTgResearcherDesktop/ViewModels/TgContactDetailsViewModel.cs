@@ -17,9 +17,8 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 
-	public TgContactDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, 
-		ILogger<TgContactDetailsViewModel> logger) 
-		: base(settingsService, navigationService, licenseService, logger, nameof(TgContactDetailsViewModel))
+	public TgContactDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgContactDetailsViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgContactDetailsViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
@@ -59,8 +58,8 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
-			await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact);
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact);
 			await LoadDataStorageCoreAsync();
 		});
 	}

@@ -1,14 +1,10 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace OpenTgResearcherDesktop.Helpers;
+namespace OpenTgResearcherDesktop.Converters;
 
 public sealed partial class TgEnumToBooleanConverter : IValueConverter
 {
-	public TgEnumToBooleanConverter()
-	{
-	}
-
 	public object Convert(object value, Type targetType, object parameter, string language)
 	{
 		if (parameter is string enumString)

@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,9 +14,9 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <helpers:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <helpers:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <helpers:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
+        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
     </common:TgPageBase.Resources>
 
     <Grid>
@@ -191,6 +192,7 @@
             Grid.Row="2"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
+            IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
             Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Expander
                 x:Uid="ExpanderSettingInStorage"
@@ -326,7 +328,6 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
-                            IsEnabled="False"
                             IsOn="{x:Bind ViewModel.UseBot, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
                         <!--  BotToken  -->
@@ -344,7 +345,6 @@
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
-                            IsEnabled="False"
                             Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
@@ -357,6 +357,7 @@
             Grid.Row="3"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
+            IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
             Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Expander
                 x:Uid="ExpanderSettingWithoutSaving"

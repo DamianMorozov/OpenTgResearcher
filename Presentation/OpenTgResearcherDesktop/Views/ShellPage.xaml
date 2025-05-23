@@ -189,12 +189,7 @@
                                     Command="{Binding DataContext.UpdatePageCommand, ElementName=ShellPageRoot}">
                                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                         <FontIcon Margin="5,0,10,0" Glyph="&#xE72C;" />
-                                        <TextBlock
-                                            x:Uid="ActionUpdatePage"
-                                            Margin="5,0,5,0"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            HorizontalTextAlignment="Left" />
+
                                     </StackPanel>
                                 </Button>
                             </StackPanel>

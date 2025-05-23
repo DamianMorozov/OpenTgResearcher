@@ -21,8 +21,8 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	public IRelayCommand UpdateOnlineCommand { get; }
 	public IRelayCommand SearchCommand { get; }
 
-	public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, ILogger<TgChatsViewModel> logger) 
-		: base(settingsService, navigationService, licenseService, logger, nameof(TgChatsViewModel))
+	public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
 	{
 		// Commands
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
@@ -31,14 +31,14 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		SearchCommand = new AsyncRelayCommand(SearchAsync);
 		// Updates
-		//TgGlobalTools.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
-		//TgGlobalTools.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
-		//TgGlobalTools.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
+		//BusinessLogicManager.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
+		//BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
+		//BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+		//BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
+		//BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
+		//BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
+		//BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
+		//BusinessLogicManager.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
 	}
 
 	#endregion
@@ -79,16 +79,16 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
 	//private async Task UpdateFromTelegramAsync()
 	//{
-	//	if (!TgGlobalTools.ConnectClient.CheckClientIsReady()) return;
+	//	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
 	//	foreach (TgEfSourceViewModel sourceVm in Dtos)
 	//		await UpdateDtoFromTelegramAsync(sourceVm);
 	//}
 
 	//private async Task GetSourcesFromTelegramAsync()
 	//{
-	//	if (!TgGlobalTools.ConnectClient.CheckClientIsReady()) return;
-	//	await TgGlobalTools.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
-	//	await TgGlobalTools.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
+	//	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
+	//	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
+	//	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
 	//}
 
 	///// <summary> Load sources from Telegram </summary>
@@ -104,8 +104,8 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
 	//private async Task MarkAllMessagesAsReadAsync()
 	//{
-	//	if (!TgGlobalTools.ConnectClient.CheckClientIsReady()) return;
-	//	await TgGlobalTools.ConnectClient.MarkHistoryReadAsync();
+	//	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
+	//	await BusinessLogicManager.ConnectClient.MarkHistoryReadAsync();
 	//}
 
 	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), useLoadData: true);
@@ -138,7 +138,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	//	if (!storageResult.IsExists)
 	//	{
 	//		await SourceRepository.SaveAsync(sourceVm.Item);
-	//		await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(sourceVm.Item.Id, 0, $"Saved source | {sourceVm.Item}");
+	//		await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(sourceVm.Item.Id, 0, $"Saved source | {sourceVm.Item}");
 	//	}
 	//}
 
@@ -194,9 +194,9 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
-			await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat);
-			//await TgGlobalTools.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat);
+			//await BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
 			await LoadDataStorageCoreAsync();
 		});
 	}

@@ -27,26 +27,23 @@ public partial class ShellViewModel : ObservableRecipient
     public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
     public IAppNotificationService AppNotificationService { get; }
-    public ITgLicenseService LicenseService { get; }
 
     public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
 	public IRelayCommand UpdatePageCommand { get; }
 
-	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService,
-		ITgLicenseService licenseService)
+	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
 	{
 		AppNotificationService = appNotificationService;
 		AppNotificationService.ClientConnectionChanged += OnClientConnectionChanged;
 		NavigationService = navigationService;
 		NavigationService.Navigated += OnNavigated;
 		NavigationViewService = navigationViewService;
-		LicenseService = licenseService;
 
 		// Commands
-		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
-		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
-		UpdatePageCommand = new AsyncRelayCommand(UpdatePageAsync);
+		ClientConnectCommand = new AsyncRelayCommand(ShellClientConnectAsync);
+		ClientDisconnectCommand = new AsyncRelayCommand(ShellClientDisconnectAsync);
+		UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
 	}
 
 	#endregion
@@ -70,8 +67,8 @@ public partial class ShellViewModel : ObservableRecipient
 		// App version + Storage version + License
 		AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		StorageVersion = $"{TgResourceExtensions.GetStorage()} {TgAppSettingsHelper.Instance.StorageVersion}";
-		if (LicenseService.CurrentLicense is not null)
-			License = LicenseService.CurrentLicense.Description;
+		if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
+			License = App.BusinessLogicManager.LicenseService.CurrentLicense.Description;
 	}
 
 	private void OnClientConnectionChanged(object? sender, bool isClientConnected)
@@ -79,35 +76,73 @@ public partial class ShellViewModel : ObservableRecipient
 		IsClientConnected = isClientConnected;
 	}
 
-	public async Task ClientConnectAsync()
+	private async Task ShellClientConnectAsync()
 	{
 		if (_eventArgs is null) return;
 		await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
-			var connectViewModel = App.GetService<TgConnectViewModel>();
-			await connectViewModel.OnNavigatedToAsync(_eventArgs);
-			if (!connectViewModel.IsClientConnected)
-			{
-				await connectViewModel.ClientConnectAsync();
-			}
-		});
+            // Trying to find an open page with TgConnectViewModel
+            var frame = NavigationService.Frame;
+            if (frame?.Content is TgConnectPage page)
+            {
+                // Search for ViewModel of type TgConnectViewModel
+                var connectViewModel = page.ViewModel as TgConnectViewModel
+                    ?? (page is FrameworkElement fe ? fe.DataContext as TgConnectViewModel : null);
+                if (connectViewModel is not null)
+                {
+                    await connectViewModel.OnNavigatedToAsync(_eventArgs);
+                    if (!connectViewModel.IsClientConnected)
+                    {
+                        connectViewModel.ClientConnectCommand.Execute(null);
+                    }
+                    return;
+                }
+            }
+
+            // If not found - get through DI
+            var vm = App.GetService<TgConnectViewModel>();
+            await vm.OnNavigatedToAsync(_eventArgs);
+            if (!vm.IsClientConnected)
+            {
+                vm.ClientConnectCommand.Execute(null);
+            }
+        });
 	}
 
-	public async Task ClientDisconnectAsync()
+	private async Task ShellClientDisconnectAsync()
 	{
 		if (_eventArgs is null) return;
 		await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
-			var connectViewModel = App.GetService<TgConnectViewModel>();
-			await connectViewModel.OnNavigatedToAsync(_eventArgs);
-			if (connectViewModel.IsClientConnected)
-			{
-				await TgGlobalTools.ConnectClient.DisconnectAsync();
-			}
-		});
+            // Trying to find an open page with TgConnectViewModel
+            var frame = NavigationService.Frame;
+            if (frame?.Content is TgConnectPage page)
+            {
+                // Search for ViewModel of type TgConnectViewModel
+                var connectViewModel = page.ViewModel as TgConnectViewModel
+                    ?? (page is FrameworkElement fe ? fe.DataContext as TgConnectViewModel : null);
+                if (connectViewModel is not null)
+                {
+                    await connectViewModel.OnNavigatedToAsync(_eventArgs);
+                    if (connectViewModel.IsClientConnected)
+                    {
+                        connectViewModel.ClientDisconnectCommand.Execute(null);
+                    }
+                    return;
+                }
+            }
+
+            // If not found - get through DI
+            var vm = App.GetService<TgConnectViewModel>();
+            await vm.OnNavigatedToAsync(_eventArgs);
+            if (vm.IsClientConnected)
+            {
+                await App.BusinessLogicManager.ConnectClient.DisconnectAsync();
+            }
+        });
 	}
 
-    private async Task UpdatePageAsync()
+    private async Task ShellUpdatePageAsync()
 	{
 		if (_eventArgs?.Content is not TgPageBase pageBase) return;
         await pageBase.ViewModel.OnNavigatedToAsync(_eventArgs);

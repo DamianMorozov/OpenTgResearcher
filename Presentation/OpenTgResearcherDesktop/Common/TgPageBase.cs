@@ -35,12 +35,12 @@ public abstract class TgPageBase : Page
 
     private async void StartEntranceAnimation()
     {
-        await Task.Delay(50);
+        await Task.Delay(1);
         if (GridContent is null) return;
 
         var visual = ElementCompositionPreview.GetElementVisual(GridContent);
         visual.Opacity = 0;
-        visual.Offset = new System.Numerics.Vector3(0, 200, 0);
+        visual.Offset = new System.Numerics.Vector3(0, 400, 0);
         GridContent.Visibility = Visibility.Visible;
 
         var compositor = visual.Compositor;
@@ -52,7 +52,7 @@ public abstract class TgPageBase : Page
 
         var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
         offsetAnimation.Duration = TimeSpan.FromSeconds(OffsetAnimationDuration);
-        offsetAnimation.InsertKeyFrame(0, new System.Numerics.Vector3(0, 200, 0));
+        offsetAnimation.InsertKeyFrame(0, new System.Numerics.Vector3(0, 400, 0));
         offsetAnimation.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0));
 
         visual.StartAnimation("Opacity", fadeAnimation);

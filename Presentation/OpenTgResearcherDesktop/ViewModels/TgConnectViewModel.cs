@@ -9,10 +9,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	#region Public and private fields, properties, constructor
 
 	private IAppNotificationService AppNotificationService { get; }
-	private TgEfAppRepository AppRepository { get; } = new();
-	private TgEfProxyRepository ProxyRepository { get; } = new();
 	[ObservableProperty]
-	public partial TgEfAppEntity App { get; set; } = null!;
+	public partial TgEfAppEntity AppEntity { get; set; } = null!;
 	[ObservableProperty]
 	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new();
 	[ObservableProperty]
@@ -65,37 +63,39 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 
 	public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
-		ITgLicenseService licenseService, ILogger<TgConnectViewModel> logger) 
-		: base(settingsService, navigationService, licenseService, logger, nameof(TgConnectViewModel))
+		ILogger<TgConnectViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgConnectViewModel))
 	{
 		AppNotificationService = appNotificationService;
 		IsClientConnected = AppNotificationService.IsClientConnected;
 
-		var task = AppClearCoreAsync();
+        var task = AppClearCoreAsync();
 		task.Wait();
-		// Commands
+		
+        // Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
 		AppLoadCommand = new AsyncRelayCommand(AppLoadAsync);
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
-		// Delegates
-		//TgGlobalTools.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-		TgGlobalTools.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
-		//TgGlobalTools.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
-		TgGlobalTools.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
-		//TgGlobalTools.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
-	}
+        
+        // Delegates
+        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
+        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
+        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
+        App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
+        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
+        App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
+        //App.BusinessLogicManager.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
+    }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(AppLoadCoreAsync);
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(AppLoadCoreAsync);
 
 	private async Task AfterClientConnectAsync()
 	{
@@ -103,7 +103,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		IsClientConnected = false;
 		if (!UseBot)
 		{
-			var client = TgGlobalTools.ConnectClient.Client;
+			var client = App.BusinessLogicManager.ConnectClient.Client;
 			// Check exceptions
 			// https://www.infotelbot.com/2021/06/telegram-error-lists.html
 			if (Exception.Message.Contains("PHONE_CODE_INVALID", StringComparison.InvariantCultureIgnoreCase))
@@ -150,8 +150,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 		
 		// Update connection buttons
-		await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync();
-		IsOnlineReady = TgGlobalTools.ConnectClient.IsReady;
+		await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync();
+		IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
 
 		// Set app client state
 		AppNotificationService.IsClientConnected = IsClientConnected;
@@ -185,7 +185,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		return response;
 	}
 
-	public async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
+    private async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
 
 	private async Task ClientConnectCoreAsync(bool isRetry)
 	{
@@ -194,9 +194,9 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 			Exception.Default();
 			DataRequest = string.Empty;
 			//if (!UseBot)
-				await TgGlobalTools.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
+				await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
 			//else
-			//	await TgGlobalTools.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
+			//	await BusinessLogicManager.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
 		}
 		catch (Exception ex)
 		{
@@ -212,14 +212,14 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 	}
 
-	public async Task ClientDisconnectAsync() => await ContentDialogAsync(TgGlobalTools.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
+	private async Task ClientDisconnectAsync() => await ContentDialogAsync(App.BusinessLogicManager.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
 
 	private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 
 	private async Task AppLoadCoreAsync()
 	{
-		var storageResult = await AppRepository.GetCurrentAppAsync(isReadOnly: false);
-		App = storageResult.IsExists ? storageResult.Item : new();
+		var storageResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
+		AppEntity = storageResult.IsExists ? storageResult.Item : new();
 
 		await ReloadUiAsync();
 	}
@@ -228,13 +228,13 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	{
 		await base.ReloadUiAsync();
 
-		ApiHash = TgDataFormatUtils.ParseGuidToString(App.ApiHash);
-		ApiId = App.ApiId;
-		PhoneNumber = App.PhoneNumber;
-		FirstName = App.FirstName;
-		LastName = App.LastName;
-		UseBot = App.UseBot;
-		BotTokenKey = App.BotTokenKey;
+		ApiHash = TgDataFormatUtils.ParseGuidToString(AppEntity.ApiHash);
+		ApiId = AppEntity.ApiId;
+		PhoneNumber = AppEntity.PhoneNumber;
+		FirstName = AppEntity.FirstName;
+		LastName = AppEntity.LastName;
+		UseBot = AppEntity.UseBot;
+		BotTokenKey = AppEntity.BotTokenKey;
 
 		UserName = string.Empty;
 		MtProxyUrl = string.Empty;
@@ -253,7 +253,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	private async Task ReloadProxyAsync()
 	{
 		ProxiesVms.Clear();
-		var storageResult = await ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false);
+		var storageResult = await App.BusinessLogicManager.StorageManager
+            .ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false);
 		if (storageResult.IsExists)
 		{
 			foreach (TgEfProxyEntity proxy in storageResult.Items)
@@ -272,7 +273,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 		// Select proxy
 		var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
-		if (App.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
+		if (AppEntity.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
 		{
 			ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
 		}
@@ -287,27 +288,27 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task AppSaveCoreAsync()
 	{
-		await AppRepository.DeleteAllAsync();
+		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
 
-		App.ApiHash = TgDataFormatUtils.ParseStringToGuid(ApiHash);
-		App.ApiId = ApiId;
-		App.FirstName = FirstName;
-		App.LastName = LastName;
-		App.PhoneNumber = PhoneNumber;
-		App.ProxyUid = ProxyVm?.Dto.Uid;
-		App.UseBot = UseBot;
-		App.BotTokenKey = BotTokenKey;
-		if (App.ProxyUid is null || App.ProxyUid == Guid.Empty)
-			App.Proxy = null;
+		AppEntity.ApiHash = TgDataFormatUtils.ParseStringToGuid(ApiHash);
+		AppEntity.ApiId = ApiId;
+		AppEntity.FirstName = FirstName;
+		AppEntity.LastName = LastName;
+		AppEntity.PhoneNumber = PhoneNumber;
+		AppEntity.ProxyUid = ProxyVm?.Dto.Uid;
+		AppEntity.UseBot = UseBot;
+		AppEntity.BotTokenKey = BotTokenKey;
+		if (AppEntity.ProxyUid is null || AppEntity.ProxyUid == Guid.Empty)
+			AppEntity.Proxy = null;
 
-		await AppRepository.SaveAsync(App);
+		await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppEntity);
 	}
 
 	private async Task AppClearAsync() => await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear());
 
 	private async Task AppClearCoreAsync()
 	{
-		App = new();
+		AppEntity = new();
 		ProxiesVms.Clear();
 		if (ProxyVm is not null)
 			ProxyVm.Dto = new();
@@ -321,7 +322,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 
 	private async Task AppDeleteCoreAsync()
 	{
-		await AppRepository.DeleteAllAsync();
+		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
 		await AppLoadCoreAsync();
 	}
 

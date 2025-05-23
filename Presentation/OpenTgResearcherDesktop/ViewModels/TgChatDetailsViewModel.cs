@@ -25,9 +25,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	public IRelayCommand UpdateOnlineCommand { get; }
 	public IRelayCommand StopDownloadingCommand { get; }
 
-	public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ITgLicenseService licenseService, 
-		ILogger<TgChatDetailsViewModel> logger) 
-		: base(settingsService, navigationService, licenseService, logger, nameof(TgChatDetailsViewModel))
+	public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgChatDetailsViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
@@ -35,7 +34,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
 		// Updates
-		TgGlobalTools.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
+		App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
 	}
 
 	#endregion
@@ -77,7 +76,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	{
 		await LoadDataAsync(async () => {
 			IsDownloading = true;
-			if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
 			var entity = Dto.GetNewEntity();
 			DownloadSettings.SourceVm.Fill(entity);
 			DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
@@ -85,9 +84,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
 			StateSourceDirectory = Dto.Directory;
 
-			await TgGlobalTools.ConnectClient.DownloadAllDataAsync(DownloadSettings);
+			await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
 			await DownloadSettings.UpdateSourceWithSettingsAsync();
-			//await TgGlobalTools.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
+			//await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
 			await LoadDataStorageCoreAsync();
 			IsDownloading = false;
 		});
@@ -97,8 +96,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
 	private async Task StopDownloadingCoreAsync()
 	{
-		if (!await TgGlobalTools.ConnectClient.CheckClientIsReadyAsync()) return;
-		TgGlobalTools.ConnectClient.SetForceStopDownloading();
+		if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+        App.BusinessLogicManager.ConnectClient.SetForceStopDownloading();
 	}
 
 	#endregion

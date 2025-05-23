@@ -30,3 +30,9 @@
 ## Требования к установке
 - [Зарегистрируйте Telegram приложение](https://my.telegram.org/apps)
 - Сохраните значения полей секции `App configuration`: `App api_id` / `App api_hash`
+
+## Заставка OpenTgResearcherDesktop
+<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherDesktop_SplashScreen.gif"></p>
+
+## Заставка OpenTgResearcherConsole
+<p align="center"><img src="Docs/Assets/SplashScreens/VsDebugConsole_SplashScreen.gif"></p>

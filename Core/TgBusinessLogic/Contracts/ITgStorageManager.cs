@@ -5,6 +5,7 @@ namespace TgBusinessLogic.Contracts;
 
 public interface ITgStorageManager : IDisposable
 {
+    public ITgEfContext EfContext { get; }
     public ITgEfAppRepository AppRepository { get; }
     public ITgEfContactRepository ContactRepository { get; }
     public ITgEfDocumentRepository DocumentRepository { get; }

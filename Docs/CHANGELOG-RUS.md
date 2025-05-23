@@ -4,14 +4,19 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.250] - 2025-05-23
+### Изменено
+- Повышение эффективности высвобождения неуправляемых ресурсов
+
 ## [0.6.240] - 2025-05-19
+### Исправлено
+- Исправление загрузки и сохранения настроек в OpenTgResearcherDesktop
 ### Изменено
 - Обновлено меню в OpenTgResearcherConsole
 - Обновлён просмотр лицензии
 - Обновлены NuGet пакеты
 - Обновлён Velopack инсталлятор
 - Обновлена заставка и добавлена анимация в OpenTgResearcherDesktop
-- Исправление загрузки и сохранения настроек в OpenTgResearcherDesktop
 - Изменена загрузка инсталлера в OpenTgResearcherDesktop
 - Улучшение ведения журнала и управления состоянием окна в OpenTgResearcherDesktop
 - Обновление Докер версии OpenTgResearcherConsole

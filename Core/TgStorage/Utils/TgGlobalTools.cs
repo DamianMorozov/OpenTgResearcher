@@ -95,57 +95,6 @@ public static class TgGlobalTools
             item.Uid = Guid.NewGuid();
     }
 
-    public static void VersionsView()
-    {
-        var versionRepository = new TgEfVersionRepository();
-        var storageResult = versionRepository.GetList(TgEnumTableTopRecords.All, 0);
-        if (storageResult.IsExists)
-        {
-            foreach (var version in storageResult.Items)
-            {
-                TgLogHelper.Instance.WriteLine($" {version.Version:00} | {version.Description}");
-            }
-        }
-    }
-
-    /// <summary> Create and update storage </summary>
-    public static async Task CreateAndUpdateDbAsync()
-    {
-        await using var scope = Container.BeginLifetimeScope();
-        using var efContext = scope.Resolve<ITgEfContext>();
-        await efContext.MigrateDbAsync();
-        TgEfVersionRepository versionRepository = new();
-        await versionRepository.FillTableVersionsAsync();
-        await efContext.ShrinkDbAsync();
-    }
-
-    /// <summary> Create and update storage </summary>
-    public static async Task CreateAndUpdateDbAsync(IWebHostEnvironment webHostEnvironment)
-    {
-        await using var scope = Container.BeginLifetimeScope();
-        using var efContext = scope.Resolve<ITgEfContext>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        await efContext.MigrateDbAsync();
-        TgEfVersionRepository versionRepository = new(webHostEnvironment);
-        await versionRepository.FillTableVersionsAsync();
-        await efContext.ShrinkDbAsync();
-    }
-
-    /// <summary> Shrink storage </summary>
-    public static async Task ShrinkDbAsync()
-    {
-        await using var scope = Container.BeginLifetimeScope();
-        using var efContext = scope.Resolve<ITgEfContext>();
-        await efContext.ShrinkDbAsync();
-    }
-
-    /// <summary> Backup storage </summary>
-    public static (bool IsSuccess, string FileName) BackupDbAsync()
-    {
-        using var scope = Container.BeginLifetimeScope();
-        using var efContext = scope.Resolve<ITgEfContext>();
-        return efContext.BackupDb();
-    }
-
     public static Expression<Func<TEfEntity, bool>> WhereUidNotEmpty<TEfEntity>() where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
         x => x.Uid != Guid.Empty;
 

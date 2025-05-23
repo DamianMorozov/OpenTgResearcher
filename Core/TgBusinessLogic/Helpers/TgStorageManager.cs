@@ -7,6 +7,8 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
 {
     #region Public and private fields, properties, constructor
 
+    private ILifetimeScope Scope { get; }
+    public ITgEfContext EfContext { get; }
     public ITgEfAppRepository AppRepository { get; }
     public ITgEfContactRepository ContactRepository { get; }
     public ITgEfDocumentRepository DocumentRepository { get; }
@@ -20,34 +22,36 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
 
     public TgStorageManager() : base()
     {
-        var scope = TgGlobalTools.Container.BeginLifetimeScope();
-
-        AppRepository = scope.Resolve<ITgEfAppRepository>();
-        ContactRepository = scope.Resolve<ITgEfContactRepository>();
-        DocumentRepository = scope.Resolve<ITgEfDocumentRepository>();
-        FilterRepository = scope.Resolve<ITgEfFilterRepository>();
-        LicenseRepository = scope.Resolve<ITgEfLicenseRepository>();
-        MessageRepository = scope.Resolve<ITgEfMessageRepository>();
-        ProxyRepository = scope.Resolve<ITgEfProxyRepository>();
-        SourceRepository = scope.Resolve<ITgEfSourceRepository>();
-        StoryRepository = scope.Resolve<ITgEfStoryRepository>();
-        VersionRepository = scope.Resolve<ITgEfVersionRepository>();
+        Scope = TgGlobalTools.Container.BeginLifetimeScope();
+        
+        EfContext = Scope.Resolve<ITgEfContext>();
+        AppRepository = Scope.Resolve<ITgEfAppRepository>();
+        ContactRepository = Scope.Resolve<ITgEfContactRepository>();
+        DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>();
+        FilterRepository = Scope.Resolve<ITgEfFilterRepository>();
+        LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>();
+        MessageRepository = Scope.Resolve<ITgEfMessageRepository>();
+        ProxyRepository = Scope.Resolve<ITgEfProxyRepository>();
+        SourceRepository = Scope.Resolve<ITgEfSourceRepository>();
+        StoryRepository = Scope.Resolve<ITgEfStoryRepository>();
+        VersionRepository = Scope.Resolve<ITgEfVersionRepository>();
     }
 
     public TgStorageManager(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment)
     {
-        var scope = TgGlobalTools.Container.BeginLifetimeScope();
-
-        AppRepository = scope.Resolve<ITgEfAppRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        ContactRepository = scope.Resolve<ITgEfContactRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        DocumentRepository = scope.Resolve<ITgEfDocumentRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        FilterRepository = scope.Resolve<ITgEfFilterRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        LicenseRepository = scope.Resolve<ITgEfLicenseRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        MessageRepository = scope.Resolve<ITgEfMessageRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        ProxyRepository = scope.Resolve<ITgEfProxyRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        SourceRepository = scope.Resolve<ITgEfSourceRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        StoryRepository = scope.Resolve<ITgEfStoryRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        VersionRepository = scope.Resolve<ITgEfVersionRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        Scope = TgGlobalTools.Container.BeginLifetimeScope();
+        
+        EfContext = Scope.Resolve<ITgEfContext>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        AppRepository = Scope.Resolve<ITgEfAppRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        ContactRepository = Scope.Resolve<ITgEfContactRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        FilterRepository = Scope.Resolve<ITgEfFilterRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        MessageRepository = Scope.Resolve<ITgEfMessageRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        ProxyRepository = Scope.Resolve<ITgEfProxyRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        SourceRepository = Scope.Resolve<ITgEfSourceRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        StoryRepository = Scope.Resolve<ITgEfStoryRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        VersionRepository = Scope.Resolve<ITgEfVersionRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
     }
 
     #endregion
@@ -56,12 +60,6 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
 
     /// <summary> Release managed resources </summary>
     public override void ReleaseManagedResources()
-    {
-        //
-    }
-
-    /// <summary> Release unmanaged resources </summary>
-    public override void ReleaseUnmanagedResources()
     {
         AppRepository.Dispose();
         ContactRepository.Dispose();
@@ -73,6 +71,15 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         SourceRepository.Dispose();
         StoryRepository.Dispose();
         VersionRepository.Dispose();
+
+        Scope.Dispose();
+        EfContext.Dispose();
+    }
+
+    /// <summary> Release unmanaged resources </summary>
+    public override void ReleaseUnmanagedResources()
+    {
+        //
     }
 
     #endregion

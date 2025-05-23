@@ -1,12 +1,11 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using System.Linq;
 using ValidationException = FluentValidation.ValidationException;
 
 namespace TgStorage.Common;
 
-public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository<TEfEntity, TDto>, IDisposable
+public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfRepository<TEfEntity, TDto>, IDisposable
     where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
@@ -29,56 +28,99 @@ public class TgEfRepositoryBase<TEfEntity, TDto> : TgCommonBase, ITgEfRepository
 
     #endregion
 
-    // TODO: IDisposable pattern is not implemented correctly. Dispose should be called only once.
     #region IDisposable
 
-    private bool _isDisposed;
-
-    ~TgEfRepositoryBase() => Dispose(false);
-
-    public void Dispose()
+    /// <summary> Release managed resources </summary>
+    public override void ReleaseManagedResources()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected void Dispose(bool disposing)
-    {
-        if (_isDisposed)
-            return;
-
-        // Release managed resources
-        if (disposing)
-        {
-            //
-        }
-
-        // Release unmanaged resources
         Scope.Dispose();
         EfContext.Dispose();
+    }
 
-        _isDisposed = true;
+    /// <summary> Release unmanaged resources </summary>
+    public override void ReleaseUnmanagedResources()
+    {
+        //
     }
 
     #endregion
 
     #region Public and private methods
 
-    public override string ToDebugString() => $"{nameof(TgEfRepositoryBase<TEfEntity, TDto>)}";
-
-    public virtual IQueryable<TEfEntity> GetQuery(bool isReadOnly = true) =>
-        throw new NotImplementedException(TgConstants.UseOverrideMethod);
-
-    private static TgEfStorageResult<TEfEntity> UseOverrideMethod() => 
-        throw new NotImplementedException(TgConstants.UseOverrideMethod);
-
-    private static async Task<TgEfStorageResult<TEfEntity>> UseOverrideMethodAsync()
+    public virtual string ToDebugString() => typeof(TEfEntity) switch
     {
-        await Task.CompletedTask;
-        throw new NotImplementedException(TgConstants.UseOverrideMethod);
+        var cls when cls == typeof(TgEfAppEntity) => $"{nameof(TgEfAppRepository)}",
+        var cls when cls == typeof(TgEfContactEntity) => $"{nameof(TgEfContactRepository)}",
+        var cls when cls == typeof(TgEfDocumentEntity) => $"{nameof(TgEfDocumentRepository)}",
+        var cls when cls == typeof(TgEfFilterEntity) => $"{nameof(TgEfFilterRepository)}",
+        var cls when cls == typeof(TgEfLicenseEntity) => $"{nameof(TgEfLicenseRepository)}",
+        var cls when cls == typeof(TgEfMessageEntity) => $"{nameof(TgEfMessageRepository)}",
+        var cls when cls == typeof(TgEfProxyEntity) => $"{nameof(TgEfProxyRepository)}",
+        var cls when cls == typeof(TgEfSourceEntity) => $"{nameof(TgEfSourceRepository)}",
+        var cls when cls == typeof(TgEfStoryEntity) => $"{nameof(TgEfStoryRepository)}",
+        var cls when cls == typeof(TgEfVersionEntity) => $"{nameof(TgEfVersionRepository)}",
+        _ => throw new InvalidOperationException($"Unsupported entity type: {typeof(TEfEntity).Name}"),
+    };
+
+    public virtual IQueryable<TEfEntity> GetQuery(bool isReadOnly = true)
+    {
+        var db = EfContext.Database;
+        var connection = db.GetDbConnection();
+        switch (connection.State)
+        {
+            case ConnectionState.Closed:
+                connection.Open();
+                break;
+            case ConnectionState.Open:
+                break;
+            case ConnectionState.Connecting:
+                break;
+            case ConnectionState.Executing:
+                break;
+            case ConnectionState.Fetching:
+                break;
+            case ConnectionState.Broken:
+                break;
+        }
+
+        // Explicitly cast the DbSet to IQueryable<TEfEntity> to resolve the type mismatch
+        return typeof(TEfEntity) switch
+        {
+            var cls when cls == typeof(TgEfAppEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Apps.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Apps,
+            var cls when cls == typeof(TgEfContactEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Contacts.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Contacts,
+            var cls when cls == typeof(TgEfDocumentEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Documents.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Documents,
+            var cls when cls == typeof(TgEfFilterEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Filters.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Filters,
+            var cls when cls == typeof(TgEfLicenseEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Licenses.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Licenses,
+            var cls when cls == typeof(TgEfMessageEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Messages.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Messages,
+            var cls when cls == typeof(TgEfProxyEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Proxies.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Proxies,
+            var cls when cls == typeof(TgEfSourceEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Sources.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Sources,
+            var cls when cls == typeof(TgEfStoryEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Stories.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Stories,
+            var cls when cls == typeof(TgEfVersionEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Versions.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Versions,
+            _ => throw new InvalidOperationException($"Unsupported entity type: {typeof(TEfEntity).Name}"),
+        };
     }
 
-    private static async Task<IEnumerable<TEfEntity>> UseOverrideMethodItemsAsync()
+    private static async Task<TgEfStorageResult<TEfEntity>> UseOverrideMethodAsync()
     {
         await Task.CompletedTask;
         throw new NotImplementedException(TgConstants.UseOverrideMethod);

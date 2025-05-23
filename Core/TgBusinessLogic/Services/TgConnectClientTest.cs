@@ -11,7 +11,7 @@ namespace TgBusinessLogic.Services;
 /// <summary> Test connection client </summary>
 public sealed partial class TgConnectClientTest : TgConnectClientBase, ITgConnectClientTest
 {
-    public TgConnectClientTest(TgStorageManager storageManager) : base(storageManager)
+    public TgConnectClientTest(ITgStorageManager storageManager) : base(storageManager)
     {
         //
     }

@@ -16,11 +16,6 @@ public sealed class TgEfContactRepository : TgEfRepositoryBase<TgEfContactEntity
 
 	#region Public and private methods
 
-	public override string ToDebugString() => $"{nameof(TgEfContactRepository)}";
-
-	public override IQueryable<TgEfContactEntity> GetQuery(bool isReadOnly = true) => 
-		isReadOnly ? EfContext.Contacts.AsNoTracking() : EfContext.Contacts.AsTracking();
-
 	public override async Task<TgEfStorageResult<TgEfContactEntity>> GetAsync(TgEfContactEntity item, bool isReadOnly = true)
 	{
 		try

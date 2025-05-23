@@ -16,11 +16,6 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 
 	#region Public and private methods
 
-	public override string ToDebugString() => $"{nameof(TgEfProxyRepository)}";
-
-	public override IQueryable<TgEfProxyEntity> GetQuery(bool isReadOnly = true) => 
-		isReadOnly ? EfContext.Proxies.AsNoTracking() : EfContext.Proxies.AsTracking();
-
 	public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetAsync(TgEfProxyEntity item, bool isReadOnly = true)
 	{
 		try

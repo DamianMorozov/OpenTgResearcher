@@ -12,16 +12,11 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 
 	public TgEfVersionRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public override string ToDebugString() => $"{nameof(TgEfVersionRepository)}";
-
-	public override IQueryable<TgEfVersionEntity> GetQuery(bool isReadOnly = true) => 
-		isReadOnly ? EfContext.Versions.AsNoTracking() : EfContext.Versions.AsTracking();
-
-	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetAsync(TgEfVersionEntity item, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetAsync(TgEfVersionEntity item, bool isReadOnly = true)
 	{
 		try
 		{

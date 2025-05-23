@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System.Threading.Tasks;
+
 namespace TgStorage.Repositories;
 
 public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity, TgEfLicenseDto>, ITgEfLicenseRepository
@@ -15,12 +17,7 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 
 	#region Public and private methods
 
-	public override string ToDebugString() => $"{nameof(TgEfLicenseRepository)}";
-
-	public override IQueryable<TgEfLicenseEntity> GetQuery(bool isReadOnly = true) =>
-		isReadOnly ? EfContext.Licenses.AsNoTracking() : EfContext.Licenses.AsTracking();
-
-	public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetAsync(TgEfLicenseEntity item, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetAsync(TgEfLicenseEntity item, bool isReadOnly = true)
 	{
 		try
 		{
@@ -120,5 +117,5 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 
 	public async Task<Guid> GetCurrentAppUidAsync() => (await GetCurrentAppAsync()).Item.Uid;
 
-	#endregion
+    #endregion
 }

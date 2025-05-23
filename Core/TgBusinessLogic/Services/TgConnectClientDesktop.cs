@@ -7,7 +7,7 @@ namespace TgBusinessLogic.Services;
 /// <summary> Desktop connection client </summary>
 public sealed partial class TgConnectClientDesktop : TgConnectClientBase, ITgConnectClientDesktop
 {
-    public TgConnectClientDesktop(TgStorageManager storageManager) : base(storageManager)
+    public TgConnectClientDesktop(ITgStorageManager storageManager) : base(storageManager)
     {
 		//
     }

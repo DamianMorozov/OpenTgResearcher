@@ -16,11 +16,6 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
 	#region Public and private methods
 
-	public override string ToDebugString() => $"{nameof(TgEfAppRepository)}";
-
-	public override IQueryable<TgEfAppEntity> GetQuery(bool isReadOnly = true) => 
-		isReadOnly ? EfContext.Apps.AsNoTracking() : EfContext.Apps.AsTracking();
-
 	public override async Task<TgEfStorageResult<TgEfAppEntity>> GetAsync(TgEfAppEntity item, bool isReadOnly = true)
 	{
 		try

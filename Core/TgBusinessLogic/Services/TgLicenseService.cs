@@ -3,7 +3,7 @@
 
 namespace TgBusinessLogic.Services;
 
-public sealed class TgLicenseService(TgStorageManager storageManager) : TgWebDisposable(), ITgLicenseService
+public sealed class TgLicenseService(ITgStorageManager storageManager) : TgWebDisposable(), ITgLicenseService
 {
 	#region Public and private fields, properties, constructor
 

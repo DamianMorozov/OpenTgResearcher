@@ -7,7 +7,7 @@ namespace TgBusinessLogic.Services;
 /// <summary> Console connection client </summary>
 public partial class TgConnectClientConsole : TgConnectClientBase, ITgConnectClientConsole
 {
-    public TgConnectClientConsole(TgStorageManager storageManager) : base(storageManager)
+    public TgConnectClientConsole(ITgStorageManager storageManager) : base(storageManager)
     {
 		//
     }

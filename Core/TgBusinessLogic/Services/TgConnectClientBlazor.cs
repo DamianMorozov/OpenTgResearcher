@@ -7,7 +7,7 @@ namespace TgBusinessLogic.Services;
 /// <summary> Blazor connection client </summary>
 public sealed partial class TgConnectClientBlazor : TgConnectClientBase, ITgConnectClientBlazor
 {
-    public TgConnectClientBlazor(TgStorageManager storageManager) : base(storageManager)
+    public TgConnectClientBlazor(ITgStorageManager storageManager) : base(storageManager)
     {
         //
     }

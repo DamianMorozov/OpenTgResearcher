@@ -23,6 +23,7 @@ public partial class ShellViewModel : ObservableRecipient
 	public partial bool IsShowSecretFields { get; set; }
 	
 	private NavigationEventArgs? _eventArgs;
+    //public Func<Task> PlayRefreshAnimationAsync { get; set; } = () => Task.CompletedTask;
 
     public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
@@ -30,9 +31,10 @@ public partial class ShellViewModel : ObservableRecipient
 
     public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
-	public IRelayCommand UpdatePageCommand { get; }
+    //public IRelayCommand AnimateRefreshCommand { get; }
+    public IRelayCommand UpdatePageCommand { get; }
 
-	public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
+    public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
 	{
 		AppNotificationService = appNotificationService;
 		AppNotificationService.ClientConnectionChanged += OnClientConnectionChanged;
@@ -43,8 +45,9 @@ public partial class ShellViewModel : ObservableRecipient
 		// Commands
 		ClientConnectCommand = new AsyncRelayCommand(ShellClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ShellClientDisconnectAsync);
-		UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
-	}
+        //AnimateRefreshCommand = new AsyncRelayCommand(ShellAnimateRefreshAsync);
+        UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
+    }
 
 	#endregion
 
@@ -85,18 +88,12 @@ public partial class ShellViewModel : ObservableRecipient
             var frame = NavigationService.Frame;
             if (frame?.Content is TgConnectPage page)
             {
-                // Search for ViewModel of type TgConnectViewModel
-                var connectViewModel = page.ViewModel as TgConnectViewModel
-                    ?? (page is FrameworkElement fe ? fe.DataContext as TgConnectViewModel : null);
-                if (connectViewModel is not null)
+                await page.ViewModel.OnNavigatedToAsync(_eventArgs);
+                if (!page.ViewModel.IsClientConnected)
                 {
-                    await connectViewModel.OnNavigatedToAsync(_eventArgs);
-                    if (!connectViewModel.IsClientConnected)
-                    {
-                        connectViewModel.ClientConnectCommand.Execute(null);
-                    }
-                    return;
+                    page.ViewModel.ClientConnectCommand.Execute(null);
                 }
+                return;
             }
 
             // If not found - get through DI
@@ -118,18 +115,12 @@ public partial class ShellViewModel : ObservableRecipient
             var frame = NavigationService.Frame;
             if (frame?.Content is TgConnectPage page)
             {
-                // Search for ViewModel of type TgConnectViewModel
-                var connectViewModel = page.ViewModel as TgConnectViewModel
-                    ?? (page is FrameworkElement fe ? fe.DataContext as TgConnectViewModel : null);
-                if (connectViewModel is not null)
+                await page.ViewModel.OnNavigatedToAsync(_eventArgs);
+                if (page.ViewModel.IsClientConnected)
                 {
-                    await connectViewModel.OnNavigatedToAsync(_eventArgs);
-                    if (connectViewModel.IsClientConnected)
-                    {
-                        connectViewModel.ClientDisconnectCommand.Execute(null);
-                    }
-                    return;
+                    page.ViewModel.ClientDisconnectCommand.Execute(null);
                 }
+                return;
             }
 
             // If not found - get through DI
@@ -142,9 +133,16 @@ public partial class ShellViewModel : ObservableRecipient
         });
 	}
 
+    //private async Task ShellAnimateRefreshAsync()
+    //{
+    //    if (_eventArgs?.Content is not TgPageBase pageBase) return;
+    //    PlayRefreshAnimationAsync?.Invoke();
+    //    await pageBase.ViewModel.OnNavigatedToAsync(_eventArgs);
+    //}
+
     private async Task ShellUpdatePageAsync()
-	{
-		if (_eventArgs?.Content is not TgPageBase pageBase) return;
+    {
+        if (_eventArgs?.Content is not TgPageBase pageBase) return;
         await pageBase.ViewModel.OnNavigatedToAsync(_eventArgs);
     }
 

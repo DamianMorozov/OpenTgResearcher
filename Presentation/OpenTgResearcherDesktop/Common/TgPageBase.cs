@@ -33,9 +33,8 @@ public abstract class TgPageBase : Page
         ViewModel.OnLoaded(XamlRoot);
     }
 
-    private async void StartEntranceAnimation()
+    private void StartEntranceAnimation()
     {
-        await Task.Delay(1);
         if (GridContent is null) return;
 
         var visual = ElementCompositionPreview.GetElementVisual(GridContent);

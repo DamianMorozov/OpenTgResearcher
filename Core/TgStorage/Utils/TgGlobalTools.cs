@@ -29,6 +29,7 @@ public static class TgGlobalTools
     public const string RouteController = "[controller]";
     public const string RouteCreated = "Created";
     public const string RouteGet = "Get";
+    public const string RouteGetFiles = "GetFiles";
     public const string RoutePost = "Post";
     public const string RouteRoot = "";
     public const string RouteValid = "Valid";

@@ -35,4 +35,4 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 <p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
 ## OpenTgResearcherConsole SplashScreen
-<p align="center"><img src="Docs/Assets/SplashScreens/VsDebugConsole_SplashScreen.gif"></p>
+<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherConsole_SplashScreen.gif"></p>

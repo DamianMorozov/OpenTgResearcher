@@ -35,4 +35,4 @@
 <p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
 ## Заставка OpenTgResearcherConsole
-<p align="center"><img src="Docs/Assets/SplashScreens/VsDebugConsole_SplashScreen.gif"></p>
+<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherConsole_SplashScreen.gif"></p>

@@ -4,7 +4,7 @@
 namespace TgInfrastructure.Contracts;
 
 /// <summary> DTO </summary>
-public interface ITgDto<TEfEntity, TDto> : ITgCommon
+public interface ITgDto<TEfEntity, TDto> : ITgDebug
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {

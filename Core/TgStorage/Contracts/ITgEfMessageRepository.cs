@@ -5,4 +5,5 @@ namespace TgStorage.Contracts;
 
 public interface ITgEfMessageRepository : ITgEfRepository<TgEfMessageEntity, TgEfMessageDto>, IDisposable
 {
+    //
 }

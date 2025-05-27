@@ -68,7 +68,7 @@ public sealed class TgLogHelper : ITgHelper
 
     public void TypeAnyKeyForReturn()
     {
-        WriteLine(TgLocaleHelper.Instance.TypeAnyKeyForReturn);
+        WriteLine($" {TgLocaleHelper.Instance.TypeAnyKeyForReturn}");
         Console.ReadKey();
     }
 

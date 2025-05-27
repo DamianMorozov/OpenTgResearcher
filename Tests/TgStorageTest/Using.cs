@@ -10,7 +10,7 @@ global using TgBusinessLogic.Contracts;
 global using TgBusinessLogic.Helpers;
 global using TgBusinessLogic.Services;
 global using TgInfrastructure.Contracts;
-global using TgInfrastructure.Utils;
+global using TgInfrastructure.Helpers;
 global using TgSharedData.Enums;
 global using TgSharedData.Helpers;
 global using TgStorage.Common;

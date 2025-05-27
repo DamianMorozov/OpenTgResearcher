@@ -4,7 +4,7 @@
 namespace TgInfrastructure.Contracts;
 
 /// <summary> Helper </summary>
-public interface ITgHelper : ITgCommon
+public interface ITgHelper : ITgDebug
 {
 	//
 }

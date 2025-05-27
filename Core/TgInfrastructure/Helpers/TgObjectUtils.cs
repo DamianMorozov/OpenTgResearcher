@@ -3,6 +3,7 @@
 
 namespace TgInfrastructure.Helpers;
 
+/// <summary> Object utilities </summary>
 public static class TgObjectUtils
 {
 	public static string ToDebugString(this object obj)

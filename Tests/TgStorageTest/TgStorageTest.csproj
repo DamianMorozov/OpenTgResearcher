@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\TgBusinessLogic\TgBusinessLogic.csproj" />
+    <ProjectReference Include="..\..\Core\TgSharedData\TgSharedData.csproj" />
     <ProjectReference Include="..\..\Core\TgStorage\TgStorage.csproj" />
     <ProjectReference Include="..\TgAssertCoreTests\TgAssertCoreTests.csproj" />
   </ItemGroup>

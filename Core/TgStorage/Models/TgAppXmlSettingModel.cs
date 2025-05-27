@@ -5,7 +5,7 @@ namespace TgStorage.Models;
 
 /// <summary> App xml setting </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed class TgAppXmlSettingModel(string name, string value) : ITgCommon
+public sealed class TgAppXmlSettingModel(string name, string value) : ITgDebug
 {
 	#region Public and private fields, properties, constructor
 

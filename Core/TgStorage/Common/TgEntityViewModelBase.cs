@@ -17,7 +17,7 @@ public abstract partial class TgEntityViewModelBase<TEfEntity, TDto> : TgViewMod
 
     #region Public and private methods
 
-    public override string ToDebugString() => $"{TgCommonUtils.GetIsLoad(IsLoad)}";
+    public override string ToDebugString() => $"{TgDataUtils.GetIsLoad(IsLoad)}";
 
     #endregion
 }

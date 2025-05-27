@@ -4,7 +4,7 @@
 namespace TgInfrastructure.Contracts;
 
 /// <summary> SQL entity </summary>
-public interface ITgEfEntity<TEfEntity> : ITgCommon 
+public interface ITgEfEntity<TEfEntity> : ITgDebug 
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
 	#region Public and private fields, properties, constructor

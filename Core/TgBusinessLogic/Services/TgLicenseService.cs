@@ -95,12 +95,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
     public async Task LicenseClearAsync()
 	{
 		await StorageManager.LicenseRepository.DeleteAllAsync();
-        var app = (await StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
-		if (app.UseBot)
-		{
-			app.UseBot = false;
-			await StorageManager.AppRepository.SaveAsync(app);
-		}
+        await StorageManager.AppRepository.SetUseBotAsync(false);
     }
 
     public async Task LicenseUpdateAsync(TgLicenseDto licenseDto)

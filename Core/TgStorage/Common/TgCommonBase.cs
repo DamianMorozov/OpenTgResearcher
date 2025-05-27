@@ -5,7 +5,7 @@ namespace TgStorage.Common;
 
 /// <summary> Base common </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public abstract class TgCommonBase : ITgCommon
+public abstract class TgCommonBase : ITgDebug
 {
     #region Public and private methods
 

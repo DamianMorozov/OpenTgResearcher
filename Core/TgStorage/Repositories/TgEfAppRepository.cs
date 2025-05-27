@@ -114,8 +114,16 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 	public async Task<TgEfAppDto> GetCurrentDtoAsync() => await
 		EfContext.Apps.AsTracking()
 			.Where(x => x.Uid != Guid.Empty)
-			.Select(x => new TgEfAppDto() { ApiHash = x.ApiHash, ApiId = x.ApiId, FirstName = x.FirstName, LastName = x.LastName, PhoneNumber = x.PhoneNumber,
-				ProxyUid = x.ProxyUid ?? Guid.Empty, BotTokenKey = x.BotTokenKey, UseBot = x.UseBot })
+			.Select(x => new TgEfAppDto() {
+                Uid = x.Uid,
+                ApiHash = x.ApiHash, 
+                ApiId = x.ApiId, 
+                FirstName = x.FirstName, 
+                LastName = x.LastName, 
+                PhoneNumber = x.PhoneNumber,
+				ProxyUid = x.ProxyUid ?? Guid.Empty, 
+                BotTokenKey = x.BotTokenKey, 
+                UseBot = x.UseBot })
 			.FirstOrDefaultAsync()
 		?? new();
 
@@ -128,5 +136,33 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
 	public async Task<Guid> GetCurrentAppUidAsync() => (await GetCurrentAppAsync()).Item.Uid;
 
-	#endregion
+    public async Task SetUseBotAsync(bool useBot)
+    {
+        var appStorage = await GetCurrentAppAsync();
+        if (appStorage.IsExists)
+        {
+            appStorage.Item.UseBot = useBot;
+            await SaveAsync(appStorage.Item);
+        }
+        else
+        {
+            throw new InvalidOperationException("Current app not found!");
+        }
+    }
+
+    public async Task SetBotTokenKeyAsync(string botTokenKey)
+    {
+        var appStorage = await GetCurrentAppAsync();
+        if (appStorage.IsExists)
+        {
+            appStorage.Item.BotTokenKey = botTokenKey;
+            await SaveAsync(appStorage.Item);
+        }
+        else
+        {
+            throw new InvalidOperationException("Current app not found!");
+        }
+    }
+
+    #endregion
 }

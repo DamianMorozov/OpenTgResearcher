@@ -74,7 +74,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 
     public string ToDebugString() =>
         $"{TgEfConstants.TableProxies} | {Uid} | {Type} | {HostName} | {Port} | {UserName} | {Password} | " +
-        $"{TgCommonUtils.GetIsFlag(!string.IsNullOrEmpty(Secret), Secret, "<No secret>")}";
+        $"{TgDataUtils.GetIsFlag(!string.IsNullOrEmpty(Secret), Secret, "<No secret>")}";
 
     public void Default()
     {

@@ -5,4 +5,5 @@ namespace TgStorage.Contracts;
 
 public interface ITgEfContactRepository : ITgEfRepository<TgEfContactEntity, TgEfContactDto>, IDisposable
 {
+    //
 }

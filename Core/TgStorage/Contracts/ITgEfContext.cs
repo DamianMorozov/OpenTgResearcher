@@ -6,10 +6,10 @@ namespace TgStorage.Contracts;
 /// <summary> Storage context </summary>
 public interface ITgEfContext : IDisposable
 {
-	#region DbContext
+    #region DbContext
 
-	/// <summary> Provides access to database related information and operations for this context </summary>
-	public DatabaseFacade Database { get; }
+    /// <summary> Provides access to database related information and operations for this context </summary>
+    public DatabaseFacade Database { get; }
 	public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 	public ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
@@ -20,10 +20,10 @@ public interface ITgEfContext : IDisposable
 	/// <summary> Detach entity </summary>
 	public void DetachItem(object item);
 
-	#endregion
+    #endregion
 
-	/// <summary> App queries </summary>
-	public DbSet<TgEfAppEntity> Apps { get; set; }
+    /// <summary> App queries </summary>
+    public DbSet<TgEfAppEntity> Apps { get; set; }
 	/// <summary> Contact queries </summary>
 	public DbSet<TgEfContactEntity> Contacts { get; set; }
 	/// <summary> Document queries </summary>
@@ -46,8 +46,8 @@ public interface ITgEfContext : IDisposable
 	/// <summary> Get storage path </summary>
 	protected string GetStoragePath(string contentRootPath = "");
 
-	/// <summary> Backup storage </summary>
-	public (bool IsSuccess, string FileName) BackupDb();
+    /// <summary> Backup storage </summary>
+    public (bool IsSuccess, string FileName) BackupDb();
 
 	/// <summary> Shrink storage </summary>
 	public Task ShrinkDbAsync();

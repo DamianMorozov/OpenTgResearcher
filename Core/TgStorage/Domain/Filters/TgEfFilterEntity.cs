@@ -71,8 +71,8 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 	public string ToDebugString() => FilterType switch
 	{
 		TgEnumFilterType.MinSize or TgEnumFilterType.MaxSize =>
-			$"{TgEfConstants.TableFilters} | {Uid} | {TgCommonUtils.GetIsEnabled(IsEnabled)} | {this.GetStringForFilterType()} | {Name} | {Size} | {SizeType}",
-		_ => $"{TgEfConstants.TableFilters} | {Uid} | {TgCommonUtils.GetIsEnabled(IsEnabled)} | {this.GetStringForFilterType()} | {Name} | {(string.IsNullOrEmpty(Mask) ? $"<{nameof(string.Empty)}>" : Mask)}",
+			$"{TgEfConstants.TableFilters} | {Uid} | {TgDataUtils.GetIsEnabled(IsEnabled)} | {this.GetStringForFilterType()} | {Name} | {Size} | {SizeType}",
+		_ => $"{TgEfConstants.TableFilters} | {Uid} | {TgDataUtils.GetIsEnabled(IsEnabled)} | {this.GetStringForFilterType()} | {Name} | {(string.IsNullOrEmpty(Mask) ? $"<{nameof(string.Empty)}>" : Mask)}",
 	};
 
 	public string ToConsoleString() =>

@@ -47,17 +47,25 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string CollectDialogs => "Collect dialogs ...";
 	public string CollectStories => "Collect stories ...";
 
-	#endregion
+    #endregion
 
-	#region Client
+    #region Bot
 
-    public string MenuClientMessage => "Client message";
-	public string MenuClientApiHash => "API hash";
+    public string MenuBotConnect => "Connect bot to TG server";
+    public string MenuBotDisconnect => "Disconnect bot from TG server";
+    public string TgBotSetupCompleteError => "The TG bot setup was completed with errors";
+    public string TgBotSetupCompleteSuccess => "The TG bot setup was completed successfully";
+
+    #endregion
+
+    #region Client
+
+    public string MenuClientApiHash => "API hash";
 	public string MenuClientApiId => "API ID";
 	public string MenuClientComplete => "Complete";
-	public string MenuClientConnect => "Connect the client to TG server";
+	public string MenuClientConnect => "Connect client to TG server";
 	public string MenuClientConnectStatus => "Connect status";
-	public string MenuClientDisconnect => "Disconnect the client from TG server";
+	public string MenuClientDisconnect => "Disconnect client from TG server";
 	public string MenuClientFirstName => "First name";
 	public string MenuClientIsConnected => "Client is connected";
 	public string MenuClientIsDisconnected => "Client is disconnected";
@@ -75,9 +83,10 @@ public sealed class TgLocaleHelper : ObservableObject
 
     public string MenuClearAutoDownload => "Clear automatically updated chats (reset auto update field)";
     public string MenuStartAutoDownload => "Start downloading automatically updated chats";
-	public string MenuAutoViewEvents => "Auto view events";
+	public string MenuBotAutoViewEvents => "Bot auto view events";
 	public string MenuClearChats => "Clear all chats (delete from storage)";
 	public string MenuClearConnectionData => "Clear connection data";
+	public string MenuClientAutoViewEvents => "Client auto view events";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
@@ -176,8 +185,9 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainAdvanced => "Advanced";
 	public string MenuMainApp => "Application";
 	public string MenuMainApps => "Apps";
+	public string MenuMainBotConnectionHealthCheck => "Bot connection health check";
+	public string MenuMainClientConnectionHealthCheck => "Client connection health check";
 	public string MenuMainConnection => "Connection";
-	public string MenuMainConnectionHealthCheck => "Connection health check";
 	public string MenuMainDownload => "Download";
 	public string MenuMainDownloadHealthCheck => "Download health check";
 	public string MenuMainDownloads => "Downloads";
@@ -323,7 +333,7 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#region Fields
 
-	public string FieldDescription => "Description";
+    public string Field => "Field";
     public string FieldFilterType => "Filter type";
     public string FieldHostname=> "Host name";
     public string FieldIsEnabled => "Enabled";
@@ -334,10 +344,33 @@ public sealed class TgLocaleHelper : ObservableObject
     public string FieldSizeType => "Size type";
     public string FieldType => "Type";
     public string FieldUserName => "Username";
+    public string FieldValue => "Value";
     public string FieldVersion => "Version";
+	public string FieldAccessHash => "Access hash";
+	public string FieldAddedToAttachmentMenu => "Added to attachment menu";
+	public string FieldBotActiveUsers => "Bot active users";
+	public string FieldBotInfo => "Bot info";
+	public string FieldBotInfoVersion => "Bot info version";
+	public string FieldBotInlinePlaceholder => "Bot inline placeholder";
+	public string FieldCanConnectToBusiness => "Can connect to business";
+	public string FieldCanJoinGroups => "Can join groups";
+	public string FieldCanReadAllGroupMessages => "Can read all group messages";
 	public string FieldCount => "Count";
+	public string FieldDescription => "Description";
 	public string FieldFirstId => "First ID";
+	public string FieldFirstName => "First name";
+	public string FieldFlags => "Flags";
+	public string FieldFlags2 => "Flags 2";
+	public string FieldHasMainWebApp => "Has main web app";
 	public string FieldId => "ID";
+	public string FieldIsActive => "Is active";
+	public string FieldIsBot => "Is bot";
+	public string FieldIsPremium => "Is premium";
+	public string FieldLanguage => "Language";
+	public string FieldLastName => "Last name";
+	public string FieldLastSeenAgo => "Last seen ago";
+	public string FieldMainUsername => "Main username";
+	public string FieldSupportsInlineQueries => "Supports inline queries";
 	public string FieldTitle => "Title";
 
     #endregion

@@ -102,5 +102,44 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 	public async Task<Guid> GetCurrentProxyUidAsync(TgEfStorageResult<TgEfAppEntity> storageResult) =>
 		(await GetCurrentProxyAsync(storageResult.Item.ProxyUid)).Item.Uid;
 
-	#endregion
+    public TgEfProxyDto GetCurrentAppDto()
+    {
+        var task = GetCurrentDtoAsync();
+        task.Wait();
+        return task.Result;
+    }
+
+    public async Task<TgEfProxyDto> GetCurrentDtoAsync() => await
+        EfContext.Proxies.AsTracking()
+            .Where(x => x.Uid != Guid.Empty)
+            .Select(x => new TgEfProxyDto()
+            {
+                Uid = x.Uid,
+                Type = x.Type,
+                HostName = x.HostName,
+                Port = x.Port,
+                UserName = x.UserName,
+                Password = x.Password,
+                Secret = x.Secret
+            })
+            .FirstOrDefaultAsync()
+        ?? new();
+
+    public async Task<TgEfProxyDto> GetDtoAsync(Guid? proxyUid) => await
+        EfContext.Proxies.AsTracking()
+            .Where(x => x.Uid == proxyUid)
+            .Select(x => new TgEfProxyDto()
+            {
+                Uid = x.Uid,
+                Type = x.Type,
+                HostName = x.HostName,
+                Port = x.Port,
+                UserName = x.UserName,
+                Password = x.Password,
+                Secret = x.Secret
+            })
+            .FirstOrDefaultAsync()
+        ?? new();
+
+    #endregion
 }

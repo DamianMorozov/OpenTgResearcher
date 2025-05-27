@@ -5,4 +5,4 @@ global using System.Text.Json;
 global using System.Text;
 global using OpenTgResearcherDesktop.Core.Contracts.Services;
 global using OpenTgResearcherDesktop.Core.Models;
-global using TgSharedData.Helpers;
+global using TgInfrastructure.Helpers;

@@ -14,6 +14,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
 	private static TgLogHelper TgLog => TgLogHelper.Instance;
 	public WTelegram.Client? Client { get; set; } = default!;
+    public WTelegram.Bot? Bot { get; private set; } = default!;
     public TgExceptionViewModel ClientException { get; set; } = default!;
     public TgExceptionViewModel ProxyException { get; set; } = default!;
     public bool IsReady { get; private set; } = default!;
@@ -31,7 +32,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public IEnumerable<ChatBase> EnumerableSmallGroups { get; set; } = default!;
     public IEnumerable<User> EnumerableContacts { get; set; } = default!;
     public IEnumerable<StoryItem> EnumerableStories { get; set; } = default!;
-    public bool IsUpdateStatus { get; set; } = default!;
+    public bool IsClientUpdateStatus { get; set; }
+    public bool IsBotUpdateStatus { get; set; }
     public bool IsForceStopDownloading { get; set; } = default!;
     private IEnumerable<TgEfFilterDto> Filters { get; set; } = default!;
     public Func<string, Task> UpdateTitleAsync { get; private set; } = default!;
@@ -51,12 +53,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public Func<long, int, string, bool, int, Task> UpdateStateMessageThreadAsync { get; private set; } = default!;
 
     public Microsoft.Data.Sqlite.SqliteConnection? BotSqlConnection { get; private set; } = default!;
-    public WTelegram.Bot? Bot { get; private set; } = default!;
 
     private List<TgEfMessageEntity> MessageEntities { get; set; } = default!;
     private int BatchMessagesCount { get; set; } = default!;
 
-    private ITgStorageManager StorageManager { get; set; } = default!;
+    protected ITgStorageManager StorageManager { get; set; } = default!;
 
     protected TgConnectClientBase(ITgStorageManager storageManager) : base()
 	{
@@ -79,10 +80,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Release managed resources </summary>
     public override void ReleaseManagedResources()
     {
-        Client?.Dispose();
-        BotSqlConnection?.Dispose();
-        Bot?.Dispose();
-        StorageManager.Dispose();
+        var tasks = new List<Task>
+        {
+            DisconnectClientAsync(),
+            DisconnectBotAsync()
+        };
+        Task.WaitAll(tasks);
     }
 
     /// <summary> Release unmanaged resources </summary>
@@ -95,7 +98,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #region Public and private methods
 
-    public string ToDebugString() => $"{TgCommonUtils.GetIsReady(IsReady)} | {Me}";
+    public string ToDebugString() => $"{TgDataUtils.GetIsReady(IsReady)} | {Me}";
 
 	private void InitializeClient()
 	{
@@ -113,7 +116,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         ClientException = new();
         ProxyException = new();
         Filters = [];
-        MessageEntities = new();
+        MessageEntities = [];
 
         UpdateTitleAsync = _ => Task.CompletedTask;
         UpdateStateConnectAsync = _ => Task.CompletedTask;
@@ -193,50 +196,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	public void SetupUpdateStateMessageThread(Func<long, int, string, bool, int, Task> updateStateMessageThreadAsync) =>
 		UpdateStateMessageThreadAsync = updateStateMessageThreadAsync;
 
-	public async Task<bool> CheckClientIsReadyAsync()
-	{
-		if (Bot is null)
-		{
-			var result = Client is { Disconnected: false };
-			if (!result)
-				return ClientResultDisconnected();
-			switch (TgGlobalTools.AppType)
-			{
-				case TgEnumAppType.Console:
-					if (!TgAppSettings.AppXml.IsExistsFileSession)
-						return ClientResultDisconnected();
-					break;
-			}
-			var app = (await StorageManager.AppRepository.GetCurrentAppAsync()).Item;
-			var proxyResult = await StorageManager.ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
-			if (TgAppSettings.IsUseProxy && !proxyResult.IsExists)
-				return ClientResultDisconnected();
-			if (ProxyException.IsExist || ClientException.IsExist)
-				return ClientResultDisconnected();
-			return ClientResultConnected();
-		}
-		else
-		{
-			var result = Bot is not null && Bot.BotId > 0;
-			if (!result)
-				return ClientResultDisconnected();
-			//switch (TgAsyncUtils.AppType)
-			//{
-			//	case TgEnumAppType.Console:
-			//		if (!TgAppSettings.AppXml.IsExistsFileSession)
-			//			return ClientResultDisconnected();
-			//		break;
-			//}
-			var app = (await StorageManager.AppRepository.GetCurrentAppAsync()).Item;
-			var proxyResult = await StorageManager.ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
-			if (TgAppSettings.IsUseProxy && !proxyResult.IsExists)
-				return ClientResultDisconnected();
-			if (ProxyException.IsExist || ClientException.IsExist)
-				return ClientResultDisconnected();
-			return ClientResultConnected();
-		}
-	}
-
 	private bool ClientResultDisconnected()
 	{
 		UpdateStateSourceAsync(0, 0, 0, string.Empty);
@@ -251,25 +210,78 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		return IsReady = true;
 	}
 
-	public async Task ConnectSessionConsoleAsync<TEfEntity>(Func<string, string?>? config, ITgDbProxy<TEfEntity> proxy)
+	public async Task ConnectClientConsoleAsync<TEfEntity>(Func<string, string?>? config, ITgDbProxy<TEfEntity> proxy)
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
-		if (IsReady)
-			return;
-		await DisconnectAsync();
-		Client = new(config);
-		await ConnectThroughProxyAsync(proxy, false);
-		Client.OnUpdates += OnUpdatesClientAsync;
-		Client.OnOther += OnClientOtherAsync;
-		await LoginUserAsync(isProxyUpdate: true);
-	}
+        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+        if (appDto.UseBot)
+        {
+            await StorageManager.AppRepository.SetUseBotAsync(false);
+            appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (appDto.UseBot)
+                throw new ArgumentOutOfRangeException(nameof(appDto), appDto, "Cannot set UseBot property!");
+        }
+        if (IsReady) return;
 
-	public async Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy)
+        await DisconnectClientAsync();
+        await DisconnectBotAsync();
+
+        Client = new(config);
+        await ConnectThroughProxyAsync(proxy, false);
+        Client.OnOther += (obj) => OnClientOtherAsync(obj);
+        Client.OnOwnUpdates += (updateBase) => OnOwnUpdatesClientAsync(updateBase);
+        Client.OnUpdates += (updateBase) => OnUpdatesClientAsync(updateBase);
+        await LoginUserAsync(isProxyUpdate: true);
+    }
+
+	public async Task ConnectBotConsoleAsync()
+	{
+        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+        if (!appDto.UseBot)
+        {
+            await StorageManager.AppRepository.SetUseBotAsync(true);
+            appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (!appDto.UseBot)
+                throw new ArgumentOutOfRangeException(nameof(appDto), appDto, "Cannot set UseBot property!");
+        }
+
+        await DisconnectClientAsync();
+        await DisconnectBotAsync();
+
+        // https://github.com/wiz0u/WTelegramBot/blob/master/Examples/ConsoleApp/Program.cs
+        try
+        {
+            var localFolder = Environment.CurrentDirectory;
+            if (Directory.Exists(localFolder))
+            {
+                var WTelegramLogs = new StreamWriter($"{localFolder}\\WTelegramBot.log", true, Encoding.UTF8) { AutoFlush = true };
+                WTelegram.Helpers.Log = (lvl, str) => WTelegramLogs.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[lvl]}] {str}");
+            }
+
+            var botToken = appDto.BotTokenKey;
+            var apiId = appDto.ApiId;
+            var apiHash = appDto.ApiHash.ToString().Replace("-", "");
+            BotSqlConnection = new Microsoft.Data.Sqlite.SqliteConnection(@"Data Source=WTelegramBot.sqlite");
+            
+            Bot = new WTelegram.Bot(botToken, apiId, apiHash, BotSqlConnection);
+            Bot.OnError += OnErrorBotAsync;
+            Bot.OnMessage += OnMessageBotAsync;
+            Bot.OnUpdate += OnUpdateBotAsync;
+        }
+        catch (Exception ex)
+        {
+            await SetClientExceptionAsync(ex);
+        }
+
+        await AfterClientConnectAsync();
+    }
+
+    public async Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy)
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		if (IsReady)
 			return;
-		await DisconnectAsync();
+		await DisconnectClientAsync();
 		Client = new(ConfigClientDesktop);
 		await ConnectThroughProxyAsync(proxy, true);
 		Client.OnUpdates += OnUpdatesClientAsync;
@@ -281,9 +293,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
-		if (IsReady)
+        if (IsReady)
 			return;
-		await DisconnectAsync();
+		await DisconnectClientAsync();
 		Client = new(config);
 		await ConnectThroughProxyAsync(proxy, true);
 		Client.OnUpdates += OnUpdatesClientAsync;
@@ -295,7 +307,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 	{
 		IsProxyUsage = false;
-		if (!await CheckClientIsReadyAsync())
+		if (!await CheckClientConnectionReadyAsync())
 			return;
 		if (Client is null)
 			return;
@@ -340,32 +352,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		}
 	}
 
-	public async Task ConnectBotDesktopAsync(string botToken, int apiId, string apiHash, string localFolder)
-	{
-		// https://github.com/wiz0u/WTelegramBot/blob/master/Examples/ConsoleApp/Program.cs
-		//if (IsReady)
-		//	return;
-		//await DisconnectAsync();
-		//Client = new(ConfigClientDesktop);
-		//await ConnectThroughProxyAsync(proxy, true);
-		//Client.OnUpdates += OnUpdatesClientAsync;
-		//Client.OnOther += OnClientOtherAsync;
-		//await LoginUserAsync(true);
-		if (!Directory.Exists(localFolder))
-			return;
-		var WTelegramLogs = new StreamWriter($"{localFolder}\\WTelegramBot.log", true, Encoding.UTF8) { AutoFlush = true };
-		WTelegram.Helpers.Log = (lvl, str) => WTelegramLogs.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[lvl]}] {str}");
-
-		BotSqlConnection = new Microsoft.Data.Sqlite.SqliteConnection(@"Data Source=WTelegramBot.sqlite");
-		Bot = new WTelegram.Bot(botToken, apiId, apiHash, BotSqlConnection);
-		var my = await Bot.GetMe();
-
-		await AfterClientConnectAsync();
-	}
-
+    /// <summary> Reduces a Telegram chat ID by removing the "-100" prefix if it exists </summary>
+    /// <remarks> This method is commonly used to normalize Telegram chat IDs for consistent processing </remarks>
 	public static long ReduceChatId(long chatId) => !$"{chatId}".StartsWith("-100") ? chatId : Convert.ToInt64($"{chatId}"[4..]);
 
-	public string GetUserUpdatedName(long id) => DicContactsUpdated.TryGetValue(ReduceChatId(id), out var user) ? user.username : string.Empty;
+    /// <summary> Ensures that the given chat ID is in the correct format for a supergroup or channel </summary>
+    /// <remarks> This method is typically used to standardize chat IDs for APIs or systems that require supergroup or channel IDs to start with "-100" </remarks>
+    public static long IncreaseChatId(long chatId) => $"{chatId}".StartsWith("-100") ? chatId : Convert.ToInt64($"-100{chatId}");
+
+    public string GetUserUpdatedName(long id) => DicContactsUpdated.TryGetValue(ReduceChatId(id), out var user) ? user.username : string.Empty;
 
 	public async Task<Channel?> GetChannelAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
@@ -396,7 +391,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		if (tgDownloadSettings.SourceVm.Dto.Id is 0 or 1)
 			tgDownloadSettings.SourceVm.Dto.Id = await GetPeerIdAsync(tgDownloadSettings.SourceVm.Dto.UserName);
 
-		Messages_Chats? messagesChats = null;
+        Messages_Chats? messagesChats = null;
 		if (Me is not null)
 			messagesChats = await Client.Channels_GetChannels(new InputChannel(tgDownloadSettings.SourceVm.Dto.Id, Me.access_hash));
 		if (messagesChats is not null)
@@ -437,7 +432,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		if (tgDownloadSettings.SourceVm.Dto.Id is 0)
 			tgDownloadSettings.SourceVm.Dto.Id = await GetPeerIdAsync(tgDownloadSettings.SourceVm.Dto.UserName);
 
-		Messages_Chats? messagesChats = null;
+        Messages_Chats? messagesChats = null;
 		if (Me is not null)
 			messagesChats = await Client.Channels_GetGroupsForDiscussion();
 
@@ -482,7 +477,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			tgDownloadSettings.SourceVm.Dto.Id = ReduceChatId(tgDownloadSettings.SourceVm.Dto.Id);
 		if (!tgDownloadSettings.SourceVm.Dto.IsReady)
 			return null;
-		Bots_BotInfo? botInfo = null;
+        Bots_BotInfo? botInfo = null;
 		if (Me is not null)
 			botInfo = await Client.Bots_GetBotInfo("en", new InputUser(tgDownloadSettings.SourceVm.Dto.Id, 0));
 		return botInfo;
@@ -556,18 +551,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
 	public async Task CollectAllContactsAsync()
 	{
-		switch (IsReady)
-		{
-			case true when Client is not null:
-			{
-				var contacts = await Client.Contacts_GetContacts();
-				FillEnumerableContacts(contacts.users);
-				break;
-			}
-		}
-	}
+        switch (IsReady)
+        {
+            case true when Client is not null:
+                {
+                    var contacts = await Client.Contacts_GetContacts();
+                    FillEnumerableContacts(contacts.users);
+                    break;
+                }
+        }
+    }
 
-	public async Task CollectAllStoriesAsync()
+    public async Task CollectAllStoriesAsync()
 	{
 		switch (IsReady)
 		{
@@ -642,16 +637,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			}
 		}
 		EnumerableStories = listStories;
-	}
-
-	public async Task OnUpdatesClientAsync(IObject arg)
-	{
-		if (!IsUpdateStatus)
-			return;
-		if (arg is UpdateShort updateShort)
-			await OnUpdateShortClientAsync(updateShort);
-		if (arg is UpdatesBase updates)
-			await OnUpdateClientUpdatesAsync(updates);
 	}
 
 	private async Task OnUpdateShortClientAsync(UpdateShort updateShort)
@@ -872,14 +857,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		}
 	}
 
-	private async Task OnClientOtherAsync(IObject arg)
-	{
-		if (!IsUpdateStatus)
-			return;
-		if (arg is Auth_SentCodeBase authSentCode)
-			await OnClientOtherAuthSentCodeAsync(authSentCode);
-	}
-
 	private async Task OnClientOtherAuthSentCodeAsync(Auth_SentCodeBase authSentCode)
 	{
 #if DEBUG
@@ -895,7 +872,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		await Task.Delay(1);
 #endif
 	}
-
 
 	//private void Client_DisplayMessage(MessageBase messageBase, bool edit = false)
 	//{
@@ -1053,9 +1029,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			var result = false;
 			await TryCatchFuncAsync(async () =>
 			{
-				await Client.ReadHistory(chatBase);
-				result = true;
-			});
+				result = await Client.ReadHistory(chatBase);
+            });
 			return result;
 		}
 		else
@@ -1065,8 +1040,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			var result = false;
 			await TryCatchFuncAsync(async () =>
 			{
-				var chatDetails = await GetChatDetails(chatBase.MainUsername, chatBase.ID);
-				result = true;
+				var botChatFullInfo = await GetChatDetailsForBot(chatBase.ID, chatBase.MainUsername);
+				result = botChatFullInfo is not null;
 			});
 			return result;
 		}
@@ -1144,7 +1119,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		await GetChannelMessageIdAsync(tgDownloadSettings, TgEnumPosition.First);
 
 	private async Task<int> SetChannelMessageIdFirstCoreAsync(ITgDownloadViewModel tgDownloadSettings, ChatBase chatBase,
-		ChatFullBase chatFullBase)
+        ChatFullBase chatFullBase)
 	{
 		if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return 0;
 		var max = chatFullBase is ChannelFull channelFull ? channelFull.read_inbox_max_id : 0;
@@ -1197,101 +1172,95 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	public async Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent)
 	{
 		if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
-		var dto = tgDownloadSettings2.SourceVm.Dto;
-		var source = await StorageManager.SourceRepository.GetItemAsync(new() { Id = dto.Id }, isReadOnly: false);
+		var sourceDto = tgDownloadSettings2.SourceVm.Dto;
+		var sourceEntity = await StorageManager.SourceRepository.GetItemAsync(new() { Id = sourceDto.Id }, isReadOnly: false);
 		await CreateChatBaseCoreAsync(tgDownloadSettings2);
 
 		if (Bot is not null)
 		{
-			//await GetChatTestAsync();
-			var chatDetails = await GetChatDetails(dto.UserName, dto.Id);
-			if (chatDetails is not null)
+            var botChatFullInfo = await GetChatDetailsForBot(sourceDto.Id, sourceDto.UserName);
+			if (botChatFullInfo is not null)
 			{
-				if (chatDetails.TLInfo is Messages_ChatFull { full_chat: ChannelFull channelFull })
+				if (botChatFullInfo.TLInfo is Messages_ChatFull { full_chat: ChannelFull channelFull })
 				{
-					if (channelFull.slowmode_seconds > 0)
-						source.UserName = chatDetails.Username;
-					source.Count = channelFull.read_inbox_max_id;
-					source.Title = chatDetails.Title;
-					source.Id = ReduceChatId(channelFull.ID);
-					source.About = channelFull.About;
-					source.AccessHash = chatDetails.AccessHash;
+					//if (channelFull.slowmode_seconds > 0)
+						sourceEntity.UserName = botChatFullInfo.Username;
+					sourceEntity.Count = channelFull.read_outbox_max_id > 0 ? channelFull.read_outbox_max_id : channelFull.read_inbox_max_id;
+					sourceEntity.Title = botChatFullInfo.Title;
+					sourceEntity.Id = ReduceChatId(channelFull.ID);
+					sourceEntity.About = channelFull.About;
+					sourceEntity.AccessHash = botChatFullInfo.AccessHash;
 				}
-				//if (chatDetails.TLInfo is TL.Messages_ChatFull chatFull)
-				//{
-				//	if (chatFull.chats.Any())
-				//	{
-				//		if (chatFull.chats.FirstOrDefault().Value is Channel channel)
-				//			source.AccessHash = channel.access_hash;
-				//	}
-				//}
 			}
 		}
 		else
 		{
 			if (tgDownloadSettings2.Chat.Base is { } chatBase && await IsChatBaseAccessAsync(chatBase))
 			{
-				source.IsUserAccess = true;
-				source.UserName = chatBase.MainUsername ?? string.Empty;
-				source.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings);
+				sourceEntity.IsUserAccess = true;
+				sourceEntity.UserName = chatBase.MainUsername ?? string.Empty;
+				sourceEntity.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings);
 				var chatFull = await PrintChatsInfoChatBaseAsync(chatBase, isFull: true, isSilent);
-				source.Title = chatBase.Title;
+				sourceEntity.Title = chatBase.Title;
 				if (chatFull?.full_chat is ChannelFull chatBaseFull)
 				{
-					source.Id = ReduceChatId(chatBaseFull.ID);
-					source.About = chatBaseFull.About;
+					sourceEntity.Id = ReduceChatId(chatBaseFull.ID);
+					sourceEntity.About = chatBaseFull.About;
 				}
 			}
 			else
 			{
-				source.IsUserAccess = false;
+				sourceEntity.IsUserAccess = false;
 			}
 		}
-		source.Directory = dto.Directory;
-		source.FirstId = dto.FirstId;
+		sourceEntity.Directory = sourceDto.Directory;
+		sourceEntity.FirstId = sourceDto.FirstId;
 
-		await StorageManager.SourceRepository.SaveAsync(source);
-		tgDownloadSettings2.SourceVm.Fill(source);
+		await StorageManager.SourceRepository.SaveAsync(sourceEntity);
+		tgDownloadSettings2.SourceVm.Fill(sourceEntity);
 	}
 
-	private async Task<WTelegram.Types.ChatFullInfo?> GetChatDetails(string dtoUserName, long dtoId)
+	/// <summary> Get chat details from bot </summary>
+	private async Task<WTelegram.Types.ChatFullInfo?> GetChatDetailsForBot(long dtoId, string dtoUserName)
 	{
-		if (Bot is null)
-			return null;
-		WTelegram.Types.ChatFullInfo? chatDetails = null;
-		if (!string.IsNullOrEmpty(dtoUserName))
-		{
-			var userName = dtoUserName.StartsWith('@') ? dtoUserName : $"@{dtoUserName}";
-			chatDetails = await Bot.GetChat(userName);
-		}
-		else
-		{
-			long? chatId = dtoId.ToString().StartsWith("-100") ? dtoId :
-				long.TryParse($"-100{dtoId}", out var id) ? id : null;
-			if (chatId is not null)
-				chatDetails = await Bot.GetChat(chatId);
-		}
-		return chatDetails;
-	}
+        if (Bot is null) return null;
 
-	//private async Task GetChatTestAsync()
-	//{
-	//	// get details about a public chat (even if bot is not a member of that chat)
-	//	if (Bot is null)
-	//		return;
-	//	var chatDetails = await Bot.GetChat("@tdlibchat");
-	//	if (chatDetails.TLInfo is TL.Messages_ChatFull { full_chat: TL.ChannelFull channelFull })
-	//	{
-	//		Console.WriteLine($"@{chatDetails.Username} has {channelFull.participants_count} members, {channelFull.online_count} online");
-	//		if (channelFull.slowmode_seconds > 0)
-	//			Console.WriteLine($"@{chatDetails.Username} has slowmode enabled: {channelFull.slowmode_seconds} seconds");
-	//		if (channelFull.available_reactions is TL.ChatReactionsAll { flags: TL.ChatReactionsAll.Flags.allow_custom })
-	//			Console.WriteLine($"@{chatDetails.Username} allows custom emojis as reactions");
-	//	}
-	//}
+        try
+        {
+			if (dtoId > 0)
+			{
+				var chatId = IncreaseChatId(dtoId);
+                var chatInfo = await Bot.GetChat(chatId);
+                if (chatInfo is not null)
+                    return chatInfo;
+			}
+		}
+		catch (Exception ex)
+		{
+			TgLog.MarkupWarning($"Error in GetChatDetailsFromBot: {ex.Message}");
+		}
+		
+        try
+		{
+			if (!string.IsNullOrWhiteSpace(dtoUserName))
+			{
+				var userName = dtoUserName.StartsWith('@') ? dtoUserName : $"@{dtoUserName}";
+				var chatInfo = await Bot.GetChat(userName);
+                if (chatInfo is not null)
+					return chatInfo;
+			}
+		}
+		catch (Exception ex)
+		{
+			TgLog.MarkupWarning($"Error in GetChatDetailsFromBot: {ex.Message}");
+		}
 
-	/// <summary> Update source from Telegram </summary>
-	public async Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings)
+        TgLog.MarkupWarning($"Chat not found by id ({dtoId}) or username ({dtoUserName})");
+        return null;
+    }
+
+    /// <summary> Update source from Telegram </summary>
+    public async Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings)
 	{
 		if (sourceVm is not TgEfSourceViewModel sourceVm2) return;
 		if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
@@ -1547,14 +1516,34 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		await UpdateTitleAsync(string.Empty);
 	}
 
+	/// <summary> Disable user access for all chats </summary>
 	private async Task DisableUserAccessForAllChatsAsync()
 	{
-		var chats = (await StorageManager.SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false)).ToArray();
-		foreach (var chat in chats)
+		var chats = await StorageManager.SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false);
+		if (!chats.Any())
+        {
+            TgLog.WriteLine("No chats found to disable user access.");
+            return;
+        }
+
+		try
 		{
-			chat.IsUserAccess = false;
+            List<TgEfSourceEntity> chatsForUpdate = [];
+			foreach (var chat in chats)
+			{
+				if (chat.IsUserAccess)
+				{
+					chat.IsUserAccess = false;
+                    chatsForUpdate.Add(chat);
+                }
+			}
+            if (chatsForUpdate.Any())
+			    await StorageManager.SourceRepository.SaveListAsync(chatsForUpdate);
 		}
-		await StorageManager.SourceRepository.SaveListAsync(chats);
+		catch (Exception ex)
+		{
+			TgLog.MarkupWarning($"Error disabling user access for all chats: {ex.Message}");
+		}
 	}
 
 	private async Task SearchSourcesTgConsoleForChannelsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -1586,7 +1575,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 					}
 				});
 			}
-			await UpdateTitleAsync($"{TgCommonUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
+			await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
 				tgDownloadSettings.SourceScanCurrent):#00.00} %");
 		}
 	}
@@ -1629,7 +1618,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 				await UpdateContactTgAsync(user);
 				await UpdateStateContactAsync(user.id, user.first_name, user.last_name, user.username);
 			});
-			await UpdateTitleAsync($"{TgCommonUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
+			await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
 				tgDownloadSettings.SourceScanCurrent):#00.00} %");
 		}
 	}
@@ -1644,7 +1633,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 				await UpdateStoryTgAsync(story);
 				await UpdateStateStoryAsync(story.id, 0, 0, story.caption);
 			});
-			await UpdateTitleAsync($"{TgCommonUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
+			await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
 				tgDownloadSettings.SourceScanCurrent):#00.00} %");
 		}
 	}
@@ -1659,7 +1648,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 				await UpdateStoryTgAsync(story);
 				await UpdateStateStoryAsync(story.id, 0, 0, story.caption);
 			});
-			await UpdateTitleAsync($"{TgCommonUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
+			await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,
 				tgDownloadSettings.SourceScanCurrent):#00.00} %");
 		}
 	}
@@ -1755,8 +1744,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		await CreateChatAsync(tgDownloadSettings, isSilent: false);
 		await TryCatchFuncAsync(async () =>
 		{
-			// Filters
-			Filters = await StorageManager.FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled);
+            var isAccessToMessages = false;
+            // Filters
+            Filters = await StorageManager.FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled);
 
 			await LoginUserAsync(isProxyUpdate: false);
 
@@ -1771,23 +1761,42 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			ForumTopicBase[]? topics = null;
 			ForumTopicBase? topicRoot = null;
 			Channel? channel = null;
-			if (tgDownloadSettings.Chat.Base is Channel)
+            WTelegram.Types.ChatFullInfo? botChatFullInfo = null;
+
+            if (tgDownloadSettings.Chat.Base is Channel)
 				channel = tgDownloadSettings.Chat.Base as Channel;
 
-			var isAccessToMessages = channel is not null && await Client.Channels_ReadMessageContents(channel);
-			var sourceFirstId = tgDownloadSettings2.SourceVm.Dto.FirstId;
-			var sourceLastId = tgDownloadSettings2.SourceVm.Dto.Count;
-			var counterForSave = 0;
-			if (isAccessToMessages)
+            var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (!appDto.UseBot && channel is not null)
+            {
+                isAccessToMessages = await Client.Channels_ReadMessageContents(channel);
+            }
+            if (appDto.UseBot && Bot is not null)
+            {
+                botChatFullInfo = await GetChatDetailsForBot(tgDownloadSettings2.SourceVm.Dto.Id, tgDownloadSettings2.SourceVm.Dto.UserName);
+                if (botChatFullInfo is not null)
+                {
+                    isAccessToMessages = true;
+                }
+            }
+
+            var sourceFirstId = tgDownloadSettings2.SourceVm.Dto.FirstId;
+            var sourceLastId = tgDownloadSettings2.SourceVm.Dto.Count;
+            var counterForSave = 0;
+
+            if (isAccessToMessages)
 			{
 				List<Task> downloadTasks = [];
 				var threadNumber = 0;
-				if (Client is not null && channel is not null)
+
+                // Enable creating subdirectories
+                if (tgDownloadSettings2.SourceVm.Dto.IsCreatingSubdirectories)
 				{
-					// Enable creating subdirectories
-					if (tgDownloadSettings2.SourceVm.Dto.IsCreatingSubdirectories)
-					{
-						try
+                    if (Client is null && Bot is not null)
+                        Client = Bot.Client;
+                    if (Client is not null && channel is not null)
+                    {
+                        try
 						{
 							var forumTopics = await Client.Channels_GetAllForumTopics(channel);
 							topics = forumTopics.topics;
@@ -1823,43 +1832,85 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #endif
 					}
 				}
+
 				while (sourceFirstId <= sourceLastId)
 				{
-					if (Client is null)
-					{
-						tgDownloadSettings2.SourceVm.Dto.FirstId = sourceLastId;
-						tgDownloadSettings2.SourceVm.Dto.IsDownload = false;
-						downloadTasks.Clear();
-						break;
-					}
-					if (Client is not null && Client.Disconnected || !tgDownloadSettings2.SourceVm.Dto.IsDownload)
-					{
-						tgDownloadSettings2.SourceVm.Dto.FirstId = sourceLastId;
-						tgDownloadSettings2.SourceVm.Dto.IsDownload = false;
-						downloadTasks.Clear();
-						break;
-					}
-					await TryCatchFuncAsync(async () =>
-					{
-						if (Client is null) return;
-						var messages = channel is not null
-							? await Client.Channels_GetMessages(channel, sourceFirstId)
-							: await Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId);
-						await UpdateTitleAsync($"{TgCommonUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
-						foreach (var message in messages.Messages)
-						{
-							// Check message exists
-							downloadTasks.Add(message.Date > DateTime.MinValue
-								? DownloadDataAsync(tgDownloadSettings2, message, threadNumber, topics, topicRoot)
-								: UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, message.ID, tgDownloadSettings2.SourceVm.Dto.Count,
-									$"Message {message.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
-							counterForSave++;
-						}
-					});
-					sourceFirstId++;
-					threadNumber++;
-					// CountThreads
-					if (downloadTasks.Count == tgDownloadSettings2.CountThreads || sourceFirstId >= sourceLastId)
+                    if (!appDto.UseBot)
+                    {
+                        if (Client is null || !tgDownloadSettings2.SourceVm.Dto.IsDownload || (Client is not null && Client.Disconnected))
+                        {
+                            tgDownloadSettings2.SourceVm.Dto.FirstId = sourceLastId;
+                            tgDownloadSettings2.SourceVm.Dto.IsDownload = false;
+                            downloadTasks.Clear();
+                            break;
+                        }
+                        await TryCatchFuncAsync(async () =>
+                        {
+                            if (Client is null) return;
+                            var messages = channel is not null
+                                ? await Client.Channels_GetMessages(channel, sourceFirstId)
+                                : await Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId);
+                            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
+                            foreach (var message in messages.Messages)
+                            {
+                                // Check message exists
+                                if (message is MessageBase messageBase)
+                                    downloadTasks.Add(messageBase.Date > DateTime.MinValue
+                                        ? DownloadDataAsync(tgDownloadSettings2, messageBase, threadNumber, topics, topicRoot)
+                                        : UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, messageBase.ID, tgDownloadSettings2.SourceVm.Dto.Count,
+                                            $"Message {messageBase.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
+                                counterForSave++;
+                            }
+                        });
+                    }
+                    else
+                    {
+                        if (Bot is null || !tgDownloadSettings2.SourceVm.Dto.IsDownload || (Bot.Client is not null && Bot.Client.Disconnected))
+                        {
+                            tgDownloadSettings2.SourceVm.Dto.FirstId = sourceLastId;
+                            tgDownloadSettings2.SourceVm.Dto.IsDownload = false;
+                            downloadTasks.Clear();
+                            break;
+                        }
+                        await TryCatchFuncAsync(async () =>
+                        {
+                            if (Bot is null || botChatFullInfo is null) return;
+                            var messages = await Bot.GetMessagesById(botChatFullInfo, [sourceFirstId]);
+                            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
+                            foreach (var message in messages.AsReadOnly())
+                            {
+                                // Check message exists
+                                if (message.TLMessage is MessageBase messageBase)
+                                    downloadTasks.Add(message.Date > DateTime.MinValue
+                                        ? DownloadDataAsync(tgDownloadSettings2, messageBase, threadNumber, topics, topicRoot)
+                                        : UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, messageBase.ID, tgDownloadSettings2.SourceVm.Dto.Count,
+                                            $"Message {messageBase.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
+                                counterForSave++;
+                            }
+
+                            if (Bot.Client is null) return;
+                            var messages2 = channel is not null
+                                ? await Bot.Client.Channels_GetMessages(channel, sourceFirstId)
+                                : await Bot.Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId);
+
+                            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
+                            foreach (var message in messages2.Messages)
+                            {
+                                // Check message exists
+                                if (message is MessageBase messageBase)
+                                    downloadTasks.Add(messageBase.Date > DateTime.MinValue
+                                        ? DownloadDataAsync(tgDownloadSettings2, messageBase, threadNumber, topics, topicRoot)
+                                        : UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, messageBase.ID, tgDownloadSettings2.SourceVm.Dto.Count,
+                                            $"Message {messageBase.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
+                                counterForSave++;
+                            }
+                        });
+                    }
+
+                    // Count threads
+                    sourceFirstId++;
+                    threadNumber++;
+                    if (downloadTasks.Count == tgDownloadSettings2.CountThreads || sourceFirstId >= sourceLastId)
 					{
 						await Task.WhenAll(downloadTasks);
 						downloadTasks.Clear();
@@ -1940,7 +1991,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	}
 
 	private async Task DownloadDataAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, int threadNumber,
-		ForumTopicBase[]? topics, ForumTopicBase? topicRoot, int maxRetries = 6, int delayBetweenRetries = 10_000)
+        ForumTopicBase[]? topics, ForumTopicBase? topicRoot, int maxRetries = 6, int delayBetweenRetries = 10_000)
 	{
 		if (messageBase is not Message message)
 		{
@@ -1965,7 +2016,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	}
 
 	private TgMediaInfoModel GetMediaInfo(MessageMedia messageMedia, TgDownloadSettingsViewModel tgDownloadSettings,
-		MessageBase messageBase, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
+        MessageBase messageBase, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
 	{
 		var extensionName = string.Empty;
 		TgMediaInfoModel? mediaInfo = null;
@@ -2115,7 +2166,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	}
 
 	private async Task DownloadDataCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase,
-		MessageMedia messageMedia, int threadNumber, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
+        MessageMedia messageMedia, int threadNumber, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
 	{
 		var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, topics, topicRoot);
 		if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly))
@@ -2131,6 +2182,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #if DEBUG
 			Debug.WriteLine($"{nameof(DownloadDataCoreAsync)} | {mediaInfo.LocalPathWithNumber}", TgConstants.LogTypeSystem);
 #endif
+            if (Client is null && Bot is not null)
+                Client = Bot.Client;
 			if (Client is not null)
 			{
 				switch (messageMedia)
@@ -2378,31 +2431,50 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
 	public virtual async Task LoginUserAsync(bool isProxyUpdate) => await UseOverrideMethodAsync();
 
-	public async Task DisconnectAsync()
+	public async Task DisconnectClientAsync()
 	{
 		IsProxyUsage = false;
 		await UpdateStateSourceAsync(0, 0, 0, string.Empty);
 		await UpdateStateProxyAsync(TgLocale.ProxyIsDisconnect);
 		await UpdateStateConnectAsync(TgLocale.MenuClientIsDisconnected);
-		if (Client is null)
-			return;
-		Client.OnUpdates -= OnUpdatesClientAsync;
-		Client.OnOther -= OnClientOtherAsync;
-		await Client.DisposeAsync();
-		Client = null;
-		ClientException = new();
-		Me = null;
-		await CheckClientIsReadyAsync();
+        Me = null;
+        if (Client is not null)
+        {
+            Client.OnUpdates -= OnUpdatesClientAsync;
+            Client.OnOther -= OnClientOtherAsync;
+            await Client.DisposeAsync();
+            Client = null;
+        }
+        ClientException = new();
+		await CheckClientConnectionReadyAsync();
 		await AfterClientConnectAsync();
+    }
 
-		// Bot
-		BotSqlConnection?.Dispose();
-		BotSqlConnection = null;
-		Bot?.Dispose();
-		Bot = null;
-	}
+    public async Task DisconnectBotAsync()
+    {
+        // Ensure the connection is closed only after all operations are done
+        if (Bot is not null)
+        {
+            Bot.OnError -= OnErrorBotAsync;
+            Bot.OnMessage -= OnMessageBotAsync;
+            Bot.OnUpdate -= OnUpdateBotAsync;
+            if (Bot.Client is { Disconnected: false })
+                await Bot.Client.DisposeAsync();
+            Bot.Dispose();
+        }
+        Bot = null;
 
-	protected async Task SetClientExceptionAsync(Exception ex,
+        // Dispose and nullify the connection only if it's open
+        if (BotSqlConnection is not null)
+        {
+            if (BotSqlConnection.State != System.Data.ConnectionState.Closed)
+                BotSqlConnection.Close();
+            BotSqlConnection.Dispose();
+            BotSqlConnection = null;
+        }
+    }
+
+    protected async Task SetClientExceptionAsync(Exception ex,
 		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
 	{
 		ClientException.Set(ex);
@@ -2583,5 +2655,53 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		throw new NotImplementedException(TgConstants.UseOverrideMethod);
 	}
 
-	#endregion
+    #endregion
+
+    #region Public and private methods - Connections
+
+    /// <summary> Checks if the client connection is ready </summary>
+    public async Task<bool> CheckClientConnectionReadyAsync()
+    {
+        var result = Client is { Disconnected: false } && Me is not null && Me.ID > 0;
+        if (!result)
+            return ClientResultDisconnected();
+        switch (TgGlobalTools.AppType)
+        {
+            case TgEnumAppType.Console:
+                if (!TgAppSettings.AppXml.IsExistsFileSession)
+                    return ClientResultDisconnected();
+                break;
+        }
+        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+        var proxyDto = await StorageManager.ProxyRepository.GetDtoAsync(appDto.ProxyUid);
+        if (TgAppSettings.IsUseProxy && proxyDto.Uid != Guid.Empty)
+            return ClientResultDisconnected();
+        if (ProxyException.IsExist || ClientException.IsExist)
+            return ClientResultDisconnected();
+        return ClientResultConnected();
+    }
+
+    /// <summary> Checks if the bot connection is ready </summary>
+    public async Task<bool> CheckBotConnectionReadyAsync()
+    {
+        var result = BotSqlConnection is not null && BotSqlConnection.State == System.Data.ConnectionState.Open && Bot is not null && Bot.BotId > 0;
+        if (!result)
+            return ClientResultDisconnected();
+        //switch (TgAsyncUtils.AppType)
+        //{
+        //	case TgEnumAppType.Console:
+        //		if (!TgAppSettings.AppXml.IsExistsFileSession)
+        //			return ClientResultDisconnected();
+        //		break;
+        //}
+        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+        var proxyDto = await StorageManager.ProxyRepository.GetDtoAsync(appDto.ProxyUid);
+        if (TgAppSettings.IsUseProxy && proxyDto.Uid != Guid.Empty)
+            return ClientResultDisconnected();
+        if (ProxyException.IsExist || ClientException.IsExist)
+            return ClientResultDisconnected();
+        return ClientResultConnected();
+    }
+
+    #endregion
 }

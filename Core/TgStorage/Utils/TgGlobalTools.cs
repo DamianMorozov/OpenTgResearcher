@@ -22,6 +22,7 @@ public static class TgGlobalTools
 	public static int DownloadCountThreadsLimitPaid => 100;
 	/// <summary> Limit batch of saving messages </summary>
 	public static int BatchMessagesLimit => 100;
+    public static string AppStorage = string.Empty;
 
     public const string FileEfStorage = "TgStorage.db";
     public const string HttpHeaderContentTypeJson = "application/json";
@@ -31,9 +32,9 @@ public static class TgGlobalTools
     public const string RouteGet = "Get";
     public const string RouteGetFiles = "GetFiles";
     public const string RoutePost = "Post";
+    public const string RoutePromoStatistic = "PromoStatistic";
     public const string RouteRoot = "";
     public const string RouteValid = "Valid";
-    public static string AppStorage = string.Empty;
 
     #endregion
 

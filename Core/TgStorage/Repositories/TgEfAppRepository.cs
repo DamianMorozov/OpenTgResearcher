@@ -164,5 +164,19 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
         }
     }
 
+    public async Task SetUseClientAsync(bool useClient)
+    {
+        var appStorage = await GetCurrentAppAsync();
+        if (appStorage.IsExists)
+        {
+            appStorage.Item.UseBot = !useClient;
+            await SaveAsync(appStorage.Item);
+        }
+        else
+        {
+            throw new InvalidOperationException("Current app not found!");
+        }
+    }
+
     #endregion
 }

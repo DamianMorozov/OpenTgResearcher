@@ -12,4 +12,5 @@ public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity, TgEfAppDto>
 
     public Task SetUseBotAsync(bool useBot);
     public Task SetBotTokenKeyAsync(string botTokenKey);
+    public Task SetUseClientAsync(bool useClient);
 }

@@ -3,16 +3,15 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuMain
+public enum TgEnumMenuBot
 {
-	Exit,
-	AppSettings,
-    BotConnection,
-    ClientConnection,
-    Storage,
-	Filters,
-	Download,
-	Advanced,
-	Update,
-	License,
+	Return,
+    UseBot,
+    ClearBotConnectionData,
+	SetBotToken,
+	RegisterTelegramApp,
+    RegisterTelegramBot,
+    RegisterBot,
+	BotConnect,
+	BotDisconnect,
 }

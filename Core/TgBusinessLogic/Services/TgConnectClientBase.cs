@@ -15,6 +15,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	private static TgLogHelper TgLog => TgLogHelper.Instance;
 	public WTelegram.Client? Client { get; set; } = default!;
     public WTelegram.Bot? Bot { get; private set; } = default!;
+    public StreamWriter? BotStreamWriterLogs { get; private set; } = default!;
     public TgExceptionViewModel ClientException { get; set; } = default!;
     public TgExceptionViewModel ProxyException { get; set; } = default!;
     public bool IsReady { get; private set; } = default!;
@@ -254,8 +255,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             var localFolder = Environment.CurrentDirectory;
             if (Directory.Exists(localFolder))
             {
-                var WTelegramLogs = new StreamWriter($"{localFolder}\\WTelegramBot.log", true, Encoding.UTF8) { AutoFlush = true };
-                WTelegram.Helpers.Log = (lvl, str) => WTelegramLogs.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[lvl]}] {str}");
+                BotStreamWriterLogs ??= new StreamWriter($"{localFolder}\\WTelegramBot.log", true, Encoding.UTF8) { AutoFlush = true };
+                WTelegram.Helpers.Log = WriteBotLogs;
             }
 
             var botToken = appDto.BotTokenKey;
@@ -274,6 +275,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
 
         await AfterClientConnectAsync();
+    }
+
+    private void WriteBotLogs(int level, string message)
+    {
+        BotStreamWriterLogs?.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
+#if DEBUG
+        Debug.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
+#endif
     }
 
     public async Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy)
@@ -2471,6 +2480,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 BotSqlConnection.Close();
             BotSqlConnection.Dispose();
             BotSqlConnection = null;
+        }
+
+        // Dispose bot logs
+        if (BotStreamWriterLogs is not null)
+        {
+            BotStreamWriterLogs.Close();
+            await BotStreamWriterLogs.DisposeAsync();
+            BotStreamWriterLogs = null;
         }
     }
 

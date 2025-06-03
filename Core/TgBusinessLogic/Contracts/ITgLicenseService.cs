@@ -22,4 +22,5 @@ public interface ITgLicenseService : IDisposable
 	public Task LicenseUpdateAsync(TgLicenseDto licenseDto);
 	public Task<TgApiResult> GetApiCreatedAsync();
 	public Task<TgApiResult> GetApiValidAsync();
+    public Task<TgApiResult> GetApiPromoStatisticAsync(DateOnly lastPromoDay);
 }

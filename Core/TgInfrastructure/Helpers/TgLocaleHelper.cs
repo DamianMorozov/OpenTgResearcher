@@ -84,8 +84,9 @@ public sealed class TgLocaleHelper : ObservableObject
     public string MenuClearAutoDownload => "Clear automatically updated chats (reset auto update field)";
     public string MenuStartAutoDownload => "Start downloading automatically updated chats";
 	public string MenuBotAutoViewEvents => "Bot auto view events";
+	public string MenuBotClearConnectionData => "Clear bot connection data";
 	public string MenuClearChats => "Clear all chats (delete from storage)";
-	public string MenuClearConnectionData => "Clear connection data";
+	public string MenuClientClearConnectionData => "Clear client connection data";
 	public string MenuClientAutoViewEvents => "Client auto view events";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
@@ -104,13 +105,14 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuManualDownload => "Manual download";
 	public string MenuMarkAllMessagesAsRead => "Mark all messages as read";
 	public string MenuMarkAsRead => "Mark as read";
-	public string MenuRegisterTelegramApp => "Register Telegram app";
-	public string MenuSaveSettings => "Save settings";
+    public string MenuRegisterTelegramApp => "Register Telegram App";
+    public string MenuRegisterTelegramBot => "Register Telegram Bot";
+    public string MenuSaveSettings => "Save settings";
 	public string MenuSearchChats => "Search chats";
 	public string MenuSearchContacts => "Search contacts";
 	public string MenuSearchDialogs => "Search dialogs";
 	public string MenuSearchStories => "Search stories";
-	public string MenuSetProxy => "Setup proxy";
+	public string MenuClientSetProxy => "Setup proxy";
 	public string MenuViewChats => "View chats";
 	public string MenuViewContacts => "View contacts";
 	public string MenuViewFilters => "View filters";
@@ -185,9 +187,11 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainAdvanced => "Advanced";
 	public string MenuMainApp => "Application";
 	public string MenuMainApps => "Apps";
+	public string MenuMainBotConnection => "Bot connection";
 	public string MenuMainBotConnectionHealthCheck => "Bot connection health check";
+	public string MenuMainClearAppData => "Clear application data";
+	public string MenuMainClientConnection => "Client connection";
 	public string MenuMainClientConnectionHealthCheck => "Client connection health check";
-	public string MenuMainConnection => "Connection";
 	public string MenuMainDownload => "Download";
 	public string MenuMainDownloadHealthCheck => "Download health check";
 	public string MenuMainDownloads => "Downloads";
@@ -195,7 +199,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainFilters => "Filters";
 	public string MenuMainLicense => "License";
 	public string MenuMainReset => "Reset";
-	public string MenuMainClearAppData => "Clear application data";
 	public string MenuMainReturn => "Return";
 	public string MenuMainSettings => "Settings";
 	public string MenuMainStop => "Stop";
@@ -273,6 +276,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TablesProxiesException => "Table PROXIES exception!";
 	public string TablesSourcesException => "Table SOURCES exception!";
 	public string TablesVersionsException => "Table VERSIONS exception!";
+	public string MenuBotSetToken => "Bot token";
 	public string TgClientException => "Client exception";
 	public string TgClientFix => "Client fix";
 	public string TgClientFixTryToDeleteSession => "Try to delete session file";
@@ -285,8 +289,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgClientProxyType => "Proxy type";
 	public string TgClientSetupCompleteError => "The TG client setup was completed with errors";
 	public string TgClientSetupCompleteSuccess => "The TG client setup was completed successfully";
-	public string TgClientUseBot => "Use bot";
-	public string TgClientBotToken => "Bot token";
 	public string TgClientUserId => "User ID";
 	public string TgClientUserIsActive => "User active";
 	public string TgClientUserName => "User name";
@@ -302,6 +304,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgSetupNotifications => "Type use notifications";
 	public string TgSetupPassword => "Type password";
 	public string TgSetupPhone => "Type phone number";
+	public string MenuBotUseBot => "Use bot";
+	public string MenuClientUseClient => "Use client";
 	public string TgVerificationCode => "Verification code";
 	public string TypeAnyKeyForReturn => "Type any key to return into the main menu";
 	public string TypeTgProxyHostName => "Type the proxy host name or ip-address";
@@ -386,9 +390,9 @@ public sealed class TgLocaleHelper : ObservableObject
 
 	#region License
 
-	public string LicenseFreeDescription => "Free license";
-	public string LicensePaidDescription => "Paid license";
-	public string LicensePremiumDescription => "Premium license";
+	public string LicenseDescriptionFree => "Free license";
+	public string LicenseDescriptionPaid => "Paid license";
+	public string LicenseDescriptionPremium => "Premium license";
 	public string LicenseTestDescription => "Test license";
 	public string LicenseVersionShort => "License";
 

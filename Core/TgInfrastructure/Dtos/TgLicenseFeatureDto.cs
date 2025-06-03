@@ -3,7 +3,7 @@
 
 namespace TgInfrastructure.Dtos;
 
-public sealed class TgLicenseFeature
+public sealed class TgLicenseFeatureDto
 {
     public string Feature { get; set; } = string.Empty;
     public string Free { get; set; } = string.Empty;

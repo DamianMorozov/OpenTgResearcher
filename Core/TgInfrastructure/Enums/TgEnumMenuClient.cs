@@ -6,13 +6,10 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuClient
 {
 	Return,
-	ClearConnectionData,
-	UseBot,
-	BotToken,
+    UseClient,
+    ClearClientConnectionData,
 	RegisterTelegramApp,
-	SetProxy,
+	ClientSetProxy,
 	ClientConnect,
 	ClientDisconnect,
-    BotConnect,
-    BotDisconnect,
 }

@@ -157,5 +157,25 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		return result;
 	}
 
+    public async Task<TgApiResult> GetApiPromoStatisticAsync(DateOnly lastPromoDay)
+    {
+        var result = new TgApiResult();
+        var promoStatisticSummaryDto = new TgPromoStatisticSummaryDto(lastPromoDay);
+        // Search promo license
+        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.LicenseType == TgEnumLicenseType.Test);
+        if (licenseDtos.Any())
+        {
+            var groups = licenseDtos.OrderByDescending(x => x.ValidTo).GroupBy(x => x.ValidTo).ToList(); 
+            promoStatisticSummaryDto.Items.AddRange(groups.Select(group => new TgPromoStatisticDto
+            {
+                PromoDate = group.Key,
+                TestCount = group.Count()
+            }));
+            result.IsOk = true;
+        }
+        result.Value = promoStatisticSummaryDto;
+        return result;
+    }
+
     #endregion
 }

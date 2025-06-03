@@ -53,7 +53,7 @@ internal partial class TgMenuHelper
 					break;
 				case TgEnumMenuAppSettings.SetUseProxy:
 					MenuAppSetUseProxy();
-					await AskClientConnectAsync(tgDownloadSettings);
+					await AskClientConnectAsync(tgDownloadSettings, isSilent: false);
 					break;
 				case TgEnumMenuAppSettings.Return:
 					break;

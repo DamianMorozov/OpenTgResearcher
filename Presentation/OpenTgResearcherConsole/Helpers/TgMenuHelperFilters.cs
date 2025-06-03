@@ -83,7 +83,7 @@ internal partial class TgMenuHelper
 	{
 		var filter = new TgEfFilterEntity();
 		var type = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.Title(TgLocale.MenuFiltersSetType)
+			.Title($"  {TgLocale.MenuFiltersSetType}")
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(TgLocale.MenuMainReturn, TgLocale.MenuFiltersSetSingleName, TgLocale.MenuFiltersSetSingleExtension,
 				TgLocale.MenuFiltersSetMultiName, TgLocale.MenuFiltersSetMultiExtension,
@@ -138,7 +138,7 @@ internal partial class TgMenuHelper
 	private async Task SetFiltersEditAsync()
 	{
 		var storageResult = await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
+		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuStorageViewFilters, storageResult.Items);
 		filter.IsEnabled = AskQuestionTrueFalseReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
 		await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filter);
 		await FiltersViewAsync();
@@ -148,7 +148,7 @@ internal partial class TgMenuHelper
 	private void SetFilterSize(TgEfFilterEntity filter, string question)
 	{
 		filter.SizeType = AnsiConsole.Prompt(new SelectionPrompt<TgEnumFileSizeType>()
-			.Title(TgLocale.MenuFiltersSetSizeType)
+			.Title($"  {TgLocale.MenuFiltersSetSizeType}")
 			.PageSize(Console.WindowHeight - 17)
 			.AddChoices(TgEnumFileSizeType.Bytes, TgEnumFileSizeType.KBytes, TgEnumFileSizeType.MBytes, TgEnumFileSizeType.GBytes, TgEnumFileSizeType.TBytes));
 		filter.Size = AnsiConsole.Ask<uint>(TgLog.GetMarkupString($"{question}:"));
@@ -158,7 +158,7 @@ internal partial class TgMenuHelper
 	private async Task SetFiltersRemoveAsync()
 	{
 		var storageResult = await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuViewFilters, storageResult.Items);
+		var filter = await GetFilterFromEnumerableAsync(TgLocale.MenuStorageViewFilters, storageResult.Items);
 		await BusinessLogicManager.StorageManager.FilterRepository.DeleteAsync(filter);
 		await FiltersViewAsync();
 	}

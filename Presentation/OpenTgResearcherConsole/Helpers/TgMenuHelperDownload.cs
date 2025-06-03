@@ -163,7 +163,7 @@ internal partial class TgMenuHelper
 		{
 			if (long.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var sourceId))
 				return SetupDownloadSourceByIdCore(sourceId);
-			input = TgCommonUtils.ClearTgPeer(input);
+			input = TgDataUtils.ClearTgPeer(input);
 			tgDownloadSettings.SourceVm.Dto.UserName = input;
 			if (!string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
 				return tgDownloadSettings;
@@ -203,7 +203,7 @@ internal partial class TgMenuHelper
 					}
 					catch (Exception ex)
 					{
-						TgLog.MarkupWarning(TgLocale.DirectoryCreateIsException(ex));
+                        CatchException(ex, TgLocale.DirectoryCreateIsException(ex));
 					}
 				}
 			}
@@ -308,7 +308,7 @@ internal partial class TgMenuHelper
 		}
 		catch (Exception ex)
 		{
-			TgLog.MarkupWarning(ex.Message);
+            CatchException(ex);
 			var floodWait = BusinessLogicManager.ConnectClient.Client?.FloodRetryThreshold ?? 60;
 			TgLog.MarkupWarning($"Flood control: waiting {floodWait} seconds");
 			await Task.Delay(floodWait * 1_000);

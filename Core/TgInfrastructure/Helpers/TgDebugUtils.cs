@@ -12,20 +12,20 @@ public static class TgDebugUtils
         // Debug output
         if (!string.IsNullOrEmpty(message))
             Debug.WriteLine(message);
-        Debug.WriteLine($"Exception: {ex.Message}");
+        Debug.WriteLine($"  Exception: {ex.Message}");
         if (ex.InnerException is not null)
-            Debug.WriteLine($"InnerException: {ex.InnerException.Message}");
+            Debug.WriteLine($"  InnerException: {ex.InnerException.Message}");
 
         // File path and line number
-        Debug.WriteLine($"{Environment.NewLine}");
+        Debug.WriteLine($"  {Environment.NewLine}");
         var fileName = TgFileUtils.GetShortFilePath(filePath);
-        Debug.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
-        Debug.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
+        Debug.WriteLine($"  [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
+        Debug.WriteLine($"  [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
 
         // Stack trace
-        Debug.WriteLine($"{Environment.NewLine}");
-        Debug.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
-        Debug.WriteLine($"{ex.StackTrace}{Environment.NewLine}");
+        Debug.WriteLine($"  {Environment.NewLine}");
+        Debug.WriteLine($"  [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
+        Debug.WriteLine($"  {ex.StackTrace}{Environment.NewLine}");
 #endif
     }
 
@@ -34,20 +34,20 @@ public static class TgDebugUtils
     {
 #if DEBUG
         // Debug output
-        Debug.WriteLine($"Exception: {ex.Message}");
+        Debug.WriteLine($"  Exception: {ex.Message}");
         if (ex.InnerException is not null)
-            Debug.WriteLine($"InnerException: {ex.InnerException.Message}");
+            Debug.WriteLine($"  InnerException: {ex.InnerException.Message}");
 
         // File path and line number
-        Debug.WriteLine($"{Environment.NewLine}");
+        Debug.WriteLine($"  {Environment.NewLine}");
         var fileName = TgFileUtils.GetShortFilePath(filePath);
-        Debug.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
-        Debug.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
+        Debug.WriteLine($"  [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
+        Debug.WriteLine($"  [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
 
         // Stack trace
-        Debug.WriteLine($"{Environment.NewLine}");
-        Debug.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
-        Debug.WriteLine($"{ex.StackTrace}{Environment.NewLine}");
+        Debug.WriteLine($"  {Environment.NewLine}");
+        Debug.WriteLine($"  [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
+        Debug.WriteLine($"  {ex.StackTrace}{Environment.NewLine}");
 #endif
     }
 }

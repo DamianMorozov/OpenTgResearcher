@@ -160,17 +160,10 @@ internal partial class TgMenuHelper
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
-#if DEBUG
 			catch (Exception ex)
 			{
-				Debug.WriteLine(ex);
-				Debug.WriteLine(ex.StackTrace);
-#else
-			catch (Exception)
-			{
-				//
-#endif
-			}
+                TgDebugUtils.WriteExceptionToDebug(ex);
+            }
 		}
 		// Update message
 		async Task UpdateStateMessageThreadAsync(long sourceId, int messageId, string message, bool isStartTask, int threadNumber)
@@ -204,17 +197,10 @@ internal partial class TgMenuHelper
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
-#if DEBUG
 			catch (Exception ex)
 			{
-				Debug.WriteLine(ex);
-				Debug.WriteLine(ex.StackTrace);
-#else
-			catch (Exception)
-			{
-				//
-#endif
-			}
+                TgDebugUtils.WriteExceptionToDebug(ex);
+            }
 		}
 	}
 
@@ -348,12 +334,12 @@ internal partial class TgMenuHelper
 	private static string GetStatus(Stopwatch sw, long count, long current) =>
 		count is 0 && current is 0
 			? $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | "
-			: $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | {TgCommonUtils.CalcSourceProgress(count, current):#00.00} % | {TgCommonUtils.GetLongString(current)} / {TgCommonUtils.GetLongString(count)}";
+			: $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | {TgDataUtils.CalcSourceProgress(count, current):#00.00} % | {TgDataUtils.GetLongString(current)} / {TgDataUtils.GetLongString(count)}";
 
 	private static string GetStatus(long count, long current) =>
 		count is 0 && current is 0
 			? TgLog.GetDtShortStamp()
-			: $"{TgLog.GetDtShortStamp()} | {TgCommonUtils.CalcSourceProgress(count, current):#00.00} % | {TgCommonUtils.GetLongString(current)} / {TgCommonUtils.GetLongString(count)}";
+			: $"{TgLog.GetDtShortStamp()} | {TgDataUtils.CalcSourceProgress(count, current):#00.00} % | {TgDataUtils.GetLongString(current)} / {TgDataUtils.GetLongString(count)}";
 
 #endregion
 }

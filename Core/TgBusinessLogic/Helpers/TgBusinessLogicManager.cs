@@ -78,7 +78,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         {
             foreach (var version in storageResult.Items)
             {
-                TgLogHelper.Instance.WriteLine($" {version.Version:00} | {version.Description}");
+                TgLogHelper.Instance.WriteLine($"  {version.Version:00} | {version.Description}");
             }
         }
     }

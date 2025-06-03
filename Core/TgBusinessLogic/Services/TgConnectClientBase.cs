@@ -137,7 +137,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
 #if DEBUG
         // TgLog to VS Output debugging pane in addition.
-        WTelegram.Helpers.Log = (i, str) => Debug.WriteLine($"{i} | {str}", TgConstants.LogTypeNetwork);
+        WTelegram.Helpers.Log = (i, str) => Debug.WriteLine($"  {i} | {str}", TgConstants.LogTypeNetwork);
 #else
         // Disable logging in Console.
         WTelegram.Helpers.Log = (_, _) => { };
@@ -149,6 +149,17 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		if (Me is null)
 			await LoginUserAsync(isProxyUpdate: false);
 		var userId = Me?.ID ?? 0;
+        
+        if (userId == 0)
+        {
+            var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync();
+            var licenseDto = licenseDtos.OrderByDescending(x => x.ValidTo).FirstOrDefault(x => x.UserId > 0);
+            if (licenseDto is not null && licenseDto.UserId > 0)
+            {
+                userId = licenseDto.UserId;
+            }
+        }
+
 		return userId;
 	}
 
@@ -279,9 +290,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private void WriteBotLogs(int level, string message)
     {
-        BotStreamWriterLogs?.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
+        BotStreamWriterLogs?.WriteLine($"  {DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
 #if DEBUG
-        Debug.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
+        Debug.WriteLine($"  {DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
 #endif
     }
 
@@ -871,7 +882,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #if DEBUG
 		try
 		{
-			Debug.WriteLine($"{nameof(authSentCode)}: {authSentCode}", TgConstants.LogTypeNetwork);
+			Debug.WriteLine($"  {nameof(authSentCode)}: {authSentCode}", TgConstants.LogTypeNetwork);
 		}
 		catch (Exception ex)
 		{
@@ -1531,7 +1542,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		var chats = await StorageManager.SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false);
 		if (!chats.Any())
         {
-            TgLog.WriteLine("No chats found to disable user access.");
+            TgLog.WriteLine("  No chats found to disable user access.");
             return;
         }
 
@@ -2189,7 +2200,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		{
 			await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
 #if DEBUG
-			Debug.WriteLine($"{nameof(DownloadDataCoreAsync)} | {mediaInfo.LocalPathWithNumber}", TgConstants.LogTypeSystem);
+			Debug.WriteLine($"  {nameof(DownloadDataCoreAsync)} | {mediaInfo.LocalPathWithNumber}", TgConstants.LogTypeSystem);
 #endif
             if (Client is null && Bot is not null)
                 Client = Bot.Client;
@@ -2299,8 +2310,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 					Message = message,
 				};
 #if DEBUG
-				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToConsoleString()}");
-				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToConsoleString()}");
+				Debug.WriteLine($"  MessageSaveAsync source: {sourceItem.ToConsoleString()}");
+				Debug.WriteLine($"  MessageSaveAsync message: {messageItem.ToConsoleString()}");
 #endif
 				if (tgDownloadSettings.IsSaveMessages)
 				{
@@ -2531,7 +2542,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			catch (Exception ex)
 			{
 #if DEBUG
-				Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
+				Debug.WriteLine($"  {TgFileUtils.GetShortFilePath(filePath)} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex, TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex.StackTrace);
 #endif

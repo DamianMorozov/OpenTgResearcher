@@ -4,7 +4,6 @@
 
 namespace OpenTgResearcherConsole.Helpers;
 
-[DebuggerDisplay("{ToDebugString()}")]
 internal sealed partial class TgMenuHelper
 {
 	#region Public and internal methods
@@ -51,26 +50,26 @@ internal sealed partial class TgMenuHelper
 	/// <summary> Velopack installer update </summary>
 	public async Task VelopackUpdateAsync(bool isWait, bool isPreview = true)
 	{
-		TgLog.WriteLine("Update started");
+		TgLog.WriteLine("  Update started");
 		await Task.Delay(250);
-		TgLog.WriteLine("Checking updates on the link github.com");
-		var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
+		TgLog.WriteLine("  Checking updates on the link github.com");
+		var mgr = new Velopack.UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
 		// Check for new version
 		try
 		{
 			var newVersion = await mgr.CheckForUpdatesAsync();
 			if (newVersion is null)
 			{
-				TgLog.WriteLine("You are using the latest version of the software");
+				TgLog.WriteLine("  You are using the latest version of the software");
 				return;
 			}
 			// Download new version
-			TgLog.WriteLine("Download new version");
+			TgLog.WriteLine("  Download new version");
 			await mgr.DownloadUpdatesAsync(newVersion);
 			// Install new version and restart app
 			var prompt = AnsiConsole.Prompt(
 				new SelectionPrompt<string>()
-					.Title("Install new version and restart app?")
+					.Title("  Install new version and restart app?")
 					.PageSize(Console.WindowHeight - 5)
 					.MoreChoicesText(TgLocale.MoveUpDown)
 					.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
@@ -81,7 +80,7 @@ internal sealed partial class TgMenuHelper
 		// Cannot perform this operation in an application which is not installed
 		catch (Exception ex)
 		{
-			TgLog.WriteLine(ex.Message);
+            CatchException(ex);
 		}
 
 		if (isWait)

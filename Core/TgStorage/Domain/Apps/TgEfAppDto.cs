@@ -22,6 +22,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 	public partial string LastName { get; set; }
 	[ObservableProperty]
 	public partial bool UseBot { get; set; }
+    public bool UseClient => !UseBot;
 	[ObservableProperty]
 	public partial string BotTokenKey { get; set; }
 

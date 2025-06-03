@@ -4,7 +4,6 @@
 
 namespace OpenTgResearcherConsole.Helpers;
 
-[DebuggerDisplay("{ToDebugString()}")]
 internal sealed partial class TgMenuHelper
 {
 	#region Public and private methods
@@ -57,7 +56,7 @@ internal sealed partial class TgMenuHelper
 	/// <summary> Clear license </summary>
 	internal async Task LicenseClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
-		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseClear))
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuLicenseClear))
 			return;
 
 		await BusinessLogicManager.LicenseService.LicenseClearAsync();
@@ -67,7 +66,7 @@ internal sealed partial class TgMenuHelper
 	/// <summary> Check license </summary>
 	internal async Task LicenseCheckAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
-        if (!isSilent && AskQuestionTrueFalseReturnNegative(TgLocale.MenuLicenseCheckWithUserId))
+        if (!isSilent && AskQuestionYesNoReturnNegative(TgLocale.MenuLicenseCheckWithUserId))
             return;
 
         try
@@ -77,62 +76,64 @@ internal sealed partial class TgMenuHelper
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
             var userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
 
-            foreach (var apiUrl in apiUrls)
-			{
-				try
-				{
-                    var url = $"{apiUrl}License/Get?userId={userId}";
-					var response = await httpClient.GetAsync(url);
-					var checkUrl = $"{TgLocale.MenuLicenseCheckServer}: {apiUrl}";
-					if (!response.IsSuccessStatusCode)
-					{
-						if (!isSilent)
-							await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseResponseStatusCode}: {response.StatusCode}"]);
-						continue;
-					}
+            if (userId == 0 && !isSilent)
+            {
+                AnsiConsole.MarkupLine($"  {TgLocale.TgClientUserId} is {userId}, try to connect client first!");
+                await AskClientConnectAsync(tgDownloadSettings, isSilent);
+                userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
+            }
 
-					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
-					if (licenseDto?.IsConfirmed != true)
-					{
-						if (!isSilent)
-							await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseIsNotCofirmed}: {response.StatusCode}"]);
-						continue;
-					}
+            if (userId > 0)
+            {
+                foreach (var apiUrl in apiUrls)
+                {
+                    try
+                    {
+                        var url = $"{apiUrl}License/Get?userId={userId}";
+                        var response = await httpClient.GetAsync(url);
+                        var checkUrl = $"{TgLocale.MenuLicenseCheckServer}: {apiUrl}";
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            if (!isSilent)
+                                await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseResponseStatusCode}: {response.StatusCode}"]);
+                            continue;
+                        }
 
-					// Updating an existing license or creating a new license
-					await BusinessLogicManager.LicenseService.LicenseUpdateAsync(licenseDto);
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+                        if (licenseDto?.IsConfirmed != true)
+                        {
+                            if (!isSilent)
+                                await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseIsNotCofirmed}: {response.StatusCode}"]);
+                            continue;
+                        }
 
-					if (!isSilent)
-						await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, TgLocale.MenuLicenseUpdatedSuccessfully]);
-					else
-						await BusinessLogicManager.LicenseService.LicenseActivateAsync();
-					return;
-				}
-				catch (Exception ex)
-				{
-#if DEBUG
-					Debug.WriteLine(ex);
-					Debug.WriteLine(ex.StackTrace);
-#endif
-					if (!isSilent)
-					{
-						AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
-						AnsiConsole.WriteLine(ex.Message);
-					}
-				}
-			}
-			if (!isSilent)
-				await LicenseShowInfoAsync(tgDownloadSettings, []);
-		}
+                        // Updating an existing license or creating a new license
+                        await BusinessLogicManager.LicenseService.LicenseUpdateAsync(licenseDto);
+
+                        if (!isSilent)
+                            await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, TgLocale.MenuLicenseUpdatedSuccessfully]);
+                        else
+                            await BusinessLogicManager.LicenseService.LicenseActivateAsync();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        TgDebugUtils.WriteExceptionToDebug(ex);
+                        if (!isSilent)
+                        {
+                            AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
+                            AnsiConsole.WriteLine(ex.Message);
+                        }
+                    }
+                }
+                if (!isSilent)
+                    await LicenseShowInfoAsync(tgDownloadSettings, []);
+            }
+        }
 		catch (Exception ex)
 		{
-#if DEBUG
-			Debug.WriteLine(ex);
-			Debug.WriteLine(ex.StackTrace);
-			if (!isSilent)
-				AnsiConsole.WriteLine(ex.Message);
-#endif
+            TgDebugUtils.WriteExceptionToDebug(ex);
 			if (!isSilent)
 			{
 				AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
@@ -145,9 +146,7 @@ internal sealed partial class TgMenuHelper
 		}
 	}
 
-	/// <summary>
-	/// Show license
-	/// </summary>
+	/// <summary> Show license </summary>
 	private async Task LicenseShowInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<string> messages, bool isWait = true)
 	{
 		try
@@ -182,11 +181,8 @@ internal sealed partial class TgMenuHelper
 		}
 		catch (Exception ex)
 		{
-#if DEBUG
-			Debug.WriteLine(ex, TgConstants.LogTypeConsole);
-			Debug.WriteLine(ex.StackTrace);
-#endif
-			AnsiConsole.WriteLine($"Opening error URL: {ex.Message}");
+            TgDebugUtils.WriteExceptionToDebug(ex);
+			AnsiConsole.WriteLine($"  Opening error URL: {ex.Message}");
 		}
 		finally
 		{

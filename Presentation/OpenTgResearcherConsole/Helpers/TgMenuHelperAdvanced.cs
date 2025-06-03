@@ -8,54 +8,63 @@ internal partial class TgMenuHelper
 {
 	#region Public and private methods
 
-	private static TgEnumMenuDownload SetMenuAdvanced()
+	private TgEnumMenuDownload SetMenuAdvanced()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(
-					TgLocale.MenuMainReturn,
-					TgLocale.MenuClearChats,
-					TgLocale.MenuClearAutoDownload,
-					TgLocale.MenuStartAutoDownload,
-					TgLocale.MenuAutoViewEvents,
-					TgLocale.MenuSearchContacts,
-					TgLocale.MenuSearchChats,
-					TgLocale.MenuSearchDialogs,
-					TgLocale.MenuSearchStories,
-					TgLocale.MenuMarkAllMessagesAsRead,
-					TgLocale.MenuViewVersions,
-					TgLocale.MenuViewContacts,
-					TgLocale.MenuViewStories,
-					TgLocale.MenuViewChats
-				));
-		if (prompt.Equals(TgLocale.MenuClearChats))
+        var selectionPrompt = new SelectionPrompt<string>()
+                .Title($"  {TgLocale.MenuSwitchNumber}")
+                .PageSize(Console.WindowHeight - 17)
+                .MoreChoicesText(TgLocale.MoveUpDown)
+                .AddChoices(
+                    TgLocale.MenuMainReturn,
+                    TgLocale.MenuStorageClearChats,
+                    TgLocale.MenuMenuStorageClearAutoDownload,
+                    TgLocale.MenuClientStartAutoDownload,
+                    TgLocale.MenuClientAutoViewEvents,
+                    TgLocale.MenuClientSearchContacts,
+                    TgLocale.MenuClientSearchChats,
+                    TgLocale.MenuClientSearchDialogs,
+                    TgLocale.MenuClientSearchStories,
+                    TgLocale.MenuClientMarkAllMessagesAsRead);
+        // Check paid license
+        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
+        {
+            selectionPrompt.AddChoice(TgLocale.MenuBotAutoViewEvents);
+        }
+        selectionPrompt.AddChoices(
+            TgLocale.MenuStorageViewVersions,
+            TgLocale.MenuStorageViewContacts,
+            TgLocale.MenuStorageViewStories,
+            TgLocale.MenuStorageViewChats);
+
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
+
+		if (prompt.Equals(TgLocale.MenuStorageClearChats))
 			return TgEnumMenuDownload.ClearChats;
-		if (prompt.Equals(TgLocale.MenuClearAutoDownload))
+		if (prompt.Equals(TgLocale.MenuMenuStorageClearAutoDownload))
 			return TgEnumMenuDownload.ClearAutoDownload;
-		if (prompt.Equals(TgLocale.MenuStartAutoDownload))
+		if (prompt.Equals(TgLocale.MenuClientStartAutoDownload))
 			return TgEnumMenuDownload.StartAutoDownload;
-		if (prompt.Equals(TgLocale.MenuAutoViewEvents))
-			return TgEnumMenuDownload.AutoViewEvents;
-		if (prompt.Equals(TgLocale.MenuSearchChats))
+		if (prompt.Equals(TgLocale.MenuClientAutoViewEvents))
+			return TgEnumMenuDownload.ClientAutoViewEvents;
+        if (prompt.Equals(TgLocale.MenuBotAutoViewEvents))
+			return TgEnumMenuDownload.BotAutoViewEvents;
+		if (prompt.Equals(TgLocale.MenuClientSearchChats))
 			return TgEnumMenuDownload.SearchChats;
-		if (prompt.Equals(TgLocale.MenuSearchDialogs))
+		if (prompt.Equals(TgLocale.MenuClientSearchDialogs))
 			return TgEnumMenuDownload.SearchDialogs;
-		if (prompt.Equals(TgLocale.MenuSearchContacts))
+		if (prompt.Equals(TgLocale.MenuClientSearchContacts))
 			return TgEnumMenuDownload.SearchContacts;
-		if (prompt.Equals(TgLocale.MenuSearchStories))
+		if (prompt.Equals(TgLocale.MenuClientSearchStories))
 			return TgEnumMenuDownload.SearchStories;
-		if (prompt.Equals(TgLocale.MenuMarkAllMessagesAsRead))
+		if (prompt.Equals(TgLocale.MenuClientMarkAllMessagesAsRead))
 			return TgEnumMenuDownload.MarkHistoryRead;
-		if (prompt.Equals(TgLocale.MenuViewVersions))
+		if (prompt.Equals(TgLocale.MenuStorageViewVersions))
 			return TgEnumMenuDownload.ViewVersions;
-		if (prompt.Equals(TgLocale.MenuViewContacts))
+		if (prompt.Equals(TgLocale.MenuStorageViewContacts))
 			return TgEnumMenuDownload.ViewContacts;
-		if (prompt.Equals(TgLocale.MenuViewStories))
+		if (prompt.Equals(TgLocale.MenuStorageViewStories))
 			return TgEnumMenuDownload.ViewStories;
-		if (prompt.Equals(TgLocale.MenuViewChats))
+		if (prompt.Equals(TgLocale.MenuStorageViewChats))
 			return TgEnumMenuDownload.ViewChats;
 		return TgEnumMenuDownload.Return;
 	}
@@ -80,8 +89,11 @@ internal partial class TgMenuHelper
 					await RunTaskStatusAsync(tgDownloadSettings, StartAutoDownloadAsync, 
 						isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
 					break;
-				case TgEnumMenuDownload.AutoViewEvents:
-					await RunTaskStatusAsync(tgDownloadSettings, AutoViewEventsAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
+				case TgEnumMenuDownload.ClientAutoViewEvents:
+					await RunTaskStatusAsync(tgDownloadSettings, ClientAutoViewEventsAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
+					break;
+				case TgEnumMenuDownload.BotAutoViewEvents:
+					await RunTaskStatusAsync(tgDownloadSettings, BotAutoViewEventsAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
 					break;
 				case TgEnumMenuDownload.SearchChats:
 					await SearchSourcesAsync(tgDownloadSettings, TgEnumSourceType.Chat);
@@ -132,7 +144,7 @@ internal partial class TgMenuHelper
 	{
 		await ShowTableViewContactsAsync(tgDownloadSettings);
 		var storageResult = await BusinessLogicManager.StorageManager.ContactRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-		var contact = await GetContactFromEnumerableAsync(TgLocale.MenuViewContacts, storageResult.Items);
+		var contact = await GetContactFromEnumerableAsync(TgLocale.MenuStorageViewContacts, storageResult.Items);
 		if (contact.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
@@ -145,7 +157,7 @@ internal partial class TgMenuHelper
 	{
 		await ShowTableViewChatsAsync(tgDownloadSettings);
 		var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-		var chat = await GetChatFromEnumerableAsync(TgLocale.MenuViewChats, storageResult.Items);
+		var chat = await GetChatFromEnumerableAsync(TgLocale.MenuStorageViewChats, storageResult.Items);
 		if (chat.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
@@ -156,7 +168,7 @@ internal partial class TgMenuHelper
 
 	private async Task ClearChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearChats)) return;
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageClearChats)) return;
 
 		await ShowTableViewChatsAsync(tgDownloadSettings);
 		await BusinessLogicManager.StorageManager.SourceRepository.DeleteAllAsync();
@@ -166,7 +178,7 @@ internal partial class TgMenuHelper
 	{
 		await ShowTableViewStoriesAsync(tgDownloadSettings);
 		var storageResult = await BusinessLogicManager.StorageManager.StoryRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-		var story = await GetStoryFromEnumerableAsync(TgLocale.MenuViewChats, storageResult.Items);
+		var story = await GetStoryFromEnumerableAsync(TgLocale.MenuStorageViewChats, storageResult.Items);
 		if (story.Uid != Guid.Empty)
 		{
 			Value = TgEnumMenuMain.Download;
@@ -178,7 +190,7 @@ internal partial class TgMenuHelper
 	private async Task ViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		await ShowTableViewVersionsAsync(tgDownloadSettings);
-		GetVersionFromEnumerable(TgLocale.MenuViewChats, (await BusinessLogicManager.StorageManager.VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
+		GetVersionFromEnumerable(TgLocale.MenuStorageViewChats, (await BusinessLogicManager.StorageManager.VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
 	}
 
 	private async Task MarkHistoryReadAsync(TgDownloadSettingsViewModel tgDownloadSettings) => 
@@ -186,7 +198,7 @@ internal partial class TgMenuHelper
 
 	private async Task ClearAutoDownloadAsync(TgDownloadSettingsViewModel _)
 	{
-		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearAutoDownload)) return;
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuMenuStorageClearAutoDownload)) return;
 
 		var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
@@ -199,7 +211,7 @@ internal partial class TgMenuHelper
 
 	private async Task StartAutoDownloadAsync(TgDownloadSettingsViewModel _)
 	{
-		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStartAutoDownload)) return;
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientStartAutoDownload)) return;
 
 		var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
 		chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
@@ -218,13 +230,23 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	private async Task AutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	private async Task ClientAutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
-		BusinessLogicManager.ConnectClient.IsUpdateStatus = true;
+		BusinessLogicManager.ConnectClient.IsClientUpdateStatus = true;
 		await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
-			tgDownloadSettings.SourceVm.Dto.Count, "Auto view updates is started");
+			tgDownloadSettings.SourceVm.Dto.Count, "Client auto view updates is started");
 		TgLog.TypeAnyKeyForReturn();
-		BusinessLogicManager.ConnectClient.IsUpdateStatus = false;
+		BusinessLogicManager.ConnectClient.IsClientUpdateStatus = false;
+		await Task.CompletedTask;
+	}
+
+	private async Task BotAutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		BusinessLogicManager.ConnectClient.IsBotUpdateStatus = true;
+		await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
+			tgDownloadSettings.SourceVm.Dto.Count, "Bot auto view updates is started");
+		TgLog.TypeAnyKeyForReturn();
+		BusinessLogicManager.ConnectClient.IsBotUpdateStatus = false;
 		await Task.CompletedTask;
 	}
 

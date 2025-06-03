@@ -46,31 +46,32 @@ public static class Program
         tgLog.SetMarkupLine(AnsiConsole.WriteLine);
         tgLog.SetMarkupLineStamp(AnsiConsole.MarkupLine);
         tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
-        tgLog.WriteLine($"{TgConstants.OpenTgResearcherConsole} {tgAppSettings.AppVersion}");
+        tgLog.WriteLine("");
+        tgLog.WriteLine($"  {TgConstants.OpenTgResearcherConsole} {tgAppSettings.AppVersion}");
 
         // Loading Velopack Installer
         LoadingVelopackInstaller(tgLog);
 
-        // Loading License
-        tgLog.WriteLine("Loading license ...");
-        tgMenu.BusinessLogicManager.LicenseService.ActivateDefaultLicense();
+        // Loading license
+        tgLog.WriteLine("  Loading license ...");
+        await tgMenu.BusinessLogicManager.LicenseService.LicenseActivateAsync();
         await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
-        tgLog.WriteLine("Loading license - v");
+        tgLog.WriteLine("  Loading license - v");
 
         // Loading storage
-        tgLog.WriteLine("Loading storage ...");
+        tgLog.WriteLine("  Loading storage ...");
         await Task.Delay(250);
         await tgMenu.BusinessLogicManager.CreateAndUpdateDbAsync();
         await tgMenu.SetStorageVersionAsync();
-        tgLog.WriteLine("Loading storage - v");
+        tgLog.WriteLine("  Loading storage - v");
 
         // Loading TG Connection
-        if (File.Exists(TgFileUtils.FileTgSession))
-        {
-            tgLog.WriteLine("Loading connection ...");
-            await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
-            tgLog.WriteLine("Loading connection - v");
-        }
+        //if (File.Exists(TgFileUtils.FileTgSession))
+        //{
+        //    tgLog.WriteLine("  Loading connection ...");
+        //    await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
+        //    tgLog.WriteLine("  Loading connection - v");
+        //}
 
         // Any key
         tgLog.TypeAnyKeyForReturn();
@@ -80,14 +81,27 @@ public static class Program
             try
             {
                 await tgMenu.ShowTableMainAsync(tgDownloadSettings);
-                var prompt = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
+                var selectionPrompt = new SelectionPrompt<string>()
                     .Title($"  {tgLocale.MenuSwitchNumber}")
                     .PageSize(Console.WindowHeight - 17)
                     .MoreChoicesText(tgLocale.MoveUpDown)
                     .AddChoices(
-                        tgLocale.MenuMainExit, tgLocale.MenuMainApp, tgLocale.MenuMainConnection, tgLocale.MenuMainStorage,
-                        tgLocale.MenuMainFilters, tgLocale.MenuMainDownload, tgLocale.MenuMainAdvanced, tgLocale.MenuMainUpdate, tgLocale.MenuMainLicense));
+                        tgLocale.MenuMainExit,
+                        tgLocale.MenuMainApp,
+                        tgLocale.MenuMainClientConnection);
+                // Check paid license
+                if (tgMenu.BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
+                {
+                    selectionPrompt.AddChoices(tgLocale.MenuMainBotConnection);
+                }
+                selectionPrompt.AddChoices(
+                    tgLocale.MenuMainStorage,
+                    tgLocale.MenuMainFilters,
+                    tgLocale.MenuMainDownload,
+                    tgLocale.MenuMainAdvanced,
+                    tgLocale.MenuMainUpdate,
+                    tgLocale.MenuMainLicense);
+                var prompt = AnsiConsole.Prompt(selectionPrompt);
                 if (prompt.Equals(tgLocale.MenuMainExit))
                     tgMenu.Value = TgEnumMenuMain.Exit;
                 if (prompt.Equals(tgLocale.MenuMainApp))
@@ -95,10 +109,15 @@ public static class Program
                     tgMenu.Value = TgEnumMenuMain.AppSettings;
                     await tgMenu.SetupAppSettingsAsync(tgDownloadSettings);
                 }
-                if (prompt.Equals(tgLocale.MenuMainConnection))
+                if (prompt.Equals(tgLocale.MenuMainClientConnection))
                 {
-                    tgMenu.Value = TgEnumMenuMain.Connection;
-                    await tgMenu.SetupConnectionAsync(tgDownloadSettings);
+                    tgMenu.Value = TgEnumMenuMain.ClientConnection;
+                    await tgMenu.SetupClientConnectionAsync(tgDownloadSettings);
+                }
+                if (prompt.Equals(tgLocale.MenuMainBotConnection))
+                {
+                    tgMenu.Value = TgEnumMenuMain.BotConnection;
+                    await tgMenu.SetupBotConnectionAsync(tgDownloadSettings);
                 }
                 if (prompt.Equals(tgLocale.MenuMainStorage))
                 {
@@ -133,10 +152,7 @@ public static class Program
             }
             catch (Exception ex)
             {
-                tgLog.MarkupLine($"{tgLocale.StatusException}: " + tgLog.GetMarkupString(ex.Message));
-                if (ex.InnerException is not null)
-                    tgLog.MarkupLine($"{tgLocale.StatusInnerException}: " + tgLog.GetMarkupString(ex.InnerException.Message));
-                tgLog.TypeAnyKeyForReturn();
+                tgMenu.CatchException(ex);
             }
         } while (tgMenu.Value is not TgEnumMenuMain.Exit);
     }
@@ -144,20 +160,20 @@ public static class Program
     /// <summary> Loading Velopack Installer </summary>
     private static void LoadingVelopackInstaller(TgLogHelper tgLog)
 	{
-        tgLog.WriteLine("Loading installer ...");
+        tgLog.WriteLine("  Loading installer ...");
         // Velopack installer update
         //await menu.VelopackUpdateAsync(isWait: false, isRelease: true);
         VelopackApp.Build()
 #if WINDOWS
 		.WithBeforeUninstallFastCallback((v) => {
 			// delete / clean up some files before uninstallation
-			tgLog.WriteLine($"Uninstalling the {TgConstants.AppTitleConsole}!");
+			tgLog.WriteLine($"  Uninstalling the {TgConstants.AppTitleConsole}!");
 		})
 #endif
             .OnFirstRun((v) => {
-                tgLog.WriteLine($"Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
+                tgLog.WriteLine($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
             })
             .Run();
-        tgLog.WriteLine("Loading installer - v");
+        tgLog.WriteLine("  Loading installer - v");
     }
 }

@@ -69,9 +69,9 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 
-		TgLog.WriteLine($"{TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
+		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
 		var backupResult = BusinessLogicManager.BackupDbAsync();
-		TgLog.WriteLine($"{TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
+		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
 		TgLog.WriteLine(backupResult.IsSuccess ? TgLocale.MenuStorageBackupSuccess : TgLocale.MenuStorageBackupFailed);
         TgLog.TypeAnyKeyForReturn();
     }
@@ -87,8 +87,8 @@ internal partial class TgMenuHelper
 	private void ClearStorageData()
 	{
 		AnsiConsole.WriteLine(TgLocale.MenuStoragePerformSteps);
-		AnsiConsole.WriteLine($"- {TgLocale.MenuStorageExitProgram}");
-		AnsiConsole.WriteLine($"- {TgLocale.MenuStorageDeleteExistsInfo(TgAppSettings.AppXml.XmlEfStorage)}");
+		AnsiConsole.WriteLine($"  - {TgLocale.MenuStorageExitProgram}");
+		AnsiConsole.WriteLine($"  - {TgLocale.MenuStorageDeleteExistsInfo(TgAppSettings.AppXml.XmlEfStorage)}");
         TgLog.TypeAnyKeyForReturn();
     }
 

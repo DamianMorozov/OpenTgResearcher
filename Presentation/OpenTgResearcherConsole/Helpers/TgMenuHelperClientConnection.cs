@@ -8,7 +8,7 @@ internal partial class TgMenuHelper
 {
 	#region Public and private methods
 
-	private TgEnumMenuClient SetMenuConnection()
+	private TgEnumMenuClient SetMenuClientConnection()
 	{
 		var selectionPrompt = new SelectionPrompt<string>()
 				.Title($"  {TgLocale.MenuSwitchNumber}")
@@ -16,82 +16,80 @@ internal partial class TgMenuHelper
 				.MoreChoicesText(TgLocale.MoveUpDown)
 				.AddChoices(
 					TgLocale.MenuMainReturn,
-					TgLocale.MenuClearConnectionData,
-					TgLocale.MenuRegisterTelegramApp,
-					TgLocale.MenuSetProxy,
+                    TgLocale.MenuClientClearConnectionData,
+                    TgLocale.MenuRegisterTelegramApp,
+                    TgLocale.MenuClientUseClient,
+					TgLocale.MenuClientSetProxy,
 					TgLocale.MenuClientConnect,
 					TgLocale.MenuClientDisconnect);
-        // Check paid license
-        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
-		{
-			selectionPrompt.AddChoice(TgLocale.TgClientUseBot);
-			selectionPrompt.AddChoice(TgLocale.TgClientBotToken);
-		}
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
-		if (prompt.Equals(TgLocale.MenuClearConnectionData))
-			return TgEnumMenuClient.ClearConnectionData;
-		if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
-			return TgEnumMenuClient.RegisterTelegramApp;
-		if (prompt.Equals(TgLocale.MenuSetProxy))
-			return TgEnumMenuClient.SetProxy;
+        if (prompt.Equals(TgLocale.MenuClientClearConnectionData))
+			return TgEnumMenuClient.ClearClientConnectionData;
+        if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
+            return TgEnumMenuClient.RegisterTelegramApp;
+        if (prompt.Equals(TgLocale.MenuClientUseClient))
+            return TgEnumMenuClient.UseClient;
+		if (prompt.Equals(TgLocale.MenuClientSetProxy))
+			return TgEnumMenuClient.ClientSetProxy;
 		if (prompt.Equals(TgLocale.MenuClientConnect))
-			return TgEnumMenuClient.Connect;
+			return TgEnumMenuClient.ClientConnect;
 		if (prompt.Equals(TgLocale.MenuClientDisconnect))
-			return TgEnumMenuClient.Disconnect;
-
-        // Check paid license
-        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
-		{
-			if (prompt.Equals(TgLocale.TgClientUseBot))
-				return TgEnumMenuClient.UseBot;
-			if (prompt.Equals(TgLocale.TgClientBotToken))
-				return TgEnumMenuClient.BotToken;
-		}
+			return TgEnumMenuClient.ClientDisconnect;
 
         return TgEnumMenuClient.Return;
     }
 
-    public async Task SetupConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task SetupClientConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
 	{
 		TgEnumMenuClient menu;
 		do
 		{
-			await ShowTableConnectionAsync(tgDownloadSettings);
-			menu = SetMenuConnection();
+			await ShowTableClientConnectionAsync(tgDownloadSettings);
+			menu = SetMenuClientConnection();
 			switch (menu)
 			{
-				case TgEnumMenuClient.ClearConnectionData:
-					await ClientClearAsync(tgDownloadSettings);
+                case TgEnumMenuClient.ClearClientConnectionData:
+					await ClearClientConnectionDataAsync(tgDownloadSettings);
 					break;
-				case TgEnumMenuClient.RegisterTelegramApp:
-					await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
-					break;
-				case TgEnumMenuClient.SetProxy:
+                case TgEnumMenuClient.RegisterTelegramApp:
+                    await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
+                    break;
+                case TgEnumMenuClient.UseClient:
+                    await UseClientAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuClient.ClientSetProxy:
 					await SetupClientProxyAsync();
-					await AskClientConnectAsync(tgDownloadSettings);
+					await AskClientConnectAsync(tgDownloadSettings, isSilent: false);
+                    break;
+				case TgEnumMenuClient.ClientConnect:
+                    await AskClientConnectAsync(tgDownloadSettings, isSilent: false);
 					break;
-				case TgEnumMenuClient.Connect:
-					TgLog.WriteLine("TG client connect ...");
-					await ConnectClientAsync(tgDownloadSettings, isSilent: false);
-					TgLog.WriteLine("TG client connect success");
-					break;
-				case TgEnumMenuClient.Disconnect:
+				case TgEnumMenuClient.ClientDisconnect:
 					await DisconnectClientAsync(tgDownloadSettings);
 					break;
-                case TgEnumMenuClient.UseBot:
-                    await ClientUseBotAsync(tgDownloadSettings);
-                    break;
-                case TgEnumMenuClient.BotToken:
-                    await ClientBotTokenAsync(tgDownloadSettings);
-                    break;
                 case TgEnumMenuClient.Return:
 					break;
 			}
 		} while (menu is not TgEnumMenuClient.Return);
 	}
 
-	private async Task<TgEfProxyEntity> AddOrUpdateProxyAsync()
+    public async Task UseClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        var useClient = AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient);
+        await BusinessLogicManager.StorageManager.AppRepository.SetUseClientAsync(useClient);
+    }
+
+    public async Task ClearClientConnectionDataAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientClearConnectionData)) return;
+
+        await ShowTableClientConnectionAsync(tgDownloadSettings);
+        await BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
+        await BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+    }
+
+    private async Task<TgEfProxyEntity> AddOrUpdateProxyAsync()
 	{
 		var prompt = AnsiConsole.Prompt(
 			new SelectionPrompt<string>()
@@ -116,9 +114,9 @@ internal partial class TgMenuHelper
 		proxy = (await BusinessLogicManager.StorageManager.ProxyRepository.GetAsync(
 			new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false)).Item;
 
-		var app = (await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
-		app.ProxyUid = proxy.Uid;
-		await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(app);
+		var appEntity = (await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
+		appEntity.ProxyUid = proxy.Uid;
+		await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
 
 		return proxy;
 	}
@@ -225,78 +223,38 @@ internal partial class TgMenuHelper
 		}
 	}
 
-	private async Task AskClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	private async Task AskClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect)) return;
-		
-		await ConnectClientAsync(tgDownloadSettings, isSilent: false);
+
+        TgLog.WriteLine("  TG client connect ...");
+        await ConnectClientAsync(tgDownloadSettings, isSilent);
+        TgLog.WriteLine("  TG client connect success");
 	}
 
 	public async Task ConnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
 		if (!isSilent)
-			await ShowTableConnectionAsync(tgDownloadSettings);
-		var app = (await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync()).Item;
-		var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(app.ProxyUid);
+			await ShowTableClientConnectionAsync(tgDownloadSettings);
+		var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+		var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
 		var proxy = proxyResult.Item;
-		await BusinessLogicManager.ConnectClient.ConnectSessionConsoleAsync(ConfigClientConsole, proxy);
+		await BusinessLogicManager.ConnectClient.ConnectClientConsoleAsync(ConfigClientConsole, proxy);
 		if (!isSilent)
 		{
 			if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
 				TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
 			else
 				TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
-		}
-		if (!isSilent)
-		    Console.ReadKey();
-	}
-
-	public async Task DisconnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-	{
-		await ShowTableConnectionAsync(tgDownloadSettings);
-		await BusinessLogicManager.ConnectClient.DisconnectAsync();
-	}
-
-	public async Task ClientClearAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-	{
-		if (AskQuestionYesNoReturnNegative(TgLocale.MenuClearConnectionData)) return;
-
-		await ShowTableConnectionAsync(tgDownloadSettings);
-		await BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
-		await BusinessLogicManager.ConnectClient.DisconnectAsync();
-	}
-
-	public async Task ClientUseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-	{
-		// Check paid license
-		if (!BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense()) return;
-
-        var useBot = AskQuestionYesNoReturnPositive(TgLocale.TgClientUseBot);
-
-		var storageResult = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync();
-		if (storageResult.IsExists)
-		{
-			storageResult.Item.UseBot = useBot;
-			await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(storageResult.Item);
-		}
-	}
-
-	public async Task ClientBotTokenAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-	{
-        // Check paid license
-        if (!BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense()) return;
-
-        var input = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TgClientBotToken}:"));
-		if (!string.IsNullOrEmpty(input))
-		{
-            var storageResult = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync();
-            if (storageResult.IsExists)
-            {
-                storageResult.Item.BotTokenKey = input;
-                await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(storageResult.Item);
-            }
+            TgLog.TypeAnyKeyForReturn();
         }
-    }
+	}
+
+    public async Task DisconnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+	{
+		await ShowTableClientConnectionAsync(tgDownloadSettings);
+		await BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+	}
 
     #endregion
 }

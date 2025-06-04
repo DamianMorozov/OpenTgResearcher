@@ -97,7 +97,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		ConnectionDt = string.Empty;
 		ConnectionMsg = string.Empty;
 		Exception.Default();
-        await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync();
+        await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 		IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
 	}
 

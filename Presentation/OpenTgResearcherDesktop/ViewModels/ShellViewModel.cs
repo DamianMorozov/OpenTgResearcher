@@ -68,7 +68,7 @@ public partial class ShellViewModel : ObservableRecipient
 			Selected = selectedItem;
 		}
 		// App version + Storage version + License
-		AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+		AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		StorageVersion = $"{TgResourceExtensions.GetStorage()} {TgAppSettingsHelper.Instance.StorageVersion}";
 		if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
 			License = App.BusinessLogicManager.LicenseService.CurrentLicense.Description;
@@ -128,7 +128,7 @@ public partial class ShellViewModel : ObservableRecipient
             await vm.OnNavigatedToAsync(_eventArgs);
             if (vm.IsClientConnected)
             {
-                await App.BusinessLogicManager.ConnectClient.DisconnectAsync();
+                await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
             }
         });
 	}

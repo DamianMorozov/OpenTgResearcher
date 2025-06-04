@@ -20,12 +20,12 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxPackageDir>c:\OpenTgResearcher\Releases\Desktop-AppPackages\</AppxPackageDir>
+    <AppxPackageDir>D:\OpenTgResearcher\Releases\Desktop-AppPackages\</AppxPackageDir>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Auto</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <AppInstallerUri>c:\OpenTgResearcher\Releases\</AppInstallerUri>
+    <AppInstallerUri>D:\OpenTgResearcher\Releases\</AppInstallerUri>
     <PackageCertificateThumbprint>1B8946F76760ABE06A8156673BEB4671213357E7</PackageCertificateThumbprint>
   </PropertyGroup>
 

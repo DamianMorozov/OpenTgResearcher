@@ -150,7 +150,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 		
 		// Update connection buttons
-		await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync();
+		await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 		IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
 
 		// Set app client state
@@ -193,12 +193,9 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		{
 			Exception.Default();
 			DataRequest = string.Empty;
-			//if (!UseBot)
-				await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
-			//else
-			//	await BusinessLogicManager.ConnectClient.ConnectBotDesktopAsync(BotTokenKey, ApiId, ApiHash, ApplicationData.Current.LocalFolder.Path);
-		}
-		catch (Exception ex)
+			await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
+        }
+        catch (Exception ex)
 		{
 			Exception.Set(ex);
 			TgLogUtils.LogFatal(ex);
@@ -212,14 +209,14 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task ClientDisconnectAsync() => await ContentDialogAsync(App.BusinessLogicManager.ConnectClient.DisconnectAsync, TgResourceExtensions.AskClientDisconnect());
+	private async Task ClientDisconnectAsync() => await ContentDialogAsync(App.BusinessLogicManager.ConnectClient.DisconnectClientAsync, TgResourceExtensions.AskClientDisconnect());
 
 	private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 
 	private async Task AppLoadCoreAsync()
 	{
-		var storageResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
-		AppEntity = storageResult.IsExists ? storageResult.Item : new();
+		var appResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
+		AppEntity = appResult.IsExists ? appResult.Item : new();
 
 		await ReloadUiAsync();
 	}

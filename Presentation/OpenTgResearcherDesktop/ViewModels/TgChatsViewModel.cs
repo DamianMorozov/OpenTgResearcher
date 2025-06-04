@@ -194,7 +194,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat);
 			//await BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
 			await LoadDataStorageCoreAsync();

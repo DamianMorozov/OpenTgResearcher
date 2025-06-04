@@ -30,7 +30,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         : base(settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
     {
         // App version + Storage version + License
-        AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+        AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
         // Commands
         ContinueCommand = new RelayCommand(ContinueAction);
     }
@@ -123,6 +123,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Loading license </summary>
     public async Task LoadingLicenseAsync()
     {
         try

@@ -76,7 +76,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	{
 		await LoadDataAsync(async () => {
 			IsDownloading = true;
-			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 			var entity = Dto.GetNewEntity();
 			DownloadSettings.SourceVm.Fill(entity);
 			DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
@@ -96,7 +96,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
 	private async Task StopDownloadingCoreAsync()
 	{
-		if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+		if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         App.BusinessLogicManager.ConnectClient.SetForceStopDownloading();
 	}
 

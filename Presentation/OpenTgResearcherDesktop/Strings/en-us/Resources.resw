@@ -272,7 +272,7 @@
     <value>"https://dotnet.microsoft.com/en-us/download/dotnet/9.0"</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsRegisterTelegram.Content" xml:space="preserve">
-    <value>Register Telegram app</value>
+    <value>Register Telegram app (open web-site)</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsRegisterTelegram.Tag" xml:space="preserve">
     <value>"https://my.telegram.org/apps"</value>

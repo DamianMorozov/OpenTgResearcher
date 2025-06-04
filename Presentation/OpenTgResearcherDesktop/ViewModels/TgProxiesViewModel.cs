@@ -70,7 +70,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 	private async Task UpdateOnlineCoreAsync()
 	{
 		await LoadDataAsync(async () => {
-			if (!await App.BusinessLogicManager.ConnectClient.CheckClientIsReadyAsync()) return;
+			if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Story);
 			await LoadDataStorageCoreAsync();
 		});

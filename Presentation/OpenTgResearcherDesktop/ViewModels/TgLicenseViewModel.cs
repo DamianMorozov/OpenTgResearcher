@@ -35,11 +35,11 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgLicenseViewModel))
 	{
-		AppVersionShort = $"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+		AppVersionShort = $"v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";
 		AppVersionTitle =
 			$"{TgConstants.OpenTgResearcherDesktop} " +
-			$"v{TgCommonUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+			$"v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		// Commands
 		LicenseShowInfoCommand = new AsyncRelayCommand(LicenseShowInfoAsync);
 		LicenseClearCommand = new AsyncRelayCommand(LicenseClearAsync);

@@ -1,7 +1,7 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgFileUtils = TgInfrastructure.Utils.TgFileUtils;
+using TgFileUtils = TgInfrastructure.Helpers.TgFileUtils;
 
 namespace OpenTgResearcherDesktop.Helpers;
 
@@ -174,6 +174,8 @@ public static class TgLogUtils
         File.AppendAllText(_startupLog, $"{message}{Environment.NewLine}");
         File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
         File.AppendAllText(_startupLog, $"{ex.StackTrace}{Environment.NewLine}");
+
+        TgDebugUtils.WriteExceptionToDebug(ex, message, filePath, lineNumber, memberName);
     }
 
     #endregion

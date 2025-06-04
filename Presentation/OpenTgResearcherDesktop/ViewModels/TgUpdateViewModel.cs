@@ -59,7 +59,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 			//// Install new version and restart app
 			//var prompt = AnsiConsole.Prompt(
 			//	new SelectionPrompt<string>()
-			//		.Title("Install new version and restart app?")
+			//		.Title("  Install new version and restart app?")
 			//		.PageSize(Console.WindowHeight - 5)
 			//		.MoreChoicesText(TgLocale.MoveUpDown)
 			//		.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));

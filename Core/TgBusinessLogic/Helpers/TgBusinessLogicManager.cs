@@ -7,11 +7,10 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
 {
     #region Public and private fields, properties, constructor
 
+    private ILifetimeScope Scope { get; } = default!;
     public ITgStorageManager StorageManager { get; private set; } = default!;
     public ITgLicenseService LicenseService { get; private set; } = default!;
     public ITgConnectClient ConnectClient { get; private set; } = default!;
-
-    private ILifetimeScope Scope { get; }
 
     public TgBusinessLogicManager() : base()
     {

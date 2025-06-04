@@ -35,7 +35,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 	protected TgEfContextBase()
 	{
 #if DEBUG
-		Debug.WriteLine($"  {nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+		Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif
 	}
 
@@ -44,7 +44,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 	protected TgEfContextBase(DbContextOptions options) : base(options)
 	{
 #if DEBUG
-		Debug.WriteLine($"  {nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+		Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif
 	}
 
@@ -53,7 +53,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 	protected TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options)
 	{
 #if DEBUG
-		Debug.WriteLine($"  {nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+		Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif
 	}
 
@@ -164,7 +164,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 		LoggerFactory factory = new();
 		optionsBuilder
 #if DEBUG
-			.LogTo(message => Debug.WriteLine($"  {TgGlobalTools.AppType}{nameof(ContextId)} {ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
+			.LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}{nameof(ContextId)} {ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
 			.EnableDetailedErrors()
 			.EnableSensitiveDataLogging()
 #endif

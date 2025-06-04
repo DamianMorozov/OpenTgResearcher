@@ -10,10 +10,10 @@ internal sealed partial class TgMenuHelper
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
     {
         if (!string.IsNullOrEmpty(message))
-            TgLog.MarkupLine(TgLog.GetMarkupString(message));
-        TgLog.MarkupLine($"{TgLocale.StatusException}: " + TgLog.GetMarkupString(ex.Message));
+            TgLog.MarkupLine($"  {TgLog.GetMarkupString(message)}");
+        TgLog.MarkupLine($"  {TgLocale.StatusException}: " + TgLog.GetMarkupString(ex.Message));
         if (ex.InnerException is not null)
-            TgLog.MarkupLine($"{TgLocale.StatusInnerException}: " + TgLog.GetMarkupString(ex.InnerException.Message));
+            TgLog.MarkupLine($"  {TgLocale.StatusInnerException}: " + TgLog.GetMarkupString(ex.InnerException.Message));
 
         TgDebugUtils.WriteExceptionToDebug(ex, message, filePath, lineNumber, memberName);
         TgLog.TypeAnyKeyForReturn();

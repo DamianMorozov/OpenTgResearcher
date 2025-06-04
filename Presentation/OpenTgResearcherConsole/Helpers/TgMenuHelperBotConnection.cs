@@ -123,7 +123,6 @@ internal partial class TgMenuHelper
 		try
 		{
 			await BusinessLogicManager.ConnectClient.ConnectBotConsoleAsync();
-			appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
 
 			if (!isSilent)
 			{
@@ -132,10 +131,7 @@ internal partial class TgMenuHelper
 				else
                 {
                     TgLog.MarkupInfo(TgLocale.TgBotSetupCompleteSuccess);
-                    if (appDto.UseBot && BusinessLogicManager.ConnectClient.Bot is Bot bot)
-                    {
-                        await PrintBotInfoAsync(bot);
-                    }
+                    await PrintBotInfoAsync();
                 }
 				TgLog.TypeAnyKeyForReturn();
 			}
@@ -146,9 +142,8 @@ internal partial class TgMenuHelper
 		}
 	}
 
-    private static async Task PrintBotInfoAsync(Bot bot)
+    private async Task PrintBotInfoAsync()
     {
-        var me = await bot.GetMe();
         var table = new Table()
             .Border(TableBorder.Rounded)
             .Title($"[bold yellow]{TgLocale.FieldBotInfo}[/]")
@@ -156,30 +151,72 @@ internal partial class TgMenuHelper
             .AddColumn($"[bold]{TgLocale.FieldValue}[/]")
             .Expand();
 
-        table.AddRow(TgLocale.FieldUserName, me.Username ?? "-");
-        table.AddRow(TgLocale.FieldId, me.Id.ToString());
-        table.AddRow(TgLocale.FieldAccessHash, me.AccessHash.ToString() ?? "-");
-        table.AddRow(TgLocale.FieldFirstName, me.FirstName ?? "-");
-        table.AddRow(TgLocale.FieldLastName, me.LastName ?? "-");
-        table.AddRow(TgLocale.FieldIsBot, me.IsBot.ToString());
-        table.AddRow(TgLocale.FieldIsPremium, me.IsPremium.ToString());
-        table.AddRow(TgLocale.FieldAddedToAttachmentMenu, me.AddedToAttachmentMenu.ToString());
-        table.AddRow(TgLocale.FieldCanConnectToBusiness, me.CanConnectToBusiness.ToString());
-        table.AddRow(TgLocale.FieldCanJoinGroups, me.CanJoinGroups.ToString());
-        table.AddRow(TgLocale.FieldCanReadAllGroupMessages, me.CanReadAllGroupMessages.ToString());
-        table.AddRow(TgLocale.FieldHasMainWebApp, me.HasMainWebApp.ToString());
-        table.AddRow(TgLocale.FieldSupportsInlineQueries, me.SupportsInlineQueries.ToString());
-
-        if (me.TLUser is not null)
+        // Ensure that the BotInfoDto is populated before printing
+        if (BusinessLogicManager.ConnectClient.BotInfoDto is null)
         {
-            table.AddRow("[grey]--- TLUser ---[/]", "");
-            table.AddRow(TgLocale.FieldIsActive, me.TLUser.IsActive.ToString());
-            table.AddRow(TgLocale.FieldLastSeenAgo, TgDtUtils.FormatLastSeenAgo(me.TLUser.LastSeenAgo));
-            table.AddRow(TgLocale.FieldMainUsername, me.TLUser.MainUsername ?? "-");
-            table.AddRow(TgLocale.FieldBotActiveUsers, me.TLUser.bot_active_users.ToString() ?? "-");
-            table.AddRow(TgLocale.FieldBotInfoVersion, me.TLUser.bot_info_version.ToString() ?? "-");
-            table.AddRow(TgLocale.FieldBotInlinePlaceholder, me.TLUser.bot_inline_placeholder ?? "-");
-            table.AddRow(TgLocale.FieldFlags, string.Join(',', me.TLUser.flags, me.TLUser.flags2));
+            var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (appDto.UseBot && BusinessLogicManager.ConnectClient.Bot is Bot bot)
+            {
+                var me = await bot.GetMe();
+                var botInfoNew = new TgBotInfoDto()
+                {
+                    Username = me.Username ?? "-",
+                    Id = me.Id.ToString(),
+                    AccessHash = me.AccessHash.ToString() ?? "-",
+                    FirstName = me.FirstName ?? "-",
+                    LastName = me.LastName ?? "-",
+                    IsBot = me.IsBot.ToString(),
+                    IsPremium = me.IsPremium.ToString(),
+                    AddedToAttachmentMenu = me.AddedToAttachmentMenu.ToString(),
+                    CanConnectToBusiness = me.CanConnectToBusiness.ToString(),
+                    CanJoinGroups = me.CanJoinGroups.ToString(),
+                    CanReadAllGroupMessages = me.CanReadAllGroupMessages.ToString(),
+                    HasMainWebApp = me.HasMainWebApp.ToString(),
+                    SupportsInlineQueries = me.SupportsInlineQueries.ToString()
+                };
+                if (me.TLUser is not null)
+                {
+                    botInfoNew.IsTlUser = true;
+                    botInfoNew.IsActive = me.TLUser.IsActive.ToString();
+                    botInfoNew.LastSeenAgo = TgDtUtils.FormatLastSeenAgo(me.TLUser.LastSeenAgo);
+                    botInfoNew.MainUsername = me.TLUser.MainUsername ?? "-";
+                    botInfoNew.BotActiveUsers = me.TLUser.bot_active_users.ToString() ?? "-";
+                    botInfoNew.BotInfoVersion = me.TLUser.bot_info_version.ToString() ?? "-";
+                    botInfoNew.BotInlinePlaceholder = me.TLUser.bot_inline_placeholder ?? "-";
+                    botInfoNew.Flags = string.Join(',', me.TLUser.flags, me.TLUser.flags2);
+                }
+                BusinessLogicManager.ConnectClient.SetBotInfoDto(botInfoNew);
+            }
+        }
+
+        // Print the bot information table
+        if (BusinessLogicManager.ConnectClient.BotInfoDto is { } botInfoDto)
+        {
+            table.AddRow(TgLocale.FieldUserName, botInfoDto.Username);
+            table.AddRow(TgLocale.FieldId, botInfoDto.Id);
+            table.AddRow(TgLocale.FieldAccessHash, botInfoDto.AccessHash);
+            table.AddRow(TgLocale.FieldFirstName, botInfoDto.FirstName);
+            table.AddRow(TgLocale.FieldLastName, botInfoDto.LastName);
+            table.AddRow(TgLocale.FieldIsBot, botInfoDto.IsBot);
+            table.AddRow(TgLocale.FieldIsPremium, botInfoDto.IsPremium);
+            table.AddRow(TgLocale.FieldAddedToAttachmentMenu, botInfoDto.AddedToAttachmentMenu);
+            table.AddRow(TgLocale.FieldCanConnectToBusiness, botInfoDto.CanConnectToBusiness);
+            table.AddRow(TgLocale.FieldCanJoinGroups, botInfoDto.CanJoinGroups);
+            table.AddRow(TgLocale.FieldCanReadAllGroupMessages, botInfoDto.CanReadAllGroupMessages);
+            table.AddRow(TgLocale.FieldHasMainWebApp, botInfoDto.HasMainWebApp);
+            table.AddRow(TgLocale.FieldSupportsInlineQueries, botInfoDto.SupportsInlineQueries);
+
+            if (botInfoDto.IsTlUser)
+            {
+                table.AddRow("[grey]--- TLUser ---[/]", "");
+                table.AddRow(TgLocale.FieldIsActive, botInfoDto.IsActive);
+                table.AddRow(TgLocale.FieldLastSeenAgo, botInfoDto.LastSeenAgo);
+                table.AddRow(TgLocale.FieldMainUsername, botInfoDto.MainUsername);
+                table.AddRow(TgLocale.FieldBotActiveUsers, botInfoDto.BotActiveUsers);
+                table.AddRow(TgLocale.FieldBotInfoVersion, botInfoDto.BotInfoVersion);
+                table.AddRow(TgLocale.FieldBotInlinePlaceholder, botInfoDto.BotInlinePlaceholder);
+                table.AddRow(TgLocale.FieldFlags, botInfoDto.Flags);
+            }
         }
 
         AnsiConsole.Write(table);

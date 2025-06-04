@@ -81,14 +81,13 @@ public sealed class TgLocaleHelper : ObservableObject
 
     #region Download
 
-    public string MenuMenuStorageClearAutoDownload => "MenuStorage - Clear automatically updated chats (reset auto update field)";
+    public string MenuClientStartAutoDownload => "Client - Start downloading automatically updated chats";
     public string MenuRegisterTelegramApp => "Register Telegram App (open web-site)";
     public string MenuRegisterTelegramBot => "Register Telegram Bot (open web-site)";
     public string MenuSaveSettings => "Save settings";
-    public string MenuClientStartAutoDownload => "Client - Start downloading automatically updated chats";
+    public string MenuStorageResetAutoDownload => "Storage - Reset automatically updated chats (reset auto update field)";
 	public string MenuBotAutoViewEvents => "Bot - Auto view events";
 	public string MenuBotClearConnectionData => "Clear bot connection data";
-	public string MenuStorageClearChats => "MenuStorage - Clear all chats";
 	public string MenuClientAutoViewEvents => "Client - Auto view events";
 	public string MenuClientClearConnectionData => "Clear client connection data";
 	public string MenuClientMarkAllMessagesAsRead => "Client - Mark all messages as read";
@@ -113,6 +112,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadUserAccess => "User access";
 	public string MenuManualDownload => "Manual download";
 	public string MenuMarkAsRead => "Mark as read";
+	public string MenuStorageClearChats => "Storage - Clear all chats";
 	public string MenuStorageViewChats => "Storage - View chats";
 	public string MenuStorageViewContacts => "Storage - View contacts";
 	public string MenuStorageViewFilters => "Storage - View filters";

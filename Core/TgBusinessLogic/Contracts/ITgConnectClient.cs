@@ -12,6 +12,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public TgExceptionViewModel ProxyException { get; set; }
 	public WTelegram.Client? Client { get; set; }
     public WTelegram.Bot? Bot { get; }
+    public TgBotInfoDto? BotInfoDto { get; }
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
 	public Dictionary<long, TL.ChatBase> DicChatsAll { get; }
@@ -55,4 +56,5 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 
     public Task<bool> CheckClientConnectionReadyAsync();
     public Task<bool> CheckBotConnectionReadyAsync();
+    public void SetBotInfoDto(TgBotInfoDto botInfoDto);
 }

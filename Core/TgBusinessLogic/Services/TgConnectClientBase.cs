@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgBusinessLogic.Helpers;
+
 using TL;
 
 namespace TgBusinessLogic.Services;
@@ -15,6 +17,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	private static TgLogHelper TgLog => TgLogHelper.Instance;
 	public WTelegram.Client? Client { get; set; } = default!;
     public WTelegram.Bot? Bot { get; private set; } = default!;
+    public TgBotInfoDto? BotInfoDto { get; private set; } = default!;
     public StreamWriter? BotStreamWriterLogs { get; private set; } = default!;
     public TgExceptionViewModel ClientException { get; set; } = default!;
     public TgExceptionViewModel ProxyException { get; set; } = default!;
@@ -137,7 +140,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
 #if DEBUG
         // TgLog to VS Output debugging pane in addition.
-        WTelegram.Helpers.Log = (i, str) => Debug.WriteLine($"  {i} | {str}", TgConstants.LogTypeNetwork);
+        WTelegram.Helpers.Log = (i, str) => Debug.WriteLine($"{i} | {str}", TgConstants.LogTypeNetwork);
 #else
         // Disable logging in Console.
         WTelegram.Helpers.Log = (_, _) => { };
@@ -258,31 +261,36 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
 
         await DisconnectClientAsync();
-        await DisconnectBotAsync();
 
-        // https://github.com/wiz0u/WTelegramBot/blob/master/Examples/ConsoleApp/Program.cs
-        try
+        var isBotConnectionReady = await CheckBotConnectionReadyAsync();
+        if (Bot is null || !isBotConnectionReady)
         {
-            var localFolder = Environment.CurrentDirectory;
-            if (Directory.Exists(localFolder))
+            await DisconnectBotAsync();
+
+            // https://github.com/wiz0u/WTelegramBot/blob/master/Examples/ConsoleApp/Program.cs
+            try
             {
-                BotStreamWriterLogs ??= new StreamWriter($"{localFolder}\\WTelegramBot.log", true, Encoding.UTF8) { AutoFlush = true };
-                WTelegram.Helpers.Log = WriteBotLogs;
-            }
+                var localFolder = Environment.CurrentDirectory;
+                if (Directory.Exists(localFolder))
+                {
+                    BotStreamWriterLogs ??= new StreamWriter($"{localFolder}\\WTelegramBot.log", true, Encoding.UTF8) { AutoFlush = true };
+                    WTelegram.Helpers.Log = WriteBotLogs;
+                }
 
-            var botToken = appDto.BotTokenKey;
-            var apiId = appDto.ApiId;
-            var apiHash = appDto.ApiHash.ToString().Replace("-", "");
-            BotSqlConnection = new Microsoft.Data.Sqlite.SqliteConnection(@"Data Source=WTelegramBot.sqlite");
-            
-            Bot = new WTelegram.Bot(botToken, apiId, apiHash, BotSqlConnection);
-            Bot.OnError += OnErrorBotAsync;
-            Bot.OnMessage += OnMessageBotAsync;
-            Bot.OnUpdate += OnUpdateBotAsync;
-        }
-        catch (Exception ex)
-        {
-            await SetClientExceptionAsync(ex);
+                var botToken = appDto.BotTokenKey;
+                var apiId = appDto.ApiId;
+                var apiHash = appDto.ApiHash.ToString().Replace("-", "");
+                BotSqlConnection = new Microsoft.Data.Sqlite.SqliteConnection(@"Data Source=WTelegramBot.sqlite");
+
+                Bot = new WTelegram.Bot(botToken, apiId, apiHash, BotSqlConnection);
+                Bot.OnError += OnErrorBotAsync;
+                Bot.OnMessage += OnMessageBotAsync;
+                Bot.OnUpdate += OnUpdateBotAsync;
+            }
+            catch (Exception ex)
+            {
+                await SetClientExceptionAsync(ex);
+            }
         }
 
         await AfterClientConnectAsync();
@@ -292,7 +300,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         BotStreamWriterLogs?.WriteLine($"  {DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
 #if DEBUG
-        Debug.WriteLine($"  {DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
+        Debug.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [{"TDIWE!"[level]}] {message}");
 #endif
     }
 
@@ -882,7 +890,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #if DEBUG
 		try
 		{
-			Debug.WriteLine($"  {nameof(authSentCode)}: {authSentCode}", TgConstants.LogTypeNetwork);
+			Debug.WriteLine($"{nameof(authSentCode)}: {authSentCode}", TgConstants.LogTypeNetwork);
 		}
 		catch (Exception ex)
 		{
@@ -899,10 +907,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	//	switch (messageBase)
 	//	{
 	//		case TL.Message message:
-	//			TgLog.MarkupLine($"{GetPeerUpdatedName(message.from_id)} in {GetPeerUpdatedName(message.peer_id)}> {message.message}");
+	//			TgLog.MarkupLine($"  {GetPeerUpdatedName(message.from_id)} in {GetPeerUpdatedName(message.peer_id)}> {message.message}");
 	//			break;
 	//		case MessageService messageService:
-	//			TgLog.MarkupLine($"{GetPeerUpdatedName(messageService.from_id)} in {GetPeerUpdatedName(messageService.peer_id)} [{messageService.action.GetType().Name[13..]}]");
+	//			TgLog.MarkupLine($"  {GetPeerUpdatedName(messageService.from_id)} in {GetPeerUpdatedName(messageService.peer_id)} [{messageService.action.GetType().Name[13..]}]");
 	//			break;
 	//	}
 	//}
@@ -915,7 +923,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	//	{
 	//		long chatId = long.Parse(input);
 	//		TL.ChatBase target = messagesChats.chats[chatId];
-	//		TgLog.MarkupLine($"Type the message into the chat: {target.Title} | {chatId}");
+	//		TgLog.MarkupLine($"  Type the message into the chat: {target.Title} | {chatId}");
 	//		input = Console.ReadLine();
 	//		if (Client is { })
 	//			await Client.SendMessageAsync(target, input);
@@ -2200,7 +2208,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		{
 			await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
 #if DEBUG
-			Debug.WriteLine($"  {nameof(DownloadDataCoreAsync)} | {mediaInfo.LocalPathWithNumber}", TgConstants.LogTypeSystem);
+			Debug.WriteLine($"{nameof(DownloadDataCoreAsync)} | {mediaInfo.LocalPathWithNumber}", TgConstants.LogTypeSystem);
 #endif
             if (Client is null && Bot is not null)
                 Client = Bot.Client;
@@ -2310,8 +2318,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 					Message = message,
 				};
 #if DEBUG
-				Debug.WriteLine($"  MessageSaveAsync source: {sourceItem.ToConsoleString()}");
-				Debug.WriteLine($"  MessageSaveAsync message: {messageItem.ToConsoleString()}");
+				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToConsoleString()}");
+				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToConsoleString()}");
 #endif
 				if (tgDownloadSettings.IsSaveMessages)
 				{
@@ -2472,6 +2480,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public async Task DisconnectBotAsync()
     {
+        // Clear DTO
+        if (BotInfoDto is not null)
+        {
+            BotInfoDto = null;
+        }
+
         // Ensure the connection is closed only after all operations are done
         if (Bot is not null)
         {
@@ -2542,7 +2556,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 			catch (Exception ex)
 			{
 #if DEBUG
-				Debug.WriteLine($"  {TgFileUtils.GetShortFilePath(filePath)} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
+				Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex, TgConstants.LogTypeNetwork);
 				Debug.WriteLine(ex.StackTrace);
 #endif
@@ -2730,6 +2744,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return ClientResultDisconnected();
         return ClientResultConnected();
     }
+
+    public void SetBotInfoDto(TgBotInfoDto botInfoDto) => BotInfoDto = botInfoDto;
 
     #endregion
 }

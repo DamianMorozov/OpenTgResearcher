@@ -208,6 +208,12 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseBot, isUseX: true)), GetMarkup(appDto.UseBot.ToString()));
 
+        // Bot connection
+        table.AddRow(GetMarkup(isBotConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
+                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+        
         // Bot token
         if (!string.IsNullOrEmpty(appDto.BotTokenKey))
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
@@ -228,7 +234,7 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseClient, isUseX: true)), GetMarkup(appDto.UseClient.ToString()));
 
-        // TG client settings
+        // Client connection
         table.AddRow(GetMarkup(isClientConnectionReady
             ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
             : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),

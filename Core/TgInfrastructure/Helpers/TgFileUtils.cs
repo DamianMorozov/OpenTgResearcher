@@ -142,9 +142,9 @@ public static class TgFileUtils
 		}
 		catch (Exception ex)
 		{
-			TgLog.MarkupLine($"Status exception: " + TgLog.GetMarkupString(ex.Message));
+			TgLog.MarkupLine($"  Status exception: " + TgLog.GetMarkupString(ex.Message));
 			if (ex.InnerException is not null)
-				TgLog.MarkupLine($"Status inner exception: " + TgLog.GetMarkupString(ex.InnerException.Message));
+				TgLog.MarkupLine($"  Status inner exception: " + TgLog.GetMarkupString(ex.InnerException.Message));
 			return 0L;
 		}
 	}

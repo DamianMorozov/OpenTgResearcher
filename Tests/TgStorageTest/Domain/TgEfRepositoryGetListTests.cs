@@ -16,7 +16,7 @@ internal sealed class TgEfRepositoryGetListTests : TgDbContextTestsBase
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfStorageResult<TEfEntity> storageResult = await repo.GetListAsync(count, 0);
-			TestContext.WriteLine($"Found {storageResult.Items.Count()} items.");
+			TestContext.WriteLine($"  Found {storageResult.Items.Count()} items.");
 			foreach (var item in storageResult.Items)
 			{
 				var itemFind = await repo.GetItemAsync(item);

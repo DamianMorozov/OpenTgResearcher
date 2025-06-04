@@ -16,7 +16,7 @@ internal sealed class TgEfRepositoryGetFirstTests : TgDbContextTestsBase
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			var item = (await repo.GetListAsync(TgEnumTableTopRecords.Top1, isReadOnly: true, skip: 0)).Items.FirstOrDefault();
-			TestContext.WriteLine($"Found {item?.ToDebugString()}");
+			TestContext.WriteLine($"  Found {item?.ToDebugString()}");
 		});
 	}
 

@@ -16,7 +16,7 @@ internal sealed class TgEfRepositoryGetCountWhereTests : TgDbContextTestsBase
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			var count = await repo.GetCountAsync(TgGlobalTools.WhereUidNotEmpty<TEfEntity>());
-			TestContext.WriteLine($"Found {count} items.");
+			TestContext.WriteLine($"  Found {count} items.");
 		});
 	}
 

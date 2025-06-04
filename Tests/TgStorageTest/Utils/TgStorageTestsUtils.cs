@@ -20,10 +20,10 @@ internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == versionRepository.LastVersion);
-			TestContext.WriteLine($"{nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
+			TestContext.WriteLine($"  {nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
 			var versions = (await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
 				.Items.ToList();
-			TestContext.WriteLine($"Found {versions.Count()} items");
+			TestContext.WriteLine($"  Found {versions.Count()} items");
 		});
 	}
 
@@ -40,10 +40,10 @@ internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == versionRepository.LastVersion);
-			TestContext.WriteLine($"{nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
+			TestContext.WriteLine($"  {nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
 			var versions = (await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
 				.Items.ToList();
-			TestContext.WriteLine($"Found {versions.Count} items");
+			TestContext.WriteLine($"  Found {versions.Count} items");
 		});
 	}
 
@@ -61,10 +61,10 @@ internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == new TgEfVersionEntity().Version);
-			TestContext.WriteLine($"{nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
+			TestContext.WriteLine($"  {nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
 			var versions = (await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
 				.Items.ToList();
-			TestContext.WriteLine($"Found {versions.Count} items");
+			TestContext.WriteLine($"  Found {versions.Count} items");
 			await versionRepository.DeleteNewAsync();
 			await versionRepository.FillTableVersionsAsync();
 		});

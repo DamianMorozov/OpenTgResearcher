@@ -14,25 +14,25 @@ public class TestClass
 	[ClassInitialize]
 	public static void ClassInitialize(TestContext context)
 	{
-		Debug.WriteLine("ClassInitialize");
+		Debug.WriteLine("  ClassInitialize");
 	}
 
 	[ClassCleanup]
 	public static void ClassCleanup()
 	{
-		Debug.WriteLine("ClassCleanup");
+		Debug.WriteLine("  ClassCleanup");
 	}
 
 	[TestInitialize]
 	public void TestInitialize()
 	{
-		Debug.WriteLine("TestInitialize");
+		Debug.WriteLine("  TestInitialize");
 	}
 
 	[TestCleanup]
 	public void TestCleanup()
 	{
-		Debug.WriteLine("TestCleanup");
+		Debug.WriteLine("  TestCleanup");
 	}
 
 	[TestMethod]

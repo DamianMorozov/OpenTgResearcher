@@ -15,7 +15,7 @@ internal sealed partial class TgMenuHelper
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuMainReturn,
+				.AddChoices(TgLocale.MenuReturn,
 					TgLocale.MenuLicenseClear,
 					TgLocale.MenuLicenseCheck,
 					TgLocale.MenuLicenseBuy
@@ -122,8 +122,8 @@ internal sealed partial class TgMenuHelper
                         TgDebugUtils.WriteExceptionToDebug(ex);
                         if (!isSilent)
                         {
-                            AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
-                            AnsiConsole.WriteLine(ex.Message);
+                            AnsiConsole.WriteLine($"  {TgLocale.MenuLicenseRequestError}");
+                            AnsiConsole.WriteLine($"  {ex.Message}");
                         }
                     }
                 }
@@ -136,8 +136,8 @@ internal sealed partial class TgMenuHelper
             TgDebugUtils.WriteExceptionToDebug(ex);
 			if (!isSilent)
 			{
-				AnsiConsole.WriteLine(TgLocale.MenuLicenseRequestError);
-				AnsiConsole.WriteLine(ex.Message);
+				AnsiConsole.WriteLine($"  {TgLocale.MenuLicenseRequestError}");
+				AnsiConsole.WriteLine($"  {ex.Message}");
 			}
 		}
 		finally

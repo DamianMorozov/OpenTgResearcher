@@ -31,9 +31,6 @@ internal partial class TgMenuHelper
     private async Task ShowTableStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageAsync);
 
-    private async Task ShowTableFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsFiltersAsync);
-
     private async Task ShowTableLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseFullInfoAsync);
 
@@ -88,19 +85,13 @@ internal partial class TgMenuHelper
 
     private async Task FillTableRowsMainAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        // App version
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.AppVersion)), GetMarkup(TgAppSettings.AppVersion));
-        // Storage version
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.StorageVersionShort)), GetMarkup(TgAppSettings.StorageVersion));
-        // License version
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.LicenseVersionShort)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.Description));
+        // Application health check
+        var isAppReady = TgAppSettings.AppXml.IsExistsFileSession && TgAppSettings.AppXml.IsExistsEfStorage;
+        table.AddRow(GetMarkup(isAppReady 
+            ? TgLocale.InfoMessage(TgLocale.MenuMainAppHealthCheck) : TgLocale.WarningMessage(TgLocale.MenuMainAppHealthCheck)),
+            GetMarkup(isAppReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
-        // App settings
-        var isReady = TgAppSettings.AppXml.IsExistsFileSession && TgAppSettings.AppXml.IsExistsEfStorage;
-        table.AddRow(GetMarkup(isReady ? TgLocale.InfoMessage(TgLocale.MenuMainApp) : TgLocale.WarningMessage(TgLocale.MenuMainApp)),
-            GetMarkup(isReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-
-        // Storage settings
+        // Storage health check
         table.AddRow(GetMarkup(TgGlobalTools.IsXmlReady
                 ? TgLocale.InfoMessage(TgLocale.MenuMainStorageHealthCheck)
                 : TgLocale.WarningMessage(TgLocale.MenuMainStorageHealthCheck)),
@@ -109,7 +100,7 @@ internal partial class TgMenuHelper
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
         if (!appDto.UseBot)
         {
-            // TG client settings
+            // Client health check
             var clientConnectReady = BusinessLogicManager.ConnectClient.IsReady;
             table.AddRow(GetMarkup(clientConnectReady
                 ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnectionHealthCheck)
@@ -118,7 +109,7 @@ internal partial class TgMenuHelper
         }
         else
         {
-            // TG bot settings
+            // Bot health check
             var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
             table.AddRow(GetMarkup(isBotConnectionReady
                 ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnectionHealthCheck)
@@ -126,18 +117,12 @@ internal partial class TgMenuHelper
                 GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
         }
 
-        // Download settings
-        table.AddRow(GetMarkup(tgDownloadSettings.SourceVm.Dto.IsReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainDownloadHealthCheck)
-            : TgLocale.WarningMessage(TgLocale.MenuMainDownloadHealthCheck)),
-            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-
         await Task.CompletedTask;
     }
 
     private async Task FillTableRowsApplicationAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        // Current dirictory
+        // Current directory
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.DirectoryCurrent)), GetMarkup(Environment.CurrentDirectory));
 
         // Storage
@@ -164,18 +149,17 @@ internal partial class TgMenuHelper
     /// <summary> Storage settings </summary>
     private async Task FillTableRowsStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
+        // Storage
         table.AddRow(GetMarkup(TgGlobalTools.IsXmlReady
                 ? TgLocale.InfoMessage(TgLocale.MenuMainStorage) : TgLocale.WarningMessage(TgLocale.MenuMainStorage)),
             GetMarkup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-        await Task.CompletedTask;
-    }
 
-    /// <summary> Filters settings </summary>
-    private async Task FillTableRowsFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
-    {
+        // Filters
         var filters = (await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuFiltersAllCount)),
             GetMarkup($"{filters.Count()}"));
+
+        await Task.CompletedTask;
     }
 
     /// <summary> License view info </summary>

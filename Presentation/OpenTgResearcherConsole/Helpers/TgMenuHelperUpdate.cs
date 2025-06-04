@@ -15,7 +15,7 @@ internal sealed partial class TgMenuHelper
 				.Title($"  {TgLocale.MenuSwitchNumber}")
 				.PageSize(Console.WindowHeight - 17)
 				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuMainReturn,
+				.AddChoices(TgLocale.MenuReturn,
 					TgLocale.MenuUpdateReleaseCheck,
 					TgLocale.MenuUpdatePreviewCheck
 				));

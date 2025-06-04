@@ -12,5 +12,4 @@ public interface ITgBusinessLogicManager : IDisposable
     (bool IsSuccess, string FileName) BackupDbAsync();
     Task CreateAndUpdateDbAsync();
     Task ShrinkDbAsync();
-    public void VersionsView();
 }

@@ -4,11 +4,12 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.260] - 2025-06-04
+## [0.6.260] - 2025-06-05
 ### Изменено
 - Повышение эффективности высвобождения неуправляемых ресурсов
+- Обновлено меню хранилища в OpenTgResearcherConsole
 ### Добавлено
-- Добавлено меню бота в OpenTgResearcherConsole
+- Добавлено меню подключения бота в OpenTgResearcherConsole
 
 ## [0.6.240] - 2025-05-19
 ### Исправлено

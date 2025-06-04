@@ -11,57 +11,100 @@ public sealed class TgLocaleHelper : ObservableObject
 	private static TgLocaleHelper _instance = null!;
 	public static TgLocaleHelper Instance => LazyInitializer.EnsureInitialized(ref _instance);
 
-	#endregion
+    #endregion
 
-	#region App
-
-	public string AppInfo => "App info";
+    #region Public and private fields, properties, constructor
+    
+    public string AppInfo => "App info";
+    public string Field => "Field";
+    public string FieldAccessHash => "Access hash";
+    public string FieldAddedToAttachmentMenu => "Added to attachment menu";
+    public string FieldBotActiveUsers => "Bot active users";
+    public string FieldBotInfo => "Bot info";
+    public string FieldBotInfoVersion => "Bot info version";
+    public string FieldBotInlinePlaceholder => "Bot inline placeholder";
+    public string FieldCanConnectToBusiness => "Can connect to business";
+    public string FieldCanJoinGroups => "Can join groups";
+    public string FieldCanReadAllGroupMessages => "Can read all group messages";
+    public string FieldCount => "Count";
+    public string FieldDescription => "Description";
+    public string FieldFilterType => "Filter type";
+    public string FieldFirstId => "First ID";
+    public string FieldFirstName => "First name";
+    public string FieldFlags => "Flags";
+    public string FieldFlags2 => "Flags 2";
+    public string FieldHasMainWebApp => "Has main web app";
+    public string FieldHostname => "Host name";
+    public string FieldId => "ID";
+    public string FieldIsActive => "Is active";
+    public string FieldIsBot => "Is bot";
+    public string FieldIsEnabled => "Enabled";
+    public string FieldIsPremium => "Is premium";
+    public string FieldLanguage => "Language";
+    public string FieldLastName => "Last name";
+    public string FieldLastSeenAgo => "Last seen ago";
+    public string FieldMainUsername => "Main username";
+    public string FieldMask => "Mask";
+    public string FieldName => "Name";
+    public string FieldPort => "Port";
+    public string FieldSize => "Size";
+    public string FieldSizeType => "Size type";
+    public string FieldSupportsInlineQueries => "Supports inline queries";
+    public string FieldTitle => "Title";
+    public string FieldType => "Type";
+    public string FieldUserName => "Username";
+    public string FieldValue => "Value";
+    public string FieldVersion => "Version";
+    public string LicenseDescriptionFree => "Free license";
+    public string LicenseDescriptionPaid => "Paid license";
+    public string LicenseDescriptionPremium => "Premium license";
+    public string LicenseTestDescription => "Test license";
+    public string LicenseVersionShort => "License";
+    public string MenuBotConnect => "Connect bot to TG server";
+    public string MenuBotDisconnect => "Disconnect bot from TG server";
+    public string MenuClientApiHash => "API hash";
+    public string MenuClientStartAutoDownload => "Start downloading auto updated chats";
+    public string MenuMainProxies => "Proxies";
+    public string MenuMainSources => "Sources";
+    public string MenuMainVersions => "Versions";
+    public string MenuRegisterTelegramApp => "Register Telegram App (open web-site)";
+    public string MenuRegisterTelegramBot => "Register Telegram Bot (open web-site)";
+    public string MenuSaveSettings => "Save settings";
+    public string MenuStorageDbIsNotFound(string fileName) => $"Storage was not found: {fileName}!";
+    public string MenuStorageDbIsZeroSize(string fileName) => $"Storage is zero size: {fileName}!";
+    public string MenuStorageDeleteExistsInfo(string fileName) => $"Manual delete the file: {fileName}";
+    public string MenuStorageResetAutoDownload => "Reset auto update field for all chats";
+    public string MenuStorageUpgradeUid(string fileName) => $"Update the UID field in the storage: {fileName}!";
+    public string ProxiesUserPassword => "Password";
+    public string ProxiesUserSecret => "Secret";
+    public string ProxyIsConnected => "Proxy is connected";
+    public string ProxyIsDisconnect => "Proxy is disconnected";
+    public string TgBotSetupCompleteError => "The TG bot setup was completed with errors";
+    public string TgBotSetupCompleteSuccess => "The TG bot setup was completed successfully";
 	public string AppName => "Name";
 	public string AppValue => "Value";
 	public string AppVersion => "Application version";
 	public string AppVersionShort => "Application";
+	public string CollectChats => "Collect chats...";
+	public string CollectContacts => "Collect contacts ...";
+	public string CollectDialogs => "Collect dialogs ...";
+	public string CollectStories => "Collect stories ...";
 	public string Exception => "Exception";
 	public string FoundRows => "Found rows";
 	public string From => "from";
 	public string HomeResetToDefault => "Reset to default";
 	public string HomeSaveToXml => "Save to XML";
-	public string MenuLocateStorage => "Specify the path to the EF storage file";
-	public string MenuLocateSession => "Specify the path to the session file";
+	public string MenuAppClearAppData => "Clear application data (recreate config xml file)";
+	public string MenuAppLocateSession => "Specify the path to the session file";
+	public string MenuAppLocateStorage => "Specify the path to the EF storage file";
 	public string MenuAppUseProxy => "Using a proxy";
 	public string MenuAppUseProxyDisable => "Disable proxy";
 	public string MenuAppUseProxyEnable => "Enable proxy";
-	public string MenuException => "Exception";
-	public string Messages => "messages";
-	public string ServerMessage => "Server message";
-	public string SqliteDataSource => "Data Source";
-	public string StorageVersion => "Storage version";
-	public string StorageVersionShort => "Storage";
-	public string UrlOpened => "URL opened";
-
-	#endregion
-
-	#region Advanced
-
-	public string CollectChats => "Collect chats...";
-	public string CollectContacts => "Collect contacts ...";
-	public string CollectDialogs => "Collect dialogs ...";
-	public string CollectStories => "Collect stories ...";
-
-    #endregion
-
-    #region Bot
-
-    public string MenuBotConnect => "Connect bot to TG server";
-    public string MenuBotDisconnect => "Disconnect bot from TG server";
-    public string TgBotSetupCompleteError => "The TG bot setup was completed with errors";
-    public string TgBotSetupCompleteSuccess => "The TG bot setup was completed successfully";
-
-    #endregion
-
-    #region Client
-
-    public string MenuClientApiHash => "API hash";
+	public string MenuBotAutoViewEvents => "Bot - Auto view events";
+	public string MenuBotClearConnectionData => "Clear bot connection data";
 	public string MenuClientApiId => "API ID";
+	public string MenuClientAutoViewEvents => "Auto view events";
+	public string MenuClientClearConnectionData => "Clear client connection data";
 	public string MenuClientComplete => "Complete";
 	public string MenuClientConnect => "Connect client to TG server";
 	public string MenuClientConnectStatus => "Connect status";
@@ -71,31 +114,17 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientIsDisconnected => "Client is disconnected";
 	public string MenuClientIsQuery => "Client is query";
 	public string MenuClientLastName => "Last name";
+	public string MenuClientMarkAllMessagesAsRead => "Mark all messages as read";
 	public string MenuClientPassword => "Password";
 	public string MenuClientPhoneNumber => "Phone number";
 	public string MenuClientProgress => "Progress";
 	public string MenuClientProxy => "Proxy";
-	public string MenuClientVerificationCode => "Verification code";
-
-    #endregion
-
-    #region Download
-
-    public string MenuClientStartAutoDownload => "Start downloading auto updated chats";
-    public string MenuRegisterTelegramApp => "Register Telegram App (open web-site)";
-    public string MenuRegisterTelegramBot => "Register Telegram Bot (open web-site)";
-    public string MenuSaveSettings => "Save settings";
-    public string MenuStorageResetAutoDownload => "Reset auto update field for all chats";
-	public string MenuBotAutoViewEvents => "Bot - Auto view events";
-	public string MenuBotClearConnectionData => "Clear bot connection data";
-	public string MenuClientAutoViewEvents => "Auto view events";
-	public string MenuClientClearConnectionData => "Clear client connection data";
-	public string MenuClientMarkAllMessagesAsRead => "Mark all messages as read";
 	public string MenuClientSearchChats => "Search chats";
 	public string MenuClientSearchContacts => "Search contacts";
 	public string MenuClientSearchDialogs => "Search dialogs";
 	public string MenuClientSearchStories => "Search stories";
 	public string MenuClientSetProxy => "Setup proxy";
+	public string MenuClientVerificationCode => "Verification code";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
@@ -110,26 +139,14 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetSourceFirstIdAuto => "Setup first ID auto";
 	public string MenuDownloadSetSourceFirstIdManual => "Setup first ID manual";
 	public string MenuDownloadUserAccess => "User access";
-	public string MenuManualDownload => "Manual download";
-	public string MenuMarkAsRead => "Mark as read";
-	public string MenuStorageClearChats => "Clear all chats";
-	public string MenuStorageViewChats => "View chats";
-	public string MenuStorageViewContacts => "View contacts";
-	public string MenuStorageViewFilters => "View filters";
-	public string MenuStorageViewStories => "View stories";
-	public string MenuStorageViewVersions => "View versions";
-
-	#endregion
-
-	#region Filters
-
+	public string MenuException => "Exception";
 	public string MenuFiltersAdd => "Add filter";
 	public string MenuFiltersAllCount => "All filters count";
-	public string MenuFiltersEnabledCount => "Enabled filters count";
+	public string MenuFiltersClear => "Clear filters";
 	public string MenuFiltersEdit => "Edit filter";
+	public string MenuFiltersEnabledCount => "Enabled filters count";
 	public string MenuFiltersError => "Error";
 	public string MenuFiltersRemove => "Remove filter";
-	public string MenuFiltersClear => "Clear filters";
 	public string MenuFiltersSetEnabled => "Set filter enabled";
 	public string MenuFiltersSetIsEnabled => "Is enabled";
 	public string MenuFiltersSetMask => "Set mask";
@@ -143,11 +160,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuFiltersSetSizeType => "Set file size type";
 	public string MenuFiltersSetType => "Set filter type";
 	public string MenuFiltersView => "View filters";
-
-	#endregion
-
-	#region License
-
+	public string MenuIsFalse => "False";
+	public string MenuIsTrue => "True";
 	public string MenuLicenseBuy => "Buy license";
 	public string MenuLicenseCheck => "Check current or get test license";
 	public string MenuLicenseCheckServer => "Check license server";
@@ -167,29 +181,13 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseResponseStatusCode => "Status code";
 	public string MenuLicenseUpdatedSuccessfully => "License updated successfully";
 	public string MenuLicenseUserNotLoggedIn => "User is not authorized, try connecting again";
-	public string MenuUserId => "User ID";
-
-	#endregion
-
-	#region Update
-
-	public string MenuUpdatePreviewCheck => "Checking for preview updates";
-	public string MenuUpdateReleaseCheck => "Checking for release updates";
-
-	#endregion
-
-	#region Main menu
-
-    public string MenuMainProxies => "Proxies";
-    public string MenuMainSources => "Sources";
-    public string MenuMainVersions => "Versions";
 	public string MenuMain => "Main menu";
 	public string MenuMainAdvanced => "Advanced";
 	public string MenuMainApp => "Application";
+	public string MenuMainAppHealthCheck => "Application health check";
 	public string MenuMainApps => "Apps";
 	public string MenuMainBotConnection => "Bot connection";
 	public string MenuMainBotConnectionHealthCheck => "Bot connection health check";
-	public string MenuMainClearAppData => "Clear application data";
 	public string MenuMainClientConnection => "Client connection";
 	public string MenuMainClientConnectionHealthCheck => "Client connection health check";
 	public string MenuMainClientDownload => "Client download";
@@ -199,46 +197,48 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainFilters => "Filters";
 	public string MenuMainLicense => "License";
 	public string MenuMainReset => "Reset";
-	public string MenuMainReturn => "Return";
 	public string MenuMainSettings => "Settings";
 	public string MenuMainStop => "Stop";
 	public string MenuMainStorage => "Storage";
 	public string MenuMainStorageHealthCheck => "Storage health check";
 	public string MenuMainUpdate => "Update";
-
-	#endregion
-
-	#region Menu
-
+	public string MenuManualDownload => "Manual download";
+	public string MenuMarkAsRead => "Mark as read";
 	public string MenuNo => "No";
-	public string MenuYes => "Yes";
-	public string MenuSwitchNumber => "Switch menu number";
-	public string MenuIsFalse => "False";
-	public string MenuIsTrue => "True";
-
-	#endregion
-
-	#region Storage
-
+	public string MenuReturn => "Return";
 	public string MenuStorageBackupDirectory => "Backup directory";
 	public string MenuStorageBackupFailed => "Backup storage was failed";
 	public string MenuStorageBackupFile => "Backup file";
 	public string MenuStorageBackupSuccess => "Backup storage was successful";
+	public string MenuStorageClearChats => "Clear all chats";
 	public string MenuStorageDbBackup => "Create backup";
-	public string MenuStorageDbCreateNew => "Create new storage";
 	public string MenuStorageDbClear => "Clear storage data";
-	public string MenuStorageDbUpgradeUid => "Update the UID field";
 	public string MenuStorageExitProgram => "Exit the program";
 	public string MenuStoragePerformSteps => "Perform the following set of steps";
 	public string MenuStorageTablesClear => "Clear tables";
 	public string MenuStorageTablesClearFinished => "Clear tables was finished";
-	public string MenuStorageTablesCompact => "Compact storage";
+	public string MenuStorageTablesCompact => "Compact (shrink) storage";
 	public string MenuStorageTablesCompactFinished => "Compact storage was finished";
-	public string MenuStorageTablesVersionsView => "Versions info";
+	public string MenuStorageViewChats => "View chats";
+	public string MenuStorageViewContacts => "View contacts";
+	public string MenuStorageViewFilters => "View filters";
+	public string MenuStorageViewStories => "View stories";
+	public string MenuStorageViewVersions => "View versions";
+	public string MenuSwitchNumber => "Switch menu number";
+	public string MenuUpdatePreviewCheck => "Checking for preview updates";
+	public string MenuUpdateReleaseCheck => "Checking for release updates";
+	public string MenuUserId => "User ID";
+	public string MenuYes => "Yes";
+	public string Messages => "messages";
+	public string ServerMessage => "Server message";
+	public string SqliteDataSource => "Data Source";
+	public string StorageVersion => "Storage version";
+	public string StorageVersionShort => "Storage";
+	public string UrlOpened => "URL opened";
 
-	#endregion
+    #endregion
 
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
     public string TgDirectoryIsExists => "The directory is exist";
     public string TgDirectoryIsNotExists => "The directory is not exists";
@@ -316,87 +316,10 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TypeTgSourceFirstId => "Type the source first ID";
 	public string WaitDownloadComplete => "Wait download complete";
 	public string WaitDownloadCompleteWithQuit => "Wait download complete (q - quit)";
-
-	#endregion
-
-	#region Public and private fields, properties, constructor
-
 	public string InfoMessage(string message, bool isUseX = false) => !isUseX ? $"[green]v {message}[/]" : $"[green]x {message}[/]";
 	public string LinkWebSite(string linkText, string url) => $"\x1B]8;;{url}\x1B\\{linkText}\x1B]8;;\x1B\\";
 	public string WarningMessage(string message) => $"[red]x {message}[/]";
 	public TgEnumLanguage Language { get; set; } = TgEnumLanguage.Default;
-
-	#endregion
-
-	#region Menu storage
-
-	public string MenuStorageDbIsNotFound(string fileName) => $"Storage was not found: {fileName}!";
-	public string MenuStorageDbIsZeroSize(string fileName) => $"Storage is zero size: {fileName}!";
-	public string MenuStorageDeleteExistsInfo(string fileName) => $"Manual delete the file: {fileName}";
-	public string MenuStorageUpgradeUid(string fileName) => $"Update the UID field in the storage: {fileName}!";
-
-	#endregion
-
-	#region Fields
-
-    public string Field => "Field";
-    public string FieldFilterType => "Filter type";
-    public string FieldHostname=> "Host name";
-    public string FieldIsEnabled => "Enabled";
-    public string FieldMask => "Mask";
-    public string FieldName => "Name";
-    public string FieldPort => "Port";
-    public string FieldSize=> "Size";
-    public string FieldSizeType => "Size type";
-    public string FieldType => "Type";
-    public string FieldUserName => "Username";
-    public string FieldValue => "Value";
-    public string FieldVersion => "Version";
-	public string FieldAccessHash => "Access hash";
-	public string FieldAddedToAttachmentMenu => "Added to attachment menu";
-	public string FieldBotActiveUsers => "Bot active users";
-	public string FieldBotInfo => "Bot info";
-	public string FieldBotInfoVersion => "Bot info version";
-	public string FieldBotInlinePlaceholder => "Bot inline placeholder";
-	public string FieldCanConnectToBusiness => "Can connect to business";
-	public string FieldCanJoinGroups => "Can join groups";
-	public string FieldCanReadAllGroupMessages => "Can read all group messages";
-	public string FieldCount => "Count";
-	public string FieldDescription => "Description";
-	public string FieldFirstId => "First ID";
-	public string FieldFirstName => "First name";
-	public string FieldFlags => "Flags";
-	public string FieldFlags2 => "Flags 2";
-	public string FieldHasMainWebApp => "Has main web app";
-	public string FieldId => "ID";
-	public string FieldIsActive => "Is active";
-	public string FieldIsBot => "Is bot";
-	public string FieldIsPremium => "Is premium";
-	public string FieldLanguage => "Language";
-	public string FieldLastName => "Last name";
-	public string FieldLastSeenAgo => "Last seen ago";
-	public string FieldMainUsername => "Main username";
-	public string FieldSupportsInlineQueries => "Supports inline queries";
-	public string FieldTitle => "Title";
-
-    #endregion
-
-	#region Proxies
-
-    public string ProxiesUserPassword => "Password";
-    public string ProxiesUserSecret => "Secret";
-    public string ProxyIsConnected => "Proxy is connected";
-    public string ProxyIsDisconnect => "Proxy is disconnected";
-
-	#endregion
-
-	#region License
-
-	public string LicenseDescriptionFree => "Free license";
-	public string LicenseDescriptionPaid => "Paid license";
-	public string LicenseDescriptionPremium => "Premium license";
-	public string LicenseTestDescription => "Test license";
-	public string LicenseVersionShort => "License";
 
 	#endregion
 }

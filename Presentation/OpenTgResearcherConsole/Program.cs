@@ -48,6 +48,7 @@ public static class Program
         tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
         tgLog.WriteLine("");
         tgLog.WriteLine($"  {TgConstants.OpenTgResearcherConsole} {tgAppSettings.AppVersion}");
+        tgLog.WriteLine("");
 
         // Loading Velopack Installer
         LoadingVelopackInstaller(tgLog);
@@ -56,24 +57,25 @@ public static class Program
         tgLog.WriteLine("  Loading license ...");
         await tgMenu.BusinessLogicManager.LicenseService.LicenseActivateAsync();
         await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
-        tgLog.WriteLine("  Loading license v");
+        tgLog.WriteLine("  Loading license   v");
 
         // Loading storage
         tgLog.WriteLine("  Loading storage ...");
         await Task.Delay(250);
         await tgMenu.BusinessLogicManager.CreateAndUpdateDbAsync();
         await tgMenu.SetStorageVersionAsync();
-        tgLog.WriteLine("  Loading storage v");
+        tgLog.WriteLine("  Loading storage   v");
 
         // Loading TG Connection
         //if (File.Exists(TgFileUtils.FileTgSession))
         //{
         //    tgLog.WriteLine("  Loading connection ...");
         //    await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
-        //    tgLog.WriteLine("  Loading connection v");
+        //    tgLog.WriteLine("  Loading connection   v");
         //}
 
         // Any key
+        tgLog.WriteLine("");
         tgLog.TypeAnyKeyForReturn();
 
         do
@@ -89,7 +91,6 @@ public static class Program
                         tgLocale.MenuMainExit,
                         tgLocale.MenuMainApp,
                         tgLocale.MenuMainStorage,
-                        tgLocale.MenuMainFilters,
                         tgLocale.MenuMainClientConnection,
                         tgLocale.MenuMainClientDownload,
                         tgLocale.MenuMainAdvanced,
@@ -123,11 +124,6 @@ public static class Program
                 {
                     tgMenu.Value = TgEnumMenuMain.Storage;
                     await tgMenu.SetupStorageAsync(tgDownloadSettings);
-                }
-                if (prompt.Equals(tgLocale.MenuMainFilters))
-                {
-                    tgMenu.Value = TgEnumMenuMain.Filters;
-                    await tgMenu.SetupFiltersAsync(tgDownloadSettings);
                 }
                 if (prompt.Equals(tgLocale.MenuMainClientDownload))
                 {
@@ -174,6 +170,6 @@ public static class Program
                 tgLog.WriteLine($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
             })
             .Run();
-        tgLog.WriteLine("  Loading installer v");
+        tgLog.WriteLine("  Loading installer   v");
     }
 }

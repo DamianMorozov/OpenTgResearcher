@@ -15,7 +15,7 @@ internal partial class TgMenuHelper
                 .PageSize(Console.WindowHeight - 17)
                 .MoreChoicesText(TgLocale.MoveUpDown)
                 .AddChoices(
-                    TgLocale.MenuMainReturn,
+                    TgLocale.MenuReturn,
                     TgLocale.MenuClientStartAutoDownload,
                     TgLocale.MenuClientAutoViewEvents,
                     TgLocale.MenuClientSearchContacts,

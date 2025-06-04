@@ -82,13 +82,13 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public async Task<TgEfContactEntity> GetContactFromEnumerableAsync(string title, IEnumerable<TgEfContactEntity> items)
     {
         items = items.OrderBy(x => x.Id);
-        List<string> list = [TgLocale.MenuMainReturn];
+        List<string> list = [TgLocale.MenuReturn];
         list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
         var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(list));
-        if (!Equals(sourceString, TgLocale.MenuMainReturn))
+        if (!Equals(sourceString, TgLocale.MenuReturn))
         {
             var parts = sourceString.Split('|');
             if (parts.Length > 3)
@@ -104,13 +104,13 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public async Task<TgEfFilterEntity> GetFilterFromEnumerableAsync(string title, IEnumerable<TgEfFilterEntity> items)
     {
         items = items.OrderBy(x => x.Name);
-        List<string> list = [TgLocale.MenuMainReturn];
+        List<string> list = [TgLocale.MenuReturn];
         list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
         var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(list));
-        if (!Equals(sourceString, TgLocale.MenuMainReturn))
+        if (!Equals(sourceString, TgLocale.MenuReturn))
         {
             var parts = sourceString.Split('|');
             if (parts.Length > 3)
@@ -125,13 +125,13 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public async Task<TgEfSourceEntity> GetChatFromEnumerableAsync(string title, IEnumerable<TgEfSourceEntity> items)
     {
         items = items.OrderBy(x => x.UserName).ThenBy(x => x.Title);
-        List<string> list = [TgLocale.MenuMainReturn, TgEfSourceEntity.ToHeaderString()];
+        List<string> list = [TgLocale.MenuReturn, TgEfSourceEntity.ToHeaderString()];
         list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
         var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(list));
-        if (!Equals(sourceString, TgLocale.MenuMainReturn))
+        if (!Equals(sourceString, TgLocale.MenuReturn))
         {
             var parts = sourceString.Split('|');
             var sourceId = parts[0].TrimEnd(' ');
@@ -144,13 +144,13 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public async Task<TgEfStoryEntity> GetStoryFromEnumerableAsync(string title, IEnumerable<TgEfStoryEntity> stories)
     {
         stories = stories.OrderBy(x => x.Id);
-        List<string> list = [TgLocale.MenuMainReturn];
+        List<string> list = [TgLocale.MenuReturn];
         list.AddRange(stories.Select(story => TgLog.GetMarkupString(story.ToConsoleString())));
         var storyString = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(list));
-        if (!Equals(storyString, TgLocale.MenuMainReturn))
+        if (!Equals(storyString, TgLocale.MenuReturn))
         {
             var parts = storyString.Split('|');
             if (parts.Length > 3)
@@ -166,7 +166,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public void GetVersionFromEnumerable(string title, IEnumerable<TgEfVersionEntity> versions)
     {
         List<TgEfVersionEntity> versionsList = [.. versions.OrderBy(x => x.Version)];
-        List<string> list = [TgLocale.MenuMainReturn];
+        List<string> list = [TgLocale.MenuReturn];
         list.AddRange(versionsList.Select(version => TgLog.GetMarkupString(version.ToConsoleString())));
         AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}")

@@ -8,13 +8,18 @@ public enum TgEnumMenuStorage
 	Return,
 	DbClear,
 	DbBackup,
-	DbCreateNew,
-	TablesVersionsView,
 	TablesCompact,
+    ClearChats,
+    ResetAutoDownload,
+    // View
     ViewChats,
     ViewContacts,
     ViewStories,
     ViewVersions,
-    ClearChats,
-    ResetAutoDownload,
+    // Filters
+    FiltersClear,
+    FiltersView,
+    FiltersAdd,
+    FiltersEdit,
+    FiltersRemove,
 }

@@ -3,10 +3,10 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuAppSettings
+public enum TgEnumMenuApp
 {
 	Return,
-	Clear,
+	ClearData,
 	SetFileSession,
 	SetEfStorage,
 	SetUseProxy,

@@ -70,18 +70,6 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
 
     #region Public and private methods
 
-    public void VersionsView()
-    {
-        var storageResult = StorageManager.VersionRepository.GetList(TgEnumTableTopRecords.All, 0);
-        if (storageResult.IsExists)
-        {
-            foreach (var version in storageResult.Items)
-            {
-                TgLogHelper.Instance.WriteLine($"  {version.Version:00} | {version.Description}");
-            }
-        }
-    }
-
     /// <summary> Create and update storage </summary>
     public async Task CreateAndUpdateDbAsync()
     {

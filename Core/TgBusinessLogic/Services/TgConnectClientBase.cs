@@ -1499,53 +1499,59 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		await TryCatchFuncAsync(async () =>
 		{
 			await LoginUserAsync(isProxyUpdate: false);
-			switch (sourceType)
-			{
-				case TgEnumSourceType.Chat:
-					await DisableUserAccessForAllChatsAsync();
-					await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectChats);
-					await CollectAllChatsAsync();
-					tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
-					tgDownloadSettings.SourceScanCurrent = 0;
-					// List groups
-					await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
-					// List channels
-					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
-					break;
-				case TgEnumSourceType.Dialog:
-					await DisableUserAccessForAllChatsAsync();
-					await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectDialogs);
-					await CollectAllDialogsAsync();
-					tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
-					tgDownloadSettings.SourceScanCurrent = 0;
-					// List groups
-					await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
-					// List channels
-					await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
-					break;
-				case TgEnumSourceType.Contact:
-					await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
-					await CollectAllContactsAsync();
-					tgDownloadSettings.SourceScanCount = DicContactsAll.Count;
-					tgDownloadSettings.SourceScanCurrent = 0;
-					// List contacts
-					await SearchSourcesTgConsoleForContactsAsync(tgDownloadSettings2);
-					break;
-				case TgEnumSourceType.Story:
-					await UpdateStateStoryAsync(tgDownloadSettings2.StoryVm.Dto.Id, 0, 0, TgLocale.CollectStories);
-					await CollectAllStoriesAsync();
-					tgDownloadSettings.SourceScanCount = DicStoriesAll.Count;
-					tgDownloadSettings.SourceScanCurrent = 0;
-					// List stories
-					await SearchSourcesTgConsoleForStoriesAsync(tgDownloadSettings2);
-					break;
-			}
-		});
+            switch (sourceType)
+            {
+                case TgEnumSourceType.Chat:
+                    await DisableUserAccessForAllChatsAsync();
+                    await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectChats);
+                    await CollectAllChatsAsync();
+                    tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
+                    tgDownloadSettings.SourceScanCurrent = 0;
+                    // List groups
+                    await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
+                    // List channels
+                    await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
+                    break;
+                case TgEnumSourceType.Dialog:
+                    await DisableUserAccessForAllChatsAsync();
+                    await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectDialogs);
+                    await CollectAllDialogsAsync();
+                    tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
+                    tgDownloadSettings.SourceScanCurrent = 0;
+                    // List groups
+                    await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
+                    // List channels
+                    await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
+                    break;
+                case TgEnumSourceType.Contact:
+                    await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
+                    await CollectAllContactsAsync();
+                    tgDownloadSettings.SourceScanCount = DicContactsAll.Count;
+                    tgDownloadSettings.SourceScanCurrent = 0;
+                    // List contacts
+                    await SearchSourcesTgConsoleForContactsAsync(tgDownloadSettings2);
+                    break;
+                case TgEnumSourceType.Story:
+                    await UpdateStateStoryAsync(tgDownloadSettings2.StoryVm.Dto.Id, 0, 0, TgLocale.CollectStories);
+                    await CollectAllStoriesAsync();
+                    tgDownloadSettings.SourceScanCount = DicStoriesAll.Count;
+                    tgDownloadSettings.SourceScanCurrent = 0;
+                    // List stories
+                    await SearchSourcesTgConsoleForStoriesAsync(tgDownloadSettings2);
+                    break;
+                case TgEnumSourceType.Default:
+                    break;
+                case TgEnumSourceType.ChatBase:
+                    break;
+                case TgEnumSourceType.Channel:
+                    break;
+            }
+        });
 		await UpdateTitleAsync(string.Empty);
-	}
+    }
 
-	/// <summary> Disable user access for all chats </summary>
-	private async Task DisableUserAccessForAllChatsAsync()
+    /// <summary> Disable user access for all chats </summary>
+    private async Task DisableUserAccessForAllChatsAsync()
 	{
 		var chats = await StorageManager.SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false);
 		if (!chats.Any())

@@ -16,12 +16,6 @@ internal partial class TgMenuHelper
                 .MoreChoicesText(TgLocale.MoveUpDown)
                 .AddChoices(
                     TgLocale.MenuMainReturn,
-                    TgLocale.MenuStorageClearChats,
-                    TgLocale.MenuStorageResetAutoDownload,
-                    TgLocale.MenuStorageViewVersions,
-                    TgLocale.MenuStorageViewContacts,
-                    TgLocale.MenuStorageViewStories,
-                    TgLocale.MenuStorageViewChats,
                     TgLocale.MenuClientStartAutoDownload,
                     TgLocale.MenuClientAutoViewEvents,
                     TgLocale.MenuClientSearchContacts,
@@ -37,18 +31,6 @@ internal partial class TgMenuHelper
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
 
-		if (prompt.Equals(TgLocale.MenuStorageClearChats))
-			return TgEnumMenuDownload.StorageClearChats;
-		if (prompt.Equals(TgLocale.MenuStorageResetAutoDownload))
-			return TgEnumMenuDownload.StorageResetAutoDownload;
-        if (prompt.Equals(TgLocale.MenuStorageViewVersions))
-            return TgEnumMenuDownload.StorageViewVersions;
-        if (prompt.Equals(TgLocale.MenuStorageViewContacts))
-            return TgEnumMenuDownload.StorageViewContacts;
-        if (prompt.Equals(TgLocale.MenuStorageViewStories))
-            return TgEnumMenuDownload.StorageViewStories;
-        if (prompt.Equals(TgLocale.MenuStorageViewChats))
-            return TgEnumMenuDownload.StorageViewChats;
         if (prompt.Equals(TgLocale.MenuClientStartAutoDownload))
 			return TgEnumMenuDownload.ClientStartAutoDownload;
 		if (prompt.Equals(TgLocale.MenuClientAutoViewEvents))
@@ -77,25 +59,6 @@ internal partial class TgMenuHelper
 			menu = SetMenuAdvanced();
 			switch (menu)
 			{
-				case TgEnumMenuDownload.StorageClearChats:
-					await StorageClearChatsAsync(tgDownloadSettings);
-					break;
-				case TgEnumMenuDownload.StorageResetAutoDownload:
-					await RunTaskStatusAsync(tgDownloadSettings, StorageResetAutoDownloadAsync, 
-						isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
-					break;
-                case TgEnumMenuDownload.StorageViewVersions:
-                    await StorageViewVersionsAsync(tgDownloadSettings);
-                    break;
-                case TgEnumMenuDownload.StorageViewContacts:
-                    await StorageViewContactsAsync(tgDownloadSettings);
-                    break;
-                case TgEnumMenuDownload.StorageViewStories:
-                    await StorageViewStoriesAsync(tgDownloadSettings);
-                    break;
-                case TgEnumMenuDownload.StorageViewChats:
-                    await StorageViewChatsAsync(tgDownloadSettings);
-                    break;
                 case TgEnumMenuDownload.ClientStartAutoDownload:
 					await RunTaskStatusAsync(tgDownloadSettings, ClientStartAutoDownloadAsync, 
 						isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
@@ -124,72 +87,6 @@ internal partial class TgMenuHelper
             }
         } while (menu is not TgEnumMenuDownload.Return);
 	}
-
-    private async Task StorageClearChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageClearChats)) return;
-
-        await ShowTableViewChatsAsync(tgDownloadSettings);
-        await BusinessLogicManager.StorageManager.SourceRepository.DeleteAllAsync();
-    }
-
-    private async Task StorageResetAutoDownloadAsync(TgDownloadSettingsViewModel _)
-    {
-        if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageResetAutoDownload)) return;
-
-        var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
-        chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
-        foreach (var chat in chats)
-        {
-            chat.IsAutoUpdate = false;
-            await BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(chat);
-        }
-    }
-
-    private async Task StorageViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        await ShowTableViewContactsAsync(tgDownloadSettings);
-        var storageResult = await BusinessLogicManager.StorageManager.ContactRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-        var contact = await GetContactFromEnumerableAsync(TgLocale.MenuStorageViewContacts, storageResult.Items);
-        if (contact.Uid != Guid.Empty)
-        {
-            Value = TgEnumMenuMain.Download;
-            tgDownloadSettings = await SetupDownloadSourceByIdAsync(contact.Id);
-            await SetupDownloadAsync(tgDownloadSettings);
-        }
-    }
-
-    private async Task StorageViewChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        await ShowTableViewChatsAsync(tgDownloadSettings);
-        var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-        var chat = await GetChatFromEnumerableAsync(TgLocale.MenuStorageViewChats, storageResult.Items);
-        if (chat.Uid != Guid.Empty)
-        {
-            Value = TgEnumMenuMain.Download;
-            tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
-            await SetupDownloadAsync(tgDownloadSettings);
-        }
-    }
-
-    private async Task StorageViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        await ShowTableViewStoriesAsync(tgDownloadSettings);
-        var storageResult = await BusinessLogicManager.StorageManager.StoryRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
-        var story = await GetStoryFromEnumerableAsync(TgLocale.MenuStorageViewChats, storageResult.Items);
-        if (story.Uid != Guid.Empty)
-        {
-            Value = TgEnumMenuMain.Download;
-            tgDownloadSettings = await SetupDownloadSourceByIdAsync(story.Id);
-            await SetupDownloadAsync(tgDownloadSettings);
-        }
-    }
-
-    private async Task StorageViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        await ShowTableViewVersionsAsync(tgDownloadSettings);
-        GetVersionFromEnumerable(TgLocale.MenuStorageViewChats, (await BusinessLogicManager.StorageManager.VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
-    }
 
     private async Task ClientSearchAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgEnumSourceType sourceType)
 	{

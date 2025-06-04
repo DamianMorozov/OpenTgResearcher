@@ -50,8 +50,8 @@ internal partial class TgMenuHelper
 		{
 			await ShowTableBotConnectionAsync(tgDownloadSettings);
 			menu = SetMenuBotConnection();
-			switch (menu)
-			{
+            switch (menu)
+            {
                 case TgEnumMenuBot.ClearBotConnectionData:
                     await ClearBotConnectionDataAsync(tgDownloadSettings);
                     break;
@@ -69,15 +69,15 @@ internal partial class TgMenuHelper
                     break;
                 case TgEnumMenuBot.BotConnect:
                     await AskBotConnectAsync(tgDownloadSettings, isSilent: false);
-					break;
-				case TgEnumMenuBot.BotDisconnect:
-					await DisconnectBotAsync(tgDownloadSettings);
-					break;
+                    break;
+                case TgEnumMenuBot.BotDisconnect:
+                    await DisconnectBotAsync(tgDownloadSettings);
+                    break;
                 case TgEnumMenuBot.Return:
-					break;
-			}
-		} while (menu is not TgEnumMenuBot.Return);
-	}
+                    break;
+            }
+        } while (menu is not TgEnumMenuBot.Return);
+    }
 
     public async Task UseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
@@ -162,7 +162,7 @@ internal partial class TgMenuHelper
                 {
                     Username = me.Username ?? "-",
                     Id = me.Id.ToString(),
-                    AccessHash = me.AccessHash.ToString() ?? "-",
+                    AccessHash = me.AccessHash.ToString(),
                     FirstName = me.FirstName ?? "-",
                     LastName = me.LastName ?? "-",
                     IsBot = me.IsBot.ToString(),
@@ -180,8 +180,8 @@ internal partial class TgMenuHelper
                     botInfoNew.IsActive = me.TLUser.IsActive.ToString();
                     botInfoNew.LastSeenAgo = TgDtUtils.FormatLastSeenAgo(me.TLUser.LastSeenAgo);
                     botInfoNew.MainUsername = me.TLUser.MainUsername ?? "-";
-                    botInfoNew.BotActiveUsers = me.TLUser.bot_active_users.ToString() ?? "-";
-                    botInfoNew.BotInfoVersion = me.TLUser.bot_info_version.ToString() ?? "-";
+                    botInfoNew.BotActiveUsers = me.TLUser.bot_active_users.ToString();
+                    botInfoNew.BotInfoVersion = me.TLUser.bot_info_version.ToString();
                     botInfoNew.BotInlinePlaceholder = me.TLUser.bot_inline_placeholder ?? "-";
                     botInfoNew.Flags = string.Join(',', me.TLUser.flags, me.TLUser.flags2);
                 }
@@ -228,5 +228,5 @@ internal partial class TgMenuHelper
 		await BusinessLogicManager.ConnectClient.DisconnectBotAsync();
 	}
 
-	#endregion
+    #endregion
 }

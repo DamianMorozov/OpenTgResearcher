@@ -11,7 +11,7 @@ public enum TgEnumMenuMain
     ClientConnection,
     Storage,
 	Filters,
-	Download,
+	ClientDownload,
 	Advanced,
 	Update,
 	License,

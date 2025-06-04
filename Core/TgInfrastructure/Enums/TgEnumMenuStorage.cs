@@ -11,4 +11,10 @@ public enum TgEnumMenuStorage
 	DbCreateNew,
 	TablesVersionsView,
 	TablesCompact,
+    ViewChats,
+    ViewContacts,
+    ViewStories,
+    ViewVersions,
+    ClearChats,
+    ResetAutoDownload,
 }

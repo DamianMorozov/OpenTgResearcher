@@ -11,7 +11,6 @@ public enum TgEnumMenuBot
 	SetBotToken,
 	RegisterTelegramApp,
     RegisterTelegramBot,
-    RegisterBot,
 	BotConnect,
 	BotDisconnect,
 }

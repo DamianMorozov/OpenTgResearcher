@@ -29,9 +29,4 @@ public enum TgEnumMenuDownload
 	SetSourceFirstIdAuto,
 	SetSourceFirstIdManual,
 	SettingsSave,
-	StorageViewChats,
-	StorageViewContacts,
-	StorageViewStories,
-	StorageViewVersions,
-	StorageClearChats,
 }

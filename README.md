@@ -31,8 +31,8 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 - [Register Telegram app](https://my.telegram.org/apps)
 - Save the values of the fields by `App configuration` section: `App api_id` / `App api_hash`
 
-## OpenTgResearcherDesktop SplashScreen
+## OpenTgResearcherDesktop Splash screen
 <p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
-## OpenTgResearcherConsole SplashScreen
+## OpenTgResearcherConsole Splash screen
 <p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherConsole_SplashScreen.gif"></p>

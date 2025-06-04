@@ -348,7 +348,7 @@ internal partial class TgMenuHelper
     {
         // Download
         table.AddRow(GetMarkup(tgDownloadSettings.SourceVm.Dto.IsReady
-                ? TgLocale.InfoMessage(TgLocale.MenuMainDownload) : TgLocale.WarningMessage(TgLocale.MenuMainDownload)),
+                ? TgLocale.InfoMessage(TgLocale.MenuMainClientDownload) : TgLocale.WarningMessage(TgLocale.MenuMainClientDownload)),
             GetMarkup(tgDownloadSettings.SourceVm.Dto.IsReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
         // Chat info

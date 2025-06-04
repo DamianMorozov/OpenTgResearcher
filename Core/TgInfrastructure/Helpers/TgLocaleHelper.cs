@@ -81,20 +81,20 @@ public sealed class TgLocaleHelper : ObservableObject
 
     #region Download
 
-    public string MenuClientStartAutoDownload => "Client - Start downloading automatically updated chats";
+    public string MenuClientStartAutoDownload => "Start downloading auto updated chats";
     public string MenuRegisterTelegramApp => "Register Telegram App (open web-site)";
     public string MenuRegisterTelegramBot => "Register Telegram Bot (open web-site)";
     public string MenuSaveSettings => "Save settings";
-    public string MenuStorageResetAutoDownload => "Storage - Reset automatically updated chats (reset auto update field)";
+    public string MenuStorageResetAutoDownload => "Reset auto update field for all chats";
 	public string MenuBotAutoViewEvents => "Bot - Auto view events";
 	public string MenuBotClearConnectionData => "Clear bot connection data";
-	public string MenuClientAutoViewEvents => "Client - Auto view events";
+	public string MenuClientAutoViewEvents => "Auto view events";
 	public string MenuClientClearConnectionData => "Clear client connection data";
-	public string MenuClientMarkAllMessagesAsRead => "Client - Mark all messages as read";
-	public string MenuClientSearchChats => "Client - Search chats";
-	public string MenuClientSearchContacts => "Client - Search contacts";
-	public string MenuClientSearchDialogs => "Client - Search dialogs";
-	public string MenuClientSearchStories => "Client - Search stories";
+	public string MenuClientMarkAllMessagesAsRead => "Mark all messages as read";
+	public string MenuClientSearchChats => "Search chats";
+	public string MenuClientSearchContacts => "Search contacts";
+	public string MenuClientSearchDialogs => "Search dialogs";
+	public string MenuClientSearchStories => "Search stories";
 	public string MenuClientSetProxy => "Setup proxy";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
@@ -112,12 +112,12 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadUserAccess => "User access";
 	public string MenuManualDownload => "Manual download";
 	public string MenuMarkAsRead => "Mark as read";
-	public string MenuStorageClearChats => "Storage - Clear all chats";
-	public string MenuStorageViewChats => "Storage - View chats";
-	public string MenuStorageViewContacts => "Storage - View contacts";
-	public string MenuStorageViewFilters => "Storage - View filters";
-	public string MenuStorageViewStories => "Storage - View stories";
-	public string MenuStorageViewVersions => "Storage - View versions";
+	public string MenuStorageClearChats => "Clear all chats";
+	public string MenuStorageViewChats => "View chats";
+	public string MenuStorageViewContacts => "View contacts";
+	public string MenuStorageViewFilters => "View filters";
+	public string MenuStorageViewStories => "View stories";
+	public string MenuStorageViewVersions => "View versions";
 
 	#endregion
 
@@ -192,7 +192,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainClearAppData => "Clear application data";
 	public string MenuMainClientConnection => "Client connection";
 	public string MenuMainClientConnectionHealthCheck => "Client connection health check";
-	public string MenuMainDownload => "Download";
+	public string MenuMainClientDownload => "Client download";
 	public string MenuMainDownloadHealthCheck => "Download health check";
 	public string MenuMainDownloads => "Downloads";
 	public string MenuMainExit => "Exit";

@@ -20,8 +20,14 @@ internal partial class TgMenuHelper
 					TgLocale.MenuStorageDbBackup,
 					TgLocale.MenuStorageDbCreateNew,
 					TgLocale.MenuStorageTablesVersionsView,
-					TgLocale.MenuStorageTablesCompact
-				));
+					TgLocale.MenuStorageTablesCompact,
+                    TgLocale.MenuStorageClearChats,
+                    TgLocale.MenuStorageResetAutoDownload,
+                    TgLocale.MenuStorageViewVersions,
+                    TgLocale.MenuStorageViewContacts,
+                    TgLocale.MenuStorageViewStories,
+                    TgLocale.MenuStorageViewChats
+                ));
 		if (prompt.Equals(TgLocale.MenuStorageDbClear))
 			return TgEnumMenuStorage.DbClear;
 		if (prompt.Equals(TgLocale.MenuStorageDbBackup))
@@ -32,7 +38,19 @@ internal partial class TgMenuHelper
 			return TgEnumMenuStorage.TablesVersionsView;
 		if (prompt.Equals(TgLocale.MenuStorageTablesCompact))
 			return TgEnumMenuStorage.TablesCompact;
-		return TgEnumMenuStorage.Return;
+        if (prompt.Equals(TgLocale.MenuStorageClearChats))
+            return TgEnumMenuStorage.ClearChats;
+        if (prompt.Equals(TgLocale.MenuStorageResetAutoDownload))
+            return TgEnumMenuStorage.ResetAutoDownload;
+        if (prompt.Equals(TgLocale.MenuStorageViewVersions))
+            return TgEnumMenuStorage.ViewVersions;
+        if (prompt.Equals(TgLocale.MenuStorageViewContacts))
+            return TgEnumMenuStorage.ViewContacts;
+        if (prompt.Equals(TgLocale.MenuStorageViewStories))
+            return TgEnumMenuStorage.ViewStories;
+        if (prompt.Equals(TgLocale.MenuStorageViewChats))
+            return TgEnumMenuStorage.ViewChats;
+        return TgEnumMenuStorage.Return;
 	}
 
 	public async Task SetupStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -45,27 +63,51 @@ internal partial class TgMenuHelper
 			switch (menu)
 			{
 				case TgEnumMenuStorage.DbClear:
-					ClearStorageData();
+                    StorageDbClear();
 					break;
 				case TgEnumMenuStorage.DbBackup:
-					TgStorageBackupDb();
+					StorageDbBackup();
 					break;
 				case TgEnumMenuStorage.DbCreateNew:
-					await TgStorageCreateNewDbAsync();
+					await StorageDbCreateNewAsync();
 					break;
 				case TgEnumMenuStorage.TablesVersionsView:
-					TgStorageTablesVersionsView();
+					StorageTablesVersionsView();
 					break;
 				case TgEnumMenuStorage.TablesCompact:
-					await TgStorageTablesCompactAsync();
+					await StorageTablesCompactAsync();
 					break;
-				case TgEnumMenuStorage.Return:
+                case TgEnumMenuStorage.ClearChats:
+                    await StorageClearChatsAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuStorage.ResetAutoDownload:
+                    await RunTaskStatusAsync(tgDownloadSettings, StorageResetAutoDownloadAsync,
+                        isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
+                    break;
+                case TgEnumMenuStorage.ViewVersions:
+                    await StorageViewVersionsAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuStorage.ViewContacts:
+                    await StorageViewContactsAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuStorage.ViewStories:
+                    await StorageViewStoriesAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuStorage.ViewChats:
+                    await StorageViewChatsAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuStorage.Return:
 					break;
 			}
 		} while (menu is not TgEnumMenuStorage.Return);
 	}
 
-	private void TgStorageBackupDb()
+    private void StorageDbClear()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void StorageDbBackup()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 
@@ -76,7 +118,7 @@ internal partial class TgMenuHelper
         TgLog.TypeAnyKeyForReturn();
     }
 
-	private async Task TgStorageCreateNewDbAsync()
+	private async Task StorageDbCreateNewAsync()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageDbCreateNew)) return;
 
@@ -92,13 +134,13 @@ internal partial class TgMenuHelper
         TgLog.TypeAnyKeyForReturn();
     }
 
-	private void TgStorageTablesVersionsView()
+	private void StorageTablesVersionsView()
 	{
 		BusinessLogicManager.VersionsView();
         TgLog.TypeAnyKeyForReturn();
     }
 
-	private async Task TgStorageTablesCompactAsync()
+	private async Task StorageTablesCompactAsync()
 	{
 		if (AskQuestionTrueFalseReturnNegative(TgLocale.MenuStorageTablesCompact)) return;
 		// Shrink storage
@@ -107,5 +149,71 @@ internal partial class TgMenuHelper
 		Console.ReadKey();
 	}
 
-	#endregion
+    private async Task StorageClearChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageClearChats)) return;
+
+        await ShowTableViewChatsAsync(tgDownloadSettings);
+        await BusinessLogicManager.StorageManager.SourceRepository.DeleteAllAsync();
+    }
+
+    private async Task StorageResetAutoDownloadAsync(TgDownloadSettingsViewModel _)
+    {
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageResetAutoDownload)) return;
+
+        var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+        chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
+        foreach (var chat in chats)
+        {
+            chat.IsAutoUpdate = false;
+            await BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(chat);
+        }
+    }
+
+    private async Task StorageViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ShowTableViewContactsAsync(tgDownloadSettings);
+        var storageResult = await BusinessLogicManager.StorageManager.ContactRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+        var contact = await GetContactFromEnumerableAsync(TgLocale.MenuStorageViewContacts, storageResult.Items);
+        if (contact.Uid != Guid.Empty)
+        {
+            Value = TgEnumMenuMain.ClientDownload;
+            tgDownloadSettings = await SetupDownloadSourceByIdAsync(contact.Id);
+            await SetupDownloadAsync(tgDownloadSettings);
+        }
+    }
+
+    private async Task StorageViewChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ShowTableViewChatsAsync(tgDownloadSettings);
+        var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+        var chat = await GetChatFromEnumerableAsync(TgLocale.MenuStorageViewChats, storageResult.Items);
+        if (chat.Uid != Guid.Empty)
+        {
+            Value = TgEnumMenuMain.ClientDownload;
+            tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
+            await SetupDownloadAsync(tgDownloadSettings);
+        }
+    }
+
+    private async Task StorageViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ShowTableViewStoriesAsync(tgDownloadSettings);
+        var storageResult = await BusinessLogicManager.StorageManager.StoryRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
+        var story = await GetStoryFromEnumerableAsync(TgLocale.MenuStorageViewChats, storageResult.Items);
+        if (story.Uid != Guid.Empty)
+        {
+            Value = TgEnumMenuMain.ClientDownload;
+            tgDownloadSettings = await SetupDownloadSourceByIdAsync(story.Id);
+            await SetupDownloadAsync(tgDownloadSettings);
+        }
+    }
+
+    private async Task StorageViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ShowTableViewVersionsAsync(tgDownloadSettings);
+        GetVersionFromEnumerable(TgLocale.MenuStorageViewChats, (await BusinessLogicManager.StorageManager.VersionRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items);
+    }
+
+    #endregion
 }

@@ -88,19 +88,19 @@ public static class Program
                     .AddChoices(
                         tgLocale.MenuMainExit,
                         tgLocale.MenuMainApp,
-                        tgLocale.MenuMainClientConnection);
+                        tgLocale.MenuMainStorage,
+                        tgLocale.MenuMainFilters,
+                        tgLocale.MenuMainClientConnection,
+                        tgLocale.MenuMainClientDownload,
+                        tgLocale.MenuMainAdvanced,
+                        tgLocale.MenuMainUpdate,
+                        tgLocale.MenuMainLicense);
                 // Check paid license
                 if (tgMenu.BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
                 {
                     selectionPrompt.AddChoices(tgLocale.MenuMainBotConnection);
                 }
-                selectionPrompt.AddChoices(
-                    tgLocale.MenuMainStorage,
-                    tgLocale.MenuMainFilters,
-                    tgLocale.MenuMainDownload,
-                    tgLocale.MenuMainAdvanced,
-                    tgLocale.MenuMainUpdate,
-                    tgLocale.MenuMainLicense);
+                
                 var prompt = AnsiConsole.Prompt(selectionPrompt);
                 if (prompt.Equals(tgLocale.MenuMainExit))
                     tgMenu.Value = TgEnumMenuMain.Exit;
@@ -129,9 +129,9 @@ public static class Program
                     tgMenu.Value = TgEnumMenuMain.Filters;
                     await tgMenu.SetupFiltersAsync(tgDownloadSettings);
                 }
-                if (prompt.Equals(tgLocale.MenuMainDownload))
+                if (prompt.Equals(tgLocale.MenuMainClientDownload))
                 {
-                    tgMenu.Value = TgEnumMenuMain.Download;
+                    tgMenu.Value = TgEnumMenuMain.ClientDownload;
                     await tgMenu.SetupDownloadAsync(tgDownloadSettings);
                 }
                 if (prompt.Equals(tgLocale.MenuMainAdvanced))

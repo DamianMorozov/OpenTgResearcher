@@ -9,7 +9,7 @@ namespace TgStorage.Migrations.TgEfDesktop
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
 
             modelBuilder.Entity("TgStorage.Domain.Apps.TgEfAppEntity", b =>
                 {
@@ -65,6 +65,11 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
                         .HasColumnName("USE_BOT");
+
+                    b.Property<bool>("UseClient")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("USE_CLIENT");
 
                     b.HasKey("Uid");
 

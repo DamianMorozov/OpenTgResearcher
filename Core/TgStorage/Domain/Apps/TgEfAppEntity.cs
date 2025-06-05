@@ -73,7 +73,13 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
 	[Column(TgEfConstants.ColumnBotTokenKey, TypeName = "NVARCHAR(50)")]
 	public string BotTokenKey { get; set; } = null!;
 
-	public TgEfAppEntity() : base()
+
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnUseClient, TypeName = "BIT")]
+    public bool UseClient { get; set; }
+    
+    public TgEfAppEntity() : base()
     {
 	    Default();
     }
@@ -95,6 +101,7 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
 		LastName = this.GetDefaultPropertyString(nameof(LastName));
 		UseBot = this.GetDefaultPropertyBool(nameof(UseBot));
 		BotTokenKey = this.GetDefaultPropertyString(nameof(BotTokenKey));
+        UseClient = this.GetDefaultPropertyBool(nameof(UseClient));
     }
 
 	public TgEfAppEntity Copy(TgEfAppEntity item, bool isUidCopy)
@@ -110,8 +117,23 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
 	    ProxyUid = item.ProxyUid;
 		UseBot = item.UseBot;
 		BotTokenKey = item.BotTokenKey;
-		return this;
+        UseClient = item.UseClient;
+        return this;
     }
 
-	#endregion
+    public void SetUseBot(bool useBot)
+    {
+        UseBot = useBot;
+        if (useBot)
+            UseClient = false;
+    }
+
+    public void SetUseClient(bool useClient)
+    {
+        UseClient = useClient;
+        if (useClient)
+            UseBot = false;
+    }
+
+    #endregion
 }

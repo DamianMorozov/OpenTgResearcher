@@ -121,9 +121,11 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
                 FirstName = x.FirstName, 
                 LastName = x.LastName, 
                 PhoneNumber = x.PhoneNumber,
-				ProxyUid = x.ProxyUid ?? Guid.Empty, 
+				ProxyUid = x.ProxyUid ?? Guid.Empty,
+                UseBot = x.UseBot,
                 BotTokenKey = x.BotTokenKey, 
-                UseBot = x.UseBot })
+                UseClient = x.UseClient,
+            })
 			.FirstOrDefaultAsync()
 		?? new();
 
@@ -141,7 +143,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
         var appStorage = await GetCurrentAppAsync();
         if (appStorage.IsExists)
         {
-            appStorage.Item.UseBot = useBot;
+            appStorage.Item.SetUseBot(useBot);
             await SaveAsync(appStorage.Item);
         }
         else
@@ -169,7 +171,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
         var appStorage = await GetCurrentAppAsync();
         if (appStorage.IsExists)
         {
-            appStorage.Item.UseBot = !useClient;
+            appStorage.Item.SetUseClient(useClient);
             await SaveAsync(appStorage.Item);
         }
         else

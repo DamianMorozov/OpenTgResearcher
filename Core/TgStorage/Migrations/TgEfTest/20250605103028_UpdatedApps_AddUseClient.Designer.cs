@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfTest
 {
     [DbContext(typeof(TgEfTestContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250605103028_UpdatedApps_AddUseClient")]
+    partial class UpdatedApps_AddUseClient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.5");

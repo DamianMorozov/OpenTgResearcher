@@ -20,9 +20,10 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 	public partial string FirstName { get; set; }
 	[ObservableProperty]
 	public partial string LastName { get; set; }
-	[ObservableProperty]
-	public partial bool UseBot { get; set; }
-    public bool UseClient => !UseBot;
+    [ObservableProperty]
+    public partial bool UseBot { get; set; }
+    [ObservableProperty]
+    public partial bool UseClient { get; set; }
 	[ObservableProperty]
 	public partial string BotTokenKey { get; set; }
 
@@ -48,7 +49,8 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 		LastName = string.Empty;
 		UseBot = false;
 		BotTokenKey = string.Empty;
-	}
+        UseClient = false;
+    }
 
 	#endregion
 
@@ -67,7 +69,8 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 		ProxyUid = dto.ProxyUid;
 		UseBot = dto.UseBot;
 		BotTokenKey = dto.BotTokenKey;
-		return this;
+        UseClient = dto.UseClient;
+        return this;
 	}
 
 	public TgEfAppDto Copy(TgEfAppEntity item, bool isUidCopy)
@@ -82,36 +85,51 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 		ProxyUid = item.ProxyUid ?? Guid.Empty;
 		UseBot = item.UseBot;
 		BotTokenKey = item.BotTokenKey;
+        UseClient = UseClient;
 		return this;
 	}
 
 	public TgEfAppDto GetNewDto(TgEfAppEntity item) => new TgEfAppDto().Copy(item, isUidCopy: true);
 
-	public TgEfAppEntity GetNewEntity(TgEfAppDto dto) => new()
-	{
-		Uid = dto.Uid,
-		ApiHash = dto.ApiHash,
-		ApiId = dto.ApiId,
-		FirstName = dto.FirstName,
-		LastName = dto.LastName,
-		PhoneNumber = dto.PhoneNumber,
-		ProxyUid = dto.ProxyUid,
-		UseBot = dto.UseBot,
-		BotTokenKey = dto.BotTokenKey,
-	};
+    public TgEfAppEntity GetNewEntity(TgEfAppDto dto)
+    {
+        var item = new TgEfAppEntity()
+        {
+            Uid = dto.Uid,
+            ApiHash = dto.ApiHash,
+            ApiId = dto.ApiId,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            PhoneNumber = dto.PhoneNumber,
+            ProxyUid = dto.ProxyUid,
+            BotTokenKey = dto.BotTokenKey,
+        };
+        if (dto.UseBot)
+            item.SetUseBot(dto.UseBot);
+        else if (dto.UseClient)
+            item.SetUseClient(dto.UseClient);
+        return item;
+    }
 
-	public TgEfAppEntity GetNewEntity() => new()
-	{
-		Uid = Uid,
-		ApiHash = ApiHash,
-		ApiId = ApiId,
-		FirstName = FirstName,
-		LastName = LastName,
-		PhoneNumber = PhoneNumber,
-		ProxyUid = ProxyUid,
-		UseBot = UseBot,
-		BotTokenKey = BotTokenKey,
-	};
+    public TgEfAppEntity GetNewEntity()
+    {
+        var item = new TgEfAppEntity()
+        {
+            Uid = Uid,
+            ApiHash = ApiHash,
+            ApiId = ApiId,
+            FirstName = FirstName,
+            LastName = LastName,
+            PhoneNumber = PhoneNumber,
+            ProxyUid = ProxyUid,
+            BotTokenKey = BotTokenKey,
+        };
+        if (UseBot)
+            item.SetUseBot(UseBot);
+        else if (UseClient)
+            item.SetUseClient(UseClient);
+        return item;
+    }
 
-	#endregion
+    #endregion
 }

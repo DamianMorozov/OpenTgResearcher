@@ -86,6 +86,7 @@ public static class TgEfConstants
 	public const string ColumnType = "TYPE";
 	public const string ColumnUid = "UID";
 	public const string ColumnUseBot = "USE_BOT";
+	public const string ColumnUseClient = "USE_CLIENT";
 	public const string ColumnUserId = "USER_ID";
 	public const string ColumnUserName = "USER_NAME";
 	public const string ColumnUserNames = "USER_NAMES";

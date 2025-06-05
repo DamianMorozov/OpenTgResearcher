@@ -1,6 +1,9 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System.Drawing;
+using System.Threading.Tasks;
+
 namespace TgStorage.Domain.Stories;
 
 /// <summary> Proxy DTO </summary>
@@ -56,9 +59,23 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, Tg
 
 	public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";
 
-	public override string ToString() => $"{DtChanged} | {Id} | {FromId} | {FromName} | {Date} | {Caption}";
+    public override string ToConsoleString()
+    {
+        var captionTrimmed = string.IsNullOrEmpty(Caption) ? string.Empty
+            : Caption.Contains('\n') ? Caption[..Caption.IndexOf('\n')] : Caption;
+        return $"{Id,11} | " +
+        $"{TgDataFormatUtils.GetFormatString(FromName, 25).TrimEnd(),-25} | " +
+        $"{Date,19} | " +
+        $"{TgDataFormatUtils.GetFormatString(captionTrimmed, 64).TrimEnd(),64}";
+    }
 
-	public TgEfStoryDto Copy(TgEfStoryDto dto, bool isUidCopy)
+    public override string ToConsoleHeaderString() =>
+        $"{TgDataFormatUtils.GetFormatString(nameof(Id), 11).TrimEnd(),-11} | " +
+        $"{TgDataFormatUtils.GetFormatString(nameof(FromName), 25).TrimEnd(),-25} | " +
+        $"{TgDataFormatUtils.GetFormatString(nameof(Date), 19).TrimEnd(),-19} | " +
+        $"Caption";
+
+    public TgEfStoryDto Copy(TgEfStoryDto dto, bool isUidCopy)
 	{
 		base.Copy(dto, isUidCopy);
 		DtChanged = dto.DtChanged;

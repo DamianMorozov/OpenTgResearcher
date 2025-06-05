@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace TgStorage.Domain.Versions;
 
 /// <summary> Proxy DTO </summary>
@@ -19,13 +21,19 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity
 		Description = string.Empty;
 	}
 
-	#endregion
-	
-	#region Public and private methods
+    #endregion
 
-	public override string ToString() => $"{Version} | {Description}";
+    #region Public and private methods
 
-	public TgEfVersionDto Copy(TgEfVersionDto dto, bool isUidCopy)
+    public override string ToConsoleString() => 
+        $"{Version,3} | " +
+        $"{TgDataFormatUtils.GetFormatString(Description, 50).TrimEnd(),-50}";
+
+    public override string ToConsoleHeaderString() =>
+        $"{TgDataFormatUtils.GetFormatString(nameof(Version), 3).TrimEnd(),-3} | " +
+        $"Description";
+
+    public TgEfVersionDto Copy(TgEfVersionDto dto, bool isUidCopy)
 	{
 		base.Copy(dto, isUidCopy);
 		Version = dto.Version;

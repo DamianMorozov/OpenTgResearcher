@@ -134,16 +134,5 @@ public sealed class TgEfStoryEntity : ITgEfEntity<TgEfStoryEntity>
         return this;
 	}
 
-	public string ToConsoleString()
-	{
-		var captionTrimmed = string.IsNullOrEmpty(Caption) ? string.Empty
-			: Caption.Contains('\n')
-				? Caption[..Caption.IndexOf('\n')] : Caption;
-		return $"{Id,11} | " +
-		$"{TgDataFormatUtils.GetFormatString(FromName, 25).TrimEnd(),-25} | " +
-		$"{(Date is null ? "" : Date.ToString()),19} | " +
-		$"{TgDataFormatUtils.GetFormatString(captionTrimmed, 64).TrimEnd(),64}";
-	}
-
 	#endregion
 }

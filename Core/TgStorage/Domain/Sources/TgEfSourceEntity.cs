@@ -170,35 +170,13 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
         return this;
 	}
 
-	public static string ToHeaderString() => 
-		$"{nameof(Id),11} | " +
-		$"{TgDataFormatUtils.GetFormatString(nameof(UserName), 25).TrimEnd(),-25} | " +
-		$"Access | " +
-		$"Active | " +
-		$"Update | " +
-		$"%        | " +
-		$"{nameof(Title),-30} | " +
-		$"Progress";
-
-	public string ToConsoleString() => 
-		$"{Id,11} | " +
-		$"{TgDataFormatUtils.GetFormatString(UserName, 25).TrimEnd(),-25} | " +
-		$"{(IsUserAccess ? "access" : ""),-6} | " +
-		$"{(IsActive ? "active" : ""),-6} | " +
-		$"{(IsAutoUpdate ? "auto" : ""),-6} | " +
-		$"{GetPercentCountString()} | " +
-		$"{TgDataFormatUtils.GetFormatString(Title, 30).TrimEnd(),-30} | " +
-		$"{FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";
-
 	public string GetPercentCountString()
     {
 	    var percent = Count <= FirstId ? 100 : FirstId > 1 ? (float)FirstId * 100 / Count : 0;
-	    if (IsPercentCountAll())
+	    if (Count <= FirstId)
 		    return "100.00 %";
 	    return percent > 9 ? $" {percent:00.00} %" : $"  {percent:0.00} %";
     }
-
-    public bool IsPercentCountAll() => Count <= FirstId;
 
 	#endregion
 }

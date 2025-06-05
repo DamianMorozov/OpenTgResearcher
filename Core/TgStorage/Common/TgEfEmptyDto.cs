@@ -19,7 +19,7 @@ public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEmptyEntity, TgEf
 
 	public override string ToString() => base.ToString();
 
-	public TgEfEmptyDto Copy(TgEfEmptyDto dto, bool isUidCopy)
+    public TgEfEmptyDto Copy(TgEfEmptyDto dto, bool isUidCopy)
 	{
 		base.Copy(dto, isUidCopy);
 		return this;

@@ -61,9 +61,6 @@ internal partial class TgMenuHelper
     private async Task ShowTableViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsViewDownloadedStoriesAsync);
 
-    private async Task ShowTableViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsViewDownloadedVersionsAsync);
-
     private async Task ShowTableMarkHistoryReadProgressAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsMarkHistoryReadProgressAsync);
 
@@ -304,11 +301,11 @@ internal partial class TgMenuHelper
                 GetMarkup(TgLocale.SettingsIsNeedSetup));
         else
         {
-            var source = await BusinessLogicManager.StorageManager.SourceRepository.GetItemAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
+            var chatDto = await BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Id == tgDownloadSettings.SourceVm.Dto.Id);
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.SettingsChat)),
-                GetMarkup(source.ToConsoleString()));
+                GetMarkup(chatDto.ToConsoleString()));
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.SettingsDtChanged)),
-                GetMarkup(TgDataFormatUtils.GetDtFormat(source.DtChanged)));
+                GetMarkup(TgDataFormatUtils.GetDtFormat(chatDto.DtChanged)));
         }
     }
 
@@ -423,9 +420,5 @@ internal partial class TgMenuHelper
 
     /// <summary> Stories </summary>
     private async Task FillTableRowsViewDownloadedStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table) =>
-        await FillTableRowsEmpty(table);
-
-    /// <summary> Versions </summary>
-    private async Task FillTableRowsViewDownloadedVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table) =>
         await FillTableRowsEmpty(table);
 }

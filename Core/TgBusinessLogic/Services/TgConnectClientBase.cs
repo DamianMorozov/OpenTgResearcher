@@ -2324,8 +2324,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 					Message = message,
 				};
 #if DEBUG
-				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToConsoleString()}");
-				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToConsoleString()}");
+				Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToDebugString()}");
+				Debug.WriteLine($"MessageSaveAsync message: {messageItem.ToDebugString()}");
 #endif
 				if (tgDownloadSettings.IsSaveMessages)
 				{

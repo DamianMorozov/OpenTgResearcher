@@ -88,13 +88,41 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		CurrentFileName = string.Empty;
 	}
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public override string ToString() => ProgressPercentString;
+    public string GetPercentCountString()
+    {
+        var percent = Count <= FirstId ? 100 : FirstId > 1 ? (float)FirstId * 100 / Count : 0;
+        if (Count <= FirstId)
+            return "100.00 %";
+        return percent > 9 ? $" {percent:00.00} %" : $"  {percent:0.00} %";
+    }
 
-	public TgEfSourceDto Copy(TgEfSourceDto dto, bool isUidCopy)
+    public override string ToString() => ProgressPercentString;
+
+    public override string ToConsoleString() =>
+        $"{Id,11} | " +
+        $"{TgDataFormatUtils.GetFormatString(UserName, 25).TrimEnd(),-25} | " +
+        $"{(IsUserAccess ? "access" : ""),-6} | " +
+        $"{(IsActive ? "active" : ""),-6} | " +
+        $"{(IsAutoUpdate ? "auto" : ""),-6} | " +
+        $"{GetPercentCountString()} | " +
+        $"{TgDataFormatUtils.GetFormatString(Title, 30).TrimEnd(),-30} | " +
+        $"{FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";
+
+    public override string ToConsoleHeaderString() =>
+        $"{nameof(Id),11} | " +
+        $"{TgDataFormatUtils.GetFormatString(nameof(UserName), 25).TrimEnd(),-25} | " +
+        $"Access | " +
+        $"Active | " +
+        $"Update | " +
+        $"%        | " +
+        $"{nameof(Title),-30} | " +
+        $"Progress";
+
+    public TgEfSourceDto Copy(TgEfSourceDto dto, bool isUidCopy)
 	{
 		base.Copy(dto, isUidCopy);
 		DtChanged = dto.DtChanged;

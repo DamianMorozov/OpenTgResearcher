@@ -79,99 +79,29 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public bool AskQuestionYesNoReturnNegative(string question, bool isYesFirst = false) =>
         !AskQuestionYesNoReturnPositive(question, isYesFirst);
 
-    public async Task<TgEfContactEntity> GetContactFromEnumerableAsync(string title, IEnumerable<TgEfContactEntity> items)
+    /// <summary> Get DTO from IEnumerable </summary>
+    /// <typeparam name="TEfEntity"></typeparam>
+    /// <typeparam name="TDto"></typeparam>
+    /// <param name="title"></param>
+    /// <param name="dtos"></param>
+    public async Task<TDto> GetDtoFromEnumerableAsync<TEfEntity, TDto>(string title, IEnumerable<TDto> dtos, 
+        ITgEfRepository<TEfEntity, TDto> repository)
+        where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+        where TDto : class, ITgDto<TEfEntity, TDto>, new()
     {
-        items = items.OrderBy(x => x.Id);
-        List<string> list = [TgLocale.MenuReturn];
-        list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
-        var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        List<TgListWithUidDto> listWithUidDtos = [new TgListWithUidDto(TgLocale.MenuReturn), new TgListWithUidDto(new TDto().ToConsoleHeaderString())];
+        listWithUidDtos.AddRange(dtos.Select(dto => new TgListWithUidDto(dto.Uid, TgLog.GetMarkupString(dto.ToConsoleString()))));
+        var printString = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}")
             .PageSize(Console.WindowHeight - 17)
-            .AddChoices(list));
-        if (!Equals(sourceString, TgLocale.MenuReturn))
+            .AddChoices(listWithUidDtos.Select(x => x.PrintString)));
+        if (!Equals(printString, TgLocale.MenuReturn) && !Equals(printString, new TDto().ToConsoleHeaderString()))
         {
-            var parts = sourceString.Split('|');
-            if (parts.Length > 3)
-            {
-                var sourceId = parts[2].TrimEnd(' ');
-                if (long.TryParse(sourceId, out var id))
-                    return (await BusinessLogicManager.StorageManager.ContactRepository.GetAsync(new() { Id = id })).Item;
-            }
-        }
-        return (await BusinessLogicManager.StorageManager.ContactRepository.GetNewAsync()).Item;
-    }
-
-    public async Task<TgEfFilterEntity> GetFilterFromEnumerableAsync(string title, IEnumerable<TgEfFilterEntity> items)
-    {
-        items = items.OrderBy(x => x.Name);
-        List<string> list = [TgLocale.MenuReturn];
-        list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
-        var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title($"  {title}")
-            .PageSize(Console.WindowHeight - 17)
-            .AddChoices(list));
-        if (!Equals(sourceString, TgLocale.MenuReturn))
-        {
-            var parts = sourceString.Split('|');
-            if (parts.Length > 3)
-            {
-                var name = parts[0].TrimEnd(' ');
-                return (await BusinessLogicManager.StorageManager.FilterRepository.GetAsync(new() { Name = name })).Item;
-            }
-        }
-        return (await BusinessLogicManager.StorageManager.FilterRepository.GetNewAsync()).Item;
-    }
-
-    public async Task<TgEfSourceEntity> GetChatFromEnumerableAsync(string title, IEnumerable<TgEfSourceEntity> items)
-    {
-        items = items.OrderBy(x => x.UserName).ThenBy(x => x.Title);
-        List<string> list = [TgLocale.MenuReturn, TgEfSourceEntity.ToHeaderString()];
-        list.AddRange(items.Select(item => TgLog.GetMarkupString(item.ToConsoleString())));
-        var sourceString = AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title($"  {title}")
-            .PageSize(Console.WindowHeight - 17)
-            .AddChoices(list));
-        if (!Equals(sourceString, TgLocale.MenuReturn))
-        {
-            var parts = sourceString.Split('|');
-            var sourceId = parts[0].TrimEnd(' ');
-            if (long.TryParse(sourceId, out var id))
-                return await BusinessLogicManager.StorageManager.SourceRepository.GetItemAsync(new() { Id = id });
+            var uid = listWithUidDtos.FirstOrDefault(x => x.PrintString.Equals(printString))?.Uid ?? Guid.Empty;
+            if (uid != Guid.Empty)    
+                return await repository.GetDtoAsync(x => x.Uid == uid);
         }
         return new();
-    }
-
-    public async Task<TgEfStoryEntity> GetStoryFromEnumerableAsync(string title, IEnumerable<TgEfStoryEntity> stories)
-    {
-        stories = stories.OrderBy(x => x.Id);
-        List<string> list = [TgLocale.MenuReturn];
-        list.AddRange(stories.Select(story => TgLog.GetMarkupString(story.ToConsoleString())));
-        var storyString = AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title($"  {title}")
-            .PageSize(Console.WindowHeight - 17)
-            .AddChoices(list));
-        if (!Equals(storyString, TgLocale.MenuReturn))
-        {
-            var parts = storyString.Split('|');
-            if (parts.Length > 3)
-            {
-                var sourceId = parts[2].TrimEnd(' ');
-                if (long.TryParse(sourceId, out var id))
-                    return (await BusinessLogicManager.StorageManager.StoryRepository.GetAsync(new() { Id = id })).Item;
-            }
-        }
-        return (await BusinessLogicManager.StorageManager.StoryRepository.GetNewAsync()).Item;
-    }
-
-    public void GetVersionFromEnumerable(string title, IEnumerable<TgEfVersionEntity> versions)
-    {
-        List<TgEfVersionEntity> versionsList = [.. versions.OrderBy(x => x.Version)];
-        List<string> list = [TgLocale.MenuReturn];
-        list.AddRange(versionsList.Select(version => TgLog.GetMarkupString(version.ToConsoleString())));
-        AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title($"  {title}")
-            .PageSize(Console.WindowHeight - 17)
-            .AddChoices(list));
     }
 
     #endregion

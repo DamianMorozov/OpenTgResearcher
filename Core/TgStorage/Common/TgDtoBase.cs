@@ -23,15 +23,19 @@ public partial class TgDtoBase : ObservableRecipient
 		IsExistsAtStorage = false;
 	}
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public override string ToString() => ToDebugString();
+    public virtual string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    public override string ToString() => ToDebugString();
 
-	protected TgDtoBase Copy(TgDtoBase dto, bool isUidCopy)
+    public virtual string ToConsoleString() => ToDebugString();
+    
+    public virtual string ToConsoleHeaderString() => string.Empty;
+
+    protected TgDtoBase Copy(TgDtoBase dto, bool isUidCopy)
 	{
 		IsLoad = dto.IsLoad;
 		if (isUidCopy)

@@ -44,9 +44,6 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
 
 	#region Public and private methods
 
-	public string ToConsoleString() => $"{Version,3} | " +
-		$"{TgDataFormatUtils.GetFormatString(Description, 50).TrimEnd(),-50}";
-
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
 	public void Default()

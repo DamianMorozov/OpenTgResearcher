@@ -185,16 +185,5 @@ public sealed class TgEfContactEntity : ITgEfEntity<TgEfContactEntity>
 		return this;
 	}
 
-	public string ToConsoleString()
-	{
-		var name = TgDataFormatUtils.GetFormatString(FirstName, 30).TrimEnd();
-		name += TgDataFormatUtils.GetFormatString(LastName, 30).TrimEnd();
-		return $"{Id,11} | " +
-			$"{TgDataFormatUtils.GetFormatString(UserName, 25).TrimEnd(),-25} | " +
-			$"{(IsActive ? "active" : ""),-6} | " +
-			$"{TgDataFormatUtils.GetFormatString(PhoneNumber, 11).TrimEnd(),-11} | " +
-			$"{name,-40}";
-	}
-
 	#endregion
 }

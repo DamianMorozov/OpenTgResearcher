@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Increased efficiency in the release of unmanaged resources
 - Updated the storage menu in OpenTgResearcherConsole
+- Optimization of the table view in OpenTgResearcherConsole
 ### Added
 - Added the bot connection menu to OpenTgResearcherConsole
 

@@ -19,7 +19,9 @@ public interface ITgDto<TEfEntity, TDto> : ITgDebug
 	#region Public and private methods
 
 	public string ToString();
-	public TDto Copy(TDto dto, bool isUidCopy);
+    public string ToConsoleString();
+    public string ToConsoleHeaderString();
+    public TDto Copy(TDto dto, bool isUidCopy);
 	public TDto Copy(TEfEntity item, bool isUidCopy);
 	public TDto GetNewDto(TEfEntity item);
     public TEfEntity GetNewEntity(TDto dto);

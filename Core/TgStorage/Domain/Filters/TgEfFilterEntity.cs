@@ -64,24 +64,11 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 		Default();
 	}
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public string ToDebugString() => FilterType switch
-	{
-		TgEnumFilterType.MinSize or TgEnumFilterType.MaxSize =>
-			$"{TgEfConstants.TableFilters} | {Uid} | {TgDataUtils.GetIsEnabled(IsEnabled)} | {this.GetStringForFilterType()} | {Name} | {Size} | {SizeType}",
-		_ => $"{TgEfConstants.TableFilters} | {Uid} | {TgDataUtils.GetIsEnabled(IsEnabled)} | {this.GetStringForFilterType()} | {Name} | {(string.IsNullOrEmpty(Mask) ? $"<{nameof(string.Empty)}>" : Mask)}",
-	};
-
-	public string ToConsoleString() =>
-		$"{TgDataFormatUtils.GetFormatString(Name, 20).TrimEnd(),-20} | " +
-		$"{TgDataFormatUtils.GetFormatString(Mask, 20).TrimEnd(),-20} | " +
-		$"{(IsEnabled ? "enabled" : "disabled"),-8} | " +
-		$"{this.GetStringForFilterType(),-20} | " +
-		$"{Size,12} | " +
-		$"{SizeType} ";
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
 	public void Default()
 	{

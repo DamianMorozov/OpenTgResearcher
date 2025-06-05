@@ -212,7 +212,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageBackupSuccess => "Backup storage was successful";
 	public string MenuStorageClearChats => "Clear all chats";
 	public string MenuStorageDbBackup => "Create backup";
-	public string MenuStorageDbClear => "Clear storage data";
+	public string MenuStorageDbClear => "Clear storage";
 	public string MenuStorageExitProgram => "Exit the program";
 	public string MenuStoragePerformSteps => "Perform the following set of steps";
 	public string MenuStorageTablesClear => "Clear tables";

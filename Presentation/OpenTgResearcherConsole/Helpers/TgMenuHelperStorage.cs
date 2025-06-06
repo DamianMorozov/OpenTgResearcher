@@ -10,29 +10,32 @@ internal partial class TgMenuHelper
 
 	private static TgEnumMenuStorage SetMenuStorage()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuReturn,
-					TgLocale.MenuStorageDbClear,
-					TgLocale.MenuStorageDbBackup,
-					TgLocale.MenuStorageTablesCompact,
-                    TgLocale.MenuStorageClearChats,
-                    TgLocale.MenuStorageResetAutoDownload,
-                    // View
-                    TgLocale.MenuStorageViewChats,
-                    TgLocale.MenuStorageViewContacts,
-                    TgLocale.MenuFiltersView,
-                    TgLocale.MenuStorageViewStories,
-                    TgLocale.MenuStorageViewVersions,
-                    // Filters
-                    TgLocale.MenuFiltersClear,
-                    TgLocale.MenuFiltersAdd,
-                    TgLocale.MenuFiltersEdit,
-                    TgLocale.MenuFiltersRemove
-                ));
+        var selectionPrompt = new SelectionPrompt<string>()
+            .Title($"  {TgLocale.MenuSwitchNumber}")
+            .PageSize(Console.WindowHeight - 17)
+            .MoreChoicesText(TgLocale.MoveUpDown);
+        selectionPrompt.AddChoices(
+            TgLocale.MenuReturn,
+            TgLocale.MenuStorageDbClear,
+            TgLocale.MenuStorageDbBackup,
+            TgLocale.MenuStorageTablesCompact,
+            TgLocale.MenuStorageResetAutoDownload,
+            // Clear
+            TgLocale.MenuStorageClearChats,
+            TgLocale.MenuFiltersClear,
+            // View
+            TgLocale.MenuStorageViewChats,
+            TgLocale.MenuStorageViewContacts,
+            TgLocale.MenuFiltersView,
+            TgLocale.MenuStorageViewStories,
+            TgLocale.MenuStorageViewVersions,
+            // Filters
+            TgLocale.MenuFiltersAdd,
+            TgLocale.MenuFiltersEdit,
+            TgLocale.MenuFiltersRemove
+        );
+
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
 		if (prompt.Equals(TgLocale.MenuStorageDbClear))
 			return TgEnumMenuStorage.DbClear;
 		if (prompt.Equals(TgLocale.MenuStorageDbBackup))
@@ -185,9 +188,9 @@ internal partial class TgMenuHelper
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewChats, dtos, BusinessLogicManager.StorageManager.SourceRepository);
         if (dto.Uid != Guid.Empty)
         {
-            Value = TgEnumMenuMain.ClientDownload;
+            Value = TgEnumMenuMain.ClientConnection;
             tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-            await SetupDownloadAsync(tgDownloadSettings);
+            await SetupClientConnectionAsync(tgDownloadSettings);
         }
     }
 
@@ -201,9 +204,9 @@ internal partial class TgMenuHelper
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewContacts, dtos, BusinessLogicManager.StorageManager.ContactRepository);
         //if (dto.Uid != Guid.Empty)
         //{
-        //    Value = TgEnumMenuMain.ClientDownload;
+        //    Value = TgEnumMenuMain.ClientConnection;
         //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupDownloadAsync(tgDownloadSettings);
+        //    await SetupClientConnectionAsync(tgDownloadSettings);
         //}
     }
 
@@ -217,9 +220,9 @@ internal partial class TgMenuHelper
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewFilters, dtos, BusinessLogicManager.StorageManager.FilterRepository);
         //if (dto.Uid != Guid.Empty)
         //{
-        //    Value = TgEnumMenuMain.ClientDownload;
+        //    Value = TgEnumMenuMain.ClientConnection;
         //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupDownloadAsync(tgDownloadSettings);
+        //    await SetupClientConnectionAsync(tgDownloadSettings);
         //}
     }
 
@@ -233,9 +236,9 @@ internal partial class TgMenuHelper
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewFilters, dtos, BusinessLogicManager.StorageManager.StoryRepository);
         //if (dto.Uid != Guid.Empty)
         //{
-        //    Value = TgEnumMenuMain.ClientDownload;
+        //    Value = TgEnumMenuMain.ClientConnection;
         //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupDownloadAsync(tgDownloadSettings);
+        //    await SetupClientConnectionAsync(tgDownloadSettings);
         //}
     }
 
@@ -249,9 +252,9 @@ internal partial class TgMenuHelper
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewFilters, dtos, BusinessLogicManager.StorageManager.VersionRepository);
         //if (dto.Uid != Guid.Empty)
         //{
-        //    Value = TgEnumMenuMain.ClientDownload;
+        //    Value = TgEnumMenuMain.ClientConnection;
         //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupDownloadAsync(tgDownloadSettings);
+        //    await SetupClientConnectionAsync(tgDownloadSettings);
         //}
     }
 

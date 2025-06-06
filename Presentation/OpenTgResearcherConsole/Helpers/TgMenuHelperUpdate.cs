@@ -10,15 +10,16 @@ internal sealed partial class TgMenuHelper
 
 	private static TgEnumMenuUpdate SetMenuUpdate()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuReturn,
-					TgLocale.MenuUpdateReleaseCheck,
-					TgLocale.MenuUpdatePreviewCheck
-				));
+        var selectionPrompt = new SelectionPrompt<string>()
+            .Title($"  {TgLocale.MenuSwitchNumber}")
+            .PageSize(Console.WindowHeight - 17)
+            .MoreChoicesText(TgLocale.MoveUpDown);
+        selectionPrompt.AddChoices(TgLocale.MenuReturn,
+            TgLocale.MenuUpdateReleaseCheck,
+            TgLocale.MenuUpdatePreviewCheck
+        );
+
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
 		if (prompt.Equals(TgLocale.MenuUpdateReleaseCheck))
 			return TgEnumMenuUpdate.ReleaseCheck;
 		if (prompt.Equals(TgLocale.MenuUpdatePreviewCheck))

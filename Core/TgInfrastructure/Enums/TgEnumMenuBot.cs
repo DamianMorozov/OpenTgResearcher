@@ -13,4 +13,5 @@ public enum TgEnumMenuBot
     RegisterTelegramBot,
 	BotConnect,
 	BotDisconnect,
+    BotAutoViewEvents,
 }

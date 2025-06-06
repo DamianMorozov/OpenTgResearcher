@@ -11,18 +11,22 @@ internal partial class TgMenuHelper
 	private TgEnumMenuBot SetMenuBotConnection()
 	{
 		var selectionPrompt = new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(
-					TgLocale.MenuReturn,
-                    TgLocale.MenuBotClearConnectionData,
-                    TgLocale.MenuRegisterTelegramApp,
-                    TgLocale.MenuRegisterTelegramBot,
-                    TgLocale.MenuBotUseBot,
-                    TgLocale.MenuSetBotToken,
-                    TgLocale.MenuBotConnect,
-					TgLocale.MenuBotDisconnect);
+			.Title($"  {TgLocale.MenuSwitchNumber}")
+			.PageSize(Console.WindowHeight - 17)
+			.MoreChoicesText(TgLocale.MoveUpDown);
+		selectionPrompt.AddChoices(
+				TgLocale.MenuReturn,
+                TgLocale.MenuBotClearConnectionData,
+                TgLocale.MenuRegisterTelegramApp,
+                TgLocale.MenuRegisterTelegramBot,
+                TgLocale.MenuBotUseBot,
+                TgLocale.MenuSetBotToken,
+                TgLocale.MenuBotConnect,
+				TgLocale.MenuBotDisconnect,
+                // Advanced
+                TgLocale.MenuAdvanced,
+                TgLocale.MenuBotAutoViewEvents
+            );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
         if (prompt.Equals(TgLocale.MenuBotClearConnectionData))
@@ -39,6 +43,8 @@ internal partial class TgMenuHelper
             return TgEnumMenuBot.BotConnect;
         if (prompt.Equals(TgLocale.MenuBotDisconnect))
             return TgEnumMenuBot.BotDisconnect;
+        if (prompt.Equals(TgLocale.MenuBotAutoViewEvents))
+            return TgEnumMenuBot.BotAutoViewEvents;
 
         return TgEnumMenuBot.Return;
     }
@@ -49,6 +55,7 @@ internal partial class TgMenuHelper
 		do
 		{
 			await ShowTableBotConnectionAsync(tgDownloadSettings);
+
 			menu = SetMenuBotConnection();
             switch (menu)
             {
@@ -72,6 +79,9 @@ internal partial class TgMenuHelper
                     break;
                 case TgEnumMenuBot.BotDisconnect:
                     await DisconnectBotAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuBot.BotAutoViewEvents:
+                    await RunTaskStatusAsync(tgDownloadSettings, BotAutoViewEventsAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
                     break;
                 case TgEnumMenuBot.Return:
                     break;
@@ -105,42 +115,43 @@ internal partial class TgMenuHelper
 
     private async Task AskBotConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
-        if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotConnect)) return;
+        try
+        {
+            TgLog.WriteLine("  TG bot connect ...");
 
-        TgLog.WriteLine("  TG bot connect ...");
-        await ConnectBotAsync(tgDownloadSettings, isSilent);
-        TgLog.WriteLine("  TG bot connect success");
-    }
+            if (!isSilent)
+            {
+                if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotConnect)) return;
+                
+                await ShowTableBotConnectionAsync(tgDownloadSettings);
+            }
+            //var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+            //var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
+            //var proxy = proxyResult.Item;
 
-    public async Task ConnectBotAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
-	{
-		if (!isSilent)
-			await ShowTableBotConnectionAsync(tgDownloadSettings);
-		var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-		var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
-		var proxy = proxyResult.Item;
+            await BusinessLogicManager.ConnectClient.ConnectBotConsoleAsync();
 
-		try
-		{
-			await BusinessLogicManager.ConnectClient.ConnectBotConsoleAsync();
-
-			if (!isSilent)
-			{
-				if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
-					TgLog.MarkupInfo(TgLocale.TgBotSetupCompleteError);
-				else
+            if (!isSilent)
+            {
+                if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
+                    TgLog.MarkupInfo(TgLocale.TgBotSetupCompleteError);
+                else
                 {
                     TgLog.MarkupInfo(TgLocale.TgBotSetupCompleteSuccess);
                     await PrintBotInfoAsync();
                 }
-				TgLog.TypeAnyKeyForReturn();
-			}
-		}
-		catch (Exception ex)
-		{
+                TgLog.TypeAnyKeyForReturn();
+            }
+        }
+        catch (Exception ex)
+        {
             CatchException(ex, TgLocale.TgBotSetupCompleteError);
-		}
-	}
+        }
+        finally
+        {
+            TgLog.WriteLine("  TG bot connect   v");
+        }
+    }
 
     private async Task PrintBotInfoAsync()
     {
@@ -227,6 +238,16 @@ internal partial class TgMenuHelper
 		await ShowTableBotConnectionAsync(tgDownloadSettings);
 		await BusinessLogicManager.ConnectClient.DisconnectBotAsync();
 	}
+
+    private async Task BotAutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        BusinessLogicManager.ConnectClient.IsBotUpdateStatus = true;
+        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
+            tgDownloadSettings.SourceVm.Dto.Count, "Bot auto view updates is started");
+        TgLog.TypeAnyKeyForReturn();
+        BusinessLogicManager.ConnectClient.IsBotUpdateStatus = false;
+        await Task.CompletedTask;
+    }
 
     #endregion
 }

@@ -93,14 +93,17 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 
 	#region Public and private methods - ITgEfProxyRepository
 
-	public async Task<TgEfStorageResult<TgEfProxyEntity>> GetCurrentProxyAsync(Guid? proxyUid)
+	public async Task<TgEfStorageResult<TgEfProxyEntity>> GetCurrentProxyAsync(Guid? uid)
 	{
-		var storageResultProxy = await GetAsync(new() { Uid = proxyUid ?? Guid.Empty }, isReadOnly: false);
+		var storageResultProxy = await GetAsync(new() { Uid = uid ?? Guid.Empty }, isReadOnly: false);
 		return storageResultProxy.IsExists ? storageResultProxy : new(TgEnumEntityState.NotExists);
 	}
 
-	public async Task<Guid> GetCurrentProxyUidAsync(TgEfStorageResult<TgEfAppEntity> storageResult) =>
-		(await GetCurrentProxyAsync(storageResult.Item.ProxyUid)).Item.Uid;
+    public async Task<Guid> GetCurrentProxyUidAsync()
+    {
+        var dto = await GetCurrentDtoAsync();
+        return dto.Uid;
+    }
 
     public TgEfProxyDto GetCurrentAppDto()
     {

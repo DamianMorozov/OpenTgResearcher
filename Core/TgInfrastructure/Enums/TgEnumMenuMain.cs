@@ -10,9 +10,6 @@ public enum TgEnumMenuMain
     BotConnection,
     ClientConnection,
     Storage,
-	Filters,
-	ClientDownload,
-	Advanced,
 	Update,
 	License,
 }

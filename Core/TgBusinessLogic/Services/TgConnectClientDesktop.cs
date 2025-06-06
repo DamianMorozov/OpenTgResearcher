@@ -10,7 +10,7 @@ public sealed partial class TgConnectClientDesktop(ITgStorageManager storageMana
 	{
 		ClientException = new();
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-        if (!appDto.UseBot)
+        if (appDto.UseClient)
         {
             if (Client is null)
                 return;
@@ -39,8 +39,9 @@ public sealed partial class TgConnectClientDesktop(ITgStorageManager storageMana
                 await AfterClientConnectAsync();
             }
         }
-        else
+        else if (appDto.UseBot)
         {
+            //
         }
 	}
 }

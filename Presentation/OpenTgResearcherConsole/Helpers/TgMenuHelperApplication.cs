@@ -10,18 +10,19 @@ internal partial class TgMenuHelper
 
 	private static TgEnumMenuApp SetMenuApp()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(
-					TgLocale.MenuReturn,
-					TgLocale.MenuAppClearAppData,
-					TgLocale.MenuAppLocateStorage,
-					TgLocale.MenuAppLocateSession,
-					TgLocale.MenuAppUseProxy
-			));
+        var selectionPrompt = new SelectionPrompt<string>()
+            .Title($"  {TgLocale.MenuSwitchNumber}")
+            .PageSize(Console.WindowHeight - 17)
+            .MoreChoicesText(TgLocale.MoveUpDown);
+        selectionPrompt.AddChoices(
+            TgLocale.MenuReturn,
+            TgLocale.MenuAppClearAppData,
+            TgLocale.MenuAppLocateStorage,
+            TgLocale.MenuAppLocateSession,
+            TgLocale.MenuAppUseProxy
+        );
+
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
 		if (prompt.Equals(TgLocale.MenuAppClearAppData))
 			return TgEnumMenuApp.ClearData;
 		if (prompt.Equals(TgLocale.MenuAppLocateStorage))

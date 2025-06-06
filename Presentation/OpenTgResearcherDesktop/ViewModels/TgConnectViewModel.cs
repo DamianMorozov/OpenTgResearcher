@@ -53,8 +53,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	public partial bool UseBot { get; set; }
 	[ObservableProperty]
 	public partial string BotTokenKey { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool UseClient { get; set; }
 
-	public IRelayCommand ClientConnectCommand { get; }
+    public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
 	public IRelayCommand AppLoadCommand { get; }
 	public IRelayCommand AppSaveCommand { get; }
@@ -101,7 +103,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	{
 		ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 		IsClientConnected = false;
-		if (!UseBot)
+		if (UseClient)
 		{
 			var client = App.BusinessLogicManager.ConnectClient.Client;
 			// Check exceptions
@@ -231,9 +233,10 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		FirstName = AppEntity.FirstName;
 		LastName = AppEntity.LastName;
 		UseBot = AppEntity.UseBot;
-		BotTokenKey = AppEntity.BotTokenKey;
+        BotTokenKey = AppEntity.BotTokenKey;
+        UseClient = AppEntity.UseClient;
 
-		UserName = string.Empty;
+        UserName = string.Empty;
 		MtProxyUrl = string.Empty;
 		MaxAutoReconnects = string.Empty;
 		FloodRetryThreshold = string.Empty;
@@ -295,7 +298,8 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		AppEntity.ProxyUid = ProxyVm?.Dto.Uid;
 		AppEntity.UseBot = UseBot;
 		AppEntity.BotTokenKey = BotTokenKey;
-		if (AppEntity.ProxyUid is null || AppEntity.ProxyUid == Guid.Empty)
+        AppEntity.UseClient = UseClient;
+        if (AppEntity.ProxyUid is null || AppEntity.ProxyUid == Guid.Empty)
 			AppEntity.Proxy = null;
 
 		await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppEntity);

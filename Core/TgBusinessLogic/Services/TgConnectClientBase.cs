@@ -252,11 +252,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 	public async Task ConnectBotConsoleAsync()
 	{
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-        if (!appDto.UseBot)
+        if (appDto.UseClient)
         {
             await StorageManager.AppRepository.SetUseBotAsync(true);
             appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (!appDto.UseBot)
+            if (appDto.UseClient)
                 throw new ArgumentOutOfRangeException(nameof(appDto), appDto, "Cannot set UseBot property!");
         }
 
@@ -1801,7 +1801,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 				channel = tgDownloadSettings.Chat.Base as Channel;
 
             var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (!appDto.UseBot && channel is not null)
+            if (appDto.UseClient && channel is not null)
             {
                 isAccessToMessages = await Client.Channels_ReadMessageContents(channel);
             }
@@ -1869,7 +1869,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
 				while (sourceFirstId <= sourceLastId)
 				{
-                    if (!appDto.UseBot)
+                    if (appDto.UseClient)
                     {
                         if (Client is null || !tgDownloadSettings2.SourceVm.Dto.IsDownload || (Client is not null && Client.Disconnected))
                         {
@@ -1897,7 +1897,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             }
                         });
                     }
-                    else
+                    else if (appDto.UseBot)
                     {
                         if (Bot is null || !tgDownloadSettings2.SourceVm.Dto.IsDownload || (Bot.Client is not null && Bot.Client.Disconnected))
                         {

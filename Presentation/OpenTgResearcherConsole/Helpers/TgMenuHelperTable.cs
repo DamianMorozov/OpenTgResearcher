@@ -49,9 +49,6 @@ internal partial class TgMenuHelper
     private async Task ShowTableDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsDownloadAsync);
 
-    private async Task ShowTableAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsAdvancedAsync);
-
     private async Task ShowTableViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsViewDownloadedContacts);
 
@@ -95,7 +92,7 @@ internal partial class TgMenuHelper
             GetMarkup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        if (!appDto.UseBot)
+        if (appDto.UseClient)
         {
             // Client health check
             var clientConnectReady = BusinessLogicManager.ConnectClient.IsReady;
@@ -189,17 +186,19 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseBot, isUseX: true)), GetMarkup(appDto.UseBot.ToString()));
 
-        // Bot connection
-        table.AddRow(GetMarkup(isBotConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
-                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-        
+        if (!appDto.UseBot) return;
+
         // Bot token
         if (!string.IsNullOrEmpty(appDto.BotTokenKey))
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken, isUseX: true)), GetMarkup(appDto.BotTokenKey));
+
+        // Bot connection
+        table.AddRow(GetMarkup(isBotConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
+                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
         await Task.CompletedTask;
     }
@@ -215,11 +214,7 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseClient, isUseX: true)), GetMarkup(appDto.UseClient.ToString()));
 
-        // Client connection
-        table.AddRow(GetMarkup(isClientConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),
-                GetMarkup(isClientConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+        if (!appDto.UseClient) return;
 
         // User name, user id, user active
         if (BusinessLogicManager.ConnectClient.Me is null)
@@ -242,8 +237,7 @@ internal partial class TgMenuHelper
         }
 
         // Proxy setup
-        if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(
-            await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync()), Guid.Empty))
+        if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(), Guid.Empty))
         {
             if (TgAppSettings.IsUseProxy)
                 table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
@@ -279,6 +273,20 @@ internal partial class TgMenuHelper
             }
         }
 
+        // Enable auto update
+        if (tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
+                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+        else
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate, isUseX: true)),
+                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+
+        // Client connection
+        table.AddRow(GetMarkup(isClientConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),
+                GetMarkup(isClientConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+
         // Exceptions
         if (BusinessLogicManager.ConnectClient.ProxyException.IsExist)
         {
@@ -312,7 +320,7 @@ internal partial class TgMenuHelper
     /// <summary> Mark history read </summary>
     private async Task FillTableRowsMarkHistoryReadProgressAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientMarkAllMessagesAsRead)),
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientAdvancedMarkAllMessagesAsRead)),
             GetMarkup($"{TgLocale.MenuClientProgress} ..."));
         await Task.CompletedTask;
     }
@@ -320,7 +328,7 @@ internal partial class TgMenuHelper
     /// <summary> Mark history read </summary>
     private async Task FillTableRowsMarkHistoryReadCompleteAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientMarkAllMessagesAsRead)),
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientAdvancedMarkAllMessagesAsRead)),
             GetMarkup($"{TgLocale.MenuClientComplete} ..."));
         await Task.CompletedTask;
     }
@@ -399,14 +407,6 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.MenuDownloadUserAccess)), GetMarkup($"{false}"));
 
-        await Task.CompletedTask;
-    }
-
-    private async Task FillTableRowsAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
-    {
-        // Enable auto update
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
-            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
         await Task.CompletedTask;
     }
 

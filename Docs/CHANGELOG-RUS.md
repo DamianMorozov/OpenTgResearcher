@@ -4,10 +4,10 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.260] - 2025-06-05
+## [0.6.260] - 2025-06-06
 ### Изменено
 - Повышение эффективности высвобождения неуправляемых ресурсов
-- Обновлено меню хранилища в OpenTgResearcherConsole
+- Обновлено меню в OpenTgResearcherConsole
 - Оптимизация просмотра таблиц в OpenTgResearcherConsole
 - Обновлена таблица приложений в TgStorage
 ### Добавлено

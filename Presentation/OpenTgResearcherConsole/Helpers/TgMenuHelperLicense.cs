@@ -10,16 +10,17 @@ internal sealed partial class TgMenuHelper
 
 	private static TgEnumMenuLicense SetMenuLicense()
 	{
-		var prompt = AnsiConsole.Prompt(
-			new SelectionPrompt<string>()
-				.Title($"  {TgLocale.MenuSwitchNumber}")
-				.PageSize(Console.WindowHeight - 17)
-				.MoreChoicesText(TgLocale.MoveUpDown)
-				.AddChoices(TgLocale.MenuReturn,
-					TgLocale.MenuLicenseClear,
-					TgLocale.MenuLicenseCheck,
-					TgLocale.MenuLicenseBuy
-				));
+        var selectionPrompt = new SelectionPrompt<string>()
+            .Title($"  {TgLocale.MenuSwitchNumber}")
+            .PageSize(Console.WindowHeight - 17)
+            .MoreChoicesText(TgLocale.MoveUpDown);
+        selectionPrompt.AddChoices(TgLocale.MenuReturn,
+            TgLocale.MenuLicenseClear,
+            TgLocale.MenuLicenseCheck,
+            TgLocale.MenuLicenseBuy
+        );
+
+        var prompt = AnsiConsole.Prompt(selectionPrompt);
 		if (prompt.Equals(TgLocale.MenuLicenseClear))
 			return TgEnumMenuLicense.LicenseClear;
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))

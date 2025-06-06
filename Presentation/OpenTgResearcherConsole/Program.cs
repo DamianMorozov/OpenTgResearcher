@@ -86,22 +86,23 @@ public static class Program
                 var selectionPrompt = new SelectionPrompt<string>()
                     .Title($"  {tgLocale.MenuSwitchNumber}")
                     .PageSize(Console.WindowHeight - 17)
-                    .MoreChoicesText(tgLocale.MoveUpDown)
-                    .AddChoices(
-                        tgLocale.MenuMainExit,
-                        tgLocale.MenuMainApp,
-                        tgLocale.MenuMainStorage,
-                        tgLocale.MenuMainClientConnection,
-                        tgLocale.MenuMainClientDownload,
-                        tgLocale.MenuMainAdvanced,
-                        tgLocale.MenuMainUpdate,
-                        tgLocale.MenuMainLicense);
+                    .MoreChoicesText(tgLocale.MoveUpDown);
+                selectionPrompt.AddChoices(
+                    tgLocale.MenuMainExit,
+                    tgLocale.MenuMainApp,
+                    tgLocale.MenuMainStorage,
+                    tgLocale.MenuMainClientConnection
+                );
                 // Check paid license
                 if (tgMenu.BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
                 {
                     selectionPrompt.AddChoices(tgLocale.MenuMainBotConnection);
                 }
-                
+                selectionPrompt.AddChoices(
+                    tgLocale.MenuMainUpdate,
+                    tgLocale.MenuMainLicense
+                );
+
                 var prompt = AnsiConsole.Prompt(selectionPrompt);
                 if (prompt.Equals(tgLocale.MenuMainExit))
                     tgMenu.Value = TgEnumMenuMain.Exit;
@@ -124,16 +125,6 @@ public static class Program
                 {
                     tgMenu.Value = TgEnumMenuMain.Storage;
                     await tgMenu.SetupStorageAsync(tgDownloadSettings);
-                }
-                if (prompt.Equals(tgLocale.MenuMainClientDownload))
-                {
-                    tgMenu.Value = TgEnumMenuMain.ClientDownload;
-                    await tgMenu.SetupDownloadAsync(tgDownloadSettings);
-                }
-                if (prompt.Equals(tgLocale.MenuMainAdvanced))
-                {
-                    tgMenu.Value = TgEnumMenuMain.Advanced;
-                    await tgMenu.SetupAdvancedAsync(tgDownloadSettings);
                 }
                 if (prompt.Equals(tgLocale.MenuMainUpdate))
                 {

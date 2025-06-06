@@ -1,4 +1,4 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
@@ -6,102 +6,79 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
-	#region Public and private methods
+    #region Public and private methods
 
-	private TgEnumMenuBot SetMenuBotConnection()
-	{
-		var selectionPrompt = new SelectionPrompt<string>()
-			.Title($"  {TgLocale.MenuSwitchNumber}")
-			.PageSize(Console.WindowHeight - 17)
-			.MoreChoicesText(TgLocale.MoveUpDown);
-		selectionPrompt.AddChoices(
-				TgLocale.MenuReturn,
-                TgLocale.MenuBotClearConnectionData,
-                TgLocale.MenuRegisterTelegramApp,
-                TgLocale.MenuRegisterTelegramBot,
-                TgLocale.MenuBotUseBot,
-                TgLocale.MenuSetBotToken,
-                TgLocale.MenuBotConnect,
-				TgLocale.MenuBotDisconnect,
-                // Advanced
-                TgLocale.MenuAdvanced,
-                TgLocale.MenuBotAutoViewEvents
-            );
+    private TgEnumMenuBotConSetup SetMenuBotConSetup()
+    {
+        var selectionPrompt = new SelectionPrompt<string>()
+            .Title($"  {TgLocale.MenuSwitchNumber}")
+            .PageSize(Console.WindowHeight - 17)
+            .MoreChoicesText(TgLocale.MoveUpDown);
+        selectionPrompt.AddChoices(
+            TgLocale.MenuReturn,
+            TgLocale.MenuRegisterTelegramApp,
+            TgLocale.MenuRegisterTelegramBot,
+            TgLocale.MenuBotUseBot,
+            TgLocale.MenuSetBotToken,
+            TgLocale.MenuBotConnect,
+            TgLocale.MenuBotDisconnect
+        );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
-        if (prompt.Equals(TgLocale.MenuBotClearConnectionData))
-			return TgEnumMenuBot.ClearBotConnectionData;
         if (prompt.Equals(TgLocale.MenuRegisterTelegramApp))
-            return TgEnumMenuBot.RegisterTelegramApp;
+            return TgEnumMenuBotConSetup.RegisterTelegramApp;
         if (prompt.Equals(TgLocale.MenuRegisterTelegramBot))
-            return TgEnumMenuBot.RegisterTelegramBot;
+            return TgEnumMenuBotConSetup.RegisterTelegramBot;
         if (prompt.Equals(TgLocale.MenuBotUseBot))
-            return TgEnumMenuBot.UseBot;
+            return TgEnumMenuBotConSetup.UseBot;
         if (prompt.Equals(TgLocale.MenuSetBotToken))
-            return TgEnumMenuBot.SetBotToken;
+            return TgEnumMenuBotConSetup.SetBotToken;
         if (prompt.Equals(TgLocale.MenuBotConnect))
-            return TgEnumMenuBot.BotConnect;
+            return TgEnumMenuBotConSetup.BotConnect;
         if (prompt.Equals(TgLocale.MenuBotDisconnect))
-            return TgEnumMenuBot.BotDisconnect;
-        if (prompt.Equals(TgLocale.MenuBotAutoViewEvents))
-            return TgEnumMenuBot.BotAutoViewEvents;
+            return TgEnumMenuBotConSetup.BotDisconnect;
 
-        return TgEnumMenuBot.Return;
+        return TgEnumMenuBotConSetup.Return;
     }
 
-    public async Task SetupBotConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-	{
-		TgEnumMenuBot menu;
-		do
-		{
-			await ShowTableBotConnectionAsync(tgDownloadSettings);
+    public async Task SetupBotConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        TgEnumMenuBotConSetup menu;
+        do
+        {
+            await ShowTableBotConSetupAsync(tgDownloadSettings);
 
-			menu = SetMenuBotConnection();
+            menu = SetMenuBotConSetup();
             switch (menu)
             {
-                case TgEnumMenuBot.ClearBotConnectionData:
-                    await ClearBotConnectionDataAsync(tgDownloadSettings);
-                    break;
-                case TgEnumMenuBot.RegisterTelegramApp:
+                case TgEnumMenuBotConSetup.RegisterTelegramApp:
                     await WebSiteOpenAsync(TgConstants.LinkTelegramApps);
                     break;
-                case TgEnumMenuBot.RegisterTelegramBot:
+                case TgEnumMenuBotConSetup.RegisterTelegramBot:
                     await WebSiteOpenAsync(TgConstants.LinkTelegramBot);
                     break;
-                case TgEnumMenuBot.UseBot:
+                case TgEnumMenuBotConSetup.UseBot:
                     await UseBotAsync(tgDownloadSettings);
                     break;
-                case TgEnumMenuBot.SetBotToken:
+                case TgEnumMenuBotConSetup.SetBotToken:
                     await SetBotTokenAsync(tgDownloadSettings);
                     break;
-                case TgEnumMenuBot.BotConnect:
+                case TgEnumMenuBotConSetup.BotConnect:
                     await AskBotConnectAsync(tgDownloadSettings, isSilent: false);
                     break;
-                case TgEnumMenuBot.BotDisconnect:
+                case TgEnumMenuBotConSetup.BotDisconnect:
                     await DisconnectBotAsync(tgDownloadSettings);
                     break;
-                case TgEnumMenuBot.BotAutoViewEvents:
-                    await RunTaskStatusAsync(tgDownloadSettings, BotAutoViewEventsAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
-                    break;
-                case TgEnumMenuBot.Return:
+                case TgEnumMenuBotConSetup.Return:
                     break;
             }
-        } while (menu is not TgEnumMenuBot.Return);
+        } while (menu is not TgEnumMenuBotConSetup.Return);
     }
 
     public async Task UseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         var useBot = AskQuestionYesNoReturnPositive(TgLocale.MenuBotUseBot);
         await BusinessLogicManager.StorageManager.AppRepository.SetUseBotAsync(useBot);
-    }
-
-    public async Task ClearBotConnectionDataAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotClearConnectionData)) return;
-
-        await ShowTableBotConnectionAsync(tgDownloadSettings);
-        await BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
-        await BusinessLogicManager.ConnectClient.DisconnectBotAsync();
     }
 
     public async Task SetBotTokenAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -122,8 +99,8 @@ internal partial class TgMenuHelper
             if (!isSilent)
             {
                 if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotConnect)) return;
-                
-                await ShowTableBotConnectionAsync(tgDownloadSettings);
+
+                await ShowTableBotConSetupAsync(tgDownloadSettings);
             }
             //var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
             //var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
@@ -233,20 +210,10 @@ internal partial class TgMenuHelper
         AnsiConsole.Write(table);
     }
 
-	public async Task DisconnectBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-	{
-		await ShowTableBotConnectionAsync(tgDownloadSettings);
-		await BusinessLogicManager.ConnectClient.DisconnectBotAsync();
-	}
-
-    private async Task BotAutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task DisconnectBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        BusinessLogicManager.ConnectClient.IsBotUpdateStatus = true;
-        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
-            tgDownloadSettings.SourceVm.Dto.Count, "Bot auto view updates is started");
-        TgLog.TypeAnyKeyForReturn();
-        BusinessLogicManager.ConnectClient.IsBotUpdateStatus = false;
-        await Task.CompletedTask;
+        await ShowTableBotConSetupAsync(tgDownloadSettings);
+        await BusinessLogicManager.ConnectClient.DisconnectBotAsync();
     }
 
     #endregion

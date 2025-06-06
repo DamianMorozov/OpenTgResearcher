@@ -101,8 +101,12 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuAppUseProxy => "Using a proxy";
 	public string MenuAppUseProxyDisable => "Disable proxy";
 	public string MenuAppUseProxyEnable => "Enable proxy";
+	public string MenuBotAdvanced => "Bot advanced";
 	public string MenuBotAutoViewEvents => "Bot - Auto view events";
 	public string MenuBotClearConnectionData => "Clear bot connection data";
+	public string MenuBotDownload => "Bot download";
+	public string MenuBotSetup => "Bot setup";
+	public string MenuClientAdvanced => "Client advanced";
 	public string MenuClientAdvancedAutoViewEvents => "Auto view events";
 	public string MenuClientAdvancedMarkAllMessagesAsRead => "Mark all messages as read";
 	public string MenuClientAdvancedSearchChats => "Search chats";
@@ -115,6 +119,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientConnect => "Connect client to TG server";
 	public string MenuClientConnectStatus => "Connect status";
 	public string MenuClientDisconnect => "Disconnect client from TG server";
+	public string MenuClientDownload => "Client download";
 	public string MenuClientFirstName => "First name";
 	public string MenuClientIsConnected => "Client is connected";
 	public string MenuClientIsDisconnected => "Client is disconnected";
@@ -125,6 +130,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientProgress => "Progress";
 	public string MenuClientProxy => "Proxy";
 	public string MenuClientSetProxy => "Setup proxy";
+	public string MenuClientSetup => "Client setup";
 	public string MenuClientVerificationCode => "Verification code";
 	public string MenuDownload => "--- Download ---";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";

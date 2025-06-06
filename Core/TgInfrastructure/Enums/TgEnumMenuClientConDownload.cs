@@ -3,26 +3,9 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuClient
+public enum TgEnumMenuClientConDownload
 {
 	Return,
-    UseClient,
-    ClearClientConnectionData,
-	RegisterTelegramApp,
-	ClientSetProxy,
-	ClientConnect,
-	ClientDisconnect,
-    // Advanced
-    AdvancedStartAutoDownload,
-    AdvancedAutoViewEvents,
-    AdvancedMarkAllMessagesAsRead,
-    AdvancedViewChats,
-    AdvancedSearchChats,
-    AdvancedSearchContacts,
-    AdvancedSearchDialogs,
-    AdvancedSearchStories,
-    // Download
-    StorageResetAutoDownload,
     DownloadManual,
     DownloadSetCountThreads,
     DownloadSetDestDirectory,

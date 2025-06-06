@@ -114,12 +114,12 @@ public static class Program
                 if (prompt.Equals(tgLocale.MenuMainClientConnection))
                 {
                     tgMenu.Value = TgEnumMenuMain.ClientConnection;
-                    await tgMenu.SetupClientConnectionAsync(tgDownloadSettings);
+                    await tgMenu.SetupClientConAsync(tgDownloadSettings);
                 }
                 if (prompt.Equals(tgLocale.MenuMainBotConnection))
                 {
                     tgMenu.Value = TgEnumMenuMain.BotConnection;
-                    await tgMenu.SetupBotConnectionAsync(tgDownloadSettings);
+                    await tgMenu.SetupBotConAsync(tgDownloadSettings);
                 }
                 if (prompt.Equals(tgLocale.MenuMainStorage))
                 {

@@ -3,15 +3,7 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuBot
+public enum TgEnumMenuBotConDownload
 {
 	Return,
-    UseBot,
-    ClearBotConnectionData,
-	SetBotToken,
-	RegisterTelegramApp,
-    RegisterTelegramBot,
-	BotConnect,
-	BotDisconnect,
-    BotAutoViewEvents,
 }

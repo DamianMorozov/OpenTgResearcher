@@ -40,23 +40,44 @@ internal partial class TgMenuHelper
     private async Task ShowTableApplicationAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsApplicationAsync);
 
-    private async Task ShowTableBotConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConnectionAsync);
+    private async Task ShowTableBotConAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConAsync);
 
-    private async Task ShowTableClientConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConnectionAsync);
+    private async Task ShowTableBotConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConSetupAsync);
 
-    private async Task ShowTableDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsDownloadAsync);
+    private async Task ShowTableBotConAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConAdvancedAsync);
+
+    private async Task ShowTableBotConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConDownloadAsync);
+
+    private async Task ShowTableClientConAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConAsync);
+
+    private async Task ShowTableClientConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConSetupAsync);
+
+    private async Task ShowTableClientConAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConAdvancedAsync);
+
+    private async Task ShowTableClientConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConDownloadAsync);
 
     private async Task ShowTableViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsViewDownloadedContacts);
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (_, __) => await Task.CompletedTask);
 
     private async Task ShowTableViewChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsViewDownloadedChatsAsync);
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (_, __) => await Task.CompletedTask);
+
+    private async Task ShowTableViewFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (_, __) => await Task.CompletedTask);
 
     private async Task ShowTableViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsViewDownloadedStoriesAsync);
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (_, __) => await Task.CompletedTask);
+
+    private async Task ShowTableViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (_, __) => await Task.CompletedTask);
 
     private async Task ShowTableMarkHistoryReadProgressAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsMarkHistoryReadProgressAsync);
@@ -175,7 +196,21 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    private async Task FillTableRowsBotConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    private async Task FillTableRowsBotConAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+
+        // Bot connection
+        table.AddRow(GetMarkup(isBotConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
+                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+
+        await Task.CompletedTask;
+    }
+
+    private async Task FillTableRowsBotConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
         var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
@@ -203,7 +238,74 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    private async Task FillTableRowsClientConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    private async Task FillTableRowsBotConAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+
+        // Use bot
+        if (appDto.UseBot)
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseBot)), GetMarkup(appDto.UseBot.ToString()));
+        else
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseBot, isUseX: true)), GetMarkup(appDto.UseBot.ToString()));
+
+        if (!appDto.UseBot) return;
+
+        // Bot token
+        if (!string.IsNullOrEmpty(appDto.BotTokenKey))
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
+        else
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken, isUseX: true)), GetMarkup(appDto.BotTokenKey));
+
+        // Bot connection
+        table.AddRow(GetMarkup(isBotConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
+                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+
+        await Task.CompletedTask;
+    }
+
+    private async Task FillTableRowsBotConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+
+        // Bot connection
+        table.AddRow(GetMarkup(isBotConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
+                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+
+        await Task.CompletedTask;
+    }
+
+    private async Task FillTableRowsClientConAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+        var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+
+        // Client connection
+        table.AddRow(GetMarkup(isClientConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),
+                GetMarkup(isClientConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+
+        // Exceptions
+        if (BusinessLogicManager.ConnectClient.ProxyException.IsExist)
+        {
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)), GetMarkup(BusinessLogicManager.ConnectClient.ProxyException.Message));
+        }
+        if (BusinessLogicManager.ConnectClient.ClientException.IsExist)
+        {
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientException)), GetMarkup(BusinessLogicManager.ConnectClient.ClientException.Message));
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)), GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task FillTableRowsClientConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
         var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
@@ -301,39 +403,105 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    /// <summary> Chat info </summary>
-    private async Task FillTableRowsDownloadedChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    private async Task FillTableRowsClientConAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        if (!tgDownloadSettings.SourceVm.Dto.IsReady)
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.SettingsChat)),
+        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+        var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+
+        // Use client
+        if (appDto.UseClient)
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseClient)), GetMarkup(appDto.UseClient.ToString()));
+        else
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseClient, isUseX: true)), GetMarkup(appDto.UseClient.ToString()));
+
+        if (!appDto.UseClient) return;
+
+        // User name, user id, user active
+        if (BusinessLogicManager.ConnectClient.Me is null)
+        {
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
                 GetMarkup(TgLocale.SettingsIsNeedSetup));
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)),
+                GetMarkup(TgLocale.SettingsIsNeedSetup));
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)),
+                GetMarkup(TgLocale.SettingsIsNeedSetup));
+        }
         else
         {
-            var chatDto = await BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Id == tgDownloadSettings.SourceVm.Dto.Id);
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.SettingsChat)),
-                GetMarkup(chatDto.ToConsoleString()));
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.SettingsDtChanged)),
-                GetMarkup(TgDataFormatUtils.GetDtFormat(chatDto.DtChanged)));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserName)),
+                GetMarkup(BusinessLogicManager.ConnectClient.Me.username));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserId)),
+                GetMarkup(BusinessLogicManager.ConnectClient.Me.id.ToString()));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserIsActive)),
+                GetMarkup(BusinessLogicManager.ConnectClient.Me.IsActive.ToString()));
         }
-    }
 
-    /// <summary> Mark history read </summary>
-    private async Task FillTableRowsMarkHistoryReadProgressAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
-    {
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientAdvancedMarkAllMessagesAsRead)),
-            GetMarkup($"{TgLocale.MenuClientProgress} ..."));
+        // Proxy setup
+        if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(), Guid.Empty))
+        {
+            if (TgAppSettings.IsUseProxy)
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
+                    GetMarkup(TgLocale.SettingsIsNeedSetup));
+            else
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
+                    GetMarkup(TgLocale.SettingsIsOk));
+        }
+        else
+        {
+            // Proxy is not found
+            if (!(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).IsExists || BusinessLogicManager.ConnectClient.Me is null)
+            {
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyType)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyHostName)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyPort)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySecret)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+            }
+            // Proxy is found
+            else
+            {
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
+                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
+                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
+                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
+                if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+            }
+        }
+
+        // Enable auto update
+        if (tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
+                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+        else
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate, isUseX: true)),
+                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+
+        // Client connection
+        table.AddRow(GetMarkup(isClientConnectionReady
+            ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
+            : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),
+                GetMarkup(isClientConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+
+        // Exceptions
+        if (BusinessLogicManager.ConnectClient.ProxyException.IsExist)
+        {
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)), GetMarkup(BusinessLogicManager.ConnectClient.ProxyException.Message));
+        }
+        if (BusinessLogicManager.ConnectClient.ClientException.IsExist)
+        {
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientException)), GetMarkup(BusinessLogicManager.ConnectClient.ClientException.Message));
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)), GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
+        }
+
         await Task.CompletedTask;
     }
 
-    /// <summary> Mark history read </summary>
-    private async Task FillTableRowsMarkHistoryReadCompleteAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
-    {
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientAdvancedMarkAllMessagesAsRead)),
-            GetMarkup($"{TgLocale.MenuClientComplete} ..."));
-        await Task.CompletedTask;
-    }
-
-    private async Task FillTableRowsDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    private async Task FillTableRowsClientConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         // Download
         table.AddRow(GetMarkup(tgDownloadSettings.SourceVm.Dto.IsReady
@@ -410,15 +578,35 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    /// <summary> Contacts </summary>
-    private async Task FillTableRowsViewDownloadedContacts(TgDownloadSettingsViewModel tgDownloadSettings, Table table) =>
-        await FillTableRowsEmpty(table);
+    /// <summary> Chat info </summary>
+    private async Task FillTableRowsDownloadedChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        if (!tgDownloadSettings.SourceVm.Dto.IsReady)
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.SettingsChat)),
+                GetMarkup(TgLocale.SettingsIsNeedSetup));
+        else
+        {
+            var chatDto = await BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Id == tgDownloadSettings.SourceVm.Dto.Id);
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.SettingsChat)),
+                GetMarkup(chatDto.ToConsoleString()));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.SettingsDtChanged)),
+                GetMarkup(TgDataFormatUtils.GetDtFormat(chatDto.DtChanged)));
+        }
+    }
 
-    /// <summary> Chats </summary>
-    private async Task FillTableRowsViewDownloadedChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table) =>
-        await FillTableRowsEmpty(table);
+    /// <summary> Mark history read </summary>
+    private async Task FillTableRowsMarkHistoryReadProgressAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientAdvancedMarkAllMessagesAsRead)),
+            GetMarkup($"{TgLocale.MenuClientProgress} ..."));
+        await Task.CompletedTask;
+    }
 
-    /// <summary> Stories </summary>
-    private async Task FillTableRowsViewDownloadedStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table) =>
-        await FillTableRowsEmpty(table);
+    /// <summary> Mark history read </summary>
+    private async Task FillTableRowsMarkHistoryReadCompleteAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientAdvancedMarkAllMessagesAsRead)),
+            GetMarkup($"{TgLocale.MenuClientComplete} ..."));
+        await Task.CompletedTask;
+    }
 }

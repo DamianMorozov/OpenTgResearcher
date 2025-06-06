@@ -190,7 +190,7 @@ internal partial class TgMenuHelper
         {
             Value = TgEnumMenuMain.ClientConnection;
             tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-            await SetupClientConnectionAsync(tgDownloadSettings);
+            await SetupClientConAsync(tgDownloadSettings);
         }
     }
 
@@ -213,7 +213,7 @@ internal partial class TgMenuHelper
     /// <summary> View filters </summary>
     private async Task FiltersViewAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        await ShowTableViewContactsAsync(tgDownloadSettings);
+        await ShowTableViewFiltersAsync(tgDownloadSettings);
 
         var dtos = await BusinessLogicManager.StorageManager.FilterRepository.GetListDtosAsync();
         dtos = [.. dtos.OrderBy(x => x.IsEnabled).ThenBy(x => x.Name)];
@@ -229,7 +229,7 @@ internal partial class TgMenuHelper
     /// <summary> View stories </summary>
     private async Task StorageViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        await ShowTableViewContactsAsync(tgDownloadSettings);
+        await ShowTableViewStoriesAsync(tgDownloadSettings);
 
         var dtos = await BusinessLogicManager.StorageManager.StoryRepository.GetListDtosAsync();
         dtos = [.. dtos.OrderBy(x => x.Id).ThenBy(x => x.Date)];
@@ -245,7 +245,7 @@ internal partial class TgMenuHelper
     /// <summary> View versions </summary>
     private async Task StorageViewVersionsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        await ShowTableViewContactsAsync(tgDownloadSettings);
+        await ShowTableViewVersionsAsync(tgDownloadSettings);
 
         var dtos = await BusinessLogicManager.StorageManager.VersionRepository.GetListDtosAsync();
         dtos = [.. dtos.OrderBy(x => x.Version)];

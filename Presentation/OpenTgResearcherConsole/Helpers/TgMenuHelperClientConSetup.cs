@@ -52,7 +52,7 @@ internal partial class TgMenuHelper
             switch (menu)
             {
                 case TgEnumMenuClientConSetup.UseClient:
-                    await UseClientAsync(tgDownloadSettings);
+                    await UseClientAsync(tgDownloadSettings, isSilent: false);
                     break;
                 case TgEnumMenuClientConSetup.ClearClientConnectionData:
                     await ClearClientConnectionDataAsync(tgDownloadSettings);
@@ -62,13 +62,13 @@ internal partial class TgMenuHelper
                     break;
                 case TgEnumMenuClientConSetup.ClientSetProxy:
                     await SetupClientProxyAsync();
-                    await AskClientConnectAsync(tgDownloadSettings, isSilent: false);
+                    await ClientConnectAsync(tgDownloadSettings, isSilent: false);
                     break;
                 case TgEnumMenuClientConSetup.ClientConnect:
-                    await AskClientConnectAsync(tgDownloadSettings, isSilent: false);
+                    await ClientConnectAsync(tgDownloadSettings, isSilent: false);
                     break;
                 case TgEnumMenuClientConSetup.ClientDisconnect:
-                    await DisconnectClientAsync(tgDownloadSettings);
+                    await ClientDisconnectAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConSetup.Return:
                     break;
@@ -76,9 +76,9 @@ internal partial class TgMenuHelper
         } while (menu is not TgEnumMenuClientConSetup.Return);
     }
 
-    public async Task UseClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task UseClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
-        var useClient = AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient);
+        var useClient = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient);
         await BusinessLogicManager.StorageManager.AppRepository.SetUseClientAsync(useClient);
     }
 
@@ -158,19 +158,48 @@ internal partial class TgMenuHelper
         },
     };
 
-    private async Task AskClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    private async Task ClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
-        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        if (!appDto.UseClient)
-            await UseClientAsync(tgDownloadSettings);
-        appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        if (!appDto.UseClient) return;
+        try
+        {
+            // Check connect
+            var isClientConnect = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+            if (isClientConnect) return;
 
-        if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect)) return;
+            // Switch flag
+            var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (!appDto.UseClient)
+                await UseClientAsync(tgDownloadSettings, isSilent);
+            appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (!appDto.UseClient) return;
 
-        TgLog.WriteLine("  TG client connect ...");
-        await ConnectClientAsync(tgDownloadSettings, isSilent);
-        TgLog.WriteLine("  TG client connect   v");
+            // Question
+            if (!isSilent)
+                if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect)) return;
+
+            // Connect
+            if (!isSilent)
+                TgLog.WriteLine("  TG client connect ...");
+            var proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(x => x.Uid == appDto.ProxyUid);
+            await BusinessLogicManager.ConnectClient.ConnectClientConsoleAsync(ConfigClientConsole, proxyDto);
+            if (!isSilent)
+            {
+                if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
+                    TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
+                else
+                    TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
+                TgLog.TypeAnyKeyForReturn();
+            }
+            if (!isSilent)
+                TgLog.WriteLine("  TG client connect   v");
+
+            if (!isSilent)
+                await ShowTableClientConSetupAsync(tgDownloadSettings);
+        }
+        catch (Exception ex)
+        {
+            CatchException(ex, TgLocale.TgBotSetupCompleteError);
+        }
     }
 
     private string? ConfigClientConsole(string what)
@@ -240,29 +269,16 @@ internal partial class TgMenuHelper
         }
     }
 
-    public async Task ConnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    public async Task ClientDisconnectAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        if (!isSilent)
-            await ShowTableClientConSetupAsync(tgDownloadSettings);
+        // Check connect
+        var isClientConnect = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+        if (!isClientConnect) return;
 
-        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
-        var proxy = proxyResult.Item;
-        await BusinessLogicManager.ConnectClient.ConnectClientConsoleAsync(ConfigClientConsole, proxy);
-        if (!isSilent)
-        {
-            if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
-                TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
-            else
-                TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
-            TgLog.TypeAnyKeyForReturn();
-        }
-    }
+        // Question
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientDisconnect)) return;
 
-    public async Task DisconnectClientAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        await ShowTableClientConSetupAsync(tgDownloadSettings);
-
+        // Disconnect
         await BusinessLogicManager.ConnectClient.DisconnectClientAsync();
     }
 

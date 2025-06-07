@@ -93,7 +93,7 @@ internal partial class TgMenuHelper
 	{
 		TgAppSettings.IsUseProxy = AskQuestionYesNoReturnPositive(TgLocale.MenuAppUseProxy);
 		SetFileAppSettings();
-        await AskClientConnectAsync(tgDownloadSettings, isSilent: false);
+        await ClientConnectAsync(tgDownloadSettings, isSilent: false);
     }
 
 	#endregion

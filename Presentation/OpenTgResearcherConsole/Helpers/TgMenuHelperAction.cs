@@ -13,7 +13,7 @@ internal partial class TgMenuHelper
 		var result = BusinessLogicManager.ConnectClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
 		if (!result)
 		{
-			await ConnectClientAsync(tgDownloadSettings, isSilent: true);
+			await ClientConnectAsync(tgDownloadSettings, isSilent: true);
 			result = BusinessLogicManager.ConnectClient is { IsReady: true } && tgDownloadSettings.SourceVm.Dto.IsReady;
 			if (!result)
 			{

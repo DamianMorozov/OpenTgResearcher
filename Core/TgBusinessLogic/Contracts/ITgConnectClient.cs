@@ -21,10 +21,10 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync();
     public Task DisconnectBotAsync();
-    public Task ConnectClientConsoleAsync<TEfEntity>(Func<string, string?>? config, ITgDbProxy<TEfEntity> proxy) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
+    public Task ConnectClientConsoleAsync(Func<string, string?>? config, TgEfProxyDto proxyDto);
     public Task ConnectBotConsoleAsync();
-	public Task ConnectSessionDesktopAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, Func<string, string?> config) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
-	public Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
+	public Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config);
+    public Task ConnectSessionAsync(TgEfProxyDto proxyDto);
 
 	public Task<Dictionary<long, TL.ChatBase>> CollectAllChatsAsync();
 

@@ -58,16 +58,16 @@ internal partial class TgMenuHelper
                     await WebSiteOpenAsync(TgConstants.LinkTelegramBot);
                     break;
                 case TgEnumMenuBotConSetup.UseBot:
-                    await UseBotAsync(tgDownloadSettings);
+                    await UseBotAsync(tgDownloadSettings, isSilent: false);
                     break;
                 case TgEnumMenuBotConSetup.SetBotToken:
                     await SetBotTokenAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuBotConSetup.BotConnect:
-                    await AskBotConnectAsync(tgDownloadSettings, isSilent: false);
+                    await BotConnectAsync(tgDownloadSettings, isSilent: false);
                     break;
                 case TgEnumMenuBotConSetup.BotDisconnect:
-                    await DisconnectBotAsync(tgDownloadSettings);
+                    await BotDisconnectAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuBotConSetup.Return:
                     break;
@@ -75,9 +75,9 @@ internal partial class TgMenuHelper
         } while (menu is not TgEnumMenuBotConSetup.Return);
     }
 
-    public async Task UseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task UseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
-        var useBot = AskQuestionYesNoReturnPositive(TgLocale.MenuBotUseBot);
+        var useBot = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuBotUseBot);
         await BusinessLogicManager.StorageManager.AppRepository.SetUseBotAsync(useBot);
     }
 
@@ -90,24 +90,29 @@ internal partial class TgMenuHelper
         }
     }
 
-    private async Task AskBotConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    private async Task BotConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
         try
         {
-            TgLog.WriteLine("  TG bot connect ...");
+            // Check connect
+            var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+            if (isBotConnect) return;
 
+            // Switch flag
+            var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (!appDto.UseBot)
+                await UseBotAsync(tgDownloadSettings, isSilent);
+            appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (!appDto.UseBot) return;
+
+            // Question
             if (!isSilent)
-            {
                 if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotConnect)) return;
 
-                await ShowTableBotConSetupAsync(tgDownloadSettings);
-            }
-            //var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-            //var proxyResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
-            //var proxy = proxyResult.Item;
-
+            // Connect
+            if (!isSilent)
+                TgLog.WriteLine("  TG bot connect ...");
             await BusinessLogicManager.ConnectClient.ConnectBotConsoleAsync();
-
             if (!isSilent)
             {
                 if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
@@ -119,14 +124,13 @@ internal partial class TgMenuHelper
                 }
                 TgLog.TypeAnyKeyForReturn();
             }
+            if (!isSilent)
+                TgLog.WriteLine("  TG bot connect   v");
+
         }
         catch (Exception ex)
         {
             CatchException(ex, TgLocale.TgBotSetupCompleteError);
-        }
-        finally
-        {
-            TgLog.WriteLine("  TG bot connect   v");
         }
     }
 
@@ -210,9 +214,16 @@ internal partial class TgMenuHelper
         AnsiConsole.Write(table);
     }
 
-    public async Task DisconnectBotAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task BotDisconnectAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        await ShowTableBotConSetupAsync(tgDownloadSettings);
+        // Check connect
+        var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+        if (!isBotConnect) return;
+
+        // Question
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotDisconnect)) return;
+
+        // Disconnect
         await BusinessLogicManager.ConnectClient.DisconnectBotAsync();
     }
 

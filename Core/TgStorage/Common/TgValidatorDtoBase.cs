@@ -4,12 +4,13 @@
 namespace TgStorage.Common;
 
 /// <summary> Validator base </summary>
-public class TgEfValidatorBase<TEfEntity> : AbstractValidator<TEfEntity>, ITgDebug
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+public class TgValidatorDtoBase<TEfEntity, TDto> : AbstractValidator<TDto>, ITgDebug
+    where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+    where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
     #region Public and private fields, properties, constructor
 
-    public TgEfValidatorBase()
+    public TgValidatorDtoBase()
 	{
 		RuleFor(item => item.Uid)
 			.NotNull();

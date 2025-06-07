@@ -6,8 +6,10 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
+    #region Public and private methods
+
     private async Task ShowTableCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, Action<Table> fillTableColumns,
-    Func<TgDownloadSettingsViewModel, Table, Task> fillTableRowsAsync)
+        Func<TgDownloadSettingsViewModel, Table, Task> fillTableRowsAsync)
     {
         AnsiConsole.Clear();
         AnsiConsole.Write(new FigletText(TgConstants.OpenTgResearcher).Centered().Color(Color.Yellow));
@@ -102,7 +104,7 @@ internal partial class TgMenuHelper
     {
         // Application health check
         var isAppReady = TgAppSettings.AppXml.IsExistsFileSession && TgAppSettings.AppXml.IsExistsEfStorage;
-        table.AddRow(GetMarkup(isAppReady 
+        table.AddRow(GetMarkup(isAppReady
             ? TgLocale.InfoMessage(TgLocale.MenuMainAppHealthCheck) : TgLocale.WarningMessage(TgLocale.MenuMainAppHealthCheck)),
             GetMarkup(isAppReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
@@ -198,22 +200,18 @@ internal partial class TgMenuHelper
 
     private async Task FillTableRowsBotConAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
-
         // Bot connection
+        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
         table.AddRow(GetMarkup(isBotConnectionReady
             ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
             : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
                 GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-
         await Task.CompletedTask;
     }
 
     private async Task FillTableRowsBotConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
 
         // Use bot
         if (appDto.UseBot)
@@ -221,19 +219,17 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseBot, isUseX: true)), GetMarkup(appDto.UseBot.ToString()));
 
-        if (!appDto.UseBot) return;
-
-        // Bot token
-        if (!string.IsNullOrEmpty(appDto.BotTokenKey))
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
-        else
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken, isUseX: true)), GetMarkup(appDto.BotTokenKey));
+        if (appDto.UseBot)
+        {
+            // Bot token
+            if (!string.IsNullOrEmpty(appDto.BotTokenKey))
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
+            else
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken, isUseX: true)), GetMarkup(appDto.BotTokenKey));
+        }
 
         // Bot connection
-        table.AddRow(GetMarkup(isBotConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
-                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+        await FillTableRowsBotConAsync(tgDownloadSettings, table);
 
         await Task.CompletedTask;
     }
@@ -241,7 +237,6 @@ internal partial class TgMenuHelper
     private async Task FillTableRowsBotConAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
 
         // Use bot
         if (appDto.UseBot)
@@ -249,40 +244,31 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseBot, isUseX: true)), GetMarkup(appDto.UseBot.ToString()));
 
-        if (!appDto.UseBot) return;
-
-        // Bot token
-        if (!string.IsNullOrEmpty(appDto.BotTokenKey))
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
-        else
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken, isUseX: true)), GetMarkup(appDto.BotTokenKey));
+        if (appDto.UseBot)
+        {
+            // Bot token
+            if (!string.IsNullOrEmpty(appDto.BotTokenKey))
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken)), GetMarkup(appDto.BotTokenKey));
+            else
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotToken, isUseX: true)), GetMarkup(appDto.BotTokenKey));
+        }
 
         // Bot connection
-        table.AddRow(GetMarkup(isBotConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
-                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+        await FillTableRowsBotConAsync(tgDownloadSettings, table);
 
         await Task.CompletedTask;
     }
 
     private async Task FillTableRowsBotConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var isBotConnectionReady = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
-
         // Bot connection
-        table.AddRow(GetMarkup(isBotConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainBotConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainBotConnection)),
-                GetMarkup(isBotConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
+        await FillTableRowsBotConAsync(tgDownloadSettings, table);
 
         await Task.CompletedTask;
     }
 
     private async Task FillTableRowsClientConAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
-        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
         var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
         // Client connection
@@ -308,7 +294,6 @@ internal partial class TgMenuHelper
     private async Task FillTableRowsClientConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
         // Use client
         if (appDto.UseClient)
@@ -316,89 +301,76 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseClient, isUseX: true)), GetMarkup(appDto.UseClient.ToString()));
 
-        if (!appDto.UseClient) return;
-
-        // User name, user id, user active
-        if (BusinessLogicManager.ConnectClient.Me is null)
+        if (appDto.UseClient)
         {
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
-                GetMarkup(TgLocale.SettingsIsNeedSetup));
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)),
-                GetMarkup(TgLocale.SettingsIsNeedSetup));
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)),
-                GetMarkup(TgLocale.SettingsIsNeedSetup));
-        }
-        else
-        {
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserName)),
-                GetMarkup(BusinessLogicManager.ConnectClient.Me.username));
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserId)),
-                GetMarkup(BusinessLogicManager.ConnectClient.Me.id.ToString()));
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserIsActive)),
-                GetMarkup(BusinessLogicManager.ConnectClient.Me.IsActive.ToString()));
-        }
-
-        // Proxy setup
-        if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(), Guid.Empty))
-        {
-            if (TgAppSettings.IsUseProxy)
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
+            // User name, user id, user active
+            if (BusinessLogicManager.ConnectClient.Me is null)
+            {
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
                     GetMarkup(TgLocale.SettingsIsNeedSetup));
-            else
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
-                    GetMarkup(TgLocale.SettingsIsOk));
-        }
-        else
-        {
-            // Proxy is not found
-            if (!(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).IsExists || BusinessLogicManager.ConnectClient.Me is null)
-            {
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyType)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyHostName)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyPort)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySecret)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)),
+                    GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)),
+                    GetMarkup(TgLocale.SettingsIsNeedSetup));
             }
-            // Proxy is found
             else
             {
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
-                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
-                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
-                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
-                if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserName)),
+                    GetMarkup(BusinessLogicManager.ConnectClient.Me.username));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserId)),
+                    GetMarkup(BusinessLogicManager.ConnectClient.Me.id.ToString()));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserIsActive)),
+                    GetMarkup(BusinessLogicManager.ConnectClient.Me.IsActive.ToString()));
             }
-        }
 
-        // Enable auto update
-        if (tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
-                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
-        else
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate, isUseX: true)),
-                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+            // Proxy setup
+            if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(), Guid.Empty))
+            {
+                if (TgAppSettings.IsUseProxy)
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
+                        GetMarkup(TgLocale.SettingsIsNeedSetup));
+                else
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
+                        GetMarkup(TgLocale.SettingsIsOk));
+            }
+            else
+            {
+                // Proxy is not found
+                if (!(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).IsExists || BusinessLogicManager.ConnectClient.Me is null)
+                {
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyType)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyHostName)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyPort)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySecret)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                }
+                // Proxy is found
+                else
+                {
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
+                    if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
+                            GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+                }
+            }
+
+            // Enable auto update
+            if (tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
+                    GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+            else
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate, isUseX: true)),
+                    GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+        }
 
         // Client connection
-        table.AddRow(GetMarkup(isClientConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),
-                GetMarkup(isClientConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-
-        // Exceptions
-        if (BusinessLogicManager.ConnectClient.ProxyException.IsExist)
-        {
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)), GetMarkup(BusinessLogicManager.ConnectClient.ProxyException.Message));
-        }
-        if (BusinessLogicManager.ConnectClient.ClientException.IsExist)
-        {
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientException)), GetMarkup(BusinessLogicManager.ConnectClient.ClientException.Message));
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)), GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
-        }
+        await FillTableRowsClientConAsync(tgDownloadSettings, table);
 
         await Task.CompletedTask;
     }
@@ -406,7 +378,6 @@ internal partial class TgMenuHelper
     private async Task FillTableRowsClientConAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-        var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
         // Use client
         if (appDto.UseClient)
@@ -414,89 +385,76 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuBotUseClient, isUseX: true)), GetMarkup(appDto.UseClient.ToString()));
 
-        if (!appDto.UseClient) return;
-
-        // User name, user id, user active
-        if (BusinessLogicManager.ConnectClient.Me is null)
+        if (appDto.UseClient)
         {
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
-                GetMarkup(TgLocale.SettingsIsNeedSetup));
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)),
-                GetMarkup(TgLocale.SettingsIsNeedSetup));
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)),
-                GetMarkup(TgLocale.SettingsIsNeedSetup));
-        }
-        else
-        {
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserName)),
-                GetMarkup(BusinessLogicManager.ConnectClient.Me.username));
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserId)),
-                GetMarkup(BusinessLogicManager.ConnectClient.Me.id.ToString()));
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserIsActive)),
-                GetMarkup(BusinessLogicManager.ConnectClient.Me.IsActive.ToString()));
-        }
-
-        // Proxy setup
-        if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(), Guid.Empty))
-        {
-            if (TgAppSettings.IsUseProxy)
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
+            // User name, user id, user active
+            if (BusinessLogicManager.ConnectClient.Me is null)
+            {
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
                     GetMarkup(TgLocale.SettingsIsNeedSetup));
-            else
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
-                    GetMarkup(TgLocale.SettingsIsOk));
-        }
-        else
-        {
-            // Proxy is not found
-            if (!(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).IsExists || BusinessLogicManager.ConnectClient.Me is null)
-            {
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyType)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyHostName)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyPort)), GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySecret)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)),
+                    GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)),
+                    GetMarkup(TgLocale.SettingsIsNeedSetup));
             }
-            // Proxy is found
             else
             {
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
-                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
-                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
-                    GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
-                if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserName)),
+                    GetMarkup(BusinessLogicManager.ConnectClient.Me.username));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserId)),
+                    GetMarkup(BusinessLogicManager.ConnectClient.Me.id.ToString()));
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientUserIsActive)),
+                    GetMarkup(BusinessLogicManager.ConnectClient.Me.IsActive.ToString()));
             }
-        }
 
-        // Enable auto update
-        if (tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
-                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
-        else
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate, isUseX: true)),
-                GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+            // Proxy setup
+            if (Equals(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyUidAsync(), Guid.Empty))
+            {
+                if (TgAppSettings.IsUseProxy)
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)),
+                        GetMarkup(TgLocale.SettingsIsNeedSetup));
+                else
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)),
+                        GetMarkup(TgLocale.SettingsIsOk));
+            }
+            else
+            {
+                // Proxy is not found
+                if (!(await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).IsExists || BusinessLogicManager.ConnectClient.Me is null)
+                {
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyType)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyHostName)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyPort)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                    table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxySecret)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                }
+                // Proxy is found
+                else
+                {
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
+                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
+                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
+                    if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
+                            GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+                }
+            }
+
+            // Enable auto update
+            if (tgDownloadSettings.SourceVm.Dto.IsAutoUpdate)
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
+                    GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+            else
+                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate, isUseX: true)),
+                    GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
+        }
 
         // Client connection
-        table.AddRow(GetMarkup(isClientConnectionReady
-            ? TgLocale.InfoMessage(TgLocale.MenuMainClientConnection)
-            : TgLocale.WarningMessage(TgLocale.MenuMainClientConnection)),
-                GetMarkup(isClientConnectionReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
-
-        // Exceptions
-        if (BusinessLogicManager.ConnectClient.ProxyException.IsExist)
-        {
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientProxyException)), GetMarkup(BusinessLogicManager.ConnectClient.ProxyException.Message));
-        }
-        if (BusinessLogicManager.ConnectClient.ClientException.IsExist)
-        {
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientException)), GetMarkup(BusinessLogicManager.ConnectClient.ClientException.Message));
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientFix)), GetMarkup(TgLocale.TgClientFixTryToDeleteSession));
-        }
+        await FillTableRowsClientConAsync(tgDownloadSettings, table);
 
         await Task.CompletedTask;
     }
@@ -575,6 +533,9 @@ internal partial class TgMenuHelper
         else
             table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.MenuDownloadUserAccess)), GetMarkup($"{false}"));
 
+        // Client connection
+        await FillTableRowsClientConAsync(tgDownloadSettings, table);
+
         await Task.CompletedTask;
     }
 
@@ -609,4 +570,6 @@ internal partial class TgMenuHelper
             GetMarkup($"{TgLocale.MenuClientComplete} ..."));
         await Task.CompletedTask;
     }
+
+    #endregion
 }

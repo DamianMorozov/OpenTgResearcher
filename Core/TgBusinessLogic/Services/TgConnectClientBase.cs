@@ -225,8 +225,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 		return IsReady = true;
 	}
 
-	public async Task ConnectClientConsoleAsync<TEfEntity>(Func<string, string?>? config, ITgDbProxy<TEfEntity> proxy)
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+	public async Task ConnectClientConsoleAsync(Func<string, string?>? config, TgEfProxyDto proxyDto)
 	{
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
         if (appDto.UseBot)
@@ -242,7 +241,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await DisconnectBotAsync();
 
         Client = new(config);
-        await ConnectThroughProxyAsync(proxy, false);
+        await ConnectThroughProxyAsync(proxyDto, false);
         Client.OnOther += (obj) => OnClientOtherAsync(obj);
         Client.OnOwnUpdates += (updateBase) => OnOwnUpdatesClientAsync(updateBase);
         Client.OnUpdates += (updateBase) => OnUpdatesClientAsync(updateBase);
@@ -304,71 +303,66 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #endif
     }
 
-    public async Task ConnectSessionAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy)
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+    public async Task ConnectSessionAsync(TgEfProxyDto proxyDto)
 	{
 		if (IsReady)
 			return;
 		await DisconnectClientAsync();
 		Client = new(ConfigClientDesktop);
-		await ConnectThroughProxyAsync(proxy, true);
+		await ConnectThroughProxyAsync(proxyDto, true);
 		Client.OnUpdates += OnUpdatesClientAsync;
 		Client.OnOther += OnClientOtherAsync;
 		await LoginUserAsync(isProxyUpdate: true);
 	}
 
-	public async Task ConnectSessionDesktopAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, Func<string, string?> config)
-
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+	public async Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config)
 	{
         if (IsReady)
 			return;
 		await DisconnectClientAsync();
 		Client = new(config);
-		await ConnectThroughProxyAsync(proxy, true);
+		await ConnectThroughProxyAsync(proxyDto, true);
 		Client.OnUpdates += OnUpdatesClientAsync;
 		Client.OnOther += OnClientOtherAsync;
 		await LoginUserAsync(isProxyUpdate: true);
 	}
 
-	public async Task ConnectThroughProxyAsync<TEfEntity>(ITgDbProxy<TEfEntity>? proxy, bool isDesktop)
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+	public async Task ConnectThroughProxyAsync(TgEfProxyDto proxyDto, bool isDesktop)
 	{
 		IsProxyUsage = false;
 		if (!await CheckClientConnectionReadyAsync())
 			return;
 		if (Client is null)
 			return;
-		if (proxy?.Uid == Guid.Empty)
+		if (proxyDto.Uid == Guid.Empty)
 			return;
 		if (!isDesktop && !TgAppSettings.IsUseProxy)
 			return;
-		if (Equals(proxy?.Type, TgEnumProxyType.None))
+		if (Equals(proxyDto.Type, TgEnumProxyType.None))
 			return;
-		if (proxy is TgEfProxyEntity efProxy)
-			if (!TgGlobalTools.GetEfValid(efProxy).IsValid)
-				return;
+		if (!TgGlobalTools.GetValidDto<TgEfProxyEntity, TgEfProxyDto>(proxyDto).IsValid)
+			return;
 
 		try
 		{
 			ProxyException = new();
 			IsProxyUsage = true;
-			switch (proxy?.Type)
+			switch (proxyDto.Type)
 			{
 				case TgEnumProxyType.Http:
 				case TgEnumProxyType.Socks:
 					Client.TcpHandler = (address, port) =>
 					{
-						Socks5ProxyClient proxyClient = string.IsNullOrEmpty(proxy.UserName) && string.IsNullOrEmpty(proxy.Password)
-							? new(proxy.HostName, proxy.Port) : new(proxy.HostName, proxy.Port, proxy.UserName, proxy.Password);
+						Socks5ProxyClient proxyClient = string.IsNullOrEmpty(proxyDto.UserName) && string.IsNullOrEmpty(proxyDto.Password)
+							? new(proxyDto.HostName, proxyDto.Port) : new(proxyDto.HostName, proxyDto.Port, proxyDto.UserName, proxyDto.Password);
 						UpdateStateProxyAsync(TgLocale.ProxyIsConnected);
 						return Task.FromResult(proxyClient.CreateConnection(address, port));
 					};
 					break;
 				case TgEnumProxyType.MtProto:
-					Client.MTProxyUrl = string.IsNullOrEmpty(proxy.Secret)
-						? $"https://t.me/proxy?server={proxy.HostName}&port={proxy.Port}"
-						: $"https://t.me/proxy?server={proxy.HostName}&port={proxy.Port}&secret={proxy.Secret}";
+					Client.MTProxyUrl = string.IsNullOrEmpty(proxyDto.Secret)
+						? $"https://t.me/proxy?server={proxyDto.HostName}&port={proxyDto.Port}"
+						: $"https://t.me/proxy?server={proxyDto.HostName}&port={proxyDto.Port}&secret={proxyDto.Secret}";
 					await UpdateStateProxyAsync(TgLocale.ProxyIsConnected);
 					break;
 			}

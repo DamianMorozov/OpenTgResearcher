@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgInfrastructure.Contracts;
+
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace TgStorage.Utils;
@@ -47,7 +49,8 @@ public static class TgGlobalTools
     /// <summary> Validate entity </summary>
     /// <typeparam name="TEfEntity"> Type of entity </typeparam>
     /// <param name="item"> Entity </param>
-    public static ValidationResult GetEfValid<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
+    public static ValidationResult GetEfValid<TEfEntity>(TEfEntity item) 
+        where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
         item switch
         {
             TgEfAppEntity app => new TgEfAppValidator().Validate(app),
@@ -60,6 +63,18 @@ public static class TgGlobalTools
             TgEfStoryEntity story => new TgEfStoryValidator().Validate(story),
             TgEfProxyEntity proxy => new TgEfProxyValidator().Validate(proxy),
             TgEfVersionEntity version => new TgEfVersionValidator().Validate(version),
+            _ => new() { Errors = [new ValidationFailure(nameof(item), "Type error!")] }
+        };
+
+    /// <summary> Validate DTO </summary>
+    /// <typeparam name="TDto"> Type of DTO </typeparam>
+    /// <param name="item"> DTO </param>
+    public static ValidationResult GetValidDto<TEfEntity, TDto>(TDto item)
+        where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+        where TDto : class, ITgDto<TEfEntity, TDto>, new() =>
+        item switch
+        {
+            TgEfProxyDto proxy => new TgProxyDtoValidator().Validate(proxy),
             _ => new() { Errors = [new ValidationFailure(nameof(item), "Type error!")] }
         };
 

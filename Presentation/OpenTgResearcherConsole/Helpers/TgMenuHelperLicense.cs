@@ -80,7 +80,7 @@ internal sealed partial class TgMenuHelper
             if (userId == 0 && !isSilent)
             {
                 AnsiConsole.MarkupLine($"  {TgLocale.TgClientUserId} is {userId}, try to connect client first!");
-                await AskClientConnectAsync(tgDownloadSettings, isSilent);
+                await ClientConnectAsync(tgDownloadSettings, isSilent);
                 userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
             }
 

@@ -195,7 +195,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		{
 			Exception.Default();
 			DataRequest = string.Empty;
-			await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto.GetNewEntity(), ConfigClientDesktop);
+			await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop);
         }
         catch (Exception ex)
 		{

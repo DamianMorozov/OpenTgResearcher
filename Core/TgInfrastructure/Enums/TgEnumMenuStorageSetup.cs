@@ -3,12 +3,10 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuStorage
+public enum TgEnumMenuStorageSetup
 {
 	Return,
-    Setup,
-    Advanced,
-    Clear,
-    Chats,
-    Filters,
+	DbClear,
+	DbBackup,
+	DbCompact,
 }

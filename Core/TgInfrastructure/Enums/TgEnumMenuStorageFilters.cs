@@ -3,12 +3,12 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuStorage
+public enum TgEnumMenuStorageFilters
 {
 	Return,
-    Setup,
-    Advanced,
-    Clear,
-    Chats,
-    Filters,
+    FiltersAdd,
+    FiltersClear,
+    FiltersEdit,
+    FiltersRemove,
+    FiltersView,
 }

@@ -33,6 +33,21 @@ internal partial class TgMenuHelper
     private async Task ShowTableStorageAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageAsync);
 
+    private async Task ShowTableStorageSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageSetupAsync);
+
+    private async Task ShowTableStorageAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageAdvancedAsync);
+
+    private async Task ShowTableStorageClearAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageClearAsync);
+
+    private async Task ShowTableStorageChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageChatsAsync);
+
+    private async Task ShowTableStorageFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageFiltersAsync);
+
     private async Task ShowTableLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseFullInfoAsync);
 
@@ -168,9 +183,50 @@ internal partial class TgMenuHelper
     {
         // Storage
         table.AddRow(GetMarkup(TgGlobalTools.IsXmlReady
-                ? TgLocale.InfoMessage(TgLocale.MenuMainStorage) : TgLocale.WarningMessage(TgLocale.MenuMainStorage)),
+            ? TgLocale.InfoMessage(TgLocale.MenuMainStorage) : TgLocale.WarningMessage(TgLocale.MenuMainStorage)),
             GetMarkup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
+        // Chats
+        await FillTableRowsStorageChatsAsync(tgDownloadSettings, table);
+
+        // Filters
+        await FillTableRowsStorageFiltersAsync(tgDownloadSettings, table);
+
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Storage settings setup </summary>
+    private async Task FillTableRowsStorageSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Storage settings advanced </summary>
+    private async Task FillTableRowsStorageAdvancedAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Storage settings clear </summary>
+    private async Task FillTableRowsStorageClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Storage settings chats </summary>
+    private async Task FillTableRowsStorageChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        // Chats
+        var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuChatsAllCount)),
+            GetMarkup($"{chats.Count()}"));
+
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Storage settings filters </summary>
+    private async Task FillTableRowsStorageFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
         // Filters
         var filters = (await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuFiltersAllCount)),

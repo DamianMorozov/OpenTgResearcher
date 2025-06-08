@@ -50,11 +50,11 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
                 //.WithBeforeUninstallFastCallback((v) =>
                 //{
                 //	delete / clean up some files before uninstallation
-                //   UpdateLog += $"Uninstalling the {TgConstants.AppTitleConsole}!";
+                //   UpdateLog += $"Uninstalling the {TgConstants.OpenTgResearcherConsole}!";
                 //})
                 //.OnFirstRun((v) =>
                 //{
-                //	UpdateLog += $"Thanks for installing the {TgConstants.AppTitleConsole}!";
+                //	UpdateLog += $"Thanks for installing the {TgConstants.OpenTgResearcherConsole}!";
                 //})
                 .Run();
             IsLoadVelopack = true;

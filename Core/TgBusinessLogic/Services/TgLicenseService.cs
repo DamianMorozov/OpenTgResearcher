@@ -62,7 +62,8 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
 		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license")
 	{
-		CurrentLicense = new TgLicenseDto() { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
+		CurrentLicense = new TgLicenseDto() 
+            { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
 		switch (licenseType)
 		{
 			case TgEnumLicenseType.Free:

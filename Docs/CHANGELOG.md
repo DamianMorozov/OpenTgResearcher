@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the application table in TgStorage
 ### Added
 - Added the bot connection menu to OpenTgResearcherConsole
+- Added checking multiple instances of the application in OpenTgResearcherConsole
 
 ## [0.6.240] - 2025-05-19
 ### Fixed

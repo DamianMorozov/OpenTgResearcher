@@ -43,7 +43,7 @@ internal sealed partial class TgMenuHelper
 					await LicenseClearAsync(tgDownloadSettings, isSilent: false);
 					break;
 				case TgEnumMenuLicense.LicenseCheck:
-					await LicenseCheckAsync(tgDownloadSettings, isSilent: false);
+					await LicenseCheckOnlineAsync(tgDownloadSettings, isSilent: false);
 					break;
 				case TgEnumMenuLicense.LicenseBuy:
 					await LicenseBuyAsync();
@@ -64,8 +64,8 @@ internal sealed partial class TgMenuHelper
 		await LicenseShowInfoAsync(tgDownloadSettings, [], isWait: false);
 	}
 
-	/// <summary> Check license </summary>
-	internal async Task LicenseCheckAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+	/// <summary> Check license online </summary>
+	internal async Task LicenseCheckOnlineAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
         if (!isSilent && AskQuestionYesNoReturnNegative(TgLocale.MenuLicenseCheckWithUserId))
             return;

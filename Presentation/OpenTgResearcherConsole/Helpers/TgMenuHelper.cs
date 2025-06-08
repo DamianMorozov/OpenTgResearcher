@@ -15,6 +15,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     internal static Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
     internal TgEnumMenuMain Value { get; set; }
     internal ITgBusinessLogicManager BusinessLogicManager { get; } = default!;
+    private static Mutex? _instanceMutex;
 
     public TgMenuHelper()
     {
@@ -29,6 +30,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public override void ReleaseManagedResources()
     {
         BusinessLogicManager.Dispose();
+        _instanceMutex?.Dispose();
     }
 
     public override void ReleaseUnmanagedResources()
@@ -102,6 +104,52 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
                 return await repository.GetDtoAsync(x => x.Uid == uid);
         }
         return new();
+    }
+
+    /// <summary> Check multiple instances of the application </summary>
+    internal bool CheckMultipleInstances()
+    {
+        // Use Mutex to check for other instances
+        bool createdNew;
+        string mutexName = $"Global\\{TgConstants.OpenTgResearcherConsole}_SingleInstance";
+
+        try
+        {
+            _instanceMutex = new Mutex(true, mutexName, out createdNew);
+            if (!createdNew && WaitHandle.WaitAny([_instanceMutex], 1_000) == WaitHandle.WaitTimeout)
+            {
+                createdNew = false;
+            }
+        }
+        catch (AbandonedMutexException)
+        {
+            createdNew = true; // Taking the abandoned mutex
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            TgLog.WriteLine($"{TgLocale.LicenseMutexAccessError}: {ex.Message}");
+            return true; // Blocking the launch in case of rights errors
+        }
+        catch (Exception ex)
+        {
+            TgLog.WriteLine($"  {TgLocale.LicenseErrorCheckingMutex}: {ex.Message}");
+            return true; // Blocking the launch in case of other errors
+        }
+
+        if (!createdNew)
+        {
+            // License verification: if it is free, we do not allow the launch of multiple copies
+            if (BusinessLogicManager.LicenseService.CurrentLicense.LicenseType == TgEnumLicenseType.Free)
+            {
+                TgLog.WriteLine("");
+                TgLog.WriteLine($"  {TgLocale.LicenseLimitByMultipleInstances}");
+                TgLog.WriteLine("");
+                return true; // Forbidding the launch
+            }
+            // For paid licenses, we allow the launch
+        }
+
+        return false; // Allowing the launch
     }
 
     #endregion

@@ -58,6 +58,9 @@ public sealed class TgLocaleHelper : ObservableObject
     public string LicenseDescriptionFree => "Free license";
     public string LicenseDescriptionPaid => "Paid license";
     public string LicenseDescriptionPremium => "Premium license";
+    public string LicenseErrorCheckingMutex => "Error checking the mutex";
+    public string LicenseLimitByMultipleInstances => "Free license does not allow multiple instances";
+    public string LicenseMutexAccessError => "Mutex access error";
     public string LicenseTestDescription => "Test license";
     public string LicenseVersionShort => "License";
     public string MenuBotConnect => "Connect bot to TG server";

@@ -38,7 +38,7 @@ public static class Program
         var tgDownloadSettings = new TgDownloadSettingsViewModel();
         var tgAppSettings = TgAppSettingsHelper.Instance;
         tgAppSettings.SetVersion(Assembly.GetExecutingAssembly());
-        var tgMenu = new TgMenuHelper();
+        using var tgMenu = new TgMenuHelper();
 
         // Loading Console
         Console.OutputEncoding = Encoding.UTF8;
@@ -56,7 +56,7 @@ public static class Program
         // Loading license
         tgLog.WriteLine("  Loading license ...");
         await tgMenu.BusinessLogicManager.LicenseService.LicenseActivateAsync();
-        await tgMenu.LicenseCheckAsync(tgDownloadSettings, isSilent: true);
+        await tgMenu.LicenseCheckOnlineAsync(tgDownloadSettings, isSilent: true);
         tgLog.WriteLine("  Loading license   v");
 
         // Loading storage
@@ -73,6 +73,10 @@ public static class Program
         //    await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
         //    tgLog.WriteLine("  Loading connection   v");
         //}
+
+        // Check multiple instances
+        if (tgMenu.CheckMultipleInstances())
+            return;
 
         // Any key
         tgLog.WriteLine("");
@@ -154,7 +158,7 @@ public static class Program
 #if WINDOWS
 		.WithBeforeUninstallFastCallback((v) => {
 			// delete / clean up some files before uninstallation
-			tgLog.WriteLine($"  Uninstalling the {TgConstants.AppTitleConsole}!");
+			tgLog.WriteLine($"  Uninstalling the {TgConstants.OpenTgResearcherConsole}!");
 		})
 #endif
             .OnFirstRun((v) => {

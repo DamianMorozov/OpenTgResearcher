@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgInfrastructure.Contracts;
-
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace TgStorage.Utils;
@@ -18,12 +16,12 @@ public static class TgGlobalTools
 
     /// <summary> Autofac Container </summary>
 	public static Autofac.IContainer Container = null!;
-	/// <summary> Limit count of download threads by free license </summary>
-	public static int DownloadCountThreadsLimitFree => 10;
-	/// <summary> Limit count of download threads by test license </summary>
-	public static int DownloadCountThreadsLimitPaid => 100;
-	/// <summary> Limit batch of saving messages </summary>
-	public static int BatchMessagesLimit => 100;
+    /// <summary> Limit count of download threads by free license </summary>
+    public static int DownloadCountThreadsLimitFree => 10;
+    /// <summary> Limit count of download threads by test license </summary>
+    public static int DownloadCountThreadsLimitPaid => 100;
+    /// <summary> Limit batch of saving messages </summary>
+    public static int BatchMessagesLimit => 100;
     public static string AppStorage = string.Empty;
 
     public const string FileEfStorage = "TgStorage.db";
@@ -49,7 +47,7 @@ public static class TgGlobalTools
     /// <summary> Validate entity </summary>
     /// <typeparam name="TEfEntity"> Type of entity </typeparam>
     /// <param name="item"> Entity </param>
-    public static ValidationResult GetEfValid<TEfEntity>(TEfEntity item) 
+    public static ValidationResult GetEfValid<TEfEntity>(TEfEntity item)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
         item switch
         {

@@ -66,6 +66,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Loading notifications </summary>
     public async Task LoadingNotificationsAsync()
     {
         try
@@ -83,6 +84,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Loading logging </summary>
     public async Task LoadingLoggingAsync()
     {
         try
@@ -102,6 +104,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Loading storage </summary>
     public async Task LoadingStorageAsync()
     {
         try
@@ -143,6 +146,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Loading complete </summary>
     public async Task LoadingCompleteAsync()
     {
         IsLoadComplete = true;

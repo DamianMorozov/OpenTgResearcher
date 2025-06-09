@@ -109,7 +109,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuBotClearConnectionData => "Clear bot connection data";
 	public string MenuBotDownload => "Bot download";
 	public string MenuBotSetup => "Bot setup";
-	public string MenuChatsAllCount => "All chats count";
+	public string MenuChatsCount => "Chats count";
 	public string MenuClientAdvanced => "Client advanced";
 	public string MenuClientAdvancedAutoViewEvents => "Auto view events";
 	public string MenuClientAdvancedMarkAllMessagesAsRead => "Mark all messages as read";
@@ -136,6 +136,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientSetProxy => "Setup proxy";
 	public string MenuClientSetup => "Client setup";
 	public string MenuClientVerificationCode => "Verification code";
+	public string MenuContactsCount => "Contacts count";
+	public string MenuDocumentsCount => "Documents count";
 	public string MenuDownload => "--- Download ---";
 	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
 	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
@@ -153,7 +155,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadUserAccess => "User access";
 	public string MenuException => "Exception";
 	public string MenuFiltersAdd => "Add filter";
-	public string MenuFiltersAllCount => "All filters count";
+	public string MenuFiltersCount => "Filters count";
 	public string MenuFiltersEdit => "Edit filter";
 	public string MenuFiltersEnabledCount => "Enabled filters count";
 	public string MenuFiltersError => "Error";
@@ -214,7 +216,9 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuMainUpdate => "Update";
 	public string MenuManualDownload => "Manual download";
 	public string MenuMarkAsRead => "Mark as read";
+	public string MenuMessagesCount => "Messages count";
 	public string MenuNo => "No";
+	public string MenuProxiesCount => "Proxies count";
 	public string MenuReturn => "Return";
 	public string MenuStorageAdvanced => "Storage advanced";
 	public string MenuStorageBackupDirectory => "Backup directory";
@@ -240,10 +244,12 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageViewFilters => "View filters";
 	public string MenuStorageViewStories => "View stories";
 	public string MenuStorageViewVersions => "View versions";
+	public string MenuStoriesCount => "Stories count";
 	public string MenuSwitchNumber => "Switch menu number";
 	public string MenuUpdatePreviewCheck => "Checking for preview updates";
 	public string MenuUpdateReleaseCheck => "Checking for release updates";
 	public string MenuUserId => "User ID";
+	public string MenuVersionsCount => "Versions count";
 	public string MenuYes => "Yes";
 	public string Messages => "messages";
 	public string ServerMessage => "Server message";

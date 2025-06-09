@@ -50,6 +50,8 @@ public interface ITgEfRepository<TEfEntity, TDto>
 	public Task<TDto> GetDtoAsync(Expression<Func<TEfEntity, bool>> where);
     public Task<List<TDto>> GetListDtosAsync(int take = 0, int skip = 0);
 	public Task<List<TDto>> GetListDtosAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where);
+    public Task<int> GetListCountAsync();
+	public Task<int> GetListCountAsync(Expression<Func<TEfEntity, bool>> where);
 
 	#endregion
 

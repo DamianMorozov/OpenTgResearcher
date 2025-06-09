@@ -328,6 +328,16 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         return dtos;
     }
 
+    public async Task<int> GetListCountAsync()
+    {
+        return await GetQuery(isReadOnly: true).CountAsync();
+    }
+
+    public async Task<int> GetListCountAsync(Expression<Func<TEfEntity, bool>> where)
+    {
+        return await GetQuery(isReadOnly: true).Where(where).CountAsync();
+    }
+
     #endregion
 
     #region Public and private methods - Write

@@ -53,18 +53,18 @@ public static class Program
         // Loading Velopack Installer
         LoadingVelopackInstaller(tgLog);
 
-        // Loading license
-        tgLog.WriteLine("  Loading license ...");
-        await tgMenu.BusinessLogicManager.LicenseService.LicenseActivateAsync();
-        await tgMenu.LicenseCheckOnlineAsync(tgDownloadSettings, isSilent: true);
-        tgLog.WriteLine("  Loading license   v");
-
         // Loading storage
         tgLog.WriteLine("  Loading storage ...");
         await Task.Delay(250);
         await tgMenu.BusinessLogicManager.CreateAndUpdateDbAsync();
         await tgMenu.SetStorageVersionAsync();
         tgLog.WriteLine("  Loading storage   v");
+
+        // Loading license
+        tgLog.WriteLine("  Loading license ...");
+        await tgMenu.BusinessLogicManager.LicenseService.LicenseActivateAsync();
+        await tgMenu.LicenseCheckOnlineAsync(tgDownloadSettings, isSilent: true);
+        tgLog.WriteLine("  Loading license   v");
 
         // Loading TG Connection
         //if (File.Exists(TgFileUtils.FileTgSession))

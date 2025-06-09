@@ -1,5 +1,16 @@
 # Screenshots
 
+## [0.6.300] - 2025-06-09
+### OpenTgResearcherConsole
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_01_SplashScreen.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_02_Main.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_03_Application.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_04_Storage.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_05_ClientConnection.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_06_BotConnection.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_07_Update.png"></p>
+<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_08_License.png"></p>
+
 ## [0.6.240] - 2025-05-16
 ### OpenTgResearcherDesktop
 <p align="center"><img src="Assets/v0.6.240/OpenTgResearcherDesktop_01_SplashScreen.png"></p>

@@ -3,11 +3,9 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuBotCon
+public enum TgEnumMenuBotConSearch
 {
-    Return,
-    BotSetup,
-    BotAdvanced,
-    BotDownload,
-    BotSearch,
+	Return,
+    User,
+    Chat,
 }

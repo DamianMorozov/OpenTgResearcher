@@ -18,7 +18,8 @@ internal partial class TgMenuHelper
 			TgLocale.MenuReturn,
             TgLocale.MenuBotSetup,
             TgLocale.MenuBotAdvanced,
-            TgLocale.MenuBotDownload
+            TgLocale.MenuBotDownload,
+            TgLocale.MenuBotSearch
         );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
@@ -28,6 +29,8 @@ internal partial class TgMenuHelper
             return TgEnumMenuBotCon.BotAdvanced;
         if (prompt.Equals(TgLocale.MenuBotDownload))
             return TgEnumMenuBotCon.BotDownload;
+        if (prompt.Equals(TgLocale.MenuBotSearch))
+            return TgEnumMenuBotCon.BotSearch;
 
         return TgEnumMenuBotCon.Return;
     }
@@ -50,6 +53,9 @@ internal partial class TgMenuHelper
                     break;
                 case TgEnumMenuBotCon.BotDownload:
                     await SetupBotConDownloadAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuBotCon.BotSearch:
+                    await SetupBotConSearchAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuBotCon.Return:
                     break;

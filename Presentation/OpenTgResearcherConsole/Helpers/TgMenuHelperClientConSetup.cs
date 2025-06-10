@@ -163,15 +163,12 @@ internal partial class TgMenuHelper
         try
         {
             // Check connect
-            var isClientConnect = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
-            if (isClientConnect) return;
+            _ = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
             // Switch flag
             var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
             if (!appDto.UseClient)
                 await UseClientAsync(tgDownloadSettings, isSilent);
-            appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (!appDto.UseClient) return;
 
             // Question
             if (!isSilent)

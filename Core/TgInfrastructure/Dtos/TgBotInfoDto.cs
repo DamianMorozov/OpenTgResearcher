@@ -29,6 +29,12 @@ public sealed class TgBotInfoDto
     public string BotInfoVersion { get; set; } = default!;
     public string BotInlinePlaceholder { get; set; } = default!;
     public string Flags { get; set; } = default!;
+    public int FloodRetryThreshold { get; set; }
+    public bool IsMainDC { get; set; }
+    public string MTProxyUrl { get; set; } = default!;
+    public int MaxAutoReconnects { get; set; }
+    public int MaxCodePwdAttempts { get; set; }
+    public int PingInterval { get; set; }
 
     public TgBotInfoDto()
     {
@@ -53,6 +59,12 @@ public sealed class TgBotInfoDto
         BotInfoVersion = string.Empty;
         BotInlinePlaceholder = string.Empty;
         Flags = string.Empty;
+        FloodRetryThreshold = 0;
+        IsMainDC = false;
+        MTProxyUrl = string.Empty;
+        MaxAutoReconnects = 0;
+        MaxCodePwdAttempts = 0;
+        PingInterval = 0;
     }
 
     #endregion

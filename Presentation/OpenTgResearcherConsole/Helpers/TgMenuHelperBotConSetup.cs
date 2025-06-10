@@ -95,15 +95,12 @@ internal partial class TgMenuHelper
         try
         {
             // Check connect
-            var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
-            if (isBotConnect) return;
+            _ = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
 
             // Switch flag
             var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
             if (!appDto.UseBot)
                 await UseBotAsync(tgDownloadSettings, isSilent);
-            appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (!appDto.UseBot) return;
 
             // Question
             if (!isSilent)
@@ -116,12 +113,9 @@ internal partial class TgMenuHelper
             if (!isSilent)
             {
                 if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
-                    TgLog.MarkupInfo(TgLocale.TgBotSetupCompleteError);
+                    TgLog.WriteLine($"  {TgLocale.TgBotSetupCompleteError}");
                 else
-                {
-                    TgLog.MarkupInfo(TgLocale.TgBotSetupCompleteSuccess);
-                    await PrintBotInfoAsync();
-                }
+                    await PrintTableWithBotInfoAsync();
                 TgLog.TypeAnyKeyForReturn();
             }
             if (!isSilent)
@@ -134,8 +128,11 @@ internal partial class TgMenuHelper
         }
     }
 
-    private async Task PrintBotInfoAsync()
+    /// <summary> Print table with bot info </summary>
+    private async Task PrintTableWithBotInfoAsync()
     {
+        TgLog.WriteLine($"  {TgLocale.TgBotSetupCompleteSuccess}");
+        
         var table = new Table()
             .Border(TableBorder.Rounded)
             .Title($"[bold yellow]{TgLocale.FieldBotInfo}[/]")
@@ -166,6 +163,8 @@ internal partial class TgMenuHelper
                     HasMainWebApp = me.HasMainWebApp.ToString(),
                     SupportsInlineQueries = me.SupportsInlineQueries.ToString()
                 };
+
+                // TLUser
                 if (me.TLUser is not null)
                 {
                     botInfoNew.IsTlUser = true;
@@ -177,6 +176,15 @@ internal partial class TgMenuHelper
                     botInfoNew.BotInlinePlaceholder = me.TLUser.bot_inline_placeholder ?? "-";
                     botInfoNew.Flags = string.Join(',', me.TLUser.flags, me.TLUser.flags2);
                 }
+
+                // Client
+                botInfoNew.FloodRetryThreshold = bot.Client.FloodRetryThreshold;
+                botInfoNew.IsMainDC = bot.Client.IsMainDC;
+                botInfoNew.MTProxyUrl = bot.Client.MTProxyUrl ?? "-";
+                botInfoNew.MaxAutoReconnects = bot.Client.MaxAutoReconnects;
+                botInfoNew.MaxCodePwdAttempts = bot.Client.MaxCodePwdAttempts;
+                botInfoNew.PingInterval = bot.Client.PingInterval;
+
                 BusinessLogicManager.ConnectClient.SetBotInfoDto(botInfoNew);
             }
         }
@@ -209,6 +217,14 @@ internal partial class TgMenuHelper
                 table.AddRow(TgLocale.FieldBotInlinePlaceholder, botInfoDto.BotInlinePlaceholder);
                 table.AddRow(TgLocale.FieldFlags, botInfoDto.Flags);
             }
+
+            table.AddRow("[grey]--- Client ---[/]", "");
+            table.AddRow(TgLocale.FieldFloodRetryThreshold, botInfoDto.FloodRetryThreshold.ToString());
+            table.AddRow(TgLocale.FieldIsMainDC, botInfoDto.IsMainDC ? "yes" : "no");
+            table.AddRow(TgLocale.FieldMTProxyUrl, botInfoDto.MTProxyUrl);
+            table.AddRow(TgLocale.FieldMaxAutoReconnects, botInfoDto.MaxAutoReconnects.ToString());
+            table.AddRow(TgLocale.FieldFloodRetryThreshold, botInfoDto.MaxCodePwdAttempts.ToString());
+            table.AddRow(TgLocale.FieldPingInterval, botInfoDto.PingInterval.ToString());
         }
 
         AnsiConsole.Write(table);

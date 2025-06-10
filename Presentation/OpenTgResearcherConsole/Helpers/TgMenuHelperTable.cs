@@ -73,6 +73,9 @@ internal partial class TgMenuHelper
     private async Task ShowTableBotConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConDownloadAsync);
 
+    private async Task ShowTableBotConSearchAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConSearchAsync);
+
     private async Task ShowTableClientConAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConAsync);
 
@@ -323,6 +326,14 @@ internal partial class TgMenuHelper
     }
 
     private async Task FillTableRowsBotConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    {
+        // Bot connection
+        await FillTableRowsBotConAsync(tgDownloadSettings, table);
+
+        await Task.CompletedTask;
+    }
+
+    private async Task FillTableRowsBotConSearchAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         // Bot connection
         await FillTableRowsBotConAsync(tgDownloadSettings, table);

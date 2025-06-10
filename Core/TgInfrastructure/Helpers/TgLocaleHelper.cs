@@ -135,8 +135,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuBotClearConnectionData => "Clear bot connection data";
 	public string MenuBotDownload => "Bot download";
 	public string MenuBotSearch => "Bot search";
-	public string MenuBotSearchChat => "Bot search chat";
-	public string MenuBotSearchUser => "Bot search user";
+	public string MenuBotSearchChat => "Chat search via bot";
+	public string MenuBotSearchUser => "User search via bot";
 	public string MenuBotSetup => "Bot setup";
 	public string MenuChatsCount => "Chats count";
 	public string MenuClientAdvanced => "Client advanced";

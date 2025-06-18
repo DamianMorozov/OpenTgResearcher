@@ -55,6 +55,7 @@ internal abstract class TgDbContextTestsBase : TgDisposable
     public override void ReleaseManagedResources()
     {
         Scope.Dispose();
+        BusinessLogicManager.Dispose();
     }
 
     /// <summary> Release unmanaged resources </summary>

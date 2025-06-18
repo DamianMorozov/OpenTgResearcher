@@ -37,5 +37,5 @@ jobs:
       - name: Build app for Release OpenTgResearcherConsole
         run: msbuild Presentation\OpenTgResearcherConsole\OpenTgResearcherConsole.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"
 
-      - name: Build app for Release OpenTgResearcherConsole
+      - name: Build app for Release OpenTgResearcherDesktop
         run: msbuild Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"

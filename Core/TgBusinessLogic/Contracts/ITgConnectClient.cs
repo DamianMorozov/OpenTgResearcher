@@ -46,7 +46,9 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 
 	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType);
 	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent);
-	public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings);
+    public Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings);
+
+    public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings);
 	public Task DownloadAllDataAsync(ITgDownloadViewModel tgDownloadSettings);
 	public Task MarkHistoryReadAsync();
 	public void SetForceStopDownloading();

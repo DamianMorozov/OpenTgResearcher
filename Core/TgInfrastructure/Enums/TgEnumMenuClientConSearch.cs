@@ -3,11 +3,11 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumMenuClientCon
+public enum TgEnumMenuClientConSearch
 {
-	Return,
-    ClientSetup,
-	ClientAdvanced,
-	ClientDownload,
-    ClientSearch,
+    Return,
+    User,
+    Chat,
+    StartMonitoringChats,
+    StopMonitoringChats,
 }

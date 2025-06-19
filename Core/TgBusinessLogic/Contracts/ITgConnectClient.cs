@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 namespace TgBusinessLogic.Contracts;
 
 /// <summary> Telegram client </summary>
@@ -15,8 +17,10 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public TgBotInfoDto? BotInfoDto { get; }
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
-	public Dictionary<long, TL.ChatBase> DicChatsAll { get; }
-	public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; }
+
+    public Dictionary<long, TL.ChatBase> DicChatsAll { get; }
+
+    public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; }
 
 	public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync();
@@ -54,9 +58,23 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetForceStopDownloading();
 	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings);
 	public Task ScanSourcesTgDesktopAsync(TgEnumSourceType sourceType, Func<ITgEfSourceViewModel, Task> afterScanAsync);
+    /// <summary> Get user id </summary>
     public Task<long> GetUserIdAsync();
-
+    /// <summary> Checks if the client connection is ready </summary>
     public Task<bool> CheckClientConnectionReadyAsync();
+    /// <summary> Checks if the bot connection is ready </summary>
     public Task<bool> CheckBotConnectionReadyAsync();
     public void SetBotInfoDto(TgBotInfoDto botInfoDto);
+    /// <summary> Gets the chat username </summary>
+    public string GetChatUserName(long chatId);
+    /// <summary> Gets the chat user link </summary>
+    public (string, string) GetChatUserLink(long chatId, int messageId);
+    /// <summary> Gets the chat user link </summary>
+    public (string, string) GetChatUserLink(long chatId);
+    /// <summary> Get user link </summary>
+    public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer);
+    /// <summary> Get participant information from chat </summary>
+    Task<User?> GetParticipantAsync(long chatId, long userId);
+    /// <summary> Clear caches </summary>
+    public void ClearCaches();
 }

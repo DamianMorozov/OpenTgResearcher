@@ -85,7 +85,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 		ProxyUid = item.ProxyUid ?? Guid.Empty;
 		UseBot = item.UseBot;
 		BotTokenKey = item.BotTokenKey;
-        UseClient = UseClient;
+        UseClient = item.UseClient;
 		return this;
 	}
 

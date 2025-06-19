@@ -18,7 +18,7 @@ public abstract class TgDisposable : ObservableRecipient, ITgDisposable
     #region IDisposable
 
     /// <summary> Locker object </summary>
-    public object Locker { get; } = new();
+    protected object Locker { get; } = new();
     /// <summary> To detect redundant calls </summary>
     private bool _disposed;
 

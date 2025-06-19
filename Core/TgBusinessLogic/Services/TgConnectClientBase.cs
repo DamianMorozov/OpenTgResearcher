@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 using TL;
+using WTelegram;
 
 namespace TgBusinessLogic.Services;
 
@@ -13,8 +14,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
     private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
     private static TgLogHelper TgLog => TgLogHelper.Instance;
-    public WTelegram.Client? Client { get; set; } = default!;
-    public WTelegram.Bot? Bot { get; private set; } = default!;
+    public Client? Client { get; set; } = default!;
+    public Bot? Bot { get; private set; } = default!;
     public TgBotInfoDto? BotInfoDto { get; private set; } = default!;
     public StreamWriter? BotStreamWriterLogs { get; private set; } = default!;
     public TgExceptionViewModel ClientException { get; set; } = default!;
@@ -23,17 +24,23 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public bool IsNotReady => !IsReady;
     public bool IsProxyUsage { get; private set; } = default!;
     public User? Me { get; protected set; } = default!;
+
     public Dictionary<long, ChatBase> DicChatsAll { get; private set; } = default!;
     public Dictionary<long, User> DicContactsAll { get; private set; } = default!;
     public Dictionary<long, StoryItem> DicStoriesAll { get; private set; } = default!;
     public Dictionary<long, ChatBase> DicChatsUpdated { get; private set; } = default!;
     public Dictionary<long, User> DicContactsUpdated { get; private set; } = default!;
-    public IEnumerable<Channel> EnumerableChannels { get; set; } = default!;
-    public IEnumerable<Channel> EnumerableGroups { get; set; } = default!;
-    public IEnumerable<ChatBase> EnumerableChats { get; set; } = default!;
-    public IEnumerable<ChatBase> EnumerableSmallGroups { get; set; } = default!;
-    public IEnumerable<User> EnumerableContacts { get; set; } = default!;
-    public IEnumerable<StoryItem> EnumerableStories { get; set; } = default!;
+
+    public IEnumerable<Channel> EnumerableChannels { get; private set; } = default!;
+    public IEnumerable<Channel> EnumerableGroups { get; private set; } = default!;
+    public IEnumerable<ChatBase> EnumerableChats { get; private set; } = default!;
+    public IEnumerable<ChatBase> EnumerableSmallGroups { get; private set; } = default!;
+    public IEnumerable<User> EnumerableContacts { get; private set; } = default!;
+    public IEnumerable<StoryItem> EnumerableStories { get; private set; } = default!;
+
+    public Dictionary<long, InputChannel> ChannelCache { get; private set; } = [];
+    public Dictionary<long, User> UserCache { get; private set; }= [];
+
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
     public bool IsForceStopDownloading { get; set; } = default!;
@@ -145,6 +152,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #endif
     }
 
+    /// <inheritdoc />
     public async Task<long> GetUserIdAsync()
     {
         if (Me is null)
@@ -279,7 +287,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 var apiHash = appDto.ApiHash.ToString().Replace("-", "");
                 BotSqlConnection = new Microsoft.Data.Sqlite.SqliteConnection(@"Data Source=WTelegramBot.sqlite");
 
-                Bot = new WTelegram.Bot(botToken, apiId, apiHash, BotSqlConnection);
+                Bot = new Bot(botToken, apiId, apiHash, BotSqlConnection);
                 Bot.OnError += OnErrorBotAsync;
                 Bot.OnMessage += OnMessageBotAsync;
                 Bot.OnUpdate += OnUpdateBotAsync;
@@ -888,39 +896,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             await SetClientExceptionAsync(ex);
         }
-#else
-		await Task.Delay(1);
 #endif
+        await Task.CompletedTask;
     }
-
-    //private void Client_DisplayMessage(MessageBase messageBase, bool edit = false)
-    //{
-    //	if (edit) Console.Write("(Edit): ");
-    //	switch (messageBase)
-    //	{
-    //		case TL.Message message:
-    //			TgLog.MarkupLine($"  {GetPeerUpdatedName(message.from_id)} in {GetPeerUpdatedName(message.peer_id)}> {message.message}");
-    //			break;
-    //		case MessageService messageService:
-    //			TgLog.MarkupLine($"  {GetPeerUpdatedName(messageService.from_id)} in {GetPeerUpdatedName(messageService.peer_id)} [{messageService.action.GetType().Name[13..]}]");
-    //			break;
-    //	}
-    //}
-
-    //public async Task PrintSendAsync(Messages_Chats messagesChats)
-    //{
-    //	Console.Write("Type a chat ID to send a message: ");
-    //	string? input = Console.ReadLine();
-    //	if (!string.IsNullOrEmpty(input))
-    //	{
-    //		long chatId = long.Parse(input);
-    //		TL.ChatBase target = messagesChats.chats[chatId];
-    //		TgLog.MarkupLine($"  Type the message into the chat: {target.Title} | {chatId}");
-    //		input = Console.ReadLine();
-    //		if (Client is { })
-    //			await Client.SendMessageAsync(target, input);
-    //	}
-    //}
 
     public IEnumerable<ChatBase> SortListChats(IList<ChatBase> chats)
     {
@@ -2406,7 +2384,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     //	}
     //}
 
-    private WTelegram.Client.ProgressCallback ClientProgressForFile(long sourceId, int messageId, string fileName, int threadNumber)
+    private Client.ProgressCallback ClientProgressForFile(long sourceId, int messageId, string fileName, int threadNumber)
     {
         var sw = Stopwatch.StartNew();
         var isStartTask = true;
@@ -2699,7 +2677,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #region Public and private methods - Connections
 
-    /// <summary> Checks if the client connection is ready </summary>
+    /// <inheritdoc />
     public async Task<bool> CheckClientConnectionReadyAsync()
     {
         var result = Client is { Disconnected: false } && Me is not null && Me.ID > 0;
@@ -2721,10 +2699,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return ClientResultConnected();
     }
 
-    /// <summary> Checks if the bot connection is ready </summary>
+    /// <inheritdoc />
     public async Task<bool> CheckBotConnectionReadyAsync()
     {
-        var result = BotSqlConnection is not null && BotSqlConnection.State == System.Data.ConnectionState.Open && 
+        var result = BotSqlConnection is not null && BotSqlConnection.State == System.Data.ConnectionState.Open &&
             Bot is not null && Bot.BotId > 0 && Bot.Client.Disconnected == false;
         if (!result)
             return ClientResultDisconnected();
@@ -2738,7 +2716,173 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return ClientResultConnected();
     }
 
+    /// <inheritdoc />
     public void SetBotInfoDto(TgBotInfoDto botInfoDto) => BotInfoDto = botInfoDto;
+
+    /// <inheritdoc />
+    public string GetChatUserName(long chatId)
+    {
+        if (DicChatsAll.TryGetValue(ReduceChatId(chatId), out var chatBase) && chatBase is not null)
+        {
+            if (!string.IsNullOrEmpty(chatBase.MainUsername))
+                return chatBase.MainUsername;
+            if (chatBase is Channel channel && !string.IsNullOrEmpty(channel.username))
+                return channel.username;
+        }
+        return string.Empty;
+    }
+
+    /// <inheritdoc />
+    public (string, string) GetChatUserLink(long chatId, int messageId) =>
+        TgStringUtils.FormatChatLink(GetChatUserName(chatId), chatId, messageId);
+
+    /// <inheritdoc />
+    public (string, string) GetChatUserLink(long chatId) =>
+        TgStringUtils.FormatChatLink(GetChatUserName(chatId), chatId);
+
+    /// <inheritdoc />
+    public async Task<(string, string)> GetUserLink(long chatId, int messageId, Peer? peer)
+    {
+        if (peer is not PeerUser peerUser) return GetChatUserLink(chatId);
+        if (chatId == peerUser.user_id) return GetChatUserLink(chatId);
+
+        try
+        {
+            // Optimization: check cache
+            if (UserCache.TryGetValue(peerUser.user_id, out var user))
+                return TgStringUtils.FormatUserLink(user.username, user.id, string.Join(" ", user.first_name, user.last_name));
+
+            // Retrieving data through a chat participant
+            var userData = await GetParticipantAsync(chatId, peerUser.user_id);
+            if (userData is null)
+                return GetChatUserLink(chatId);
+
+            // Optimization: update cache
+            UserCache.TryAdd(userData.id, userData);
+            return TgStringUtils.FormatUserLink(userData.username, userData.id, string.Join(" ", userData.first_name, userData.last_name));
+        }
+#if DEBUG
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.StackTrace);
+        }
+#else
+        catch (Exception)
+        {
+            // Ignore
+        }
+#endif
+        return GetChatUserLink(chatId);
+    }
+
+    /// <summary> Get input channel </summary>
+    private InputChannel? GetInputChannelFromUserChats(long chatId)
+    {
+        try
+        {
+            // Optimization: check cache
+            if (ChannelCache.TryGetValue(chatId, out var inputChannel))
+                return inputChannel;
+
+            long channelAccessHash = 0;
+            if (DicChatsAll.Any())
+            {
+                var chatBase = DicChatsAll.FirstOrDefault(x => x.Key == chatId).Value;
+                if (chatBase is Channel channel)
+                    channelAccessHash = channel.access_hash;
+            }
+            var result = new InputChannel(chatId, channelAccessHash);
+            // Optimization: update cache
+            ChannelCache.TryAdd(chatId, result);
+
+            return result;
+        }
+#if DEBUG
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.StackTrace);
+        }
+#else
+        catch (Exception)
+        {
+            // Ignore
+        }
+#endif
+        return null;
+    }
+
+    /// <inheritdoc />
+    public async Task<User?> GetParticipantAsync(long chatId, long userId)
+    {
+        var inputChannel = GetInputChannelFromUserChats(chatId);
+        if (inputChannel is null || inputChannel.access_hash == 0) return null;
+
+        // Optimization: check cache
+        if (UserCache.TryGetValue(userId, out var user))
+            return user;
+
+        // Get one participant: need access hash
+        try
+        {
+            var response = await Client.Channels_GetParticipant(inputChannel, new InputUser(userId, access_hash: 0));
+            if (response is not null)
+            {
+                // Optimization: update cache
+                var userData = response.users.FirstOrDefault(x => x.Value.id == userId).Value;
+                if (userData is not null)
+                {
+                    UserCache.TryAdd(userId, userData);
+                    return userData;
+                }
+            }
+        }
+        catch (RpcException ex) when (ex.Code == 400) // USER_NOT_PARTICIPANT
+        {
+            // Ignore
+        }
+
+        // Get
+        try
+        {
+            int limit = 200;
+            int offset = 0;
+            while (true)
+            {
+                ChannelParticipantsFilter filter = new ChannelParticipantsRecent();
+                var participants = await Client.Channels_GetParticipants(inputChannel, filter, offset, limit, 0);
+                if (participants is null || participants.participants.Length == 0)
+                    break;
+
+                foreach (var userItem in participants.users)
+                {
+                    if (userItem.Value.id == userId)
+                    {
+                        // Optimization: update cache
+                        UserCache.TryAdd(userId, userItem.Value);
+                        return userItem.Value;
+                    }
+                }
+
+                if (participants.participants.Length < limit)
+                    break;
+                offset += participants.participants.Length;
+            }
+            return null;
+        }
+        catch (RpcException ex) when (ex.Code == 400) // USER_NOT_PARTICIPANT
+        {
+            return null;
+        }
+    }
+
+    /// <inheritdoc />
+    public void ClearCaches()
+    {
+        ChannelCache.Clear();
+        UserCache.Clear();
+    }
 
     #endregion
 }

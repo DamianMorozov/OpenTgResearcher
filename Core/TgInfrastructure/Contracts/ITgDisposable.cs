@@ -5,7 +5,6 @@ namespace TgInfrastructure.Contracts;
 
 public interface ITgDisposable : IDisposable
 {
-    public object Locker { get; }
     /// <summary> Throw exception if disposed </summary>
     public void CheckIfDisposed();
     /// <summary> Release managed resources </summary>

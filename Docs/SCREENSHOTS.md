@@ -1,12 +1,23 @@
 # Screenshots
 
+## [0.6.400] - 2025-06-19
+### OpenTgResearcherConsole
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_01_SplashScreen.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_02_Main.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_03_Application.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_04_Storage.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_05_ClientConnection.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_06_ClientConnection_Monitoring.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_07_BotConnection.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_08_Update.png"></p>
+<p align="center"><img src="Assets/v0.6.400/OpenTgResearcherConsole_09_License.png"></p>
+
 ## [0.6.300] - 2025-06-09
 ### OpenTgResearcherConsole
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_01_SplashScreen.png"></p>
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_02_Main.png"></p>
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_03_Application.png"></p>
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_04_Storage.png"></p>
-<p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_05_ClientConnection.png"></p>
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_06_BotConnection.png"></p>
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_07_Update.png"></p>
 <p align="center"><img src="Assets/v0.6.300/OpenTgResearcherConsole_08_License.png"></p>

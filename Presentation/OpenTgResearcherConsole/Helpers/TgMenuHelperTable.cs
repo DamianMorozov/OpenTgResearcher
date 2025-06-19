@@ -27,6 +27,25 @@ internal partial class TgMenuHelper
         AnsiConsole.Write(table);
     }
 
+    private async Task ShowTableCoreAsync(Action<Table> fillTableColumns,
+        Func<Table, Task> fillTableRowsAsync)
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.Write(new FigletText(TgConstants.OpenTgResearcher).Centered().Color(Color.Yellow));
+        Table table = new()
+        {
+            ShowHeaders = false,
+            Border = TableBorder.Rounded,
+            // App version + Storage version + License
+            Title = new($"{TgLocale.AppVersionShort} {TgAppSettings.AppVersion} / {TgLocale.StorageVersionShort} {TgAppSettings.StorageVersion} / " +
+                $"{BusinessLogicManager.LicenseService.CurrentLicense.Description ?? string.Empty}", Style.Plain),
+        };
+        fillTableColumns(table);
+        await fillTableRowsAsync(table);
+        table.Expand();
+        AnsiConsole.Write(table);
+    }
+
     public async Task ShowTableMainAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsMainAsync);
 
@@ -59,7 +78,7 @@ internal partial class TgMenuHelper
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsUpdateAsync);
 
     private async Task ShowTableApplicationAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsApplicationAsync);
+        await ShowTableCoreAsync(FillTableColumns, FillTableRowsApplicationAsync);
 
     private async Task ShowTableBotConAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConAsync);
@@ -77,7 +96,7 @@ internal partial class TgMenuHelper
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsBotConSearchAsync);
 
     private async Task ShowTableClientConAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConAsync);
+        await ShowTableCoreAsync(FillTableColumns, FillTableRowsClientConAsync);
 
     private async Task ShowTableClientConSetupAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConSetupAsync);
@@ -87,6 +106,9 @@ internal partial class TgMenuHelper
 
     private async Task ShowTableClientConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsClientConDownloadAsync);
+
+    private async Task ShowTableClientConSearchAsync() =>
+        await ShowTableCoreAsync(FillTableColumns, FillTableRowsClientConSearchAsync);
 
     private async Task ShowTableViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (_, __) => await Task.CompletedTask);
@@ -159,7 +181,7 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    private async Task FillTableRowsApplicationAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    private async Task FillTableRowsApplicationAsync(Table table)
     {
         // Current directory
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.DirectoryCurrent)), GetMarkup(Environment.CurrentDirectory));
@@ -341,7 +363,7 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    private async Task FillTableRowsClientConAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    private async Task FillTableRowsClientConAsync(Table table)
     {
         var isClientConnectionReady = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
@@ -444,7 +466,7 @@ internal partial class TgMenuHelper
         }
 
         // Client connection
-        await FillTableRowsClientConAsync(tgDownloadSettings, table);
+        await FillTableRowsClientConAsync(table);
 
         await Task.CompletedTask;
     }
@@ -528,7 +550,7 @@ internal partial class TgMenuHelper
         }
 
         // Client connection
-        await FillTableRowsClientConAsync(tgDownloadSettings, table);
+        await FillTableRowsClientConAsync(table);
 
         await Task.CompletedTask;
     }
@@ -608,7 +630,49 @@ internal partial class TgMenuHelper
             table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.MenuDownloadUserAccess)), GetMarkup($"{false}"));
 
         // Client connection
-        await FillTableRowsClientConAsync(tgDownloadSettings, table);
+        await FillTableRowsClientConAsync(table);
+
+        await Task.CompletedTask;
+    }
+
+    private async Task FillTableRowsClientConSearchAsync(Table table)
+    {
+        // Client connection
+        await FillTableRowsClientConAsync(table);
+
+        // Check if the client is monitoring chats
+        table.AddRow(GetMarkup(ClientMonitoringVm.IsStartMonitoring
+            ? TgLocale.InfoMessage(TgLocale.MenuClientStateMonitoringChats)
+            : TgLocale.InfoMessage(TgLocale.MenuClientStateMonitoringChats)),
+                GetMarkup(ClientMonitoringVm.IsStartMonitoring ? TgLocale.MenuYes : TgLocale.MenuNo));
+        if (ClientMonitoringVm.IsStartMonitoring)
+        {
+            // Send user
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientSendMessagesToUser)),
+                GetMarkup(ClientMonitoringVm.IsSendToMyself ? TgLocale.MenuClientSendMessagesToMyself
+                : $"{ClientMonitoringVm.UserName} with ID {ClientMonitoringVm.UserId}"));
+            // Search chats
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientSearchChats)),
+                GetMarkup(ClientMonitoringVm.IsSearchAtAllChats ? TgLocale.MenuClientSearchAtAllChats :
+                string.Join(", ", ClientMonitoringVm.ChatNames)));
+            // Search keywords
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuKeywordsForMessageFiltering)),
+                GetMarkup(ClientMonitoringVm.IsSkipKeywords
+                    ? TgLocale.MenuClientSkipKeywords
+                    : string.Join(", ", ClientMonitoringVm.Keywords)));
+            // Catch messages count
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientCatchMessages)),
+                GetMarkup(ClientMonitoringVm.CatchMessages.ToString()));
+            // Last message
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientLastMessageDateTime)),
+                GetMarkup(ClientMonitoringVm.LastDateTime));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientLastMessageUserLink)),
+                GetMarkup(ClientMonitoringVm.LastUserLink));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientLastMessageLink)),
+                GetMarkup(ClientMonitoringVm.LastMessageLink));
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientLastMessageText)),
+                GetMarkup(ClientMonitoringVm.LastMessageText));
+        }
 
         await Task.CompletedTask;
     }

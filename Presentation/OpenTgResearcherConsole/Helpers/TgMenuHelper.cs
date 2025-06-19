@@ -31,6 +31,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     {
         BusinessLogicManager.Dispose();
         _instanceMutex?.Dispose();
+        ClientForSendData?.Dispose();
     }
 
     public override void ReleaseUnmanagedResources()

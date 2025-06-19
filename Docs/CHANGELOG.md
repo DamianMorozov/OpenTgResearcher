@@ -4,12 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.310] - 2025-06-10
+## [0.6.400] - 2025-06-19
 ### Changed
-- Expanding information about connecting the bot to OpenTgResearcherConsole
+- Extension of bot connection information in OpenTgResearcherConsole
+- Extension of client connection information in OpenTgResearcherConsole
 ### Added
-- Added a search menu for chat info via the bot in OpenTgResearcherConsole
-- Added a search menu for user information via the bot in OpenTgResearcherConsole
+- Added search for chat info via bot in OpenTgResearcherConsole
+- Added search for user info via bot in OpenTgResearcherConsole
+- Added search for chat info via client in OpenTgResearcherConsole
+- Added search for user info via client in OpenTgResearcherConsole
+- Added monitoring of chats by keywords via client in OpenTgResearcherConsole
 
 ## [0.6.300] - 2025-06-09
 ### Changed

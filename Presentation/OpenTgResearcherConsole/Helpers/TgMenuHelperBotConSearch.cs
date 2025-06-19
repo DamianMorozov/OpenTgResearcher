@@ -2,12 +2,23 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
+using Telegram.Bot.Types.Enums;
 using TL;
 
 namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
+    #region Public and private fields, properties, constructor
+
+    private List<string> BotMonitoringChatNames { get; set; } = [];
+    private List<string> BotMonitoringKeywords { get; set; } = [];
+    private string BotMonitoringUserName { get; set; } = string.Empty;
+    private long BotMonitoringUserId { get; set; }
+    public Bot? BotForSendData { get; set; }
+
+    #endregion
+
     #region Public and private methods
 
     private TgEnumMenuBotConSearch SetMenuBotConSearch()
@@ -20,6 +31,8 @@ internal partial class TgMenuHelper
             TgLocale.MenuReturn,
             TgLocale.MenuBotSearchChat,
             TgLocale.MenuBotSearchUser
+            //TgLocale.MenuBotStartMonitoringChats,
+            //TgLocale.MenuBotStopMonitoringChats
         );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
@@ -27,6 +40,10 @@ internal partial class TgMenuHelper
             return TgEnumMenuBotConSearch.Chat;
         if (prompt.Equals(TgLocale.MenuBotSearchUser))
             return TgEnumMenuBotConSearch.User;
+        if (prompt.Equals(TgLocale.MenuBotStartMonitoringChats))
+            return TgEnumMenuBotConSearch.StartMonitoringChats;
+        if (prompt.Equals(TgLocale.MenuBotStopMonitoringChats))
+            return TgEnumMenuBotConSearch.StopMonitoringChats;
 
         return TgEnumMenuBotConSearch.Return;
     }
@@ -47,45 +64,53 @@ internal partial class TgMenuHelper
                 case TgEnumMenuBotConSearch.User:
                     await BotSearchUserAsync(tgDownloadSettings);
                     break;
+                case TgEnumMenuBotConSearch.StartMonitoringChats:
+                    await BotStartMonitoringChatsAsync(tgDownloadSettings);
+                    break;
+                case TgEnumMenuBotConSearch.StopMonitoringChats:
+                    await BotStopMonitoringChatsAsync(tgDownloadSettings);
+                    break;
                 case TgEnumMenuBotConSearch.Return:
                     break;
             }
         } while (menu is not TgEnumMenuBotConSearch.Return);
     }
 
-    /// <summary> Normilize TG name </summary>
-    private string NormilizeTgName(string name)
-    {
-        if (name.StartsWith("https://t.me/"))
-            name = name.Substring(13, name.Length - 13);
-        if (!name.StartsWith("@"))
-            name = $"@{name}";
-        return name;
+    /// <summary> Check bot connection </summary>
+    private async Task<Bot?> CheckBotConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {        
+        await BotConnectAsync(tgDownloadSettings, isSilent: true);
+        var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+        if (!isBotConnect) return null;
+
+        if (BusinessLogicManager.ConnectClient.Bot is not Bot bot) return null;
+
+        return bot;
     }
 
     /// <summary> Bot search chat </summary>
     private async Task BotSearchChatAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        // Check connect
-        await BotConnectAsync(tgDownloadSettings, isSilent: true);
-        var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
-        if (!isBotConnect) return;
-
-        if (BusinessLogicManager.ConnectClient.Bot is not Bot bot) return;
-
-        var input = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetChatName}:");
-        if (string.IsNullOrEmpty(input))
+        var bot = await CheckBotConnectionAsync(tgDownloadSettings);
+        if (bot is null)
         {
-            TgLog.MarkupWarning(TgLocale.MenuSetChatNameIsEmpty);
+            TgLog.WriteLine(TgLocale.MenuBotConfigurationError);
             return;
         }
 
-        input = NormilizeTgName(input);
+        // Get the name of the public chat to search for
+        var input = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetChatName}:");
+        if (string.IsNullOrEmpty(input))
+        {
+            TgLog.WriteLine(TgLocale.MenuSetChatNameIsEmpty);
+            return;
+        }
+        input = TgStringUtils.NormilizeTgName(input);
 
-        // get details about a public chat (even if bot is not a member of that chat)
+        // Get details about a public chat (even if bot is not a member of that chat)
         var chatDetails = await bot.GetChat(input);
         if (chatDetails is null)
-            TgLog.MarkupInfo(TgLocale.TgBotGetChatDetailsError);
+            TgLog.MarkupInfo(TgLocale.TgGetChatDetailsError);
         else
             PrintTableWithChatInfo(chatDetails);
         TgLog.TypeAnyKeyForReturn();
@@ -106,10 +131,9 @@ internal partial class TgMenuHelper
         table.AddRow(TgLocale.FieldId, TgConnectClientBase.ReduceChatId(chatDetails.Id).ToString());
         table.AddRow(TgLocale.FieldUserName, chatDetails.Username ?? "-");
         table.AddRow(TgLocale.FieldInviteLink, chatDetails.InviteLink ?? "-");
-        table.AddRow(TgLocale.FieldIsForum, chatDetails.IsForum ? "yes" : "no");
         table.AddRow(TgLocale.FieldDescription, chatDetails.Description ?? "-");
         if (chatDetails.Permissions is null)
-            table.AddRow(TgLocale.FieldPermissions, "");
+            table.AddRow(TgLocale.FieldPermissions, "-");
         else
         {
             var permissions = new List<string>();
@@ -143,17 +167,29 @@ internal partial class TgMenuHelper
                 permissions.Add(nameof(chatDetails.Permissions.CanManageTopics));
             table.AddRow(TgLocale.FieldPermissions, string.Join(", ", permissions));
         }
-        if (chatDetails.TLInfo is TL.Messages_ChatFull { full_chat: TL.ChannelFull channelFull })
+
+        if (chatDetails.TLInfo is TL.Messages_ChatFull messagesChatFull)
         {
-            table.AddRow(TgLocale.FieldAbout, channelFull.About);
-            table.AddRow(TgLocale.FieldParticipantsCount, channelFull.participants_count.ToString());
-            table.AddRow(TgLocale.FieldOnlineCount, channelFull.online_count.ToString());
-            table.AddRow(TgLocale.FieldSlowmode, channelFull.slowmode_seconds > 0
-                ? $"slowmode enabled: {channelFull.slowmode_seconds} seconds" : $"slowmode disbaled");
-            table.AddRow(TgLocale.FieldAvailableReactions,
-                channelFull.available_reactions is TL.ChatReactionsAll { flags: TL.ChatReactionsAll.Flags.allow_custom }
-                ? "allows custom emojis as reactions" : "does not allow the use of custom emojis as a reaction");
-            table.AddRow(TgLocale.FieldTtlPeriod, channelFull.TtlPeriod.ToString());
+            if (messagesChatFull.full_chat is TL.ChannelFull channelFull)
+            {
+                table.AddRow(TgLocale.FieldAbout, channelFull.About);
+                table.AddRow(TgLocale.FieldParticipantsCount, channelFull.participants_count.ToString());
+                table.AddRow(TgLocale.FieldOnlineCount, channelFull.online_count.ToString());
+                table.AddRow(TgLocale.FieldSlowmode, channelFull.slowmode_seconds > 0
+                    ? $"slowmode enabled: {channelFull.slowmode_seconds} seconds" : $"slowmode disbaled");
+                table.AddRow(TgLocale.FieldAvailableReactions,
+                    channelFull.available_reactions is TL.ChatReactionsAll { flags: TL.ChatReactionsAll.Flags.allow_custom }
+                    ? "allows custom emojis as reactions" : "does not allow the use of custom emojis as a reaction");
+                table.AddRow(TgLocale.FieldTtlPeriod, channelFull.TtlPeriod.ToString());
+            }
+            if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is ChatBase chatBase)
+            {
+                table.AddRow(TgLocale.FieldIsActive, chatBase.IsActive ? "yes" : "no");
+                table.AddRow(TgLocale.FieldIsBanned, chatBase.IsBanned() ? "yes" : "no");
+                table.AddRow(TgLocale.FieldIsChannel, chatBase.IsChannel ? "yes" : "no");
+                table.AddRow(TgLocale.FieldIsIsGroup, chatBase.IsGroup ? "yes" : "no");
+                table.AddRow(TgLocale.FieldIsForum, chatDetails.IsForum ? "yes" : "no");
+            }
         }
 
         AnsiConsole.Write(table);
@@ -162,34 +198,36 @@ internal partial class TgMenuHelper
     /// <summary> Bot search user </summary>
     private async Task BotSearchUserAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        // Check connect
-        await BotConnectAsync(tgDownloadSettings, isSilent: true);
-        var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
-        if (!isBotConnect) return;
-
-        if (BusinessLogicManager.ConnectClient.Bot is not Bot bot) return;
-
-        var input = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetUserName}:");
-        if (string.IsNullOrEmpty(input))
+        var bot = await CheckBotConnectionAsync(tgDownloadSettings);
+        if (bot is null)
         {
-            TgLog.MarkupWarning(TgLocale.MenuSetUserNameIsEmpty);
+            TgLog.WriteLine(TgLocale.MenuBotConfigurationError);
             return;
         }
 
-        input = NormilizeTgName(input);
+        // Get the public username of the user to search for
+        var input = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetUserName}:");
+        if (string.IsNullOrEmpty(input))
+        {
+            TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
+            return;
+        }
+        input = TgStringUtils.NormilizeTgName(input);
 
-        // get details about a user via the public username (even if not in discussion with bot)
-        if (await bot.InputUser(input) is { user_id: var userId })
+        // Get details about a user via the public username (even if not in discussion with bot)
+        var inputUser = await bot.InputUser(input);
+        if (inputUser is { user_id: var userId })
         {
             var userDetails = await bot.GetChat(userId);
             if (userDetails.TLInfo is null)
-                TgLog.MarkupInfo(TgLocale.TgBotGetUserDetailsError);
+                TgLog.MarkupInfo(TgLocale.TgGetUserDetailsError);
             else
                 PrintTableWithUserInfo(userDetails.TLInfo, userId);
             TgLog.TypeAnyKeyForReturn();
         }
     }
 
+    /// <summary> Print table with user info </summary>
     private void PrintTableWithUserInfo(IObject tLInfo, long userId)
     {
         var table = new Table()
@@ -228,6 +266,179 @@ internal partial class TgMenuHelper
         table.AddRow(TgLocale.FieldStoriesMaxId, tlUser.stories_max_id.ToString());
 
         AnsiConsole.Write(table);
+    }
+
+    /// <summary> Start monitoring chats for new messages </summary>
+    private async Task BotStartMonitoringChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        BotMonitoringUserName = string.Empty;
+        BotMonitoringUserId = 0;
+        BotMonitoringChatNames.Clear();
+        BotMonitoringKeywords.Clear();
+
+        var bot = await CheckBotConnectionAsync(tgDownloadSettings);
+        if (bot is null)
+        {
+            TgLog.WriteLine(TgLocale.MenuBotConfigurationError);
+            return;
+        }
+        BotForSendData = bot;
+
+        // Get username for send messages
+        var userNameInput = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetUserNameForSendMessages}:");
+        if (string.IsNullOrEmpty(userNameInput))
+        {
+            TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
+            return;
+        }
+        BotMonitoringUserName = TgStringUtils.NormilizeTgName(userNameInput);
+        var inputUser = await bot.InputUser(BotMonitoringUserName);
+        if (inputUser is { user_id: var userId })
+        {
+            var userDetails = await bot.GetChat(userId);
+            if (userDetails.TLInfo is null)
+                TgLog.MarkupInfo(TgLocale.TgGetUserDetailsError);
+            else
+                BotMonitoringUserId = userId;
+        }
+
+        // Get the list of chats that the bot is a member of
+        var chatNamesInput = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetChatNames}:");
+        if (string.IsNullOrEmpty(chatNamesInput))
+        {
+            TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
+            return;
+        }
+        var chatNames = TgStringUtils.NormilizeTgNames(chatNamesInput);
+
+        // Get the list of keywords to filter messages
+        var keywordsInput = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetKeywordsForMessageFiltering}:");
+        if (string.IsNullOrEmpty(keywordsInput))
+        {
+            TgLog.WriteLine(TgLocale.MenuSetKeywordsForFilterMessagesIsEmpty);
+            return;
+        }
+        BotMonitoringKeywords = [.. keywordsInput
+            .Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)
+            .Select(keyword => keyword.Trim().ToUpper())];
+
+        // Start monitoring chats for new messages
+        TgLog.MarkupInfo($"  {TgLocale.MenuBotStartMonitoringChats} {chatNames.Count} chats...");
+        foreach (var chatName in chatNames)
+        {
+            var joined = await TryJoinChatAsBotAsync(bot, chatName);
+            if (!joined)
+                continue;
+            BotMonitoringChatNames.Add(chatName.ToUpper());
+        }
+
+        // Subscribe
+        BotForSendData.OnMessage += OnBotMessageAsync;
+        BotForSendData.OnUpdate += OnBotUpdateAsync;
+        TgLog.WriteLine("  Monitoring started");
+        TgLog.TypeAnyKeyForReturn();
+
+        // Unsubscribe
+        BotForSendData?.OnMessage -= OnBotMessageAsync;
+        BotForSendData?.OnUpdate -= OnBotUpdateAsync;
+    }
+
+    private async Task OnBotMessageAsync(WTelegram.Types.Message message, UpdateType type)
+    {
+        // Check if the message is from a chat that we are monitoring
+        var chatName = message.Chat?.Username?.ToUpper() ?? "";
+        if (string.IsNullOrEmpty(chatName)) return;
+        
+        if (BotMonitoringChatNames.Contains(chatName))
+        {
+            // Filter messages by keywords
+            var text = (message.Text ?? string.Empty).ToUpper();
+            if (BotMonitoringKeywords.Any(k => text.Contains(k)))
+            {
+                // Send a message to the specified userName
+                TgLog.MarkupInfo($"[bold green]New message for {BotMonitoringUserName} in {chatName}:[/] {message.Text}");
+                if (BotForSendData is Bot bot && message.Chat?.Id is long chatId)
+                    await bot.SendMessage(BotMonitoringUserId, message.Text ?? string.Empty);
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task OnBotUpdateAsync(WTelegram.Types.Update update)
+    {
+        var foo = update;
+        // Check if the message is from a chat that we are monitoring
+        //var chatName = message.Chat?.Username?.ToUpper() ?? "";
+        //if (string.IsNullOrEmpty(chatName)) return;
+
+        //if (BotMonitoringChatNames.Contains(chatName))
+        //{
+        //    // Filter messages by keywords
+        //    var text = (message.Text ?? string.Empty).ToUpper();
+        //    if (BotMonitoringKeywords.Any(k => text.Contains(k)))
+        //    {
+        //        // Send a message to the specified userName
+        //        TgLog.MarkupInfo($"[bold green]New message for {BotMonitoringUserName} in {chatName}:[/] {message.Text}");
+        //        if (BotForSendData is Bot bot && message.Chat?.Id is long chatId)
+        //            await bot.SendMessage(BotMonitoringUserId, message.Text ?? string.Empty);
+        //    }
+        //}
+
+        await Task.CompletedTask;
+    }
+
+    // <summary> Stop monitoring chats for new messages </summary>
+    private async Task BotStopMonitoringChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        BotMonitoringUserName = string.Empty;
+        BotMonitoringUserId = 0;
+        BotMonitoringChatNames.Clear();
+        BotMonitoringKeywords.Clear();
+
+        // Unsubscribe
+        BotForSendData?.OnMessage -= OnBotMessageAsync;
+        BotForSendData?.OnUpdate -= OnBotUpdateAsync;
+
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Join bot to chat by username or id if it is not already a member </summary>
+    private async Task<bool> TryJoinChatAsBotAsync(Bot bot, string chatNameOrId)
+    {
+        try
+        {
+            // Get chat details
+            var chatInfo = await bot.GetChat(chatNameOrId);
+            if (chatInfo is null)
+            {
+                TgLog.WriteLine($"{TgLocale.TgGetChatDetailsError} {chatNameOrId}");
+                return false;
+            }
+
+            // Check if bot is already a member of the chat
+            var isMember = false;
+            var members = await bot.GetChatMemberList(chatInfo.Id);
+            if (members is not null && members.Any())
+            {
+                isMember = members.Any(m => m.User?.Username?.Equals(BotMonitoringUserName, StringComparison.OrdinalIgnoreCase) == true);
+            }
+            if (!isMember)
+            {
+                TgLog.WriteLine($"  The bot is not a member of the chat {chatNameOrId}");
+                return false;
+            }
+
+            // Try to join the chat
+            //await bot.JoinChat(chatNameOrId);
+            //TgLog.WriteLine($"  The bot has successfully joined the chat {chatNameOrId}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            TgLog.WriteLine($"  Error when joining the bot to the chat {chatNameOrId}: {ex.Message}");
+            return false;
+        }
     }
 
     #endregion

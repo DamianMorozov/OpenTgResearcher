@@ -4,12 +4,16 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.310] - 2025-06-10
+## [0.6.400] - 2025-06-19
 ### Изменено
 - Расширение информации о подключении бота в OpenTgResearcherConsole
+- Расширение информации о подключении клиента в OpenTgResearcherConsole
 ### Добавлено
-- Добавлено меню поиска инфо о чате через бота в OpenTgResearcherConsole
-- Добавлено меню поиска инфо о пользователе через бота в OpenTgResearcherConsole
+- Добавлен поиск инфо о чате через бота в OpenTgResearcherConsole
+- Добавлен поиск инфо о пользователе через бота в OpenTgResearcherConsole
+- Добавлен поиск инфо о чате через клиента в OpenTgResearcherConsole
+- Добавлен поиск инфо о пользователе через клиента в OpenTgResearcherConsole
+- Добавлен мониторинг чатов по ключевым словам через клиента в OpenTgResearcherConsole
 
 ## [0.6.300] - 2025-06-09
 ### Изменено

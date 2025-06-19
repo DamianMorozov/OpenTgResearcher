@@ -32,7 +32,10 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 - Save the values of the fields by `App configuration` section: `App api_id` / `App api_hash`
 
 ## OpenTgResearcherDesktop Splash screen
-<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherDesktop_SplashScreen.gif"></p>
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
 ## OpenTgResearcherConsole Splash screen
-<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherConsole_SplashScreen.gif"></p>
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
+
+## OpenTgResearcherConsole - Start monitoring chats via client
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats_via_client.gif"></p>

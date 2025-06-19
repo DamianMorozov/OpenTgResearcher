@@ -32,7 +32,10 @@
 - Сохраните значения полей секции `App configuration`: `App api_id` / `App api_hash`
 
 ## Заставка OpenTgResearcherDesktop
-<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherDesktop_SplashScreen.gif"></p>
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
 ## Заставка OpenTgResearcherConsole
-<p align="center"><img src="Docs/Assets/SplashScreens/OpenTgResearcherConsole_SplashScreen.gif"></p>
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
+
+## OpenTgResearcherConsole - Запуск мониторинга чатов через клиент
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats_via_client.gif"></p>

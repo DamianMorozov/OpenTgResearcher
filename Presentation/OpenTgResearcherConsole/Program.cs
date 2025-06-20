@@ -6,10 +6,13 @@ namespace OpenTgResearcherConsole;
 public static class Program
 {
     public static async Task Main()
-	{
+    {
+        // Uncomment for make screen record
+        //WaitForMakeScreenRecord(seconds: 5);
+
         // Set app type
         TgGlobalTools.SetAppType(TgEnumAppType.Console);
-        
+
         // DI register
         var containerBuilder = new ContainerBuilder();
         // Registering repositories
@@ -150,7 +153,7 @@ public static class Program
 
     /// <summary> Loading Velopack Installer </summary>
     private static void LoadingVelopackInstaller(TgLogHelper tgLog)
-	{
+    {
         tgLog.WriteLine("  Loading installer ...");
         // Velopack installer update
         //await menu.VelopackUpdateAsync(isWait: false, isRelease: true);
@@ -161,10 +164,24 @@ public static class Program
 			tgLog.WriteLine($"  Uninstalling the {TgConstants.OpenTgResearcherConsole}!");
 		})
 #endif
-            .OnFirstRun((v) => {
+            .OnFirstRun((v) =>
+            {
                 tgLog.WriteLine($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
             })
             .Run();
         tgLog.WriteLine("  Loading installer   v");
+    }
+
+    /// <summary> Wait for make screen record </summary>
+    private static void WaitForMakeScreenRecord(int seconds)
+    {
+        for (int i = seconds; i > 0; i--)
+        {
+            Console.WriteLine("Wait for make screen record");
+            Console.Write($"Seconds left: {i}");
+            Thread.Sleep(1_000);
+            Console.Clear();
+        }
+        Thread.Sleep(3_000);
     }
 }

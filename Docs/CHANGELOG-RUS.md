@@ -4,7 +4,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.400] - 2025-06-19
+## [0.6.420] - 2025-06-20
 ### Изменено
 - Расширение информации о подключении бота в OpenTgResearcherConsole
 - Расширение информации о подключении клиента в OpenTgResearcherConsole

@@ -202,8 +202,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientLocalMessageDateTime => "Local date time";
 	public string MenuClientMonitoringStarted => "Monitoring has started";
 	public string MenuClientMonitoringStopped => "Monitoring has stopped";
-	public string MenuClientSearchingStarted => "The search has started";
-	public string MenuClientSearchingStopped => "The search has stopped";
 	public string MenuClientPassword => "Password";
 	public string MenuClientPhoneNumber => "Phone number";
 	public string MenuClientProgress => "Progress";
@@ -213,7 +211,9 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientSearchChat => "Chat search via client";
 	public string MenuClientSearchChats => "Search chats";
 	public string MenuClientSearchForKeywordsInChatsStart => "Start search for keywords in chats";
-	public string MenuClientSearchForKeywordsInChatsStop => "Sttop search for keywords in chats";
+	public string MenuClientSearchForKeywordsInChatsStop => "Stop search for keywords in chats";
+	public string MenuClientSearchingStarted => "The search has started";
+	public string MenuClientSearchingStopped => "The search has stopped";
 	public string MenuClientSearchUser => "User search via client";
 	public string MenuClientSendingMessageError => "Sending message error";
 	public string MenuClientSendMessages => "Send messages";
@@ -223,7 +223,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientSetup => "Client setup";
 	public string MenuClientSkipKeywords => "Skip keywords to filter messages";
 	public string MenuClientStartMonitoringChats => "Start monitoring chats";
-	public string MenuClientStateMonitoringChats => "State monitoring chats";
+	public string MenuClientStateMonitoringChats => "Status of chat monitoring";
+	public string MenuClientStateSearchingChats => "Status of keyword searches in chats";
 	public string MenuClientStopMonitoringChats => "Stop monitoring chats";
 	public string MenuClientUseClient => "Use client";
 	public string MenuClientVerificationCode => "Verification code";

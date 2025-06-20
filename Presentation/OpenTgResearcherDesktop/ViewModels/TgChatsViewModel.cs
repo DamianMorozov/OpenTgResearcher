@@ -31,7 +31,6 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		SearchCommand = new AsyncRelayCommand(SearchAsync);
 		// Updates
-		//BusinessLogicManager.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
 		//BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
 		//BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
 		//BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);

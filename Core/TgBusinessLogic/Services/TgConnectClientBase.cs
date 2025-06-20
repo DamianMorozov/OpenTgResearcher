@@ -46,7 +46,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public bool IsForceStopDownloading { get; set; } = default!;
     private IEnumerable<TgEfFilterDto> Filters { get; set; } = default!;
     public Func<string, Task> UpdateTitleAsync { get; private set; } = default!;
-    public Func<string, Task> UpdateStateConnectAsync { get; private set; } = default!;
     public Func<string, Task> UpdateStateProxyAsync { get; private set; } = default!;
     public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; private set; } = default!;
     public Func<long, string, string, string, Task> UpdateStateContactAsync { get; private set; } = default!;
@@ -128,7 +127,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         MessageEntities = [];
 
         UpdateTitleAsync = _ => Task.CompletedTask;
-        UpdateStateConnectAsync = _ => Task.CompletedTask;
         UpdateStateProxyAsync = _ => Task.CompletedTask;
         UpdateStateExceptionAsync = (_, _, _, _) => Task.CompletedTask;
         UpdateExceptionAsync = _ => Task.CompletedTask;
@@ -171,9 +169,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         return userId;
     }
-
-    public void SetupUpdateStateConnect(Func<string, Task> updateStateConnectAsync) =>
-        UpdateStateConnectAsync = updateStateConnectAsync;
 
     public void SetupUpdateStateProxy(Func<string, Task> updateStateProxyAsync) =>
         UpdateStateProxyAsync = updateStateProxyAsync;
@@ -221,13 +216,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         UpdateStateSourceAsync(0, 0, 0, string.Empty);
         UpdateStateProxyAsync(TgLocale.ProxyIsDisconnect);
-        UpdateStateConnectAsync(TgLocale.MenuClientIsDisconnected);
         return IsReady = false;
     }
 
     private bool ClientResultConnected()
     {
-        UpdateStateConnectAsync(TgLocale.MenuClientIsConnected);
         return IsReady = true;
     }
 
@@ -2440,7 +2433,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         IsProxyUsage = false;
         await UpdateStateSourceAsync(0, 0, 0, string.Empty);
         await UpdateStateProxyAsync(TgLocale.ProxyIsDisconnect);
-        await UpdateStateConnectAsync(TgLocale.MenuClientIsDisconnected);
         Me = null;
         if (Client is not null)
         {
@@ -2874,6 +2866,42 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         catch (RpcException ex) when (ex.Code == 400) // USER_NOT_PARTICIPANT
         {
             return null;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task MakeFuncWithMessagesAsync(long chatId, Func<MessageBase, Task> func)
+    {
+        var inputChannel = GetInputChannelFromUserChats(chatId);
+        if (inputChannel is null || inputChannel.access_hash == 0) return;
+
+        // Get
+        try
+        {
+            int limit = 200;
+            int offset = 0;
+            while (true)
+            {
+                var messages = await Client.Messages_GetHistory(inputChannel, offset_id: offset, limit: limit, 
+                    max_id: 0, min_id: 0, add_offset: 0, hash: inputChannel.access_hash);
+                if (messages is null || messages.Messages.Length == 0)
+                    break;
+                foreach (var messageItem in messages.Messages)
+                {
+                    await func(messageItem);
+                }
+
+                if (messages.Messages.Length < limit)
+                    break;
+                offset += messages.Messages.Length;
+            }
+        }
+        catch (Exception ex)
+        {
+#if DEBUG
+            Debug.WriteLine(ex);
+            Debug.WriteLine(ex.StackTrace);
+#endif
         }
     }
 

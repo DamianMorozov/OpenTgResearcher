@@ -39,7 +39,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetupUpdateStateContact(Func<long, string, string, string, Task> updateStateContactAsync);
 	public void SetupUpdateStateStory(Func<long, int, int, string, Task> updateStateStoryAsync);
 	public void SetupUpdateStateMessage(Func<string, Task> updateStateMessageAsync);
-	public void SetupUpdateStateConnect(Func<string, Task> updateStateConnectAsync);
 	public void SetupUpdateStateProxy(Func<string, Task> updateStateProxyAsync);
 	public void SetupUpdateStateException(Func<string, int, string, string, Task> updateStateExceptionAsync);
 	public void SetupUpdateStateExceptionShort(Func<string, Task> updateStateExceptionShortAsync);
@@ -75,6 +74,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer);
     /// <summary> Get participant information from chat </summary>
     Task<User?> GetParticipantAsync(long chatId, long userId);
+    /// <summary> Make an action with messages in a chat </summary>
+    Task MakeFuncWithMessagesAsync(long chatId, Func<MessageBase, Task> func);
     /// <summary> Clear caches </summary>
     public void ClearCaches();
 }

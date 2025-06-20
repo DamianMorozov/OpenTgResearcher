@@ -83,7 +83,6 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
         
         // Delegates
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateConnect(UpdateStateConnectAsync);
         //App.BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
         //App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
         //App.BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);

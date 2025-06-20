@@ -640,12 +640,20 @@ internal partial class TgMenuHelper
         // Client connection
         await FillTableRowsClientConAsync(table);
 
-        // Check if the client is monitoring chats
+        // Check if the client is start monitoring chats
         table.AddRow(GetMarkup(ClientMonitoringVm.IsStartMonitoring
             ? TgLocale.InfoMessage(TgLocale.MenuClientStateMonitoringChats)
             : TgLocale.InfoMessage(TgLocale.MenuClientStateMonitoringChats)),
                 GetMarkup(ClientMonitoringVm.IsStartMonitoring ? TgLocale.MenuYes : TgLocale.MenuNo));
-        if (ClientMonitoringVm.IsStartMonitoring)
+
+        // Check if the client is start searching chats
+        table.AddRow(GetMarkup(ClientMonitoringVm.IsStartSearching
+            ? TgLocale.InfoMessage(TgLocale.MenuClientStateSearchingChats)
+            : TgLocale.InfoMessage(TgLocale.MenuClientStateSearchingChats)),
+                GetMarkup(ClientMonitoringVm.IsStartMonitoring ? TgLocale.MenuYes : TgLocale.MenuNo));
+
+        // Flag start monitoring or Flag start searching
+        if (ClientMonitoringVm.IsStartMonitoring || ClientMonitoringVm.IsStartSearching)
         {
             // Send user
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientSendMessagesToUser)),

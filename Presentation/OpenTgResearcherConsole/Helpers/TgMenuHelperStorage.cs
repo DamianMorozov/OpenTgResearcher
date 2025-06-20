@@ -45,26 +45,28 @@ internal partial class TgMenuHelper
 		{
 			await ShowTableStorageAsync(tgDownloadSettings);
 			menu = SetMenuStorage();
-			switch (menu)
+            switch (menu)
             {
                 case TgEnumMenuStorage.Setup:
                     await SetupStorageSetupAsync(tgDownloadSettings);
                     break;
-				case TgEnumMenuStorage.Advanced:
+                case TgEnumMenuStorage.Advanced:
                     await SetupStorageAdvancedAsync(tgDownloadSettings);
                     break;
-				case TgEnumMenuStorage.Clear:
+                case TgEnumMenuStorage.Clear:
                     await SetupStorageClearAsync(tgDownloadSettings);
                     break;
-				case TgEnumMenuStorage.Chats:
+                case TgEnumMenuStorage.Chats:
                     await SetupStorageChatsAsync(tgDownloadSettings);
                     break;
-				case TgEnumMenuStorage.Filters:
+                case TgEnumMenuStorage.Filters:
                     await SetupStorageFilterAsync(tgDownloadSettings);
                     break;
-			}
-		} while (menu is not TgEnumMenuStorage.Return);
-	}
+                case TgEnumMenuStorage.Return:
+                    break;
+            }
+        } while (menu is not TgEnumMenuStorage.Return);
+    }
 
     #endregion
 }

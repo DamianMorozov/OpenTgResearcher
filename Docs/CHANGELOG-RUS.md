@@ -13,6 +13,7 @@
 - Добавлен поиск инфо о пользователе в OpenTgResearcherConsole
 - Добавлен мониторинг чатов в OpenTgResearcherConsole
 - Добавлены настройки мониторинга чатов в OpenTgResearcherConsole
+- Добавлено логирование приложения OpenTgResearcherConsole в файл
 
 ## [0.6.300] - 2025-06-09
 ### Изменено

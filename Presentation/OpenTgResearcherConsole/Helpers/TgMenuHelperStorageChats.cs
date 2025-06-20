@@ -36,7 +36,7 @@ internal partial class TgMenuHelper
 		{
 			await ShowTableStorageChatsAsync(tgDownloadSettings);
 			menu = SetMenuStorageChats();
-			switch (menu)
+            switch (menu)
             {
                 case TgEnumMenuStorageChats.ChatsView:
                     await StorageViewChatsAsync(tgDownloadSettings);
@@ -44,9 +44,11 @@ internal partial class TgMenuHelper
                 case TgEnumMenuStorageChats.ChatsClear:
                     await StorageClearChatsAsync(tgDownloadSettings);
                     break;
-			}
-		} while (menu is not TgEnumMenuStorageChats.Return);
-	}
+                case TgEnumMenuStorageChats.Return:
+                    break;
+            }
+        } while (menu is not TgEnumMenuStorageChats.Return);
+    }
 
     #endregion
 }

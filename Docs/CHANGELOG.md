@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added search for user info in OpenTgResearcherConsole
 - Added monitoring of chats in OpenTgResearcherConsole
 - Added chat monitoring settings to OpenTgResearcherConsole
+- Added logging of the application OpenTgResearcherConsole to file
 
 ## [0.6.300] - 2025-06-09
 ### Changed

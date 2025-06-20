@@ -35,6 +35,8 @@ internal partial class TgMenuHelper
             {
                 case TgEnumMenuBotConDownload.Return:
                     break;
+                default:
+                    break;
             }
         } while (menu is not TgEnumMenuBotConDownload.Return);
     }

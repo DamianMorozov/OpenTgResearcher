@@ -339,8 +339,8 @@ internal partial class TgMenuHelper
         TgLog.TypeAnyKeyForReturn();
 
         // Unsubscribe
-        BotForSendData?.OnMessage -= OnBotMessageAsync;
-        BotForSendData?.OnUpdate -= OnBotUpdateAsync;
+        BotForSendData.OnMessage -= OnBotMessageAsync;
+        BotForSendData.OnUpdate -= OnBotUpdateAsync;
     }
 
     private async Task OnBotMessageAsync(WTelegram.Types.Message message, UpdateType type)

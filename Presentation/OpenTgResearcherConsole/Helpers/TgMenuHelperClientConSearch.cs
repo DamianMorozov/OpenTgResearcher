@@ -4,6 +4,8 @@
 
 using TL;
 
+using WTelegram;
+
 namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
@@ -182,6 +184,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.WriteLine($"{TgLocale.TgErrorAnalyzingUsername} '{username}': {ex.Message}");
         }
         return null;
@@ -256,9 +259,22 @@ internal partial class TgMenuHelper
     {
         if (ClientForSendData is null) return;
 
-        // Flasg for sending messages
+        // Flag for sending messages
         ClientMonitoringVm.IsSendMessages = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSendMessages);
-        if (!ClientMonitoringVm.IsSendMessages) return;
+        if (!ClientMonitoringVm.IsSendMessages)
+        {
+            ClientMonitoringVm.UserName = TgStringUtils.NormilizeTgName(ClientForSendData.User.MainUsername, isAddAt: false);
+            var inputUser = await GetInputUserAsync(ClientForSendData, ClientMonitoringVm.UserName);
+            if (inputUser is { user_id: var userId })
+            {
+                var userDetails = await ClientForSendData.Users_GetFullUser(inputUser);
+                if (userDetails is null)
+                    TgLog.WriteLine(TgLocale.TgGetUserDetailsError);
+                else
+                    ClientMonitoringVm.UserId = userId;
+            }
+            return;
+        }
 
         // Flag for sending messages to myself
         ClientMonitoringVm.IsSendToMyself = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSendMessagesToMyself);
@@ -435,6 +451,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.WriteLine($"  Error when joining the client to the chat {chatNameOrId}: {ex.Message}");
             return false;
         }
@@ -451,6 +468,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.WriteLine($"{TgLocale.TgErrorCheckUserMember}: user ID {userId}, chat ID {inputChannel.channel_id}: {ex.Message}");
             return false;
         }
@@ -562,11 +580,8 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.WriteLine($"{TgLocale.MenuClientSendingMessageError}: {ex.Message}");
-#if DEBUG
-            Debug.WriteLine(ex);
-            Debug.WriteLine(ex.StackTrace);
-#endif
         }
     }
 
@@ -635,11 +650,8 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.WriteLine($"{TgLocale.MenuClientSendingMessageError}: {ex.Message}");
-#if DEBUG
-            Debug.WriteLine(ex);
-            Debug.WriteLine(ex.StackTrace);
-#endif
         }
     }
 

@@ -40,20 +40,22 @@ internal partial class TgMenuHelper
 		{
 			await ShowTableStorageSetupAsync(tgDownloadSettings);
 			menu = SetMenuStorageSetup();
-			switch (menu)
-			{
-				case TgEnumMenuStorageSetup.DbClear:
+            switch (menu)
+            {
+                case TgEnumMenuStorageSetup.DbClear:
                     StorageDbClear();
-					break;
-				case TgEnumMenuStorageSetup.DbBackup:
-					StorageDbBackup();
-					break;
-				case TgEnumMenuStorageSetup.DbCompact:
-					await StorageDbCompactAsync();
-					break;
-			}
-		} while (menu is not TgEnumMenuStorageSetup.Return);
-	}
+                    break;
+                case TgEnumMenuStorageSetup.DbBackup:
+                    StorageDbBackup();
+                    break;
+                case TgEnumMenuStorageSetup.DbCompact:
+                    await StorageDbCompactAsync();
+                    break;
+                case TgEnumMenuStorageSetup.Return:
+                    break;
+            }
+        } while (menu is not TgEnumMenuStorageSetup.Return);
+    }
 
     /// <summary> Clear storage database </summary>
     private void StorageDbClear()

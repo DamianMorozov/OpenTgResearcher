@@ -287,6 +287,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             catch (Exception ex)
             {
+                TgLogUtils.LogFatal(ex);
                 await SetClientExceptionAsync(ex);
             }
         }
@@ -368,6 +369,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             IsProxyUsage = false;
             await SetProxyExceptionAsync(ex);
         }
@@ -686,6 +688,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                     catch (Exception ex)
                     {
+                        TgLogUtils.LogFatal(ex);
                         await SetClientExceptionAsync(ex);
                     }
                 }
@@ -693,6 +696,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             await SetClientExceptionAsync(ex);
         }
     }
@@ -723,6 +727,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                     catch (Exception ex)
                     {
+                        TgLogUtils.LogFatal(ex);
                         await SetClientExceptionAsync(ex);
                     }
                 }
@@ -730,6 +735,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             await SetClientExceptionAsync(ex);
         }
     }
@@ -887,6 +893,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             await SetClientExceptionAsync(ex);
         }
 #endif
@@ -965,6 +972,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             await SetClientExceptionAsync(ex);
         }
         return fullChannel;
@@ -988,6 +996,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             await SetClientExceptionAsync(ex);
         }
         return chatFull;
@@ -1228,6 +1237,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.MarkupWarning($"Error in GetChatDetailsFromBot: {ex.Message}");
         }
 
@@ -1243,6 +1253,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.MarkupWarning($"Error in GetChatDetailsFromBot: {ex.Message}");
         }
 
@@ -1539,6 +1550,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             TgLog.MarkupWarning($"Error disabling user access for all chats: {ex.Message}");
         }
     }
@@ -1808,25 +1820,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                 }
                                 catch (Exception ex)
                                 {
-#if DEBUG
-                                    Debug.WriteLine(ex);
-                                    Debug.WriteLine(ex.StackTrace);
-#endif
+                                    TgLogUtils.LogFatal(ex);
                                     await SetClientExceptionAsync(ex);
                                 }
                             }
                         }
-#if DEBUG
                         catch (Exception ex)
                         {
-                            Debug.WriteLine(ex);
+                            TgLogUtils.LogFatal(ex);
                         }
-#else
-						catch (Exception)
-						{
-							// ignored
-						}
-#endif
                     }
                 }
 
@@ -1981,6 +1983,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             await SetClientExceptionAsync(ex);
             return false;
         }
@@ -2308,15 +2311,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (messageType == TgEnumMessageType.Document)
                 await UpdateStateFileAsync(tgDownloadSettings.SourceVm.Dto.Id, messageId, string.Empty, 0, 0, 0, false, threadNumber);
         }
-#if DEBUG
         catch (Exception ex)
         {
-            Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-            Debug.WriteLine(ex.StackTrace);
-#else
-		catch (Exception)
-		{
-#endif
+            TgLogUtils.LogFatal(ex, TgConstants.LogTypeStorage);
             BatchMessagesCount = 0;
             MessageEntities.Clear();
             if (!isRetry)
@@ -2523,10 +2520,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             catch (Exception ex)
             {
+                TgLogUtils.LogFatal(ex, TgConstants.LogTypeNetwork);
 #if DEBUG
                 Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {memberName} | {lineNumber}", TgConstants.LogTypeNetwork);
-                Debug.WriteLine(ex, TgConstants.LogTypeNetwork);
-                Debug.WriteLine(ex.StackTrace);
 #endif
                 if (attempt < maxRetries - 1)
                     await Task.Delay(delayBetweenRetries);
@@ -2616,6 +2612,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            TgLogUtils.LogFatal(ex);
             // CHANNEL_INVALID | BadMsgNotification 48
             if (ClientException.Message.Contains("You must connect to Telegram first"))
             {
@@ -2753,18 +2750,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             UserCache.TryAdd(userData.id, userData);
             return TgStringUtils.FormatUserLink(userData.username, userData.id, string.Join(" ", userData.first_name, userData.last_name));
         }
-#if DEBUG
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
-            Debug.WriteLine(ex.StackTrace);
+            TgLogUtils.LogFatal(ex);
         }
-#else
-        catch (Exception)
-        {
-            // Ignore
-        }
-#endif
         return GetChatUserLink(chatId);
     }
 
@@ -2790,18 +2779,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             return result;
         }
-#if DEBUG
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
-            Debug.WriteLine(ex.StackTrace);
+            TgLogUtils.LogFatal(ex);
         }
-#else
-        catch (Exception)
-        {
-            // Ignore
-        }
-#endif
         return null;
     }
 
@@ -2898,10 +2879,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
-#if DEBUG
-            Debug.WriteLine(ex);
-            Debug.WriteLine(ex.StackTrace);
-#endif
+            TgLogUtils.LogFatal(ex);
         }
     }
 

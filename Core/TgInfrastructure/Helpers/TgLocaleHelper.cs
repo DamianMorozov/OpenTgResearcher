@@ -165,8 +165,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuBotConfigurationError => "Bot configuration error";
 	public string MenuBotDownload => "Bot download";
 	public string MenuBotSearch => "Bot search";
-	public string MenuBotSearchChat => "Chat search via bot";
-	public string MenuBotSearchUser => "User search via bot";
+	public string MenuBotSearchChat => "Chat search";
+	public string MenuBotSearchUser => "User search";
 	public string MenuBotSetup => "Bot setup";
 	public string MenuBotStartMonitoringChats => "Start monitoring chats via bot";
 	public string MenuBotStopMonitoringChats => "Stop monitoring chats via bot";
@@ -208,13 +208,13 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientProxy => "Proxy";
 	public string MenuClientSearch => "Client search";
 	public string MenuClientSearchAtAllChats => "Search all of a user's chats";
-	public string MenuClientSearchChat => "Chat search via client";
+	public string MenuClientSearchChat => "Chat search";
 	public string MenuClientSearchChats => "Search chats";
 	public string MenuClientSearchForKeywordsInChatsStart => "Start search for keywords in chats";
 	public string MenuClientSearchForKeywordsInChatsStop => "Stop search for keywords in chats";
 	public string MenuClientSearchingStarted => "The search has started";
 	public string MenuClientSearchingStopped => "The search has stopped";
-	public string MenuClientSearchUser => "User search via client";
+	public string MenuClientSearchUser => "User search";
 	public string MenuClientSendingMessageError => "Sending message error";
 	public string MenuClientSendMessages => "Send messages";
 	public string MenuClientSendMessagesToMyself => "Send messages to myself";

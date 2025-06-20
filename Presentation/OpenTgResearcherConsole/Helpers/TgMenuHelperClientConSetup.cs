@@ -170,15 +170,17 @@ internal partial class TgMenuHelper
             if (!appDto.UseClient)
                 await UseClientAsync(isSilent);
 
-            // Question
             if (!isSilent)
+            {
+                // Question
                 if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect)) return;
-
-            // Connect
-            if (!isSilent)
+                // Connect
                 TgLog.WriteLine("  TG client connect ...");
+            }
+
             var proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(x => x.Uid == appDto.ProxyUid);
             await BusinessLogicManager.ConnectClient.ConnectClientConsoleAsync(ConfigClientConsole, proxyDto);
+            
             if (!isSilent)
             {
                 if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
@@ -186,12 +188,11 @@ internal partial class TgMenuHelper
                 else
                     TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
                 TgLog.TypeAnyKeyForReturn();
-            }
-            if (!isSilent)
+                
                 TgLog.WriteLine("  TG client connect   v");
-
-            if (!isSilent)
+                
                 await ShowTableClientConSetupAsync(tgDownloadSettings);
+            }
         }
         catch (Exception ex)
         {

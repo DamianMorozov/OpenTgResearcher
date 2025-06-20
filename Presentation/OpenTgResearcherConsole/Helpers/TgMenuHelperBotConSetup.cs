@@ -102,14 +102,16 @@ internal partial class TgMenuHelper
             if (!appDto.UseBot)
                 await UseBotAsync(tgDownloadSettings, isSilent);
 
-            // Question
             if (!isSilent)
+            {
+                // Question
                 if (AskQuestionYesNoReturnNegative(TgLocale.MenuBotConnect)) return;
-
-            // Connect
-            if (!isSilent)
+                // Connect
                 TgLog.WriteLine("  TG bot connect ...");
+            }
+
             await BusinessLogicManager.ConnectClient.ConnectBotConsoleAsync();
+            
             if (!isSilent)
             {
                 if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
@@ -117,10 +119,8 @@ internal partial class TgMenuHelper
                 else
                     await PrintTableWithBotInfoAsync();
                 TgLog.TypeAnyKeyForReturn();
-            }
-            if (!isSilent)
                 TgLog.WriteLine("  TG bot connect   v");
-
+            }
         }
         catch (Exception ex)
         {

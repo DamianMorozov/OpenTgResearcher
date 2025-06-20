@@ -1,18 +1,14 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgFileUtils = TgInfrastructure.Helpers.TgFileUtils;
-
-namespace OpenTgResearcherDesktop.Helpers;
+namespace TgInfrastructure.Helpers;
 
 /// <summary> Log utils </summary>
 public static class TgLogUtils
 {
     #region Public and private fields, properties, constructor
 
-    private static readonly string _startupLog = 
-		Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherDesktop, "current", 
-			$"{TgConstants.OpenTgResearcherDesktop}-StartupLog.txt");
+    private static string _startupLog = default!;
 
 	#endregion
 
@@ -140,11 +136,14 @@ public static class TgLogUtils
 	}
 
 	/// <summary> Initialize startup log </summary>
-	public static void InitStartupLog()
+	public static void InitStartupLog(string appName)
 	{
 		try
 		{
-			if (!string.IsNullOrEmpty(_startupLog) && !Directory.Exists(Path.GetDirectoryName(_startupLog)))
+            _startupLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                appName, "current", $"{appName}-StartupLog.txt");
+
+            if (!string.IsNullOrEmpty(_startupLog) && !Directory.Exists(Path.GetDirectoryName(_startupLog)))
 			{
 				Directory.CreateDirectory(Path.GetDirectoryName(_startupLog)!);
             }

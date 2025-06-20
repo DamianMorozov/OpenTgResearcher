@@ -38,7 +38,7 @@ public partial class App : Application
         TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
         
 		// Logging to the application directory
-        TgLogUtils.InitStartupLog();
+        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherDesktop);
         TgLogUtils.WriteToLog($"App started");
 
         // DI register

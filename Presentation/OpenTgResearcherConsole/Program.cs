@@ -77,6 +77,13 @@ public static class Program
         //    tgLog.WriteLine("  Loading connection   v");
         //}
 
+        // Loading logging
+        tgLog.WriteLine("  Loading logging ...");
+        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherConsole);
+        TgLogUtils.WriteToLog($"App started");
+        tgLog.WriteLine("  Loading logging   v");
+
+
         // Check multiple instances
         if (tgMenu.CheckMultipleInstances())
             return;

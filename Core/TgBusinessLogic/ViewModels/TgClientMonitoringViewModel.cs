@@ -22,6 +22,10 @@ public sealed partial class TgClientMonitoringViewModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsStartMonitoring { get; set; }
     [ObservableProperty]
+    public partial bool IsStartSearching { get; set; }
+    [ObservableProperty]
+    public partial bool IsSendMessages { get; set; }
+    [ObservableProperty]
     public partial bool IsSendToMyself { get; set; }
     [ObservableProperty]
     public partial bool IsSearchAtAllChats { get; set; }

@@ -32,7 +32,9 @@ internal partial class TgMenuHelper
         if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
             selectionPrompt.AddChoices(
                 TgLocale.MenuClientStartMonitoringChats,
-                TgLocale.MenuClientStopMonitoringChats
+                TgLocale.MenuClientStopMonitoringChats,
+                TgLocale.MenuClientSearchForKeywordsInChatsStart,
+                TgLocale.MenuClientSearchForKeywordsInChatsStop
             );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
@@ -44,6 +46,10 @@ internal partial class TgMenuHelper
             return TgEnumMenuClientConSearch.StartMonitoringChats;
         if (prompt.Equals(TgLocale.MenuClientStopMonitoringChats))
             return TgEnumMenuClientConSearch.StopMonitoringChats;
+        if (prompt.Equals(TgLocale.MenuClientSearchForKeywordsInChatsStart))
+            return TgEnumMenuClientConSearch.StartSearchForKeywordsInChats;
+        if (prompt.Equals(TgLocale.MenuClientSearchForKeywordsInChatsStop))
+            return TgEnumMenuClientConSearch.StopSearchForKeywordsInChats;
 
         return TgEnumMenuClientConSearch.Return;
     }
@@ -65,20 +71,26 @@ internal partial class TgMenuHelper
                     await ClientSearchUserAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConSearch.StartMonitoringChats:
-                    await ClientStartMonitoringChatsAsync(tgDownloadSettings);
+                    await ClientMonitoringStartAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConSearch.StopMonitoringChats:
-                    await ClientStopMonitoringChatsAsync(tgDownloadSettings);
+                    await ClientMonitoringStopAsync();
+                    break;
+                case TgEnumMenuClientConSearch.StartSearchForKeywordsInChats:
+                    await ClientSearchForKeywordsInChatsStart(tgDownloadSettings);
+                    break;
+                case TgEnumMenuClientConSearch.StopSearchForKeywordsInChats:
+                    await ClientSearchForKeywordsInChatsStop(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConSearch.Return:
-                    await ClientStopMonitoringChatsAsync(tgDownloadSettings);
+                    await ClientMonitoringStopAsync();
                     break;
             }
         } while (menu is not TgEnumMenuClientConSearch.Return);
     }
 
-    /// <summary> Check client connection </summary>
-    private async Task<Client?> CheckClientConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    /// <summary> Get client connection </summary>
+    private async Task<Client?> GetClientConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         await ClientConnectAsync(tgDownloadSettings, isSilent: true);
         var isClientConnect = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
@@ -92,7 +104,7 @@ internal partial class TgMenuHelper
     /// <summary> Client search chat </summary>
     private async Task ClientSearchChatAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        var client = await CheckClientConnectionAsync(tgDownloadSettings);
+        var client = await GetClientConnectionAsync(tgDownloadSettings);
         if (client is null)
         {
             TgLog.WriteLine(TgLocale.MenuClientConfigurationError);
@@ -109,9 +121,13 @@ internal partial class TgMenuHelper
         input = TgStringUtils.NormilizeTgName(input, isAddAt: false);
 
         // Get details about a public chat (even if client is not a member of that chat)
-        tgDownloadSettings.SourceVm = new TgEfSourceViewModel();
-        tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto();
-        tgDownloadSettings.SourceVm.Dto.UserName = input;
+        tgDownloadSettings.SourceVm = new TgEfSourceViewModel
+        {
+            Dto = new TgEfSourceDto
+            {
+                UserName = input
+            }
+        };
         await BusinessLogicManager.ConnectClient.CreateChatBaseCoreAsync(tgDownloadSettings);
         var fullChat = await client.GetFullChat(tgDownloadSettings.Chat.Base);
         if (fullChat is null)
@@ -173,7 +189,7 @@ internal partial class TgMenuHelper
     /// <summary> Client search user </summary>
     private async Task ClientSearchUserAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        var client = await CheckClientConnectionAsync(tgDownloadSettings);
+        var client = await GetClientConnectionAsync(tgDownloadSettings);
         if (client is null)
         {
             TgLog.WriteLine(TgLocale.MenuClientConfigurationError);
@@ -203,24 +219,48 @@ internal partial class TgMenuHelper
     }
 
     /// <summary> Start monitoring chats for new messages </summary>
-    private async Task ClientStartMonitoringChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    private async Task ClientMonitoringStartAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         if (ClientMonitoringVm.IsStartMonitoring) return;
-
         ClientMonitoringVm.Default();
 
-        var client = await CheckClientConnectionAsync(tgDownloadSettings);
-        if (client is null)
+        // Get client connection
+        ClientForSendData = await GetClientConnectionAsync(tgDownloadSettings);
+        if (ClientForSendData is null)
         {
             TgLog.WriteLine(TgLocale.MenuClientConfigurationError);
             return;
         }
-        ClientForSendData = client;
 
         // Get username for send messages
+        await ClientMonitoringGetUserNameAsync();
+        // Get chats
+        var chatNames = ClientMonitoringGetChats();
+        // Get keywords to filter messages
+        GetKeywordsForMonitoring();
+        // Add chats for monitoring
+        await ClientMonitoringAddChatsAsync(tgDownloadSettings, chatNames);
+
+        // Subscribe to client updates for monitoring new messages in chats
+        await ClientMonitoringSubscribeAsync();
+
+        TgLog.TypeAnyKeyForReturn();
+    }
+
+    /// <summary> Get username for send messages </summary>
+    private async Task ClientMonitoringGetUserNameAsync()
+    {
+        if (ClientForSendData is null) return;
+
+        // Flasg for sending messages
+        ClientMonitoringVm.IsSendMessages = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSendMessages);
+        if (!ClientMonitoringVm.IsSendMessages) return;
+
+        // Flag for sending messages to myself
         ClientMonitoringVm.IsSendToMyself = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSendMessagesToMyself);
         if (!ClientMonitoringVm.IsSendToMyself)
         {
+            // Get user name for sending messages
             var userNameInput = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetUserNameForSendMessages}:");
             if (string.IsNullOrEmpty(userNameInput))
             {
@@ -228,19 +268,22 @@ internal partial class TgMenuHelper
                 return;
             }
             ClientMonitoringVm.UserName = TgStringUtils.NormilizeTgName(userNameInput, isAddAt: false);
-            var inputUser = await GetInputUserAsync(client, ClientMonitoringVm.UserName);
+            var inputUser = await GetInputUserAsync(ClientForSendData, ClientMonitoringVm.UserName);
             if (inputUser is { user_id: var userId })
             {
-                var userDetails = await client.Users_GetFullUser(inputUser);
+                var userDetails = await ClientForSendData.Users_GetFullUser(inputUser);
                 if (userDetails is null)
                     TgLog.WriteLine(TgLocale.TgGetUserDetailsError);
                 else
                     ClientMonitoringVm.UserId = userId;
             }
         }
+    }
 
-        // Get chats
-        List<string>? chatNames = null;
+    /// <summary> Get chats for monitoring </summary>
+    private List<string> ClientMonitoringGetChats()
+    {
+        List<string> chatNames = [];
         ClientMonitoringVm.IsSearchAtAllChats = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSearchAtAllChats);
         if (!ClientMonitoringVm.IsSearchAtAllChats)
         {
@@ -248,12 +291,16 @@ internal partial class TgMenuHelper
             if (string.IsNullOrEmpty(chatNamesInput))
             {
                 TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
-                return;
+                return chatNames;
             }
             chatNames = TgStringUtils.NormilizeTgNames(chatNamesInput, isAddAt: false);
         }
+        return chatNames;
+    }
 
-        // Get keywords to filter messages
+    /// <summary> Get keywords for monitoring </summary>
+    private void GetKeywordsForMonitoring()
+    {
         ClientMonitoringVm.IsSkipKeywords = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSkipKeywords);
         if (!ClientMonitoringVm.IsSkipKeywords)
         {
@@ -267,50 +314,69 @@ internal partial class TgMenuHelper
             .Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries)
             .Select(keyword => keyword.Trim().ToUpper())];
         }
+    }
 
-        // Start monitoring chats for new messages
+    /// <summary> Add chats for monitoring </summary>
+    private async Task ClientMonitoringAddChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<string> chatNames)
+    {
+        if (ClientForSendData is null) return;
+
         if (!ClientMonitoringVm.IsSearchAtAllChats && chatNames is not null)
         {
             TgLog.WriteLine($"  {TgLocale.MenuClientStartMonitoringChats} {chatNames.Count} chats...");
             foreach (var chatName in chatNames)
             {
-                var joined = await TryJoinChatAsClientAsync(tgDownloadSettings, client, chatName);
+                var joined = await TryJoinChatAsClientAsync(tgDownloadSettings, ClientForSendData, chatName);
                 if (!joined)
                     continue;
                 ClientMonitoringVm.ChatNames.Add(chatName.ToUpper());
                 ClientMonitoringVm.ChatIds.Add(tgDownloadSettings.SourceVm.Dto.Id);
             }
         }
-
-        // Subscribe
-        if (ClientForSendData is not null)
-        {
-            BusinessLogicManager.ConnectClient.ClearCaches();
-            if (!BusinessLogicManager.ConnectClient.DicChatsAll.Any())
-                await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
-            ClientForSendData.OnUpdates -= OnClientUpdatesAsync;
-            ClientForSendData.OnUpdates += OnClientUpdatesAsync;
-            TgLog.WriteLine($"  {TgLocale.MenuClientMonitoringStarted}");
-            ClientMonitoringVm.IsStartMonitoring = true;
-        }
-        TgLog.TypeAnyKeyForReturn();
     }
 
-    // <summary> Stop monitoring chats for new messages </summary>
-    private async Task ClientStopMonitoringChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    /// <summary> Subscribe to client updates for monitoring new messages in chats </summary>
+    private async Task ClientMonitoringSubscribeAsync()
+    {
+        if (ClientMonitoringVm.IsStartMonitoring) return;
+        if (ClientForSendData is null) return;
+         
+        BusinessLogicManager.ConnectClient.ClearCaches();
+        if (!BusinessLogicManager.ConnectClient.DicChatsAll.Any())
+            await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
+
+        ClientForSendData.OnUpdates -= OnClientUpdatesAsync;
+        ClientForSendData.OnUpdates += OnClientUpdatesAsync;
+
+        ClientMonitoringVm.IsStartMonitoring = true;
+
+        TgLog.WriteLine($"  {TgLocale.MenuClientMonitoringStarted}");
+    }
+
+    /// <summary> Stop monitoring chats for new messages </summary>
+    private async Task ClientMonitoringStopAsync()
     {
         if (!ClientMonitoringVm.IsStartMonitoring) return;
 
         ClientMonitoringVm.Default();
 
-        // Unsubscribe
-        if (ClientForSendData is not null)
-        {
-            BusinessLogicManager.ConnectClient.ClearCaches();
-            ClientForSendData?.OnUpdates -= OnClientUpdatesAsync;
-            ClientMonitoringVm.IsStartMonitoring = false;
-            TgLog.WriteLine($"  {TgLocale.MenuClientMonitoringStopped}");
-        }
+        // Unsubscribe to client updates for monitoring new messages in chats
+        await ClientMonitoringUnsubscribeAsync();
+        
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Unsubscribe to client updates for monitoring new messages in chats </summary>
+    private async Task ClientMonitoringUnsubscribeAsync()
+    {
+        if (!ClientMonitoringVm.IsStartMonitoring) return;
+        if (ClientForSendData is null) return;
+
+        BusinessLogicManager.ConnectClient.ClearCaches();
+        ClientForSendData.OnUpdates -= OnClientUpdatesAsync;
+        ClientMonitoringVm.IsStartMonitoring = false;
+        TgLog.WriteLine($"  {TgLocale.MenuClientMonitoringStopped}");
+
         await Task.CompletedTask;
     }
 
@@ -320,9 +386,7 @@ internal partial class TgMenuHelper
         try
         {
             // Get details about a public chat (even if client is not a member of that chat)
-            tgDownloadSettings.SourceVm = new TgEfSourceViewModel();
-            tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto();
-            tgDownloadSettings.SourceVm.Dto.UserName = chatNameOrId;
+            tgDownloadSettings.SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { UserName = chatNameOrId } };
             await BusinessLogicManager.ConnectClient.CreateChatBaseCoreAsync(tgDownloadSettings);
             var fullChat = await client.GetFullChat(tgDownloadSettings.Chat.Base);
             // Get chat details
@@ -372,6 +436,7 @@ internal partial class TgMenuHelper
         }
     }
 
+    /// <summary> Check if user is a member of the chat </summary>
     private async Task<bool> CheckUserMemberAsync(Client client, TL.InputChannel inputChannel, long userId)
     {
         try
@@ -392,7 +457,6 @@ internal partial class TgMenuHelper
     {
         if (!ClientMonitoringVm.IsStartMonitoring) return;
         if (update is null || update.UpdateList is null) return;
-        if (!ClientMonitoringVm.IsSendToMyself && string.IsNullOrEmpty(ClientMonitoringVm.UserName)) return;
 
         // Check if the message is from a chat that we are monitoring
         foreach (var itemUpdate in update.UpdateList)
@@ -441,13 +505,16 @@ internal partial class TgMenuHelper
             lastMessageText = $"{TgLocale.MenuClientLocalMessageDateTime}: {lastDateTime}";
 
             // Add the sender's username if available
-            if (message.from_id is not null)
+            if (ClientMonitoringVm.IsSendMessages)
             {
-                lastUserLink = await BusinessLogicManager.ConnectClient.GetUserLink(chatId, message.id, message.from_id);
-                if (!string.IsNullOrEmpty(lastUserLink.Item2))
-                    lastMessageText += $"{Environment.NewLine}[{lastUserLink.Item1}]({lastUserLink.Item2})";
-                else if (!string.IsNullOrEmpty(lastUserLink.Item1))
-                    lastMessageText += $"{Environment.NewLine}{lastUserLink.Item1}";
+                if (message.from_id is not null)
+                {
+                    lastUserLink = await BusinessLogicManager.ConnectClient.GetUserLink(chatId, message.id, message.from_id);
+                    if (!string.IsNullOrEmpty(lastUserLink.Item2))
+                        lastMessageText += $"{Environment.NewLine}[{lastUserLink.Item1}]({lastUserLink.Item2})";
+                    else if (!string.IsNullOrEmpty(lastUserLink.Item1))
+                        lastMessageText += $"{Environment.NewLine}{lastUserLink.Item1}";
+                }
             }
 
             // Add the chat name if available
@@ -468,25 +535,31 @@ internal partial class TgMenuHelper
             var entities = client.MarkdownToEntities(ref lastMessageText);
 
             // Get the InputPeer of the user to whom we are sending the message
-            if (!ClientMonitoringVm.IsSendToMyself)
+            if (ClientMonitoringVm.IsSendMessages)
             {
-                if (ClientMonitoringVm.ResolvedPeer is null)
-                    ClientMonitoringVm.ResolvedPeer = await client.Contacts_ResolveUsername(ClientMonitoringVm.UserName);
-            }
-            else
-            {
-                if (ClientMonitoringVm.ResolvedPeer is null)
-                    ClientMonitoringVm.ResolvedPeer = await client.Contacts_ResolveUsername(client.User.MainUsername);
+                if (!ClientMonitoringVm.IsSendToMyself)
+                {
+                    if (ClientMonitoringVm.ResolvedPeer is null)
+                        ClientMonitoringVm.ResolvedPeer = await client.Contacts_ResolveUsername(ClientMonitoringVm.UserName);
+                }
+                else
+                {
+                    if (ClientMonitoringVm.ResolvedPeer is null)
+                        ClientMonitoringVm.ResolvedPeer = await client.Contacts_ResolveUsername(client.User.MainUsername);
+                }
             }
 
-            // Send message with entities
+            // Show message
             ClientMonitoringVm.LastDateTime = lastDateTime;
             ClientMonitoringVm.LastUserLink = lastUserLink.Item2 ?? "-";
             ClientMonitoringVm.LastMessageLink = lastMessageLink.Item2 ?? "-";
             ClientMonitoringVm.LastMessageText = message.message ?? "-";
             ClientMonitoringVm.CatchMessages++;
             await ShowTableClientConSearchAsync();
-            await client.SendMessageAsync(ClientMonitoringVm.ResolvedPeer, lastMessageText, entities: entities);
+
+            // Send message
+            if (ClientMonitoringVm.IsSendMessages)
+                await client.SendMessageAsync(ClientMonitoringVm.ResolvedPeer, lastMessageText, entities: entities);
         }
         catch (Exception ex)
         {
@@ -496,6 +569,61 @@ internal partial class TgMenuHelper
             Debug.WriteLine(ex.StackTrace);
 #endif
         }
+    }
+
+    /// <summary> Start search for keywords in chats </summary>
+    private async Task ClientSearchForKeywordsInChatsStart(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ClientMonitoringStopAsync();
+        if (ClientMonitoringVm.IsStartSearching) return;
+
+        // Get client connection
+        ClientForSendData = await GetClientConnectionAsync(tgDownloadSettings);
+        if (ClientForSendData is null)
+        {
+            TgLog.WriteLine(TgLocale.MenuClientConfigurationError);
+            return;
+        }
+
+        // Get username for send messages
+        await ClientMonitoringGetUserNameAsync();
+        // Get chats
+        var chatNames = ClientMonitoringGetChats();
+        // Get keywords to filter messages
+        GetKeywordsForMonitoring();
+        // Add chats for monitoring
+        await ClientMonitoringAddChatsAsync(tgDownloadSettings, chatNames);
+
+        // Subscribe to start search for keywords in chats
+        await ClientSearchForKeywordsInChatsSubscribeAsync();
+    }
+
+    /// <summary> Subscribe to start search for keywords in chats </summary>
+    private async Task ClientSearchForKeywordsInChatsSubscribeAsync()
+    {
+        if (ClientMonitoringVm.IsStartSearching) return;
+        if (ClientForSendData is null) return;
+
+        BusinessLogicManager.ConnectClient.ClearCaches();
+        if (!BusinessLogicManager.ConnectClient.DicChatsAll.Any())
+            await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
+
+        ClientMonitoringVm.IsStartSearching = true;
+
+        TgLog.WriteLine($"  {TgLocale.MenuClientSearchingStarted}");
+    }
+
+    /// <summary> Stop search for keywords in chats </summary>
+    private async Task ClientSearchForKeywordsInChatsStop(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        if (!ClientMonitoringVm.IsStartSearching) return;
+        if (ClientForSendData is null) return;
+
+        BusinessLogicManager.ConnectClient.ClearCaches();
+        ClientMonitoringVm.IsStartSearching = false;
+        TgLog.WriteLine($"  {TgLocale.MenuClientSearchingStopped}");
+
+        await Task.CompletedTask;
     }
 
     #endregion

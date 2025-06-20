@@ -52,7 +52,7 @@ internal partial class TgMenuHelper
             switch (menu)
             {
                 case TgEnumMenuClientConSetup.UseClient:
-                    await UseClientAsync(tgDownloadSettings, isSilent: false);
+                    await UseClientAsync(isSilent: false);
                     break;
                 case TgEnumMenuClientConSetup.ClearClientConnectionData:
                     await ClearClientConnectionDataAsync(tgDownloadSettings);
@@ -76,7 +76,7 @@ internal partial class TgMenuHelper
         } while (menu is not TgEnumMenuClientConSetup.Return);
     }
 
-    public async Task UseClientAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    public async Task UseClientAsync(bool isSilent)
     {
         var useClient = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient);
         await BusinessLogicManager.StorageManager.AppRepository.SetUseClientAsync(useClient);
@@ -168,7 +168,7 @@ internal partial class TgMenuHelper
             // Switch flag
             var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
             if (!appDto.UseClient)
-                await UseClientAsync(tgDownloadSettings, isSilent);
+                await UseClientAsync(isSilent);
 
             // Question
             if (!isSilent)

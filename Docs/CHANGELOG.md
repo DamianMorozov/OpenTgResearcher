@@ -9,11 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extension of bot connection information in OpenTgResearcherConsole
 - Extension of client connection information in OpenTgResearcherConsole
 ### Added
-- Added search for chat info via bot in OpenTgResearcherConsole
-- Added search for user info via bot in OpenTgResearcherConsole
-- Added search for chat info via client in OpenTgResearcherConsole
-- Added search for user info via client in OpenTgResearcherConsole
-- Added monitoring of chats by keywords via client in OpenTgResearcherConsole
+- Added search for chat info in OpenTgResearcherConsole
+- Added search for user info in OpenTgResearcherConsole
+- Added monitoring of chats in OpenTgResearcherConsole
+- Added chat monitoring settings to OpenTgResearcherConsole
 
 ## [0.6.300] - 2025-06-09
 ### Changed

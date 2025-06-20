@@ -649,12 +649,14 @@ internal partial class TgMenuHelper
         {
             // Send user
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientSendMessagesToUser)),
-                GetMarkup(ClientMonitoringVm.IsSendToMyself ? TgLocale.MenuClientSendMessagesToMyself
+                GetMarkup(!ClientMonitoringVm.IsSendMessages 
+                ? TgLocale.MenuNo
+                : ClientMonitoringVm.IsSendToMyself ? TgLocale.MenuClientSendMessagesToMyself
                 : $"{ClientMonitoringVm.UserName} with ID {ClientMonitoringVm.UserId}"));
             // Search chats
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuClientSearchChats)),
-                GetMarkup(ClientMonitoringVm.IsSearchAtAllChats ? TgLocale.MenuClientSearchAtAllChats :
-                string.Join(", ", ClientMonitoringVm.ChatNames)));
+                GetMarkup(ClientMonitoringVm.IsSearchAtAllChats 
+                ? TgLocale.MenuClientSearchAtAllChats : string.Join(", ", ClientMonitoringVm.ChatNames)));
             // Search keywords
             table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuKeywordsForMessageFiltering)),
                 GetMarkup(ClientMonitoringVm.IsSkipKeywords

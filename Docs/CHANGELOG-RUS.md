@@ -9,11 +9,10 @@
 - Расширение информации о подключении бота в OpenTgResearcherConsole
 - Расширение информации о подключении клиента в OpenTgResearcherConsole
 ### Добавлено
-- Добавлен поиск инфо о чате через бота в OpenTgResearcherConsole
-- Добавлен поиск инфо о пользователе через бота в OpenTgResearcherConsole
-- Добавлен поиск инфо о чате через клиента в OpenTgResearcherConsole
-- Добавлен поиск инфо о пользователе через клиента в OpenTgResearcherConsole
-- Добавлен мониторинг чатов по ключевым словам через клиента в OpenTgResearcherConsole
+- Добавлен поиск инфо о чате в OpenTgResearcherConsole
+- Добавлен поиск инфо о пользователе в OpenTgResearcherConsole
+- Добавлен мониторинг чатов в OpenTgResearcherConsole
+- Добавлены настройки мониторинга чатов в OpenTgResearcherConsole
 
 ## [0.6.300] - 2025-06-09
 ### Изменено

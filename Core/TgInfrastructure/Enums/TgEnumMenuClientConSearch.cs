@@ -10,4 +10,6 @@ public enum TgEnumMenuClientConSearch
     Chat,
     StartMonitoringChats,
     StopMonitoringChats,
+    StartSearchForKeywordsInChats,
+    StopSearchForKeywordsInChats,
 }

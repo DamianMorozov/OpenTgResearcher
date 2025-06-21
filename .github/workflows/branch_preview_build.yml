@@ -13,6 +13,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    
+    env:
+      GITHUB_ACTIONS: true
 
     steps:
       - name: Checkout to the repository

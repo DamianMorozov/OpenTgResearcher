@@ -37,5 +37,8 @@
 ## Заставка OpenTgResearcherConsole
 <p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
 
-## OpenTgResearcherConsole - Запуск мониторинга чатов через клиент
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats_via_client.gif"></p>
+## OpenTgResearcherConsole - Мониторинг чатов
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
+
+## OpenTgResearcherConsole - Поиск ключевых слов в чатах
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>

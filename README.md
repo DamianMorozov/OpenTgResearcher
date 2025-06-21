@@ -37,5 +37,8 @@ Telegram's open researcher and search engine. Download chats by catalogs.
 ## OpenTgResearcherConsole Splash screen
 <p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
 
-## OpenTgResearcherConsole - Start monitoring chats via client
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats_via_client.gif"></p>
+## OpenTgResearcherConsole - Monitoring chats
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
+
+## OpenTgResearcherConsole - Search for keywords in chats
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>

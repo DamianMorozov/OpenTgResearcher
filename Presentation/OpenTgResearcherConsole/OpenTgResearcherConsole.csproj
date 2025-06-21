@@ -9,14 +9,14 @@
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
-		<Version>0.6.420.0</Version>
+		<Version>0.6.500.0</Version>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="TgLocale\**" />
 	  <EmbeddedResource Remove="TgLocale\**" />
 	  <None Remove="TgLocale\**" />
 	</ItemGroup>
-	<ItemGroup>
+	<ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
 	  <Content Include="..\..\..\Helpers\OpenTgResearcher.xml" Link="OpenTgResearcher.xml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
@@ -45,7 +45,7 @@
 	<ItemGroup>
 	  <Folder Include="Docs\" />
 	</ItemGroup>
-	<ItemGroup>
+	<ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
 	  <None Include="..\..\..\Helpers\OpenTgResearcher.session" Link="OpenTgResearcher.session">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

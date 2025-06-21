@@ -9,18 +9,21 @@ public sealed class TgPromoStatisticDto
 
     public DateOnly PromoDate { get; set; } = DateOnly.MinValue;
     public int TestCount { get; set; }
+    public int Limit { get; set; }
 
-	public TgPromoStatisticDto(DateOnly promoDate, int testCount)
+	public TgPromoStatisticDto(DateOnly promoDate, int testCount, int limit)
 	{
         PromoDate = promoDate;
         TestCount = testCount;
+        Limit = limit;
 	}
 
 	public TgPromoStatisticDto()
 	{
         PromoDate = DateOnly.MinValue;
         TestCount = 0;
-	}
+        Limit = 0;
+    }
 
 	#endregion
 }

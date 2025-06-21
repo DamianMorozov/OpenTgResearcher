@@ -31,6 +31,10 @@ public static class TgGlobalTools
     public const string RouteCreated = "Created";
     public const string RouteGet = "Get";
     public const string RouteGetFiles = "GetFiles";
+    public const string RouteImage = "Image";
+    public const string RouteLicense = "License";
+    public const string RouteLicenses = "Licenses";
+    public const string RouteMedias = "Medias";
     public const string RoutePost = "Post";
     public const string RoutePromoStatistic = "PromoStatistic";
     public const string RouteRoot = "";

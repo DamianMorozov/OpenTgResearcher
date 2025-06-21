@@ -136,19 +136,25 @@ public static class TgLogUtils
 	}
 
 	/// <summary> Initialize startup log </summary>
-	public static void InitStartupLog(string appName)
+	public static void InitStartupLog(string appName, bool isWebApp, bool isRewrite)
 	{
 		try
 		{
-            _startupLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                appName, "current", $"{appName}-StartupLog.txt");
+            _startupLog = !isWebApp
+                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    appName, "current", $"{appName}-StartupLog.txt")
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"{appName}-StartupLog.txt");
 
             if (!string.IsNullOrEmpty(_startupLog) && !Directory.Exists(Path.GetDirectoryName(_startupLog)))
 			{
 				Directory.CreateDirectory(Path.GetDirectoryName(_startupLog)!);
             }
-            if (File.Exists(_startupLog))
+
+            // Check rewrite flag
+            if (isRewrite && File.Exists(_startupLog))
                 File.Delete(_startupLog);
+            
+            WriteToLog($"App started");
         }
         catch (Exception ex)
 		{

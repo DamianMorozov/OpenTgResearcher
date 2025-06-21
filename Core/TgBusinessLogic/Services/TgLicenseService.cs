@@ -166,11 +166,12 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.LicenseType == TgEnumLicenseType.Test);
         if (licenseDtos.Any())
         {
-            var groups = licenseDtos.OrderByDescending(x => x.ValidTo).GroupBy(x => x.ValidTo).ToList(); 
+            var groups = licenseDtos.OrderByDescending(x => x.ValidTo).GroupBy(x => x.ValidTo).ToList();
             promoStatisticSummaryDto.Items.AddRange(groups.Select(group => new TgPromoStatisticDto
             {
                 PromoDate = group.Key,
-                TestCount = group.Count()
+                TestCount = group.Count(),
+                Limit = 0 // Assuming no limit is set for promo licenses
             }));
             result.IsOk = true;
         }

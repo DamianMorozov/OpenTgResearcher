@@ -6,11 +6,9 @@ namespace TgInfrastructure.Helpers;
 /// <summary> File utils </summary>
 public static class TgFileUtils
 {
-	#region Public and private methods
+    #region Public and private fields, properties, constructor
 
-	public static string GetShortFilePath(string filePath) => string.IsNullOrEmpty(filePath) ? string.Empty : Path.GetFileName(filePath);
-
-	private static TgLogHelper TgLog => TgLogHelper.Instance;
+    private static TgLogHelper TgLog => TgLogHelper.Instance;
 	public static string BaseDirectory = string.Empty;
 	public static string FileAppXmlSettings => !string.IsNullOrEmpty(BaseDirectory) ? Path.Combine(BaseDirectory, "OpenTgResearcher.xml") : string.Empty;
 	public static string FileTgSession => "OpenTgResearcher.session";
@@ -28,11 +26,13 @@ public static class TgFileUtils
 		}
 	}
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public static ulong GetContentRowsCountSlow(string sourceFile)
+    public static string GetShortFilePath(string filePath) => string.IsNullOrEmpty(filePath) ? string.Empty : Path.GetFileName(filePath);
+    
+    public static ulong GetContentRowsCountSlow(string sourceFile)
 	{
 		ulong rows = 0;
 		using StreamReader streamReader = new(sourceFile);
@@ -182,5 +182,32 @@ public static class TgFileUtils
 		return Environment.CurrentDirectory;
 	}
 
-	#endregion
+    /// <summary> Normalizes a file path by replacing backslashes with forward slashes, removing duplicate slashes, 
+    /// and ensuring it starts with a slash if it's an absolute path </summary>
+    public static string NormalizePath(string path)
+    {
+        if (string.IsNullOrEmpty(path)) return string.Empty;
+
+        // Gat absolute path if possible
+        string fullPath;
+        try
+        {
+            fullPath = Path.GetFullPath(path);
+        }
+        catch
+        {
+            fullPath = path;
+        }
+
+        // Replace backslashes with forward slashes
+        fullPath = fullPath.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+
+        // Remove duplicate slashes
+        var pattern = $"{Regex.Escape(Path.DirectorySeparatorChar.ToString())}{{2,}}";
+        fullPath = Regex.Replace(fullPath, pattern, Path.DirectorySeparatorChar.ToString());
+
+        return fullPath;
+    }
+
+    #endregion
 }

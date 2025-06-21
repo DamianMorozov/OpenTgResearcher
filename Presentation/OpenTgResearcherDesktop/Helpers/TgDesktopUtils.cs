@@ -64,7 +64,7 @@ public static class TgDesktopUtils
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex, $"{Path.Combine(folder, fileName)}");
+			TgLogUtils.WriteExceptionWithMessage(ex, $"{Path.Combine(folder, fileName)}");
 		}
 		return false;
 	}
@@ -95,7 +95,7 @@ public static class TgDesktopUtils
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 			return 0;
 		}
 		return totalSize;

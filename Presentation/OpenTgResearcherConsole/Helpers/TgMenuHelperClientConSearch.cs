@@ -4,8 +4,6 @@
 
 using TL;
 
-using WTelegram;
-
 namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
@@ -34,9 +32,9 @@ internal partial class TgMenuHelper
         if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
             selectionPrompt.AddChoices(
                 TgLocale.MenuClientStartMonitoringChats,
-                TgLocale.MenuClientStopMonitoringChats
-                //TgLocale.MenuClientSearchForKeywordsInChatsStart,
-                //TgLocale.MenuClientSearchForKeywordsInChatsStop
+                TgLocale.MenuClientStopMonitoringChats,
+                TgLocale.MenuClientSearchForKeywordsInChatsStart,
+                TgLocale.MenuClientSearchForKeywordsInChatsStop
             );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
@@ -184,7 +182,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
-            TgLogUtils.LogFatal(ex);
+            TgLogUtils.WriteException(ex);
             TgLog.WriteLine($"{TgLocale.TgErrorAnalyzingUsername} '{username}': {ex.Message}");
         }
         return null;
@@ -451,7 +449,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
-            TgLogUtils.LogFatal(ex);
+            TgLogUtils.WriteException(ex);
             TgLog.WriteLine($"  Error when joining the client to the chat {chatNameOrId}: {ex.Message}");
             return false;
         }
@@ -468,7 +466,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
-            TgLogUtils.LogFatal(ex);
+            TgLogUtils.WriteException(ex);
             TgLog.WriteLine($"{TgLocale.TgErrorCheckUserMember}: user ID {userId}, chat ID {inputChannel.channel_id}: {ex.Message}");
             return false;
         }
@@ -571,7 +569,7 @@ internal partial class TgMenuHelper
             ClientMonitoringVm.LastMessageLink = lastMessageLink.Item2 ?? "-";
             ClientMonitoringVm.LastMessageText = message.message ?? "-";
             ClientMonitoringVm.CatchMessages++;
-            
+
             await ShowTableClientConSearchAsync();
 
             // Send message
@@ -580,7 +578,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
-            TgLogUtils.LogFatal(ex);
+            TgLogUtils.WriteException(ex);
             TgLog.WriteLine($"{TgLocale.MenuClientSendingMessageError}: {ex.Message}");
         }
     }
@@ -650,7 +648,7 @@ internal partial class TgMenuHelper
         }
         catch (Exception ex)
         {
-            TgLogUtils.LogFatal(ex);
+            TgLogUtils.WriteException(ex);
             TgLog.WriteLine($"{TgLocale.MenuClientSendingMessageError}: {ex.Message}");
         }
     }

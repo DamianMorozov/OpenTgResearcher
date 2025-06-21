@@ -24,7 +24,7 @@ public sealed partial class TgSettingsPage
 
 	private void ComboBoxAppThemes_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		Task.Run(async () =>
+        Task.Run((Func<Task?>)(async () =>
 		{
 			try
 			{
@@ -32,14 +32,14 @@ public sealed partial class TgSettingsPage
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatal(ex, "An error occurred set theme!");
+                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred set theme!");
 			}
-		});
+		}));
 	}
 
 	private void ComboBoxAppLanguages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		Task.Run(async () =>
+        Task.Run((Func<Task?>)(async () =>
 		{
 			try
 			{
@@ -47,9 +47,9 @@ public sealed partial class TgSettingsPage
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatal(ex, "An error occurred set language!");
+                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred set language!");
 			}
-		});
+		}));
 	}
 
 	#endregion

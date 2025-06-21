@@ -10,21 +10,21 @@ public partial class ContentGridDetailViewModel(ISampleDataService sampleDataSer
 
 	public void OnNavigatedTo(object parameter)
 	{
-		Task.Run(async () =>
+        Task.Run((Func<Task?>)(async () =>
 		{
 			try
 			{
 				if (parameter is long orderId)
 				{
 					var data = await sampleDataService.GetContentGridDataAsync();
-					Item = data.First(i => i.OrderID == orderId);
+                    Item = data.First(i => i.OrderID == orderId);
 				}
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred during navigation!");
 			}
-		});
+		}));
 	}
 
 	public void OnNavigatedFrom()

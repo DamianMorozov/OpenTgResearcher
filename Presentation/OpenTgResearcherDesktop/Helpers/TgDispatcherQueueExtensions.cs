@@ -16,17 +16,17 @@ internal static class TgDispatcherQueueExtensions
 			{
 				action();
 				if (!string.IsNullOrEmpty(method))
-					TgLogUtils.LogInformationProxy($"{method} complete.", filePath, lineNumber, memberName);
+					TgLogUtils.WriteLogWithCaller($"{method} complete.", filePath, lineNumber, memberName);
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatalProxy(ex, method, filePath, lineNumber, memberName);
+				TgLogUtils.WriteExceptionWithMessage(ex, method, filePath, lineNumber, memberName);
 				throw;
 			}
 			finally
 			{
 				if (!string.IsNullOrEmpty(method))
-					TgLogUtils.LogInformationProxy($"{method} finally.", filePath, lineNumber, memberName);
+					TgLogUtils.WriteLogWithCaller($"{method} finally.", filePath, lineNumber, memberName);
 			}
 		});
 	}
@@ -41,17 +41,17 @@ internal static class TgDispatcherQueueExtensions
 			{
 				action();
 				if (!string.IsNullOrEmpty(method))
-					TgLogUtils.LogInformationProxy($"{method} complete.", filePath, lineNumber, memberName);
+					TgLogUtils.WriteLogWithCaller($"{method} complete.", filePath, lineNumber, memberName);
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatalProxy(ex, method, filePath, lineNumber, memberName);
+				TgLogUtils.WriteExceptionWithMessage(ex, method, filePath, lineNumber, memberName);
 				throw;
 			}
 			finally
 			{
 				if (!string.IsNullOrEmpty(method))
-					TgLogUtils.LogInformationProxy($"{method} finally.", filePath, lineNumber, memberName);
+					TgLogUtils.WriteLogWithCaller($"{method} finally.", filePath, lineNumber, memberName);
 			}
 		});
 	}
@@ -67,17 +67,17 @@ internal static class TgDispatcherQueueExtensions
 				await func();
 				tcs.SetResult(null);
 				if (!string.IsNullOrEmpty(method))
-					TgLogUtils.LogInformationProxy($"{method} complete.", filePath, lineNumber, memberName);
+					TgLogUtils.WriteLogWithCaller($"{method} complete.", filePath, lineNumber, memberName);
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatalProxy(ex, method, filePath, lineNumber, memberName);
+				TgLogUtils.WriteExceptionWithMessage(ex, method, filePath, lineNumber, memberName);
 				tcs.SetException(ex);
 			}
 			finally
 			{
 				if (!string.IsNullOrEmpty(method))
-					TgLogUtils.LogInformationProxy($"{method} finally.", filePath, lineNumber, memberName);
+					TgLogUtils.WriteLogWithCaller($"{method} finally.", filePath, lineNumber, memberName);
 			}
 		});
 		return tcs.Task;
@@ -92,17 +92,17 @@ internal static class TgDispatcherQueueExtensions
 			await func();
 			tcs.SetResult(null);
 			if (!string.IsNullOrEmpty(method))
-				TgLogUtils.LogInformationProxy($"{method} complete.", filePath, lineNumber, memberName);
+				TgLogUtils.WriteLogWithCaller($"{method} complete.", filePath, lineNumber, memberName);
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatalProxy(ex, method, filePath, lineNumber, memberName);
+			TgLogUtils.WriteExceptionWithMessage(ex, method, filePath, lineNumber, memberName);
 			tcs.SetException(ex);
 		}
 		finally
 		{
 			if (!string.IsNullOrEmpty(method))
-				TgLogUtils.LogInformationProxy($"{method} finally.", filePath, lineNumber, memberName);
+				TgLogUtils.WriteLogWithCaller($"{method} finally.", filePath, lineNumber, memberName);
 		}
 	}
 }

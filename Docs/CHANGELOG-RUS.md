@@ -8,6 +8,7 @@
 ### Изменено
 - Расширение информации о подключении бота в OpenTgResearcherConsole
 - Расширение информации о подключении клиента в OpenTgResearcherConsole
+- Обновлено логирование в файл
 ### Добавлено
 - Добавлен поиск инфо о чате в OpenTgResearcherConsole
 - Добавлен поиск инфо о пользователе в OpenTgResearcherConsole

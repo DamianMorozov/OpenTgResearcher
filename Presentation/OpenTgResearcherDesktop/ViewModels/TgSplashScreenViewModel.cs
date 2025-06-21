@@ -74,7 +74,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
             var notificationService = App.GetService<IAppNotificationService>();
             notificationService.Initialize();
             notificationService.Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
-            TgLogUtils.LogInformation(TgResourceExtensions.GetNotificationLoading());
+            TgLogUtils.WriteLog(TgResourceExtensions.GetNotificationLoading());
             IsLoadNotifications = true;
             await Task.Delay(250);
         }
@@ -94,7 +94,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
                 .MinimumLevel.Verbose()
                 .WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
                 .CreateLogger();
-            TgLogUtils.LogInformation(TgResourceExtensions.GetLoggerLoading());
+            TgLogUtils.WriteLog(TgResourceExtensions.GetLoggerLoading());
             IsLoadLogging = true;
             await Task.Delay(250);
         }
@@ -116,7 +116,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
             var versionsResult = await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
             var version = versionsResult.Items.Single(x => x.Version == versionRepository.LastVersion);
             TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
-            TgLogUtils.LogInformation(TgResourceExtensions.GetStorageLoading());
+            TgLogUtils.WriteLog(TgResourceExtensions.GetStorageLoading());
             IsLoadStorage = true;
             await Task.Delay(250);
         }
@@ -135,7 +135,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
             TgGlobalTools.AppStorage = App.GetService<ITgSettingsService>().AppStorage;
 
             await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
-            TgLogUtils.LogInformation(TgResourceExtensions.GetLicenseLoading());
+            TgLogUtils.WriteLog(TgResourceExtensions.GetLicenseLoading());
             IsLoadLicense = true;
             await Task.Delay(250);
 

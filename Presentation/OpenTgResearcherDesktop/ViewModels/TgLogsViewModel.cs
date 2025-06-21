@@ -59,7 +59,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
+			TgLogUtils.WriteExceptionWithMessage(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
 		}
 	}
 
@@ -91,7 +91,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 			}
 			else
 			{
-				TgLogUtils.LogFatal(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
+				TgLogUtils.WriteExceptionWithMessage(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
 				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
 			}
 		}

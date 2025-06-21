@@ -28,7 +28,7 @@ public sealed partial class ContentGridDetailPage
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+			TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred during navigation!");
 		}
 	}
 

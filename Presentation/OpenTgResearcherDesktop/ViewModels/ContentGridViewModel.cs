@@ -21,23 +21,23 @@ public partial class ContentGridViewModel : ObservableRecipient, INavigationAwar
 
 	public void OnNavigatedTo(object parameter)
 	{
-		Task.Run(async () =>
+        Task.Run((Func<Task?>)(async () =>
 		{
 			try
 			{
-				Source.Clear();
+                Source.Clear();
 				// TODO: Replace with real data.
 				var data = await _sampleDataService.GetContentGridDataAsync();
 				foreach (var item in data)
 				{
-					Source.Add(item);
+                    Source.Add(item);
 				}
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred during navigation!");
 			}
-		});
+		}));
 	}
 
 	public void OnNavigatedFrom()

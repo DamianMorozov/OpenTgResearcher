@@ -13,23 +13,23 @@ public partial class ListDetailsViewModel(ISampleDataService sampleDataService) 
 
 	public void OnNavigatedTo(object parameter)
 	{
-		Task.Run(async () =>
+        Task.Run((Func<Task?>)(async () =>
 		{
 			try
 			{
-				SampleItems.Clear();
+                SampleItems.Clear();
 				// TODO: Replace with real data.
 				var data = await sampleDataService.GetListDetailsDataAsync();
 				foreach (var item in data)
 				{
-					SampleItems.Add(item);
+                    SampleItems.Add(item);
 				}
 			}
 			catch (Exception ex)
 			{
-				TgLogUtils.LogFatal(ex, "An error occurred during navigation!");
+                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred during navigation!");
 			}
-		});
+		}));
 	}
 
 	public void OnNavigatedFrom()

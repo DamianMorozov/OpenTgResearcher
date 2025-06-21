@@ -14,127 +14,6 @@ public static class TgLogUtils
 
 	#region Public and private methods
 
-	public static void LogFatal(Exception ex, string message = "", 
-		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
-	{
-#if DEBUG
-		if (!string.IsNullOrEmpty(message))
-			Debug.WriteLine(ex, $"{message} exception!");
-		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		Debug.WriteLine(ex);
-		Debug.WriteLine(ex.StackTrace);
-#endif
-		try
-		{
-			if (!string.IsNullOrEmpty(message))
-				Log.Fatal(ex, $"{message} exception!");
-			Log.Fatal(ex, $"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		}
-		catch (Exception)
-		{
-			//
-		}
-	}
-
-	public static void LogFatalProxy(Exception ex, string message, string filePath, int lineNumber, string memberName)
-	{
-#if DEBUG
-		if (!string.IsNullOrEmpty(message))
-			Debug.WriteLine(ex, $"{message} exception!");
-		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		Debug.WriteLine(ex);
-		Debug.WriteLine(ex.StackTrace);
-#endif
-		try
-		{
-			if (!string.IsNullOrEmpty(message))
-				Log.Fatal(ex, $"{message} exception!");
-			Log.Fatal(ex, $"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		}
-		catch (Exception)
-		{
-			//
-		}
-	}
-
-	public static void LogFatal(string message = "", 
-		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
-	{
-#if DEBUG
-		if (!string.IsNullOrEmpty(message))
-			Debug.WriteLine($"{message} exception!");
-		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-#endif
-		try
-		{
-			if (!string.IsNullOrEmpty(message))
-				Log.Fatal($"{message} exception!");
-			Log.Fatal($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		}
-		catch (Exception)
-		{
-			//
-		}
-	}
-
-	public static void LogFatalProxy(string message, string filePath, int lineNumber, string memberName)
-	{
-#if DEBUG
-		if (!string.IsNullOrEmpty(message))
-			Debug.WriteLine($"{message} exception!");
-		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-#endif
-		try
-		{
-			if (!string.IsNullOrEmpty(message))
-				Log.Fatal($"{message} exception!");
-			Log.Fatal($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		}
-		catch (Exception)
-		{
-			//
-		}
-	}
-
-	public static void LogInformation(string message,
-		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
-	{
-#if DEBUG
-		if (!string.IsNullOrEmpty(message))
-			Debug.WriteLine(message);
-		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-#endif
-		try
-		{
-			if (!string.IsNullOrEmpty(message))
-				Log.Information($"{message}");
-			Log.Information($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		}
-		catch (Exception)
-		{
-			//
-		}
-	}
-
-	public static void LogInformationProxy(string message, string filePath, int lineNumber, string memberName)
-	{
-#if DEBUG
-		if (!string.IsNullOrEmpty(message))
-			Debug.WriteLine(message);
-		Debug.WriteLine($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-#endif
-		try
-		{
-			if (!string.IsNullOrEmpty(message))
-				Log.Information($"{message}");
-			Log.Information($"{TgFileUtils.GetShortFilePath(filePath)} | {lineNumber} | {memberName}");
-		}
-		catch (Exception)
-		{
-			//
-		}
-	}
-
 	/// <summary> Initialize startup log </summary>
 	public static void InitStartupLog(string appName, bool isWebApp, bool isRewrite)
 	{
@@ -154,33 +33,63 @@ public static class TgLogUtils
             if (isRewrite && File.Exists(_startupLog))
                 File.Delete(_startupLog);
             
-            WriteToLog($"App started");
+            WriteLog($"App started");
         }
         catch (Exception ex)
 		{
-			LogFatal(ex, "Initialize startup log failed!");
+            WriteExceptionWithMessage(ex, "App startup log failed!");
 		}
     }
 
-	public static void WriteToLog(string message)
-	{
-		File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+    private static void WriteCallerCore(string filePath, int lineNumber, string memberName)
+    {
+        var fileName = TgFileUtils.GetShortFilePath(filePath);
+        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
+        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
+        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
     }
 
-	public static void WriteException(Exception ex,
-		[CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
-	{
+    public static void WriteLog(string message)
+    {
+        if (string.IsNullOrEmpty(message)) return;
+        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+    }
+
+    public static void WriteLog(string message,
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        WriteLog(message);
+        WriteCallerCore(filePath, lineNumber, memberName);
+    }
+
+    public static void WriteLogWithCaller(string message,
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        WriteLog(message);
+        WriteCallerCore(filePath, lineNumber, memberName);
+    }
+
+    private static void WriteExceptionCore(Exception ex, string filePath, int lineNumber, string memberName)
+    {
         var message = ex.Message;
         if (ex.InnerException is not null)
             message += Environment.NewLine + ex.InnerException.Message;
-		var fileName = TgFileUtils.GetShortFilePath(filePath);
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
-        File.AppendAllText(_startupLog, $"{message}{Environment.NewLine}");
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
-        File.AppendAllText(_startupLog, $"{ex.StackTrace}{Environment.NewLine}");
+        WriteLog(message);
+        WriteCallerCore(filePath, lineNumber, memberName);
+        WriteLog(ex.StackTrace?.ToString() ?? string.Empty);
 
         TgDebugUtils.WriteExceptionToDebug(ex, message, filePath, lineNumber, memberName);
+    }
+
+    public static void WriteException(Exception ex,
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "") => 
+        WriteExceptionCore(ex, filePath, lineNumber, memberName);
+
+    public static void WriteExceptionWithMessage(Exception ex, string message = "",
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        WriteLog(message);
+        WriteExceptionCore(ex, filePath, lineNumber, memberName);
     }
 
     #endregion

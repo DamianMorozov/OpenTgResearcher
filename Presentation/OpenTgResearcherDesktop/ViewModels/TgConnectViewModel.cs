@@ -181,7 +181,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 		return response;
 	}
@@ -199,7 +199,7 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
         catch (Exception ex)
 		{
 			Exception.Set(ex);
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 			if (isRetry)
 				return;
 			if (Exception.Message.Contains("or delete the file to start a new session"))

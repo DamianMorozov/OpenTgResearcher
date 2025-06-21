@@ -68,7 +68,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 
 		try
@@ -79,7 +79,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 	}
 
@@ -192,7 +192,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		{
 			try
 			{
-				TgLogUtils.LogFatal(ex);
+				TgLogUtils.WriteException(ex);
 			}
 			catch (Exception)
 			{
@@ -209,7 +209,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		{
 			try
 			{
-				TgLogUtils.LogFatal(ex);
+				TgLogUtils.WriteException(ex);
 			}
 			catch (Exception)
 			{
@@ -226,7 +226,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		{
 			try
 			{
-				TgLogUtils.LogFatal(ex);
+				TgLogUtils.WriteException(ex);
 			}
 			catch (Exception)
 			{
@@ -323,7 +323,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 		return default;
 	}
@@ -364,7 +364,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         }
         catch (Exception ex)
         {
-            TgLogUtils.LogFatal(ex);
+            TgLogUtils.WriteException(ex);
         }
         return default;
     }
@@ -386,7 +386,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 	}
 

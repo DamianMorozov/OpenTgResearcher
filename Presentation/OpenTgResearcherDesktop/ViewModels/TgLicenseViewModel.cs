@@ -71,7 +71,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 		await Task.CompletedTask;
 	}
@@ -127,7 +127,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 				}
 				catch (Exception ex)
 				{
-					TgLogUtils.LogFatal(ex);
+					TgLogUtils.WriteException(ex);
 				}
 			}
 		}
@@ -146,7 +146,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 		finally
 		{

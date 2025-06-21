@@ -71,7 +71,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 		catch (Exception ex)
 		{
 			log.AppendLine(ex.Message);
-			TgLogUtils.LogFatal(ex);
+			TgLogUtils.WriteException(ex);
 		}
 		finally
 		{

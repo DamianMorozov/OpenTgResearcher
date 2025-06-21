@@ -79,8 +79,7 @@ public static class Program
 
         // Loading logging
         tgLog.WriteLine("  Loading logging ...");
-        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherConsole);
-        TgLogUtils.WriteToLog($"App started");
+        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherConsole, isWebApp: false, isRewrite: true);
         tgLog.WriteLine("  Loading logging   v");
 
 

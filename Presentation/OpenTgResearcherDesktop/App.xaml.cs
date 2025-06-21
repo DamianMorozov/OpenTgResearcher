@@ -38,8 +38,7 @@ public partial class App : Application
         TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
         
 		// Logging to the application directory
-        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherDesktop);
-        TgLogUtils.WriteToLog($"App started");
+        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherDesktop, isWebApp: false, isRewrite: true);
 
         // DI register
         var containerBuilder = new ContainerBuilder();

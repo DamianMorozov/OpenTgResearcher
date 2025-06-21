@@ -75,7 +75,10 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     /// <summary> Get participant information from chat </summary>
     Task<User?> GetParticipantAsync(long chatId, long userId);
     /// <summary> Make an action with messages in a chat </summary>
-    Task MakeFuncWithMessagesAsync(long chatId, Func<MessageBase, Task> func);
+    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, 
+        Func<TgDownloadSettingsViewModel, ChatBase, MessageBase, Task> func);
+    /// <summary> Get the last message ID in a chat </summary>
+    Task<int> GetChatLastMessageIdAsync(long chatId);
     /// <summary> Clear caches </summary>
     public void ClearCaches();
 }

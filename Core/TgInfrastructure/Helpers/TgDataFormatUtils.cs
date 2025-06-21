@@ -103,7 +103,26 @@ public static class TgDataFormatUtils
 	public static string TrimStringEnd(string value, int len = 30) =>
 		string.IsNullOrEmpty(value) ? string.Empty : value.Length <= len ? value : value[..len];
 
-	public static string GetFormatString(string? value, int len = 30) =>
+    public static string TrimStringEndOrNewLine(string value, int len = 30)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        // Find the index of the first line break
+        int newLineIndex = value.IndexOfAny(new[] { '\r', '\n' });
+
+        // If there is a line break and it is before len, trim to it
+        int trimIndex = (newLineIndex >= 0 && newLineIndex < len) ? newLineIndex : len;
+
+        // If the string length is less than trimIndex, return the whole string
+        if (value.Length <= trimIndex)
+            return value;
+
+        return value.Substring(0, trimIndex);
+    }
+
+
+    public static string GetFormatString(string? value, int len = 30) =>
 		string.IsNullOrEmpty(value) ? string.Empty : value.PadRight(len)[..len];
 
 	public static string GetFormatStringWithStrongLength(string? value, int len = 30)

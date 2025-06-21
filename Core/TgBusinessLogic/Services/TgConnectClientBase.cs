@@ -38,7 +38,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public IEnumerable<User> EnumerableContacts { get; private set; } = default!;
     public IEnumerable<StoryItem> EnumerableStories { get; private set; } = default!;
 
-    public Dictionary<long, InputChannel> ChannelCache { get; private set; } = [];
+    public Dictionary<long, InputChannel> InputChannelCache { get; private set; } = [];
+    public Dictionary<long, ChatBase> ChatCache { get; private set; } = [];
     public Dictionary<long, User> UserCache { get; private set; }= [];
 
     public bool IsClientUpdateStatus { get; set; }
@@ -2763,21 +2764,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Optimization: check cache
-            if (ChannelCache.TryGetValue(chatId, out var inputChannel))
+            if (InputChannelCache.TryGetValue(chatId, out var inputChannel))
                 return inputChannel;
 
             long channelAccessHash = 0;
             if (DicChatsAll.Any())
             {
                 var chatBase = DicChatsAll.FirstOrDefault(x => x.Key == chatId).Value;
-                if (chatBase is Channel channel)
+                if (chatBase is TL.Channel channel)
                     channelAccessHash = channel.access_hash;
+                var result = new InputChannel(chatId, channelAccessHash);
+                
+                // Optimization: update cache
+                InputChannelCache.TryAdd(chatId, result);
+                
+                return result;
             }
-            var result = new InputChannel(chatId, channelAccessHash);
-            // Optimization: update cache
-            ChannelCache.TryAdd(chatId, result);
-
-            return result;
         }
         catch (Exception ex)
         {
@@ -2786,10 +2788,56 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return null;
     }
 
+    /// <summary> Get chat </summary>
+    private ChatBase? GetChatBaseFromUserChats(long chatId)
+    {
+        try
+        {
+            // Optimization: check cache
+            if (ChatCache.TryGetValue(chatId, out var chat))
+                return chat;
+
+            if (DicChatsAll.Any())
+            {
+                var chatBase = DicChatsAll.FirstOrDefault(x => x.Key == chatId).Value;
+                
+                // Optimization: update cache
+                ChatCache.TryAdd(chatId, chatBase);
+                
+                return chatBase;
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        return null;
+    }
+
+    private InputChannel? GetInputChannelFromChatBase(ChatBase? chatBase)
+    {
+        if (chatBase is null) return null;
+
+        // Optimization: check cache
+        if (InputChannelCache.TryGetValue(chatBase.ID, out var inputChannel))
+            return inputChannel;
+
+        long channelAccessHash = 0;
+        if (chatBase is TL.Channel channel)
+            channelAccessHash = channel.access_hash;
+        var result = new InputChannel(chatBase.ID, channelAccessHash);
+
+        // Optimization: update cache
+        InputChannelCache.TryAdd(chatBase.ID, result);
+
+        return result;
+    }
+
     /// <inheritdoc />
     public async Task<User?> GetParticipantAsync(long chatId, long userId)
     {
-        var inputChannel = GetInputChannelFromUserChats(chatId);
+        var chatBase = GetChatBaseFromUserChats(chatId);
+        var inputChannel = GetInputChannelFromChatBase(chatBase);
         if (inputChannel is null || inputChannel.access_hash == 0) return null;
 
         // Optimization: check cache
@@ -2851,30 +2899,37 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <inheritdoc />
-    public async Task MakeFuncWithMessagesAsync(long chatId, Func<MessageBase, Task> func)
+    public async Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings,
+        long chatId, Func<TgDownloadSettingsViewModel, ChatBase, MessageBase, Task> func)
     {
-        var inputChannel = GetInputChannelFromUserChats(chatId);
+        var chatBase = GetChatBaseFromUserChats(chatId);
+        if (chatBase is null) return;
+
+        var inputChannel = GetInputChannelFromChatBase(chatBase);
         if (inputChannel is null || inputChannel.access_hash == 0) return;
 
         // Get
         try
         {
-            int limit = 200;
-            int offset = 0;
+            int limit = 100;
+            int offsetId = 0;
+            int minId = 0;
+            int maxId = await GetChatLastMessageIdAsync(chatId);
             while (true)
             {
-                var messages = await Client.Messages_GetHistory(inputChannel, offset_id: offset, limit: limit, 
-                    max_id: 0, min_id: 0, add_offset: 0, hash: inputChannel.access_hash);
-                if (messages is null || messages.Messages.Length == 0)
-                    break;
-                foreach (var messageItem in messages.Messages)
+                var messages = await Client.Messages_GetHistory(inputChannel, offset_id: 0, limit: limit, 
+                    max_id: maxId, min_id: minId, add_offset: offsetId, hash: inputChannel.access_hash);
+                if (messages is not null)
                 {
-                    await func(messageItem);
+                    foreach (var messageItem in messages.Messages)
+                    {
+                        await func(tgDownloadSettings, chatBase, messageItem);
+                    }
+                    maxId -= limit;
                 }
-
-                if (messages.Messages.Length < limit)
+                offsetId += 100;
+                if (maxId <= 0)
                     break;
-                offset += messages.Messages.Length;
             }
         }
         catch (Exception ex)
@@ -2884,9 +2939,34 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <inheritdoc />
+    public async Task<int> GetChatLastMessageIdAsync(long chatId)
+    {
+        var chatBase = GetChatBaseFromUserChats(chatId);
+        if (chatBase is null) return 0;
+
+        var inputChannel = GetInputChannelFromChatBase(chatBase);
+        if (inputChannel is null || inputChannel.access_hash == 0) return 0;
+
+        // Get
+        try
+        {
+            var messages = await Client.Messages_GetHistory(inputChannel, offset_id: 0, limit: 1,
+                max_id: 0, min_id: 0, add_offset: 0, hash: inputChannel.access_hash);
+            var lastNumber = messages.Messages.FirstOrDefault()?.ID ?? 0;
+            return lastNumber;
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        return 0;
+    }
+
+    /// <inheritdoc />
     public void ClearCaches()
     {
-        ChannelCache.Clear();
+        InputChannelCache.Clear();
+        ChatCache.Clear();
         UserCache.Clear();
     }
 

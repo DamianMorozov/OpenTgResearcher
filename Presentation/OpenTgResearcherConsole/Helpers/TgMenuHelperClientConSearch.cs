@@ -74,17 +74,17 @@ internal partial class TgMenuHelper
                     await ClientMonitoringStartAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConSearch.StopMonitoringChats:
-                    await ClientMonitoringStopAsync();
+                    await ClientMonitoringStopAsync(isSilent: false);
                     break;
                 case TgEnumMenuClientConSearch.StartSearchForKeywordsInChats:
                     await ClientSearchingStartAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConSearch.StopSearchForKeywordsInChats:
-                    await ClientSearchingStopAsync(tgDownloadSettings);
+                    await ClientSearchingStopAsync(isSilent: false);
                     break;
                 case TgEnumMenuClientConSearch.Return:
-                    await ClientSearchingStopAsync(tgDownloadSettings);
-                    await ClientMonitoringStopAsync();
+                    await ClientSearchingStopAsync(isSilent: true);
+                    await ClientMonitoringStopAsync(isSilent: true);
                     break;
             }
         } while (menu is not TgEnumMenuClientConSearch.Return);
@@ -223,7 +223,9 @@ internal partial class TgMenuHelper
     /// <summary> Start monitoring chats for new messages </summary>
     private async Task ClientMonitoringStartAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        await ClientSearchingStopAsync(tgDownloadSettings);
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientStartMonitoringChats)) return;
+
+        await ClientSearchingStopAsync(isSilent: true);
         if (ClientMonitoringVm.IsStartMonitoring) return;
         if (ClientMonitoringVm.IsStartSearching) return;
 
@@ -372,8 +374,9 @@ internal partial class TgMenuHelper
     }
 
     /// <summary> Stop monitoring chats for new messages </summary>
-    private async Task ClientMonitoringStopAsync()
+    private async Task ClientMonitoringStopAsync(bool isSilent)
     {
+        if (!isSilent && AskQuestionYesNoReturnNegative(TgLocale.MenuClientStopMonitoringChats)) return;
         if (!ClientMonitoringVm.IsStartMonitoring) return;
 
         ClientMonitoringVm.Default();
@@ -492,7 +495,7 @@ internal partial class TgMenuHelper
                     if (!ClientMonitoringVm.IsSearchAtAllChats && !ClientMonitoringVm.ChatIds.Contains(chatId)) continue;
 
                     // Send message
-                    await SendMonitoredMessageAsync(message, chatId);
+                    await SendMonitoredMessageAsync(message, chatId, isMessageTextAtOneString: false);
                 }
             }
         }
@@ -501,7 +504,7 @@ internal partial class TgMenuHelper
     }
 
     /// <summary> Send message to the specified chat </summary>
-    private async Task SendMonitoredMessageAsync(TL.Message message, long chatId)
+    private async Task SendMonitoredMessageAsync(TL.Message message, long chatId, bool isMessageTextAtOneString)
     {
         if (ClientForSendData is not Client client) return;
         // Filter by keywords
@@ -567,9 +570,12 @@ internal partial class TgMenuHelper
             ClientMonitoringVm.LastDateTime = lastDateTime;
             ClientMonitoringVm.LastUserLink = lastUserLink.Item2 ?? "-";
             ClientMonitoringVm.LastMessageLink = lastMessageLink.Item2 ?? "-";
-            ClientMonitoringVm.LastMessageText = message.message ?? "-";
+            ClientMonitoringVm.LastMessageText = string.IsNullOrEmpty(message.message)
+                ? "-"
+                : !isMessageTextAtOneString ? message.message : TgDataFormatUtils.TrimStringEndOrNewLine(message.message, 55).TrimEnd();
             ClientMonitoringVm.CatchMessages++;
 
+            // Update table
             await ShowTableClientConSearchAsync();
 
             // Send message
@@ -586,7 +592,9 @@ internal partial class TgMenuHelper
     /// <summary> Start search for keywords in chats </summary>
     private async Task ClientSearchingStartAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        await ClientMonitoringStopAsync();
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientSearchForKeywordsInChatsStart)) return;
+
+        await ClientMonitoringStopAsync(isSilent: true);
         if (ClientMonitoringVm.IsStartMonitoring) return;
         if (ClientMonitoringVm.IsStartSearching) return;
 
@@ -608,11 +616,11 @@ internal partial class TgMenuHelper
         await ClientMonitoringAddChatsAsync(tgDownloadSettings, chatNames);
 
         // Subscribe to start search for keywords in chats
-        await ClientSearchForKeywordsInChatsSubscribeAsync();
+        await ClientSearchForKeywordsInChatsSubscribeAsync(tgDownloadSettings);
     }
 
     /// <summary> Subscribe to start search for keywords in chats </summary>
-    private async Task ClientSearchForKeywordsInChatsSubscribeAsync()
+    private async Task ClientSearchForKeywordsInChatsSubscribeAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         if (ClientMonitoringVm.IsStartSearching) return;
         if (ClientForSendData is null) return;
@@ -622,13 +630,14 @@ internal partial class TgMenuHelper
             await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
 
         ClientMonitoringVm.IsStartSearching = true;
-        await ClientSearchForKeywordsInChatsProcessAsync();
+        await ClientSearchForKeywordsInChatsProcessAllChatsAsync(tgDownloadSettings);
 
         TgLog.WriteLine($"  {TgLocale.MenuClientSearchingStarted}");
+        ClientMonitoringVm.IsStartSearching = false;
     }
 
-    /// <summary> Process search for keywords in chats </summary>
-    private async Task ClientSearchForKeywordsInChatsProcessAsync()
+    /// <summary> Process all chats for search keywords </summary>
+    private async Task ClientSearchForKeywordsInChatsProcessAllChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         if (ClientForSendData is not Client client) return;
         if (!ClientMonitoringVm.IsStartSearching) return;
@@ -643,7 +652,15 @@ internal partial class TgMenuHelper
             foreach (var chat in chats)
             {
                 if (chat is null) continue;
-                await BusinessLogicManager.ConnectClient.MakeFuncWithMessagesAsync(chat.ID, ProcessMessage);
+                
+                tgDownloadSettings.SourceVm.Dto.Count = await BusinessLogicManager.ConnectClient.GetChatLastMessageIdAsync(chat.ID);
+                // Update table
+                await ShowTableClientConSearchAsync();
+
+                await RunTaskProgressAsync(tgDownloadSettings, async (tgDownloadSettings) => {
+                    await BusinessLogicManager.ConnectClient.MakeFuncWithMessagesAsync(tgDownloadSettings, 
+                        chat.ID, ClientSearchForKeywordsInChatsProcessAllMessagesInChatAsync);
+                }, isSkipCheckTgSettings: true, isScanCount: false);
             }
         }
         catch (Exception ex)
@@ -653,20 +670,31 @@ internal partial class TgMenuHelper
         }
     }
 
-    private async Task ProcessMessage(TL.MessageBase message)
+    /// <summary> Process all messages in chat for search keywords </summary>
+    private async Task ClientSearchForKeywordsInChatsProcessAllMessagesInChatAsync(TgDownloadSettingsViewModel tgDownloadSettings, 
+        TL.ChatBase chatBase, TL.MessageBase message)
     {
-        await Task.Run(async () =>
-        {
-            if (message is not TL.Message msg) return;
+        if (message is not TL.Message msg) return;
 
-            // Send message
-            await SendMonitoredMessageAsync(msg, msg.Peer.ID);
-        });
+        // StatusContext
+        var chatId = string.IsNullOrEmpty(chatBase.MainUsername) ? $"{chatBase.ID}" : $"{chatBase.ID} | @{chatBase.MainUsername}";
+        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(chatBase.ID, 
+            tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count,
+            tgDownloadSettings.SourceVm.Dto.Count <= 0
+                ? $"The source {chatId}: hasn't any messages!"
+                : $"The source {chatId}: read {tgDownloadSettings.SourceVm.Dto.FirstId} from {tgDownloadSettings.SourceVm.Dto.Count} messages.");
+
+        // Send message
+        await SendMonitoredMessageAsync(msg, msg.Peer.ID, isMessageTextAtOneString: true);
+
+        tgDownloadSettings.SourceVm.Dto.FirstId = tgDownloadSettings.SourceVm.Dto.Count - message.ID + 1;
     }
 
     /// <summary> Stop search for keywords in chats </summary>
-    private async Task ClientSearchingStopAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    private async Task ClientSearchingStopAsync(bool isSilent)
     {
+        if (!isSilent && AskQuestionYesNoReturnNegative(TgLocale.MenuClientSearchForKeywordsInChatsStop)) return;
+        
         if (!ClientMonitoringVm.IsStartSearching) return;
         if (ClientForSendData is null) return;
 

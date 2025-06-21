@@ -122,7 +122,8 @@ internal partial class TgMenuHelper
                     await DownloadSetCountThreadsAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuClientConDownload.DownloadSettingsSave:
-                    await RunTaskStatusAsync(tgDownloadSettings, DownloadSettingsSaveAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: false);
+                    await RunTaskStatusAsync(tgDownloadSettings, DownloadSettingsSaveAsync, isSkipCheckTgSettings: true, 
+                        isScanCount: false, isWaitComplete: false);
                     break;
                 case TgEnumMenuClientConDownload.DownloadManual:
                     await RunTaskProgressAsync(tgDownloadSettings, DownloadManualAsync, isSkipCheckTgSettings: false, isScanCount: false);

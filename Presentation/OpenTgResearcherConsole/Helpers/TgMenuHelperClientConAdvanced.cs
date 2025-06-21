@@ -98,8 +98,8 @@ internal partial class TgMenuHelper
         foreach (var chat in chats)
         {
             var tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
-            var chatId = string.IsNullOrEmpty(chat.UserName) ? $"{chat.Id}" : $"{chat.Id} | @{chat.UserName}";
             // StatusContext
+            var chatId = string.IsNullOrEmpty(chat.UserName) ? $"{chat.Id}" : $"{chat.Id} | @{chat.UserName}";
             await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(chat.Id, chat.FirstId, chat.Count,
                 chat.Count <= 0
                     ? $"The source {chatId} hasn't any messages!"

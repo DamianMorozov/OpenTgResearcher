@@ -90,6 +90,9 @@
     <Page Update="Views\TgProxiesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\TgStoragePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\TgStoriesPage.xaml">
       <SubType>Designer</SubType>
     </Page>

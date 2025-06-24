@@ -107,6 +107,12 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--  Storage  -->
+                <NavigationViewItem x:Uid="Shell_Storage" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC25;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <!--  Connection  -->
                 <NavigationViewItem x:Uid="Shell_Connect" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgConnectViewModel">
                     <NavigationViewItem.Icon>

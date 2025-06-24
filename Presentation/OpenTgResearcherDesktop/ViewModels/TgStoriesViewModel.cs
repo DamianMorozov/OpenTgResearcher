@@ -8,7 +8,6 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfStoryRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfStoryDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }
@@ -56,7 +55,7 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await Repository.GetListDtosAsync()]);
+		SetOrderData([.. await App.BusinessLogicManager.StorageManager.StoryRepository.GetListDtosAsync()]);
 	}
 
 	private async Task DefaultSortAsync()

@@ -1,0 +1,249 @@
+﻿<common:TgPageBase
+    x:Class="OpenTgResearcherDesktop.Views.TgStoragePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
+    xmlns:views="using:OpenTgResearcherDesktop.Views"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgStorageViewModel}"
+    mc:Ignorable="d">
+
+    <common:TgPageBase.Resources>
+        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </common:TgPageBase.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <!--  Load data  -->
+        <views:TgLoadDataPage
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+        <!--  Actions  -->
+        <ContentControl
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Expander
+                x:Uid="SettingAppActions"
+                Grid.Row="2"
+                Margin="{StaticResource ExpanderMargin}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <Grid Margin="0,-10,0,-10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Load from storage  -->
+                    <Button
+                        Grid.Column="0"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.StorageLoadDataCommand}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                            <TextBlock
+                                x:Uid="ActionLoadFromStorage"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Storage setup  -->
+                    <Button
+                        Grid.Column="1"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.StorageSetupCommand}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <!--<FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />-->
+                            <TextBlock
+                                x:Uid="ActionStorageSetup"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Storage advanced settings  -->
+                    <Button
+                        Grid.Column="2"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.StorageAdvancedSettingCommand}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <!--<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />-->
+                            <TextBlock
+                                x:Uid="ActionStorageAdvancedSettings"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Storage clearing  -->
+                    <Button
+                        Grid.Column="3"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.StorageClearingCommand}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <!--<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />-->
+                            <TextBlock
+                                x:Uid="ActionStorageClearing"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Expander>
+        </ContentControl>
+        <!--  Data in storage  -->
+        <ContentControl
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Grid Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--  Table  -->
+                <Expander
+                    x:Uid="ExpanderDataInStorage"
+                    Grid.Row="0"
+                    Margin="{StaticResource ExpanderMargin}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True"
+                    Visibility="{x:Bind ViewModel.IsStorageLoadDataShow, Mode=OneWay}">
+                    <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                        <Grid Margin="0,0,10,0">
+                            <controls:DataGrid
+                                VerticalAlignment="Top"
+                                AutoGenerateColumns="False"
+                                Background="Transparent"
+                                CanUserSortColumns="True"
+                                HeadersVisibility="Column"
+                                ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
+                                <controls:DataGrid.Columns>
+                                    <!--  Name  -->
+                                    <controls:DataGridTemplateColumn
+                                        x:Uid="TemplateColumnTableName"
+                                        Width="1*"
+                                        CanUserReorder="True"
+                                        CanUserSort="True">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="2"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalTextAlignment="Left"
+                                                    Text="{Binding Name, Mode=OneWay}" />
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <!--  SensitiveField  -->
+                                    <controls:DataGridTemplateColumn
+                                        x:Uid="TemplateColumnRecordsCount"
+                                        Width="1*"
+                                        CanUserReorder="True"
+                                        CanUserSort="True"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="2"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalTextAlignment="Left"
+                                                    Text="{Binding SensitiveField, Mode=OneWay}" />
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <!--  Count of records  -->
+                                    <controls:DataGridTemplateColumn
+                                        x:Uid="TemplateColumnRecordsCount"
+                                        Width="1*"
+                                        CanUserReorder="True"
+                                        CanUserSort="True"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <controls:DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    Margin="2"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalTextAlignment="Left"
+                                                    Text="{Binding RecordsCount, Mode=OneWay}" />
+                                            </DataTemplate>
+                                        </controls:DataGridTemplateColumn.CellTemplate>
+                                    </controls:DataGridTemplateColumn>
+                                    <!--  End  -->
+                                </controls:DataGrid.Columns>
+                            </controls:DataGrid>
+                        </Grid>
+                    </ScrollView>
+                </Expander>
+                <!--  Storage setup  -->
+                <Expander
+                    x:Uid="ExpanderStorageSetup"
+                    Grid.Row="1"
+                    Margin="{StaticResource ExpanderMargin}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True"
+                    Visibility="{x:Bind ViewModel.IsStorageSetupShow, Mode=OneWay}">
+                    <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                        <Grid Margin="0,0,10,0" />
+                    </ScrollView>
+                </Expander>
+                <!--  Storage advanced settings  -->
+                <Expander
+                    x:Uid="ExpanderStorageAdvancedSettings"
+                    Grid.Row="2"
+                    Margin="{StaticResource ExpanderMargin}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True"
+                    Visibility="{x:Bind ViewModel.IsStorageAdvancedSettingShow, Mode=OneWay}">
+                    <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                        <Grid Margin="0,0,10,0" />
+                    </ScrollView>
+                </Expander>
+                <!--  Storage clearing  -->
+                <Expander
+                    x:Uid="ExpanderStorageClearing"
+                    Grid.Row="3"
+                    Margin="{StaticResource ExpanderMargin}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True"
+                    Visibility="{x:Bind ViewModel.IsStorageClearingShow, Mode=OneWay}">
+                    <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                        <Grid Margin="0,0,10,0" />
+                    </ScrollView>
+                </Expander>
+            </Grid>
+        </ContentControl>
+    </Grid>
+</common:TgPageBase>

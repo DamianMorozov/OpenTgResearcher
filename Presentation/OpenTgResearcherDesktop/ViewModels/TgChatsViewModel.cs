@@ -1,6 +1,9 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -8,7 +11,6 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfSourceRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
 	[ObservableProperty]
@@ -109,10 +111,23 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
 	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), useLoadData: true);
 
-	private async Task LoadDataStorageCoreAsync()
+    private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
+
+    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, bool isReadOnly = true)
+    {
+        var dtos = take > 0
+            ? await App.BusinessLogicManager.StorageManager.SourceRepository
+                .GetQuery(isReadOnly).Skip(skip).Take(take).Select(SelectLiteDto()).ToListAsync()
+            : await App.BusinessLogicManager.StorageManager.SourceRepository
+                .GetQuery(isReadOnly).Select(SelectLiteDto()).ToListAsync();
+        return dtos;
+    }
+
+    private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await Repository.GetListLiteDtosAsync(take: 0, skip: 0)]);
+
+        SetOrderData([.. await GetListLiteDtosAsync(take: 0, skip: 0)]);
 	}
 
 	private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());

@@ -125,7 +125,6 @@
                         VerticalAlignment="Center"
                         Text="{x:Bind ViewModel.Dtos.Count, Mode=OneWay}"
                         TextAlignment="Center" />
-
                 </Grid>
             </Expander>
         </ContentControl>

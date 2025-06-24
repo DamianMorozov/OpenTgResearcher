@@ -8,7 +8,6 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 {
 	#region Public and private fields, properties, constructor
 
-	private TgEfContactRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfContactDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }
@@ -56,7 +55,7 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await Repository.GetListDtosAsync()]);
+		SetOrderData([.. await App.BusinessLogicManager.StorageManager.ContactRepository.GetListDtosAsync()]);
 	}
 
 	private async Task DefaultSortAsync()

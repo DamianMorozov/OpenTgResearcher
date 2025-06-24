@@ -230,7 +230,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 						break;
 				}
 			}
-			await Task.Delay(50);
+			await Task.Delay(250);
 			await task();
 		}
 		finally

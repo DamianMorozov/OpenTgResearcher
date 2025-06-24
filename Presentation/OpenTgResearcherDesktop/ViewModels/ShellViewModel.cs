@@ -23,7 +23,6 @@ public partial class ShellViewModel : ObservableRecipient
 	public partial bool IsShowSecretFields { get; set; }
 	
 	private NavigationEventArgs? _eventArgs;
-    //public Func<Task> PlayRefreshAnimationAsync { get; set; } = () => Task.CompletedTask;
 
     public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
@@ -31,7 +30,6 @@ public partial class ShellViewModel : ObservableRecipient
 
     public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
-    //public IRelayCommand AnimateRefreshCommand { get; }
     public IRelayCommand UpdatePageCommand { get; }
 
     public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
@@ -45,7 +43,6 @@ public partial class ShellViewModel : ObservableRecipient
 		// Commands
 		ClientConnectCommand = new AsyncRelayCommand(ShellClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ShellClientDisconnectAsync);
-        //AnimateRefreshCommand = new AsyncRelayCommand(ShellAnimateRefreshAsync);
         UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
     }
 
@@ -132,13 +129,6 @@ public partial class ShellViewModel : ObservableRecipient
             }
         });
 	}
-
-    //private async Task ShellAnimateRefreshAsync()
-    //{
-    //    if (_eventArgs?.Content is not TgPageBase pageBase) return;
-    //    PlayRefreshAnimationAsync?.Invoke();
-    //    await pageBase.ViewModel.OnNavigatedToAsync(_eventArgs);
-    //}
 
     private async Task ShellUpdatePageAsync()
     {

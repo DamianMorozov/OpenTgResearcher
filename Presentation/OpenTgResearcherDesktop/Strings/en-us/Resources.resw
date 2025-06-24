@@ -91,6 +91,9 @@
   <data name="Shell_Sources.Content" xml:space="preserve">
     <value>Sources</value>
   </data>
+  <data name="Shell_Storage.Content" xml:space="preserve">
+    <value>Storage</value>
+  </data>
   <data name="Shell_Stories.Content" xml:space="preserve">
     <value>Stories</value>
   </data>
@@ -363,6 +366,15 @@
   <data name="ActionUpdatePage.Text" xml:space="preserve">
     <value>Update page</value>
   </data>
+  <data name="ActionStorageSetup.Text" xml:space="preserve">
+    <value>Storage setup</value>
+  </data>
+  <data name="ActionStorageAdvancedSettings.Text" xml:space="preserve">
+    <value>Storage advanced settings</value>
+  </data>
+  <data name="ActionStorageClearing.Text" xml:space="preserve">
+    <value>Storage clearing</value>
+  </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>
   </data>
@@ -428,6 +440,15 @@
   </data>
   <data name="ExpanderDataInStorage.Header" xml:space="preserve">
     <value>Data in storage</value>
+  </data>
+  <data name="ExpanderStorageSetup.Header" xml:space="preserve">
+    <value>Storage setup</value>
+  </data>
+  <data name="ExpanderStorageAdvancedSettings.Header" xml:space="preserve">
+    <value>Storage advanced settings</value>
+  </data>
+  <data name="ExpanderStorageClearing.Header" xml:space="preserve">
+    <value>Storage clearing</value>
   </data>
   <data name="ExpanderSettingWithoutSaving.Header" xml:space="preserve">
     <value>Settings without saving</value>
@@ -690,6 +711,9 @@
   <data name="TemplateColumnCount.Header" xml:space="preserve">
     <value>Count</value>
   </data>
+  <data name="TemplateColumnRecordsCount.Header" xml:space="preserve">
+    <value>Count of records</value>
+  </data>
   <data name="TemplateColumnProgress.Header" xml:space="preserve">
     <value>Progress</value>
   </data>
@@ -728,6 +752,9 @@
   </data>
   <data name="TemplateColumnSize.Header" xml:space="preserve">
     <value>Size</value>
+  </data>
+  <data name="TemplateColumnTableName.Header" xml:space="preserve">
+    <value>Table name</value>
   </data>
   <data name="TemplateColumnCaption.Header" xml:space="preserve">
     <value>Caption</value>
@@ -992,6 +1019,33 @@
   </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Update the page?</value>
+  </data>
+  <data name="TableNameApps" xml:space="preserve">
+    <value>Applications</value>
+  </data>
+  <data name="TableNameChats" xml:space="preserve">
+    <value>Chats</value>
+  </data>
+  <data name="TableNameContacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="TableNameDocuments" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="TableNameFilters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="TableNameMessages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="TableNameProxies" xml:space="preserve">
+    <value>Proxies</value>
+  </data>
+  <data name="TableNameStories" xml:space="preserve">
+    <value>Stories</value>
+  </data>
+  <data name="TableNameVersions" xml:space="preserve">
+    <value>Versions</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

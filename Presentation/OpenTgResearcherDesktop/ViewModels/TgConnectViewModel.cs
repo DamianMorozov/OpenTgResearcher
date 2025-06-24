@@ -63,7 +63,6 @@ public sealed partial class TgConnectViewModel : TgPageViewModelBase
 	public IRelayCommand AppClearCommand { get; }
 	public IRelayCommand AppDeleteCommand { get; }
 
-
 	public TgConnectViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
 		ILogger<TgConnectViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgConnectViewModel))

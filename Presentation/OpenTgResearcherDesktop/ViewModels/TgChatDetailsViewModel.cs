@@ -8,8 +8,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfSourceRepository Repository { get; } = new();
-    private TgEfMessageRepository MessageRepository { get; } = new();
 	[ObservableProperty]
 	public partial Guid Uid { get; set; } = Guid.Empty!;
 	[ObservableProperty]
@@ -64,8 +62,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	{
 		await ReloadUiAsync();
 		if (!SettingsService.IsExistsAppStorage) return;
-		Dto = await Repository.GetDtoAsync(x => x.Uid == Uid);
-		Messages = [.. await MessageRepository.GetListDtosDescAsync(take: 100, skip: 0, x => x.SourceId == Dto.Id, isReadOnly: true)];
+		Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+		Messages = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosDescAsync(
+            take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id, isReadOnly: true)];
 		EmptyData = !Messages.Any();
 		ScrollRequested?.Invoke();
 	}

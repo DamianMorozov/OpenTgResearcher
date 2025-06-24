@@ -26,6 +26,7 @@ public sealed class PageService : IPageService
 		Configure<TgProxiesViewModel, TgProxiesPage>();
 		Configure<TgSettingsViewModel, TgSettingsPage>();
 		Configure<TgSplashScreenViewModel, TgSplashScreenPage>();
+		Configure<TgStorageViewModel, TgStoragePage>();
 		Configure<TgStoriesViewModel, TgStoriesPage>();
 		Configure<TgUpdateViewModel, TgUpdatePage>();
 		Configure<WebViewViewModel, WebViewPage>();

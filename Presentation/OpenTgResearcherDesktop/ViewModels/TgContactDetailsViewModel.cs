@@ -8,7 +8,6 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfContactRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial Guid Uid { get; set; } = Guid.Empty!;
 	[ObservableProperty]
@@ -50,7 +49,7 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		Dto = await Repository.GetDtoAsync(x => x.Uid == Uid);
+		Dto = await App.BusinessLogicManager.StorageManager.ContactRepository.GetDtoAsync(x => x.Uid == Uid);
 	}
 
 	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());

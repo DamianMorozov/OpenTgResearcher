@@ -8,7 +8,6 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
-    private TgEfProxyRepository Repository { get; } = new();
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }
@@ -56,7 +55,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await Repository.GetListDtosAsync()]);
+		SetOrderData([.. await App.BusinessLogicManager.StorageManager.ProxyRepository.GetListDtosAsync()]);
 	}
 
 	private async Task DefaultSortAsync()

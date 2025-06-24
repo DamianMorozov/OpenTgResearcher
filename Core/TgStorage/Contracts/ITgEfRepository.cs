@@ -49,7 +49,9 @@ public interface ITgEfRepository<TEfEntity, TDto>
     public Expression<Func<TEfEntity, TDto>> SelectDto();
 	public Task<TDto> GetDtoAsync(Expression<Func<TEfEntity, bool>> where);
     public Task<List<TDto>> GetListDtosAsync(int take = 0, int skip = 0);
-	public Task<List<TDto>> GetListDtosAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where);
+    public Task<List<TDto>> GetListDtosAsync(int take, int skip, Expression<Func<TEfEntity, bool>> where);
+    public Task<List<TDto>> GetListDtosDescAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where,
+        Expression<Func<TEfEntity, TKey>> order, bool isReadOnly = true);
     public Task<int> GetListCountAsync();
 	public Task<int> GetListCountAsync(Expression<Func<TEfEntity, bool>> where);
 

@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 using ValidationException = FluentValidation.ValidationException;
 
 namespace TgStorage.Common;
@@ -325,6 +327,15 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         var dtos = take > 0
             ? await GetQuery(isReadOnly: true).Where(where).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
             : await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).ToListAsync();
+        return dtos;
+    }
+
+    public async Task<List<TDto>> GetListDtosDescAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where,
+        Expression<Func<TEfEntity, TKey>> order, bool isReadOnly = true)
+    {
+        var dtos = take > 0
+            ? await GetQuery(isReadOnly).Where(where).OrderByDescending(order).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+            : await GetQuery(isReadOnly).Where(where).OrderByDescending(order).Select(SelectDto()).ToListAsync();
         return dtos;
     }
 

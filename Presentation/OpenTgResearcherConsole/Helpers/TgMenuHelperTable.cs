@@ -59,17 +59,15 @@ internal partial class TgMenuHelper
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageAdvancedAsync);
 
     private async Task ShowTableStorageClearAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageClearAsync);
+        await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsStorageClearingAsync);
 
     private async Task ShowTableStorageChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (tgDownloadSettings, table) => await
-            FillTableRowsStorageTableAsync(tgDownloadSettings, table,
-                BusinessLogicManager.StorageManager.SourceRepository, TgLocale.MenuChatsCount));
+            FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.SourceRepository, TgLocale.MenuTableChatsRecordsCount));
 
     private async Task ShowTableStorageFiltersAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, async (tgDownloadSettings, table) => await
-            FillTableRowsStorageTableAsync(tgDownloadSettings, table,
-                BusinessLogicManager.StorageManager.FilterRepository, TgLocale.MenuFiltersCount));
+            FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.FilterRepository, TgLocale.MenuTableFiltersRecordsCount));
 
     private async Task ShowTableLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
         await ShowTableCoreAsync(tgDownloadSettings, FillTableColumns, FillTableRowsLicenseFullInfoAsync);
@@ -216,22 +214,15 @@ internal partial class TgMenuHelper
             GetMarkup(TgGlobalTools.IsXmlReady ? TgLocale.SettingsIsOk : TgLocale.SettingsIsNeedSetup));
 
         // Counts
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.SourceRepository, TgLocale.MenuChatsCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.ContactRepository, TgLocale.MenuContactsCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.DocumentRepository, TgLocale.MenuDocumentsCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.FilterRepository, TgLocale.MenuFiltersCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.MessageRepository, TgLocale.MenuMessagesCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.ProxyRepository, TgLocale.MenuProxiesCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.StoryRepository, TgLocale.MenuStoriesCount);
-        await FillTableRowsStorageTableAsync(tgDownloadSettings, table, 
-            BusinessLogicManager.StorageManager.VersionRepository, TgLocale.MenuVersionsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.AppRepository, TgLocale.MenuTableAppsRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.SourceRepository, TgLocale.MenuTableChatsRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.ContactRepository, TgLocale.MenuTableContactsRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.DocumentRepository, TgLocale.MenuTableDocumentsRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.FilterRepository, TgLocale.MenuTableFiltersRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.MessageRepository, TgLocale.MenuTableMessagesRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.ProxyRepository, TgLocale.MenuTableProxiesRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.StoryRepository, TgLocale.MenuTableStoriesRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.VersionRepository, TgLocale.MenuTableVersionsRecordsCount);
 
         await Task.CompletedTask;
     }
@@ -248,21 +239,20 @@ internal partial class TgMenuHelper
         await Task.CompletedTask;
     }
 
-    /// <summary> Storage clear </summary>
-    private async Task FillTableRowsStorageClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
+    /// <summary> Storage clearing </summary>
+    private async Task FillTableRowsStorageClearingAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         await Task.CompletedTask;
     }
 
     /// <summary> Storage table </summary>
-    private async Task FillTableRowsStorageTableAsync<TEfEntity, TDto>(TgDownloadSettingsViewModel tgDownloadSettings, Table table,
+    private async Task FillTableRowsStorageTableAsync<TEfEntity, TDto>(Table table,
         ITgEfRepository<TEfEntity, TDto> repository, string messageCount)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
         where TDto : class, ITgDto<TEfEntity, TDto>, new()
     {
         var count = await repository.GetListCountAsync();
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(messageCount)),
-            GetMarkup($"{count}"));
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(messageCount)), GetMarkup($"{count}"));
 
         await Task.CompletedTask;
     }

@@ -18,7 +18,7 @@ internal partial class TgMenuHelper
             TgLocale.MenuReturn,
             TgLocale.MenuStorageSetup,
             TgLocale.MenuStorageAdvanced,
-            TgLocale.MenuStorageClear,
+            TgLocale.MenuStorageClearing,
             TgLocale.MenuStorageChats,
             TgLocale.MenuStorageFilters
         );
@@ -28,7 +28,7 @@ internal partial class TgMenuHelper
             return TgEnumMenuStorage.Setup;
         if (prompt.Equals(TgLocale.MenuStorageAdvanced))
             return TgEnumMenuStorage.Advanced;
-        if (prompt.Equals(TgLocale.MenuStorageClear))
+        if (prompt.Equals(TgLocale.MenuStorageClearing))
             return TgEnumMenuStorage.Clear;
         if (prompt.Equals(TgLocale.MenuStorageChats))
             return TgEnumMenuStorage.Chats;

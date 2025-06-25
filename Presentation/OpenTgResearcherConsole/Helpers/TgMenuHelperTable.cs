@@ -185,13 +185,13 @@ internal partial class TgMenuHelper
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.DirectoryCurrent)), GetMarkup(Environment.CurrentDirectory));
 
         // Storage
-        var fileSize = TgFileUtils.GetFileSizeString(TgFileUtils.CalculateFileSize(TgAppSettings.AppXml.XmlEfStorage));
+        var fileSize = TgFileUtils.GetFileSizeAsString(TgFileUtils.CalculateFileSize(TgAppSettings.AppXml.XmlEfStorage));
         table.AddRow(TgAppSettings.AppXml.IsExistsEfStorage
             ? GetMarkup(TgLocale.InfoMessage(TgLocale.EfStorage)) : GetMarkup(TgLocale.WarningMessage(TgLocale.EfStorage)),
             GetMarkup($"{Path.Combine(Environment.CurrentDirectory, TgAppSettings.AppXml.XmlEfStorage)} ({fileSize})"));
 
         // Session
-        fileSize = TgFileUtils.GetFileSizeString(TgFileUtils.CalculateFileSize(TgAppSettings.AppXml.XmlFileSession));
+        fileSize = TgFileUtils.GetFileSizeAsString(TgFileUtils.CalculateFileSize(TgAppSettings.AppXml.XmlFileSession));
         table.AddRow(TgAppSettings.AppXml.IsExistsFileSession
             ? GetMarkup(TgLocale.InfoMessage(TgLocale.FileSession)) : GetMarkup(TgLocale.WarningMessage(TgLocale.FileSession)),
             GetMarkup($"{Path.Combine(Environment.CurrentDirectory, TgAppSettings.AppXml.XmlFileSession)} ({fileSize})"));

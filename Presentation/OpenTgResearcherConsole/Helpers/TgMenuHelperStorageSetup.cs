@@ -18,7 +18,7 @@ internal partial class TgMenuHelper
             TgLocale.MenuReturn,
             TgLocale.MenuStorageDbClear,
             TgLocale.MenuStorageDbBackup,
-            TgLocale.MenuStorageTablesCompact,
+            TgLocale.MenuStorageTablesShrink,
             TgLocale.MenuStorageResetAutoDownload
         );
 
@@ -27,7 +27,7 @@ internal partial class TgMenuHelper
 			return TgEnumMenuStorageSetup.DbClear;
 		if (prompt.Equals(TgLocale.MenuStorageDbBackup))
 			return TgEnumMenuStorageSetup.DbBackup;
-		if (prompt.Equals(TgLocale.MenuStorageTablesCompact))
+		if (prompt.Equals(TgLocale.MenuStorageTablesShrink))
 			return TgEnumMenuStorageSetup.DbCompact;
 
         return TgEnumMenuStorageSetup.Return;
@@ -72,7 +72,7 @@ internal partial class TgMenuHelper
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 
 		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
-		var backupResult = BusinessLogicManager.BackupDbAsync();
+		var backupResult = BusinessLogicManager.BackupDb();
 		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
 		TgLog.WriteLine(backupResult.IsSuccess ? $"  {TgLocale.MenuStorageBackupSuccess}" : $"  {TgLocale.MenuStorageBackupFailed}");
         TgLog.TypeAnyKeyForReturn();
@@ -81,10 +81,10 @@ internal partial class TgMenuHelper
     /// <summary> Compact storage database </summary>
 	private async Task StorageDbCompactAsync()
 	{
-		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageTablesCompact)) return;
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageTablesShrink)) return;
 
         await BusinessLogicManager.ShrinkDbAsync();
-		TgLog.WriteLine($"  {TgLocale.MenuStorageTablesCompactFinished}");
+		TgLog.WriteLine($"  {TgLocale.MenuStorageTablesShrinkFinished}");
         TgLog.TypeAnyKeyForReturn();
 	}
 

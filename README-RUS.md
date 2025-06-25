@@ -4,12 +4,12 @@
 Открытый исследователь и поисковик Телеграм. Скачивай чаты по каталогам. 
 
 ## Official site
-### <div align="center"><b><a href="http://opentgresearcher.online">opentgresearcher.online</a></b></div>
+### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
 ### <div align="center"><b><a href="README.md">Readme</a> | <a href="Docs/CHANGELOG.md">Changelog</a> | <a href="Docs/RELEASES.md">Statistics</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Screenshots</a> | <a href="Docs/GUIDES.md">Guides</a> | <a href="LICENSE.md">License</a></b></div>
 
 ## Официальный сайт
-### <div align="center"><b><a href="http://opentgresearcher.ru">opentgresearcher.ru</a></b></div>
+### <div align="center"><b><a href="https://opentgresearcher.ru">opentgresearcher.ru</a></b></div>
 ### <div align="center"><b><a href="README-RUS.md">Прочти меня</a> | <a href="Docs/CHANGELOG-RUS.md">История версий</a> | <a href="Docs/RELEASES-RUS.md">Статистика</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
 

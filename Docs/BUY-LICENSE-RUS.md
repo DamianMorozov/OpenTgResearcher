@@ -1,4 +1,4 @@
 ﻿# Купить лицензию
 
 ## Чтобы купить лицензию, перейдите по следующей ссылке:
-http://opentgresearcher.online/licenses
+https://opentgresearcher.online/licenses

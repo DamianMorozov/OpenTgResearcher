@@ -105,7 +105,7 @@ public sealed class TgLocaleHelper : ObservableObject
     public string MenuSaveSettings => "Save settings";
     public string MenuStorageDbIsNotFound(string fileName) => $"Storage was not found: {fileName}!";
     public string MenuStorageDbIsZeroSize(string fileName) => $"Storage is zero size: {fileName}!";
-    public string MenuStorageDeleteExistsInfo(string fileName) => $"Manual delete the file: {fileName}";
+    public string MenuStorageDeleteExistsInfo(string fileName) => $"Remove the file manually: {fileName}";
     public string MenuStorageResetAutoDownload => "Reset auto update field for all chats";
     public string MenuStorageUpgradeUid(string fileName) => $"Update the UID field in the storage: {fileName}!";
     public string ProxiesUserPassword => "Password";
@@ -323,7 +323,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageChats => "Storage chats";
 	public string MenuStorageChatsClear => "Clear chats";
 	public string MenuStorageClearing => "Storage clearing ";
-	public string MenuStorageDbBackup => "Create backup";
+	public string MenuStorageDbBackup => "Backup storage";
 	public string MenuStorageDbClear => "Clear storage";
 	public string MenuStorageExitProgram => "Exit the program";
 	public string MenuStorageFilters => "Storage filters";
@@ -332,7 +332,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageSetup => "Storage setup";
 	public string MenuStorageTablesClear => "Clear tables";
 	public string MenuStorageTablesClearFinished => "Clear tables was finished";
-	public string MenuStorageTablesShrink => "Shrink storage";
+	public string MenuStorageDbShrink => "Shrink storage";
 	public string MenuStorageTablesShrinkFinished => "Shrink storage was finished";
 	public string MenuStorageViewChats => "View chats";
 	public string MenuStorageViewContacts => "View contacts";

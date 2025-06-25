@@ -16,19 +16,18 @@ internal partial class TgMenuHelper
             .MoreChoicesText(TgLocale.MoveUpDown);
         selectionPrompt.AddChoices(
             TgLocale.MenuReturn,
-            TgLocale.MenuStorageDbClear,
             TgLocale.MenuStorageDbBackup,
-            TgLocale.MenuStorageTablesShrink,
-            TgLocale.MenuStorageResetAutoDownload
+            TgLocale.MenuStorageDbShrink,
+            TgLocale.MenuStorageDbClear
         );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
-		if (prompt.Equals(TgLocale.MenuStorageDbClear))
-			return TgEnumMenuStorageSetup.DbClear;
 		if (prompt.Equals(TgLocale.MenuStorageDbBackup))
 			return TgEnumMenuStorageSetup.DbBackup;
-		if (prompt.Equals(TgLocale.MenuStorageTablesShrink))
+		if (prompt.Equals(TgLocale.MenuStorageDbShrink))
 			return TgEnumMenuStorageSetup.DbCompact;
+		if (prompt.Equals(TgLocale.MenuStorageDbClear))
+			return TgEnumMenuStorageSetup.DbClear;
 
         return TgEnumMenuStorageSetup.Return;
 	}
@@ -42,14 +41,14 @@ internal partial class TgMenuHelper
 			menu = SetMenuStorageSetup();
             switch (menu)
             {
-                case TgEnumMenuStorageSetup.DbClear:
-                    StorageDbClear();
-                    break;
                 case TgEnumMenuStorageSetup.DbBackup:
                     StorageDbBackup();
                     break;
                 case TgEnumMenuStorageSetup.DbCompact:
-                    await StorageDbCompactAsync();
+                    await StorageDbShrinkAsync();
+                    break;
+                case TgEnumMenuStorageSetup.DbClear:
+                    StorageDbClear();
                     break;
                 case TgEnumMenuStorageSetup.Return:
                     break;
@@ -78,10 +77,10 @@ internal partial class TgMenuHelper
         TgLog.TypeAnyKeyForReturn();
     }
 
-    /// <summary> Compact storage database </summary>
-	private async Task StorageDbCompactAsync()
+    /// <summary> Shrink storage database </summary>
+	private async Task StorageDbShrinkAsync()
 	{
-		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageTablesShrink)) return;
+		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageDbShrink)) return;
 
         await BusinessLogicManager.ShrinkDbAsync();
 		TgLog.WriteLine($"  {TgLocale.MenuStorageTablesShrinkFinished}");

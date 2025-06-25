@@ -79,10 +79,8 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     }
 
     /// <inheritdoc />
-    public async Task ShrinkDbAsync()
-    {
+    public async Task ShrinkDbAsync() => 
         await StorageManager.EfContext.ShrinkDbAsync();
-    }
 
     /// <inheritdoc />
     public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") => 

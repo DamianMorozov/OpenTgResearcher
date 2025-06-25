@@ -312,14 +312,14 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
         var dtos = new ObservableCollection<TgStorageBackupDto>();
         if (File.Exists(storagePath))
         {
+            dtos.Add(new TgStorageBackupDto(storagePath, new FileInfo(storagePath).Length));
             var fileNames = Directory.GetFiles(
                 Path.GetDirectoryName(storagePath) ?? string.Empty,
                 $"{Path.GetFileNameWithoutExtension(storagePath)}_*.bak",
                 SearchOption.TopDirectoryOnly);
             foreach (var fileName in fileNames)
             {
-                var fileSize = new FileInfo(fileName).Length;
-                dtos.Add(new TgStorageBackupDto(fileName, fileSize));
+                dtos.Add(new TgStorageBackupDto(fileName, new FileInfo(fileName).Length));
             }
         }
 

@@ -110,7 +110,7 @@
                 <!--  Storage  -->
                 <NavigationViewItem x:Uid="Shell_Storage" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC25;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Connection  -->

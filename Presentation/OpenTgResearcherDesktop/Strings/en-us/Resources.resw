@@ -242,7 +242,7 @@
     <value>opentgresearcher.online</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
-    <value>"http://opentgresearcher.online"</value>
+    <value>"https://opentgresearcher.online"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Releases</value>
@@ -368,6 +368,39 @@
   </data>
   <data name="ActionStorageSetup.Text" xml:space="preserve">
     <value>Storage setup</value>
+  </data>
+  <data name="ActionStorageCreateBackup.Text" xml:space="preserve">
+    <value>Backup storage</value>
+  </data>
+  <data name="AskActionStorageBackup" xml:space="preserve">
+    <value>Backup storage?</value>
+  </data>
+  <data name="ActionStorageCreateBackupFile" xml:space="preserve">
+    <value>Backup file</value>
+  </data>
+  <data name="ActionStorageCreateBackupSuccess" xml:space="preserve">
+    <value>Backup storage was successful</value>
+  </data>
+  <data name="ActionStorageCreateBackupFailed" xml:space="preserve">
+    <value>Backup failed with an error</value>
+  </data>
+  <data name="ActionStorageShrink.Text" xml:space="preserve">
+    <value>Shrink storage</value>
+  </data>
+  <data name="AskActionStorageShrink" xml:space="preserve">
+    <value>Shrink storage?</value>
+  </data>
+  <data name="ActionStorageClear.Text" xml:space="preserve">
+    <value>Clear storage</value>
+  </data>
+  <data name="AskActionStorageClear" xml:space="preserve">
+    <value>Clear storage?</value>
+  </data>
+  <data name="ActionStorageResetAutoUpdate.Text" xml:space="preserve">
+    <value>Reset auto update field</value>
+  </data>
+  <data name="AskActionStorageResetAutoUpdate" xml:space="preserve">
+    <value>Reset auto update field?</value>
   </data>
   <data name="ActionStorageAdvancedSettings.Text" xml:space="preserve">
     <value>Storage advanced settings</value>
@@ -756,6 +789,12 @@
   <data name="TemplateColumnTableName.Header" xml:space="preserve">
     <value>Table name</value>
   </data>
+  <data name="TemplateColumnFileName.Header" xml:space="preserve">
+    <value>File name</value>
+  </data>
+  <data name="TemplateColumnFileSize.Header" xml:space="preserve">
+    <value>File size</value>
+  </data>
   <data name="TemplateColumnCaption.Header" xml:space="preserve">
     <value>Caption</value>
   </data>
@@ -1046,6 +1085,9 @@
   </data>
   <data name="TableNameVersions" xml:space="preserve">
     <value>Versions</value>
+  </data>
+  <data name="GetManualDeleteFile" xml:space="preserve">
+    <value>Remove the file manually</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

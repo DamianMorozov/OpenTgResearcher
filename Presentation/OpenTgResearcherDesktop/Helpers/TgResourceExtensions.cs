@@ -15,6 +15,13 @@ public static class TgResourceExtensions
 
 	#region Public and private methods
 
+	public static string ActionStorageCreateBackupFailed() => "ActionStorageCreateBackupFailed".GetLocalized();
+	public static string ActionStorageCreateBackupFile() => "ActionStorageCreateBackupFile".GetLocalized();
+	public static string ActionStorageCreateBackupSuccess() => "ActionStorageCreateBackupSuccess".GetLocalized();
+	public static string AskActionStorageBackup() => "AskActionStorageBackup".GetLocalized();
+	public static string AskActionStorageResetAutoUpdate() => "AskActionStorageResetAutoUpdate".GetLocalized();
+	public static string AskActionStorageShrink() => "AskActionStorageShrink".GetLocalized();
+	public static string AskActionStorageClear() => "AskActionStorageClear".GetLocalized();
 	public static string AskAddRecord() => "AskAddRecord".GetLocalized();
 	public static string AskClientConnect() => "AskClientConnect".GetLocalized();
 	public static string AskClientDisconnect() => "AskClientDisconnect".GetLocalized();
@@ -59,6 +66,7 @@ public static class TgResourceExtensions
 	public static string GetLicensePremiumDescription() => "LicensePremiumDescription".GetLocalized();
 	public static string GetLicenseTestDescription() => "LicenseTestDescription".GetLocalized();
 	public static string GetLoggerLoading() => "LoggerLoading".GetLocalized();
+	public static string GetManualDeleteFile(string fileName) => $"{"GetManualDeleteFile".GetLocalized()}: {fileName}";
 	public static string GetMenuClientIsQuery() => "MenuClientIsQuery".GetLocalized();
 	public static string GetMenuLicenseCheckServer() => "MenuLicenseCheckServer".GetLocalized();
 	public static string GetMenuLicenseIsNotCofirmed() => "MenuLicenseIsNotCofirmed".GetLocalized();
@@ -79,8 +87,6 @@ public static class TgResourceExtensions
 	public static string GetSettingsThemeLight() => "SettingsThemeLight".GetLocalized();
 	public static string GetStorage() => "Storage".GetLocalized();
 	public static string GetStorageLoading() => "StorageLoading".GetLocalized();
-	public static string GetTgClientLoading() => "TgClientLoading".GetLocalized();
-	public static string GetYesButton() => "YesButton".GetLocalized();
 	public static string GetTableNameApps() => "TableNameApps".GetLocalized();
 	public static string GetTableNameChats() => "TableNameChats".GetLocalized();
 	public static string GetTableNameContacts() => "TableNameContacts".GetLocalized();
@@ -90,6 +96,8 @@ public static class TgResourceExtensions
 	public static string GetTableNameProxies() => "TableNameProxies".GetLocalized();
 	public static string GetTableNameStories() => "TableNameStories".GetLocalized();
 	public static string GetTableNameVersions() => "TableNameVersions".GetLocalized();
+	public static string GetTgClientLoading() => "TgClientLoading".GetLocalized();
+	public static string GetYesButton() => "YesButton".GetLocalized();
 
 	#endregion
 }

@@ -1,6 +1,10 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using CommunityToolkit.WinUI.UI.Controls.TextToolbarButtons;
+
+using System.Threading.Tasks;
+
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -9,7 +13,9 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     #region Public and private fields, properties, constructor
 
     [ObservableProperty]
-    public partial ObservableCollection<TgStorageTableDto> Dtos { get; set; } = [];
+    public partial ObservableCollection<TgStorageTableDto> StorageTableDtos { get; set; } = [];
+    [ObservableProperty]
+    public partial ObservableCollection<TgStorageBackupDto> StorageBackupDtos { get; set; } = [];
     [ObservableProperty]
     public partial bool IsStorageLoadDataShow { get; set; }
     [ObservableProperty]
@@ -18,9 +24,13 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     public partial bool IsStorageAdvancedSettingShow { get; set; }
     [ObservableProperty]
     public partial bool IsStorageClearingShow { get; set; }
+    [ObservableProperty]
+    public partial string StorageLog { get; set; }
 
-    public IRelayCommand StorageLoadDataCommand { get; }
     public IRelayCommand StorageSetupCommand { get; }
+    public IRelayCommand StorageCreateBackupCommand { get; }
+    public IRelayCommand StorageShrinkCommand { get; }
+    public IRelayCommand StorageClear { get; }
     public IRelayCommand StorageAdvancedSettingCommand { get; }
     public IRelayCommand StorageClearingCommand { get; }
     public IRelayCommand StorageChatsCommand { get; }
@@ -29,9 +39,12 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     public TgStorageViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStorageViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgStorageViewModel))
     {
+        StorageLog = string.Empty;
         // Commands
-        StorageLoadDataCommand = new AsyncRelayCommand(LoadDataStorageAsync);
         StorageSetupCommand = new AsyncRelayCommand(StorageSetupAsync);
+        StorageCreateBackupCommand = new AsyncRelayCommand(StorageCreateBackupAsync);
+        StorageShrinkCommand = new AsyncRelayCommand(StorageShrinkAsync);
+        StorageClear = new AsyncRelayCommand(StorageClearAsync);
         StorageAdvancedSettingCommand = new AsyncRelayCommand(StorageAdvancedSettingsAsync);
         StorageClearingCommand = new AsyncRelayCommand(StorageClearingAsync);
         StorageChatsCommand = new AsyncRelayCommand(StorageChatsAsync);
@@ -44,42 +57,21 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
         {
-            await LoadDataStorageAsync();
+            await LoadStorageTableDtosAsync();
             await ReloadUiAsync();
         });
 
-    /// <summary> Sort data </summary>
-    private void SetOrderData(ObservableCollection<TgStorageTableDto> dtos)
-    {
-        if (!dtos.Any()) return;
-        Dtos = [.. dtos.OrderBy(x => x.Name)];
-    }
-
-    private async Task LoadDataStorageAsync()
+    /// <summary> Load storage table dtos </summary>
+    private async Task LoadStorageTableDtosAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;
 
         try
         {
-            var appDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameApps(),
-            await App.BusinessLogicManager.StorageManager.AppRepository.GetListCountAsync());
-            var chatsDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameChats(),
-                await App.BusinessLogicManager.StorageManager.SourceRepository.GetListCountAsync());
-            var contactsDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameContacts(),
-                await App.BusinessLogicManager.StorageManager.ContactRepository.GetListCountAsync());
-            var documentsDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameDocuments(),
-                await App.BusinessLogicManager.StorageManager.DocumentRepository.GetListCountAsync());
-            var filtersDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameFilters(),
-                await App.BusinessLogicManager.StorageManager.FilterRepository.GetListCountAsync());
-            var messagesDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameMessages(),
-                await App.BusinessLogicManager.StorageManager.MessageRepository.GetListCountAsync());
-            var proxiesDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameProxies(),
-                await App.BusinessLogicManager.StorageManager.ProxyRepository.GetListCountAsync());
-            var storiesDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameStories(),
-                await App.BusinessLogicManager.StorageManager.StoryRepository.GetListCountAsync());
-            var versionsDtos = new TgStorageTableDto(TgResourceExtensions.GetTableNameVersions(),
-                await App.BusinessLogicManager.StorageManager.VersionRepository.GetListCountAsync());
-            SetOrderData([appDtos, chatsDtos, contactsDtos, documentsDtos, filtersDtos, messagesDtos, proxiesDtos, storiesDtos, versionsDtos]);
+            StorageTableDtos = await App.BusinessLogicManager.LoadStorageTableDtosAsync(TgResourceExtensions.GetTableNameApps(),
+                TgResourceExtensions.GetTableNameChats(), TgResourceExtensions.GetTableNameContacts(), TgResourceExtensions.GetTableNameDocuments(),
+                TgResourceExtensions.GetTableNameFilters(), TgResourceExtensions.GetTableNameMessages(), TgResourceExtensions.GetTableNameProxies(),
+                TgResourceExtensions.GetTableNameStories(), TgResourceExtensions.GetTableNameVersions());
         }
         finally
         {
@@ -90,14 +82,16 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Setup storage </summary>
     private async Task StorageSetupAsync()
     {
         try
         {
-            await Task.Delay(250);
+            await LoadStorageBackupDtosAsync();
         }
         finally
         {
+            StorageLog = string.Empty;
             IsStorageLoadDataShow = false;
             IsStorageSetupShow = true;
             IsStorageAdvancedSettingShow = false;
@@ -105,6 +99,81 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Load storage backup dtos </summary>
+    private async Task LoadStorageBackupDtosAsync()
+    {
+        if (!SettingsService.IsExistsAppStorage) return;
+
+        StorageBackupDtos = App.BusinessLogicManager.LoadStorageBackupDtos(SettingsService.AppStorage);
+        await Task.CompletedTask;
+    }
+
+    /// <summary> Backup storage </summary>
+    private async Task StorageCreateBackupAsync() => await ContentDialogAsync(StorageCreateBackupCoreAsync,
+        TgResourceExtensions.AskActionStorageBackup());
+
+    private async Task StorageCreateBackupCoreAsync()
+    {
+        try
+        {
+            StorageLog = string.Empty;
+            var backupResult = App.BusinessLogicManager.BackupDb(SettingsService.AppStorage);
+            StorageLog = $"{TgResourceExtensions.ActionStorageCreateBackupFile()}: {backupResult.FileName}";
+            StorageLog = backupResult.IsSuccess
+                ? TgResourceExtensions.ActionStorageCreateBackupSuccess() : TgResourceExtensions.ActionStorageCreateBackupFailed();
+        }
+        finally
+        {
+            await LoadStorageBackupDtosAsync();
+        }
+    }
+
+    /// <summary> Shrink storage </summary>
+    private async Task StorageShrinkAsync() => await ContentDialogAsync(StorageShrinkCoreAsync,
+        TgResourceExtensions.AskActionStorageShrink());
+
+    private async Task StorageShrinkCoreAsync()
+    {
+        try
+        {
+            StorageLog = string.Empty;
+            await App.BusinessLogicManager.ShrinkDbAsync();
+            await LoadStorageBackupDtosAsync();
+        }
+        finally
+        {
+            await Task.Delay(250);
+        }
+    }
+
+    /// <summary> Clear storage </summary>
+    private async Task StorageClearAsync()
+    {
+        await ContentDialogAsync(StorageClearCoreAsync, TgResourceExtensions.AskActionStorageClear());
+
+        ContentDialog dialog = new()
+        {
+            XamlRoot = XamlRootVm,
+            Title = TgResourceExtensions.GetManualDeleteFile(SettingsService.AppStorage),
+            CloseButtonText = TgResourceExtensions.GetOkButton(),
+            DefaultButton = ContentDialogButton.Close,
+        };
+        _ = await dialog.ShowAsync();
+    }
+
+    private async Task StorageClearCoreAsync()
+    {
+        try
+        {
+            StorageLog = TgResourceExtensions.GetManualDeleteFile(SettingsService.AppStorage);
+        }
+        finally
+        {
+            await Task.Delay(250);
+        }
+    }
+
+    /// <summary> Advanced settings </summary>
     private async Task StorageAdvancedSettingsAsync()
     {
         try
@@ -120,6 +189,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
         }
     }
 
+    // <summary> Storage clearing </summary>
     private async Task StorageClearingAsync()
     {
         try

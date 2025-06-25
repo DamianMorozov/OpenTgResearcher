@@ -180,7 +180,8 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		_ = await dialog.ShowAsync();
 	}
 
-	protected async Task ContentDialogAsync(Func<Task> task, string title, ContentDialogButton defaultButton = ContentDialogButton.Close, bool useLoadData = false)
+	protected async Task ContentDialogAsync(Func<Task> task, string title, ContentDialogButton defaultButton = ContentDialogButton.Close, 
+        bool useLoadData = false)
 	{
 		if (XamlRootVm is null) return;
 		ContentDialog dialog = new()

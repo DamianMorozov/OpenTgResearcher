@@ -301,7 +301,7 @@
     <value>opentgresearcher.ru</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
-    <value>"http://opentgresearcher.ru"</value>
+    <value>"https://opentgresearcher.ru"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Релизы</value>
@@ -427,6 +427,39 @@
   </data>
   <data name="ActionStorageSetup.Text" xml:space="preserve">
     <value>Настройка хранилища</value>
+  </data>
+  <data name="ActionStorageCreateBackup.Text" xml:space="preserve">
+    <value>Создать бэкап</value>
+  </data>
+  <data name="AskActionStorageBackup" xml:space="preserve">
+    <value>Создать бэкап?</value>
+  </data>
+  <data name="ActionStorageCreateBackupFile" xml:space="preserve">
+    <value>Файл бэкапа</value>
+  </data>
+  <data name="ActionStorageCreateBackupSuccess" xml:space="preserve">
+    <value>Резервное копирование прошло успешно</value>
+  </data>
+  <data name="ActionStorageCreateBackupFailed" xml:space="preserve">
+    <value>Резервное копирование прошло с ошибкой</value>
+  </data>
+  <data name="ActionStorageShrink.Text" xml:space="preserve">
+    <value>Сжать хранилище</value>
+  </data>
+  <data name="AskActionStorageShrink" xml:space="preserve">
+    <value>Сжать хранилище?</value>
+  </data>
+  <data name="ActionStorageClear.Text" xml:space="preserve">
+    <value>Очистить хранилище</value>
+  </data>
+  <data name="AskActionStorageClear" xml:space="preserve">
+    <value>Очистить хранилище?</value>
+  </data>
+  <data name="ActionStorageResetAutoUpdate.Text" xml:space="preserve">
+    <value>Сброс поля автоматического обновления</value>
+  </data>
+  <data name="AskActionStorageResetAutoUpdate" xml:space="preserve">
+    <value>Сброс поля автоматического обновления?</value>
   </data>
   <data name="ActionStorageAdvancedSettings.Text" xml:space="preserve">
     <value>Дополнительные настройки хранилища</value>
@@ -818,6 +851,12 @@
   <data name="TemplateColumnTableName.Header" xml:space="preserve">
     <value>Имя таблицы</value>
   </data>
+  <data name="TemplateColumnFileName.Header" xml:space="preserve">
+    <value>Имя файла</value>
+  </data>
+  <data name="TemplateColumnFileSize.Header" xml:space="preserve">
+    <value>Размер файла</value>
+  </data>
   <data name="TemplateColumnCaption.Header" xml:space="preserve">
     <value>Заголовок</value>
   </data>
@@ -1108,6 +1147,9 @@
   </data>
   <data name="TableNameVersions" xml:space="preserve">
     <value>Версии</value>
+  </data>
+  <data name="GetManualDeleteFile" xml:space="preserve">
+    <value>Удалите файл вручную</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

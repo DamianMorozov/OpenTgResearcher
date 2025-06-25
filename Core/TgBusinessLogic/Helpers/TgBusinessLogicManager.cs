@@ -70,7 +70,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
 
     #region Public and private methods
 
-    /// <summary> Create and update storage </summary>
+    /// <inheritdoc />
     public async Task CreateAndUpdateDbAsync()
     {
         await StorageManager.EfContext.MigrateDbAsync();
@@ -78,17 +78,38 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         await StorageManager.EfContext.ShrinkDbAsync();
     }
 
-    /// <summary> Shrink storage </summary>
+    /// <inheritdoc />
     public async Task ShrinkDbAsync()
     {
         await StorageManager.EfContext.ShrinkDbAsync();
     }
 
-    /// <summary> Backup storage </summary>
-    public (bool IsSuccess, string FileName) BackupDbAsync()
+    /// <inheritdoc />
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") => 
+        StorageManager.EfContext.BackupDb(storagePath);
+
+    /// <inheritdoc />
+    public async Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName,
+        string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName)
     {
-        return StorageManager.EfContext.BackupDb();
+        var appDtos = new TgStorageTableDto(appsName, await StorageManager.AppRepository.GetListCountAsync());
+        var chatsDtos = new TgStorageTableDto(chatsName, await StorageManager.SourceRepository.GetListCountAsync());
+        var contactsDtos = new TgStorageTableDto(contactsName, await StorageManager.ContactRepository.GetListCountAsync());
+        var documentsDtos = new TgStorageTableDto(documentsName, await StorageManager.DocumentRepository.GetListCountAsync());
+        var filtersDtos = new TgStorageTableDto(filtersName, await StorageManager.FilterRepository.GetListCountAsync());
+        var messagesDtos = new TgStorageTableDto(messagesName, await StorageManager.MessageRepository.GetListCountAsync());
+        var proxiesDtos = new TgStorageTableDto(proxiesName, await StorageManager.ProxyRepository.GetListCountAsync());
+        var storiesDtos = new TgStorageTableDto(storiesName, await StorageManager.StoryRepository.GetListCountAsync());
+        var versionsDtos = new TgStorageTableDto(versionsName, await StorageManager.VersionRepository.GetListCountAsync());
+
+        // Order
+        ObservableCollection<TgStorageTableDto> dtos = [appDtos, chatsDtos, contactsDtos, documentsDtos, filtersDtos, messagesDtos, proxiesDtos, storiesDtos, versionsDtos];
+        return [.. dtos.OrderBy(x => x.Name)];
     }
+
+    /// <inheritdoc />
+    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "") =>
+        StorageManager.EfContext.LoadStorageBackupDtos(storagePath);
 
     #endregion
 }

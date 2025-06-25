@@ -7,10 +7,10 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 {
 	#region Public and private fields, properties, constructor
 
-	public string MenuWebSiteGlobalUrl => "http://opentgresearcher.online/";
-	public string MenuWebSiteGlobalLicenseBuyUrl => "http://opentgresearcher.online/licenses/";
-	public string MenuWebSiteRussianUrl => "http://opentgresearcher.ru/";
-	public string MenuWebSiteRussianLicenseBuyUrl => "http://opentgresearcher.ru/licenses/";
+	public string MenuWebSiteGlobalUrl => "https://opentgresearcher.online/";
+	public string MenuWebSiteGlobalLicenseBuyUrl => "https://opentgresearcher.online/licenses/";
+	public string MenuWebSiteRussianUrl => "https://opentgresearcher.ru/";
+	public string MenuWebSiteRussianLicenseBuyUrl => "https://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = default!;
     
     private ITgStorageManager StorageManager { get; } = default!;

@@ -12,6 +12,7 @@ global using Microsoft.EntityFrameworkCore.Migrations;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using ProxyLib.Proxy;
+global using System.Collections.ObjectModel;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel;

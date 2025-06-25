@@ -5,6 +5,7 @@ global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using Microsoft.AspNetCore.Hosting;
 global using ProxyLib.Proxy;
+global using System.Collections.ObjectModel;
 global using System.Diagnostics;
 global using System.Runtime.CompilerServices;
 global using System.Text;

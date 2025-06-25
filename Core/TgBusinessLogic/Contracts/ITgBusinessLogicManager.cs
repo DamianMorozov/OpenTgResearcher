@@ -8,8 +8,15 @@ public interface ITgBusinessLogicManager : IDisposable
     public ITgStorageManager StorageManager { get; }
     public ITgLicenseService LicenseService { get; }
     public ITgConnectClient ConnectClient { get; }
-
-    (bool IsSuccess, string FileName) BackupDbAsync();
+    /// <summary> Backup storage </summary>
+    (bool IsSuccess, string FileName) BackupDb(string storagePath = "");
+    /// <summary> Create and update storage </summary>
     Task CreateAndUpdateDbAsync();
+    /// <summary> Shrink storage </summary>
     Task ShrinkDbAsync();
+    /// <summary> Load storage table dtos </summary>
+    Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName, 
+        string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName);
+    /// <summary> Load storage backup dtos </summary>
+    ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
 }

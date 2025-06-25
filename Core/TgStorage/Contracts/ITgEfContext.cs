@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System.Collections.ObjectModel;
+
 namespace TgStorage.Contracts;
 
 /// <summary> Storage context </summary>
@@ -45,13 +47,12 @@ public interface ITgEfContext : IDisposable
 
 	/// <summary> Get storage path </summary>
 	protected string GetStoragePath(string contentRootPath = "");
-
-    /// <summary> Backup storage </summary>
-    public (bool IsSuccess, string FileName) BackupDb();
-
 	/// <summary> Shrink storage </summary>
 	public Task ShrinkDbAsync();
-
 	/// <summary> Migrate storage </summary>
 	public Task MigrateDbAsync();
+    /// <summary> Backup storage </summary>
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "");
+    /// <summary> Load storage backup dtos </summary>
+    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
 }

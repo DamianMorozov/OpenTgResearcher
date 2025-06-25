@@ -152,7 +152,7 @@ public static class TgFileUtils
 	public static long CalculateFileSize(string file) =>
 		!File.Exists(file) ? 0L : new FileInfo(file).Length;
 
-	public static string GetFileSizeString(long value) =>
+	public static string GetFileSizeAsString(long value) =>
 		value > 0
 			? value switch
 			{

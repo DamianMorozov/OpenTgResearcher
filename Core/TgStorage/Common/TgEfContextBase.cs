@@ -280,29 +280,54 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 	}
 
 	/// <inheritdoc />
-	public (bool IsSuccess, string FileName) BackupDb()
-	{
-		// Console app
-		if (TgGlobalTools.AppType == TgEnumAppType.Memory || TgGlobalTools.AppType == TgEnumAppType.Console)
-		{
-			if (File.Exists(TgAppSettings.AppXml.XmlEfStorage))
-			{
-				var dt = DateTime.Now;
-				var fileBackup =
-					$"{Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}\\" +
-					$"{Path.GetFileNameWithoutExtension(TgAppSettings.AppXml.XmlEfStorage)}_{dt:yyyyMMdd}_{dt:HHmmss}.bak";
-				File.Copy(TgAppSettings.AppXml.XmlEfStorage, fileBackup);
-				return (File.Exists(fileBackup), fileBackup);
-			}
-		}
-		return (false, string.Empty);
-	}
-
-	/// <inheritdoc />
 	public async Task ShrinkDbAsync() => await Database.ExecuteSqlRawAsync("VACUUM;");
 
 	/// <inheritdoc />
 	public async Task MigrateDbAsync() => await Database.MigrateAsync();
 
-	#endregion
+    /// <inheritdoc />
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "")
+    {
+        if (string.IsNullOrEmpty(storagePath))
+            storagePath = TgAppSettings.AppXml.XmlEfStorage;
+        
+        if (File.Exists(storagePath))
+        {
+            var dt = DateTime.Now;
+            var fileBackup =
+                $"{Path.GetDirectoryName(storagePath)}\\" +
+                $"{Path.GetFileNameWithoutExtension(storagePath)}_{dt:yyyyMMdd}_{dt:HHmmss}.bak";
+            File.Copy(storagePath, fileBackup);
+            return (File.Exists(fileBackup), fileBackup);
+        }
+
+        return (false, string.Empty);
+    }
+
+    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "")
+    {
+        if (string.IsNullOrEmpty(storagePath))
+            storagePath = TgAppSettings.AppXml.XmlEfStorage;
+
+        var dtos = new ObservableCollection<TgStorageBackupDto>();
+        if (File.Exists(storagePath))
+        {
+            var fileNames = Directory.GetFiles(
+                Path.GetDirectoryName(storagePath) ?? string.Empty,
+                $"{Path.GetFileNameWithoutExtension(storagePath)}_*.bak",
+                SearchOption.TopDirectoryOnly);
+            foreach (var fileName in fileNames)
+            {
+                var fileSize = new FileInfo(fileName).Length;
+                dtos.Add(new TgStorageBackupDto(fileName, fileSize));
+            }
+        }
+
+        // Order
+        dtos = [.. dtos.OrderBy(x => x.FileName)];
+
+        return dtos;
+    }
+
+    #endregion
 }

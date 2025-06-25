@@ -317,7 +317,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuSetUserNameIsEmpty => "User name is empty!";
 	public string MenuStorageAdvanced => "Storage advanced settings";
 	public string MenuStorageBackupDirectory => "Backup directory";
-	public string MenuStorageBackupFailed => "Backup storage was failed";
+	public string MenuStorageBackupFailed => "Backup failed with an error";
 	public string MenuStorageBackupFile => "Backup file";
 	public string MenuStorageBackupSuccess => "Backup storage was successful";
 	public string MenuStorageChats => "Storage chats";
@@ -332,8 +332,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageSetup => "Storage setup";
 	public string MenuStorageTablesClear => "Clear tables";
 	public string MenuStorageTablesClearFinished => "Clear tables was finished";
-	public string MenuStorageTablesCompact => "Compact (shrink) storage";
-	public string MenuStorageTablesCompactFinished => "Compact storage was finished";
+	public string MenuStorageTablesShrink => "Shrink storage";
+	public string MenuStorageTablesShrinkFinished => "Shrink storage was finished";
 	public string MenuStorageViewChats => "View chats";
 	public string MenuStorageViewContacts => "View contacts";
 	public string MenuStorageViewFilters => "View filters";

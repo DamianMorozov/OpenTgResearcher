@@ -16,7 +16,7 @@ internal partial class TgMenuHelper
             .MoreChoicesText(TgLocale.MoveUpDown);
         selectionPrompt.AddChoices(
             TgLocale.MenuReturn,
-            TgLocale.MenuStorageResetAutoDownload,
+            TgLocale.MenuStorageResetAutoUpdate,
             TgLocale.MenuStorageViewChats,
             TgLocale.MenuStorageViewContacts,
             TgLocale.MenuStorageViewStories,
@@ -24,8 +24,8 @@ internal partial class TgMenuHelper
         );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
-        if (prompt.Equals(TgLocale.MenuStorageResetAutoDownload))
-            return TgEnumMenuStorageAdvanced.ResetAutoDownload;
+        if (prompt.Equals(TgLocale.MenuStorageResetAutoUpdate))
+            return TgEnumMenuStorageAdvanced.ResetAutoUpdate;
         if (prompt.Equals(TgLocale.MenuStorageViewChats))
             return TgEnumMenuStorageAdvanced.ViewChats;
         if (prompt.Equals(TgLocale.MenuStorageViewContacts))
@@ -49,7 +49,7 @@ internal partial class TgMenuHelper
 			menu = SetMenuStorageAdvanced();
 			switch (menu)
             {
-                case TgEnumMenuStorageAdvanced.ResetAutoDownload:
+                case TgEnumMenuStorageAdvanced.ResetAutoUpdate:
                     await RunTaskStatusAsync(tgDownloadSettings, StorageResetAutoDownloadAsync,
                         isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
                     break;
@@ -76,15 +76,9 @@ internal partial class TgMenuHelper
 
     private async Task StorageResetAutoDownloadAsync(TgDownloadSettingsViewModel _)
     {
-        if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageResetAutoDownload)) return;
+        if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageResetAutoUpdate)) return;
 
-        var chats = (await BusinessLogicManager.StorageManager.SourceRepository.GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
-        chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
-        foreach (var chat in chats)
-        {
-            chat.IsAutoUpdate = false;
-            await BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(chat);
-        }
+        await BusinessLogicManager.StorageManager.SourceRepository.ResetAutoUpdateAsync();
     }
 
     /// <summary> View chats </summary>

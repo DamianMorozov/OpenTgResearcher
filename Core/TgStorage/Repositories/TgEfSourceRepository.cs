@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 namespace TgStorage.Repositories;
 
 /// <summary> Source repository </summary>
@@ -108,11 +110,12 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 		return await EfContext.Sources.AsNoTracking().Where(where).CountAsync();
 	}
 
-	#endregion
+    #endregion
 
-	#region Public and private methods - Delete
+    #region Public and private methods - Delete
 
-	public override async Task<TgEfStorageResult<TgEfSourceEntity>> DeleteAllAsync()
+    /// <inheritdoc />
+    public override async Task<TgEfStorageResult<TgEfSourceEntity>> DeleteAllAsync()
 	{
 		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
 		if (storageResult.IsExists)
@@ -125,5 +128,13 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 		return new(storageResult.IsExists ? TgEnumEntityState.IsDeleted : TgEnumEntityState.NotDeleted);
 	}
 
-	#endregion
+    /// <inheritdoc />
+    public async Task ResetAutoUpdateAsync()
+    {
+        var chats = (await GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
+        chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
+        await SaveListAsync(chats);
+    }
+
+    #endregion
 }

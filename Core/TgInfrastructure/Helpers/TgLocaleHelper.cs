@@ -106,7 +106,7 @@ public sealed class TgLocaleHelper : ObservableObject
     public string MenuStorageDbIsNotFound(string fileName) => $"Storage was not found: {fileName}!";
     public string MenuStorageDbIsZeroSize(string fileName) => $"Storage is zero size: {fileName}!";
     public string MenuStorageDeleteExistsInfo(string fileName) => $"Remove the file manually: {fileName}";
-    public string MenuStorageResetAutoDownload => "Reset auto update field for all chats";
+    public string MenuStorageResetAutoUpdate => "Reset auto update field for all chats";
     public string MenuStorageUpgradeUid(string fileName) => $"Update the UID field in the storage: {fileName}!";
     public string ProxiesUserPassword => "Password";
     public string ProxiesUserSecret => "Secret";

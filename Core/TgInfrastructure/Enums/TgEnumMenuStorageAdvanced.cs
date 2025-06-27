@@ -6,7 +6,7 @@ namespace TgInfrastructure.Enums;
 public enum TgEnumMenuStorageAdvanced
 {
 	Return,
-    ResetAutoDownload,
+    ResetAutoUpdate,
     ViewChats,
     ViewContacts,
     ViewFilters,

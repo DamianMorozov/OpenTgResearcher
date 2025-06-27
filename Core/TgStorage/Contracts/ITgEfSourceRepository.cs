@@ -5,5 +5,6 @@ namespace TgStorage.Contracts;
 
 public interface ITgEfSourceRepository : ITgEfRepository<TgEfSourceEntity, TgEfSourceDto>, IDisposable
 {
-    //
+    /// <summary> Reset auto update field </summary>
+    public Task ResetAutoUpdateAsync();
 }

@@ -443,6 +443,12 @@
   <data name="ActionStorageCreateBackupFailed" xml:space="preserve">
     <value>Резервное копирование прошло с ошибкой</value>
   </data>
+  <data name="ActionStorageResetAutoUpdateSuccess" xml:space="preserve">
+    <value>Поле автоматического обновления было успешно сброшено</value>
+  </data>
+  <data name="ActionStorageResetAutoUpdateFailed" xml:space="preserve">
+    <value>Сбой при сбросе поля автоматического обновления с ошибкой</value>
+  </data>
   <data name="ActionStorageShrink.Text" xml:space="preserve">
     <value>Сжать хранилище</value>
   </data>

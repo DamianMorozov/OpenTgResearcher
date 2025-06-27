@@ -384,6 +384,12 @@
   <data name="ActionStorageCreateBackupFailed" xml:space="preserve">
     <value>Backup failed with an error</value>
   </data>
+  <data name="ActionStorageResetAutoUpdateSuccess" xml:space="preserve">
+    <value>Reset auto update field was successful</value>
+  </data>
+  <data name="ActionStorageResetAutoUpdateFailed" xml:space="preserve">
+    <value>Reset auto update field failed with an error</value>
+  </data>
   <data name="ActionStorageShrink.Text" xml:space="preserve">
     <value>Shrink storage</value>
   </data>

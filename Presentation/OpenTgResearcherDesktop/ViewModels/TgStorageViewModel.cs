@@ -1,10 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using CommunityToolkit.WinUI.UI.Controls.TextToolbarButtons;
-
-using System.Threading.Tasks;
-
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -32,6 +28,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     public IRelayCommand StorageShrinkCommand { get; }
     public IRelayCommand StorageClear { get; }
     public IRelayCommand StorageAdvancedSettingCommand { get; }
+    public IRelayCommand StorageResetAutoUpdateCommand { get; }
     public IRelayCommand StorageClearingCommand { get; }
     public IRelayCommand StorageChatsCommand { get; }
     public IRelayCommand StorageFiltersCommand { get; }
@@ -46,6 +43,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
         StorageShrinkCommand = new AsyncRelayCommand(StorageShrinkAsync);
         StorageClear = new AsyncRelayCommand(StorageClearAsync);
         StorageAdvancedSettingCommand = new AsyncRelayCommand(StorageAdvancedSettingsAsync);
+        StorageResetAutoUpdateCommand = new AsyncRelayCommand(StorageResetAutoUpdateAsync);
         StorageClearingCommand = new AsyncRelayCommand(StorageClearingAsync);
         StorageChatsCommand = new AsyncRelayCommand(StorageChatsAsync);
         StorageFiltersCommand = new AsyncRelayCommand(StorageFiltersAsync);
@@ -186,6 +184,32 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
             IsStorageSetupShow = false;
             IsStorageAdvancedSettingShow = true;
             IsStorageClearingShow = false;
+        }
+    }
+
+    /// <summary> Clear storage </summary>
+    private async Task StorageResetAutoUpdateAsync() =>
+        await ContentDialogAsync(StorageResetAutoUpdateCoreAsync, TgResourceExtensions.AskActionStorageResetAutoUpdate());
+
+    /// <summary> Reset auto update field </summary>
+    private async Task StorageResetAutoUpdateCoreAsync()
+    {
+        try
+        {
+            StorageLog = string.Empty;
+            await App.BusinessLogicManager.StorageManager.SourceRepository.ResetAutoUpdateAsync();
+            StorageLog = TgResourceExtensions.ActionStorageResetAutoUpdateSuccess();
+        }
+        catch (Exception ex)
+        {
+            StorageLog = TgResourceExtensions.ActionStorageResetAutoUpdateSuccess();
+            StorageLog += Environment.NewLine + ex.Message;
+            if (ex.InnerException is not null)
+                StorageLog += Environment.NewLine + ex.InnerException.Message;
+        }
+        finally
+        {
+            await Task.Delay(250);
         }
     }
 

@@ -47,7 +47,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <!--  Storage setup  -->
                     <Button
@@ -80,20 +79,20 @@
                         </StackPanel>
                     </Button>
                     <!--  Storage clearing  -->
-                    <Button
+                    <!--<Button
                         Grid.Column="2"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Command="{x:Bind ViewModel.StorageClearingCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <!--<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />-->
+                            --><!--<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />--><!--
                             <TextBlock
                                 x:Uid="ActionStorageClearing"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </Button>
+                    </Button>-->
                 </Grid>
             </Expander>
         </ContentControl>
@@ -332,9 +331,38 @@
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="True"
                     Visibility="{x:Bind ViewModel.IsStorageAdvancedSettingShow, Mode=OneWay}">
-                    <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
-                        <Grid Margin="0,0,10,0" />
-                    </ScrollView>
+                    <Grid Margin="0,-10,0,-10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <!--  Reset auto update field  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.StorageResetAutoUpdateCommand}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <TextBlock
+                                    x:Uid="ActionStorageResetAutoUpdate"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Storage log  -->
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.ColumnSpan="3"
+                            Margin="0,10,0,0"
+                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                            Text="{x:Bind ViewModel.StorageLog, Mode=OneWay}"
+                            TextWrapping="WrapWholeWords" />
+                    </Grid>
                 </Expander>
                 <!--  Storage clearing  -->
                 <Expander
@@ -345,9 +373,7 @@
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="True"
                     Visibility="{x:Bind ViewModel.IsStorageClearingShow, Mode=OneWay}">
-                    <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
-                        <Grid Margin="0,0,10,0" />
-                    </ScrollView>
+                    <Grid Margin="0,0,10,0" />
                 </Expander>
             </Grid>
         </ContentControl>

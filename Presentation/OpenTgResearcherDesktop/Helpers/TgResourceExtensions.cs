@@ -18,10 +18,12 @@ public static class TgResourceExtensions
 	public static string ActionStorageCreateBackupFailed() => "ActionStorageCreateBackupFailed".GetLocalized();
 	public static string ActionStorageCreateBackupFile() => "ActionStorageCreateBackupFile".GetLocalized();
 	public static string ActionStorageCreateBackupSuccess() => "ActionStorageCreateBackupSuccess".GetLocalized();
+	public static string ActionStorageResetAutoUpdateFailed() => "ActionStorageResetAutoUpdateFailed".GetLocalized();
+	public static string ActionStorageResetAutoUpdateSuccess() => "ActionStorageResetAutoUpdateSuccess".GetLocalized();
 	public static string AskActionStorageBackup() => "AskActionStorageBackup".GetLocalized();
+	public static string AskActionStorageClear() => "AskActionStorageClear".GetLocalized();
 	public static string AskActionStorageResetAutoUpdate() => "AskActionStorageResetAutoUpdate".GetLocalized();
 	public static string AskActionStorageShrink() => "AskActionStorageShrink".GetLocalized();
-	public static string AskActionStorageClear() => "AskActionStorageClear".GetLocalized();
 	public static string AskAddRecord() => "AskAddRecord".GetLocalized();
 	public static string AskClientConnect() => "AskClientConnect".GetLocalized();
 	public static string AskClientDisconnect() => "AskClientDisconnect".GetLocalized();

@@ -131,9 +131,9 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     /// <inheritdoc />
     public async Task ResetAutoUpdateAsync()
     {
-        var chats = (await GetListAsync(TgEnumTableTopRecords.All, 0)).Items;
-        chats = [.. chats.Where(sourceSetting => sourceSetting.IsAutoUpdate)];
-        await SaveListAsync(chats);
+        await EfContext.Sources
+            .Where(source => source.IsAutoUpdate)
+            .ExecuteUpdateAsync(source => source.SetProperty(s => s.IsAutoUpdate, false));
     }
 
     #endregion

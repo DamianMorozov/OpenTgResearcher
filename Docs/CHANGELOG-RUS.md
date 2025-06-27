@@ -4,10 +4,11 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.530] - 2025-06-24
+## [0.6.540] - 2025-06-27
 ### Добавлено
 - Добавлена страница хранилища в OpenTgResearcherDesktop
 - Добавлена страница настройки хранилища в OpenTgResearcherDesktop
+- Добавлена страница расширенных настроек хранилища в OpenTgResearcherDesktop
 
 ## [0.6.500] - 2025-06-21
 ### Изменено

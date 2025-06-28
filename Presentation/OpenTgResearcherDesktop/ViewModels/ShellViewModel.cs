@@ -81,9 +81,9 @@ public partial class ShellViewModel : ObservableRecipient
 		if (_eventArgs is null) return;
 		await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
-            // Trying to find an open page with TgConnectViewModel
+            // Trying to find an open page with ViewModel
             var frame = NavigationService.Frame;
-            if (frame?.Content is TgConnectPage page)
+            if (frame?.Content is TgClientConnectionPage page)
             {
                 await page.ViewModel.OnNavigatedToAsync(_eventArgs);
                 if (!page.ViewModel.IsClientConnected)
@@ -94,7 +94,7 @@ public partial class ShellViewModel : ObservableRecipient
             }
 
             // If not found - get through DI
-            var vm = App.GetService<TgConnectViewModel>();
+            var vm = App.GetService<TgClientConnectionViewModel>();
             await vm.OnNavigatedToAsync(_eventArgs);
             if (!vm.IsClientConnected)
             {
@@ -108,9 +108,9 @@ public partial class ShellViewModel : ObservableRecipient
 		if (_eventArgs is null) return;
 		await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
-            // Trying to find an open page with TgConnectViewModel
+            // Trying to find an open page with ViewModel
             var frame = NavigationService.Frame;
-            if (frame?.Content is TgConnectPage page)
+            if (frame?.Content is TgClientConnectionPage page)
             {
                 await page.ViewModel.OnNavigatedToAsync(_eventArgs);
                 if (page.ViewModel.IsClientConnected)
@@ -121,7 +121,7 @@ public partial class ShellViewModel : ObservableRecipient
             }
 
             // If not found - get through DI
-            var vm = App.GetService<TgConnectViewModel>();
+            var vm = App.GetService<TgClientConnectionViewModel>();
             await vm.OnNavigatedToAsync(_eventArgs);
             if (vm.IsClientConnected)
             {

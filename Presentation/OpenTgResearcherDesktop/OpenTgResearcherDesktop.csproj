@@ -69,7 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\TgConnectPage.xaml">
+    <Page Update="Views\TgClientConnectionPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgChatDetailsPage.xaml">

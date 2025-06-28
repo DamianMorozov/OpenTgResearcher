@@ -1,5 +1,5 @@
 ﻿<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgConnectPage"
+    x:Class="OpenTgResearcherDesktop.Views.TgClientConnectionPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
@@ -10,7 +10,7 @@
     xmlns:proxies="using:TgStorage.Domain.Proxies"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgConnectViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgClientConnectionViewModel}"
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>

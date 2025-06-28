@@ -99,8 +99,8 @@ public partial class App : Application
 				services.AddTransient<TgChatDetailsViewModel>();
 				services.AddTransient<TgChatsPage>();
 				services.AddTransient<TgChatsViewModel>();
-				services.AddTransient<TgConnectPage>();
-				services.AddTransient<TgConnectViewModel>();
+				services.AddTransient<TgClientConnectionPage>();
+				services.AddTransient<TgClientConnectionViewModel>();
 				services.AddTransient<TgContactDetailsPage>();
 				services.AddTransient<TgContactDetailsViewModel>();
 				services.AddTransient<TgContactsPage>();

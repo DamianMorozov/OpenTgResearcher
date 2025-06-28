@@ -3,15 +3,15 @@
 
 namespace OpenTgResearcherDesktop.Views;
 
-public sealed partial class TgConnectPage
+public sealed partial class TgClientConnectionPage
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgConnectViewModel ViewModel { get; }
+	public override TgClientConnectionViewModel ViewModel { get; }
 
-	public TgConnectPage()
+	public TgClientConnectionPage()
 	{
-		ViewModel = App.GetService<TgConnectViewModel>();
+		ViewModel = App.GetService<TgClientConnectionViewModel>();
 		InitializeComponent();
 		Loaded += PageLoaded;
 	}

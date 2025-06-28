@@ -113,12 +113,18 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Connection  -->
-                <NavigationViewItem x:Uid="Shell_Connect" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgConnectViewModel">
+                <!--  Client connection  -->
+                <NavigationViewItem x:Uid="Shell_Connect" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--  Bot connection  -->
+                <!--<NavigationViewItem x:Uid="Shell_Connect" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>-->
                 <!--  Filters  -->
                 <NavigationViewItem x:Uid="Shell_Filters" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgFiltersViewModel">
                     <NavigationViewItem.Icon>

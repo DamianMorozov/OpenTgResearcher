@@ -132,8 +132,11 @@
   <data name="Shell_Dashboard.Content" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="Shell_Connect.Content" xml:space="preserve">
-    <value>Подключение</value>
+  <data name="Shell_BotConnection.Content" xml:space="preserve">
+    <value>Подключение бота</value>
+  </data>
+  <data name="Shell_ClientConnection.Content" xml:space="preserve">
+    <value>Подключение клиента</value>
   </data>
   <data name="Shell_Contacts.Content" xml:space="preserve">
     <value>Контакты</value>

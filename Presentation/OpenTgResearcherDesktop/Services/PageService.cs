@@ -13,6 +13,7 @@ public sealed class PageService : IPageService
 		Configure<ContentGridViewModel, ContentGridPage>();
 		Configure<DataGridViewModel, DataGridPage>();
 		Configure<ListDetailsViewModel, ListDetailsPage>();
+		Configure<TgBotConnectionViewModel, TgBotConnectionPage>();
 		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();
 		Configure<TgChatsViewModel, TgChatsPage>();
 		Configure<TgClientConnectionViewModel, TgClientConnectionPage>();

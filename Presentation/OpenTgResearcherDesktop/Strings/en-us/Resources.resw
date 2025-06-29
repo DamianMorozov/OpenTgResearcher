@@ -73,8 +73,11 @@
   <data name="Shell_Dashboard.Content" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="Shell_Connect.Content" xml:space="preserve">
-    <value>Connection</value>
+  <data name="Shell_BotConnection.Content" xml:space="preserve">
+    <value>Bot connection</value>
+  </data>
+  <data name="Shell_ClientConnection.Content" xml:space="preserve">
+    <value>Client connection</value>
   </data>
   <data name="Shell_Contacts.Content" xml:space="preserve">
     <value>Contacts</value>

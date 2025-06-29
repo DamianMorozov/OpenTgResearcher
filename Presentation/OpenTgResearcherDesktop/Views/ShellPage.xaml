@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:OpenTgResearcherDesktop.Behaviors"
+    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -11,6 +12,12 @@
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     x:Name="ShellPageRoot"
     Loaded="OnLoaded">
+
+    <Page.Resources>
+        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
+    </Page.Resources>
 
     <Grid>
         <Grid
@@ -114,13 +121,16 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Client connection  -->
-                <NavigationViewItem x:Uid="Shell_Connect" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel">
+                <NavigationViewItem x:Uid="Shell_ClientConnection" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Bot connection  -->
-                <!--<NavigationViewItem x:Uid="Shell_Connect" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel">
+                <!--<NavigationViewItem
+                    x:Uid="Shell_BotConnection"
+                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgBotConnectionViewModel"
+                    Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
                     </NavigationViewItem.Icon>

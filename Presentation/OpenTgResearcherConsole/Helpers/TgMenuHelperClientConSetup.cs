@@ -52,7 +52,7 @@ internal partial class TgMenuHelper
             switch (menu)
             {
                 case TgEnumMenuClientConSetup.UseClient:
-                    await UseClientAsync(isSilent: false);
+                    await SetUseClientAsync(isSilent: false);
                     break;
                 case TgEnumMenuClientConSetup.ClearClientConnectionData:
                     await ClearClientConnectionDataAsync(tgDownloadSettings);
@@ -76,10 +76,11 @@ internal partial class TgMenuHelper
         } while (menu is not TgEnumMenuClientConSetup.Return);
     }
 
-    public async Task UseClientAsync(bool isSilent)
+    /// <summary> Set UseClient property </summary>
+    public async Task<bool> SetUseClientAsync(bool isSilent)
     {
         var useClient = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient);
-        await BusinessLogicManager.StorageManager.AppRepository.SetUseClientAsync(useClient);
+        return await BusinessLogicManager.StorageManager.AppRepository.SetUseClientAsync(useClient);
     }
 
     public async Task ClearClientConnectionDataAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -163,12 +164,10 @@ internal partial class TgMenuHelper
         try
         {
             // Check connect
-            _ = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+            var isClientConnect = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
             // Switch flag
-            var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (!appDto.UseClient)
-                await UseClientAsync(isSilent);
+            var isUseClient = await SetUseClientAsync(isSilent: true);
 
             if (!isSilent)
             {
@@ -178,6 +177,7 @@ internal partial class TgMenuHelper
                 TgLog.WriteLine("  TG client connect ...");
             }
 
+            var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
             var proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(x => x.Uid == appDto.ProxyUid);
             await BusinessLogicManager.ConnectClient.ConnectClientConsoleAsync(ConfigClientConsole, proxyDto);
             

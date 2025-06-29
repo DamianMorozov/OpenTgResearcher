@@ -132,8 +132,8 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     public async Task ResetAutoUpdateAsync()
     {
         await EfContext.Sources
-            .Where(source => source.IsAutoUpdate)
-            .ExecuteUpdateAsync(source => source.SetProperty(s => s.IsAutoUpdate, false));
+            .Where(x => x.IsAutoUpdate)
+            .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsAutoUpdate, false));
     }
 
     #endregion

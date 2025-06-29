@@ -9,8 +9,10 @@ public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity, TgEfAppDto>
     public Task<Guid> GetCurrentAppUidAsync();
     public TgEfStorageResult<TgEfAppEntity> GetCurrentApp(bool isReadOnly = true);
     public Task<TgEfAppDto> GetCurrentDtoAsync();
-
-    public Task SetUseBotAsync(bool useBot);
-    public Task SetBotTokenKeyAsync(string botTokenKey);
-    public Task SetUseClientAsync(bool useClient);
+    /// <summary> Set use bot </summary>
+    public Task<bool> SetUseBotAsync(bool useBot);
+    /// <summary> Set bot token </summary>
+    public Task<bool> SetBotTokenKeyAsync(string botTokenKey);
+    /// <summary> Set use client </summary>
+    public Task<bool> SetUseClientAsync(bool useClient);
 }

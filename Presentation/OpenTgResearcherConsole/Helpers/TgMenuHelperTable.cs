@@ -433,16 +433,17 @@ internal partial class TgMenuHelper
                 // Proxy is found
                 else
                 {
+                    var proxyEntity = (await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item;
                     table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
                     table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
+                        GetMarkup(proxyEntity.Type.ToString()));
                     table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
+                        GetMarkup(proxyEntity.HostName));
                     table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
-                    if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
+                        GetMarkup(proxyEntity.Port.ToString()));
+                    if (Equals(proxyEntity.Type, TgEnumProxyType.MtProto))
                         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
-                            GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+                            GetMarkup(proxyEntity.Secret));
                 }
             }
 

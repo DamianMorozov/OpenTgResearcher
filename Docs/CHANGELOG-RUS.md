@@ -4,7 +4,9 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.540] - 2025-06-27
+## [0.6.550] - 2025-06-29
+### Исправлено
+- Исправлена настрйока клиента и бота в OpenTgResearcherConsole
 ### Добавлено
 - Добавлена страница хранилища в OpenTgResearcherDesktop
 - Добавлена страница настройки хранилища в OpenTgResearcherDesktop

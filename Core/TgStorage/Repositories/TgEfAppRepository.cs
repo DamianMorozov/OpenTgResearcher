@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using System.Net.Sockets;
+
 namespace TgStorage.Repositories;
 
 /// <summary> App repository </summary>
@@ -138,46 +140,49 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
 	public async Task<Guid> GetCurrentAppUidAsync() => (await GetCurrentAppAsync()).Item.Uid;
 
-    public async Task SetUseBotAsync(bool useBot)
+    /// <inheritdoc />
+    public async Task<bool> SetUseBotAsync(bool useBot)
     {
-        var appStorage = await GetCurrentAppAsync();
-        if (appStorage.IsExists)
-        {
-            appStorage.Item.SetUseBot(useBot);
-            await SaveAsync(appStorage.Item);
-        }
-        else
-        {
-            throw new InvalidOperationException("Current app not found!");
-        }
+        var result = await EfContext.Apps
+            .ExecuteUpdateAsync(x => x.SetProperty(a => a.UseBot, useBot));
+        if (result > 0)
+            return true;
+
+        // Create app entity
+        var app = new TgEfAppEntity { UseBot = useBot };
+        EfContext.Apps.Add(app);
+        result = await EfContext.SaveChangesAsync();
+        return result > 0;
     }
 
-    public async Task SetBotTokenKeyAsync(string botTokenKey)
+    /// <inheritdoc />
+    public async Task<bool> SetBotTokenKeyAsync(string botTokenKey)
     {
-        var appStorage = await GetCurrentAppAsync();
-        if (appStorage.IsExists)
-        {
-            appStorage.Item.BotTokenKey = botTokenKey;
-            await SaveAsync(appStorage.Item);
-        }
-        else
-        {
-            throw new InvalidOperationException("Current app not found!");
-        }
+        var result = await EfContext.Apps
+            .ExecuteUpdateAsync(x => x.SetProperty(a => a.BotTokenKey, botTokenKey));
+        if (result > 0)
+            return true;
+
+        // Create app entity
+        var app = new TgEfAppEntity { BotTokenKey = botTokenKey };
+        EfContext.Apps.Add(app);
+        result = await EfContext.SaveChangesAsync();
+        return result > 0;
     }
 
-    public async Task SetUseClientAsync(bool useClient)
+    /// <inheritdoc />
+    public async Task<bool> SetUseClientAsync(bool useClient)
     {
-        var appStorage = await GetCurrentAppAsync();
-        if (appStorage.IsExists)
-        {
-            appStorage.Item.SetUseClient(useClient);
-            await SaveAsync(appStorage.Item);
-        }
-        else
-        {
-            throw new InvalidOperationException("Current app not found!");
-        }
+        var result = await EfContext.Apps
+            .ExecuteUpdateAsync(x => x.SetProperty(a => a.UseClient, useClient));
+        if (result > 0)
+            return true;
+
+        // Create app entity
+        var app = new TgEfAppEntity { UseClient = useClient };
+        EfContext.Apps.Add(app);
+        result = await EfContext.SaveChangesAsync();
+        return result > 0;
     }
 
     #endregion

@@ -55,39 +55,31 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
         TgAppSettings.StorageVersion = $"v{version.Version}";
     }
 
-    public bool AskQuestionTrueFalseReturnPositive(string title, bool isTrueFirst = false)
-    {
-        var prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
+    public static bool AskQuestionTrueFalseReturnPositive(string title, bool isTrueFirst = false) =>
+        AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}?")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(isTrueFirst
                 ? new() { TgLocale.MenuIsTrue, TgLocale.MenuIsFalse }
-                : new List<string> { TgLocale.MenuIsFalse, TgLocale.MenuIsTrue }));
-        return prompt.Equals(TgLocale.MenuIsTrue);
-    }
+                : new List<string> { TgLocale.MenuIsFalse, TgLocale.MenuIsTrue }))
+            .Equals(TgLocale.MenuIsTrue);
 
-    public bool AskQuestionTrueFalseReturnNegative(string question, bool isTrueFirst = false) =>
+    public static bool AskQuestionTrueFalseReturnNegative(string question, bool isTrueFirst = false) =>
         !AskQuestionTrueFalseReturnPositive(question, isTrueFirst);
 
-    public bool AskQuestionYesNoReturnPositive(string title, bool isYesFirst = false)
-    {
-        var prompt = AnsiConsole.Prompt(new SelectionPrompt<string>()
+    public static bool AskQuestionYesNoReturnPositive(string title, bool isYesFirst = false) =>
+        AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {title}?")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(isYesFirst
-                ? new() { TgLocale.MenuYes, TgLocale.MenuNo }
-                : new List<string> { TgLocale.MenuNo, TgLocale.MenuYes }));
-        return prompt.Equals(TgLocale.MenuYes);
-    }
+                ? [TgLocale.MenuYes, TgLocale.MenuNo]
+                : new List<string> { TgLocale.MenuNo, TgLocale.MenuYes }))
+            .Equals(TgLocale.MenuYes);
 
-    public bool AskQuestionYesNoReturnNegative(string question, bool isYesFirst = false) =>
+    public static bool AskQuestionYesNoReturnNegative(string question, bool isYesFirst = false) =>
         !AskQuestionYesNoReturnPositive(question, isYesFirst);
 
     /// <summary> Get DTO from IEnumerable </summary>
-    /// <typeparam name="TEfEntity"></typeparam>
-    /// <typeparam name="TDto"></typeparam>
-    /// <param name="title"></param>
-    /// <param name="dtos"></param>
     public async Task<TDto> GetDtoFromEnumerableAsync<TEfEntity, TDto>(string title, IEnumerable<TDto> dtos, 
         ITgEfRepository<TEfEntity, TDto> repository)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new()

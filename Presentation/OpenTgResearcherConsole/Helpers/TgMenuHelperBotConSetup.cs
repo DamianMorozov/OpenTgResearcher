@@ -58,7 +58,7 @@ internal partial class TgMenuHelper
                     await WebSiteOpenAsync(TgConstants.LinkTelegramBot);
                     break;
                 case TgEnumMenuBotConSetup.UseBot:
-                    await UseBotAsync(tgDownloadSettings, isSilent: false);
+                    await SetUseBotAsync(tgDownloadSettings, isSilent: false);
                     break;
                 case TgEnumMenuBotConSetup.SetBotToken:
                     await SetBotTokenAsync(tgDownloadSettings);
@@ -75,10 +75,10 @@ internal partial class TgMenuHelper
         } while (menu is not TgEnumMenuBotConSetup.Return);
     }
 
-    public async Task UseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    public async Task<bool> SetUseBotAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
         var useBot = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuBotUseBot);
-        await BusinessLogicManager.StorageManager.AppRepository.SetUseBotAsync(useBot);
+        return await BusinessLogicManager.StorageManager.AppRepository.SetUseBotAsync(useBot);
     }
 
     public async Task SetBotTokenAsync(TgDownloadSettingsViewModel tgDownloadSettings)
@@ -95,12 +95,11 @@ internal partial class TgMenuHelper
         try
         {
             // Check connect
-            _ = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
+            var isClientConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
 
             // Switch flag
-            var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (!appDto.UseBot)
-                await UseBotAsync(tgDownloadSettings, isSilent);
+            var isUseBot = await SetUseBotAsync(tgDownloadSettings, isSilent);
+            await SetBotTokenAsync(tgDownloadSettings);
 
             if (!isSilent)
             {

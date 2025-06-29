@@ -6,7 +6,7 @@
 - 
 ## Quick Start
 - Application -> Specify the path to the EF storage file
-- Connection -> Connect the client to TG server
+- Client connection -> Client setup -> Connect client to TG server
 
 ## Default settings for OpenTgResearcherConsole
 - Delete the file `OpenTgResearcher.xml`

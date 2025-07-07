@@ -115,7 +115,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		return Enum.TryParse(themeName, out TgEnumTheme cacheTheme) ? cacheTheme : TgEnumTheme.Default;
 	}
 
-	private async Task<string> LoadAppStorageAsync() => await ReadSettingAsync<string>(SettingsKeyAppStorage) ?? TgGlobalTools.FileEfStorage;
+	private async Task<string> LoadAppStorageAsync() => await ReadSettingAsync<string>(SettingsKeyAppStorage) ?? TgGlobalTools.AppStorage;
 
 	private async Task<string> LoadAppSessionAsync() => await ReadSettingAsync<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
 
@@ -178,6 +178,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
 	private async Task SaveWindowYAsync(int value) => await SaveSettingAsync(SettingsKeyWindowY, value);
 
+    /// <summary> Set application folder path </summary>
 	private void SetAppFolder()
 	{
 		try
@@ -242,7 +243,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		SetAppFolder();
 		if (Directory.Exists(AppFolder))
 		{
-			AppStorage = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgGlobalTools.FileEfStorage) : string.Empty;
+			AppStorage = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgGlobalTools.AppStorage) : string.Empty;
 			IsExistsAppStorage = File.Exists(AppStorage);
 			AppSession = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgFileUtils.FileTgSession) : string.Empty;
 			IsExistsAppSession = File.Exists(AppSession);
@@ -262,9 +263,13 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		AppTheme = AppThemes.First(x => x == appTheme);
 		var appLanguage = await LoadAppLanguageAsync();
 		AppLanguage = AppLanguages.First(x => x == appLanguage);
-		AppStorage = await LoadAppStorageAsync();
+		
+        AppStorage = await LoadAppStorageAsync();
 		IsExistsAppStorage = File.Exists(AppStorage);
-		AppSession = await LoadAppSessionAsync();
+        // Register TgEfContext as the DbContext for EF Core
+        TgGlobalTools.AppStorage = App.GetService<ITgSettingsService>().AppStorage;
+
+        AppSession = await LoadAppSessionAsync();
 		IsExistsAppSession = File.Exists(AppSession);
 	}
 

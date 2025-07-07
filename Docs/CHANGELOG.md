@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.560] - 2025-07-07
+## [0.6.570] - 2025-07-07
 ### Fixed
-- 
+- Fixed storage update in OpenTgResearcherDesktop
 ### Changed
 - Updated NuGet packages
 - Increased the limit on the number of download streams for a user with a free license

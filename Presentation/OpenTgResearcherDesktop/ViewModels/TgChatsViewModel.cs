@@ -32,15 +32,14 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		SearchCommand = new AsyncRelayCommand(SearchAsync);
-		// Updates
-		//BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-		//BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		//BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-		//BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
-		//BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
-		//BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
-		//BusinessLogicManager.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
-	}
+        // Updates
+        //BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
+        //BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
+        //BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
+        //BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
+        //BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
+        //BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
+    }
 
 	#endregion
 

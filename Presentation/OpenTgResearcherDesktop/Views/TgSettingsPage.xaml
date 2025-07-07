@@ -177,7 +177,7 @@
                         Tag="{x:Bind ViewModel.SettingsService.AppFolder, Mode=OneWay}">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
-                    <!--  Storage  -->
+                    <!--  EF storage  -->
                     <TextBlock
                         x:Uid="SettingStorage"
                         Grid.Row="1"

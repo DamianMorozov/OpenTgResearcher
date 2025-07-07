@@ -54,8 +54,8 @@ public partial class App : Application
         containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
         containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
         // Registering services
-        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
         containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
+        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
         containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();

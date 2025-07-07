@@ -88,7 +88,6 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
         //App.BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupGetClientDesktopConfig(ConfigClientDesktop);
     }
 
     #endregion

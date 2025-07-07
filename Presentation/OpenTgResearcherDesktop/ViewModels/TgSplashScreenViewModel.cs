@@ -131,9 +131,6 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     {
         try
         {
-            // Register TgEfContext as the DbContext for EF Core
-            TgGlobalTools.AppStorage = App.GetService<ITgSettingsService>().AppStorage;
-
             await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
             TgLogUtils.WriteLog(TgResourceExtensions.GetLicenseLoading());
             IsLoadLicense = true;

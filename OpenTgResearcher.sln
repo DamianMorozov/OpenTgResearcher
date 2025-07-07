@@ -76,11 +76,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests.MSTest", "Tests\OpenTgResearcherDesktop.Tests.MSTest\OpenTgResearcherDesktop.Tests.MSTest.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{D1DB4BDE-5AA3-4A23-BE99-85AAADF0624A}"
-	ProjectSection(SolutionItems) = preProject
-		Settings\TgDownloader.xml = Settings\TgDownloader.xml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBusinessLogic", "Core\TgBusinessLogic\TgBusinessLogic.csproj", "{BC89CBA1-E87C-4256-90C1-7C472DA48361}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgInfrastructureTest", "Tests\TgInfrastructureTest\TgInfrastructureTest.csproj", "{5CE42557-44CE-4318-B5C3-9202F432C9EC}"

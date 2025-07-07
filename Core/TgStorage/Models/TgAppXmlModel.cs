@@ -38,7 +38,7 @@ public sealed class TgAppXmlModel : ObservableObject, ITgDebug
     public void Default()
     {
 	    XmlFileSession = TgFileUtils.FileTgSession;
-	    XmlEfStorage = TgGlobalTools.FileEfStorage;
+	    XmlEfStorage = TgGlobalTools.AppStorage;
 	}
 
 	/// <summary> Set path for file session </summary>
@@ -57,11 +57,11 @@ public sealed class TgAppXmlModel : ObservableObject, ITgDebug
 	public void SetEfStoragePath(string path)
 	{
 		XmlEfStorage = !File.Exists(path) && Directory.Exists(path)
-			? Path.Combine(path, TgGlobalTools.FileEfStorage)
+			? Path.Combine(path, TgGlobalTools.AppStorage)
 			: path;
 		if (!IsExistsEfStorage)
 		{
-			XmlEfStorage = Path.Combine(Directory.GetCurrentDirectory(), TgGlobalTools.FileEfStorage);
+			XmlEfStorage = Path.Combine(Directory.GetCurrentDirectory(), TgGlobalTools.AppStorage);
 		}
 	}
 

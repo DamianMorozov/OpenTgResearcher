@@ -16,15 +16,13 @@ public static class TgGlobalTools
 
     /// <summary> Autofac Container </summary>
 	public static Autofac.IContainer Container = null!;
-    /// <summary> Limit count of download threads by free license </summary>
-    public static int DownloadCountThreadsLimitFree => 10;
-    /// <summary> Limit count of download threads by test license </summary>
-    public static int DownloadCountThreadsLimitPaid => 100;
+    /// <summary> Limit count of download threads </summary>
+    public static int DownloadCountThreadsLimit => 100;
     /// <summary> Limit batch of saving messages </summary>
     public static int BatchMessagesLimit => 100;
-    public static string AppStorage = string.Empty;
-
-    public const string FileEfStorage = "TgStorage.db";
+    /// <summary> EF storage </summary>
+    public static string AppStorage = "TgStorage.db";
+        
     public const string HttpHeaderContentTypeJson = "application/json";
     public const string RouteChangeLog = "ChangeLog";
     public const string RouteController = "[controller]";

@@ -22,13 +22,12 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 
     public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; }
 
-	public Task LoginUserAsync(bool isProxyUpdate);
+    public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync();
     public Task DisconnectBotAsync();
     public Task ConnectClientConsoleAsync(Func<string, string?>? config, TgEfProxyDto proxyDto);
     public Task ConnectBotConsoleAsync();
 	public Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config);
-    public Task ConnectSessionAsync(TgEfProxyDto proxyDto);
 
 	public Task<Dictionary<long, TL.ChatBase>> CollectAllChatsAsync();
 
@@ -43,7 +42,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetupUpdateStateException(Func<string, int, string, string, Task> updateStateExceptionAsync);
 	public void SetupUpdateStateExceptionShort(Func<string, Task> updateStateExceptionShortAsync);
     public void SetupAfterClientConnect(Func<Task> afterClientConnectAsync);
-	public void SetupGetClientDesktopConfig(Func<string, string?> getClientDesktopConfig);
 	public void SetupUpdateException(Func<Exception, Task> updateExceptionAsync);
 	public void SetupUpdateStateItemSource(Func<long, Task> updateStateItemSourceAsync);
 

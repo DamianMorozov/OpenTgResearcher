@@ -55,7 +55,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public Func<Exception, Task> UpdateExceptionAsync { get; private set; } = default!;
     public Func<string, Task> UpdateStateExceptionShortAsync { get; private set; } = default!;
     public Func<Task> AfterClientConnectAsync { get; private set; } = default!;
-    public Func<string, string?> ConfigClientDesktop { get; private set; } = default!;
     public Func<long, Task> UpdateStateItemSourceAsync { get; private set; } = default!;
     public Func<long, int, string, long, long, long, bool, int, Task> UpdateStateFileAsync { get; private set; } = default!;
     public Func<string, Task> UpdateStateMessageAsync { get; private set; } = default!;
@@ -136,7 +135,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         UpdateStateContactAsync = (_, _, _, _) => Task.CompletedTask;
         UpdateStateStoryAsync = (_, _, _, _) => Task.CompletedTask;
         AfterClientConnectAsync = () => Task.CompletedTask;
-        ConfigClientDesktop = _ => string.Empty;
         UpdateStateItemSourceAsync = _ => Task.CompletedTask;
         UpdateStateFileAsync = (_, _, _, _, _, _, _, _) => Task.CompletedTask;
         UpdateStateMessageAsync = _ => Task.CompletedTask;
@@ -194,9 +192,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public void SetupAfterClientConnect(Func<Task> afterClientConnectAsync) =>
         AfterClientConnectAsync = afterClientConnectAsync;
-
-    public void SetupGetClientDesktopConfig(Func<string, string?> getClientDesktopConfig) =>
-        ConfigClientDesktop = getClientDesktopConfig;
 
     public void SetupUpdateTitle(Func<string, Task> updateTitleAsync) =>
         UpdateTitleAsync = updateTitleAsync;
@@ -304,17 +299,17 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #endif
     }
 
-    public async Task ConnectSessionAsync(TgEfProxyDto proxyDto)
-    {
-        if (IsReady)
-            return;
-        await DisconnectClientAsync();
-        Client = new(ConfigClientDesktop);
-        await ConnectThroughProxyAsync(proxyDto, true);
-        Client.OnUpdates += OnUpdatesClientAsync;
-        Client.OnOther += OnClientOtherAsync;
-        await LoginUserAsync(isProxyUpdate: true);
-    }
+    //public async Task ConnectSessionAsync(TgEfProxyDto proxyDto)
+    //{
+    //    if (IsReady)
+    //        return;
+    //    await DisconnectClientAsync();
+    //    Client = new(ConfigClientDesktop);
+    //    await ConnectThroughProxyAsync(proxyDto, true);
+    //    Client.OnUpdates += OnUpdatesClientAsync;
+    //    Client.OnOther += OnClientOtherAsync;
+    //    await LoginUserAsync(isProxyUpdate: true);
+    //}
 
     public async Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config)
     {

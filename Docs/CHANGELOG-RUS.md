@@ -4,9 +4,15 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.560] - 2025-07-07
+### Исправлено
+- 
+### Изменено
+- Обновлены NuGet пакеты
+
 ## [0.6.550] - 2025-06-29
 ### Исправлено
-- Исправлена настрйока клиента и бота в OpenTgResearcherConsole
+- Исправлена настройка клиента и бота в OpenTgResearcherConsole
 ### Добавлено
 - Добавлена страница хранилища в OpenTgResearcherDesktop
 - Добавлена страница настройки хранилища в OpenTgResearcherDesktop

@@ -9,7 +9,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="WTelegramBot" Version="9.0.1" />
-    <PackageReference Include="WTelegramClient" Version="4.3.4" />
+    <PackageReference Include="WTelegramClient" Version="4.3.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgInfrastructure\TgInfrastructure.csproj" />

@@ -244,19 +244,8 @@ internal partial class TgMenuHelper
             tgDownloadSettings.CountThreads = 1;
         else
         {
-            switch (BusinessLogicManager.LicenseService.CurrentLicense.LicenseType)
-            {
-                case TgEnumLicenseType.Test:
-                case TgEnumLicenseType.Paid:
-                case TgEnumLicenseType.Premium:
-                    if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitPaid)
-                        tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimitPaid;
-                    break;
-                default:
-                    if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimitFree)
-                        tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimitFree;
-                    break;
-            }
+            if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimit)
+                tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimit;
         }
     }
 

@@ -219,17 +219,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 			IsPageLoad = true;
 			if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
 			{
-				switch (App.BusinessLogicManager.LicenseService.CurrentLicense.LicenseType)
-				{
-					case TgEnumLicenseType.Test:
-					case TgEnumLicenseType.Paid:
-					case TgEnumLicenseType.Premium:
-						DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimitPaid;
-						break;
-					default:
-						DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimitFree;
-						break;
-				}
+				DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimit;
 			}
 			await Task.Delay(250);
 			await task();

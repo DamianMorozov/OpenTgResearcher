@@ -56,6 +56,11 @@ public static class Program
         // Loading Velopack Installer
         LoadingVelopackInstaller(tgLog);
 
+        // Loading logging
+        tgLog.WriteLine("  Loading logging ...");
+        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherConsole, isWebApp: false, isRewrite: true);
+        tgLog.WriteLine("  Loading logging   v");
+
         // Loading storage
         tgLog.WriteLine("  Loading storage ...");
         await Task.Delay(250);
@@ -76,12 +81,6 @@ public static class Program
         //    await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
         //    tgLog.WriteLine("  Loading connection   v");
         //}
-
-        // Loading logging
-        tgLog.WriteLine("  Loading logging ...");
-        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherConsole, isWebApp: false, isRewrite: true);
-        tgLog.WriteLine("  Loading logging   v");
-
 
         // Check multiple instances
         if (tgMenu.CheckMultipleInstances())

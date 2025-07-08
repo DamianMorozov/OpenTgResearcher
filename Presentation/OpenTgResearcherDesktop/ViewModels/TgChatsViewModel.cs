@@ -1,9 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -17,7 +14,6 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	public partial ObservableCollection<TgEfSourceLiteDto> FilteredDtos { get; set; } = [];
 	[ObservableProperty]
 	public partial string FilterText { get; set; } = string.Empty;
-	public IRelayCommand LoadDataStorageCommand { get; }
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand DefaultSortCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
@@ -27,7 +23,6 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		: base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
 	{
 		// Commands
-		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);

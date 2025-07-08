@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated NuGet packages
 - Increased the limit on the number of download streams for a user with a free license
+- Optimized loading of chats page in OpenTgResearcherDesktop
 ### Added
 - Added copying of messages on the chat page in OpenTgResearcherDesktop
 

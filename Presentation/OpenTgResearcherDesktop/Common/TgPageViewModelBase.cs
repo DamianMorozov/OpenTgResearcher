@@ -237,16 +237,13 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
 			if (sender is not Button button) return;
-			var address = button.Tag.ToString();
-			if (string.IsNullOrEmpty(address)) return;
-			if (!string.IsNullOrEmpty(address))
-			{
-				var dataPackage = new DataPackage();
-				dataPackage.SetText(address);
-				Clipboard.SetContent(dataPackage);
-				if (!isSilent)
-					await ContentDialogAsync(TgResourceExtensions.GetClipboard(), address);
-			}
+			var text = button.Tag.ToString();
+			if (string.IsNullOrEmpty(text)) return;
+			var dataPackage = new DataPackage();
+			dataPackage.SetText(text);
+			Clipboard.SetContent(dataPackage);
+			if (!isSilent)
+				await ContentDialogAsync(TgResourceExtensions.GetClipboard(), text);
 		});
 	}
 

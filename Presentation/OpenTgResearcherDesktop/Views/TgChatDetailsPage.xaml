@@ -35,17 +35,29 @@
                     HorizontalAlignment="Stretch"
                     Background="{ThemeResource SystemColorHighlightColor}"
                     CornerRadius="10">
+                    <!--  DateTime changed  -->
                     <TextBlock
                         Padding="0,10,0,0"
                         HorizontalAlignment="Left"
                         Foreground="{ThemeResource SystemColorHighlightTextColor}"
                         Style="{ThemeResource CaptionTextBlockStyle}"
-                        Text="{x:Bind DtChangedString}" />
+                        Text="{x:Bind DtChangedString, Mode=OneWay}" />
+                    <!--  Copy  -->
+                    <Button
+                        Grid.Column="1"
+                        Margin="10,10,10,10"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Message, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  Message  -->
                     <TextBlock
                         Padding="0,0,0,10"
                         Foreground="{ThemeResource SystemColorHighlightTextColor}"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{x:Bind Message}" />
+                        Text="{x:Bind Message, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -252,6 +264,7 @@
                                 IsEnabled="False"
                                 IsReadOnly="True"
                                 Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
@@ -316,6 +329,7 @@
                                 IsEnabled="False"
                                 IsReadOnly="True"
                                 Text="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
@@ -350,6 +364,7 @@
                                 IsEnabled="False"
                                 IsReadOnly="True"
                                 Text="{x:Bind ViewModel.Dto.Title, Mode=OneWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
@@ -384,6 +399,7 @@
                                 IsEnabled="False"
                                 IsReadOnly="True"
                                 Text="{x:Bind ViewModel.Dto.About, Mode=OneWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
@@ -416,13 +432,14 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Text="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
                                 Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
-                                Tag="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}">
+                                Tag="{x:Bind ViewModel.Dto.Directory, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
                             </Button>
                         </Grid>
@@ -447,6 +464,7 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Text="{x:Bind ViewModel.Dto.FirstId, Mode=TwoWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
@@ -478,13 +496,14 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 Text="{x:Bind ViewModel.Dto.Count, Mode=OneWay}" />
+                            <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
                                 Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
-                                Tag="{x:Bind ViewModel.Dto.Count, Mode=TwoWay}">
+                                Tag="{x:Bind ViewModel.Dto.Count, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
                             </Button>
                         </Grid>

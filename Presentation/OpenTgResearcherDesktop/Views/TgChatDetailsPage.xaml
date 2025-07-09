@@ -215,6 +215,15 @@
                             Grid.Row="0"
                             Margin="2,7,7,2"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="0"
                             Grid.Column="1"
@@ -222,7 +231,8 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             IsEnabled="False"
-                            Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  DtChanged  -->
                         <TextBlock
                             x:Uid="FieldDtChanged"
@@ -257,13 +267,22 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+                            <!--  Sensitive data  -->
+                            <TextBlock
+                                Grid.Column="0"
+                                Margin="2,10,2,2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalTextAlignment="Left"
+                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             <TextBox
                                 Grid.Column="0"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 IsEnabled="False"
                                 IsReadOnly="True"
-                                Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
@@ -427,11 +446,20 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+                            <!--  Sensitive data  -->
+                            <TextBlock
+                                Grid.Column="0"
+                                Margin="2,10,2,2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalTextAlignment="Left"
+                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             <TextBox
                                 Grid.Column="0"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
-                                Text="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}" />
+                                Text="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <!--  Copy  -->
                             <Button
                                 Grid.Column="1"
@@ -699,6 +727,15 @@
                             Grid.Column="2"
                             Margin="12,7,7,2"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="5"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="5"
                             Grid.Column="3"
@@ -707,7 +744,8 @@
                             HorizontalContentAlignment="Left"
                             IsEnabled="False"
                             IsReadOnly="True"
-                            Text="{x:Bind ViewModel.StateSourceDirectory, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.StateSourceDirectory, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </ScrollView>
             </Expander>

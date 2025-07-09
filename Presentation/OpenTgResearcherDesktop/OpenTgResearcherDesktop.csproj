@@ -168,12 +168,10 @@
     <None Include="..\..\Docs\ISSUE.md" Link="Docs\ISSUE.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Docs\RELEASES-RUS.md" Link="Docs\RELEASES-RUS.md" />
     <None Include="..\..\Docs\RELEASES.md" Link="Docs\RELEASES.md" />
     <None Include="..\..\Docs\SCREENSHOTS.md" Link="Docs\SCREENSHOTS.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Docs\OpenTgResearcherDesktop-Installing.ps1" Link="Docs\OpenTgResearcherDesktop-Installing.ps1" />
     <None Include="..\..\LICENSE.md" Link="Docs\LICENSE.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

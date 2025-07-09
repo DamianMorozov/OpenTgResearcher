@@ -301,10 +301,10 @@
     <value>"https://my.telegram.org/auth?to=apps"</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Content" xml:space="preserve">
-    <value>opentgresearcher.ru</value>
+    <value>opentgresearcher.online</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
-    <value>"https://opentgresearcher.ru"</value>
+    <value>"https://opentgresearcher.online"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Релизы</value>
@@ -316,7 +316,7 @@
     <value>Статистика скачиваний</value>
   </data>
   <data name="SettingsPage_DownloadStatistics.Tag" xml:space="preserve">
-    <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/Docs/RELEASES-RUS.md"</value>
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/Docs/RELEASES.md"</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Content" xml:space="preserve">
     <value>Докер образ</value>

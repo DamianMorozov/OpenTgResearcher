@@ -9,8 +9,6 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 
 	public string MenuWebSiteGlobalUrl => "https://opentgresearcher.online/";
 	public string MenuWebSiteGlobalLicenseBuyUrl => "https://opentgresearcher.online/licenses/";
-	public string MenuWebSiteRussianUrl => "https://opentgresearcher.ru/";
-	public string MenuWebSiteRussianLicenseBuyUrl => "https://opentgresearcher.ru/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = default!;
     
     private ITgStorageManager StorageManager { get; } = default!;

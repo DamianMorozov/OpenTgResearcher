@@ -5,12 +5,13 @@
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
+
+## Global documentation
 ### <div align="center"><b><a href="README.md">Readme</a> | <a href="Docs/CHANGELOG.md">Changelog</a> | <a href="Docs/RELEASES.md">Statistics</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Screenshots</a> | <a href="Docs/GUIDES.md">Guides</a> | <a href="LICENSE.md">License</a></b></div>
 
-## Официальный сайт
-### <div align="center"><b><a href="https://opentgresearcher.ru">opentgresearcher.ru</a></b></div>
-### <div align="center"><b><a href="README-RUS.md">Прочти меня</a> | <a href="Docs/CHANGELOG-RUS.md">История версий</a> | <a href="Docs/RELEASES-RUS.md">Статистика</a></b></div>
+## Русская документация
+### <div align="center"><b><a href="README-RUS.md">Прочти меня</a> | <a href="Docs/CHANGELOG-RUS.md">История версий</a> | <a href="Docs/RELEASES.md">Статистика</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
 
 ## Скачать
@@ -30,6 +31,9 @@
 ## Требования к установке
 - [Зарегистрируйте Telegram приложение](https://my.telegram.org/apps)
 - Сохраните значения полей секции `App configuration`: `App api_id` / `App api_hash`
+
+## Программа поощрения за обнаружение ошибок
+- [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bugbounty)
 
 ## Заставка OpenTgResearcherDesktop
 <p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>

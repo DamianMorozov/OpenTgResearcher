@@ -72,7 +72,7 @@ internal sealed partial class TgMenuHelper
 
         try
         {
-            var apiUrls = new[] { BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, BusinessLogicManager.LicenseService.MenuWebSiteRussianUrl };
+            var apiUrls = new[] { BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
             var userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();

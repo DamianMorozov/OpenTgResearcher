@@ -126,7 +126,7 @@
                                 Grid.Column="0"
                                 Margin="10,0,10,0"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
-							<!--  Sensitive data  -->
+                            <!--  Sensitive data  -->
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="1"

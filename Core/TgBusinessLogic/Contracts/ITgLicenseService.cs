@@ -7,8 +7,6 @@ public interface ITgLicenseService : IDisposable
 {
 	public string MenuWebSiteGlobalUrl { get; }
 	public string MenuWebSiteGlobalLicenseBuyUrl { get; }
-	public string MenuWebSiteRussianUrl { get; }
-	public string MenuWebSiteRussianLicenseBuyUrl { get; }
 	public TgLicenseDto CurrentLicense { get; }
 
 	public void ActivateDefaultLicense();

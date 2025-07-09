@@ -93,7 +93,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		{
 			LicenseLog = TgResourceExtensions.GetActionCheckLicenseMsg() + Environment.NewLine;
 
-            var apiUrls = new[] { App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, App.BusinessLogicManager.LicenseService.MenuWebSiteRussianUrl };
+            var apiUrls = new[] { App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl };
 			using var httpClient = new HttpClient();
 			httpClient.Timeout = TimeSpan.FromSeconds(10);
             var userId = await App.BusinessLogicManager.ConnectClient.GetUserIdAsync();

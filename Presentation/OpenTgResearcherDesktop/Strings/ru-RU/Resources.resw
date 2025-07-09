@@ -893,6 +893,18 @@
   <data name="TextBlockLoad.Text" xml:space="preserve">
     <value>Загрузить</value>
   </data>
+  <data name="TextBlockLoaded" xml:space="preserve">
+    <value>Загружено</value>
+  </data>
+  <data name="TextBlockFiltered" xml:space="preserve">
+    <value>Отфильтровано</value>
+  </data>
+  <data name="TextBlockTotalAmount" xml:space="preserve">
+    <value>Общее количество</value>
+  </data>
+  <data name="TextBlockFrom.Text" xml:space="preserve">
+    <value>из</value>
+  </data>
   <data name="TextBlockClear.Text" xml:space="preserve">
     <value>Очистить</value>
   </data>
@@ -934,6 +946,9 @@
   </data>
   <data name="TextBlockLoadingLicense.Text" xml:space="preserve">
     <value>Загрузка лицензии</value>
+  </data>
+  <data name="TextBlockLoadMore.Text" xml:space="preserve">
+    <value>Загрузить ещё</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Буфер обмена</value>
@@ -1002,7 +1017,10 @@
     <value>Бот</value>
   </data>
   <data name="FieldUseBot.Text" xml:space="preserve">
-    <value>Бот</value>
+    <value>Использовать бот</value>
+  </data>
+  <data name="FieldUseClient.Text" xml:space="preserve">
+    <value>Использовать клиент</value>
   </data>
   <data name="FieldIsAutoUpdate.Text" xml:space="preserve">
     <value>Авто-обновление</value>
@@ -1121,11 +1139,11 @@
   <data name="Storage" xml:space="preserve">
     <value>Хранилище</value>
   </data>
-  <data name="ToggleSwitchShowSecretFields.OffContent" xml:space="preserve">
-    <value>Скрыть конфиденциальные поля</value>
+  <data name="ToggleSwitchShowSensitiveData.OffContent" xml:space="preserve">
+    <value>Скрыть конфиденциальные данные</value>
   </data>
-  <data name="ToggleSwitchShowSecretFields.OnContent" xml:space="preserve">
-    <value>Отображать конфиденциальные поля</value>
+  <data name="ToggleSwitchShowSensitiveData.OnContent" xml:space="preserve">
+    <value>Отображать конфиденциальные данные</value>
   </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Обновить страницу?</value>

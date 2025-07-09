@@ -237,8 +237,8 @@
                                     Text="{Binding}" />
                                 <!--  Show secret fields  -->
                                 <ToggleSwitch
-                                    x:Name="ToggleSwitchShowSecretFields"
-                                    x:Uid="ToggleSwitchShowSecretFields"
+                                    x:Name="ToggleSwitchShowSensitiveData"
+                                    x:Uid="ToggleSwitchShowSensitiveData"
                                     Grid.Column="2"
                                     Margin="10,5,15,-5"
                                     HorizontalAlignment="Right"

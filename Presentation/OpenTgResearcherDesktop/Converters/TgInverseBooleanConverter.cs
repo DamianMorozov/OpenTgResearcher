@@ -14,12 +14,6 @@ public sealed partial class TgInverseBooleanConverter : IValueConverter
 		return DependencyProperty.UnsetValue;
 	}
 
-	public object ConvertBack(object value, Type targetType, object parameter, string language)
-	{
-		if (value is bool boolValue)
-		{
-			return !boolValue;
-		}
-		return DependencyProperty.UnsetValue;
-	}
+    public object ConvertBack(object value, Type targetType, object parameter, string language) => 
+        Convert(value, targetType, parameter, language);
 }

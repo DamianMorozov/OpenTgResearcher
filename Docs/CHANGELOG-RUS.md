@@ -4,7 +4,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.580] - 2025-07-08
+## [0.6.600] - 2025-07-09
 ### Исправлено
 - Исправлено обновление хранилища в OpenTgResearcherDesktop
 ### Изменено
@@ -13,6 +13,7 @@
 - Оптимизирована загрузка страницы чатов в OpenTgResearcherDesktop
 ### Добавлено
 - Добавлено копирование сообщений на странице чата в OpenTgResearcherDesktop
+- Добавлена ленивая загрузка и статистика данных на страницу чатов в OpenTgResearcherDesktop
 
 ## [0.6.550] - 2025-06-29
 ### Исправлено

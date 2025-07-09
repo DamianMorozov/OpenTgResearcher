@@ -45,12 +45,28 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Update from Telegram  -->
+                    <!--  Lazy load  -->
                     <Button
                         Grid.Column="0"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.LazyLoadCommand}"
+                        IsEnabled="{x:Bind ViewModel.HasMoreItems, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xE712;" />
+                            <TextBlock
+                                x:Uid="TextBlockLoadMore"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Update from Telegram  -->
+                    <Button
+                        Grid.Column="1"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -98,7 +114,7 @@
 						</Button>-->
                     <!--  Clear viewing  -->
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="2"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -111,37 +127,14 @@
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <!--  Default sort  -->
-                    <!--<Button
-							Grid.Column="5"
-							Margin="0,0,5,0"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							Command="{x:Bind ViewModel.DefaultSortCommand}">
-							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-								<FontIcon Margin="0,0,10,0" Glyph="&#xe8cb;" />
-								<TextBlock
-									x:Uid="TextBlockDefaultSort"
-									HorizontalAlignment="Center"
-									VerticalAlignment="Center" />
-							</StackPanel>
-						</Button>-->
-                    <!--  Count  -->
-                    <TextBlock
-                        x:Uid="TextBlockCount"
-                        Grid.Column="2"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center"
-                        TextAlignment="Right" />
+                    <!--  Loaded data statistics  -->
                     <TextBlock
                         Grid.Column="3"
-                        Margin="0,0,5,0"
+                        Margin="5,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        Text="{x:Bind ViewModel.FilteredDtos.Count, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}"
                         TextAlignment="Center" />
-
                 </Grid>
             </Expander>
         </ContentControl>
@@ -265,12 +258,12 @@
                                 <!--  User name  -->
                                 <controls:DataGridTextColumn
                                     x:Uid="TemplateColumnUserName"
-                                    Width="Auto"
+                                    Width="2*"
                                     Binding="{Binding UserName, Mode=OneWay}" />
                                 <!--  Title  -->
                                 <controls:DataGridTextColumn
                                     x:Uid="TemplateColumnTitle"
-                                    Width="Auto"
+                                    Width="3*"
                                     Binding="{Binding Title, Mode=OneWay}" />
                                 <!--  First ID  -->
                                 <controls:DataGridTemplateColumn

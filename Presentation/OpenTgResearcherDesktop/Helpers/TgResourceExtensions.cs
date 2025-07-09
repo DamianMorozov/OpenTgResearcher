@@ -98,6 +98,9 @@ public static class TgResourceExtensions
 	public static string GetTableNameProxies() => "TableNameProxies".GetLocalized();
 	public static string GetTableNameStories() => "TableNameStories".GetLocalized();
 	public static string GetTableNameVersions() => "TableNameVersions".GetLocalized();
+	public static string GetTextBlockFiltered() => "TextBlockFiltered".GetLocalized();
+	public static string GetTextBlockLoaded() => "TextBlockLoaded".GetLocalized();
+	public static string GetTextBlockTotalAmount() => "TextBlockTotalAmount".GetLocalized();
 	public static string GetTgClientLoading() => "TgClientLoading".GetLocalized();
 	public static string GetYesButton() => "YesButton".GetLocalized();
 

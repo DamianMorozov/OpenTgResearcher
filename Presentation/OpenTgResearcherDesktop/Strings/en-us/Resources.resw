@@ -831,6 +831,18 @@
   <data name="TextBlockLoad.Text" xml:space="preserve">
     <value>Load</value>
   </data>
+  <data name="TextBlockLoaded" xml:space="preserve">
+    <value>Loaded</value>
+  </data>
+  <data name="TextBlockFiltered" xml:space="preserve">
+    <value>Filtered</value>
+  </data>
+  <data name="TextBlockTotalAmount" xml:space="preserve">
+    <value>Total amount</value>
+  </data>
+  <data name="TextBlockFrom.Text" xml:space="preserve">
+    <value>from</value>
+  </data>
   <data name="TextBlockClear.Text" xml:space="preserve">
     <value>Clear</value>
   </data>
@@ -872,6 +884,9 @@
   </data>
   <data name="TextBlockLoadingLicense.Text" xml:space="preserve">
     <value>Loading license</value>
+  </data>
+  <data name="TextBlockLoadMore.Text" xml:space="preserve">
+    <value>Load more</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>
@@ -940,7 +955,10 @@
     <value>Bot</value>
   </data>
   <data name="FieldUseBot.Text" xml:space="preserve">
-    <value>Bot</value>
+    <value>Use bot</value>
+  </data>
+  <data name="FieldUseClient.Text" xml:space="preserve">
+    <value>Use client</value>
   </data>
   <data name="FieldIsAutoUpdate.Text" xml:space="preserve">
     <value>Auto-update</value>
@@ -1059,11 +1077,11 @@
   <data name="Storage" xml:space="preserve">
     <value>Storage</value>
   </data>
-  <data name="ToggleSwitchShowSecretFields.OffContent" xml:space="preserve">
-    <value>Hide sensitive fields</value>
+  <data name="ToggleSwitchShowSensitiveData.OffContent" xml:space="preserve">
+    <value>Hide sensitive data</value>
   </data>
-  <data name="ToggleSwitchShowSecretFields.OnContent" xml:space="preserve">
-    <value>Display sensitive fields</value>
+  <data name="ToggleSwitchShowSensitiveData.OnContent" xml:space="preserve">
+    <value>Display sensitive data</value>
   </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Update the page?</value>

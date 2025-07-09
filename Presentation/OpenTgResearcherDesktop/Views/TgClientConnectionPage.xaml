@@ -219,7 +219,7 @@
                         <TextBlock
                             x:Uid="ClientApiHash"
                             Grid.Row="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -235,7 +235,7 @@
                             x:Uid="ClientApiId"
                             Grid.Row="0"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -250,7 +250,7 @@
                         <TextBlock
                             x:Uid="ClientPhoneNumber"
                             Grid.Row="1"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -266,7 +266,7 @@
                             x:Uid="ClientProxy"
                             Grid.Row="1"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <ComboBox
@@ -288,7 +288,7 @@
                         <TextBlock
                             x:Uid="ClientFirstName"
                             Grid.Row="2"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -303,7 +303,7 @@
                             x:Uid="FieldLastName"
                             Grid.Row="2"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -313,11 +313,28 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.LastName, Mode=TwoWay}" />
-                        <!--  UseBot  -->
+                        <!--  UseClient  -->
                         <TextBlock
+                            x:Uid="FieldUseClient"
+                            Grid.Row="3"
+                            Margin="2,7,7,2"
+                            FontWeight="Bold"
+                            TextAlignment="Left"
+                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                        <ToggleSwitch
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            IsOn="{x:Bind ViewModel.UseClient, Mode=TwoWay}"
+                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                        <!--  UseBot  -->
+                        <!--<TextBlock
                             x:Uid="FieldUseBot"
                             Grid.Row="3"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left"
                             Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
@@ -330,12 +347,14 @@
                             HorizontalContentAlignment="Left"
                             IsOn="{x:Bind ViewModel.UseBot, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                        -->
                         <!--  BotToken  -->
+                        <!--
                         <TextBlock
                             x:Uid="FieldBotToken"
                             Grid.Row="3"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left"
                             Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
@@ -347,7 +366,7 @@
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />-->
                     </Grid>
                 </ScrollView>
             </Expander>
@@ -388,7 +407,7 @@
                             x:Uid="ClientLoginCode"
                             Grid.Row="0"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <PasswordBox
@@ -403,7 +422,7 @@
                             x:Uid="ClientPassword"
                             Grid.Row="0"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <PasswordBox
@@ -418,7 +437,7 @@
                             x:Uid="ClientConnectionDt"
                             Grid.Row="1"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -445,7 +464,7 @@
                             <TextBlock
                                 x:Uid="ClientConnectionState"
                                 Grid.Column="0"
-                                Margin="12,7,2,2"
+                                Margin="12,7,7,2"
                                 FontWeight="Bold"
                                 TextAlignment="Left" />
                             <ToggleSwitch
@@ -472,7 +491,7 @@
                             x:Uid="ClientConnectionException"
                             Grid.Row="2"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -491,7 +510,7 @@
                             x:Uid="ClientUserName"
                             Grid.Row="3"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -510,7 +529,7 @@
                             x:Uid="ClientMtProxyUrl"
                             Grid.Row="3"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -529,7 +548,7 @@
                             x:Uid="ClientMaxAutoReconnects"
                             Grid.Row="4"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -548,7 +567,7 @@
                             x:Uid="ClientMaxCodePwdAttempts"
                             Grid.Row="4"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -567,7 +586,7 @@
                             x:Uid="ClientFloodRetryThreshold"
                             Grid.Row="5"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -586,7 +605,7 @@
                             x:Uid="ClientPingInterval"
                             Grid.Row="5"
                             Grid.Column="2"
-                            Margin="12,7,2,2"
+                            Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -605,7 +624,7 @@
                             x:Uid="ClientDataRequest"
                             Grid.Row="6"
                             Grid.Column="0"
-                            Margin="2,7,2,2"
+                            Margin="2,7,7,2"
                             VerticalAlignment="Center"
                             FontWeight="Bold"
                             TextAlignment="Left" />

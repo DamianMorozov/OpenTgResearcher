@@ -27,9 +27,11 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	[ObservableProperty]
 	public partial bool IsCreatingSubdirectories { get; set; }
 	[ObservableProperty]
+	public partial bool IsUserAccess { get; set; }
+	[ObservableProperty]
 	public partial bool IsFileNamingByMessage { get; set; }
 	[ObservableProperty]
-	public partial bool IsUserAccess { get; set; }
+	public partial bool IsRestrictSavingContent { get; set; }
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	[ObservableProperty]
@@ -94,8 +96,9 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = item.Count;
 		IsAutoUpdate = item.IsAutoUpdate;
 		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
-		IsFileNamingByMessage = item.IsFileNamingByMessage;
 		IsUserAccess = item.IsUserAccess;
+		IsFileNamingByMessage = item.IsFileNamingByMessage;
+        IsRestrictSavingContent = item.IsRestrictSavingContent;
 		ProgressPercent = item.Count == 0 ? 0 : item.FirstId * 100 / item.Count;
 		ProgressPercentString = ProgressPercent == 0 ? "{0:00.00} %" : $"{ProgressPercent:#00.00} %";
 		return this;
@@ -114,8 +117,9 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = dto.Count,
 		IsAutoUpdate = dto.IsAutoUpdate,
 		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
-		IsFileNamingByMessage = dto.IsFileNamingByMessage,
 		IsUserAccess = dto.IsUserAccess,
+		IsFileNamingByMessage = dto.IsFileNamingByMessage,
+        IsRestrictSavingContent = dto.IsRestrictSavingContent,
 	};
 
 	public TgEfSourceEntity GetNewEntity() => new()
@@ -129,8 +133,9 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		Count = Count,
 		IsAutoUpdate = IsAutoUpdate,
 		IsCreatingSubdirectories = IsCreatingSubdirectories,
-		IsFileNamingByMessage = IsFileNamingByMessage,
 		IsUserAccess = IsUserAccess,
+		IsFileNamingByMessage = IsFileNamingByMessage,
+        IsRestrictSavingContent = IsRestrictSavingContent,
 	};
 
 	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;

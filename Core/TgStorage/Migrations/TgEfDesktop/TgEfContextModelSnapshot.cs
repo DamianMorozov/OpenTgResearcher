@@ -9,7 +9,7 @@ namespace TgStorage.Migrations.TgEfDesktop
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
 
             modelBuilder.Entity("TgStorage.Domain.Apps.TgEfAppEntity", b =>
                 {
@@ -580,6 +580,11 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .HasColumnType("BIT")
                         .HasColumnName("IS_FILE_NAMING_BY_MESSAGE");
 
+                    b.Property<bool>("IsRestrictSavingContent")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_RESTRICT_SAVING_CONTENT");
+
                     b.Property<bool>("IsUserAccess")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
@@ -619,6 +624,8 @@ namespace TgStorage.Migrations.TgEfDesktop
                     b.HasIndex("IsCreatingSubdirectories");
 
                     b.HasIndex("IsFileNamingByMessage");
+
+                    b.HasIndex("IsRestrictSavingContent");
 
                     b.HasIndex("IsUserAccess");
 

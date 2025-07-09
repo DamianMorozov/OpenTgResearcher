@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfConsole
 {
     [DbContext(typeof(TgEfConsoleContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250709100022_UpdatedSources_AddedIsRestrictSavingContent")]
+    partial class UpdatedSources_AddedIsRestrictSavingContent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");

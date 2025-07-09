@@ -17,8 +17,9 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(FirstId))]
 [Index(nameof(IsAutoUpdate))]
 [Index(nameof(IsCreatingSubdirectories))]
-[Index(nameof(IsFileNamingByMessage))]
 [Index(nameof(IsUserAccess))]
+[Index(nameof(IsFileNamingByMessage))]
+[Index(nameof(IsRestrictSavingContent))]
 public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 {
 	#region Public and private fields, properties, constructor
@@ -108,6 +109,11 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
     [Column(TgEfConstants.ColumnIsFileNamingByMessage, TypeName = "BIT")]
     public bool IsFileNamingByMessage { get; set; }
 
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsRestrictSavingContent, TypeName = "BIT")]
+    public bool IsRestrictSavingContent { get; set; }
+
     public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
 
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
@@ -142,8 +148,9 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 	    FirstId = this.GetDefaultPropertyInt(nameof(FirstId));
 	    IsAutoUpdate = this.GetDefaultPropertyBool(nameof(IsAutoUpdate));
 	    IsCreatingSubdirectories = this.GetDefaultPropertyBool(nameof(IsCreatingSubdirectories));
-		IsFileNamingByMessage = this.GetDefaultPropertyBool(nameof(IsFileNamingByMessage));
 	    IsUserAccess = this.GetDefaultPropertyBool(nameof(IsUserAccess));
+		IsFileNamingByMessage = this.GetDefaultPropertyBool(nameof(IsFileNamingByMessage));
+        IsRestrictSavingContent = this.GetDefaultPropertyBool(nameof(IsRestrictSavingContent));
 	    Documents = new List<TgEfDocumentEntity>();
         Messages = new List<TgEfMessageEntity>();
     }
@@ -165,8 +172,9 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 		Directory = item.Directory;
 		IsAutoUpdate = item.IsAutoUpdate;
 		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
-		IsFileNamingByMessage = item.IsFileNamingByMessage;
 		IsUserAccess = item.IsUserAccess;
+		IsFileNamingByMessage = item.IsFileNamingByMessage;
+        IsRestrictSavingContent = item.IsRestrictSavingContent;
         return this;
 	}
 

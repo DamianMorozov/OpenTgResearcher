@@ -33,8 +33,6 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 	[ObservableProperty]
 	public partial bool IsCreatingSubdirectories { get; set; }
 	[ObservableProperty]
-	public partial bool IsFileNamingByMessage { get; set; }
-	[ObservableProperty]
 	public partial bool IsUserAccess { get; set; }
 	[ObservableProperty]
 	public partial string CurrentFileName { get; set; } = string.Empty;
@@ -46,6 +44,10 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 	public partial long CurrentFileSpeed { get; set; }
 	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
+	[ObservableProperty]
+	public partial bool IsFileNamingByMessage { get; set; }
+	[ObservableProperty]
+	public partial bool IsRestrictSavingContent { get; set; }
 
 	public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";
 
@@ -82,8 +84,9 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Directory = string.Empty;
 		IsAutoUpdate = false;
 		IsCreatingSubdirectories = false;
-		IsFileNamingByMessage = false;
 		IsUserAccess = false;
+		IsFileNamingByMessage = false;
+        IsRestrictSavingContent = false;
 		IsDownload = false;
 		CurrentFileName = string.Empty;
 	}
@@ -137,10 +140,11 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Directory = dto.Directory;
 		IsAutoUpdate = dto.IsAutoUpdate;
 		IsCreatingSubdirectories = dto.IsCreatingSubdirectories;
-		IsFileNamingByMessage = dto.IsFileNamingByMessage;
 		IsUserAccess = dto.IsUserAccess;
 		IsDownload = dto.IsDownload;
 		CurrentFileName = dto.CurrentFileName;
+		IsFileNamingByMessage = dto.IsFileNamingByMessage;
+        IsRestrictSavingContent = dto.IsRestrictSavingContent;
 		return this;
 	}
 
@@ -160,8 +164,9 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Directory = item.Directory ?? string.Empty;
 		IsAutoUpdate = item.IsAutoUpdate;
 		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
-		IsFileNamingByMessage = item.IsFileNamingByMessage;
 		IsUserAccess = item.IsUserAccess;
+		IsFileNamingByMessage = item.IsFileNamingByMessage;
+        IsRestrictSavingContent = item.IsRestrictSavingContent;
 		return this;
 	}
 
@@ -182,8 +187,9 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Directory = dto.Directory,
 		IsAutoUpdate = dto.IsAutoUpdate,
 		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
-		IsFileNamingByMessage = dto.IsFileNamingByMessage,
 		IsUserAccess = dto.IsUserAccess,
+		IsFileNamingByMessage = dto.IsFileNamingByMessage,
+        IsRestrictSavingContent = dto.IsRestrictSavingContent,
 	};
 
 	public TgEfSourceEntity GetNewEntity() => new()
@@ -201,8 +207,9 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		Directory = Directory,
 		IsAutoUpdate = IsAutoUpdate,
 		IsCreatingSubdirectories = IsCreatingSubdirectories,
-		IsFileNamingByMessage = IsFileNamingByMessage,
 		IsUserAccess = IsUserAccess,
+		IsFileNamingByMessage = IsFileNamingByMessage,
+        IsRestrictSavingContent = IsRestrictSavingContent,
 	};
 
 	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;

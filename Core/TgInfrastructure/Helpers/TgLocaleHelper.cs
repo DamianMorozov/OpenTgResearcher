@@ -234,6 +234,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
 	public string MenuDownloadSetIsCreatingSubdirectories => "Enable creating subdirectories";
 	public string MenuDownloadSetIsFileNamingByMessage => "Enable naming media files by message";
+	public string MenuDownloadSetIsRestrictSavingContent => "Restrict saving content";
 	public string MenuDownloadSetIsRewriteFiles => "Enable rewrite exists files";
 	public string MenuDownloadSetIsRewriteMessages => "Enable rewrite exists messages";
 	public string MenuDownloadSetIsSaveMessages => "Enable save messages";
@@ -325,6 +326,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageClearing => "Storage clearing ";
 	public string MenuStorageDbBackup => "Backup storage";
 	public string MenuStorageDbClear => "Clear storage";
+	public string MenuStorageDbShrink => "Shrink storage";
 	public string MenuStorageExitProgram => "Exit the program";
 	public string MenuStorageFilters => "Storage filters";
 	public string MenuStorageFiltersClear => "Clear filters";
@@ -332,7 +334,6 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageSetup => "Storage setup";
 	public string MenuStorageTablesClear => "Clear tables";
 	public string MenuStorageTablesClearFinished => "Clear tables was finished";
-	public string MenuStorageDbShrink => "Shrink storage";
 	public string MenuStorageTablesShrinkFinished => "Shrink storage was finished";
 	public string MenuStorageViewChats => "View chats";
 	public string MenuStorageViewContacts => "View contacts";

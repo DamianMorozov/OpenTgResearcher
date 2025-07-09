@@ -1078,10 +1078,10 @@
     <value>Storage</value>
   </data>
   <data name="ToggleSwitchShowSensitiveData.OffContent" xml:space="preserve">
-    <value>Hide sensitive data</value>
+    <value>Hiding sensitive data</value>
   </data>
   <data name="ToggleSwitchShowSensitiveData.OnContent" xml:space="preserve">
-    <value>Display sensitive data</value>
+    <value>Displaying sensitive data</value>
   </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Update the page?</value>

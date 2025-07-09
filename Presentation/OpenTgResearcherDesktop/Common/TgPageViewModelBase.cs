@@ -57,9 +57,9 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
 	[ObservableProperty]
-	public partial bool IsDisplaySensitiveField { get; set; }
+	public partial bool IsDisplaySensitiveData { get; set; }
 	[ObservableProperty]
-	public partial string SensitiveField { get; set; } = "**********";
+	public partial string SensitiveData { get; set; } = "**********";
 
 	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{

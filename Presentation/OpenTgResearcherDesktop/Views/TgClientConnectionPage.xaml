@@ -16,6 +16,7 @@
     <common:TgPageBase.Resources>
         <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
         <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
     </common:TgPageBase.Resources>
 
@@ -222,6 +223,15 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="0"
                             Grid.Column="1"
@@ -229,7 +239,8 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.ApiHash, Mode=TwoWay}"
-                            TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}" />
+                            TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  API ID  -->
                         <TextBlock
                             x:Uid="ClientApiId"
@@ -238,6 +249,15 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="0"
                             Grid.Column="3"
@@ -245,7 +265,8 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.ApiId, Mode=TwoWay}"
-                            TextChanged="{x:Bind OnApiIdTextChanged, Mode=OneWay}" />
+                            TextChanged="{x:Bind OnApiIdTextChanged, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Phone number  -->
                         <TextBlock
                             x:Uid="ClientPhoneNumber"
@@ -253,6 +274,15 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
@@ -260,7 +290,8 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
-                            TextChanged="{x:Bind OnPhoneTextChanged, Mode=OneWay}" />
+                            TextChanged="{x:Bind OnPhoneTextChanged, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Proxy  -->
                         <TextBlock
                             x:Uid="ClientProxy"
@@ -269,6 +300,15 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <ComboBox
                             Grid.Row="1"
                             Grid.Column="3"
@@ -277,7 +317,8 @@
                             HorizontalContentAlignment="Left"
                             ItemsSource="{x:Bind ViewModel.ProxiesVms, Mode=OneWay}"
                             SelectedIndex="0"
-                            SelectedItem="{x:Bind ViewModel.ProxyVm, Mode=TwoWay}">
+                            SelectedItem="{x:Bind ViewModel.ProxyVm, Mode=TwoWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="proxies:TgEfProxyViewModel">
                                     <TextBlock Text="{x:Bind Dto.PrettyName, Mode=OneWay}" />
@@ -291,13 +332,23 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Last name  -->
                         <TextBlock
                             x:Uid="FieldLastName"
@@ -306,13 +357,23 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="2"
                             Grid.Column="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.LastName, Mode=TwoWay}" />
+                            Text="{x:Bind ViewModel.LastName, Mode=TwoWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  UseClient  -->
                         <TextBlock
                             x:Uid="FieldUseClient"
@@ -328,45 +389,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.UseClient, Mode=TwoWay}"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
-                        <!--  UseBot  -->
-                        <!--<TextBlock
-                            x:Uid="FieldUseBot"
-                            Grid.Row="3"
-                            Margin="2,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
-                        <ToggleSwitch
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.UseBot, Mode=TwoWay}"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
-                        -->
-                        <!--  BotToken  -->
-                        <!--
-                        <TextBlock
-                            x:Uid="FieldBotToken"
-                            Grid.Row="3"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
-                        <TextBox
-                            Grid.Row="3"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
-                            TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />-->
+                            IsOn="{x:Bind ViewModel.UseClient, Mode=TwoWay}" />
                     </Grid>
                 </ScrollView>
             </Expander>
@@ -410,13 +433,23 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <PasswordBox
                             Grid.Row="0"
                             Grid.Column="1"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                            Password="{x:Bind ViewModel.VerificationCode, Mode=TwoWay}" />
+                            Password="{x:Bind ViewModel.VerificationCode, Mode=TwoWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Password  -->
                         <TextBlock
                             x:Uid="ClientPassword"
@@ -425,13 +458,23 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <PasswordBox
                             Grid.Row="0"
                             Grid.Column="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                            Password="{x:Bind ViewModel.Password, Mode=TwoWay}" />
+                            Password="{x:Bind ViewModel.Password, Mode=TwoWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Connection dt  -->
                         <TextBlock
                             x:Uid="ClientConnectionDt"
@@ -440,6 +483,15 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
@@ -450,7 +502,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.ConnectionDt, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Connection state  -->
                         <Grid
                             Grid.Row="1"
@@ -475,6 +528,14 @@
                                 HorizontalContentAlignment="Center"
                                 IsEnabled="False"
                                 IsOn="{x:Bind ViewModel.IsClientConnected, Mode=OneWay}" />
+                            <!--  Sensitive data  -->
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="2,10,2,2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalTextAlignment="Left"
+                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                             <TextBox
                                 Grid.Column="2"
                                 Margin="2"
@@ -484,7 +545,8 @@
                                 IsEnabled="False"
                                 IsReadOnly="True"
                                 Text="{x:Bind ViewModel.ConnectionMsg, Mode=OneWay}"
-                                TextWrapping="Wrap" />
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
                         <!--  Connection exception  -->
                         <TextBlock
@@ -497,6 +559,7 @@
                         <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
+                            Grid.ColumnSpan="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
@@ -513,6 +576,15 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="3"
                             Grid.Column="1"
@@ -523,7 +595,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.UserName, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  MtProxyUrl  -->
                         <TextBlock
                             x:Uid="ClientMtProxyUrl"
@@ -532,6 +605,15 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="3"
                             Grid.Column="3"
@@ -542,7 +624,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.MtProxyUrl, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  MaxAutoReconnects  -->
                         <TextBlock
                             x:Uid="ClientMaxAutoReconnects"
@@ -551,6 +634,15 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="4"
                             Grid.Column="1"
@@ -561,7 +653,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.MaxAutoReconnects, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  MaxCodePwdAttempts  -->
                         <TextBlock
                             x:Uid="ClientMaxCodePwdAttempts"
@@ -570,6 +663,15 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="4"
                             Grid.Column="3"
@@ -580,7 +682,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.MaxCodePwdAttempts, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  FloodRetryThreshold  -->
                         <TextBlock
                             x:Uid="ClientFloodRetryThreshold"
@@ -589,6 +692,15 @@
                             Margin="2,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="5"
+                            Grid.Column="1"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="5"
                             Grid.Column="1"
@@ -599,7 +711,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.FloodRetryThreshold, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  PingInterval  -->
                         <TextBlock
                             x:Uid="ClientPingInterval"
@@ -608,6 +721,15 @@
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="5"
+                            Grid.Column="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="5"
                             Grid.Column="3"
@@ -618,7 +740,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.PingInterval, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <!--  Data request  -->
                         <TextBlock
                             x:Uid="ClientDataRequest"
@@ -628,6 +751,16 @@
                             VerticalAlignment="Center"
                             FontWeight="Bold"
                             TextAlignment="Left" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="3"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="6"
                             Grid.Column="1"
@@ -639,7 +772,8 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.DataRequest, Mode=OneWay}"
-                            TextWrapping="Wrap" />
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </ScrollView>
             </Expander>

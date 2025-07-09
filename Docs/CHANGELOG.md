@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added copying of messages on the chat page in OpenTgResearcherDesktop
 - Added lazy loading and data statistics to the chat page in OpenTgResearcherDesktop
+- Added hiding sensitive data on the client connection page in OpenTgResearcherDesktop
 
 ## [0.6.550] - 2025-06-29
 ### Fixed

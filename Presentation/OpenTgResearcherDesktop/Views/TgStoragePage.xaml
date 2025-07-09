@@ -86,7 +86,9 @@
                         VerticalAlignment="Stretch"
                         Command="{x:Bind ViewModel.StorageClearingCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            --><!--<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />--><!--
+                    -->
+                    <!--<FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />-->
+                    <!--
                             <TextBlock
                                 x:Uid="ActionStorageClearing"
                                 HorizontalAlignment="Center"
@@ -145,13 +147,13 @@
                                             </DataTemplate>
                                         </controls:DataGridTemplateColumn.CellTemplate>
                                     </controls:DataGridTemplateColumn>
-                                    <!--  Sensitive field column  -->
+                                    <!--  Sensitive data  -->
                                     <controls:DataGridTemplateColumn
                                         x:Uid="TemplateColumnRecordsCount"
                                         Width="1*"
                                         CanUserReorder="True"
                                         CanUserSort="True"
-                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -169,7 +171,7 @@
                                         Width="1*"
                                         CanUserReorder="True"
                                         CanUserSort="True"
-                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -264,11 +266,11 @@
                                 HeadersVisibility="Column"
                                 ItemsSource="{x:Bind ViewModel.StorageBackupDtos, Mode=OneWay}">
                                 <controls:DataGrid.Columns>
-                                    <!--  Sensitive field column  -->
+                                    <!--  Sensitive data  -->
                                     <controls:DataGridTemplateColumn
                                         x:Uid="TemplateColumnFileName"
                                         Width="3*"
-                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock
@@ -284,7 +286,7 @@
                                     <controls:DataGridTemplateColumn
                                         x:Uid="TemplateColumnFileName"
                                         Width="3*"
-                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveField, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock

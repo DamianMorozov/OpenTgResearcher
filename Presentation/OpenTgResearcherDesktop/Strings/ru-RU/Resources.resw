@@ -1140,10 +1140,10 @@
     <value>Хранилище</value>
   </data>
   <data name="ToggleSwitchShowSensitiveData.OffContent" xml:space="preserve">
-    <value>Скрыть конфиденциальные данные</value>
+    <value>Скрытие конфиденциальных данных</value>
   </data>
   <data name="ToggleSwitchShowSensitiveData.OnContent" xml:space="preserve">
-    <value>Отображать конфиденциальные данные</value>
+    <value>Отображение конфиденциальных данных</value>
   </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Обновить страницу?</value>

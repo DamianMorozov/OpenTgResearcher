@@ -19,11 +19,13 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 	[ObservableProperty]
 	public partial long Size { get; set; }
 	[ObservableProperty]
-	public partial string Message { get; set; } = string.Empty;
+	public partial string Message { get; set; }
 	[ObservableProperty]
-	public partial TgEnumDirection Direction { get; set; } = TgEnumDirection.Default;
+	public partial TgEnumDirection Direction { get; set; }
+    [ObservableProperty]
+    public partial string Directory { get; set; }
 
-	public TgEfMessageDto() : base()
+    public TgEfMessageDto() : base()
 	{
 		DtCreated = DateTime.MinValue;
 		SourceId = 0;
@@ -31,6 +33,8 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Type = TgEnumMessageType.Message;
 		Size = 0;
 		Message = string.Empty;
+        Direction = TgEnumDirection.Default;
+        Directory = string.Empty;
 	}
 
 	#endregion
@@ -50,6 +54,8 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Type = dto.Type;
 		Size = dto.Size;
 		Message = dto.Message;
+		Direction = dto.Direction;
+        Directory = dto.Directory;
 		return this;
 	}
 
@@ -64,6 +70,7 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Size = item.Size;
 		Message = item.Message;
 		Direction = TgEnumDirection.Default;
+        Directory = string.Empty;
 		return this;
 	}
 
@@ -91,5 +98,63 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Message = Message,
 	};
 
-	#endregion
+    public string MessageText
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Message))
+                return string.Empty;
+            var idx = Message.LastIndexOf('|');
+            if (idx < 0)
+                return Message.Trim();
+            return Message.Substring(0, idx).Trim();
+        }
+    }
+
+    public string FileName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Message))
+                return string.Empty;
+            var idx = Message.LastIndexOf('|');
+            if (idx < 0)
+                return string.Empty;
+            return Message.Substring(idx + 1).Trim();
+        }
+    }
+
+    public string ImageFullPath
+    {
+        get
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Directory)) return string.Empty;
+                if (string.IsNullOrEmpty(FileName)) return string.Empty;
+
+                var fullPath = Path.Combine(Directory, FileName);
+                if (File.Exists(fullPath))
+                    return fullPath;
+                return string.Empty;
+            }
+#if DEBUG
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+                Debug.WriteLine(ex.StackTrace);
+            }
+#else
+        catch (Exception)
+        {
+            //
+        }
+#endif
+            return string.Empty;
+        }
+    }
+
+    public bool IsImageExists => !string.IsNullOrEmpty(ImageFullPath);
+
+    #endregion
 }

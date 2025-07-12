@@ -74,6 +74,8 @@ internal partial class TgMenuHelper
 
     public async Task SetupClientConDownloadAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
+        await ClientConnectAsync(tgDownloadSettings, isSilent: true);
+
         TgEnumMenuClientConDownload menu;
         do
         {

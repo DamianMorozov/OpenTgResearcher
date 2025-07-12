@@ -1016,16 +1016,40 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return result;
     }
 
+    /// <summary> Check access rights for chat </summary>
     public async Task<bool> IsChatBaseAccessAsync(ChatBase chatBase)
     {
+        if (chatBase is null || chatBase.ID is 0)
+            return false;
+
         if (Bot is null)
         {
-            if (Client is null || chatBase.ID is 0)
+            if (Client is null)
                 return false;
             var result = false;
             await TryCatchFuncAsync(async () =>
             {
-                result = await Client.ReadHistory(chatBase);
+                if (chatBase is Chat chatBaseObj)
+                {
+                    var full = await Client.Messages_GetFullChat(chatBaseObj.ID);
+                    if (full is TL.Messages_ChatFull chatFull &&
+                        chatFull.full_chat is TL.ChatFull chatFullObj)
+                    {
+                        if (chatFullObj.flags.HasFlag(TL.User.Flags.has_access_hash))
+                        {
+                            result = true;
+                            return;
+                        }
+                    }
+                }
+                if (chatBase is Channel channelBase)
+                {
+                    if (channelBase.flags.HasFlag(TL.Channel.Flags.has_access_hash))
+                    {
+                        result = true;
+                        return;
+                    }
+                }
             });
             return result;
         }
@@ -1094,6 +1118,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return 0;
     }
 
+    // TODO: use smart method from scan chat
     public async Task<int> GetChannelMessageIdLastAsync(ITgDownloadViewModel? tgDownloadSettings) =>
         await GetChannelMessageIdWithLockAsync(tgDownloadSettings, TgEnumPosition.Last);
 
@@ -1195,6 +1220,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 sourceEntity.IsUserAccess = true;
                 sourceEntity.UserName = chatBase.MainUsername ?? string.Empty;
+                // TODO: use smart method from scan chat
                 sourceEntity.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings);
                 var chatFull = await PrintChatsInfoChatBaseAsync(chatBase, isFull: true, isSilent);
                 sourceEntity.Title = chatBase.Title;
@@ -1202,6 +1228,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     sourceEntity.Id = ReduceChatId(chatBaseFull.ID);
                     sourceEntity.About = chatBaseFull.About;
+                }
+                if (chatBase is TL.Channel channel)
+                {
+                    sourceEntity.IsRestrictSavingContent = channel.flags.HasFlag(TL.Channel.Flags.noforwards);
                 }
             }
             else
@@ -2200,20 +2230,30 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             };
                             await StorageManager.DocumentRepository.SaveAsync(doc);
                         }
+                        // Store message
+                        await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
+                            TgEnumMessageType.Document, threadNumber);
                         break;
                     case MessageMediaPhoto mediaPhoto:
                         if (mediaPhoto is { photo: Photo photo })
                         {
+                            //var fileReferenceBase64 = Convert.ToBase64String(photo.file_reference);
+                            //var fileReferenceHex = BitConverter.ToString(photo.file_reference).Replace("-", "");
                             await Client.DownloadFileAsync(photo, localFileStream, null,
                                 ClientProgressForFile(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
                         }
+                        // Store message
+                        var messageStr = string.Empty;
+                        if (messageBase is TL.Message message)
+                            messageStr = message.message;
+                        await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, 
+                            $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
+                            TgEnumMessageType.Photo, threadNumber);
                         break;
                 }
             }
             localFileStream.Close();
         }
-        // Store message
-        await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName, TgEnumMessageType.Document, threadNumber);
         // Set file date time
         if (File.Exists(mediaInfo.LocalPathWithNumber))
         {

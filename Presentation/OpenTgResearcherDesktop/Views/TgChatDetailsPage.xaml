@@ -19,47 +19,51 @@
         <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:TgEnumToColumnConverter x:Key="EnumToColumnConverter" />
         <converters:TgEnumToColumnSpanConverter x:Key="EnumToColumnSpanConverter" />
+        <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
         <!--  Data template  -->
         <DataTemplate x:Key="MessageViewTemplate" x:DataType="messages:TgEfMessageDto">
-            <Grid Height="Auto" Margin="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel
-                    Grid.Column="{x:Bind Direction, Converter={StaticResource EnumToColumnConverter}}"
-                    Grid.ColumnSpan="{x:Bind Direction, Converter={StaticResource EnumToColumnSpanConverter}}"
-                    Padding="10,0,0,10"
-                    HorizontalAlignment="Stretch"
-                    Background="{ThemeResource SystemColorHighlightColor}"
-                    CornerRadius="10">
+            <StackPanel
+                Grid.Column="{x:Bind Direction, Converter={StaticResource EnumToColumnConverter}}"
+                Grid.ColumnSpan="{x:Bind Direction, Converter={StaticResource EnumToColumnSpanConverter}}"
+                Height="Auto"
+                Margin="4"
+                Padding="10,0,0,10"
+                HorizontalAlignment="Stretch"
+                Background="{ThemeResource SystemColorHighlightColor}"
+                CornerRadius="10">
+                <StackPanel Orientation="Horizontal">
                     <!--  DateTime changed  -->
                     <TextBlock
-                        Padding="0,10,0,0"
+                        Margin="5,10,5,0"
                         HorizontalAlignment="Left"
                         Foreground="{ThemeResource SystemColorHighlightTextColor}"
                         Style="{ThemeResource CaptionTextBlockStyle}"
                         Text="{x:Bind DtChangedString, Mode=OneWay}" />
-                    <!--  Copy  -->
+                    <!--  Copy button  -->
                     <Button
-                        Grid.Column="1"
-                        Margin="10,10,10,10"
+                        Margin="0,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="OnClipboardSilentWriteClick"
+                        Click="OnClipboardWriteClick"
                         CornerRadius="10"
-                        Tag="{x:Bind Message, Mode=OneWay}">
+                        Tag="{x:Bind MessageText, Mode=OneWay}">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
-                    <!--  Message  -->
+                    <!--  Message text  -->
                     <TextBlock
-                        Padding="0,0,0,10"
+                        Margin="5,10,5,0"
                         Foreground="{ThemeResource SystemColorHighlightTextColor}"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{x:Bind Message, Mode=OneWay}" />
+                        Text="{x:Bind MessageText, Mode=OneWay}" />
                 </StackPanel>
-            </Grid>
+                <!--  Image preview  -->
+                <Image
+                    MaxHeight="200"
+                    Margin="0,10,0,10"
+                    Source="{x:Bind ImageFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
+                    Stretch="Uniform"
+                    Tapped="OnImagePreviewClick"
+                    Visibility="{x:Bind IsImageExists, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
         </DataTemplate>
     </common:TgPageBase.Resources>
 
@@ -91,29 +95,12 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Load from storage  -->
-                    <Button
-                        Grid.Column="0"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.LoadDataStorageCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                            <TextBlock
-                                x:Uid="ActionLoadFromStorage"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
                     <!--  Update from Telegram  -->
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="0"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -130,7 +117,7 @@
                     </Button>
                     <!--  Stop downloading  -->
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="0"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -147,7 +134,7 @@
                     </Button>
                     <!--  Clear viewing  -->
                     <Button
-                        Grid.Column="2"
+                        Grid.Column="1"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -164,13 +151,13 @@
                     <!--  Count  -->
                     <TextBlock
                         x:Uid="TextBlockCount"
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         TextAlignment="Right" />
                     <TextBlock
-                        Grid.Column="4"
+                        Grid.Column="3"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
@@ -264,7 +251,7 @@
                             Margin="2"
                             HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <!--  Sensitive data  -->
@@ -294,6 +281,21 @@
                                 <SymbolIcon Symbol="Copy" />
                             </Button>
                         </Grid>
+                        <!--  IsRestrictSavingContent  -->
+                        <TextBlock
+                            x:Uid="FieldIsRestrictSavingContent"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="12,10,7,2"
+                            TextAlignment="Left" />
+                        <ToggleSwitch
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            IsEnabled="False"
+                            IsOn="{x:Bind ViewModel.Dto.IsRestrictSavingContent, Mode=OneWay}" />
                         <!--  IsActive  -->
                         <TextBlock
                             x:Uid="FieldIsActive"
@@ -773,32 +775,57 @@
                         Grid.Row="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Visibility="{x:Bind ViewModel.EmptyData, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        Visibility="{x:Bind ViewModel.EmptyData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <!--  Data  -->
                     <ScrollView
                         Grid.Row="1"
                         Margin="0,0,10,0"
                         HorizontalScrollMode="Disabled"
                         VerticalScrollMode="Auto"
-                        Visibility="{x:Bind ViewModel.EmptyData, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ListView
-                            x:Name="ListViewData"
-                            ItemTemplate="{StaticResource MessageViewTemplate}"
-                            ItemsSource="{x:Bind ViewModel.Messages, Mode=OneWay}">
-                            <!--  The ItemsStackPanel must be edited to update the following two properties  -->
-                            <!--  These properties allow the list to grow from the bottom  -->
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                        </ListView>
+                        Visibility="{x:Bind ViewModel.EmptyData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
+                            <!--  List view with messages  -->
+                            <ListView
+                                x:Name="ListViewData"
+                                Grid.Row="0"
+                                ItemTemplate="{StaticResource MessageViewTemplate}"
+                                ItemsSource="{x:Bind ViewModel.Messages, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsImageViewerVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                                <!--  The ItemsStackPanel must be edited to update the following two properties  -->
+                                <!--  These properties allow the list to grow from the bottom  -->
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                            <!--  Full-size image on top of ListView  -->
+                            <Border
+                                Grid.Row="1"
+                                Grid.RowSpan="2"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="#CC000000"
+                                IsHitTestVisible="{x:Bind ViewModel.IsImageViewerVisible, Mode=OneWay}">
+                                <Image
+                                    x:Name="FullScreenImage"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Stretch="Uniform"
+                                    Tapped="OnFullScreenImageTapped"
+                                    Visibility="{x:Bind ViewModel.IsImageViewerVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Border>
+                        </Grid>
                     </ScrollView>
                 </Grid>
             </Expander>

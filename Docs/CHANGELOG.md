@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.600] - 2025-07-09
+## [0.6.600] - 2025-07-12
 ### Fixed
 - Fixed storage update in OpenTgResearcherDesktop
 ### Changed
@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added lazy loading and data statistics to the chat page in OpenTgResearcherDesktop
 - Added hiding sensitive data on the client connection page in OpenTgResearcherDesktop
 - Added hiding sensitive data on the chat details page in OpenTgResearcherDesktop
+- Added chat check for restrict saving content
+- Added preview of downloaded chat images in OpenTgResearcherDesktop
+- Added copying of chat messages in OpenTgResearcherDesktop
 
 ## [0.6.550] - 2025-06-29
 ### Fixed

@@ -963,6 +963,9 @@
   <data name="FieldIsAutoUpdate.Text" xml:space="preserve">
     <value>Auto-update</value>
   </data>
+  <data name="FieldIsRestrictSavingContent.Text" xml:space="preserve">
+    <value>Restrict saving content</value>
+  </data>
   <data name="FieldFirstName.Text" xml:space="preserve">
     <value>First name</value>
   </data>
@@ -1115,6 +1118,12 @@
   </data>
   <data name="GetManualDeleteFile" xml:space="preserve">
     <value>Remove the file manually</value>
+  </data>
+  <data name="ViewImage" xml:space="preserve">
+    <value>View image</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Close</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

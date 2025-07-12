@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.UI.Xaml.Data;
+
 namespace OpenTgResearcherDesktop.Common;
 
 /// <summary> Base class for TgViewModel </summary>
@@ -99,10 +101,10 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		Exception.Default();
         await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 		IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
-	}
+    }
 
-	/// <summary> Open url </summary>
-	public void OpenHyperlink(object sender, RoutedEventArgs e)
+    /// <summary> Open url </summary>
+    public void OpenHyperlink(object sender, RoutedEventArgs e)
 	{
 		if (sender is not HyperlinkButton hyperlinkButton)
 			return;

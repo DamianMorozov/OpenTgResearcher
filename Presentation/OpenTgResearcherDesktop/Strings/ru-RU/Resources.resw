@@ -1025,6 +1025,9 @@
   <data name="FieldIsAutoUpdate.Text" xml:space="preserve">
     <value>Авто-обновление</value>
   </data>
+  <data name="FieldIsRestrictSavingContent.Text" xml:space="preserve">
+    <value>Запрет на сохранение содержимого</value>
+  </data>
   <data name="FieldFirstName.Text" xml:space="preserve">
     <value>Имя</value>
   </data>
@@ -1177,6 +1180,12 @@
   </data>
   <data name="GetManualDeleteFile" xml:space="preserve">
     <value>Удалите файл вручную</value>
+  </data>
+  <data name="ViewImage" xml:space="preserve">
+    <value>Просмотр изображения</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Закрыть</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

@@ -18,8 +18,10 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	public partial bool EmptyData { get; set; } = true;
 	[ObservableProperty]
 	public partial Action ScrollRequested { get; set; } = () => { };
-	public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearDataStorageCommand { get; }
+    [ObservableProperty]
+    public partial bool IsImageViewerVisible { get; set; }
+
+    public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 	public IRelayCommand StopDownloadingCommand { get; }
 
@@ -28,7 +30,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
-		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
 		// Updates
@@ -44,7 +45,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 			Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
 			await LoadDataStorageCoreAsync();
 			await ReloadUiAsync();
-		});
+        });
 
 	private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
 
@@ -52,11 +53,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 	{
 		Dto = new();
 		Messages = [];
-		EmptyData = true;
-		await Task.CompletedTask;
+        EmptyData = !Messages.Any();
+        await Task.CompletedTask;
 	}
-
-	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), useLoadData: true);
 
 	private async Task LoadDataStorageCoreAsync()
 	{
@@ -65,33 +64,35 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 		Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 		Messages = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosDescAsync(
             take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id, isReadOnly: true)];
+        foreach (var messageDto in Messages)
+        {
+            messageDto.Directory = Dto.Directory;
+        }
 		EmptyData = !Messages.Any();
 		ScrollRequested?.Invoke();
 	}
 
 	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
 
-	private async Task UpdateOnlineCoreAsync()
-	{
-		await LoadDataAsync(async () => {
-			IsDownloading = true;
-			if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-			var entity = Dto.GetNewEntity();
-			DownloadSettings.SourceVm.Fill(entity);
-			DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
-			await DownloadSettings.UpdateSourceWithSettingsAsync();
+    private async Task UpdateOnlineCoreAsync() => await LoadDataAsync(async () =>
+    {
+        IsDownloading = true;
+        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+        var entity = Dto.GetNewEntity();
+        DownloadSettings.SourceVm.Fill(entity);
+        DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
+        await DownloadSettings.UpdateSourceWithSettingsAsync();
 
-			StateSourceDirectory = Dto.Directory;
+        StateSourceDirectory = Dto.Directory;
 
-			await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
-			await DownloadSettings.UpdateSourceWithSettingsAsync();
-			//await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
-			await LoadDataStorageCoreAsync();
-			IsDownloading = false;
-		});
-	}
+        await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
+        await DownloadSettings.UpdateSourceWithSettingsAsync();
+        //await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
+        await LoadDataStorageCoreAsync();
+        IsDownloading = false;
+    });
 
-	private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());
+    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());
 
 	private async Task StopDownloadingCoreAsync()
 	{

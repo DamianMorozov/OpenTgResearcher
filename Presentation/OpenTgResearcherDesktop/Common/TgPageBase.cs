@@ -5,9 +5,9 @@ namespace OpenTgResearcherDesktop.Common;
 
 public abstract class TgPageBase : Page
 {
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
-	public virtual ITgPageViewModel ViewModel => null!;
+    public virtual ITgPageViewModel ViewModel => null!;
     public Grid? GridContent { get; set; }
     public double FadeAnimationDuration { get; private set; } = 10.0;
     public double OffsetAnimationDuration { get; private set; } = 10.0;
@@ -17,15 +17,15 @@ public abstract class TgPageBase : Page
     #region Public and private methods
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
-	{
-		base.OnNavigatedTo(e);
-		App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
-		{
-			await ViewModel.OnNavigatedToAsync(e);
-		}, $"{ViewModel.Name}.{nameof(OnNavigatedTo)}");
-	}
+    {
+        base.OnNavigatedTo(e);
+        App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+        {
+            await ViewModel.OnNavigatedToAsync(e);
+        }, $"{ViewModel.Name}.{nameof(OnNavigatedTo)}");
+    }
 
-	protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
+    protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
 
     protected void PageLoadedWithAnimation(object sender, RoutedEventArgs e)
     {

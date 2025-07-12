@@ -58,6 +58,7 @@ public static class TgResourceExtensions
 	public static string GetClientIsConnected() => "ClientIsConnected".GetLocalized();
 	public static string GetClientIsDisconnected() => "ClientIsDisconnected".GetLocalized();
 	public static string GetClipboard() => "Clipboard".GetLocalized();
+	public static string GetCloseButton() => "CloseButton".GetLocalized();
 	public static string GetError() => "Error".GetLocalized();
 	public static string GetErrorOccurredWhileLoadingLogs() => "ErrorOccurredWhileLoadingLogs".GetLocalized();
 	public static string GetInDevelopment() => "InDevelopment".GetLocalized();
@@ -103,6 +104,7 @@ public static class TgResourceExtensions
 	public static string GetTextBlockTotalAmount() => "TextBlockTotalAmount".GetLocalized();
 	public static string GetTgClientLoading() => "TgClientLoading".GetLocalized();
 	public static string GetYesButton() => "YesButton".GetLocalized();
+	public static string ViewImage() => "ViewImage".GetLocalized();
 
 	#endregion
 }

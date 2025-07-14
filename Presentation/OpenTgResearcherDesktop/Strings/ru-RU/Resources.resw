@@ -953,6 +953,18 @@
   <data name="TextBlockMessageDeleted.Text" xml:space="preserve">
     <value>Сообщение удалено</value>
   </data>
+  <data name="TextBlockSender.Text" xml:space="preserve">
+    <value>Отправитель</value>
+  </data>
+  <data name="TextBlockMessage.Text" xml:space="preserve">
+    <value>Сообщение</value>
+  </data>
+  <data name="TextBlockId.Text" xml:space="preserve">
+    <value>ИД</value>
+  </data>
+  <data name="TextBlockLink.Text" xml:space="preserve">
+    <value>Ссылка</value>
+  </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Буфер обмена</value>
   </data>

@@ -29,89 +29,6 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
     [ObservableProperty]
     public partial bool IsDeleted { get; set; }
 
-    public TgEfMessageDto() : base()
-	{
-		DtCreated = DateTime.MinValue;
-		SourceId = 0;
-		Id = 0;
-		Type = TgEnumMessageType.Message;
-		Size = 0;
-		Message = string.Empty;
-        Direction = TgEnumDirection.Default;
-        Directory = string.Empty;
-        UserId = 0;
-        IsDeleted = false;
-    }
-
-	#endregion
-
-	#region Public and private methods
-
-	public string DtChangedString => $"{DtCreated:yyyy-MM-dd HH:mm:ss}";
-
-	public override string ToString() => $"{DtCreated} | {SourceId} | {Id} | {Type} | {Size} | {Message}";
-
-	public TgEfMessageDto Copy(TgEfMessageDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		DtCreated = dto.DtCreated;
-		SourceId = dto.SourceId;
-		Id = dto.Id;
-		Type = dto.Type;
-		Size = dto.Size;
-		Message = dto.Message;
-		Direction = dto.Direction;
-        Directory = dto.Directory;
-        UserId = dto.UserId;
-        IsDeleted = dto.IsDeleted;
-        return this;
-	}
-
-	public TgEfMessageDto Copy(TgEfMessageEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		DtCreated = item.DtCreated;
-		SourceId = item.SourceId;
-		Id = item.Id;
-		Type = item.Type;
-		Size = item.Size;
-		Message = item.Message;
-		Direction = TgEnumDirection.Default;
-        Directory = string.Empty;
-        UserId = item.UserId;
-        IsDeleted = item.IsDeleted;
-        return this;
-	}
-
-	public TgEfMessageDto GetNewDto(TgEfMessageEntity item) => new TgEfMessageDto().Copy(item, isUidCopy: true);
-
-	public TgEfMessageEntity GetNewEntity(TgEfMessageDto dto) => new()
-	{
-		Uid = dto.Uid,
-		DtCreated = dto.DtCreated,
-		SourceId = dto.SourceId,
-		Id = dto.Id,
-		Type = dto.Type,
-		Size = dto.Size,
-		Message = dto.Message,
-        UserId = dto.UserId,
-        IsDeleted = dto.IsDeleted,
-    };
-
-	public TgEfMessageEntity GetNewEntity() => new()
-	{
-		Uid = Uid,
-		DtCreated = DtCreated,
-		SourceId = SourceId,
-		Id = Id,
-		Type = Type,
-		Size = Size,
-		Message = Message,
-        UserId = UserId,
-        IsDeleted = IsDeleted,
-    };
-
     public string MessageText
     {
         get
@@ -169,6 +86,91 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
     }
 
     public bool IsImageExists => !string.IsNullOrEmpty(ImageFullPath);
+
+    public string Link => TgStringUtils.FormatChatLink(string.Empty, SourceId, (int)Id).Item2;
+
+    public TgEfMessageDto() : base()
+	{
+		DtCreated = DateTime.MinValue;
+		SourceId = 0;
+		Id = 0;
+		Type = TgEnumMessageType.Message;
+		Size = 0;
+		Message = string.Empty;
+        Direction = TgEnumDirection.Default;
+        Directory = string.Empty;
+        UserId = 0;
+        IsDeleted = false;
+    }
+
+	#endregion
+
+	#region Public and private methods
+
+	public string DtChangedString => $"{DtCreated:yyyy-MM-dd HH:mm:ss}";
+
+	public override string ToString() => $"{DtCreated} | {SourceId} | {Id} | {Type} | {Size} | {Message}";
+
+	public TgEfMessageDto Copy(TgEfMessageDto dto, bool isUidCopy)
+	{
+		base.Copy(dto, isUidCopy);
+		DtCreated = dto.DtCreated;
+		SourceId = dto.SourceId;
+		Id = dto.Id;
+        Type = dto.Type;
+		Size = dto.Size;
+		Message = dto.Message;
+		Direction = dto.Direction;
+        Directory = dto.Directory;
+        UserId = dto.UserId;
+        IsDeleted = dto.IsDeleted;
+        return this;
+	}
+
+	public TgEfMessageDto Copy(TgEfMessageEntity item, bool isUidCopy)
+	{
+		if (isUidCopy)
+			Uid = item.Uid;
+		DtCreated = item.DtCreated;
+		SourceId = item.SourceId;
+		Id = item.Id;
+        Type = item.Type;
+		Size = item.Size;
+		Message = item.Message;
+		Direction = TgEnumDirection.Default;
+        Directory = string.Empty;
+        UserId = item.UserId;
+        IsDeleted = item.IsDeleted;
+        return this;
+	}
+
+	public TgEfMessageDto GetNewDto(TgEfMessageEntity item) => new TgEfMessageDto().Copy(item, isUidCopy: true);
+
+	public TgEfMessageEntity GetNewEntity(TgEfMessageDto dto) => new()
+	{
+		Uid = dto.Uid,
+		DtCreated = dto.DtCreated,
+		SourceId = dto.SourceId,
+		Id = dto.Id,
+		Type = dto.Type,
+		Size = dto.Size,
+		Message = dto.Message,
+        UserId = dto.UserId,
+        IsDeleted = dto.IsDeleted,
+    };
+
+	public TgEfMessageEntity GetNewEntity() => new()
+	{
+		Uid = Uid,
+		DtCreated = DtCreated,
+		SourceId = SourceId,
+		Id = Id,
+		Type = Type,
+		Size = Size,
+		Message = Message,
+        UserId = UserId,
+        IsDeleted = IsDeleted,
+    };
 
     #endregion
 }

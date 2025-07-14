@@ -891,6 +891,18 @@
   <data name="TextBlockMessageDeleted.Text" xml:space="preserve">
     <value>Message deleted</value>
   </data>
+  <data name="TextBlockSender.Text" xml:space="preserve">
+    <value>Sender</value>
+  </data>
+  <data name="TextBlockMessage.Text" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="TextBlockId.Text" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="TextBlockLink.Text" xml:space="preserve">
+    <value>Link</value>
+  </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>
   </data>

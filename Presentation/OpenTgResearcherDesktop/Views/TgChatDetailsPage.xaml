@@ -29,31 +29,96 @@
                 Margin="4"
                 Padding="10,0,0,10"
                 HorizontalAlignment="Stretch"
-                Background="Transparent"
-                CornerRadius="10">
+                Background="{ThemeResource SystemColorBackgroundBrush}"
+                CornerRadius="10"
+                Opacity="1">
+                <!--  Message ID  -->
                 <StackPanel Orientation="Horizontal">
                     <!--  DateTime changed  -->
                     <TextBlock
-                        Margin="5,10,5,0"
+                        Margin="5,5,5,0"
                         HorizontalAlignment="Left"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="{x:Bind DtChangedString, Mode=OneWay}" />
+                    <!--  ID  -->
+                    <TextBlock
+                        x:Uid="TextBlockId"
+                        Margin="15,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Margin="10,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind Id, Mode=OneWay}" />
                     <!--  Copy button  -->
                     <Button
-                        Margin="0,5,0,0"
+                        Margin="5,0,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="OnClipboardWriteClick"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Id, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  Link  -->
+                    <TextBlock
+                        x:Uid="TextBlockLink"
+                        Margin="15,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Margin="10,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind Link, Mode=OneWay}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,0,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Link, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                </StackPanel>
+                <!--  Message  -->
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        x:Uid="TextBlockMessage"
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Margin="10,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind MessageText, Mode=OneWay}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-5,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
                         CornerRadius="10"
                         Tag="{x:Bind MessageText, Mode=OneWay}">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
-                    <!--  Message text  -->
-                    <TextBlock
-                        Margin="5,10,5,0"
-                        Foreground="{ThemeResource SystemColorHighlightTextColor}"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{x:Bind MessageText, Mode=OneWay}" />
                 </StackPanel>
+                <!--  Sender  -->
+                <!--<StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        x:Uid="TextBlockSender"
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Margin="10,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind UserId, Mode=OneWay}" />
+                -->
+                <!--  Copy button  -->
+                <!--
+                    <Button
+                        Margin="5,-5,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind UserId, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                </StackPanel>-->
                 <!--  Image preview  -->
                 <Image
                     MaxHeight="200"
@@ -62,11 +127,10 @@
                     Stretch="Uniform"
                     Tapped="OnImagePreviewClick"
                     Visibility="{x:Bind IsImageExists, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <!--  Is deleted text  -->
+                <!--  Message deleted  -->
                 <TextBlock
                     x:Uid="TextBlockMessageDeleted"
-                    Margin="5,10,5,0"
-                    Foreground="{ThemeResource SystemColorHighlightTextColor}"
+                    Margin="5,0,5,0"
                     Style="{ThemeResource BodyTextBlockStyle}"
                     Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
@@ -281,7 +345,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.Id, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
@@ -361,7 +425,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
@@ -396,7 +460,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.Title, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
@@ -431,7 +495,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.About, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
@@ -473,7 +537,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.Directory, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
@@ -505,7 +569,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.FirstId, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />
@@ -537,7 +601,7 @@
                                 Grid.Column="1"
                                 Margin="10,0,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OnClipboardWriteClick, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.OnClipboardSilentWriteClick, Mode=OneWay}"
                                 CornerRadius="10"
                                 Tag="{x:Bind ViewModel.Dto.Count, Mode=OneWay}">
                                 <SymbolIcon Symbol="Copy" />

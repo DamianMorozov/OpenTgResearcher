@@ -60,6 +60,14 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
     [Column(TgEfConstants.ColumnMessage, TypeName = "NVARCHAR(100)")]
     public string Message { get; set; } = null!;
 
+    [DefaultValue(0)]
+    [Column(TgEfConstants.ColumnUserId, TypeName = "LONG(20)")]
+    public long UserId { get; set; }
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsDeleted, TypeName = "BIT")]
+    public bool IsDeleted { get; set; }
+
     public TgEfMessageEntity() : base()
     {
         Default();
@@ -71,15 +79,6 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
-	public string ToConsoleString() => 
-		$"{Id,11} | " +
-		$"{Message,20} | " +
-	    $"{TgDataFormatUtils.GetFormatString(Source?.UserName, 25).TrimEnd(),-25} | " +
-	    $"{(Source?.IsActive ?? false ? "active" : ""),-6} | " +
-	    $"{Source?.GetPercentCountString()} | " +
-	    $"{TgDataFormatUtils.GetFormatString(Source?.Title, 30).TrimEnd(),-30} | " +
-	    $"{Source?.FirstId} {TgLocaleHelper.Instance.From} {Source?.Count} {TgLocaleHelper.Instance.Messages}";
-
 	public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -89,7 +88,9 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 		Type = this.GetDefaultPropertyGeneric<TgEnumMessageType>(nameof(Type));
 	    Size = this.GetDefaultPropertyLong(nameof(Size));
 	    Message = this.GetDefaultPropertyString(nameof(Message));
-	}
+        UserId = this.GetDefaultPropertyLong(nameof(UserId));
+        IsDeleted = this.GetDefaultPropertyBool(nameof(IsDeleted));
+    }
 
     public TgEfMessageEntity Copy(TgEfMessageEntity item, bool isUidCopy)
 	{
@@ -101,7 +102,9 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 		Type = item.Type;
 		Size = item.Size;
 		Message = item.Message;
-		return this;
+        UserId = item.UserId;
+        IsDeleted = item.IsDeleted;
+        return this;
 	}
 
 	#endregion

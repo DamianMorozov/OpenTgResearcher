@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.610] - 2025-07-14
+### Fixed
+- 
+### Changed
+- Updated message table in TgStorage
+### Added
+- 
+
 ## [0.6.600] - 2025-07-12
 ### Fixed
 - Fixed storage update in OpenTgResearcherDesktop

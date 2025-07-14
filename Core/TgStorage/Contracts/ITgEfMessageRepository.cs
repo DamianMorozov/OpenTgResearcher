@@ -5,5 +5,6 @@ namespace TgStorage.Contracts;
 
 public interface ITgEfMessageRepository : ITgEfRepository<TgEfMessageEntity, TgEfMessageDto>, IDisposable
 {
-    //
+    /// <summary> Get last ID </summary>
+    public Task<long> GetLastIdAsync(long sourceId);
 }

@@ -410,6 +410,11 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .HasColumnType("LONG(20)")
                         .HasColumnName("ID");
 
+                    b.Property<bool>("IsDeleted")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_DELETED");
+
                     b.Property<string>("Message")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -430,6 +435,10 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .IsConcurrencyToken()
                         .HasColumnType("INT")
                         .HasColumnName("TYPE");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("USER_ID");
 
                     b.HasKey("Uid");
 

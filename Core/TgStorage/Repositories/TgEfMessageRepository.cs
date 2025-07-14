@@ -114,11 +114,19 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		return await EfContext.Messages.AsNoTracking().Where(where).CountAsync();
 	}
 
-	#endregion
+    /// <inheritdoc />
+    public async Task<long> GetLastIdAsync(long sourceId) => await EfContext.Messages
+        .AsNoTracking()
+        .Where(x => x.SourceId == sourceId)
+        .OrderByDescending(x => x.Id)
+        .Select(x => x.Id)
+        .FirstOrDefaultAsync();
 
-	#region Public and private methods - Delete
+    #endregion
 
-	public override async Task<TgEfStorageResult<TgEfMessageEntity>> DeleteAllAsync()
+    #region Public and private methods - Delete
+
+    public override async Task<TgEfStorageResult<TgEfMessageEntity>> DeleteAllAsync()
 	{
 		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
 		if (storageResult.IsExists)
@@ -131,5 +139,5 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		return new(storageResult.IsExists ? TgEnumEntityState.IsDeleted : TgEnumEntityState.NotDeleted);
 	}
 
-	#endregion
+    #endregion
 }

@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfConsole
 {
     [DbContext(typeof(TgEfConsoleContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250714130954_UpdatedMessages_AddedUserId")]
+    partial class UpdatedMessages_AddedUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -409,11 +411,6 @@ namespace TgStorage.Migrations.TgEfConsole
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")
                         .HasColumnName("ID");
-
-                    b.Property<bool>("IsDeleted")
-                        .IsConcurrencyToken()
-                        .HasColumnType("BIT")
-                        .HasColumnName("IS_DELETED");
 
                     b.Property<string>("Message")
                         .IsConcurrencyToken()

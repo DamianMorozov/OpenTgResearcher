@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfConsole
 {
     [DbContext(typeof(TgEfConsoleContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250714133725_UpdatedMessages_AddedIsDeleted")]
+    partial class UpdatedMessages_AddedIsDeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");

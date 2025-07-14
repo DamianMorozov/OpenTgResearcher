@@ -57,6 +57,7 @@ public static class TgEfConstants
 	public const string ColumnIsBot = "IS_BOT";
 	public const string ColumnIsConfirmed = "IS_CONFIRMED";
 	public const string ColumnIsCreatingSubdirectories = "IS_CREATING_SUBDIRS";
+	public const string ColumnIsDeleted = "IS_DELETED";
 	public const string ColumnIsEnabled = "IS_ENABLED";
 	public const string ColumnIsFileNamingByMessage = "IS_FILE_NAMING_BY_MESSAGE";
 	public const string ColumnIsRestrictSavingContent = "IS_RESTRICT_SAVING_CONTENT";

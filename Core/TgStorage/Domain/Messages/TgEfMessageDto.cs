@@ -24,6 +24,10 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 	public partial TgEnumDirection Direction { get; set; }
     [ObservableProperty]
     public partial string Directory { get; set; }
+    [ObservableProperty]
+    public partial long UserId { get; set; }
+    [ObservableProperty]
+    public partial bool IsDeleted { get; set; }
 
     public TgEfMessageDto() : base()
 	{
@@ -35,7 +39,9 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Message = string.Empty;
         Direction = TgEnumDirection.Default;
         Directory = string.Empty;
-	}
+        UserId = 0;
+        IsDeleted = false;
+    }
 
 	#endregion
 
@@ -56,7 +62,9 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Message = dto.Message;
 		Direction = dto.Direction;
         Directory = dto.Directory;
-		return this;
+        UserId = dto.UserId;
+        IsDeleted = dto.IsDeleted;
+        return this;
 	}
 
 	public TgEfMessageDto Copy(TgEfMessageEntity item, bool isUidCopy)
@@ -71,7 +79,9 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Message = item.Message;
 		Direction = TgEnumDirection.Default;
         Directory = string.Empty;
-		return this;
+        UserId = item.UserId;
+        IsDeleted = item.IsDeleted;
+        return this;
 	}
 
 	public TgEfMessageDto GetNewDto(TgEfMessageEntity item) => new TgEfMessageDto().Copy(item, isUidCopy: true);
@@ -85,7 +95,9 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Type = dto.Type,
 		Size = dto.Size,
 		Message = dto.Message,
-	};
+        UserId = dto.UserId,
+        IsDeleted = dto.IsDeleted,
+    };
 
 	public TgEfMessageEntity GetNewEntity() => new()
 	{
@@ -96,7 +108,9 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Type = Type,
 		Size = Size,
 		Message = Message,
-	};
+        UserId = UserId,
+        IsDeleted = IsDeleted,
+    };
 
     public string MessageText
     {

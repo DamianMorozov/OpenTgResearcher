@@ -24,4 +24,6 @@ public sealed class TgConstants
 	public static string OpenTgResearcherConsole => "OpenTgResearcherConsole";
 	public static string OpenTgResearcherDesktop => "OpenTgResearcherDesktop";
 	public static string OTR => "OTR";
+	public static string LocaleEnUs => "en-US";
+	public static string LocaleRuRu => "ru-RU";
 }

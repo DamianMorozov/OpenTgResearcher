@@ -24,10 +24,12 @@ public static class TgGlobalTools
     public static string AppStorage = "TgStorage.db";
         
     public const string HttpHeaderContentTypeJson = "application/json";
+    public const string RouteBase = "Base";
     public const string RouteChangeLog = "ChangeLog";
     public const string RouteController = "[controller]";
     public const string RouteCreated = "Created";
     public const string RouteGet = "Get";
+    public const string RouteGetFile = "GetFile";
     public const string RouteGetFiles = "GetFiles";
     public const string RouteImage = "Image";
     public const string RouteLicense = "License";
@@ -35,8 +37,10 @@ public static class TgGlobalTools
     public const string RouteMedias = "Medias";
     public const string RoutePost = "Post";
     public const string RoutePromoStatistic = "PromoStatistic";
+    public const string RouteReleases = "Releases";
     public const string RouteRoot = "";
     public const string RouteValid = "Valid";
+    public const string RouteVersionHistory = "VersionHistory";
 
     #endregion
 

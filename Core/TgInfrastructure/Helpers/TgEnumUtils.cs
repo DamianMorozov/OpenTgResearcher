@@ -9,29 +9,29 @@ public static class TgEnumUtils
 	public static string GetLanguageAsString(TgEnumLanguage language) =>
 		language switch
 		{
-			TgEnumLanguage.Russian => "ru-RU",
-			TgEnumLanguage.English => "en-US",
-			TgEnumLanguage.Default => "en-US",
-			_ => "en-US"
-		};
+			TgEnumLanguage.Russian => TgConstants.LocaleRuRu,
+			TgEnumLanguage.English => TgConstants.LocaleEnUs,
+			TgEnumLanguage.Default => TgConstants.LocaleEnUs,
+			_ => TgConstants.LocaleEnUs
+        };
 	
 	public static string GetLanguage(string language) =>
 		language switch
 		{
-			nameof(TgEnumLanguage.Russian) => "ru-RU",
-			nameof(TgEnumLanguage.English) => "en-US",
-			nameof(TgEnumLanguage.Default) => "en-US",
-			_ => "en-US"
-		};
+			nameof(TgEnumLanguage.Russian) => TgConstants.LocaleRuRu,
+			nameof(TgEnumLanguage.English) => TgConstants.LocaleEnUs,
+			nameof(TgEnumLanguage.Default) => TgConstants.LocaleEnUs,
+			_ => TgConstants.LocaleEnUs
+        };
 
 	public static TgEnumLanguage GetLanguageAsEnum(string language) =>
 		language switch
 		{
-			nameof(TgEnumLanguage.Russian) => TgEnumLanguage.Russian,
-			"ru-RU" => TgEnumLanguage.Russian,
-			nameof(TgEnumLanguage.English) => TgEnumLanguage.English,
-			"en-US" => TgEnumLanguage.English,
-			nameof(TgEnumLanguage.Default) => TgEnumLanguage.Default,
-			_ => TgEnumLanguage.Default
+			nameof(TgEnumLanguage.Russian) => TgEnumLanguage.Russian, 
+            "ru-RU" => TgEnumLanguage.Russian,
+			nameof(TgEnumLanguage.English) => TgEnumLanguage.English, 
+            "en-US" => TgEnumLanguage.English,
+			nameof(TgEnumLanguage.Default) => TgEnumLanguage.Default, 
+            _ => TgEnumLanguage.Default
 		};
 }

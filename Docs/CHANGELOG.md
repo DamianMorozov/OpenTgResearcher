@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated message table in TgStorage
 ### Added
-- 
+- Checking messages for deleted messages when rescanning a chat
 
 ## [0.6.600] - 2025-07-12
 ### Fixed

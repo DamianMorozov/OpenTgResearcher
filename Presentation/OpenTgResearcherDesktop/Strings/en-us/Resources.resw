@@ -888,6 +888,9 @@
   <data name="TextBlockLoadMore.Text" xml:space="preserve">
     <value>Load more</value>
   </data>
+  <data name="TextBlockMessageDeleted.Text" xml:space="preserve">
+    <value>Message deleted</value>
+  </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>
   </data>

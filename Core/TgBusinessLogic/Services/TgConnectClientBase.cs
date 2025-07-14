@@ -1816,7 +1816,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
 
             var sourceFirstId = tgDownloadSettings2.SourceVm.Dto.FirstId;
-            var sourceLastId = tgDownloadSettings2.SourceVm.Dto.Count;
+            // Get the last message ID in a chat 
+            var sourceLastId = tgDownloadSettings2.SourceVm.Dto.Count = await GetChatLastMessageIdAsync(tgDownloadSettings2.SourceVm.Dto.Id);
+            var entityLastId = await StorageManager.MessageRepository.GetLastIdAsync(tgDownloadSettings2.SourceVm.Dto.Id);
+            if (entityLastId > sourceLastId)
+                sourceLastId = (int)entityLastId;
             var counterForSave = 0;
 
             if (isAccessToMessages)
@@ -1876,15 +1880,25 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                 ? await Client.Channels_GetMessages(channel, sourceFirstId)
                                 : await Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId);
                             await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
-                            foreach (var message in messages.Messages)
+                            // Check deleted messages and mark storage entity
+                            if (messages.Messages.FirstOrDefault()?.From is null)
                             {
-                                // Check message exists
-                                if (message is MessageBase messageBase)
-                                    downloadTasks.Add(messageBase.Date > DateTime.MinValue
-                                        ? DownloadDataAsync(tgDownloadSettings2, messageBase, threadNumber, topics, topicRoot)
-                                        : UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, messageBase.ID, tgDownloadSettings2.SourceVm.Dto.Count,
-                                            $"Message {messageBase.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
-                                counterForSave++;
+                                // Mark storage entity as deleted 
+                                await CheckDeletedMessageAndMarkEntityAsync(tgDownloadSettings2.SourceVm.Dto.Id, sourceFirstId);
+                            }
+                            else
+                            {
+                                foreach (var message in messages.Messages)
+                                {
+                                    // Check message exists
+                                    if (message is MessageBase messageBase)
+                                        downloadTasks.Add(messageBase.Date > DateTime.MinValue
+                                            ? DownloadDataAsync(tgDownloadSettings2, messageBase, threadNumber, topics, topicRoot)
+                                            : UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, messageBase.ID, tgDownloadSettings2.SourceVm.Dto.Count,
+                                                $"Message {messageBase.ID} is not exists in {tgDownloadSettings2.SourceVm.Dto.Id}!"));
+                                    // Counter
+                                    counterForSave++;
+                                }
                             }
                         });
                     }
@@ -1966,6 +1980,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await UpdateTitleAsync(string.Empty);
     }
 
+    /// <summary> Mark storage entity as deleted </summary>
+    private async Task CheckDeletedMessageAndMarkEntityAsync(long chatId, int messageId)
+    {
+        var storageResult = await StorageManager.MessageRepository.GetAsync(new TgEfMessageEntity { SourceId = chatId, Id = messageId }, isReadOnly: false);
+
+        if (storageResult.IsExists && storageResult.Item is { } messageEntity && !messageEntity.IsDeleted)
+        {
+            messageEntity.IsDeleted = true;
+            await StorageManager.MessageRepository.SaveAsync(messageEntity);
+        }
+    }
+
     public void SetForceStopDownloading() => IsForceStopDownloading = true;
 
     public async Task MarkHistoryReadAsync()
@@ -2033,7 +2059,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             else
             {
-                await MessageSaveAsync(tgDownloadSettings, message.ID, message.Date, 0, message.message, TgEnumMessageType.Message, threadNumber);
+                await MessageSaveAsync(tgDownloadSettings, message.ID, message.Date, 0, message.message, TgEnumMessageType.Message, threadNumber, isRetry: false,
+                    userId: messageBase.From.ID);
             }
             await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, message.ID, tgDownloadSettings.SourceVm.Dto.Count,
                 $"Reading the message {message.ID} from {tgDownloadSettings.SourceVm.Dto.Count}");
@@ -2195,21 +2222,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         MessageMedia messageMedia, int threadNumber, ForumTopicBase[]? topics, ForumTopicBase? topicRoot)
     {
         var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, topics, topicRoot);
-        if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly))
-            return;
+        if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly)) return;
+        
         // Delete files
         DeleteExistsFiles(tgDownloadSettings, mediaInfo);
+        
         // Move exists file at current directory
         MoveExistsFilesAtCurrentDir(tgDownloadSettings, mediaInfo);
+
+        if (Client is null && Bot is not null)
+            Client = Bot.Client;
+
         // Download new file
         if (!File.Exists(mediaInfo.LocalPathWithNumber))
         {
             await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
-#if DEBUG
-            Debug.WriteLine($"{nameof(DownloadDataCoreAsync)} | {mediaInfo.LocalPathWithNumber}", TgConstants.LogTypeSystem);
-#endif
-            if (Client is null && Bot is not null)
-                Client = Bot.Client;
             if (Client is not null)
             {
                 switch (messageMedia)
@@ -2219,20 +2246,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             await Client.DownloadFileAsync(document, localFileStream, null,
                                 ClientProgressForFile(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
-                            TgEfDocumentEntity doc = new()
-                            {
-                                Id = document.ID,
-                                SourceId = tgDownloadSettings.SourceVm.Dto.Id,
-                                MessageId = messageBase.ID,
-                                FileName = mediaInfo.LocalPathWithNumber,
-                                FileSize = mediaInfo.RemoteSize,
-                                AccessHash = document.access_hash
-                            };
-                            await StorageManager.DocumentRepository.SaveAsync(doc);
                         }
                         // Store message
                         await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                            TgEnumMessageType.Document, threadNumber);
+                            TgEnumMessageType.Document, threadNumber, isRetry: false, userId: messageBase.From.ID);
                         break;
                     case MessageMediaPhoto mediaPhoto:
                         if (mediaPhoto is { photo: Photo photo })
@@ -2242,18 +2259,47 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             await Client.DownloadFileAsync(photo, localFileStream, null,
                                 ClientProgressForFile(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
                         }
-                        // Store message
-                        var messageStr = string.Empty;
-                        if (messageBase is TL.Message message)
-                            messageStr = message.message;
-                        await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, 
-                            $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
-                            TgEnumMessageType.Photo, threadNumber);
                         break;
                 }
             }
             localFileStream.Close();
         }
+
+        // Save message
+        if (Client is not null)
+        {
+            switch (messageMedia)
+            {
+                case MessageMediaDocument mediaDocument:
+                    if ((mediaDocument.flags & MessageMediaDocument.Flags.has_document) is not 0 && mediaDocument.document is Document document)
+                    {
+                        TgEfDocumentEntity doc = new()
+                        {
+                            Id = document.ID,
+                            SourceId = tgDownloadSettings.SourceVm.Dto.Id,
+                            MessageId = messageBase.ID,
+                            FileName = mediaInfo.LocalPathWithNumber,
+                            FileSize = mediaInfo.RemoteSize,
+                            AccessHash = document.access_hash
+                        };
+                        await StorageManager.DocumentRepository.SaveAsync(doc);
+                    }
+                    // Store message
+                    await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
+                        TgEnumMessageType.Document, threadNumber, isRetry: false, userId: messageBase.From.ID);
+                    break;
+                case MessageMediaPhoto mediaPhoto:
+                    var messageStr = string.Empty;
+                    if (messageBase is TL.Message message)
+                        messageStr = message.message;
+                    await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize,
+                        $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
+                        TgEnumMessageType.Photo, threadNumber, isRetry: false, userId: messageBase.From.ID);
+                    break;
+            }
+            // Save user info
+        }
+
         // Set file date time
         if (File.Exists(mediaInfo.LocalPathWithNumber))
         {
@@ -2265,13 +2311,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private void DeleteExistsFiles(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo)
     {
-        if (!tgDownloadSettings.IsRewriteFiles)
-            return;
+        if (!tgDownloadSettings.IsRewriteFiles) return;
+
         TryCatchAction(() =>
         {
             if (File.Exists(mediaInfo.LocalPathWithNumber))
             {
                 var fileSize = TgFileUtils.CalculateFileSize(mediaInfo.LocalPathWithNumber);
+                // If file size is less then original size
                 if (fileSize == 0 || fileSize < mediaInfo.RemoteSize)
                     File.Delete(mediaInfo.LocalPathWithNumber);
             }
@@ -2305,7 +2352,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     private async Task MessageSaveAsync(TgDownloadSettingsViewModel tgDownloadSettings, int messageId, DateTime dtCreated, long size, string message,
-        TgEnumMessageType messageType, int threadNumber, bool isRetry = false)
+        TgEnumMessageType messageType, int threadNumber, bool isRetry, long userId)
     {
         try
         {
@@ -2324,6 +2371,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     Type = messageType,
                     Size = size,
                     Message = message,
+                    UserId = userId,
                 };
 #if DEBUG
                 Debug.WriteLine($"MessageSaveAsync source: {sourceItem.ToDebugString()}");
@@ -2355,7 +2403,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (!isRetry)
             {
                 await Task.Delay(500);
-                await MessageSaveAsync(tgDownloadSettings, messageId, dtCreated, size, message, messageType, threadNumber, isRetry: true);
+                await MessageSaveAsync(tgDownloadSettings, messageId, dtCreated, size, message, messageType, threadNumber, isRetry: true, userId);
             }
             throw;
         }
@@ -2949,6 +2997,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             int limit = 100;
             int offsetId = 0;
             int minId = 0;
+            // Get the last message ID in a chat 
             int maxId = await GetChatLastMessageIdAsync(chatId);
             while (true)
             {

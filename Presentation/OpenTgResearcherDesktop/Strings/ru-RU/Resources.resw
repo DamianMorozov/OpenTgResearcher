@@ -950,6 +950,9 @@
   <data name="TextBlockLoadMore.Text" xml:space="preserve">
     <value>Загрузить ещё</value>
   </data>
+  <data name="TextBlockMessageDeleted.Text" xml:space="preserve">
+    <value>Сообщение удалено</value>
+  </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Буфер обмена</value>
   </data>

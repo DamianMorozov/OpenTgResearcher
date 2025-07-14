@@ -652,7 +652,7 @@ internal partial class TgMenuHelper
             foreach (var chat in chats)
             {
                 if (chat is null) continue;
-                
+                // Get the last message ID in a chat 
                 tgDownloadSettings.SourceVm.Dto.Count = await BusinessLogicManager.ConnectClient.GetChatLastMessageIdAsync(chat.ID);
                 // Update table
                 await ShowTableClientConSearchAsync();

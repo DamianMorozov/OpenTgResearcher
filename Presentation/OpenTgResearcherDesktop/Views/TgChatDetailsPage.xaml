@@ -36,8 +36,7 @@
                     <TextBlock
                         Margin="5,10,5,0"
                         HorizontalAlignment="Left"
-                        Foreground="{ThemeResource SystemColorHighlightTextColor}"
-                        Style="{ThemeResource CaptionTextBlockStyle}"
+                        Style="{ThemeResource BodyTextBlockStyle}"
                         Text="{x:Bind DtChangedString, Mode=OneWay}" />
                     <!--  Copy button  -->
                     <Button
@@ -63,6 +62,13 @@
                     Stretch="Uniform"
                     Tapped="OnImagePreviewClick"
                     Visibility="{x:Bind IsImageExists, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <!--  Is deleted text  -->
+                <TextBlock
+                    x:Uid="TextBlockMessageDeleted"
+                    Margin="5,10,5,0"
+                    Foreground="{ThemeResource SystemColorHighlightTextColor}"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
     </common:TgPageBase.Resources>

@@ -29,7 +29,7 @@
                 Margin="4"
                 Padding="10,0,0,10"
                 HorizontalAlignment="Stretch"
-                Background="{ThemeResource SystemColorHighlightColor}"
+                Background="Transparent"
                 CornerRadius="10">
                 <StackPanel Orientation="Horizontal">
                     <!--  DateTime changed  -->

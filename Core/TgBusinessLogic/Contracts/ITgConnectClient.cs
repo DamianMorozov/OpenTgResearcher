@@ -79,4 +79,12 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     Task<int> GetChatLastMessageIdAsync(long chatId);
     /// <summary> Clear caches </summary>
     public void ClearCaches();
+    /// <summary> Get chat details </summary>
+    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(string userName, TgDownloadSettingsViewModel tgDownloadSettings);
+    /// <summary> Get chat details </summary>
+    public Task<TgChatDetailsDto> GetChatDetailsByBotAsync(string userName);
+    /// <summary> Get chat details </summary>
+    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id);
+    /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
+    public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(Messages_ChatFull messagesChatFull);
 }

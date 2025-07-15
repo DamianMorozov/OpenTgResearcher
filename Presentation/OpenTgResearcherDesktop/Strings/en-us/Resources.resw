@@ -510,6 +510,9 @@
   <data name="ExpanderDownloading.Header" xml:space="preserve">
     <value>Downloading</value>
   </data>
+  <data name="ExpanderChatDetails.Header" xml:space="preserve">
+    <value>Chat details</value>
+  </data>
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Files</value>
   </data>
@@ -566,6 +569,9 @@
   </data>
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Update online?</value>
+  </data>
+  <data name="AskUpdateChatDetails" xml:space="preserve">
+    <value>Update chat details?</value>
   </data>
   <data name="AskStopDownloading" xml:space="preserve">
     <value>Stop downloading?</value>
@@ -870,6 +876,9 @@
   <data name="TextBlockUpdateOnline.Text" xml:space="preserve">
     <value>Online update</value>
   </data>
+  <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
+    <value>Update chat details</value>
+  </data>
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Stop downloading</value>
   </data>
@@ -975,8 +984,20 @@
   <data name="FieldIsActive.Text" xml:space="preserve">
     <value>Active</value>
   </data>
+  <data name="FieldIsBanned.Text" xml:space="preserve">
+    <value>Banned</value>
+  </data>
   <data name="FieldIsBot.Text" xml:space="preserve">
     <value>Bot</value>
+  </data>
+  <data name="FieldIsChannel.Text" xml:space="preserve">
+    <value>Channel</value>
+  </data>
+  <data name="FieldIsGroup.Text" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="FieldIsForum.Text" xml:space="preserve">
+    <value>Forum</value>
   </data>
   <data name="FieldUseBot.Text" xml:space="preserve">
     <value>Use bot</value>
@@ -1019,6 +1040,9 @@
   </data>
   <data name="FieldTitle.Text" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="FieldType.Text" xml:space="preserve">
+    <value>Type</value>
   </data>
   <data name="FieldAbout.Text" xml:space="preserve">
     <value>About</value>
@@ -1067,6 +1091,30 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Naming media files by message</value>
+  </data>
+  <data name="FieldInviteLink.Text" xml:space="preserve">
+    <value>Invite link</value>
+  </data>
+  <data name="FieldDescription.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="FieldPermissions.Text" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="FieldParticipantsCount.Text" xml:space="preserve">
+    <value>Participants count</value>
+  </data>
+  <data name="FieldOnlineCount.Text" xml:space="preserve">
+    <value>Number of online</value>
+  </data>
+  <data name="FieldSlowMode.Text" xml:space="preserve">
+    <value>Slow mode</value>
+  </data>
+  <data name="FieldAvailableReactions.Text" xml:space="preserve">
+    <value>Available reactions</value>
+  </data>
+  <data name="FieldTtlPeriod.Text" xml:space="preserve">
+    <value>TTL period</value>
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Enter the text to filter</value>

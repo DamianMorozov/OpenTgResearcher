@@ -94,11 +94,11 @@ internal partial class TgMenuHelper
     private async Task<Client?> GetClientConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         await ClientConnectAsync(tgDownloadSettings, isSilent: true);
+
         var isClientConnect = await BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
         if (!isClientConnect) return null;
 
         if (BusinessLogicManager.ConnectClient.Client is not Client client) return null;
-
         return client;
     }
 
@@ -119,54 +119,10 @@ internal partial class TgMenuHelper
             TgLog.WriteLine(TgLocale.MenuSetChatNameIsEmpty);
             return;
         }
-        input = TgStringUtils.NormilizeTgName(input, isAddAt: false);
 
-        // Get details about a public chat (even if client is not a member of that chat)
-        tgDownloadSettings.SourceVm = new TgEfSourceViewModel
-        {
-            Dto = new TgEfSourceDto
-            {
-                UserName = input
-            }
-        };
-        await BusinessLogicManager.ConnectClient.CreateChatBaseCoreAsync(tgDownloadSettings);
-        var fullChat = await client.GetFullChat(tgDownloadSettings.Chat.Base);
-        if (fullChat is null)
-            TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
-        else
-        {
-            var chatDetails = ConvertToChatFullInfo(fullChat);
-            PrintTableWithChatInfo(chatDetails);
-        }
+        var chatDetailsDto = await BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(input, tgDownloadSettings);
+        PrintTableWithChatInfo(chatDetailsDto);
         TgLog.TypeAnyKeyForReturn();
-    }
-
-    /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
-    private WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(TL.Messages_ChatFull messagesChatFull)
-    {
-        var chatFullInfo = new WTelegram.Types.ChatFullInfo();
-
-        if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is not ChatBase chatBase)
-            return new WTelegram.Types.ChatFullInfo();
-
-        chatFullInfo.Title = chatBase.Title;
-        chatFullInfo.Id = chatBase.ID;
-        chatFullInfo.Username = chatBase.MainUsername;
-        chatFullInfo.TLInfo = messagesChatFull;
-
-        if (messagesChatFull.full_chat is TL.ChannelFull channelFull)
-        {
-            chatFullInfo.Description = channelFull.about;
-            chatFullInfo.InviteLink = channelFull.exported_invite?.ToString() ?? "-";
-        }
-
-        if (messagesChatFull.full_chat is TL.ChatFull chatFull)
-        {
-            chatFullInfo.Description = chatFull.about;
-            chatFullInfo.InviteLink = chatFull.exported_invite?.ToString() ?? "-";
-        }
-
-        return chatFullInfo;
     }
 
     /// <summary> Get InputUser by username </summary>

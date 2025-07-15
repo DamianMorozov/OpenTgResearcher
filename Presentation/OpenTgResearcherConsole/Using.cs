@@ -10,6 +10,7 @@ global using System.Reflection;
 global using System.Runtime.CompilerServices;
 global using System.Text.Json;
 global using System.Text;
+global using Telegram.Bot.Types.Enums;
 global using TgBusinessLogic.Contracts;
 global using TgBusinessLogic.Helpers;
 global using TgBusinessLogic.Services;

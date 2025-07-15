@@ -52,7 +52,7 @@ public sealed class TgLocaleHelper : ObservableObject
     public string FieldIsChannel => "Is channel";
     public string FieldIsEnabled => "Enabled";
     public string FieldIsForum => "Is forum";
-    public string FieldIsIsGroup => "Is group";
+    public string FieldIsGroup => "Is group";
     public string FieldIsMainDC => "Is main DC";
     public string FieldIsPremium => "Is premium";
     public string FieldIsRestricted => "Is restricted";
@@ -66,7 +66,7 @@ public sealed class TgLocaleHelper : ObservableObject
     public string FieldMaxAutoReconnects => "Max auto reconnects";
     public string FieldMTProxyUrl => "MT proxy url";
     public string FieldName => "Name";
-    public string FieldOnlineCount => "Online count";
+    public string FieldOnlineCount => "Number of online";
     public string FieldParticipantsCount => "Participants count";
     public string FieldPermissions => "Permissions";
     public string FieldPhone => "Phone";
@@ -75,7 +75,7 @@ public sealed class TgLocaleHelper : ObservableObject
     public string FieldSendPaidMessagesStars => "Send paid messages stars";
     public string FieldSize => "Size";
     public string FieldSizeType => "Size type";
-    public string FieldSlowmode => "Slowmode";
+    public string FieldSlowMode => "Slow mode";
     public string FieldStoriesMaxId => "Stories max Id";
     public string FieldSupportsInlineQueries => "Supports inline queries";
     public string FieldTitle => "Title";

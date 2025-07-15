@@ -40,6 +40,7 @@ public static class TgResourceExtensions
 	public static string AskSettingsSave() => "AskSettingsSave".GetLocalized();
 	public static string AskStopDownloading() => "AskStopDownloading".GetLocalized();
 	public static string AskUpdateOnline() => "AskUpdateOnline".GetLocalized();
+	public static string AskUpdateChatDetails() => "AskUpdateChatDetails".GetLocalized();
 	public static string AskUpdatePage() => "AskUpdatePage".GetLocalized();
 	public static string AskUpdatePreviewApp() => "AskUpdatePreviewApp".GetLocalized();
 	public static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalized();

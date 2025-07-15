@@ -40,7 +40,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public Dictionary<long, InputChannel> InputChannelCache { get; private set; } = [];
     public Dictionary<long, ChatBase> ChatCache { get; private set; } = [];
-    public Dictionary<long, User> UserCache { get; private set; }= [];
+    public Dictionary<long, User> UserCache { get; private set; } = [];
 
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
@@ -2223,10 +2223,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, topics, topicRoot);
         if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly)) return;
-        
+
         // Delete files
         DeleteExistsFiles(tgDownloadSettings, mediaInfo);
-        
+
         // Move exists file at current directory
         MoveExistsFilesAtCurrentDir(tgDownloadSettings, mediaInfo);
 
@@ -2857,10 +2857,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 if (chatBase is TL.Channel channel)
                     channelAccessHash = channel.access_hash;
                 var result = new InputChannel(chatId, channelAccessHash);
-                
+
                 // Optimization: update cache
                 InputChannelCache.TryAdd(chatId, result);
-                
+
                 return result;
             }
         }
@@ -2883,10 +2883,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (DicChatsAll.Any())
             {
                 var chatBase = DicChatsAll.FirstOrDefault(x => x.Key == chatId).Value;
-                
+
                 // Optimization: update cache
                 ChatCache.TryAdd(chatId, chatBase);
-                
+
                 return chatBase;
             }
         }
@@ -3001,7 +3001,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             int maxId = await GetChatLastMessageIdAsync(chatId);
             while (true)
             {
-                var messages = await Client.Messages_GetHistory(inputChannel, offset_id: 0, limit: limit, 
+                var messages = await Client.Messages_GetHistory(inputChannel, offset_id: 0, limit: limit,
                     max_id: maxId, min_id: minId, add_offset: offsetId, hash: inputChannel.access_hash);
                 if (messages is not null)
                 {
@@ -3052,6 +3052,183 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         InputChannelCache.Clear();
         ChatCache.Clear();
         UserCache.Clear();
+    }
+
+    /// <inheritdoc />
+    public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(string userName, TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        userName = TgStringUtils.NormilizeTgName(userName, isAddAt: false);
+
+        tgDownloadSettings.SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { UserName = userName } };
+        await CreateChatBaseCoreAsync(tgDownloadSettings);
+
+        TgChatDetailsDto chatDetailsDto = new();
+        if (Client is null) return chatDetailsDto;
+
+        // Get details about a public chat (even if client is not a member of that chat)
+        var fullChat = await Client.GetFullChat(tgDownloadSettings.Chat.Base);
+        WTelegram.Types.ChatFullInfo? chatDetails;
+        if (fullChat is null)
+            TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
+        else
+        {
+            chatDetails = ConvertToChatFullInfo(fullChat);
+            FillChatDetailsDto(chatDetailsDto, chatDetails);
+        }
+        return chatDetailsDto;
+    }
+
+    /// <inheritdoc />
+    public async Task<TgChatDetailsDto> GetChatDetailsByBotAsync(string userName)
+    {
+        userName = TgStringUtils.NormilizeTgName(userName, isAddAt: false);
+
+        TgChatDetailsDto chatDetailsDto = new();
+        if (Bot is null) return chatDetailsDto;
+
+        // Get details about a public chat (even if bot is not a member of that chat)
+        var chatDetails = await Bot.GetChat(userName);
+        if (chatDetails is null)
+            TgLog.MarkupInfo(TgLocale.TgGetChatDetailsError);
+        else
+        {
+            FillChatDetailsDto(chatDetailsDto, chatDetails);
+        }
+        return chatDetailsDto;
+    }
+
+    /// <inheritdoc />
+    public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id)
+    {
+        var tgDownloadSettings = new TgDownloadSettingsViewModel();
+        tgDownloadSettings.SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { Id = id } };
+        await CreateChatBaseCoreAsync(tgDownloadSettings);
+
+        TgChatDetailsDto chatDetailsDto = new();
+        if (Client is null) return chatDetailsDto;
+
+        // Get details about a public chat (even if client is not a member of that chat)
+        var fullChat = await Client.GetFullChat(tgDownloadSettings.Chat.Base);
+        WTelegram.Types.ChatFullInfo? chatDetails;
+        if (fullChat is null)
+            TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
+        else
+        {
+            chatDetails = ConvertToChatFullInfo(fullChat);
+            FillChatDetailsDto(chatDetailsDto, chatDetails);
+        }
+        return chatDetailsDto;
+    }
+
+    /// <inheritdoc />
+    public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(TL.Messages_ChatFull messagesChatFull)
+    {
+        var chatFullInfo = new WTelegram.Types.ChatFullInfo();
+
+        if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is not ChatBase chatBase)
+            return new WTelegram.Types.ChatFullInfo();
+
+        chatFullInfo.Title = chatBase.Title;
+        chatFullInfo.Id = chatBase.ID;
+        chatFullInfo.Username = chatBase.MainUsername;
+        chatFullInfo.TLInfo = messagesChatFull;
+
+        if (messagesChatFull.full_chat is TL.ChannelFull channelFull)
+        {
+            chatFullInfo.Description = channelFull.about;
+            chatFullInfo.InviteLink = channelFull.exported_invite?.ToString() ?? "-";
+        }
+
+        if (messagesChatFull.full_chat is TL.ChatFull chatFull)
+        {
+            chatFullInfo.Description = chatFull.about;
+            chatFullInfo.InviteLink = chatFull.exported_invite?.ToString() ?? "-";
+        }
+
+        return chatFullInfo;
+    }
+
+    private static void FillChatDetailsDto(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
+    {
+        chatDetailsDto.Title = chatDetails.Title ?? "-";
+        chatDetailsDto.Type = chatDetails.Type switch
+        {
+            ChatType.Private => "Normal one-to-one chat with a user or bot",
+            ChatType.Group => "Normal group chat",
+            ChatType.Channel => "A channel",
+            ChatType.Supergroup => "A supergroup",
+            ChatType.Sender => "Value possible only in InlineQuery.ChatType: private chat with the inline query sender",
+            _ => "-",
+        };
+        chatDetailsDto.Id = ReduceChatId(chatDetails.Id).ToString();
+        chatDetailsDto.UserName = chatDetails.Username ?? "-";
+        chatDetailsDto.InviteLink = chatDetails.InviteLink ?? "-";
+        chatDetailsDto.Description = !string.IsNullOrEmpty(chatDetails.Description) ? chatDetails.Description : "-" ?? "-";
+        
+        FillShatDetailsPermissions(chatDetailsDto, chatDetails);
+
+        if (chatDetails.TLInfo is TL.Messages_ChatFull messagesChatFull)
+        {
+            if (messagesChatFull.full_chat is TL.ChannelFull channelFull)
+            {
+                chatDetailsDto.IsChatFull = true;
+                chatDetailsDto.About = channelFull.About;
+                chatDetailsDto.ParticipantsCount = channelFull.participants_count;
+                chatDetailsDto.OnlineCount = channelFull.online_count;
+                chatDetailsDto.SlowMode = channelFull.slowmode_seconds > 0
+                    ? $"enabled: {channelFull.slowmode_seconds} seconds" : $"disbaled";
+                chatDetailsDto.AvailableReactions = channelFull.available_reactions is TL.ChatReactionsAll { flags: TL.ChatReactionsAll.Flags.allow_custom }
+                    ? "allows custom emojis as reactions" : "does not allow the use of custom emojis as a reaction";
+                chatDetailsDto.TtlPeriod = channelFull.TtlPeriod;
+            }
+            if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is ChatBase chatBase)
+            {
+                chatDetailsDto.IsActiveChat = chatBase.IsActive;
+                chatDetailsDto.IsBanned = chatBase.IsBanned();
+                chatDetailsDto.IsChannel = chatBase.IsChannel;
+                chatDetailsDto.IsGroup = chatBase.IsGroup;
+            }
+            chatDetailsDto.IsForum = chatDetails.IsForum;
+        }
+    }
+
+    private static void FillShatDetailsPermissions(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
+    {
+        if (chatDetails.Permissions is null)
+            chatDetailsDto.Permissions = "-";
+        else
+        {
+            var permissions = new List<string>();
+            if (chatDetails.Permissions.CanSendMessages)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendAudios));
+            if (chatDetails.Permissions.CanSendAudios)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendMessages));
+            if (chatDetails.Permissions.CanSendDocuments)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendDocuments));
+            if (chatDetails.Permissions.CanSendPhotos)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendPhotos));
+            if (chatDetails.Permissions.CanSendVideos)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendVideos));
+            if (chatDetails.Permissions.CanSendVideoNotes)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendVideoNotes));
+            if (chatDetails.Permissions.CanSendVoiceNotes)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendVoiceNotes));
+            if (chatDetails.Permissions.CanSendPolls)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendPolls));
+            if (chatDetails.Permissions.CanSendOtherMessages)
+                permissions.Add(nameof(chatDetails.Permissions.CanSendOtherMessages));
+            if (chatDetails.Permissions.CanAddWebPagePreviews)
+                permissions.Add(nameof(chatDetails.Permissions.CanAddWebPagePreviews));
+            if (chatDetails.Permissions.CanChangeInfo)
+                permissions.Add(nameof(chatDetails.Permissions.CanChangeInfo));
+            if (chatDetails.Permissions.CanInviteUsers)
+                permissions.Add(nameof(chatDetails.Permissions.CanInviteUsers));
+            if (chatDetails.Permissions.CanPinMessages)
+                permissions.Add(nameof(chatDetails.Permissions.CanPinMessages));
+            if (chatDetails.Permissions.CanManageTopics)
+                permissions.Add(nameof(chatDetails.Permissions.CanManageTopics));
+            chatDetailsDto.Permissions = string.Join(", ", permissions);
+        }
     }
 
     #endregion

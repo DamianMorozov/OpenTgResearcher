@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
-using Telegram.Bot.Types.Enums;
 using TL;
 
 namespace OpenTgResearcherConsole.Helpers;
@@ -31,8 +30,8 @@ internal partial class TgMenuHelper
             TgLocale.MenuReturn,
             TgLocale.MenuBotSearchChat,
             TgLocale.MenuBotSearchUser
-            //TgLocale.MenuBotStartMonitoringChats,
-            //TgLocale.MenuBotStopMonitoringChats
+        //TgLocale.MenuBotStartMonitoringChats,
+        //TgLocale.MenuBotStopMonitoringChats
         );
 
         var prompt = AnsiConsole.Prompt(selectionPrompt);
@@ -78,7 +77,7 @@ internal partial class TgMenuHelper
 
     /// <summary> Check bot connection </summary>
     private async Task<Bot?> CheckBotConnectionAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {        
+    {
         await BotConnectAsync(tgDownloadSettings, isSilent: true);
         var isBotConnect = await BusinessLogicManager.ConnectClient.CheckBotConnectionReadyAsync();
         if (!isBotConnect) return null;
@@ -105,19 +104,14 @@ internal partial class TgMenuHelper
             TgLog.WriteLine(TgLocale.MenuSetChatNameIsEmpty);
             return;
         }
-        input = TgStringUtils.NormilizeTgName(input);
 
-        // Get details about a public chat (even if bot is not a member of that chat)
-        var chatDetails = await bot.GetChat(input);
-        if (chatDetails is null)
-            TgLog.MarkupInfo(TgLocale.TgGetChatDetailsError);
-        else
-            PrintTableWithChatInfo(chatDetails);
+        var chatDetailsDto = await BusinessLogicManager.ConnectClient.GetChatDetailsByBotAsync(input);
+        PrintTableWithChatInfo(chatDetailsDto);
         TgLog.TypeAnyKeyForReturn();
     }
 
     /// <summary> Print table with chat info </summary>
-    private void PrintTableWithChatInfo(WTelegram.Types.ChatFullInfo chatDetails)
+    private void PrintTableWithChatInfo(TgChatDetailsDto chatDetailsDto)
     {
         var table = new Table()
             .Border(TableBorder.Rounded)
@@ -126,70 +120,27 @@ internal partial class TgMenuHelper
             .AddColumn($"[bold]{TgLocale.FieldValue}[/]")
             .Expand();
 
-        table.AddRow(TgLocale.FieldTitle, chatDetails.Title ?? "-");
-        table.AddRow(TgLocale.FieldType, chatDetails.Type.ToString());
-        table.AddRow(TgLocale.FieldId, TgConnectClientBase.ReduceChatId(chatDetails.Id).ToString());
-        table.AddRow(TgLocale.FieldUserName, chatDetails.Username ?? "-");
-        table.AddRow(TgLocale.FieldInviteLink, chatDetails.InviteLink ?? "-");
-        table.AddRow(TgLocale.FieldDescription, chatDetails.Description ?? "-");
-        if (chatDetails.Permissions is null)
-            table.AddRow(TgLocale.FieldPermissions, "-");
-        else
-        {
-            var permissions = new List<string>();
-            if (chatDetails.Permissions.CanSendMessages)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendAudios));
-            if (chatDetails.Permissions.CanSendAudios)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendMessages));
-            if (chatDetails.Permissions.CanSendDocuments)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendDocuments));
-            if (chatDetails.Permissions.CanSendPhotos)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendPhotos));
-            if (chatDetails.Permissions.CanSendVideos)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendVideos));
-            if (chatDetails.Permissions.CanSendVideoNotes)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendVideoNotes));
-            if (chatDetails.Permissions.CanSendVoiceNotes)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendVoiceNotes));
-            if (chatDetails.Permissions.CanSendPolls)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendPolls));
-            if (chatDetails.Permissions.CanSendOtherMessages)
-                permissions.Add(nameof(chatDetails.Permissions.CanSendOtherMessages));
-            if (chatDetails.Permissions.CanAddWebPagePreviews)
-                permissions.Add(nameof(chatDetails.Permissions.CanAddWebPagePreviews));
-            if (chatDetails.Permissions.CanChangeInfo)
-                permissions.Add(nameof(chatDetails.Permissions.CanChangeInfo));
-            if (chatDetails.Permissions.CanInviteUsers)
-                permissions.Add(nameof(chatDetails.Permissions.CanInviteUsers));
-            if (chatDetails.Permissions.CanPinMessages)
-                permissions.Add(nameof(chatDetails.Permissions.CanPinMessages));
-            if (chatDetails.Permissions.CanManageTopics)
-                permissions.Add(nameof(chatDetails.Permissions.CanManageTopics));
-            table.AddRow(TgLocale.FieldPermissions, string.Join(", ", permissions));
-        }
+        table.AddRow(TgLocale.FieldTitle, chatDetailsDto.Title);
+        table.AddRow(TgLocale.FieldType, chatDetailsDto.Type);
+        table.AddRow(TgLocale.FieldId, chatDetailsDto.Id);
+        table.AddRow(TgLocale.FieldUserName, chatDetailsDto.UserName);
+        table.AddRow(TgLocale.FieldInviteLink, chatDetailsDto.InviteLink);
+        table.AddRow(TgLocale.FieldDescription, chatDetailsDto.Description);
+        table.AddRow(TgLocale.FieldPermissions, chatDetailsDto.Permissions);
 
-        if (chatDetails.TLInfo is TL.Messages_ChatFull messagesChatFull)
+        if (chatDetailsDto.IsChatFull)
         {
-            if (messagesChatFull.full_chat is TL.ChannelFull channelFull)
-            {
-                table.AddRow(TgLocale.FieldAbout, channelFull.About);
-                table.AddRow(TgLocale.FieldParticipantsCount, channelFull.participants_count.ToString());
-                table.AddRow(TgLocale.FieldOnlineCount, channelFull.online_count.ToString());
-                table.AddRow(TgLocale.FieldSlowmode, channelFull.slowmode_seconds > 0
-                    ? $"slowmode enabled: {channelFull.slowmode_seconds} seconds" : $"slowmode disbaled");
-                table.AddRow(TgLocale.FieldAvailableReactions,
-                    channelFull.available_reactions is TL.ChatReactionsAll { flags: TL.ChatReactionsAll.Flags.allow_custom }
-                    ? "allows custom emojis as reactions" : "does not allow the use of custom emojis as a reaction");
-                table.AddRow(TgLocale.FieldTtlPeriod, channelFull.TtlPeriod.ToString());
-            }
-            if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is ChatBase chatBase)
-            {
-                table.AddRow(TgLocale.FieldIsActive, chatBase.IsActive ? "yes" : "no");
-                table.AddRow(TgLocale.FieldIsBanned, chatBase.IsBanned() ? "yes" : "no");
-                table.AddRow(TgLocale.FieldIsChannel, chatBase.IsChannel ? "yes" : "no");
-                table.AddRow(TgLocale.FieldIsIsGroup, chatBase.IsGroup ? "yes" : "no");
-                table.AddRow(TgLocale.FieldIsForum, chatDetails.IsForum ? "yes" : "no");
-            }
+            table.AddRow(TgLocale.FieldAbout, chatDetailsDto.About);
+            table.AddRow(TgLocale.FieldParticipantsCount, chatDetailsDto.ParticipantsCount.ToString());
+            table.AddRow(TgLocale.FieldOnlineCount, chatDetailsDto.OnlineCount.ToString());
+            table.AddRow(TgLocale.FieldSlowMode, chatDetailsDto.SlowMode);
+            table.AddRow(TgLocale.FieldAvailableReactions, chatDetailsDto.AvailableReactions);
+            table.AddRow(TgLocale.FieldTtlPeriod, chatDetailsDto.TtlPeriod.ToString());
+            table.AddRow(TgLocale.FieldIsActive, chatDetailsDto.IsActiveChat ? "yes" : "no");
+            table.AddRow(TgLocale.FieldIsBanned, chatDetailsDto.IsBanned ? "yes" : "no");
+            table.AddRow(TgLocale.FieldIsChannel, chatDetailsDto.IsChannel ? "yes" : "no");
+            table.AddRow(TgLocale.FieldIsGroup, chatDetailsDto.IsGroup ? "yes" : "no");
+            table.AddRow(TgLocale.FieldIsForum, chatDetailsDto.IsForum ? "yes" : "no");
         }
 
         AnsiConsole.Write(table);
@@ -348,7 +299,7 @@ internal partial class TgMenuHelper
         // Check if the message is from a chat that we are monitoring
         var chatName = message.Chat?.Username?.ToUpper() ?? "";
         if (string.IsNullOrEmpty(chatName)) return;
-        
+
         if (BotMonitoringChatNames.Contains(chatName))
         {
             // Filter messages by keywords

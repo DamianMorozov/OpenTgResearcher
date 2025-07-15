@@ -20,6 +20,7 @@
         <converters:TgEnumToColumnConverter x:Key="EnumToColumnConverter" />
         <converters:TgEnumToColumnSpanConverter x:Key="EnumToColumnSpanConverter" />
         <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
+        <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
         <!--  Data template  -->
         <DataTemplate x:Key="MessageViewTemplate" x:DataType="messages:TgEfMessageDto">
             <StackPanel
@@ -143,6 +144,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <!--  Load data  -->
@@ -219,6 +221,7 @@
                         </StackPanel>
                     </Button>
                     <!--  Count  -->
+                    <!--
                     <TextBlock
                         x:Uid="TextBlockCount"
                         Grid.Column="2"
@@ -232,7 +235,7 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         Text="{x:Bind ViewModel.Messages.Count, Mode=OneWay}"
-                        TextAlignment="Center" />
+                        TextAlignment="Center" />-->
                 </Grid>
             </Expander>
         </ContentControl>
@@ -247,7 +250,7 @@
                 Margin="{StaticResource ExpanderMargin}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
+                IsExpanded="False">
                 <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
@@ -622,7 +625,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-                IsExpanded="True">
+                IsExpanded="False">
                 <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
@@ -647,7 +650,6 @@
                             Margin="2,7,7,2"
                             TextAlignment="Left" />
                         <NumberBox
-                            x:Name="NumberBoxSpinButtonPlacementExample"
                             Grid.Row="0"
                             Grid.Column="1"
                             Margin="2"
@@ -822,9 +824,483 @@
                 </ScrollView>
             </Expander>
         </ContentControl>
-        <!--  Content  -->
+        <!--  Chat details  -->
         <ContentControl
             Grid.Row="4"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch">
+            <Expander
+                x:Uid="ExpanderChatDetails"
+                Margin="{StaticResource ExpanderMargin}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                IsExpanded="False"
+                Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}">
+                <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                    <Grid Margin="0,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <!--  Update chat details  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="4"
+                            Margin="0,0,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.UpdateChatDetailsCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                                <TextBlock
+                                    x:Uid="TextBlockUpdateChatDetails"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Title  -->
+                        <TextBlock
+                            x:Uid="FieldTitle"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  Type  -->
+                        <TextBlock
+                            x:Uid="FieldType"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  Id  -->
+                        <TextBlock
+                            x:Uid="FieldId"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  UserName  -->
+                        <TextBlock
+                            x:Uid="FieldUserName"
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="2"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  InviteLink  -->
+                        <TextBlock
+                            x:Uid="FieldInviteLink"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  Description  -->
+                        <TextBlock
+                            x:Uid="FieldDescription"
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="3"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  Permissions  -->
+                        <TextBlock
+                            x:Uid="FieldPermissions"
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
+                                TextAlignment="Left"
+                                TextWrapping="WrapWholeWords" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  About  -->
+                        <TextBlock
+                            x:Uid="FieldAbout"
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="4"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  ParticipantsCount  -->
+                        <TextBlock
+                            x:Uid="FieldParticipantsCount"
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="5"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
+                                TextAlignment="Left"
+                                TextWrapping="WrapWholeWords" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  OnlineCount  -->
+                        <TextBlock
+                            x:Uid="FieldOnlineCount"
+                            Grid.Row="5"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="5"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  SlowMode  -->
+                        <TextBlock
+                            x:Uid="FieldSlowMode"
+                            Grid.Row="6"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
+                                TextAlignment="Left"
+                                TextWrapping="WrapWholeWords" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  AvailableReactions  -->
+                        <TextBlock
+                            x:Uid="FieldAvailableReactions"
+                            Grid.Row="6"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="6"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
+                                TextAlignment="Left" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  TtlPeriod  -->
+                        <TextBlock
+                            x:Uid="FieldTtlPeriod"
+                            Grid.Row="7"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="7"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="7,7,7,2"
+                                Text="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
+                                TextAlignment="Left"
+                                TextWrapping="WrapWholeWords" />
+                            <!--  Copy button  -->
+                            <Button
+                                Margin="5,5,0,0"
+                                HorizontalContentAlignment="Left"
+                                Click="OnClipboardSilentWriteClick"
+                                CornerRadius="10"
+                                Tag="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}">
+                                <SymbolIcon Symbol="Copy" />
+                            </Button>
+                        </StackPanel>
+                        <!--  IsActive  -->
+                        <TextBlock
+                            x:Uid="FieldIsActive"
+                            Grid.Row="7"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="7"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <ToggleSwitch
+                                Margin="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                IsOn="{x:Bind ViewModel.ChatDetailsDto.IsActiveChat, Mode=OneWay}" />
+                        </StackPanel>
+                        <!--  IsActive  -->
+                        <TextBlock
+                            x:Uid="FieldIsBanned"
+                            Grid.Row="8"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="8"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <ToggleSwitch
+                                Margin="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                IsOn="{x:Bind ViewModel.ChatDetailsDto.IsBanned, Mode=OneWay}" />
+                        </StackPanel>
+                        <!--  IsChannel  -->
+                        <TextBlock
+                            x:Uid="FieldIsChannel"
+                            Grid.Row="8"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="8"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <ToggleSwitch
+                                Margin="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                IsOn="{x:Bind ViewModel.ChatDetailsDto.IsChannel, Mode=OneWay}" />
+                        </StackPanel>
+                        <!--  IsGroup  -->
+                        <TextBlock
+                            x:Uid="FieldIsGroup"
+                            Grid.Row="9"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="9"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <ToggleSwitch
+                                Margin="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                IsOn="{x:Bind ViewModel.ChatDetailsDto.IsGroup, Mode=OneWay}" />
+                        </StackPanel>
+                        <!--  IsForum  -->
+                        <TextBlock
+                            x:Uid="FieldIsForum"
+                            Grid.Row="9"
+                            Grid.Column="2"
+                            Margin="12,7,7,2"
+                            TextAlignment="Left" />
+                        <StackPanel
+                            Grid.Row="9"
+                            Grid.Column="3"
+                            Orientation="Horizontal">
+                            <ToggleSwitch
+                                Margin="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                IsOn="{x:Bind ViewModel.ChatDetailsDto.IsForum, Mode=OneWay}" />
+                        </StackPanel>
+                    </Grid>
+                </ScrollView>
+            </Expander>
+        </ContentControl>
+        <!--  Content with messages and media  -->
+        <ContentControl
+            Grid.Row="5"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsEnabledContent, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -833,7 +1309,7 @@
                 Margin="{StaticResource ExpanderMargin}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
+                IsExpanded="False">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

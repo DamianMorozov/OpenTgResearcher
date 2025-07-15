@@ -569,6 +569,9 @@
   <data name="ExpanderDownloading.Header" xml:space="preserve">
     <value>Скачивание</value>
   </data>
+  <data name="ExpanderChatDetails.Header" xml:space="preserve">
+    <value>Детали чата</value>
+  </data>
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Файлы</value>
   </data>
@@ -625,6 +628,9 @@
   </data>
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Обновить онлайн?</value>
+  </data>
+  <data name="AskUpdateChatDetails" xml:space="preserve">
+    <value>Обновить детали чата?</value>
   </data>
   <data name="AskStopDownloading" xml:space="preserve">
     <value>Остановить загрузку?</value>
@@ -932,6 +938,9 @@
   <data name="TextBlockUpdateOnline.Text" xml:space="preserve">
     <value>Обновить онлайн</value>
   </data>
+  <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
+    <value>Обновить детали чата</value>
+  </data>
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Остановить загрузку</value>
   </data>
@@ -1037,8 +1046,20 @@
   <data name="FieldIsActive.Text" xml:space="preserve">
     <value>Активно</value>
   </data>
+  <data name="FieldIsBanned.Text" xml:space="preserve">
+    <value>Запрещено</value>
+  </data>
   <data name="FieldIsBot.Text" xml:space="preserve">
     <value>Бот</value>
+  </data>
+  <data name="FieldIsChannel.Text" xml:space="preserve">
+    <value>Канал</value>
+  </data>
+  <data name="FieldIsGroup.Text" xml:space="preserve">
+    <value>Группа</value>
+  </data>
+  <data name="FieldIsForum.Text" xml:space="preserve">
+    <value>Форум</value>
   </data>
   <data name="FieldUseBot.Text" xml:space="preserve">
     <value>Использовать бот</value>
@@ -1081,6 +1102,9 @@
   </data>
   <data name="FieldTitle.Text" xml:space="preserve">
     <value>Заголовок</value>
+  </data>
+  <data name="FieldType.Text" xml:space="preserve">
+    <value>Тип</value>
   </data>
   <data name="FieldAbout.Text" xml:space="preserve">
     <value>Об источнике</value>
@@ -1129,6 +1153,30 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Именование медиа-файлов по сообщению</value>
+  </data>
+  <data name="FieldInviteLink.Text" xml:space="preserve">
+    <value>Ссылка для приглашения</value>
+  </data>
+  <data name="FieldDescription.Text" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="FieldPermissions.Text" xml:space="preserve">
+    <value>Разрешения</value>
+  </data>
+  <data name="FieldParticipantsCount.Text" xml:space="preserve">
+    <value>Количество участников</value>
+  </data>
+  <data name="FieldOnlineCount.Text" xml:space="preserve">
+    <value>Количество онлайн</value>
+  </data>
+  <data name="FieldSlowMode.Text" xml:space="preserve">
+    <value>Замедленный режим</value>
+  </data>
+  <data name="FieldAvailableReactions.Text" xml:space="preserve">
+    <value>Доступные реакции</value>
+  </data>
+  <data name="FieldTtlPeriod.Text" xml:space="preserve">
+    <value>Период ожидания</value>
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Введите текст для фильтрации</value>

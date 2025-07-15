@@ -306,6 +306,12 @@
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
     <value>"https://opentgresearcher.online"</value>
   </data>
+  <data name="SettingsPage_OfficialSite_BugBounty.Content" xml:space="preserve">
+    <value>Помогите нам сделать OpenTgResearcher более безопасным и получите бесплатную лицензию!</value>
+  </data>
+  <data name="SettingsPage_OfficialSite_BugBounty.Tag" xml:space="preserve">
+    <value>"https://opentgresearcher.online/bugbounty"</value>
+  </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Релизы</value>
   </data>
@@ -502,6 +508,9 @@
   </data>
   <data name="ExpanderInstallRequirements.Header" xml:space="preserve">
     <value>Требования к установке</value>
+  </data>
+  <data name="ExpanderBugBounty.Header" xml:space="preserve">
+    <value>Программа поощрения за обнаружение ошибок</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsSaveValues.Text" xml:space="preserve">
     <value>Сохраните значения полей секции App configuration: `App api_id` / `App api_hash`</value>

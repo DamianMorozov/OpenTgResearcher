@@ -247,6 +247,12 @@
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
     <value>"https://opentgresearcher.online"</value>
   </data>
+  <data name="SettingsPage_OfficialSite_BugBounty.Content" xml:space="preserve">
+    <value>Help us make OpenTgResearcher more secure and get a free license!</value>
+  </data>
+  <data name="SettingsPage_OfficialSite_BugBounty.Tag" xml:space="preserve">
+    <value>"https://opentgresearcher.online/bugbounty"</value>
+  </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Releases</value>
   </data>
@@ -443,6 +449,9 @@
   </data>
   <data name="ExpanderInstallRequirements.Header" xml:space="preserve">
     <value>Install Requirements</value>
+  </data>
+  <data name="ExpanderBugBounty.Header" xml:space="preserve">
+    <value>Bug Bounty Program</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsSaveValues.Text" xml:space="preserve">
     <value>Save the values of the fields by App configuration section: `App api_id` / `App api_hash`</value>

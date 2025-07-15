@@ -159,6 +159,23 @@
                         <TextBlock x:Uid="SettingsPage_GitHub_InstallRequirementsSaveValues" Margin="10,5,0,0" />
                     </StackPanel>
                 </Expander>
+                <!--  Bug Bounty  -->
+                <Expander
+                    x:Uid="ExpanderBugBounty"
+                    Grid.Row="8"
+                    Margin="{StaticResource ExpanderMargin}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="False">
+                    <StackPanel Margin="0,-10,0,-5">
+                        <HyperlinkButton
+                            x:Uid="SettingsPage_OfficialSite_BugBounty"
+                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Click="{x:Bind ViewModel.OpenHyperlink}" />
+                    </StackPanel>
+                </Expander>
             </Grid>
         </ContentControl>
     </ScrollView>

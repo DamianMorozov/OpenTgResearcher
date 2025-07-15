@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.6.620] - 2025-07-14
 ### Changed
 - Updated message table in TgStorage
+- Updated the main page in OpenTgResearcherDesktop
 ### Added
 - Added checking messages for deleted messages when rescanning a chat
 - Added display of message link in OpenTgResearcherDesktop

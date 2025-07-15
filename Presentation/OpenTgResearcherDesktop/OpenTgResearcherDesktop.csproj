@@ -140,6 +140,18 @@
     <None Include="..\..\Docs\CHANGELOG.md" Link="Docs\CHANGELOG.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\Docs\GUIDE-DESKTOP-GET-TEST-LICENSE-RUS.md" Link="Docs\GUIDE-DESKTOP-GET-TEST-LICENSE-RUS.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Docs\GUIDE-DESKTOP-GET-TEST-LICENSE.md" Link="Docs\GUIDE-DESKTOP-GET-TEST-LICENSE.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Docs\GUIDE-DESKTOP-VIEW-CHAT-DETAILS-RUS.md" Link="Docs\GUIDE-DESKTOP-VIEW-CHAT-DETAILS-RUS.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Docs\GUIDE-DESKTOP-VIEW-CHAT-DETAILS.md" Link="Docs\GUIDE-DESKTOP-VIEW-CHAT-DETAILS.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\Docs\GUIDE-SETUP-DESKTOP-RUS.md" Link="Docs\GUIDE-SETUP-DESKTOP-RUS.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

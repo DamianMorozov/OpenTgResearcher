@@ -4,13 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.620] - 2025-07-14
+## [0.6.640] - 2025-07-15
 ### Changed
 - Updated message table in TgStorage
 - Updated the main page in OpenTgResearcherDesktop
+- Updated chat details view in OpenTgResearcherConsole
+- Updated documentation
 ### Added
 - Added checking messages for deleted messages when rescanning a chat
 - Added display of message link in OpenTgResearcherDesktop
+- Added chat details view in OpenTgResearcherDesktop
 
 ## [0.6.600] - 2025-07-12
 ### Fixed

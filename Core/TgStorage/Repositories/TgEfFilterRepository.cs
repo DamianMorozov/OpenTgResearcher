@@ -61,21 +61,15 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<int> GetCountAsync()
-	{
-		return await EfContext.Filters.AsNoTracking().CountAsync();
-	}
+    public override async Task<int> GetCountAsync() => await EfContext.Filters.AsNoTracking().CountAsync();
 
-	public override async Task<int> GetCountAsync(Expression<Func<TgEfFilterEntity, bool>> where)
-	{
-		return await EfContext.Filters.AsNoTracking().Where(where).CountAsync();
-	}
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfFilterEntity, bool>> where) => await EfContext.Filters.AsNoTracking().Where(where).CountAsync();
 
-	#endregion
+    #endregion
 
-	#region Public and private methods - Delete
+    #region Public and private methods - Delete
 
-	public override async Task<TgEfStorageResult<TgEfFilterEntity>> DeleteAllAsync()
+    public override async Task<TgEfStorageResult<TgEfFilterEntity>> DeleteAllAsync()
 	{
 		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
 		if (storageResult.IsExists)

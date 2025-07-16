@@ -42,6 +42,7 @@ global using TgStorage.Domain.Messages;
 global using TgStorage.Domain.Proxies;
 global using TgStorage.Domain.Sources;
 global using TgStorage.Domain.Stories;
+global using TgStorage.Domain.Users;
 global using TgStorage.Domain.Versions;
 global using TgStorage.Domain;
 global using TgStorage.Helpers;

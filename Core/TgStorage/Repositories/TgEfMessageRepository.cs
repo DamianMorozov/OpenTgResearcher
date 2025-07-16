@@ -104,15 +104,9 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<int> GetCountAsync()
-	{
-		return await EfContext.Messages.AsNoTracking().CountAsync();
-	}
+    public override async Task<int> GetCountAsync() => await EfContext.Messages.AsNoTracking().CountAsync();
 
-	public override async Task<int> GetCountAsync(Expression<Func<TgEfMessageEntity, bool>> where)
-	{
-		return await EfContext.Messages.AsNoTracking().Where(where).CountAsync();
-	}
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfMessageEntity, bool>> where) => await EfContext.Messages.AsNoTracking().Where(where).CountAsync();
 
     /// <inheritdoc />
     public async Task<long> GetLastIdAsync(long sourceId) => await EfContext.Messages

@@ -98,15 +98,9 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<int> GetCountAsync()
-	{
-		return await EfContext.Sources.AsNoTracking().CountAsync();
-	}
+    public override async Task<int> GetCountAsync() => await EfContext.Sources.AsNoTracking().CountAsync();
 
-	public override async Task<int> GetCountAsync(Expression<Func<TgEfSourceEntity, bool>> where)
-	{
-		return await EfContext.Sources.AsNoTracking().Where(where).CountAsync();
-	}
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfSourceEntity, bool>> where) => await EfContext.Sources.AsNoTracking().Where(where).CountAsync();
 
     #endregion
 

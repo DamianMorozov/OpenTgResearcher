@@ -61,21 +61,15 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<int> GetCountAsync()
-	{
-		return await EfContext.Versions.AsNoTracking().CountAsync();
-	}
+    public override async Task<int> GetCountAsync() => await EfContext.Versions.AsNoTracking().CountAsync();
 
-	public override async Task<int> GetCountAsync(Expression<Func<TgEfVersionEntity, bool>> where)
-	{
-		return await EfContext.Versions.AsNoTracking().Where(where).CountAsync();
-	}
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfVersionEntity, bool>> where) => await EfContext.Versions.AsNoTracking().Where(where).CountAsync();
 
-	#endregion
+    #endregion
 
-	#region Public and private methods - Delete
+    #region Public and private methods - Delete
 
-	public override async Task<TgEfStorageResult<TgEfVersionEntity>> DeleteAllAsync()
+    public override async Task<TgEfStorageResult<TgEfVersionEntity>> DeleteAllAsync()
 	{
 		var storageResult =
 			await GetListAsync(0, 0, isReadOnly: false);

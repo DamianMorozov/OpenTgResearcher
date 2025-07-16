@@ -2917,34 +2917,36 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetParticipantAsync(long chatId, long userId)
+    public async Task<User?> GetParticipantAsync(long chatId, long? userId)
     {
         var chatBase = GetChatBaseFromUserChats(chatId);
         var inputChannel = GetInputChannelFromChatBase(chatBase);
         if (inputChannel is null || inputChannel.access_hash == 0) return null;
 
         // Optimization: check cache
-        if (UserCache.TryGetValue(userId, out var user))
-            return user;
-
-        // Get one participant: need access hash
-        try
+        if (userId is not null)
         {
-            var response = await Client.Channels_GetParticipant(inputChannel, new InputUser(userId, access_hash: 0));
-            if (response is not null)
+            if (UserCache.TryGetValue((long)userId, out var user))
+                return user;
+            // Get one participant: need access hash
+            try
             {
-                // Optimization: update cache
-                var userData = response.users.FirstOrDefault(x => x.Value.id == userId).Value;
-                if (userData is not null)
+                var response = await Client.Channels_GetParticipant(inputChannel, new InputUser((long)userId, access_hash: 0));
+                if (response is not null)
                 {
-                    UserCache.TryAdd(userId, userData);
-                    return userData;
+                    // Optimization: update cache
+                    var userData = response.users.FirstOrDefault(x => x.Value.id == userId).Value;
+                    if (userData is not null)
+                    {
+                        UserCache.TryAdd((long)userId, userData);
+                        return userData;
+                    }
                 }
             }
-        }
-        catch (RpcException ex) when (ex.Code == 400) // USER_NOT_PARTICIPANT
-        {
-            // Ignore
+            catch (RpcException ex) when (ex.Code == 400) // USER_NOT_PARTICIPANT
+            {
+                TgLogUtils.WriteException(ex);
+            }
         }
 
         // Get
@@ -2961,11 +2963,19 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
                 foreach (var userItem in participants.users)
                 {
-                    if (userItem.Value.id == userId)
+                    if (userId is not null)
+                    {
+                        if (userItem.Value.id == userId)
+                        {
+                            // Optimization: update cache
+                            UserCache.TryAdd(userItem.Value.id, userItem.Value);
+                            return userItem.Value;
+                        }
+                    }
+                    else
                     {
                         // Optimization: update cache
-                        UserCache.TryAdd(userId, userItem.Value);
-                        return userItem.Value;
+                        UserCache.TryAdd(userItem.Value.id, userItem.Value);
                     }
                 }
 
@@ -2979,6 +2989,24 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             return null;
         }
+    }
+
+    /// <inheritdoc />
+    public async Task<List<TL.User>> GetParticipantsAsync(long chatId)
+    {
+        await GetChatDetailsByClientAsync(chatId);
+
+        UserCache.Clear();
+        await GetParticipantAsync(chatId, null);
+
+        // Sort participants
+        var userList = UserCache
+            .OrderByDescending(x => x.Key == Client?.UserId)
+            .ThenBy(x => x.Value.LastSeenAgo)
+            .Select(x => x.Value)
+            .ToList();
+
+        return userList;
     }
 
     /// <inheritdoc />
@@ -3062,8 +3090,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         tgDownloadSettings.SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { UserName = userName } };
         await CreateChatBaseCoreAsync(tgDownloadSettings);
 
-        TgChatDetailsDto chatDetailsDto = new();
-        if (Client is null) return chatDetailsDto;
+        if (Client is null) return new();
 
         // Get details about a public chat (even if client is not a member of that chat)
         var fullChat = await Client.GetFullChat(tgDownloadSettings.Chat.Base);
@@ -3073,9 +3100,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         else
         {
             chatDetails = ConvertToChatFullInfo(fullChat);
-            FillChatDetailsDto(chatDetailsDto, chatDetails);
+            await GetParticipantsAsync(chatDetails.Id);
+            return FillChatDetailsDto(chatDetails);
         }
-        return chatDetailsDto;
+        return new();
     }
 
     /// <inheritdoc />
@@ -3083,8 +3111,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         userName = TgStringUtils.NormilizeTgName(userName, isAddAt: false);
 
-        TgChatDetailsDto chatDetailsDto = new();
-        if (Bot is null) return chatDetailsDto;
+        if (Bot is null) return new();
 
         // Get details about a public chat (even if bot is not a member of that chat)
         var chatDetails = await Bot.GetChat(userName);
@@ -3092,20 +3119,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             TgLog.MarkupInfo(TgLocale.TgGetChatDetailsError);
         else
         {
-            FillChatDetailsDto(chatDetailsDto, chatDetails);
+            return FillChatDetailsDto(chatDetails);
         }
-        return chatDetailsDto;
+        return new();
     }
 
     /// <inheritdoc />
     public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id)
     {
-        var tgDownloadSettings = new TgDownloadSettingsViewModel();
-        tgDownloadSettings.SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { Id = id } };
+        var tgDownloadSettings = new TgDownloadSettingsViewModel
+        {
+            SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { Id = id } }
+        };
         await CreateChatBaseCoreAsync(tgDownloadSettings);
 
-        TgChatDetailsDto chatDetailsDto = new();
-        if (Client is null) return chatDetailsDto;
+        if (Client is null) return new();
 
         // Get details about a public chat (even if client is not a member of that chat)
         var fullChat = await Client.GetFullChat(tgDownloadSettings.Chat.Base);
@@ -3115,9 +3143,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         else
         {
             chatDetails = ConvertToChatFullInfo(fullChat);
-            FillChatDetailsDto(chatDetailsDto, chatDetails);
+            return FillChatDetailsDto(chatDetails);
         }
-        return chatDetailsDto;
+        return new();
     }
 
     /// <inheritdoc />
@@ -3148,23 +3176,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return chatFullInfo;
     }
 
-    private static void FillChatDetailsDto(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
+    private static TgChatDetailsDto FillChatDetailsDto(WTelegram.Types.ChatFullInfo chatDetails)
     {
-        chatDetailsDto.Title = chatDetails.Title ?? "-";
-        chatDetailsDto.Type = chatDetails.Type switch
+        TgChatDetailsDto chatDetailsDto = new()
         {
-            ChatType.Private => "Normal one-to-one chat with a user or bot",
-            ChatType.Group => "Normal group chat",
-            ChatType.Channel => "A channel",
-            ChatType.Supergroup => "A supergroup",
-            ChatType.Sender => "Value possible only in InlineQuery.ChatType: private chat with the inline query sender",
-            _ => "-",
+            Title = chatDetails.Title ?? "-",
+            Type = chatDetails.Type switch
+            {
+                ChatType.Private => "Normal one-to-one chat with a user or bot",
+                ChatType.Group => "Normal group chat",
+                ChatType.Channel => "A channel",
+                ChatType.Supergroup => "A supergroup",
+                ChatType.Sender => "Value possible only in InlineQuery.ChatType: private chat with the inline query sender",
+                _ => "-",
+            },
+            Id = ReduceChatId(chatDetails.Id).ToString(),
+            UserName = chatDetails.Username ?? "-",
+            InviteLink = chatDetails.InviteLink ?? "-",
+            Description = !string.IsNullOrEmpty(chatDetails.Description) ? chatDetails.Description : "-" ?? "-"
         };
-        chatDetailsDto.Id = ReduceChatId(chatDetails.Id).ToString();
-        chatDetailsDto.UserName = chatDetails.Username ?? "-";
-        chatDetailsDto.InviteLink = chatDetails.InviteLink ?? "-";
-        chatDetailsDto.Description = !string.IsNullOrEmpty(chatDetails.Description) ? chatDetails.Description : "-" ?? "-";
-        
+
         FillShatDetailsPermissions(chatDetailsDto, chatDetails);
 
         if (chatDetails.TLInfo is TL.Messages_ChatFull messagesChatFull)
@@ -3190,6 +3221,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             chatDetailsDto.IsForum = chatDetails.IsForum;
         }
+
+        return chatDetailsDto;
     }
 
     private static void FillShatDetailsPermissions(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)

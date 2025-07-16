@@ -3,7 +3,7 @@
 
 namespace TgStorage.Domain.Users;
 
-/// <summary> Contact entity </summary>
+/// <summary> User entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(DtChanged))]
@@ -105,28 +105,6 @@ public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
     [Column(TgEfConstants.ColumnLangCode, TypeName = "NVARCHAR(16)")]
     public string? LangCode { get; set; } = null!;
 
-    [DefaultValue(-1)]
-    [ConcurrencyCheck]
-    [Column(TgEfConstants.ColumnStoriesMaxId, TypeName = "INT(20)")]
-    public int StoriesMaxId { get; set; }
-
-    [DefaultValue("")]
-    [ConcurrencyCheck]
-    [MaxLength(20)]
-    [Column(TgEfConstants.ColumnBotInfoVersion, TypeName = "NVARCHAR(20)")]
-    public string? BotInfoVersion { get; set; } = null!;
-
-    [DefaultValue("")]
-    [ConcurrencyCheck]
-    [MaxLength(128)]
-    [Column(TgEfConstants.ColumnBotInlinePlaceholder, TypeName = "NVARCHAR(128)")]
-    public string BotInlinePlaceholder { get; set; } = null!;
-
-    [DefaultValue(-1)]
-    [ConcurrencyCheck]
-    [Column(TgEfConstants.ColumnBotActiveUsers, TypeName = "INT(20)")]
-    public int BotActiveUsers { get; set; }
-
     public TgEfUserEntity() : base()
     {
         Default();
@@ -154,10 +132,6 @@ public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
         Status = this.GetDefaultPropertyString(nameof(Status));
         RestrictionReason = this.GetDefaultPropertyString(nameof(RestrictionReason));
         LangCode = this.GetDefaultPropertyString(nameof(LangCode));
-        StoriesMaxId = this.GetDefaultPropertyInt(nameof(StoriesMaxId));
-        BotInfoVersion = this.GetDefaultPropertyString(nameof(BotInfoVersion));
-        BotInlinePlaceholder = this.GetDefaultPropertyString(nameof(BotInlinePlaceholder));
-        BotActiveUsers = this.GetDefaultPropertyInt(nameof(BotActiveUsers));
     }
 
     public TgEfUserEntity Copy(TgEfUserEntity item, bool isUidCopy)
@@ -178,10 +152,6 @@ public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
         Status = item.Status;
         RestrictionReason = item.RestrictionReason;
         LangCode = item.LangCode;
-        StoriesMaxId = item.StoriesMaxId;
-        BotInfoVersion = item.BotInfoVersion;
-        BotInlinePlaceholder = item.BotInlinePlaceholder;
-        BotActiveUsers = item.BotActiveUsers;
         return this;
     }
 

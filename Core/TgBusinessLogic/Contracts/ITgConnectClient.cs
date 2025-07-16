@@ -70,11 +70,12 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public (string, string) GetChatUserLink(long chatId);
     /// <summary> Get user link </summary>
     public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer);
-    /// <summary> Get participant information from chat </summary>
-    Task<User?> GetParticipantAsync(long chatId, long userId);
+    /// <summary> Get chat participant information </summary>
+    Task<User?> GetParticipantAsync(long chatId, long? userId);
+    /// <summary> Get chat participants information </summary>
+    Task<List<TL.User>> GetParticipantsAsync(long chatId);
     /// <summary> Make an action with messages in a chat </summary>
-    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, 
-        Func<TgDownloadSettingsViewModel, ChatBase, MessageBase, Task> func);
+    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, ChatBase, MessageBase, Task> func);
     /// <summary> Get the last message ID in a chat </summary>
     Task<int> GetChatLastMessageIdAsync(long chatId);
     /// <summary> Clear caches </summary>

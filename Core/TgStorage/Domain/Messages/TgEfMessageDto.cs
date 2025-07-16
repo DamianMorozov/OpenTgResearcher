@@ -10,7 +10,8 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 
 	[ObservableProperty]
 	public partial DateTime DtCreated { get; set; }
-	[ObservableProperty]
+    public string DtChangedString => $"{DtCreated:yyyy-MM-dd HH:mm:ss}";
+    [ObservableProperty]
 	public partial long SourceId { get; set; }
 	[ObservableProperty]
 	public partial long Id { get; set; }
@@ -106,8 +107,6 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 	#endregion
 
 	#region Public and private methods
-
-	public string DtChangedString => $"{DtCreated:yyyy-MM-dd HH:mm:ss}";
 
 	public override string ToString() => $"{DtCreated} | {SourceId} | {Id} | {Type} | {Size} | {Message}";
 

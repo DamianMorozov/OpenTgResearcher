@@ -24,9 +24,15 @@ public sealed partial class TgChatDetailsPage
 
     private void ScrollRequested()
     {
-        if (ListViewData is null) return;
-        if (ListViewData.Items.Any())
-            ListViewData.ScrollIntoView(ListViewData.Items.Last());
+        // Scroll to the last item in the Messages ListView
+        if (ListViewMessages is null) return;
+        if (ListViewMessages.Items.Any())
+            ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
+
+        // Scroll to the last item in the Participants ListView
+        if (ListViewParticipants is null) return;
+        if (ListViewParticipants.Items.Any())
+            ListViewParticipants.ScrollIntoView(ListViewParticipants.Items.Last());
     }
 
     /// <summary> Write text to clipboard </summary>

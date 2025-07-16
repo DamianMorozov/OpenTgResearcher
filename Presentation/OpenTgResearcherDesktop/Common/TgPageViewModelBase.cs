@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using Microsoft.UI.Xaml.Data;
-
 namespace OpenTgResearcherDesktop.Common;
 
 /// <summary> Base class for TgViewModel </summary>
@@ -58,12 +56,13 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 	public partial bool IsDownloading { get; set; }
 	[ObservableProperty]
 	public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
-	[ObservableProperty]
+    [ObservableProperty]
+    public partial string SensitiveData { get; set; } = "**********";
+    [ObservableProperty]
 	public partial bool IsDisplaySensitiveData { get; set; }
-	[ObservableProperty]
-	public partial string SensitiveData { get; set; } = "**********";
+    public IRelayCommand? IsDisplaySensitiveCommand { get; set; }
 
-	public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
+    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{
 		SettingsService = settingsService;
 		NavigationService = navigationService;
@@ -75,9 +74,15 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 
 	#region Public and private methods
 
+    partial void OnIsDisplaySensitiveDataChanged(bool value)
+    {
+        if (IsDisplaySensitiveCommand?.CanExecute(value) ?? false)
+            IsDisplaySensitiveCommand.Execute(value);
+    }
+
 	public virtual string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
-	public virtual void OnLoaded(object parameter)
+    public virtual void OnLoaded(object parameter)
 	{
 		if (parameter is XamlRoot xamlRoot)
 		{

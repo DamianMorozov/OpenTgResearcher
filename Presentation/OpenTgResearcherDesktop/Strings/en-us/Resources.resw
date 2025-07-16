@@ -513,6 +513,12 @@
   <data name="ExpanderChatDetails.Header" xml:space="preserve">
     <value>Chat details</value>
   </data>
+  <data name="ExpanderChatParticipants.Header" xml:space="preserve">
+    <value>Chat participants</value>
+  </data>
+  <data name="ExpanderChatStatistics.Header" xml:space="preserve">
+    <value>Chat statistics</value>
+  </data>
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Files</value>
   </data>
@@ -584,6 +590,9 @@
   </data>
   <data name="AskUpdatePreviewApp" xml:space="preserve">
     <value>Check for preview updates of the application?</value>
+  </data>
+  <data name="AskGetParticipants" xml:space="preserve">
+    <value>Get participants?</value>
   </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Restart the application.</value>
@@ -879,6 +888,12 @@
   <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
     <value>Update chat details</value>
   </data>
+  <data name="TextBlockGetParticipants.Text" xml:space="preserve">
+    <value>Get participants</value>
+  </data>
+  <data name="TextBlockCalcChatStatistics.Text" xml:space="preserve">
+    <value>Calculate chat statistics</value>
+  </data>
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Stop downloading</value>
   </data>
@@ -917,6 +932,18 @@
   </data>
   <data name="TextBlockId.Text" xml:space="preserve">
     <value>ID</value>
+  </data>
+  <data name="TextBlockDtStart.Text" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="TextBlockDtEnd.Text" xml:space="preserve">
+    <value>End date</value>
+  </data>
+  <data name="TextBlockUsers.Text" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="TextBlockBots.Text" xml:space="preserve">
+    <value>Bots</value>
   </data>
   <data name="TextBlockLink.Text" xml:space="preserve">
     <value>Link</value>
@@ -1056,6 +1083,9 @@
   <data name="FieldCount.Text" xml:space="preserve">
     <value>Count</value>
   </data>
+  <data name="FieldMessagesCount.Text" xml:space="preserve">
+    <value>Messages count</value>
+  </data>
   <data name="FieldEmptyData.Text" xml:space="preserve">
     <value>Empty data</value>
   </data>
@@ -1118,6 +1148,9 @@
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Enter the text to filter</value>
+  </data>
+  <data name="FieldLastSeenAgo.Text" xml:space="preserve">
+    <value>Last seen ago</value>
   </data>
   <data name="ButtonFilter.Content" xml:space="preserve">
     <value>Filter</value>

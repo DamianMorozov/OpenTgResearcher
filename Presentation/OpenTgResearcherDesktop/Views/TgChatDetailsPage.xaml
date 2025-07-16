@@ -8,6 +8,7 @@
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
+    xmlns:users="using:TgStorage.Domain.Users"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
     d:DataContext="{d:DesignInstance Type=viewmodels:TgChatDetailsViewModel}"
@@ -21,8 +22,9 @@
         <converters:TgEnumToColumnSpanConverter x:Key="EnumToColumnSpanConverter" />
         <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
         <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
-        <!--  Data template  -->
-        <DataTemplate x:Key="MessageViewTemplate" x:DataType="messages:TgEfMessageDto">
+        <converters:TgDateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
+        <!--  Messages data template  -->
+        <DataTemplate x:Key="MessagesViewTemplate" x:DataType="messages:TgEfMessageDto">
             <StackPanel
                 Grid.Column="{x:Bind Direction, Converter={StaticResource EnumToColumnConverter}}"
                 Grid.ColumnSpan="{x:Bind Direction, Converter={StaticResource EnumToColumnSpanConverter}}"
@@ -122,7 +124,7 @@
                 </StackPanel>-->
                 <!--  Image preview  -->
                 <Image
-                    MaxHeight="200"
+                    MaxHeight="1000"
                     Margin="0,10,0,10"
                     Source="{x:Bind ImageFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
                     Stretch="Uniform"
@@ -136,6 +138,252 @@
                     Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
         </DataTemplate>
+        <!--  Participants data template  -->
+        <DataTemplate x:Key="ParticipantsViewTemplate" x:DataType="users:TgEfUserDto">
+            <StackPanel
+                Height="Auto"
+                Margin="4"
+                Padding="10,0,0,10"
+                HorizontalAlignment="Stretch"
+                Background="{ThemeResource SystemColorBackgroundBrush}"
+                CornerRadius="10"
+                Opacity="1">
+                <StackPanel Orientation="Horizontal">
+                    <!--  DateTime changed  -->
+                    <!--<TextBlock
+                        Margin="5,5,5,0"
+                        HorizontalAlignment="Left"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind DtChangedString, Mode=OneWay}" />-->
+                    <!--  ID  -->
+                    <TextBlock
+                        x:Uid="TextBlockId"
+                        Margin="5,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="10,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind Id, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Id, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  MainUserName  -->
+                    <TextBlock
+                        x:Uid="FieldUserName"
+                        Margin="20,5,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind MainUserName, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind MainUserName, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  AccessHash  -->
+                    <TextBlock
+                        x:Uid="FieldAccessHash"
+                        Margin="20,5,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind AccessHash, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind AccessHash, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <!--  IsContactActive  -->
+                    <TextBlock
+                        x:Uid="FieldIsActive"
+                        Margin="5,5,7,2"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Margin="5,-2,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsEnabled="False"
+                        IsOn="{x:Bind IsContactActive, Mode=OneWay}" />
+                    <!--  IsBot  -->
+                    <TextBlock
+                        x:Uid="FieldIsBot"
+                        Margin="-50,5,7,2"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Margin="-15,-2,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsEnabled="False"
+                        IsOn="{x:Bind IsBot, Mode=OneWay}" />
+                    <!--  LastSeenAgo  -->
+                    <TextBlock
+                        x:Uid="FieldLastSeenAgo"
+                        Margin="-50,5,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind LastSeenAgoAsString, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  RestrictionReason  -->
+                    <TextBlock
+                        x:Uid="FieldRestrictionReason"
+                        Margin="20,5,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind RestrictionReason, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind RestrictionReason, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <!--  FirstLastName  -->
+                    <TextBlock
+                        x:Uid="FieldFirstName"
+                        Margin="5,0,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind FirstLastName, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind FirstLastName, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  PhoneNumber  -->
+                    <TextBlock
+                        x:Uid="FieldPhoneNumber"
+                        Margin="5,0,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind PhoneNumber, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind PhoneNumber, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  Status  -->
+                    <TextBlock
+                        x:Uid="FieldStatus"
+                        Margin="5,0,7,2"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,5,5,0"
+                        Text="{x:Bind SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="{x:Bind Status, Mode=OneWay}"
+                        Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-2,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Status, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <!--  User deleted  -->
+                    <TextBlock
+                        x:Uid="TextBlockMessageDeleted"
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
     </common:TgPageBase.Resources>
 
     <Grid>
@@ -145,7 +393,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Load data  -->
         <views:TgLoadDataPage
@@ -234,7 +484,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        Text="{x:Bind ViewModel.Messages.Count, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.MessageDtos.Count, Mode=OneWay}"
                         TextAlignment="Center" />-->
                 </Grid>
             </Expander>
@@ -265,9 +515,9 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <!--  Uid  -->
                         <TextBlock
@@ -639,9 +889,9 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <!--  Threads count  -->
                         <TextBlock
@@ -853,9 +1103,9 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <!--  Update chat details  -->
                         <Button
@@ -1298,9 +1548,239 @@
                 </ScrollView>
             </Expander>
         </ContentControl>
-        <!--  Content with messages and media  -->
+        <!--  Chat participants  -->
         <ContentControl
             Grid.Row="5"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch">
+            <Expander
+                x:Uid="ExpanderChatParticipants"
+                Margin="{StaticResource ExpanderMargin}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                IsExpanded="False"
+                Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}">
+                <Grid Margin="0,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Get participants  -->
+                    <Button
+                        Margin="0,0,5,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.GetParticipantsCommand}"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                            <TextBlock
+                                x:Uid="TextBlockGetParticipants"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  List view with participants  -->
+                    <ListView
+                        x:Name="ListViewParticipants"
+                        Grid.Row="1"
+                        MaxHeight="1000"
+                        ItemTemplate="{StaticResource ParticipantsViewTemplate}"
+                        ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}">
+                        <!--  The ItemsStackPanel must be edited to update the following two properties  -->
+                        <!--  These properties allow the list to grow from the bottom  -->
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+            </Expander>
+        </ContentControl>
+        <!--  Chat statistics  -->
+        <ContentControl
+            Grid.Row="6"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch">
+            <Expander
+                x:Uid="ExpanderChatStatistics"
+                Margin="{StaticResource ExpanderMargin}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                IsExpanded="False"
+                Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}">
+                <Grid Margin="0,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Statistics calculation button  -->
+                    <Button
+                        Margin="0,0,5,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.CalcChatStatisticsCommand}"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                            <TextBlock
+                                x:Uid="TextBlockCalcChatStatistics"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  ChatStatisticsDto  -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <!--  DtStart  -->
+                        <TextBlock x:Uid="TextBlockDtStart" VerticalAlignment="Center" />
+                        <DatePicker
+                            Grid.Column="1"
+                            Margin="10,5,0,10"
+                            HorizontalAlignment="Left"
+                            SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtStart, Mode=TwoWay}" />
+                        <!--  DtEnd  -->
+                        <TextBlock
+                            x:Uid="TextBlockDtEnd"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            VerticalAlignment="Center" />
+                        <DatePicker
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,01,0,10"
+                            SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtEnd, Mode=TwoWay}" />
+                        <!--  User and bot statistics  -->
+                        <TextBlock
+                            x:Uid="TextBlockUsers"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            Margin="50,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="3"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind ViewModel.ChatStatisticsDto.UsersCount, Mode=OneWay}" />
+                        <TextBlock
+                            x:Uid="TextBlockBots"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="4"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="5"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind ViewModel.ChatStatisticsDto.BotsCount, Mode=OneWay}" />
+                        <!--  List of users and number of messages (UserDtos)  -->
+                        <ListView
+                            Grid.Row="2"
+                            Grid.ColumnSpan="7"
+                            MaxHeight="1000"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            ItemsSource="{x:Bind ViewModel.ChatStatisticsDto.UserWithCountDtos}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="users:TgEfUserWithCountDto">
+                                    <StackPanel
+                                        Padding="5"
+                                        Orientation="Horizontal"
+                                        Spacing="10">
+                                        <!--  Id  -->
+                                        <TextBlock x:Uid="FieldId" Margin="20,0,0,0" />
+                                        <!--  Sensitive data  -->
+                                        <TextBlock
+                                            Margin="0,5,5,0"
+                                            Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
+                                            Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                        <!--  Id  -->
+                                        <TextBlock
+                                            Width="Auto"
+                                            Margin="0,0,0,0"
+                                            Text="{x:Bind UserDto.Id}"
+                                            Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <!--  Copy button  -->
+                                        <Button
+                                            Margin="5,-2,0,0"
+                                            Click="OnClipboardSilentWriteClick"
+                                            CornerRadius="10"
+                                            Tag="{x:Bind UserDto.Id, Mode=OneWay}">
+                                            <SymbolIcon Symbol="Copy" />
+                                        </Button>
+                                        <!--  FirstLastName  -->
+                                        <TextBlock x:Uid="FieldFirstName" Margin="20,0,0,0" />
+                                        <!--  Sensitive data  -->
+                                        <TextBlock
+                                            Margin="0,5,5,0"
+                                            Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
+                                            Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                        <!--  FirstLastName  -->
+                                        <TextBlock
+                                            Margin="0,0,0,0"
+                                            Text="{x:Bind UserDto.FirstLastName}"
+                                            Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <!--  Copy button  -->
+                                        <Button
+                                            Margin="5,-2,0,0"
+                                            Click="OnClipboardSilentWriteClick"
+                                            CornerRadius="10"
+                                            Tag="{x:Bind UserDto.FirstLastName, Mode=OneWay}">
+                                            <SymbolIcon Symbol="Copy" />
+                                        </Button>
+                                        <!--  Count  -->
+                                        <TextBlock x:Uid="FieldMessagesCount" Margin="20,0,0,0" />
+                                        <TextBlock
+                                            Margin="5,0,0,0"
+                                            FontWeight="SemiBold"
+                                            Text="{x:Bind Count}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Grid>
+            </Expander>
+        </ContentControl>
+        <!--  Content with messages and media  -->
+        <ContentControl
+            Grid.Row="7"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsEnabledContent, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -1336,10 +1816,10 @@
                             </Grid.RowDefinitions>
                             <!--  List view with messages  -->
                             <ListView
-                                x:Name="ListViewData"
-                                Grid.Row="0"
-                                ItemTemplate="{StaticResource MessageViewTemplate}"
-                                ItemsSource="{x:Bind ViewModel.Messages, Mode=OneWay}"
+                                x:Name="ListViewMessages"
+                                MaxHeight="1000"
+                                ItemTemplate="{StaticResource MessagesViewTemplate}"
+                                ItemsSource="{x:Bind ViewModel.MessageDtos, Mode=OneWay}"
                                 Visibility="{x:Bind ViewModel.IsImageViewerVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                                 <!--  The ItemsStackPanel must be edited to update the following two properties  -->
                                 <!--  These properties allow the list to grow from the bottom  -->

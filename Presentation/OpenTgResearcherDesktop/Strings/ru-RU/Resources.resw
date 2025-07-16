@@ -572,6 +572,12 @@
   <data name="ExpanderChatDetails.Header" xml:space="preserve">
     <value>Детали чата</value>
   </data>
+  <data name="ExpanderChatParticipants.Header" xml:space="preserve">
+    <value>Участники чата</value>
+  </data>
+  <data name="ExpanderChatStatistics.Header" xml:space="preserve">
+    <value>Статистика чата</value>
+  </data>
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Файлы</value>
   </data>
@@ -643,6 +649,9 @@
   </data>
   <data name="AskUpdatePreviewApp" xml:space="preserve">
     <value>Проверить наличие предварительных обновлений приложения?</value>
+  </data>
+  <data name="AskGetParticipants" xml:space="preserve">
+    <value>Получить участников?</value>
   </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Перезапустите приложение.</value>
@@ -941,6 +950,12 @@
   <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
     <value>Обновить детали чата</value>
   </data>
+  <data name="TextBlockGetParticipants.Text" xml:space="preserve">
+    <value>Получить участников</value>
+  </data>
+  <data name="TextBlockCalcChatStatistics.Text" xml:space="preserve">
+    <value>Рассчитать статистику чата</value>
+  </data>
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Остановить загрузку</value>
   </data>
@@ -979,6 +994,18 @@
   </data>
   <data name="TextBlockId.Text" xml:space="preserve">
     <value>ИД</value>
+  </data>
+  <data name="TextBlockDtStart.Text" xml:space="preserve">
+    <value>Дата начала</value>
+  </data>
+  <data name="TextBlockDtEnd.Text" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="TextBlockUsers.Text" xml:space="preserve">
+    <value>Пользователи</value>
+  </data>
+  <data name="TextBlockBots.Text" xml:space="preserve">
+    <value>Бота</value>
   </data>
   <data name="TextBlockLink.Text" xml:space="preserve">
     <value>Ссылка</value>
@@ -1118,6 +1145,9 @@
   <data name="FieldCount.Text" xml:space="preserve">
     <value>Кол-во</value>
   </data>
+  <data name="FieldMessagesCount.Text" xml:space="preserve">
+    <value>Кол-во сообщений</value>
+  </data>
   <data name="FieldEmptyData.Text" xml:space="preserve">
     <value>Пустые данные</value>
   </data>
@@ -1180,6 +1210,9 @@
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Введите текст для фильтрации</value>
+  </data>
+  <data name="FieldLastSeenAgo.Text" xml:space="preserve">
+    <value>Был последний раз</value>
   </data>
   <data name="ButtonFilter.Content" xml:space="preserve">
     <value>Фильтровать</value>

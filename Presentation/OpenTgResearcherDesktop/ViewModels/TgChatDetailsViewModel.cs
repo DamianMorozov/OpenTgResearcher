@@ -15,18 +15,24 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
-    public partial ObservableCollection<TgEfMessageDto> Messages { get; set; } = null!;
+    public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = new();
+    [ObservableProperty]
+    public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
     public partial bool EmptyData { get; set; } = true;
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
     [ObservableProperty]
     public partial bool IsImageViewerVisible { get; set; }
+    [ObservableProperty]
+    public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
 
     public IRelayCommand ClearDataStorageCommand { get; }
     public IRelayCommand UpdateOnlineCommand { get; }
     public IRelayCommand UpdateChatDetailsCommand { get; }
     public IRelayCommand StopDownloadingCommand { get; }
+    public IRelayCommand GetParticipantsCommand { get; }
+    public IRelayCommand CalcChatStatisticsCommand { get; }
 
     public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgChatDetailsViewModel))
@@ -36,6 +42,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
         UpdateChatDetailsCommand = new AsyncRelayCommand(UpdateChatDetailsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
+        GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
+        IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
+        CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
         // Updates
         App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
     }
@@ -56,8 +65,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     private async Task ClearDataStorageCoreAsync()
     {
         Dto = new();
-        Messages = [];
-        EmptyData = !Messages.Any();
+        MessageDtos = [];
+        UserDtos = [];
+        EmptyData = !MessageDtos.Any();
         await Task.CompletedTask;
     }
 
@@ -66,13 +76,13 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         await ReloadUiAsync();
         if (!SettingsService.IsExistsAppStorage) return;
         Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
-        Messages = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosDescAsync(
+        MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosDescAsync(
             take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id, isReadOnly: true)];
-        foreach (var messageDto in Messages)
+        foreach (var messageDto in MessageDtos)
         {
             messageDto.Directory = Dto.Directory;
         }
-        EmptyData = !Messages.Any();
+        EmptyData = !MessageDtos.Any();
         ScrollRequested?.Invoke();
     }
 
@@ -91,7 +101,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
         await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
         await DownloadSettings.UpdateSourceWithSettingsAsync();
-        //await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(DownloadSettings.SourceVm.Dto.Id, DownloadSettings.SourceVm.Dto.FirstId, TgLocale.SettingsSource);
         await LoadDataStorageCoreAsync();
         IsDownloading = false;
     });
@@ -111,6 +120,86 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         App.BusinessLogicManager.ConnectClient.SetForceStopDownloading();
+    }
+
+    private async Task GetParticipantsAsync() => await ContentDialogAsync(GetParticipantsCoreAsync, TgResourceExtensions.AskGetParticipants());
+
+    private async Task GetParticipantsCoreAsync()
+    {
+        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+
+        var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
+        UserDtos = [.. participants.Select(x => new TgEfUserDto()
+        {
+            IsDisplaySensitiveData = IsDisplaySensitiveData,
+            Id = x.id,
+            IsContactActive = x.IsActive,
+            IsBot = x.IsBot,
+            LastSeenAgo = x.LastSeenAgo,
+            UserName = x.MainUsername,
+            AccessHash = x.access_hash,
+            FirstName = x.first_name,
+            LastName = x.last_name,
+            UserNames = x.usernames is null ? string.Empty : string.Join("|", x.usernames.ToList()),
+            PhoneNumber = x.phone,
+            Status = x.status?.ToString() ?? string.Empty,
+            RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
+            LangCode = x.lang_code, 
+        }).ToList()];
+    }
+
+    private async Task IsDisplaySensitiveAsync()
+    {
+        foreach (var userDto in UserDtos)
+        {
+            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+        }
+        await Task.CompletedTask;
+    }
+
+    private async Task CalcChatStatisticsAsync()
+    {
+        ChatStatisticsDto.DefaultValues();
+        await GetParticipantsCoreAsync();
+
+        ChatStatisticsDto.UsersCount = UserDtos.Where(x => !x.IsBot).Count();
+        ChatStatisticsDto.BotsCount = UserDtos.Where(x => x.IsBot).Count();
+
+        var dtStartRaw = ChatStatisticsDto.DtStart ?? TgEfChatStatisticsDto.SafeMinDate;
+        var dtEndRaw = ChatStatisticsDto.DtEnd ?? TgEfChatStatisticsDto.SafeMaxDate;
+        // If the minimum date is still obtained (which may contain a dangerous offset) replace
+        var dtStart = dtStartRaw < TgEfChatStatisticsDto.SafeMinDate ? TgEfChatStatisticsDto.SafeMinDate : dtStartRaw;
+        var dtEnd = dtEndRaw > TgEfChatStatisticsDto.SafeMaxDate ? TgEfChatStatisticsDto.SafeMaxDate : dtEndRaw;
+        DateTimeOffset startDate = dtStart.ToUniversalTime().Date;
+        DateTimeOffset tmpEnd = dtEnd.ToUniversalTime().Date;
+        DateTimeOffset endDate;
+        if (tmpEnd < TgEfChatStatisticsDto.SafeMaxDate.Date)
+        {
+            endDate = tmpEnd.AddDays(1).AddTicks(-1);
+        }
+        else
+        {
+            endDate = tmpEnd;
+        }
+
+        foreach (var userDto in UserDtos)
+        {
+            var userWithCountDto = new TgEfUserWithCountDto
+            {
+                UserDto = userDto,
+                Count = await App.BusinessLogicManager.StorageManager.MessageRepository
+                    .GetCountAsync(x => x.SourceId == Dto.Id && x.UserId == userDto.Id &&
+                    x.DtCreated >= startDate.UtcDateTime && x.DtCreated <= endDate.UtcDateTime)
+            };
+            ChatStatisticsDto.UserWithCountDtos.Add(userWithCountDto);
+        }
+        // Order
+        var orderedUsers = ChatStatisticsDto.UserWithCountDtos.OrderByDescending(x => x.Count).ToList();
+        ChatStatisticsDto.UserWithCountDtos.Clear();
+        foreach (var user in orderedUsers)
+        {
+            ChatStatisticsDto.UserWithCountDtos.Add(user);
+        }
     }
 
     #endregion

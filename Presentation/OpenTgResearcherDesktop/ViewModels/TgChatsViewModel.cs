@@ -40,6 +40,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		SearchCommand = new AsyncRelayCommand(SearchAsync);
         LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, CanLoadMore);
+        IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
         // Updates
         //BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
         //BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
@@ -61,36 +62,45 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		await ReloadUiAsync();
 	});
 
-	//private async Task UpdateFromTelegramAsync()
-	//{
-	//	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
-	//	foreach (TgEfSourceViewModel sourceVm in Dtos)
-	//		await UpdateDtoFromTelegramAsync(sourceVm);
-	//}
+    private async Task IsDisplaySensitiveAsync()
+    {
+        foreach (var userDto in Dtos)
+        {
+            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+        }
+        await Task.CompletedTask;
+    }
 
-	//private async Task GetSourcesFromTelegramAsync()
-	//{
-	//	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
-	//	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
-	//	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
-	//}
+    //private async Task UpdateFromTelegramAsync()
+    //{
+    //	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
+    //	foreach (TgEfSourceViewModel sourceVm in Dtos)
+    //		await UpdateDtoFromTelegramAsync(sourceVm);
+    //}
 
-	///// <summary> Load sources from Telegram </summary>
-	//private async Task LoadFromTelegramAsync(TgEfSourceViewModel sourceVm)
-	//{
-	//	var storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm.Item.Id }, isReadOnly: false);
-	//	if (storageResult.IsExists)
-	//		sourceVm = new(storageResult.Item);
-	//	if (!Dtos.Select(x => x.SourceId).Contains(sourceVm.SourceId))
-	//		Dtos.Add(sourceVm);
-	//	await SaveSourceAsync(sourceVm);
-	//}
+    //private async Task GetSourcesFromTelegramAsync()
+    //{
+    //	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
+    //	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
+    //	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
+    //}
 
-	//private async Task MarkAllMessagesAsReadAsync()
-	//{
-	//	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
-	//	await BusinessLogicManager.ConnectClient.MarkHistoryReadAsync();
-	//}
+    ///// <summary> Load sources from Telegram </summary>
+    //private async Task LoadFromTelegramAsync(TgEfSourceViewModel sourceVm)
+    //{
+    //	var storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm.Item.Id }, isReadOnly: false);
+    //	if (storageResult.IsExists)
+    //		sourceVm = new(storageResult.Item);
+    //	if (!Dtos.Select(x => x.SourceId).Contains(sourceVm.SourceId))
+    //		Dtos.Add(sourceVm);
+    //	await SaveSourceAsync(sourceVm);
+    //}
+
+    //private async Task MarkAllMessagesAsReadAsync()
+    //{
+    //	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
+    //	await BusinessLogicManager.ConnectClient.MarkHistoryReadAsync();
+    //}
 
     private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
 
@@ -135,7 +145,10 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
             HasMoreItems = false;
 
         foreach (var item in newItems)
+        {
+            item.IsDisplaySensitiveData = IsDisplaySensitiveData;
             Dtos.Add(item);
+        }
 
         CurrentSkip += newItems.Count;
         ApplyFilter();

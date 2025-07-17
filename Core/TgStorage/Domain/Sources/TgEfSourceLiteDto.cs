@@ -6,9 +6,13 @@ namespace TgStorage.Domain.Sources;
 /// <summary> Source DTO </summary>
 public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEntity, TgEfSourceLiteDto>
 {
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
-	[ObservableProperty]
+    [ObservableProperty]
+    public partial string SensitiveData { get; set; } = "**********";
+    [ObservableProperty]
+    public partial bool IsDisplaySensitiveData { get; set; }
+    [ObservableProperty]
 	public partial long Id { get; set; }
 	[ObservableProperty]
 	public partial string DtChangedString { get; set; }

@@ -15,6 +15,7 @@
 
     <common:TgPageBase.Resources>
         <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </common:TgPageBase.Resources>
 
     <Grid>
@@ -200,14 +201,22 @@
                             ItemsSource="{x:Bind ViewModel.FilteredDtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
                                 <!--  ID  -->
-                                <controls:DataGridTextColumn
-                                    x:Uid="TemplateColumnId"
-                                    Width="Auto"
-                                    Binding="{Binding Id, Mode=OneWay}" />
+                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnId" Width="0.7*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <!--  Sensitive data  -->
+                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                <!--  Id  -->
+                                                <TextBlock Text="{Binding Id, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
                                 <!--  Is access  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnIsAccess"
-                                    Width="Auto"
+                                    Width="0.5*"
                                     CanUserReorder="True"
                                     CanUserSort="True">
                                     <controls:DataGridTemplateColumn.CellTemplate>
@@ -224,7 +233,7 @@
                                 <!--  Is active  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnIsActive"
-                                    Width="Auto"
+                                    Width="0.5*"
                                     CanUserReorder="True"
                                     CanUserSort="True">
                                     <controls:DataGridTemplateColumn.CellTemplate>
@@ -241,7 +250,7 @@
                                 <!--  Auto-update  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnAutoUpd"
-                                    Width="Auto"
+                                    Width="0.7*"
                                     CanUserReorder="True"
                                     CanUserSort="True">
                                     <controls:DataGridTemplateColumn.CellTemplate>

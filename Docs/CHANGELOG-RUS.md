@@ -4,11 +4,13 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.660] - 2025-07-16
+## [0.6.670] - 2025-07-17
 ### Изменено
 - Обновлена таблица сообщений в TgStorage
 - Обновлена главная страница в OpenTgResearcherDesktop
 - Обновлён просмотр деталей чата в OpenTgResearcherConsole
+- Обновлена страница просмотра деталей чата в OpenTgResearcherDesktop
+- Обновлена страница просмотра чатов в OpenTgResearcherDesktop
 - Обновлена документация
 ### Добавлено
 - Добавлена проверка сообщений на удалённые при повторном скнировании чата

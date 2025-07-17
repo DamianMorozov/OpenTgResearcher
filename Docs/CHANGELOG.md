@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.6.670] - 2025-07-17
+### Fixed
+- Fixed online chat update in OpenTgResearcherDesktop
 ### Changed
 - Updated message table in TgStorage
 - Updated the main page in OpenTgResearcherDesktop

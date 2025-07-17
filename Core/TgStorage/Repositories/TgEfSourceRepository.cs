@@ -126,6 +126,24 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
         await EfContext.Sources
             .Where(x => x.IsAutoUpdate)
             .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsAutoUpdate, false));
+        await EfContext.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task SetIsUserAccess(bool isUserAccess)
+    {
+        await EfContext.Sources
+            .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsUserAccess, isUserAccess));
+        await EfContext.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task SetIsUserAccess(List<long> chatIds, bool isUserAccess)
+    {
+        await EfContext.Sources
+            .Where(x => chatIds.Contains(x.Id))
+            .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsUserAccess, isUserAccess));
+        await EfContext.SaveChangesAsync();
     }
 
     #endregion

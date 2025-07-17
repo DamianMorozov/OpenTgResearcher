@@ -5,6 +5,8 @@
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.6.670] - 2025-07-17
+### Исправлено
+- Исправлено онлайн обновление чатов в OpenTgResearcherDesktop
 ### Изменено
 - Обновлена таблица сообщений в TgStorage
 - Обновлена главная страница в OpenTgResearcherDesktop

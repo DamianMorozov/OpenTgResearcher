@@ -7,4 +7,8 @@ public interface ITgEfSourceRepository : ITgEfRepository<TgEfSourceEntity, TgEfS
 {
     /// <summary> Reset auto update field </summary>
     public Task ResetAutoUpdateAsync();
+    /// <summary> Set user access </summary>
+    public Task SetIsUserAccess(bool isUserAccess);
+    /// <summary> Set user access </summary>
+    public Task SetIsUserAccess(List<long> chatIds, bool isUserAccess);
 }

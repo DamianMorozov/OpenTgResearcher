@@ -1493,7 +1493,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task UpdateSourceTgAsync(ChatBase chatBase, int count, bool isUserAccess) =>
         await UpdateSourceTgCoreAsync(chatBase, string.Empty, count, isUserAccess);
 
-    public async Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType)
+    public async Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? chatIds = null)
     {
         if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
         await TryCatchFuncAsync(async () =>
@@ -1502,26 +1502,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             switch (sourceType)
             {
                 case TgEnumSourceType.Chat:
-                    await DisableUserAccessForAllChatsAsync();
+                    await DisableUserAccessForAllChatsAsync(chatIds);
                     await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectChats);
                     await CollectAllChatsAsync();
                     tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
                     // List groups
-                    await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
+                    await SearchSourcesTgForGroupsAsync(tgDownloadSettings, chatIds);
                     // List channels
-                    await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
+                    await SearchSourcesTgForChannelsAsync(tgDownloadSettings2, chatIds);
                     break;
                 case TgEnumSourceType.Dialog:
-                    await DisableUserAccessForAllChatsAsync();
+                    await DisableUserAccessForAllChatsAsync(chatIds);
                     await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectDialogs);
                     await CollectAllDialogsAsync();
                     tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
                     // List groups
-                    await SearchSourcesTgConsoleForGroupsAsync(tgDownloadSettings);
+                    await SearchSourcesTgForGroupsAsync(tgDownloadSettings, chatIds);
                     // List channels
-                    await SearchSourcesTgConsoleForChannelsAsync(tgDownloadSettings2);
+                    await SearchSourcesTgForChannelsAsync(tgDownloadSettings2, chatIds);
                     break;
                 case TgEnumSourceType.Contact:
                     await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
@@ -1551,28 +1551,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Disable user access for all chats </summary>
-    private async Task DisableUserAccessForAllChatsAsync()
+    private async Task DisableUserAccessForAllChatsAsync(List<long>? chatIds)
     {
-        var chats = await StorageManager.SourceRepository.GetListItemsAsync(TgEnumTableTopRecords.All, skip: 0, isReadOnly: false);
-        if (!chats.Any())
-        {
-            TgLog.WriteLine("  No chats found to disable user access.");
-            return;
-        }
-
         try
         {
-            List<TgEfSourceEntity> chatsForUpdate = [];
-            foreach (var chat in chats)
-            {
-                if (chat.IsUserAccess)
-                {
-                    chat.IsUserAccess = false;
-                    chatsForUpdate.Add(chat);
-                }
-            }
-            if (chatsForUpdate.Any())
-                await StorageManager.SourceRepository.SaveListAsync(chatsForUpdate);
+            if (chatIds is null)
+                await StorageManager.SourceRepository.SetIsUserAccess(isUserAccess: false);
+            else
+                await StorageManager.SourceRepository.SetIsUserAccess(chatIds, isUserAccess: false);
         }
         catch (Exception ex)
         {
@@ -1581,9 +1567,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task SearchSourcesTgConsoleForChannelsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    private async Task SearchSourcesTgForChannelsAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<long>? chatIds)
     {
-        foreach (var channel in EnumerableChannels)
+        var channels = chatIds is not null && chatIds.Any()
+            ? EnumerableChannels.Where(x => chatIds.Contains(x.ID)) : EnumerableChannels;
+        foreach (var channel in channels)
         {
             tgDownloadSettings.SourceScanCurrent++;
             if (channel.IsActive)
@@ -1615,13 +1603,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task SearchSourcesTgConsoleForGroupsAsync(ITgDownloadViewModel tgDownloadSettings)
+    private async Task SearchSourcesTgForGroupsAsync(ITgDownloadViewModel tgDownloadSettings, List<long>? chatIds)
     {
-        await SearchSourcesTgConsoleForGroupsCoreAsync(tgDownloadSettings, EnumerableSmallGroups);
-        await SearchSourcesTgConsoleForGroupsCoreAsync(tgDownloadSettings, EnumerableGroups);
+        var smallGroups = (chatIds is not null && chatIds.Any()) ? EnumerableSmallGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableSmallGroups;
+        var groups = (chatIds is not null && chatIds.Any()) ? EnumerableGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableGroups;
+        
+        await SearchSourcesTgForGroupsCoreAsync(tgDownloadSettings, smallGroups);
+        await SearchSourcesTgForGroupsCoreAsync(tgDownloadSettings, groups);
     }
 
-    private async Task SearchSourcesTgConsoleForGroupsCoreAsync(ITgDownloadViewModel tgDownloadSettings, IEnumerable<ChatBase> groups)
+    private async Task SearchSourcesTgForGroupsCoreAsync(ITgDownloadViewModel tgDownloadSettings, IEnumerable<ChatBase> groups)
     {
         foreach (var group in groups)
         {

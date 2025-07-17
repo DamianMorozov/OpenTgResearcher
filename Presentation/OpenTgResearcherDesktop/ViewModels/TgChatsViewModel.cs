@@ -41,13 +41,6 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		SearchCommand = new AsyncRelayCommand(SearchAsync);
         LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, CanLoadMore);
         IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
-        // Updates
-        //BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-        //BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-        //BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-        //BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
-        //BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
-        //BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
     }
 
     #endregion
@@ -71,43 +64,10 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    //private async Task UpdateFromTelegramAsync()
-    //{
-    //	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
-    //	foreach (TgEfSourceViewModel sourceVm in Dtos)
-    //		await UpdateDtoFromTelegramAsync(sourceVm);
-    //}
-
-    //private async Task GetSourcesFromTelegramAsync()
-    //{
-    //	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
-    //	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Chat, LoadFromTelegramAsync);
-    //	await BusinessLogicManager.ConnectClient.ScanSourcesTgDesktopAsync(TgEnumSourceType.Dialog, LoadFromTelegramAsync);
-    //}
-
-    ///// <summary> Load sources from Telegram </summary>
-    //private async Task LoadFromTelegramAsync(TgEfSourceViewModel sourceVm)
-    //{
-    //	var storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm.Item.Id }, isReadOnly: false);
-    //	if (storageResult.IsExists)
-    //		sourceVm = new(storageResult.Item);
-    //	if (!Dtos.Select(x => x.SourceId).Contains(sourceVm.SourceId))
-    //		Dtos.Add(sourceVm);
-    //	await SaveSourceAsync(sourceVm);
-    //}
-
-    //private async Task MarkAllMessagesAsReadAsync()
-    //{
-    //	if (!BusinessLogicManager.ConnectClient.CheckClientIsReady()) return;
-    //	await BusinessLogicManager.ConnectClient.MarkHistoryReadAsync();
-    //}
-
     private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
 
-    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, bool isReadOnly = true)
-    {
-        // Dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.Title)];
-        var dtos = take > 0
+    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, bool isReadOnly = true) => 
+        take > 0
             ? await App.BusinessLogicManager.StorageManager.SourceRepository
                 .GetQuery(isReadOnly)
                 .OrderBy(x => x.Title)
@@ -119,8 +79,6 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
                 .OrderBy(x => x.Title)
                 .OrderBy(x => x.UserName)
                 .Select(SelectLiteDto()).ToListAsync();
-        return dtos;
-    }
 
     private async Task LoadDataStorageCoreAsync()
 	{
@@ -185,83 +143,25 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 	{
 		Dtos.Clear();
 		FilteredDtos.Clear();
+        FilterText = string.Empty;
 		await Task.CompletedTask;
 	}
-
-	//private async Task SaveSourceAsync(TgEfSourceViewModel sourceVm)
-	//{
-	//	if (sourceVm is null) return;
-	//	var storageResult = await SourceRepository.GetAsync(new TgEfSourceEntity { Id = sourceVm.Item.Id }, isReadOnly: false);
-	//	if (!storageResult.IsExists)
-	//	{
-	//		await SourceRepository.SaveAsync(sourceVm.Item);
-	//		await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(sourceVm.Item.Id, 0, $"Saved source | {sourceVm.Item}");
-	//	}
-	//}
-
-	//private async Task GetSourceFromStorageAsync(TgEfSourceViewModel? sourceVm)
-	//{
-	//	if (sourceVm is null) return;
-	//	//TgDesktopUtils.TgItemSourceVm.SetItemSourceVm(sourceVm);
-	//	//await TgDesktopUtils.TgItemSourceVm.OnGetSourceFromStorageAsync();
-
-	//	//for (int i = 0; i < Dtos.Count; i++)
-	//	//{
-	//	//	if (Dtos[i].SourceId.Equals(sourceVm.SourceId))
-	//	//	{
-	//	//		Dtos[i].Item.Fill(TgDesktopUtils.TgItemSourceVm.ItemSourceVm.Item, isUidCopy: false);
-	//	//		break;
-	//	//	}
-	//	//}
-	//	await Task.CompletedTask;
-	//}
-
-	//private async Task UpdateDtoFromTelegramAsync(TgEfSourceViewModel? sourceVm)
-	//{
-	//	if (sourceVm is null) return;
-	//	//TgDesktopUtils.TgItemSourceVm.SetItemSourceVm(sourceVm);
-	//	//await TgDesktopUtils.TgItemSourceVm.OnUpdateSourceFromTelegramAsync();
-	//	await GetSourceFromStorageAsync(sourceVm);
-	//}
-
-	//private async Task DownloadAsync(TgEfSourceViewModel? sourceVm)
-	//{
-	//	if (sourceVm is null) return;
-	//	//TgDesktopUtils.TgItemSourceVm.SetItemSourceVm(sourceVm);
-	//	//TgDesktopUtils.TgItemSourceVm.ViewModel = this;
-	//	//if (await TgDesktopUtils.TgItemSourceVm.OnDownloadSourceAsync())
-	//	//	await TgDesktopUtils.TgItemSourceVm.OnUpdateSourceFromTelegramAsync();
-	//	await Task.CompletedTask;
-	//}
-
-	//private async Task EditSourceAsync(TgEfSourceViewModel? sourceVm)
-	//{
-	//	if (sourceVm is null) return;
-	//	//if (Application.Current.MainWindow is MainWindow navigationWindow)
-	//	//{
-	//	//	TgDesktopUtils.TgItemSourceVm.SetItemSourceVm(sourceVm);
-	//	//	navigationWindow.ShowWindow();
-	//	//	navigationWindow.Navigate(typeof(TgItemSourcePage));
-	//	//}
-	//	await Task.CompletedTask;
-	//}
 
 	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
 
     private async Task UpdateOnlineCoreAsync() => await LoadDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-        await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat);
-        //await BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
-        await LoadDataStorageCoreAsync();
+
+        var chatIds = !string.IsNullOrEmpty(FilterText) ? FilteredDtos.Select(x => x.Id).ToList() : null;
+        await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, chatIds);
+        await SearchAsync();
     });
 
     public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
 	{
-		if (sender is not DataGrid dataGrid)
-			return;
-		if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto)
-			return;
+		if (sender is not DataGrid dataGrid) return;
+		if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
 
 		NavigationService.NavigateTo(typeof(TgChatDetailsViewModel).FullName!, dto.Uid);
 	}

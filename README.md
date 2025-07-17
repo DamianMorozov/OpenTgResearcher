@@ -1,7 +1,11 @@
 ﻿# OpenTgResearcher - Open Telegram Researcher
 
 ## Product assignment
-Telegram's open researcher and search engine. Download chats by catalogs. 
+Telegram's open researcher and search engine:
+- Download the chat media files to your disk
+- Download chat messages to local storage
+- View expanded information about chat participants
+- View chat statistics
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>

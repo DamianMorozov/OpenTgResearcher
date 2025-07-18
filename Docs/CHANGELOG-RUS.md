@@ -9,6 +9,7 @@
 - Исправлено онлайн обновление чатов в OpenTgResearcherDesktop
 - Исправлена страница чатов в OpenTgResearcherDesktop
 - Исправлена страница подключения клиента в OpenTgResearcherDesktop
+- Исправлена страница настроек в OpenTgResearcherDesktop
 ### Изменено
 - Обновлена таблица сообщений в TgStorage
 - Обновлена главная страница в OpenTgResearcherDesktop

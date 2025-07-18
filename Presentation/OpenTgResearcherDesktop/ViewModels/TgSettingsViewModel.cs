@@ -71,8 +71,14 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
     private void LoadSettingsFromService()
     {
         AppStorage = SettingsService.AppStorage;
-        AppSession = SettingsService.AppSession;
         IsExistsAppStorage = SettingsService.IsExistsAppStorage;
+
+        AppSession = SettingsService.AppSession;
+        // Fix windows path
+        if (AppSession.Equals(TgFileUtils.FileTgSession))
+        {
+            AppSession = Path.Combine(SettingsService.AppFolder, TgFileUtils.FileTgSession);
+        }
         IsExistsAppSession = SettingsService.IsExistsAppSession;
     }
 

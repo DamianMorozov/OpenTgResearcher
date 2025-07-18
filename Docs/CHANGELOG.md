@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed online chat update in OpenTgResearcherDesktop
 - Fixed chats page in OpenTgResearcherDesktop
 - Fixed client connection page in OpenTgResearcherDesktop
+- Fixed settings page in OpenTgResearcherDesktop
 ### Changed
 - Updated message table in TgStorage
 - Updated the main page in OpenTgResearcherDesktop

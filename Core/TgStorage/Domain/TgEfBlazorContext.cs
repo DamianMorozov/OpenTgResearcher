@@ -12,7 +12,10 @@ public sealed class TgEfBlazorContext(IWebHostEnvironment webHostEnvironment) : 
     {
         base.OnConfiguring(optionsBuilder);
 
-		optionsBuilder.UseSqlite(GetStoragePath(webHostEnvironment.ContentRootPath));
+        if (!optionsBuilder.IsConfigured)
+        {
+		    optionsBuilder.UseSqlite(GetStoragePath(webHostEnvironment.ContentRootPath));
+        }
     }
 
 	#endregion

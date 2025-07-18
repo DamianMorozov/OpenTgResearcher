@@ -6,13 +6,24 @@ namespace TgStorage.Domain;
 /// <summary> Console DB context </summary>
 public sealed class TgEfConsoleContext : TgEfContextBase, ITgEfContext
 {
+    #region Public and private fields, properties, constructor
+
+    public TgEfConsoleContext() : base() { }
+
+    public TgEfConsoleContext(DbContextOptions<TgEfConsoleContext> options) : base(options) { }
+
+    #endregion
+
     #region Public and private methods
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
 
-		optionsBuilder.UseSqlite(GetStoragePath());
+        if (!optionsBuilder.IsConfigured)
+        {
+		    optionsBuilder.UseSqlite(GetStoragePath());
+        }
     }
 
 	#endregion

@@ -10,6 +10,9 @@ public sealed class TgEfTestContext : TgEfContextBase, ITgEfContext
 	{
 		base.OnConfiguring(optionsBuilder);
 
-		optionsBuilder.UseSqlite(GetStoragePath());
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlite(GetStoragePath());
+        }
 	}
 }

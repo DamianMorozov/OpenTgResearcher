@@ -48,8 +48,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial string DataRequestEmptyResponse { get; set; } = string.Empty;
 	[ObservableProperty]
-	public partial bool IsFieldsCheck { get; set; }
-	[ObservableProperty]
 	public partial bool UseBot { get; set; }
 	[ObservableProperty]
 	public partial string BotTokenKey { get; set; } = string.Empty;
@@ -329,10 +327,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		if (TgDataFormatUtils.ParseStringToGuid(ApiHash) == Guid.Empty ||
 			ApiId <= 0 || string.IsNullOrEmpty(PhoneNumber))
 		{
-			IsFieldsCheck = false;
 			return;
 		}
-		IsFieldsCheck = true;
 	}
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)
@@ -341,11 +337,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 			return;
 		if (TgDataFormatUtils.ParseStringToGuid(textBox.Text) == Guid.Empty)
 		{
-			IsFieldsCheck = false;
 			return;
 		}
-		if (ApiId > 0 && !string.IsNullOrEmpty(PhoneNumber))
-			IsFieldsCheck = true;
 	}
 
 	public void OnApiIdTextChanged(object sender, TextChangedEventArgs e)
@@ -354,11 +347,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 			return;
 		if (!int.TryParse(textBox.Text, out int id) || id <= 0)
 		{
-			IsFieldsCheck = false;
 			return;
 		}
-		if (TgDataFormatUtils.ParseStringToGuid(ApiHash) != Guid.Empty && !string.IsNullOrEmpty(PhoneNumber))
-			IsFieldsCheck = true;
 	}
 
 	public void OnPhoneTextChanged(object sender, TextChangedEventArgs e)
@@ -367,11 +357,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 			return;
 		if (string.IsNullOrEmpty(textBox.Text))
 		{
-			IsFieldsCheck = false;
 			return;
 		}
-		if (TgDataFormatUtils.ParseStringToGuid(ApiHash) != Guid.Empty && ApiId > 0)
-			IsFieldsCheck = true;
 	}
 
 	#endregion

@@ -52,10 +52,9 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
                     <!--  TG session  -->
                     <StackPanel
@@ -68,27 +67,11 @@
                             IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppSession, Mode=OneWay}"
                             IsEnabled="False" />
                     </StackPanel>
-                    <!--  Load from storage  -->
+                    <!--  Save  -->
                     <Button
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.AppLoadCommand}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE896;" />
-                            <TextBlock
-                                x:Uid="ActionLoadFromStorage"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Save  -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="5,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Command="{x:Bind Path=ViewModel.AppSaveCommand}">
@@ -103,7 +86,7 @@
                     <!--  Clear  -->
                     <Button
                         Grid.Row="0"
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Margin="5,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -119,7 +102,7 @@
                     <!--  Empty  -->
                     <Button
                         Grid.Row="0"
-                        Grid.Column="4"
+                        Grid.Column="3"
                         Margin="5,0,0,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -173,8 +156,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.ClientDisconnectCommand}"
-                            FontWeight="Bold"
-                            IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                            FontWeight="Bold">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE8BB;" />
                                 <TextBlock
@@ -192,7 +174,6 @@
             Grid.Row="2"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
             Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Expander
                 x:Uid="ExpanderSettingInStorage"
@@ -201,7 +182,11 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
-                <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                <ScrollView
+                    MaxHeight="1000"
+                    HorizontalScrollMode="Disabled"
+                    IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                    VerticalScrollMode="Auto">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -398,7 +383,6 @@
             Grid.Row="3"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
             Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Expander
                 x:Uid="ExpanderSettingWithoutSaving"
@@ -407,7 +391,11 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
-                <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                <ScrollView
+                    MaxHeight="1000"
+                    HorizontalScrollMode="Disabled"
+                    IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                    VerticalScrollMode="Auto">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -764,11 +752,12 @@
                             Grid.Row="6"
                             Grid.Column="1"
                             Grid.ColumnSpan="3"
+                            MaxHeight="1000"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
-                            IsEnabled="False"
+                            IsEnabled="True"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.DataRequest, Mode=OneWay}"
                             TextWrapping="Wrap"

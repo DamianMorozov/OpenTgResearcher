@@ -888,6 +888,9 @@
   <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
     <value>Update chat details</value>
   </data>
+  <data name="TextBlockSaveChatSettings.Text" xml:space="preserve">
+    <value>Save chat settings</value>
+  </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Get participants</value>
   </data>

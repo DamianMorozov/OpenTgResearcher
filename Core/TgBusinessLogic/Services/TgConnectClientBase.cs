@@ -2744,9 +2744,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<bool> CheckClientConnectionReadyAsync()
     {
-        var result = Client is { Disconnected: false } && Me is not null && Me.ID > 0;
-        if (!result)
-            return ClientResultDisconnected();
+        if (Client is null) return ClientResultDisconnected();
+        if (Client is { Disconnected: true }) return ClientResultDisconnected();
+        if (Me is null) return ClientResultDisconnected();
+        if (Me.ID <= 0) return ClientResultDisconnected();
         switch (TgGlobalTools.AppType)
         {
             case TgEnumAppType.Console:

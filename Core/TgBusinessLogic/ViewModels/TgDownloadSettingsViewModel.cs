@@ -51,11 +51,5 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 
     public string ToDebugString() => $"{SourceVm.ToDebugString()}";
 
-    public async Task UpdateSourceWithSettingsAsync() => await SourceVm.SaveAsync();
-
-    public async Task UpdateContactWithSettingsAsync() => await ContactVm.SaveAsync();
-
-    public async Task UpdateStoryWithSettingsAsync() => await StoryVm.SaveAsync();
-
     #endregion
 }

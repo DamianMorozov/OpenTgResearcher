@@ -56,7 +56,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
-	public IRelayCommand AppLoadCommand { get; }
 	public IRelayCommand AppSaveCommand { get; }
 	public IRelayCommand AppClearCommand { get; }
 	public IRelayCommand AppDeleteCommand { get; }
@@ -74,17 +73,12 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         // Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
-		AppLoadCommand = new AsyncRelayCommand(AppLoadAsync);
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
         
         // Delegates
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
     }
 
@@ -207,8 +201,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	}
 
 	private async Task ClientDisconnectAsync() => await ContentDialogAsync(App.BusinessLogicManager.ConnectClient.DisconnectClientAsync, TgResourceExtensions.AskClientDisconnect());
-
-	private async Task AppLoadAsync() => await ContentDialogAsync(AppLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 
 	private async Task AppLoadCoreAsync()
 	{

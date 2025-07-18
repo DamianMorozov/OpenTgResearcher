@@ -29,7 +29,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
     public IRelayCommand ClearDataStorageCommand { get; }
     public IRelayCommand UpdateOnlineCommand { get; }
-    public IRelayCommand UpdateChatDetailsCommand { get; }
+    public IRelayCommand UpdateChatSettingsCommand { get; }
+    public IRelayCommand SaveChatSettingsCommand { get; }
     public IRelayCommand StopDownloadingCommand { get; }
     public IRelayCommand GetParticipantsCommand { get; }
     public IRelayCommand CalcChatStatisticsCommand { get; }
@@ -40,7 +41,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         // Commands
         ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        UpdateChatDetailsCommand = new AsyncRelayCommand(UpdateChatDetailsAsync);
+        UpdateChatSettingsCommand = new AsyncRelayCommand(UpdateChatSettingsAsync);
+        SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
         IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
@@ -90,22 +92,26 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
     private async Task UpdateOnlineCoreAsync() => await LoadDataAsync(async () =>
     {
-        IsDownloading = true;
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-        var entity = Dto.GetNewEntity();
-        DownloadSettings.SourceVm.Fill(entity);
-        DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
-        await DownloadSettings.UpdateSourceWithSettingsAsync();
+        try
+        {
+            IsDownloading = true;
+            if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-        StateSourceDirectory = Dto.Directory;
+            await SaveChatSettingsCoreAsync();
 
-        await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
-        await DownloadSettings.UpdateSourceWithSettingsAsync();
-        await LoadDataStorageCoreAsync();
-        IsDownloading = false;
+            StateSourceDirectory = Dto.Directory;
+
+            await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
+            await DownloadSettings.SourceVm.SaveAsync();
+            await LoadDataStorageCoreAsync();
+        }
+        finally
+        {
+            IsDownloading = false;
+        }
     });
 
-    private async Task UpdateChatDetailsAsync() => await ContentDialogAsync(UpdateChatDetailsCoreAsync, TgResourceExtensions.AskUpdateChatDetails());
+    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatDetailsCoreAsync, TgResourceExtensions.AskUpdateChatDetails());
 
     private async Task UpdateChatDetailsCoreAsync() => await LoadDataAsync(async () =>
     {
@@ -113,6 +119,16 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
         ChatDetailsDto = await App.BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(Dto.Id);
     });
+
+    public async Task SaveChatSettingsAsync() => await ContentDialogAsync(SaveChatSettingsCoreAsync, TgResourceExtensions.AskSettingsSave());
+
+    private async Task SaveChatSettingsCoreAsync()
+    {
+        var entity = Dto.GetNewEntity();
+        DownloadSettings.SourceVm.Fill(entity);
+        DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
+        await DownloadSettings.SourceVm.SaveAsync();
+    }
 
     private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());
 

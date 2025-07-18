@@ -950,6 +950,9 @@
   <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
     <value>Обновить детали чата</value>
   </data>
+  <data name="TextBlockSaveChatSettings.Text" xml:space="preserve">
+    <value>Сохранить настройки чата</value>
+  </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Получить участников</value>
   </data>

@@ -40,8 +40,32 @@ public partial class App : Application
 		// Logging to the application directory
         TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherDesktop, isWebApp: false, isRewrite: true);
 
+        // Create ServiceCollection for EF Core pooling
+        var services = new ServiceCollection();
+        services.AddDbContextPool<TgEfDesktopContext>(options =>
+        {
+            var context = new TgEfDesktopContext();
+            options.UseSqlite(context.GetStoragePath());
+            // Copy by TgEfConsoleContext.OnConfiguring
+            LoggerFactory factory = new();
+            options
+#if DEBUG
+                .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}{nameof(context.ContextId)} {context.ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
+                .EnableDetailedErrors()
+                .EnableSensitiveDataLogging()
+#endif
+                .EnableThreadSafetyChecks()
+                .UseLoggerFactory(factory);
+
+        }, poolSize: 128);
+        var serviceProvider = services.BuildServiceProvider();
+
         // DI register
         var containerBuilder = new ContainerBuilder();
+        // Register DbContext from ServiceProvider
+        containerBuilder.Register(c => serviceProvider.GetRequiredService<TgEfDesktopContext>())
+            .As<ITgEfContext>()
+            .InstancePerLifetimeScope();
         // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         containerBuilder.RegisterType<TgEfContactRepository>().As<ITgEfContactRepository>();

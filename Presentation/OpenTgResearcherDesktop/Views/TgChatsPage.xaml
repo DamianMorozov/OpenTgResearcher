@@ -201,7 +201,7 @@
                             ItemsSource="{x:Bind ViewModel.FilteredDtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
                                 <!--  ID  -->
-                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnId" Width="0.7*">
+                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnId" Width="Auto">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -216,7 +216,7 @@
                                 <!--  Is access  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnIsAccess"
-                                    Width="0.5*"
+                                    Width="Auto"
                                     CanUserReorder="True"
                                     CanUserSort="True">
                                     <controls:DataGridTemplateColumn.CellTemplate>
@@ -233,7 +233,7 @@
                                 <!--  Is active  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnIsActive"
-                                    Width="0.5*"
+                                    Width="Auto"
                                     CanUserReorder="True"
                                     CanUserSort="True">
                                     <controls:DataGridTemplateColumn.CellTemplate>
@@ -250,7 +250,7 @@
                                 <!--  Auto-update  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnAutoUpd"
-                                    Width="0.7*"
+                                    Width="Auto"
                                     CanUserReorder="True"
                                     CanUserSort="True">
                                     <controls:DataGridTemplateColumn.CellTemplate>

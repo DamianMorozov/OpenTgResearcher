@@ -88,140 +88,6 @@ namespace TgStorage.Migrations.TgEfDesktop
                     b.ToTable("APPS", (string)null);
                 });
 
-            modelBuilder.Entity("TgStorage.Domain.Contacts.TgEfContactEntity", b =>
-                {
-                    b.Property<Guid>("Uid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("CHAR(36)")
-                        .HasColumnName("UID");
-
-                    b.Property<long>("AccessHash")
-                        .IsConcurrencyToken()
-                        .HasColumnType("LONG(20)")
-                        .HasColumnName("ACCESS_HASH");
-
-                    b.Property<int>("BotActiveUsers")
-                        .IsConcurrencyToken()
-                        .HasColumnType("INT(20)")
-                        .HasColumnName("BOT_ACTIVE_USERS");
-
-                    b.Property<string>("BotInfoVersion")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(20)
-                        .HasColumnType("NVARCHAR(20)")
-                        .HasColumnName("BOT_INFO_VERSION");
-
-                    b.Property<string>("BotInlinePlaceholder")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("NVARCHAR(128)")
-                        .HasColumnName("BOT_INLINE_PLACEHOLDER");
-
-                    b.Property<DateTime>("DtChanged")
-                        .IsConcurrencyToken()
-                        .HasColumnType("DATETIME")
-                        .HasColumnName("DT_CHANGED");
-
-                    b.Property<string>("FirstName")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(128)
-                        .HasColumnType("NVARCHAR(128)")
-                        .HasColumnName("FIRST_NAME");
-
-                    b.Property<long>("Id")
-                        .IsConcurrencyToken()
-                        .HasColumnType("LONG(20)")
-                        .HasColumnName("ID");
-
-                    b.Property<bool>("IsActive")
-                        .IsConcurrencyToken()
-                        .HasColumnType("BIT")
-                        .HasColumnName("IS_ACTIVE");
-
-                    b.Property<bool>("IsBot")
-                        .IsConcurrencyToken()
-                        .HasColumnType("BIT")
-                        .HasColumnName("IS_BOT");
-
-                    b.Property<string>("LangCode")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(16)
-                        .HasColumnType("NVARCHAR(16)")
-                        .HasColumnName("LANG_CODE");
-
-                    b.Property<string>("LastName")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(128)
-                        .HasColumnType("NVARCHAR(128)")
-                        .HasColumnName("LAST_NAME");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(20)
-                        .HasColumnType("NVARCHAR(20)")
-                        .HasColumnName("PHONE_NUMBER");
-
-                    b.Property<string>("RestrictionReason")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(128)
-                        .HasColumnType("NVARCHAR(128)")
-                        .HasColumnName("RESTRICTION_REASON");
-
-                    b.Property<string>("Status")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(20)
-                        .HasColumnType("NVARCHAR(20)")
-                        .HasColumnName("STATUS");
-
-                    b.Property<int>("StoriesMaxId")
-                        .IsConcurrencyToken()
-                        .HasColumnType("INT(20)")
-                        .HasColumnName("STORIES_MAX_ID");
-
-                    b.Property<string>("UserName")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(128)
-                        .HasColumnType("NVARCHAR(128)")
-                        .HasColumnName("USER_NAME");
-
-                    b.Property<string>("UserNames")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(128)
-                        .HasColumnType("NVARCHAR(128)")
-                        .HasColumnName("USER_NAMES");
-
-                    b.HasKey("Uid");
-
-                    b.HasIndex("AccessHash");
-
-                    b.HasIndex("DtChanged");
-
-                    b.HasIndex("FirstName");
-
-                    b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("IsActive");
-
-                    b.HasIndex("IsBot");
-
-                    b.HasIndex("LangCode");
-
-                    b.HasIndex("LastName");
-
-                    b.HasIndex("PhoneNumber");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("Uid")
-                        .IsUnique();
-
-                    b.HasIndex("UserName");
-
-                    b.ToTable("CONTACTS", (string)null);
-                });
-
             modelBuilder.Entity("TgStorage.Domain.Documents.TgEfDocumentEntity", b =>
                 {
                     b.Property<Guid>("Uid")
@@ -737,6 +603,150 @@ namespace TgStorage.Migrations.TgEfDesktop
                         .IsUnique();
 
                     b.ToTable("STORIES", (string)null);
+                });
+
+            modelBuilder.Entity("TgStorage.Domain.Users.TgEfUserEntity", b =>
+                {
+                    b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("CHAR(36)")
+                        .HasColumnName("UID");
+
+                    b.Property<long>("AccessHash")
+                        .IsConcurrencyToken()
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("ACCESS_HASH");
+
+                    b.Property<int>("BotActiveUsers")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT(20)")
+                        .HasColumnName("BOT_ACTIVE_USERS");
+
+                    b.Property<string>("BotInfoVersion")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(20)
+                        .HasColumnType("NVARCHAR(20)")
+                        .HasColumnName("BOT_INFO_VERSION");
+
+                    b.Property<string>("BotInlinePlaceholder")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR(128)")
+                        .HasColumnName("BOT_INLINE_PLACEHOLDER");
+
+                    b.Property<DateTime>("DtChanged")
+                        .IsConcurrencyToken()
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("DT_CHANGED");
+
+                    b.Property<string>("FirstName")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR(128)")
+                        .HasColumnName("FIRST_NAME");
+
+                    b.Property<long>("Id")
+                        .IsConcurrencyToken()
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("ID");
+
+                    b.Property<bool>("IsActive")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_ACTIVE");
+
+                    b.Property<bool>("IsBot")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_BOT");
+
+                    b.Property<bool>("IsContact")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_CONTACT");
+
+                    b.Property<bool>("IsDeleted")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_DELETED");
+
+                    b.Property<string>("LangCode")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(16)
+                        .HasColumnType("NVARCHAR(16)")
+                        .HasColumnName("LANG_CODE");
+
+                    b.Property<string>("LastName")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR(128)")
+                        .HasColumnName("LAST_NAME");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(20)
+                        .HasColumnType("NVARCHAR(20)")
+                        .HasColumnName("PHONE_NUMBER");
+
+                    b.Property<string>("RestrictionReason")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR(128)")
+                        .HasColumnName("RESTRICTION_REASON");
+
+                    b.Property<string>("Status")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(20)
+                        .HasColumnType("NVARCHAR(20)")
+                        .HasColumnName("STATUS");
+
+                    b.Property<int>("StoriesMaxId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT(20)")
+                        .HasColumnName("STORIES_MAX_ID");
+
+                    b.Property<string>("UserName")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR(128)")
+                        .HasColumnName("USER_NAME");
+
+                    b.Property<string>("UserNames")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR(128)")
+                        .HasColumnName("USER_NAMES");
+
+                    b.HasKey("Uid");
+
+                    b.HasIndex("AccessHash");
+
+                    b.HasIndex("DtChanged");
+
+                    b.HasIndex("FirstName");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("IsBot");
+
+                    b.HasIndex("LangCode");
+
+                    b.HasIndex("LastName");
+
+                    b.HasIndex("PhoneNumber");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
+
+                    b.HasIndex("UserName");
+
+                    b.ToTable("USERS", (string)null);
                 });
 
             modelBuilder.Entity("TgStorage.Domain.Versions.TgEfVersionEntity", b =>

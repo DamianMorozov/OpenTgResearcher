@@ -50,7 +50,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     public virtual string ToDebugString() => typeof(TEfEntity) switch
     {
         var cls when cls == typeof(TgEfAppEntity) => $"{nameof(TgEfAppRepository)}",
-        var cls when cls == typeof(TgEfContactEntity) => $"{nameof(TgEfContactRepository)}",
+        var cls when cls == typeof(TgEfUserEntity) => $"{nameof(TgEfUserRepository)}",
         var cls when cls == typeof(TgEfDocumentEntity) => $"{nameof(TgEfDocumentRepository)}",
         var cls when cls == typeof(TgEfFilterEntity) => $"{nameof(TgEfFilterRepository)}",
         var cls when cls == typeof(TgEfLicenseEntity) => $"{nameof(TgEfLicenseRepository)}",
@@ -89,9 +89,9 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             var cls when cls == typeof(TgEfAppEntity) => isReadOnly
                 ? (IQueryable<TEfEntity>)EfContext.Apps.AsNoTracking()
                 : (IQueryable<TEfEntity>)EfContext.Apps,
-            var cls when cls == typeof(TgEfContactEntity) => isReadOnly
-                ? (IQueryable<TEfEntity>)EfContext.Contacts.AsNoTracking()
-                : (IQueryable<TEfEntity>)EfContext.Contacts,
+            var cls when cls == typeof(TgEfUserEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.Users.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.Users,
             var cls when cls == typeof(TgEfDocumentEntity) => isReadOnly
                 ? (IQueryable<TEfEntity>)EfContext.Documents.AsNoTracking()
                 : (IQueryable<TEfEntity>)EfContext.Documents,

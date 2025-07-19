@@ -11,7 +11,6 @@ public static class TgEfConstants
 
 	public const string TableApps = "APPS";
 	public const string TableBots = "BOTS";
-	public const string TableContacts = "CONTACTS";
 	public const string TableDocuments = "DOCUMENTS";
 	public const string TableFilters = "FILTERS";
 	public const string TableLicenses = "LICENSES";
@@ -19,6 +18,7 @@ public static class TgEfConstants
 	public const string TableProxies = "PROXIES";
 	public const string TableSources = "SOURCES";
 	public const string TableStories = "STORIES";
+	public const string TableUsers = "USERS";
 	public const string TableVersions = "VERSIONS";
 
     #endregion
@@ -56,6 +56,7 @@ public static class TgEfConstants
 	public const string ColumnIsAutoUpdate = "IS_AUTO_UPDATE";
 	public const string ColumnIsBot = "IS_BOT";
 	public const string ColumnIsConfirmed = "IS_CONFIRMED";
+	public const string ColumnIsContact = "IS_CONTACT";
 	public const string ColumnIsCreatingSubdirectories = "IS_CREATING_SUBDIRS";
 	public const string ColumnIsDeleted = "IS_DELETED";
 	public const string ColumnIsEnabled = "IS_ENABLED";

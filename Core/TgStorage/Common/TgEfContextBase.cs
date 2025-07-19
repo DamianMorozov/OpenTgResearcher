@@ -10,8 +10,6 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     /// <summary> App queries </summary>
     public DbSet<TgEfAppEntity> Apps { get; set; } = null!;
-    /// <summary> Contact queries </summary>
-    public DbSet<TgEfContactEntity> Contacts { get; set; } = null!;
     /// <summary> Document queries </summary>
     public DbSet<TgEfDocumentEntity> Documents { get; set; } = null!;
     /// <summary> Filter queries </summary>
@@ -26,6 +24,8 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     public DbSet<TgEfSourceEntity> Sources { get; set; } = null!;
     /// <summary> Stories queries </summary>
     public DbSet<TgEfStoryEntity> Stories { get; set; } = null!;
+    /// <summary> Users queries </summary>
+    public DbSet<TgEfUserEntity> Users { get; set; } = null!;
     /// <summary> Version queries </summary>
     public DbSet<TgEfVersionEntity> Versions { get; set; } = null!;
 
@@ -181,7 +181,6 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
         // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/concurrency?view=aspnetcore-9.0&source=docs
         // This property isn't on the C# class, so we set it up as a "shadow" property and use it for concurrency.
         modelBuilder.Entity<TgEfAppEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfContactEntity>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<TgEfDocumentEntity>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<TgEfFilterEntity>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<TgEfLicenseEntity>().Property(x => x.RowVersion).IsRowVersion();
@@ -189,10 +188,10 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
         modelBuilder.Entity<TgEfProxyEntity>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<TgEfSourceEntity>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<TgEfStoryEntity>().Property(x => x.RowVersion).IsRowVersion();
+        modelBuilder.Entity<TgEfUserEntity>().Property(x => x.RowVersion).IsRowVersion();
         modelBuilder.Entity<TgEfVersionEntity>().Property(x => x.RowVersion).IsRowVersion();
         // Ignore
         modelBuilder.Entity<TgEfAppEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfContactEntity>().Ignore(TgEfConstants.ColumnRowVersion);
         modelBuilder.Entity<TgEfDocumentEntity>().Ignore(TgEfConstants.ColumnRowVersion);
         modelBuilder.Entity<TgEfFilterEntity>().Ignore(TgEfConstants.ColumnRowVersion);
         modelBuilder.Entity<TgEfLicenseEntity>().Ignore(TgEfConstants.ColumnRowVersion);
@@ -200,6 +199,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
         modelBuilder.Entity<TgEfProxyEntity>().Ignore(TgEfConstants.ColumnRowVersion);
         modelBuilder.Entity<TgEfSourceEntity>().Ignore(TgEfConstants.ColumnRowVersion);
         modelBuilder.Entity<TgEfStoryEntity>().Ignore(TgEfConstants.ColumnRowVersion);
+        modelBuilder.Entity<TgEfUserEntity>().Ignore(TgEfConstants.ColumnRowVersion);
         modelBuilder.Entity<TgEfVersionEntity>().Ignore(TgEfConstants.ColumnRowVersion);
 
         // Apps
@@ -212,12 +212,6 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
             .WithMany(proxy => proxy.Apps)
             .HasForeignKey(app => app.ProxyUid)
             .HasPrincipalKey(proxy => proxy.Uid);
-
-        // Contacts
-        modelBuilder.Entity<TgEfContactEntity>(entity =>
-        {
-            entity.ToTable(TgEfConstants.TableContacts);
-        });
 
         // Documents
         modelBuilder.Entity<TgEfDocumentEntity>(entity =>
@@ -270,6 +264,12 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
         modelBuilder.Entity<TgEfStoryEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableStories);
+        });
+
+        // Users
+        modelBuilder.Entity<TgEfUserEntity>(entity =>
+        {
+            entity.ToTable(TgEfConstants.TableUsers);
         });
 
         // Versions

@@ -25,7 +25,7 @@ public interface ITgEfContext : IDisposable
     /// <summary> App queries </summary>
     public DbSet<TgEfAppEntity> Apps { get; set; }
 	/// <summary> Contact queries </summary>
-	public DbSet<TgEfContactEntity> Contacts { get; set; }
+	public DbSet<TgEfUserEntity> Users { get; set; }
 	/// <summary> Document queries </summary>
 	public DbSet<TgEfDocumentEntity> Documents { get; set; }
 	/// <summary> Filter queries </summary>

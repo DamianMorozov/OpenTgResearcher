@@ -7,7 +7,6 @@ public interface ITgStorageManager : IDisposable
 {
     public ITgEfContext EfContext { get; }
     public ITgEfAppRepository AppRepository { get; }
-    public ITgEfContactRepository ContactRepository { get; }
     public ITgEfDocumentRepository DocumentRepository { get; }
     public ITgEfFilterRepository FilterRepository { get; }
     public ITgEfLicenseRepository LicenseRepository { get; }
@@ -15,5 +14,6 @@ public interface ITgStorageManager : IDisposable
     public ITgEfProxyRepository ProxyRepository { get; }
     public ITgEfSourceRepository SourceRepository { get; }
     public ITgEfStoryRepository StoryRepository { get; }
+    public ITgEfUserRepository UserRepository { get; }
     public ITgEfVersionRepository VersionRepository { get; }
 }

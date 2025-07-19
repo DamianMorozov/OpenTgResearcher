@@ -92,7 +92,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     {
         var appDtos = new TgStorageTableDto(appsName, await StorageManager.AppRepository.GetListCountAsync());
         var chatsDtos = new TgStorageTableDto(chatsName, await StorageManager.SourceRepository.GetListCountAsync());
-        var contactsDtos = new TgStorageTableDto(contactsName, await StorageManager.ContactRepository.GetListCountAsync());
+        var usersDtos = new TgStorageTableDto(contactsName, await StorageManager.UserRepository.GetListCountAsync());
         var documentsDtos = new TgStorageTableDto(documentsName, await StorageManager.DocumentRepository.GetListCountAsync());
         var filtersDtos = new TgStorageTableDto(filtersName, await StorageManager.FilterRepository.GetListCountAsync());
         var messagesDtos = new TgStorageTableDto(messagesName, await StorageManager.MessageRepository.GetListCountAsync());
@@ -101,7 +101,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         var versionsDtos = new TgStorageTableDto(versionsName, await StorageManager.VersionRepository.GetListCountAsync());
 
         // Order
-        ObservableCollection<TgStorageTableDto> dtos = [appDtos, chatsDtos, contactsDtos, documentsDtos, filtersDtos, messagesDtos, proxiesDtos, storiesDtos, versionsDtos];
+        ObservableCollection<TgStorageTableDto> dtos = [appDtos, chatsDtos, usersDtos, documentsDtos, filtersDtos, messagesDtos, proxiesDtos, storiesDtos, versionsDtos];
         return [.. dtos.OrderBy(x => x.Name)];
     }
 

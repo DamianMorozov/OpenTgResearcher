@@ -10,7 +10,7 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial TgEfContactViewModel ContactVm { get; set; }
+	public partial TgEfUserViewModel ContactVm { get; set; }
 	[ObservableProperty]
 	public partial TgEfSourceViewModel SourceVm { get; set; }
 	[ObservableProperty]

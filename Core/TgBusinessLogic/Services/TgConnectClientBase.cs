@@ -26,16 +26,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public User? Me { get; protected set; } = default!;
 
     public Dictionary<long, ChatBase> DicChatsAll { get; private set; } = default!;
-    public Dictionary<long, User> DicContactsAll { get; private set; } = default!;
+    public Dictionary<long, User> DicUsersAll { get; private set; } = default!;
     public Dictionary<long, StoryItem> DicStoriesAll { get; private set; } = default!;
     public Dictionary<long, ChatBase> DicChatsUpdated { get; private set; } = default!;
-    public Dictionary<long, User> DicContactsUpdated { get; private set; } = default!;
+    public Dictionary<long, User> DicUsersUpdated { get; private set; } = default!;
 
     public IEnumerable<Channel> EnumerableChannels { get; private set; } = default!;
     public IEnumerable<Channel> EnumerableGroups { get; private set; } = default!;
     public IEnumerable<ChatBase> EnumerableChats { get; private set; } = default!;
     public IEnumerable<ChatBase> EnumerableSmallGroups { get; private set; } = default!;
-    public IEnumerable<User> EnumerableContacts { get; private set; } = default!;
+    public IEnumerable<User> EnumerableUsers { get; private set; } = default!;
     public IEnumerable<StoryItem> EnumerableStories { get; private set; } = default!;
 
     public Dictionary<long, InputChannel> InputChannelCache { get; private set; } = [];
@@ -111,15 +111,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private void InitializeClient()
     {
         DicChatsAll = [];
-        DicContactsAll = [];
+        DicUsersAll = [];
         DicStoriesAll = [];
         DicChatsUpdated = [];
-        DicContactsUpdated = [];
+        DicUsersUpdated = [];
         EnumerableChannels = [];
         EnumerableChats = [];
         EnumerableGroups = [];
         EnumerableSmallGroups = [];
-        EnumerableContacts = [];
+        EnumerableUsers = [];
         EnumerableStories = [];
         ClientException = new();
         ProxyException = new();
@@ -379,7 +379,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <remarks> This method is typically used to standardize chat IDs for APIs or systems that require supergroup or channel IDs to start with "-100" </remarks>
     public static long IncreaseChatId(long chatId) => $"{chatId}".StartsWith("-100") ? chatId : Convert.ToInt64($"-100{chatId}");
 
-    public string GetUserUpdatedName(long id) => DicContactsUpdated.TryGetValue(ReduceChatId(id), out var user) ? user.username : string.Empty;
+    public string GetUserUpdatedName(long id) => DicUsersUpdated.TryGetValue(ReduceChatId(id), out var user) ? user.username : string.Empty;
 
     public async Task<Channel?> GetChannelAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
@@ -630,7 +630,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private void FillEnumerableContacts(Dictionary<long, User> users)
     {
-        DicContactsAll = users;
+        DicUsersAll = users;
         var listContacts = new List<User>();
         // Sort
         var usersSorted = users.OrderBy(i => i.Value.username).ThenBy(i => i.Value.ID);
@@ -638,7 +638,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             listContacts.Add(user.Value);
         }
-        EnumerableContacts = listContacts;
+        EnumerableUsers = listContacts;
     }
 
     private void FillEnumerableStories(List<PeerStories> peerStories)
@@ -662,7 +662,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         try
         {
-            updateShort.CollectUsersChats(DicContactsUpdated, DicChatsUpdated);
+            updateShort.CollectUsersChats(DicUsersUpdated, DicChatsUpdated);
             if (updateShort.UpdateList.Any())
             {
                 foreach (var update in updateShort.UpdateList)
@@ -701,7 +701,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         try
         {
-            updates.CollectUsersChats(DicContactsUpdated, DicChatsUpdated);
+            updates.CollectUsersChats(DicUsersUpdated, DicChatsUpdated);
             if (updates.UpdateList.Any())
             {
                 foreach (var update in updates.UpdateList)
@@ -1330,27 +1330,27 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task UpdateContactTgAsync(User user)
     {
-        var storageResult = await StorageManager.ContactRepository.GetAsync(new() { Id = user.id });
-        var contactNew = storageResult.IsExists ? storageResult.Item : new();
-        contactNew.DtChanged = DateTime.UtcNow;
-        contactNew.Id = user.id;
-        contactNew.AccessHash = user.access_hash;
-        contactNew.IsActive = user.IsActive;
-        contactNew.IsBot = user.IsBot;
-        contactNew.FirstName = user.first_name;
-        contactNew.LastName = user.last_name;
-        contactNew.UserName = user.username;
-        contactNew.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames.ToList());
-        contactNew.PhoneNumber = user.phone;
-        contactNew.Status = user.status is null ? string.Empty : user.status.ToString();
-        contactNew.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason.ToList());
-        contactNew.LangCode = user.lang_code;
-        contactNew.StoriesMaxId = user.stories_max_id;
-        contactNew.BotInfoVersion = user.bot_info_version.ToString();
-        contactNew.BotInlinePlaceholder = user.bot_inline_placeholder is null ? string.Empty : user.bot_inline_placeholder.ToString();
-        contactNew.BotActiveUsers = user.bot_active_users;
+        var storageResult = await StorageManager.UserRepository.GetAsync(new() { Id = user.id });
+        var userNew = storageResult.IsExists ? storageResult.Item : new();
+        userNew.DtChanged = DateTime.UtcNow;
+        userNew.Id = user.id;
+        userNew.AccessHash = user.access_hash;
+        userNew.IsActive = user.IsActive;
+        userNew.IsBot = user.IsBot;
+        userNew.FirstName = user.first_name;
+        userNew.LastName = user.last_name;
+        userNew.UserName = user.username;
+        userNew.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames.ToList());
+        userNew.PhoneNumber = user.phone;
+        userNew.Status = user.status is null ? string.Empty : user.status.ToString();
+        userNew.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason.ToList());
+        userNew.LangCode = user.lang_code;
+        userNew.StoriesMaxId = user.stories_max_id;
+        userNew.BotInfoVersion = user.bot_info_version.ToString();
+        userNew.BotInlinePlaceholder = user.bot_inline_placeholder is null ? string.Empty : user.bot_inline_placeholder.ToString();
+        userNew.BotActiveUsers = user.bot_active_users;
         // Save
-        await StorageManager.ContactRepository.SaveAsync(contactNew);
+        await StorageManager.UserRepository.SaveAsync(userNew);
     }
 
     private async Task UpdateStoryTgAsync(StoryItem story)
@@ -1526,7 +1526,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 case TgEnumSourceType.Contact:
                     await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
                     await CollectAllContactsAsync();
-                    tgDownloadSettings.SourceScanCount = DicContactsAll.Count;
+                    tgDownloadSettings.SourceScanCount = DicUsersAll.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
                     // List contacts
                     await SearchSourcesTgConsoleForContactsAsync(tgDownloadSettings2);
@@ -1636,7 +1636,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task SearchSourcesTgConsoleForContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        foreach (var user in EnumerableContacts)
+        foreach (var user in EnumerableUsers)
         {
             tgDownloadSettings.SourceScanCurrent++;
             await TryCatchFuncAsync(async () =>

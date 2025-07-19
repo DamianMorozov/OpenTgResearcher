@@ -10,7 +10,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
     private ILifetimeScope Scope { get; }
     public ITgEfContext EfContext { get; }
     public ITgEfAppRepository AppRepository { get; }
-    public ITgEfContactRepository ContactRepository { get; }
+    public ITgEfUserRepository UserRepository { get; }
     public ITgEfDocumentRepository DocumentRepository { get; }
     public ITgEfFilterRepository FilterRepository { get; }
     public ITgEfLicenseRepository LicenseRepository { get; }
@@ -26,7 +26,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         
         EfContext = Scope.Resolve<ITgEfContext>();
         AppRepository = Scope.Resolve<ITgEfAppRepository>();
-        ContactRepository = Scope.Resolve<ITgEfContactRepository>();
+        UserRepository = Scope.Resolve<ITgEfUserRepository>();
         DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>();
         FilterRepository = Scope.Resolve<ITgEfFilterRepository>();
         LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>();
@@ -43,7 +43,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         
         EfContext = Scope.Resolve<ITgEfContext>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         AppRepository = Scope.Resolve<ITgEfAppRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        ContactRepository = Scope.Resolve<ITgEfContactRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        UserRepository = Scope.Resolve<ITgEfUserRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         FilterRepository = Scope.Resolve<ITgEfFilterRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
@@ -62,7 +62,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
     public override void ReleaseManagedResources()
     {
         AppRepository.Dispose();
-        ContactRepository.Dispose();
+        UserRepository.Dispose();
         DocumentRepository.Dispose();
         FilterRepository.Dispose();
         LicenseRepository.Dispose();

@@ -58,7 +58,7 @@ public static class TgGlobalTools
         item switch
         {
             TgEfAppEntity app => new TgEfAppValidator().Validate(app),
-            TgEfContactEntity contact => new TgEfContactValidator().Validate(contact),
+            TgEfUserEntity contact => new TgEfUserValidator().Validate(contact),
             TgEfDocumentEntity document => new TgEfDocumentValidator().Validate(document),
             TgEfFilterEntity filter => new TgEfFilterValidator().Validate(filter),
             TgEfLicenseEntity license => new TgEfLicenseValidator().Validate(license),
@@ -93,7 +93,7 @@ public static class TgGlobalTools
                 if (app.ProxyUid == Guid.Empty)
                     app.ProxyUid = null;
                 break;
-            case TgEfContactEntity contact:
+            case TgEfUserEntity contact:
                 break;
             case TgEfDocumentEntity document:
                 break;

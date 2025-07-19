@@ -3,13 +3,13 @@
 
 namespace TgStorage.Validators;
 
-/// <summary> Contact validator </summary>
+/// <summary> User validator </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed class TgEfContactValidator : TgEfValidatorBase<TgEfContactEntity>
+public sealed class TgEfUserValidator : TgEfValidatorBase<TgEfUserEntity>
 {
 	#region Public and private fields, properties, constructor
 
-	public TgEfContactValidator()
+	public TgEfUserValidator()
 	{
 		//
 	}

@@ -102,9 +102,9 @@ internal partial class TgMenuHelper
     {
         await ShowTableViewContactsAsync(tgDownloadSettings);
 
-        var dtos = await BusinessLogicManager.StorageManager.ContactRepository.GetListDtosAsync();
+        var dtos = await BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync();
         dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.LastName).ThenBy(x => x.FirstName)];
-        var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewContacts, dtos, BusinessLogicManager.StorageManager.ContactRepository);
+        var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewContacts, dtos, BusinessLogicManager.StorageManager.UserRepository);
         //if (dto.Uid != Guid.Empty)
         //{
         //    Value = TgEnumMenuMain.ClientConnection;

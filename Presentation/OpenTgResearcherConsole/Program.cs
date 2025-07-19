@@ -41,7 +41,7 @@ public static class Program
             .InstancePerLifetimeScope();
         // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
-        containerBuilder.RegisterType<TgEfContactRepository>().As<ITgEfContactRepository>();
+        containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
         containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
         containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
         containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();

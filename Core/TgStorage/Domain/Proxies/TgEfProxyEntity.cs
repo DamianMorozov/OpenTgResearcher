@@ -85,7 +85,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 	    UserName = this.GetDefaultPropertyString(nameof(UserName));
 	    Password = this.GetDefaultPropertyString(nameof(Password));
 	    Secret = this.GetDefaultPropertyString(nameof(Secret));
-	    Apps = new List<TgEfAppEntity>();
+	    Apps = [];
     }
 
     public TgEfProxyEntity Copy(TgEfProxyEntity item, bool isUidCopy)

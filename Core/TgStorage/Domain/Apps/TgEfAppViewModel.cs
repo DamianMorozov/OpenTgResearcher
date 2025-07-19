@@ -5,41 +5,97 @@ namespace TgStorage.Domain.Apps;
 
 /// <summary> App view-model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEntity, TgEfAppDto>, ITgDtoViewModel
+public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEntity, TgEfAppDto>, ITgDtoViewModel, IDisposable
 {
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
-	public override TgEfAppRepository Repository { get; } = new();
-	[ObservableProperty]
-	public partial TgEfAppDto Dto { get; set; } = null!;
+    public override TgEfAppRepository Repository { get; } = new();
+    [ObservableProperty]
+    public partial TgEfAppDto Dto { get; set; } = null!;
 
-	public TgEfAppViewModel(TgEfAppEntity item) : base()
-	{
-		Fill(item);
-	}
+    public TgEfAppViewModel(TgEfAppEntity item) : base()
+    {
+        Fill(item);
+    }
 
-	public TgEfAppViewModel() : base()
-	{
-		TgEfAppEntity item = new();
-		Fill(item);
-	}
+    public TgEfAppViewModel() : base()
+    {
+        TgEfAppEntity item = new();
+        Fill(item);
+    }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region IDisposable
 
-	public override string ToString() => Dto.ToString() ?? string.Empty;
+    /// <summary> Locker object </summary>
+    private object Locker { get; } = new();
+    /// <summary> To detect redundant calls </summary>
+    private bool _disposed;
 
-	public override string ToDebugString() => Dto.ToDebugString();
+    /// <summary> Finalizer </summary>
+	~TgEfAppViewModel() => Dispose(false);
 
-	public void Fill(TgEfAppEntity item)
-	{
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    /// <summary> Throw exception if disposed </summary>
+    public void CheckIfDisposed()
+    {
+        if (_disposed)
+            throw new ObjectDisposedException($"{nameof(TgEfAppViewModel)}: {TgConstants.ObjectHasBeenDisposedOff}!");
+    }
 
-	public async Task<TgEfStorageResult<TgEfAppEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetNewEntity());
+    /// <summary> Release managed resources </summary>
+    public void ReleaseManagedResources()
+    {
+        Repository.Dispose();
+    }
 
-	#endregion
+    /// <summary> Release unmanaged resources </summary>
+    public void ReleaseUnmanagedResources()
+    {
+        //
+    }
+
+    /// <summary> Dispose pattern </summary>
+    public void Dispose()
+    {
+        // Dispose of unmanaged resources
+        Dispose(true);
+        // Suppress finalization
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary> Dispose pattern </summary>
+    public void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        lock (Locker)
+        {
+            // Release managed resources
+            if (disposing)
+                ReleaseManagedResources();
+            // Release unmanaged resources
+            ReleaseUnmanagedResources();
+            // Flag
+            _disposed = true;
+        }
+    }
+
+    #endregion
+
+    #region Public and private methods
+
+    public override string ToString() => Dto.ToString() ?? string.Empty;
+
+    public override string ToDebugString() => Dto.ToDebugString();
+
+    public void Fill(TgEfAppEntity item)
+    {
+        Dto ??= new();
+        Dto.Copy(item, isUidCopy: true);
+    }
+
+    public async Task<TgEfStorageResult<TgEfAppEntity>> SaveAsync() =>
+        await Repository.SaveAsync(Dto.GetNewEntity());
+
+    #endregion
 }

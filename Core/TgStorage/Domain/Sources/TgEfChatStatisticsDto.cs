@@ -8,8 +8,8 @@ public sealed partial class TgEfChatStatisticsDto : TgDtoBase
 {
     #region Public and private fields, properties, constructor
 
-    public static readonly DateTimeOffset SafeMinDate = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
-    public static readonly DateTimeOffset SafeMaxDate = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero);
+    public static readonly DateTimeOffset SafeMinDate = new(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
+    public static readonly DateTimeOffset SafeMaxDate = new(9999, 12, 31, 23, 59, 59, TimeSpan.Zero);
     [ObservableProperty]
     public partial DateTimeOffset? DtStart { get; set; }
     [ObservableProperty]

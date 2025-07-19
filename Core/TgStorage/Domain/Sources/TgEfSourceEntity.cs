@@ -151,8 +151,8 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 	    IsUserAccess = this.GetDefaultPropertyBool(nameof(IsUserAccess));
 		IsFileNamingByMessage = this.GetDefaultPropertyBool(nameof(IsFileNamingByMessage));
         IsRestrictSavingContent = this.GetDefaultPropertyBool(nameof(IsRestrictSavingContent));
-	    Documents = new List<TgEfDocumentEntity>();
-        Messages = new List<TgEfMessageEntity>();
+	    Documents = [];
+        Messages = [];
     }
 
     public TgEfSourceEntity Copy(TgEfSourceEntity item, bool isUidCopy)

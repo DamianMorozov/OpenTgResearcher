@@ -9,7 +9,7 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 	#region Public and private fields, properties, constructor
 
 	[ObservableProperty]
-	public partial ObservableCollection<TgEfContactDto> Dtos { get; set; } = [];
+	public partial ObservableCollection<TgEfUserDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand DefaultSortCommand { get; }
@@ -36,7 +36,7 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 		});
 
 	/// <summary> Sort data </summary>
-	private void SetOrderData(ObservableCollection<TgEfContactDto> dtos)
+	private void SetOrderData(ObservableCollection<TgEfUserDto> dtos)
 	{
 		if (!dtos.Any()) return;
 		Dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.FirstName).ThenBy(x => x.LastName)];
@@ -55,7 +55,7 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await App.BusinessLogicManager.StorageManager.ContactRepository.GetListDtosAsync()]);
+		SetOrderData([.. await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync()]);
 	}
 
 	private async Task DefaultSortAsync()
@@ -78,7 +78,7 @@ public sealed partial class TgContactsViewModel : TgPageViewModelBase
 	public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
 	{
 		if (sender is not DataGrid dataGrid) return;
-		if (dataGrid.SelectedItem is not TgEfContactDto dto) return;
+		if (dataGrid.SelectedItem is not TgEfUserDto dto) return;
 
 		NavigationService.NavigateTo(typeof(TgContactDetailsViewModel).FullName!, dto.Uid);
 	}

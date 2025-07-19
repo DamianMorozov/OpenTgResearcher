@@ -11,7 +11,7 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial Guid Uid { get; set; } = Guid.Empty!;
 	[ObservableProperty]
-	public partial TgEfContactDto Dto { get; set; } = null!;
+	public partial TgEfUserDto Dto { get; set; } = null!;
 	public IRelayCommand LoadDataStorageCommand { get; }
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
@@ -49,7 +49,7 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		Dto = await App.BusinessLogicManager.StorageManager.ContactRepository.GetDtoAsync(x => x.Uid == Uid);
+		Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Uid == Uid);
 	}
 
 	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());

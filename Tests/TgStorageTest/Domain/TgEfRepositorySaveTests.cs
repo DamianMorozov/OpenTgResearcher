@@ -32,7 +32,7 @@ internal sealed class TgEfRepositorySaveTests : TgDbContextTestsBase
 	public void Save_apps_async() => SaveItemAsync(new TgEfAppRepository());
 
 	[Test]
-	public void Save_contacts_async() => SaveItemAsync(new TgEfContactRepository());
+	public void Save_contacts_async() => SaveItemAsync(new TgEfUserRepository());
 
 	[Test]
 	public void Save_documents_async() => SaveItemAsync(new TgEfDocumentRepository());

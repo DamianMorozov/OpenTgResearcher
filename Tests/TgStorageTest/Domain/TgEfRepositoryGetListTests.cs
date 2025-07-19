@@ -30,7 +30,7 @@ internal sealed class TgEfRepositoryGetListTests : TgDbContextTestsBase
 	public void Get_apps_async() => GetListAsync(new TgEfAppRepository());
 
 	[Test]
-	public void Get_contacts_async() => GetListAsync(new TgEfContactRepository());
+	public void Get_contacts_async() => GetListAsync(new TgEfUserRepository());
 
 	[Test]
 	public void Get_documents_async() => GetListAsync(new TgEfDocumentRepository());

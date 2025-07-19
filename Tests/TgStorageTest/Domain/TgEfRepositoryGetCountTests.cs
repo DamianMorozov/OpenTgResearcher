@@ -24,7 +24,7 @@ internal sealed class TgEfRepositoryGetCountTests : TgDbContextTestsBase
 	public void TgEf_get_count_apps_async() => GetCountAsync(new TgEfAppRepository());
 
 	[Test]
-	public void TgEf_get_count_contacts_async() => GetCountAsync(new TgEfContactRepository());
+	public void TgEf_get_count_contacts_async() => GetCountAsync(new TgEfUserRepository());
 
 	[Test]
 	public void TgEf_get_count_documents_async() => GetCountAsync(new TgEfDocumentRepository());

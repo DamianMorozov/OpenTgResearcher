@@ -15,7 +15,7 @@ global using TgInfrastructure.Helpers;
 global using TgStorage.Common;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Apps;
-global using TgStorage.Domain.Contacts;
+global using TgStorage.Domain.Users;
 global using TgStorage.Domain.Documents;
 global using TgStorage.Domain.Filters;
 global using TgStorage.Domain.Messages;

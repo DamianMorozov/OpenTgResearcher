@@ -34,8 +34,8 @@
 //                    case var cls when cls == typeof(TgEfAppEntity):
 //	                    await CreateNewItemAndDeleteAsync(new TgEfAppRepository());
 //						break;
-//                    case var cls when cls == typeof(TgEfContactEntity):
-//	                    await CreateNewItemAndDeleteAsync(new TgEfContactRepository());
+//                    case var cls when cls == typeof(TgEfUserEntity):
+//	                    await CreateNewItemAndDeleteAsync(new TgEfUserRepository());
 //						break;
 //                    case var cls when cls == typeof(TgEfDocumentEntity):
 //	                    await CreateNewItemAndDeleteAsync(new TgEfDocumentRepository());
@@ -85,8 +85,8 @@
 //					case var cls when cls == typeof(TgEfAppEntity):
 //						await GetNewItemsAndDeleteAsync(new TgEfAppRepository());
 //						break;
-//					case var cls when cls == typeof(TgEfContactEntity):
-//						await GetNewItemsAndDeleteAsync(new TgEfContactRepository());
+//					case var cls when cls == typeof(TgEfUserEntity):
+//						await GetNewItemsAndDeleteAsync(new TgEfUserRepository());
 //						break;
 //					case var cls when cls == typeof(TgEfDocumentEntity):
 //						await GetNewItemsAndDeleteAsync(new TgEfDocumentRepository());

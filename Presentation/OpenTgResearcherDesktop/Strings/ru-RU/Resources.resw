@@ -566,6 +566,9 @@
   <data name="ExpanderContent.Header" xml:space="preserve">
     <value>Содержимое</value>
   </data>
+  <data name="ExpanderContentStatistics.Header" xml:space="preserve">
+    <value>Статистика содержимого</value>
+  </data>
   <data name="ExpanderDownloading.Header" xml:space="preserve">
     <value>Скачивание</value>
   </data>
@@ -959,6 +962,15 @@
   <data name="TextBlockCalcChatStatistics.Text" xml:space="preserve">
     <value>Рассчитать статистику чата</value>
   </data>
+  <data name="AskCalcChatStatistics" xml:space="preserve">
+    <value>Рассчитать статистику чата?</value>
+  </data>
+  <data name="TextBlockCalcContentStatistics.Text" xml:space="preserve">
+    <value>Рассчитать статистику содержимого</value>
+  </data>
+  <data name="AskCalcContentStatistics" xml:space="preserve">
+    <value>Рассчитать статистику содержимого?</value>
+  </data>
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Остановить загрузку</value>
   </data>
@@ -1009,6 +1021,15 @@
   </data>
   <data name="TextBlockBots.Text" xml:space="preserve">
     <value>Бота</value>
+  </data>
+  <data name="TextBlockImages.Text" xml:space="preserve">
+    <value>Изображения</value>
+  </data>
+  <data name="TextBlockAudios.Text" xml:space="preserve">
+    <value>Аудио</value>
+  </data>
+  <data name="TextBlockVideos.Text" xml:space="preserve">
+    <value>Видео</value>
   </data>
   <data name="TextBlockLink.Text" xml:space="preserve">
     <value>Ссылка</value>

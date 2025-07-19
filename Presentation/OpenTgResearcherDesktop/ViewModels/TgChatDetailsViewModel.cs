@@ -26,6 +26,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     public partial bool IsImageViewerVisible { get; set; }
     [ObservableProperty]
     public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
+    [ObservableProperty]
+    public partial TgEfContentStatisticsDto ContentStatisticsDto { get; set; } = new();
 
     public IRelayCommand ClearDataStorageCommand { get; }
     public IRelayCommand UpdateOnlineCommand { get; }
@@ -34,6 +36,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     public IRelayCommand StopDownloadingCommand { get; }
     public IRelayCommand GetParticipantsCommand { get; }
     public IRelayCommand CalcChatStatisticsCommand { get; }
+    public IRelayCommand CalcContentStatisticsCommand { get; }
 
     public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgChatDetailsViewModel))
@@ -47,6 +50,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
         IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
         CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
+        CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         // Updates
         App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
     }
@@ -173,7 +177,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task CalcChatStatisticsAsync()
+    private async Task CalcChatStatisticsAsync() => await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics());
+    
+    private async Task CalcChatStatisticsCoreAsync()
     {
         ChatStatisticsDto.DefaultValues();
         await GetParticipantsCoreAsync();
@@ -215,6 +221,32 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         foreach (var user in orderedUsers)
         {
             ChatStatisticsDto.UserWithCountDtos.Add(user);
+        }
+    }
+
+    private async Task CalcContentStatisticsAsync() => await ContentDialogAsync(CalcContentStatisticsCoreAsync, TgResourceExtensions.AskCalcContentStatistics());
+    
+    private async Task CalcContentStatisticsCoreAsync()
+    {
+        ContentStatisticsDto.DefaultValues();
+        await GetParticipantsCoreAsync();
+
+        if (Directory.Exists(Dto.Directory))
+        {
+            var files = Directory.GetFiles(Dto.Directory);
+            if (files.Any())
+            {
+                var imageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp" };
+                var audioExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    { ".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a", ".wma", ".alac", ".aiff", ".ape", ".opus" };
+                var videoExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                    { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
+
+                ContentStatisticsDto.ImagesCount = files.Count(file => imageExtensions.Contains(Path.GetExtension(file)));
+                ContentStatisticsDto.AudiosCount = files.Count(file => audioExtensions.Contains(Path.GetExtension(file)));
+                ContentStatisticsDto.VideosCount = files.Count(file => videoExtensions.Contains(Path.GetExtension(file)));
+            }
         }
     }
 

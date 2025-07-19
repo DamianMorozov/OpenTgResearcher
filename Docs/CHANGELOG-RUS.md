@@ -25,6 +25,7 @@
 - Добавлен просмотр деталей чата в OpenTgResearcherDesktop
 - Добавлен просмотр участников чата в OpenTgResearcherDesktop
 - Добавлен просмотр статистики чата в OpenTgResearcherDesktop
+- Добавлен просмотр статистики содержимого в OpenTgResearcherDesktop
 
 ## [0.6.600] - 2025-07-12
 ### Исправлено

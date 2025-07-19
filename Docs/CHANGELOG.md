@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added chat details view in OpenTgResearcherDesktop
 - Added viewing of chat participants in OpenTgResearcherDesktop
 - Added viewing of chat statistics in OpenTgResearcherDesktop
+- Added viewing of content statistics in OpenTgResearcherDesktop
 
 ## [0.6.600] - 2025-07-12
 ### Fixed

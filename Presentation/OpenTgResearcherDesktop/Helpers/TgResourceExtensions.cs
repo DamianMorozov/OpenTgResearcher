@@ -25,11 +25,14 @@ public static class TgResourceExtensions
 	public static string AskActionStorageResetAutoUpdate() => "AskActionStorageResetAutoUpdate".GetLocalized();
 	public static string AskActionStorageShrink() => "AskActionStorageShrink".GetLocalized();
 	public static string AskAddRecord() => "AskAddRecord".GetLocalized();
+	public static string AskCalcChatStatistics() => "AskCalcChatStatistics".GetLocalized();
+	public static string AskCalcContentStatistics() => "AskCalcContentStatistics".GetLocalized();
 	public static string AskClientConnect() => "AskClientConnect".GetLocalized();
 	public static string AskClientDisconnect() => "AskClientDisconnect".GetLocalized();
 	public static string AskDataClear() => "AskDataClear".GetLocalized();
 	public static string AskDataLoad() => "AskDataLoad".GetLocalized();
 	public static string AskDeleteFile() => "AskDeleteFile".GetLocalized();
+	public static string AskGetParticipants() => "AskGetParticipants".GetLocalized();
 	public static string AskLicenseCheck() => "AskLicenseCheck".GetLocalized();
 	public static string AskLicenseClear() => "AskLicenseClear".GetLocalized();
 	public static string AskRestartApp() => "AskRestartApp".GetLocalized();
@@ -39,9 +42,8 @@ public static class TgResourceExtensions
 	public static string AskSettingsLoad() => "AskSettingsLoad".GetLocalized();
 	public static string AskSettingsSave() => "AskSettingsSave".GetLocalized();
 	public static string AskStopDownloading() => "AskStopDownloading".GetLocalized();
-	public static string AskGetParticipants() => "AskGetParticipants".GetLocalized();
-	public static string AskUpdateOnline() => "AskUpdateOnline".GetLocalized();
 	public static string AskUpdateChatDetails() => "AskUpdateChatDetails".GetLocalized();
+	public static string AskUpdateOnline() => "AskUpdateOnline".GetLocalized();
 	public static string AskUpdatePage() => "AskUpdatePage".GetLocalized();
 	public static string AskUpdatePreviewApp() => "AskUpdatePreviewApp".GetLocalized();
 	public static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalized();

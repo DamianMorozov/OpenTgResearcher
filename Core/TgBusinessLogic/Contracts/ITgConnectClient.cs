@@ -88,4 +88,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id);
     /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
     public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(Messages_ChatFull messagesChatFull);
+    /// <summary> Update user </summary>
+    Task UpdateUserAsync(User user, bool isContact);
+    /// <summary> Update users </summary>
+    Task UpdateUsersAsync(List<TgEfUserDto> users);
 }

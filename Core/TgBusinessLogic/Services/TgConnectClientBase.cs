@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using Microsoft.EntityFrameworkCore;
+
 using TL;
 using WTelegram;
 
@@ -574,8 +576,32 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             case true when Client is not null:
                 {
+                    EnumerableUsers = [];
                     var contacts = await Client.Contacts_GetContacts();
-                    FillEnumerableContacts(contacts.users);
+                    FillEnumerableUsers(contacts.users);
+                    break;
+                }
+        }
+    }
+
+    public async Task CollectAllUsersAsync(List<long>? chatIds)
+    {
+        switch (IsReady)
+        {
+            case true when Client is not null:
+                {
+                    EnumerableUsers = [];
+                    if (chatIds is not null && chatIds.Any())
+                    {
+                        foreach (var chatId in chatIds)
+                        {
+                            var participants = await GetParticipantsAsync(chatId);
+                            Dictionary<long, User> users = [];
+                            foreach (var user in participants)
+                                users.Add(user.id, user);
+                            FillEnumerableUsers(users);
+                        }
+                    }
                     break;
                 }
         }
@@ -628,7 +654,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         EnumerableSmallGroups = listSmallGroups;
     }
 
-    private void FillEnumerableContacts(Dictionary<long, User> users)
+    private void FillEnumerableUsers(Dictionary<long, User> users)
     {
         DicUsersAll = users;
         var listContacts = new List<User>();
@@ -1328,7 +1354,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await StorageManager.SourceRepository.SaveAsync(sourceNew);
     }
 
-    private async Task UpdateContactTgAsync(User user)
+    /// <inheritdoc />
+    public async Task UpdateUserAsync(TL.User user, bool isContact)
     {
         var storageResult = await StorageManager.UserRepository.GetAsync(new() { Id = user.id });
         var userNew = storageResult.IsExists ? storageResult.Item : new();
@@ -1349,9 +1376,84 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         userNew.BotInfoVersion = user.bot_info_version.ToString();
         userNew.BotInlinePlaceholder = user.bot_inline_placeholder is null ? string.Empty : user.bot_inline_placeholder.ToString();
         userNew.BotActiveUsers = user.bot_active_users;
+        userNew.IsContact = isContact;
         // Save
         await StorageManager.UserRepository.SaveAsync(userNew);
     }
+
+    /// <inheritdoc />
+    public async Task UpdateUsersAsync(List<TgEfUserDto> users)
+    {
+        if (users is null || users.Count == 0) return;
+
+        var userIds = users.Select(u => u.Id).ToList();
+
+        // Load exists users
+        var existingUsers = await StorageManager.EfContext.Users
+            .Where(u => userIds.Contains(u.Id))
+            .ToListAsync();
+
+        foreach (var userDto in users)
+        {
+            // Find user at storage
+            var existingUser = existingUsers.FirstOrDefault(u => u.Id == userDto.Id);
+            if (existingUser is not null)
+            {
+                // Update
+                UpdateUserEntityFromDto(existingUser, userDto);
+            }
+            else
+            {
+                // Add new
+                var newUser = CreateUserEntityFromDto(userDto);
+                StorageManager.EfContext.Users.Add(newUser);
+            }
+        }
+
+        await StorageManager.EfContext.SaveChangesAsync();
+    }
+
+    private void UpdateUserEntityFromDto(TgEfUserEntity entity, TgEfUserDto dto)
+    {
+        entity.DtChanged = DateTime.UtcNow;
+        entity.AccessHash = dto.AccessHash;
+        entity.IsActive = dto.IsContactActive;
+        entity.IsBot = dto.IsBot;
+        entity.FirstName = dto.FirstName ?? string.Empty;
+        entity.LastName = dto.LastName ?? string.Empty;
+        entity.UserName = dto.UserName ?? string.Empty;
+        entity.UserNames = dto.UserNames ?? string.Empty;
+        entity.PhoneNumber = dto.PhoneNumber ?? string.Empty;
+        entity.Status = dto.Status ?? string.Empty;
+        entity.RestrictionReason = dto.RestrictionReason ?? string.Empty;
+        entity.LangCode = dto.LangCode ?? string.Empty;
+        entity.StoriesMaxId = dto.StoriesMaxId;
+        entity.BotInfoVersion = dto.BotInfoVersion ?? string.Empty;
+        entity.BotInlinePlaceholder = dto.BotInlinePlaceholder ?? string.Empty;
+        entity.BotActiveUsers = dto.BotActiveUsers;
+    }
+
+    private TgEfUserEntity CreateUserEntityFromDto(TgEfUserDto dto) => new TgEfUserEntity
+    {
+        DtChanged = DateTime.UtcNow,
+        Id = dto.Id,
+        AccessHash = dto.AccessHash,
+        IsActive = dto.IsContactActive,
+        IsBot = dto.IsBot,
+        FirstName = dto.FirstName ?? string.Empty,
+        LastName = dto.LastName ?? string.Empty,
+        UserName = dto.UserName ?? string.Empty,
+        UserNames = dto.UserNames ?? string.Empty,
+        PhoneNumber = dto.PhoneNumber ?? string.Empty,
+        Status = dto.Status ?? string.Empty,
+        RestrictionReason = dto.RestrictionReason ?? string.Empty,
+        LangCode = dto.LangCode ?? string.Empty,
+        StoriesMaxId = dto.StoriesMaxId,
+        BotInfoVersion = dto.BotInfoVersion ?? string.Empty,
+        BotInlinePlaceholder = dto.BotInlinePlaceholder ?? string.Empty,
+        BotActiveUsers = dto.BotActiveUsers,
+        IsContact = dto.IsContact
+    };
 
     private async Task UpdateStoryTgAsync(StoryItem story)
     {
@@ -1523,14 +1625,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     // List channels
                     await SearchSourcesTgForChannelsAsync(tgDownloadSettings2, chatIds);
                     break;
-                case TgEnumSourceType.Contact:
-                    await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
-                    await CollectAllContactsAsync();
-                    tgDownloadSettings.SourceScanCount = DicUsersAll.Count;
-                    tgDownloadSettings.SourceScanCurrent = 0;
-                    // List contacts
-                    await SearchSourcesTgConsoleForContactsAsync(tgDownloadSettings2);
-                    break;
                 case TgEnumSourceType.Story:
                     await UpdateStateStoryAsync(tgDownloadSettings2.StoryVm.Dto.Id, 0, 0, TgLocale.CollectStories);
                     await CollectAllStoriesAsync();
@@ -1538,6 +1632,20 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     tgDownloadSettings.SourceScanCurrent = 0;
                     // List stories
                     await SearchSourcesTgConsoleForStoriesAsync(tgDownloadSettings2);
+                    break;
+                case TgEnumSourceType.Contact:
+                    await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
+                    await CollectAllContactsAsync();
+                    tgDownloadSettings.SourceScanCount = DicUsersAll.Count;
+                    tgDownloadSettings.SourceScanCurrent = 0;
+                    await SearchSourcesTgForContactsAsync(tgDownloadSettings2, isContact: true);
+                    break;
+                case TgEnumSourceType.User:
+                    await UpdateStateSourceAsync(tgDownloadSettings2.ContactVm.Dto.Id, 0, 0, TgLocale.CollectUsers);
+                    await CollectAllUsersAsync(chatIds);
+                    tgDownloadSettings.SourceScanCount = DicUsersAll.Count;
+                    tgDownloadSettings.SourceScanCurrent = 0;
+                    await SearchSourcesTgForContactsAsync(tgDownloadSettings2, isContact: false);
                     break;
                 case TgEnumSourceType.Default:
                     break;
@@ -1634,14 +1742,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task SearchSourcesTgConsoleForContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    private async Task SearchSourcesTgForContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isContact)
     {
         foreach (var user in EnumerableUsers)
         {
             tgDownloadSettings.SourceScanCurrent++;
             await TryCatchFuncAsync(async () =>
             {
-                await UpdateContactTgAsync(user);
+                await UpdateUserAsync(user, isContact);
                 await UpdateStateContactAsync(user.id, user.first_name, user.last_name, user.username);
             });
             await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount,

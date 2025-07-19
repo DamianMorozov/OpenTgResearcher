@@ -133,6 +133,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string CollectContacts => "Collect contacts ...";
 	public string CollectDialogs => "Collect dialogs ...";
 	public string CollectStories => "Collect stories ...";
+	public string CollectUsers => "Collect users ...";
 	public string DirectoryCreate => "Create directory";
 	public string DirectoryCreateIsException(Exception ex) => $"Exception of create directory: {(ex.InnerException is null ? ex.Message : ex.Message + $" | {ex.InnerException.Message}")}";
 	public string DirectoryCurrent => "Current directory";

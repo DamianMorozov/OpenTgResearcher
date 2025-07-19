@@ -12,4 +12,5 @@ public enum TgEnumSourceType
 	Channel = 4,
 	Contact = 5,
 	Story = 6,
+	User = 7,
 }

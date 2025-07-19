@@ -1,5 +1,5 @@
 ﻿<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgContactsPage"
+    x:Class="OpenTgResearcherDesktop.Views.TgUsersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgContactsViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgUsersViewModel}"
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
@@ -45,28 +45,12 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Load from storage  -->
-                    <Button
-                        Grid.Column="0"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.LoadDataStorageCommand}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                            <TextBlock
-                                x:Uid="ActionLoadFromStorage"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
                     <!--  Update from Telegram  -->
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="0"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -82,7 +66,7 @@
                     </Button>
                     <!--  Clear viewing  -->
                     <Button
-                        Grid.Column="2"
+                        Grid.Column="1"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -98,13 +82,13 @@
                     <!--  Count  -->
                     <TextBlock
                         x:Uid="TextBlockCount"
-                        Grid.Column="3"
+                        Grid.Column="2"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         TextAlignment="Right" />
                     <TextBlock
-                        Grid.Column="4"
+                        Grid.Column="3"
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"

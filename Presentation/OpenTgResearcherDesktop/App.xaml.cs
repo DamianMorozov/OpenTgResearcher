@@ -127,10 +127,6 @@ public partial class App : Application
 				services.AddTransient<TgChatsViewModel>();
 				services.AddTransient<TgClientConnectionPage>();
 				services.AddTransient<TgClientConnectionViewModel>();
-				services.AddTransient<TgContactDetailsPage>();
-				services.AddTransient<TgContactDetailsViewModel>();
-				services.AddTransient<TgContactsPage>();
-				services.AddTransient<TgContactsViewModel>();
 				services.AddTransient<TgFiltersPage>();
 				services.AddTransient<TgFiltersViewModel>();
 				services.AddTransient<TgLicensePage>();
@@ -153,6 +149,10 @@ public partial class App : Application
 				services.AddTransient<TgStoriesViewModel>();
 				services.AddTransient<TgUpdatePage>();
 				services.AddTransient<TgUpdateViewModel>();
+				services.AddTransient<TgUserDetailsPage>();
+				services.AddTransient<TgUserDetailsViewModel>();
+				services.AddTransient<TgUsersPage>();
+				services.AddTransient<TgUsersViewModel>();
 				services.AddTransient<WebViewPage>();
 				services.AddTransient<WebViewViewModel>();
 				// Logger

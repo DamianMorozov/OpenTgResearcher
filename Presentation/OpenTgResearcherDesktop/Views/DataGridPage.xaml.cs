@@ -14,8 +14,10 @@ public sealed partial class DataGridPage
 	public DataGridPage()
 	{
 		ViewModel = App.GetService<DataGridViewModel>();
-		InitializeComponent();
-	}
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+    }
 
-	#endregion
+    #endregion
 }

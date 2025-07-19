@@ -12,8 +12,10 @@ public sealed partial class TgClientConnectionPage
 	public TgClientConnectionPage()
 	{
 		ViewModel = App.GetService<TgClientConnectionViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

@@ -4,7 +4,7 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
+public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
@@ -16,8 +16,8 @@ public sealed partial class TgContactDetailsViewModel : TgPageViewModelBase
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 
-	public TgContactDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgContactDetailsViewModel> logger) 
-		: base(settingsService, navigationService, logger, nameof(TgContactDetailsViewModel))
+	public TgUserDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUserDetailsViewModel> logger) 
+		: base(settingsService, navigationService, logger, nameof(TgUserDetailsViewModel))
 	{
 		// Commands
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);

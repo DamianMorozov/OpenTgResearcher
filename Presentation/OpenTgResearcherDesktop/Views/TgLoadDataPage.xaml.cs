@@ -12,8 +12,10 @@ public sealed partial class TgLoadDataPage
 	public TgLoadDataPage()
 	{
 		ViewModel = App.GetService<TgLoadDataViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

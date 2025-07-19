@@ -12,8 +12,10 @@ public sealed partial class TgChatsPage
 	public TgChatsPage()
 	{
 		ViewModel = App.GetService<TgChatsViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

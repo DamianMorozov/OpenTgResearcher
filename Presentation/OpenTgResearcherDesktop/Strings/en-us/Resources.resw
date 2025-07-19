@@ -85,6 +85,12 @@
   <data name="Shell_ContactDetails.Content" xml:space="preserve">
     <value>Edit contact</value>
   </data>
+  <data name="Shell_Users.Content" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Shell_UserDetails.Content" xml:space="preserve">
+    <value>Edit user</value>
+  </data>
   <data name="Shell_Filters.Content" xml:space="preserve">
     <value>Filters</value>
   </data>
@@ -1224,8 +1230,8 @@
   <data name="TableNameChats" xml:space="preserve">
     <value>Chats</value>
   </data>
-  <data name="TableNameContacts" xml:space="preserve">
-    <value>Contacts</value>
+  <data name="TableNameUsers" xml:space="preserve">
+    <value>Users</value>
   </data>
   <data name="TableNameDocuments" xml:space="preserve">
     <value>Documents</value>

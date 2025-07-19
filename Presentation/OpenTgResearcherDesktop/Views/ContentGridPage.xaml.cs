@@ -12,8 +12,10 @@ public sealed partial class ContentGridPage
 	public ContentGridPage()
 	{
 		ViewModel = App.GetService<ContentGridViewModel>();
-		InitializeComponent();
-	}
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+    }
 
-	#endregion
+    #endregion
 }

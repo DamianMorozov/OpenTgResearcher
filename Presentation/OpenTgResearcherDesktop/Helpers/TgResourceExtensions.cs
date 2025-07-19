@@ -96,12 +96,12 @@ public static class TgResourceExtensions
 	public static string GetStorageLoading() => "StorageLoading".GetLocalized();
 	public static string GetTableNameApps() => "TableNameApps".GetLocalized();
 	public static string GetTableNameChats() => "TableNameChats".GetLocalized();
-	public static string GetTableNameContacts() => "TableNameContacts".GetLocalized();
 	public static string GetTableNameDocuments() => "TableNameDocuments".GetLocalized();
 	public static string GetTableNameFilters() => "TableNameFilters".GetLocalized();
 	public static string GetTableNameMessages() => "TableNameMessages".GetLocalized();
 	public static string GetTableNameProxies() => "TableNameProxies".GetLocalized();
 	public static string GetTableNameStories() => "TableNameStories".GetLocalized();
+	public static string GetTableNameUsers() => "TableNameUsers".GetLocalized();
 	public static string GetTableNameVersions() => "TableNameVersions".GetLocalized();
 	public static string GetTextBlockFiltered() => "TextBlockFiltered".GetLocalized();
 	public static string GetTextBlockLoaded() => "TextBlockLoaded".GetLocalized();

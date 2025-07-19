@@ -12,10 +12,10 @@ public sealed partial class ShellPage
 
     public ShellPage(ShellViewModel viewModel)
     {
-        //viewModel.PlayRefreshAnimationAsync += PlayRefreshAnimationAsync;
         ViewModel = viewModel;
-        DataContext = ViewModel;
+        
         InitializeComponent();
+        DataContext = ViewModel;
 
         ViewModel.NavigationService.Frame = NavigationFrame;
         ViewModel.NavigationViewService.Initialize(NavigationViewControl);
@@ -103,43 +103,21 @@ public sealed partial class ShellPage
         }
     }
 
-    //private async Task PlayRefreshAnimationAsync()
-    //{
-    //    var player = FindChildOfType<AnimatedVisualPlayer>(NavigationViewControl);
-    //    if (player is not null)
-    //    {
-    //        if (!player.IsLoaded)
-    //        {
-    //            TaskCompletionSource<bool> tcs = new();
-    //            RoutedEventHandler loadedHandler = null!;
-    //            loadedHandler = (s, e) =>
-    //            {
-    //                player.Loaded -= loadedHandler;
-    //                tcs.SetResult(true);
-    //            };
-    //            player.Loaded += loadedHandler;
-    //            await tcs.Task;
-    //        }
-    //        await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
-    //        {
-    //            await player.PlayAsync(0, 480, looped: true);
-    //            await Task.CompletedTask;
-    //        });
-    //    }
-    //}
+    private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        if (args.InvokedItemContainer is NavigationViewItem navItem)
+        {
+            // Get name ViewModel for navigation
+            var navigateTo = TgNavigationHelper.GetNavigateTo(navItem);
+            var navigationParameter = TgNavigationHelper.GetNavigationParameter(navItem);
 
-    //public static T? FindChildOfType<T>(DependencyObject depObj) where T : DependencyObject
-    //{
-    //    if (depObj == null) return null;
-    //    for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-    //    {
-    //        var child = VisualTreeHelper.GetChild(depObj, i);
-    //        if (child is T t) return t;
-    //        var result = FindChildOfType<T>(child);
-    //        if (result != null) return result;
-    //    }
-    //    return null;
-    //}
+            if (navigateTo == null)
+                return;
+
+            // Navigation with parameter transmission via NavigationService
+            _ = ViewModel.NavigationService.NavigateTo(navigateTo, navigationParameter);
+        }
+    }
 
     #endregion
 }

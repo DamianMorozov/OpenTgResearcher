@@ -12,8 +12,10 @@ public sealed partial class TgMainPage
 	public TgMainPage()
 	{
 		ViewModel = App.GetService<TgMainViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

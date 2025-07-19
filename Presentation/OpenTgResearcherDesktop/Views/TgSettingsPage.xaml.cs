@@ -12,8 +12,10 @@ public sealed partial class TgSettingsPage
 	public TgSettingsPage()
 	{
 		ViewModel = App.GetService<TgSettingsViewModel>();
-		InitializeComponent();
-		ComboBoxAppThemes.SelectionChanged += ComboBoxAppThemes_OnSelectionChanged;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        ComboBoxAppThemes.SelectionChanged += ComboBoxAppThemes_OnSelectionChanged;
 		ComboBoxAppLanguages.SelectionChanged += ComboBoxAppLanguages_OnSelectionChanged;
 		Loaded += PageLoaded;
 	}

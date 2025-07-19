@@ -12,14 +12,16 @@ public sealed partial class ListDetailsPage
 	public ListDetailsPage()
 	{
 		ViewModel = App.GetService<ListDetailsViewModel>();
+
 		InitializeComponent();
-	}
+        DataContext = ViewModel;
+    }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	private void OnViewStateChanged(object sender, ListDetailsViewState e)
+    private void OnViewStateChanged(object sender, ListDetailsViewState e)
 	{
 		if (e == ListDetailsViewState.Both)
 		{

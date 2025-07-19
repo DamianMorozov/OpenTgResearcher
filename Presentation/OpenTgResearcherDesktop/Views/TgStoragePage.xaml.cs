@@ -12,8 +12,10 @@ public partial class TgStoragePage
 	public TgStoragePage()
 	{
 		ViewModel = App.GetService<TgStorageViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

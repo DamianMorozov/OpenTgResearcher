@@ -3,17 +3,19 @@
 
 namespace OpenTgResearcherDesktop.Views;
 
-public sealed partial class TgContactDetailsPage
+public sealed partial class TgUserDetailsPage
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgContactDetailsViewModel ViewModel { get; }
+	public override TgUserDetailsViewModel ViewModel { get; }
 
-	public TgContactDetailsPage()
+	public TgUserDetailsPage()
 	{
-		ViewModel = App.GetService<TgContactDetailsViewModel>();
+		ViewModel = App.GetService<TgUserDetailsViewModel>();
+
 		InitializeComponent();
-		Loaded += PageLoaded;
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

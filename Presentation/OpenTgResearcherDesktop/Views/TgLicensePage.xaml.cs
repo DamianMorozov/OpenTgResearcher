@@ -12,8 +12,10 @@ public sealed partial class TgLicensePage
 	public TgLicensePage()
 	{
 		ViewModel = App.GetService<TgLicenseViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

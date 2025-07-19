@@ -13,8 +13,9 @@ public sealed partial class TgSplashScreenPage
     public TgSplashScreenPage()
 	{
 		ViewModel = App.GetService<TgSplashScreenViewModel>();
-		InitializeComponent();
-
+		
+        InitializeComponent();
+        DataContext = ViewModel;
         GridContent = MainContent;
         Loaded += PageLoadedWithAnimation;
     }

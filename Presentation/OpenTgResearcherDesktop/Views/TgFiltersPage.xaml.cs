@@ -12,8 +12,10 @@ public sealed partial class TgFiltersPage
 	public TgFiltersPage()
 	{
 		ViewModel = App.GetService<TgFiltersViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

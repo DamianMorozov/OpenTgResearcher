@@ -12,8 +12,10 @@ public sealed partial class TgUpdatePage
 	public TgUpdatePage()
 	{
 		ViewModel = App.GetService<TgUpdateViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

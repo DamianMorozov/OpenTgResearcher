@@ -17,8 +17,6 @@ public sealed class PageService : IPageService
 		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();
 		Configure<TgChatsViewModel, TgChatsPage>();
 		Configure<TgClientConnectionViewModel, TgClientConnectionPage>();
-		Configure<TgContactDetailsViewModel, TgContactDetailsPage>();
-		Configure<TgContactsViewModel, TgContactsPage>();
 		Configure<TgFiltersViewModel, TgFiltersPage>();
 		Configure<TgLicenseViewModel, TgLicensePage>();
 		Configure<TgLoadDataViewModel, TgLoadDataPage>();
@@ -30,6 +28,8 @@ public sealed class PageService : IPageService
 		Configure<TgStorageViewModel, TgStoragePage>();
 		Configure<TgStoriesViewModel, TgStoriesPage>();
 		Configure<TgUpdateViewModel, TgUpdatePage>();
+		Configure<TgUserDetailsViewModel, TgUserDetailsPage>();
+		Configure<TgUsersViewModel, TgUsersPage>();
 		Configure<WebViewViewModel, WebViewPage>();
 	}
 

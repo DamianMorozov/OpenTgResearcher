@@ -1,5 +1,5 @@
 ﻿<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgContactDetailsPage"
+    x:Class="OpenTgResearcherDesktop.Views.TgUserDetailsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgContactDetailsViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgUserDetailsViewModel}"
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>

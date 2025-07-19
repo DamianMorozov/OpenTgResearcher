@@ -78,13 +78,13 @@
     <Page Update="Views\TgChatDetailsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\TgContactDetailsPage.xaml">
+    <Page Update="Views\TgUserDetailsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgFiltersPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\TgContactsPage.xaml">
+    <Page Update="Views\TgUsersPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgChatsPage.xaml">

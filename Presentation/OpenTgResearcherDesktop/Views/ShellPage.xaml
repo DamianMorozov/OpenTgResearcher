@@ -100,11 +100,12 @@
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
-            ExpandedModeThresholdWidth="1280"
+            ExpandedModeThresholdWidth="1000"
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"
             IsBackButtonVisible="Visible"
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
             IsSettingsVisible="True"
+            ItemInvoked="NavigationViewControl_ItemInvoked"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <NavigationView.MenuItems>
                 <!--  https://docs.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#icon-list  -->
@@ -126,15 +127,6 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Bot connection  -->
-                <!--<NavigationViewItem
-                    x:Uid="Shell_BotConnection"
-                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgBotConnectionViewModel"
-                    Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
                 <!--  Filters  -->
                 <NavigationViewItem x:Uid="Shell_Filters" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgFiltersViewModel">
                     <NavigationViewItem.Icon>
@@ -147,12 +139,6 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDA3;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Contacts  -->
-                <NavigationViewItem x:Uid="Shell_Contacts" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgContactsViewModel">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
                 <!--  Stories  -->
                 <NavigationViewItem x:Uid="Shell_Stories" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStoriesViewModel">
                     <NavigationViewItem.Icon>
@@ -163,6 +149,24 @@
                 <NavigationViewItem x:Uid="Shell_Chats" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatsViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!--  Contacts  -->
+                <NavigationViewItem
+                    x:Uid="Shell_Contacts"
+                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel"
+                    helpers:TgNavigationHelper.NavigationParameter="Contact">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <!--  Users  -->
+                <NavigationViewItem
+                    x:Uid="Shell_Users"
+                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel"
+                    helpers:TgNavigationHelper.NavigationParameter="User">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Logs  -->
@@ -214,20 +218,6 @@
                                         <FontIcon Margin="0,0,0,0" Glyph="&#xE72C;" />
                                     </StackPanel>
                                 </Button>
-                                <!--<Button
-                                    x:Name="RefreshButton"
-                                    Width="155"
-                                    Height="155"
-                                    Command="{Binding DataContext.AnimateRefreshCommand, ElementName=ShellPageRoot}">
-                                    <winui:AnimatedVisualPlayer
-                                        x:Name="RefreshLottiePlayer"
-                                        Width="150"
-                                        Height="150"
-                                        AutoPlay="True"
-                                        Stretch="Fill">
-                                        <lottie:LottieVisualSource UriSource="ms-appx:///Assets/Lottie/Refresh.lottie" />
-                                    </winui:AnimatedVisualPlayer>
-                                </Button>-->
                                 <!--  Page title  -->
                                 <TextBlock
                                     Grid.Column="1"

@@ -176,7 +176,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		return response;
 	}
 
-    private async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
+    public async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
 
 	private async Task ClientConnectCoreAsync(bool isRetry)
 	{

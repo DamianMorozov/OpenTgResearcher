@@ -144,6 +144,12 @@
   <data name="Shell_ContactDetails.Content" xml:space="preserve">
     <value>Редактирование контакта</value>
   </data>
+  <data name="Shell_Users.Content" xml:space="preserve">
+    <value>Пользователи</value>
+  </data>
+  <data name="Shell_UserDetails.Content" xml:space="preserve">
+    <value>Редактирование пользователя</value>
+  </data>
   <data name="Shell_Filters.Content" xml:space="preserve">
     <value>Фильтры</value>
   </data>
@@ -1286,8 +1292,8 @@
   <data name="TableNameChats" xml:space="preserve">
     <value>Чаты</value>
   </data>
-  <data name="TableNameContacts" xml:space="preserve">
-    <value>Контакты</value>
+  <data name="TableNameUsers" xml:space="preserve">
+    <value>Пользователи</value>
   </data>
   <data name="TableNameDocuments" xml:space="preserve">
     <value>Документы</value>

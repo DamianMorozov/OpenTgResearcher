@@ -12,14 +12,16 @@ public sealed partial class ContentGridDetailPage
 	public ContentGridDetailPage()
 	{
 		ViewModel = App.GetService<ContentGridDetailViewModel>();
-		InitializeComponent();
-	}
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+    }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override void OnNavigatedTo(NavigationEventArgs e)
 	{
 		try
 		{

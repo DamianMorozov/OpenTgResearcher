@@ -13,8 +13,10 @@ public sealed partial class WebViewPage
 	public WebViewPage()
 	{
 		ViewModel = App.GetService<WebViewViewModel>();
+
 		InitializeComponent();
-		ViewModel.WebViewService.Initialize(WebView);
+        DataContext = ViewModel;
+        ViewModel.WebViewService.Initialize(WebView);
 	}
 
 	#endregion

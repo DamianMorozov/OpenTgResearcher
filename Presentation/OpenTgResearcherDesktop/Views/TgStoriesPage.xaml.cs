@@ -12,8 +12,10 @@ public partial class TgStoriesPage
 	public TgStoriesPage()
 	{
 		ViewModel = App.GetService<TgStoriesViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

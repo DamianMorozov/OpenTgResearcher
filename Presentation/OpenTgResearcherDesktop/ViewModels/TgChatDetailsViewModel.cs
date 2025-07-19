@@ -164,8 +164,12 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
             PhoneNumber = x.phone,
             Status = x.status?.ToString() ?? string.Empty,
             RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
-            LangCode = x.lang_code, 
-        }).ToList()];
+            LangCode = x.lang_code,
+            IsContact = false,
+        })];
+
+        var usersDtosForSave = UserDtos.Where(x => x.Id != App.BusinessLogicManager.ConnectClient.Client?.UserId).ToList();
+        await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync(usersDtosForSave);
     }
 
     private async Task IsDisplaySensitiveAsync()

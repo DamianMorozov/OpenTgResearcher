@@ -66,10 +66,16 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
 
         try
         {
-            StorageTableDtos = await App.BusinessLogicManager.LoadStorageTableDtosAsync(TgResourceExtensions.GetTableNameApps(),
-                TgResourceExtensions.GetTableNameChats(), TgResourceExtensions.GetTableNameContacts(), TgResourceExtensions.GetTableNameDocuments(),
-                TgResourceExtensions.GetTableNameFilters(), TgResourceExtensions.GetTableNameMessages(), TgResourceExtensions.GetTableNameProxies(),
-                TgResourceExtensions.GetTableNameStories(), TgResourceExtensions.GetTableNameVersions());
+            StorageTableDtos = await App.BusinessLogicManager.LoadStorageTableDtosAsync(
+                TgResourceExtensions.GetTableNameApps(),
+                TgResourceExtensions.GetTableNameChats(), 
+                TgResourceExtensions.GetTableNameDocuments(),
+                TgResourceExtensions.GetTableNameFilters(), 
+                TgResourceExtensions.GetTableNameMessages(), 
+                TgResourceExtensions.GetTableNameProxies(),
+                TgResourceExtensions.GetTableNameStories(), 
+                TgResourceExtensions.GetTableNameUsers(), 
+                TgResourceExtensions.GetTableNameVersions());
         }
         finally
         {

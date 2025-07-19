@@ -13,8 +13,9 @@ public sealed partial class TgChatDetailsPage
     {
         ViewModel = App.GetService<TgChatDetailsViewModel>();
         ViewModel.ScrollRequested = ScrollRequested;
+        
         InitializeComponent();
-        DataContext = this;
+        DataContext = ViewModel;
         Loaded += PageLoaded;
     }
 

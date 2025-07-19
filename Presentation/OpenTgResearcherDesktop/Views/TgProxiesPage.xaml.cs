@@ -12,8 +12,10 @@ public partial class TgProxiesPage
 	public TgProxiesPage()
 	{
 		ViewModel = App.GetService<TgProxiesViewModel>();
+
 		InitializeComponent();
-		Loaded += PageLoaded;
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

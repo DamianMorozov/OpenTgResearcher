@@ -12,8 +12,10 @@ public sealed partial class TgBotConnectionPage
 	public TgBotConnectionPage()
 	{
 		ViewModel = App.GetService<TgBotConnectionViewModel>();
-		InitializeComponent();
-		Loaded += PageLoaded;
+		
+        InitializeComponent();
+        DataContext = ViewModel;
+        Loaded += PageLoaded;
 	}
 
 	#endregion

@@ -18,5 +18,15 @@ public sealed partial class TgUserDetailsPage
         Loaded += PageLoaded;
 	}
 
-	#endregion
+    #endregion
+
+    #region Public and private methods
+
+    /// <summary> Write text to clipboard </summary>
+    public void OnClipboardWriteClick(object sender, RoutedEventArgs e) => ViewModel.OnClipboardWriteClick(sender, e);
+
+    /// <summary> Silent write text to clipboard </summary>
+    public void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e) => ViewModel.OnClipboardSilentWriteClick(sender, e);
+
+    #endregion
 }

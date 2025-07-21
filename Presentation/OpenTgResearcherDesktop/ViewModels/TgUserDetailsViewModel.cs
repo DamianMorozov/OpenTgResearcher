@@ -11,8 +11,13 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial Guid Uid { get; set; } = Guid.Empty!;
 	[ObservableProperty]
-	public partial TgEfUserDto Dto { get; set; } = null!;
-	public IRelayCommand LoadDataStorageCommand { get; }
+	public partial TgEfUserDto Dto { get; set; } = default!;
+    [ObservableProperty]
+    public partial List<long> ChatIds { get; set; } = [];
+    [ObservableProperty]
+    public partial ObservableCollection<TgEfUserWithMessagesDto> UserWithMessagesDtos { get; set; } = [];
+
+    public IRelayCommand LoadDataStorageCommand { get; }
 	public IRelayCommand ClearDataStorageCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 
@@ -23,7 +28,8 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-	}
+        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
+    }
 
 	#endregion
 
@@ -32,11 +38,33 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 		{
 			Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+            if (e?.Parameter is Tuple<long, long> tuple)
+            {
+                Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Id == tuple.Item1);
+                Uid = Dto.Uid;
+                ChatIds.Clear();
+                ChatIds.Add(tuple.Item2);
+            }
 			await LoadDataStorageCoreAsync();
 			await ReloadUiAsync();
 		});
 
-	private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
+    private async Task SetDisplaySensitiveAsync()
+    {
+        Dto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+
+        foreach (var userWithMessagesDto in UserWithMessagesDtos)
+        {
+            userWithMessagesDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+            foreach (var messageDto in userWithMessagesDto.MessageDtos)
+            {
+                messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+            }
+        }
+        await Task.CompletedTask;
+    }
+
+    private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
 
 	private async Task ClearDataStorageCoreAsync()
 	{
@@ -49,7 +77,21 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
+
 		Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Uid == Uid);
+
+        UserWithMessagesDtos.Clear();
+        if (ChatIds is not null && ChatIds.Any())
+        {
+            foreach (var chatId in ChatIds)
+            {
+                var messageDtos = await App.BusinessLogicManager.StorageManager.MessageRepository
+                    .GetListDtosAsync(0, 0, x => x.SourceId == chatId);
+                messageDtos = [.. messageDtos.OrderBy(x => x.Id)];
+                var chatDto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Id == chatId);
+                UserWithMessagesDtos.Add(new TgEfUserWithMessagesDto(Dto, chatDto, messageDtos));
+            }
+        }
 	}
 
 	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
@@ -58,8 +100,10 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	{
 		await LoadDataAsync(async () => {
 			if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+
 			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact);
-			await LoadDataStorageCoreAsync();
+			
+            await LoadDataStorageCoreAsync();
 		});
 	}
 

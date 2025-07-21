@@ -38,6 +38,7 @@
                 x:Uid="SettingAppActions"
                 Grid.Row="2"
                 Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
@@ -123,6 +124,7 @@
                 x:Uid="ExpanderDataInStorage"
                 Grid.Row="0"
                 Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">

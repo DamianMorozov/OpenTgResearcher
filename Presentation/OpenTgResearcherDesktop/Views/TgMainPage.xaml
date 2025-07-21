@@ -30,6 +30,7 @@
                     x:Uid="ExpanderAbout"
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="True">
@@ -43,6 +44,7 @@
                     x:Uid="ExpanderOfficialSite"
                     Grid.Row="1"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">
@@ -60,6 +62,7 @@
                     x:Uid="ExpanderDownload"
                     Grid.Row="3"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">
@@ -83,6 +86,7 @@
                     x:Uid="ExpanderGitHub"
                     Grid.Row="4"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">
@@ -112,6 +116,7 @@
                     x:Uid="ExpanderUserSupport"
                     Grid.Row="5"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">
@@ -129,6 +134,7 @@
                     x:Uid="ExpanderDocker"
                     Grid.Row="6"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">
@@ -146,6 +152,7 @@
                     x:Uid="ExpanderInstallRequirements"
                     Grid.Row="7"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">
@@ -164,6 +171,7 @@
                     x:Uid="ExpanderBugBounty"
                     Grid.Row="8"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="False">

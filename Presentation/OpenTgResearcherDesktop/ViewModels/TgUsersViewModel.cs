@@ -25,6 +25,7 @@ public sealed partial class TgUsersViewModel : TgPageViewModelBase
         ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
         DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
+        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
     #endregion
@@ -42,11 +43,27 @@ public sealed partial class TgUsersViewModel : TgPageViewModelBase
             await ReloadUiAsync();
         });
 
+    private async Task SetDisplaySensitiveAsync()
+    {
+        foreach (var dto in Dtos)
+        {
+            dto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+        }
+        await Task.CompletedTask;
+    }
+
     /// <summary> Sort data </summary>
     private void SetOrderData(ObservableCollection<TgEfUserDto> dtos)
     {
         if (!dtos.Any()) return;
-        Dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.FirstName).ThenBy(x => x.LastName)];
+
+        // Order: 1 - local user, 2 - name without username, 3 - username
+        Dtos = [.. dtos
+            .OrderByDescending(x => x.Id == App.BusinessLogicManager.ConnectClient.Client?.UserId)
+            .ThenBy(x => x.UserName)
+            .ThenBy(x => x.FirstName)
+            .ThenBy(x => x.LastName)
+        ];
     }
 
     private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
@@ -60,6 +77,7 @@ public sealed partial class TgUsersViewModel : TgPageViewModelBase
     public async Task LoadDataStorageCoreAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;
+        
         List<TgEfUserDto> users = [];
         if (SourceType == TgEnumSourceType.Contact)
             users = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(0, 0, x => x.IsContact);

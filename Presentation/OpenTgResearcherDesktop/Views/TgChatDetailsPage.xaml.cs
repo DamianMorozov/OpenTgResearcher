@@ -62,5 +62,8 @@ public sealed partial class TgChatDetailsPage
         Bindings.Update();
     }
 
+    /// <summary> Chat user </summary>
+    public void OnChatUserClick(object sender, RoutedEventArgs e) => ViewModel.OnChatUserClick(sender, e);
+
     #endregion
 }

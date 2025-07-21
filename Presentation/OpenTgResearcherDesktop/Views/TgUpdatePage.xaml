@@ -20,6 +20,7 @@
                     x:Uid="ExpanderUpdate"
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
                     IsExpanded="True">

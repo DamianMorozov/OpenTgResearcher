@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.730] - 2025-07-19
+## [0.6.750] - 2025-07-21
 ### Fixed
 - Fixed online chat update in OpenTgResearcherDesktop
 - Fixed chats page in OpenTgResearcherDesktop
@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added users table to the storage
 - Added users page in OpenTgResearcherDesktop
 - Added saving of chat users in OpenTgResearcherDesktop
+- Added messages to the user details page in OpenTgResearcherDesktop
 
 ## [0.6.600] - 2025-07-12
 ### Fixed

@@ -70,12 +70,6 @@ public partial class ShellViewModel : ObservableRecipient
         if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
         {
             License = App.BusinessLogicManager.LicenseService.CurrentLicense.Description;
-            var foo = LicenseService.CurrentLicense.LicenseType;
-            // Check paid license
-            if (App.BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
-            {
-                //selectionPrompt.AddChoices(tgLocale.MenuMainBotConnection);
-            }
         }
     }
 

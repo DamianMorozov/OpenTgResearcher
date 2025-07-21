@@ -208,9 +208,9 @@
                                 <!--  Update page  -->
                                 <Button
                                     Grid.Column="0"
-                                    Width="55"
-                                    Height="55"
-                                    Margin="0,5,5,0"
+                                    Width="45"
+                                    Height="45"
+                                    Margin="0,5,5,8"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
                                     Command="{Binding DataContext.UpdatePageCommand, ElementName=ShellPageRoot}">

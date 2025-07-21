@@ -39,6 +39,7 @@
                 x:Uid="SettingAppActions"
                 Grid.Row="2"
                 Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
@@ -147,13 +148,13 @@
             Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Expander
                 x:Uid="ExpanderDataInStorage"
-                Grid.Row="0"
                 Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="True">
                 <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
-                    <Grid Margin="0,0,10,0">
+                    <Grid Margin="0,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="1*" />
@@ -265,15 +266,31 @@
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
                                 <!--  User name  -->
-                                <controls:DataGridTextColumn
-                                    x:Uid="TemplateColumnUserName"
-                                    Width="2*"
-                                    Binding="{Binding UserName, Mode=OneWay}" />
+                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnUserName" Width="2*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <!--  Sensitive data  -->
+                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                <!--  Id  -->
+                                                <TextBlock Text="{Binding UserName, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
                                 <!--  Title  -->
-                                <controls:DataGridTextColumn
-                                    x:Uid="TemplateColumnTitle"
-                                    Width="3*"
-                                    Binding="{Binding Title, Mode=OneWay}" />
+                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnTitle" Width="3*">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <!--  Sensitive data  -->
+                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                <!--  Id  -->
+                                                <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
                                 <!--  First ID  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnFirstId"

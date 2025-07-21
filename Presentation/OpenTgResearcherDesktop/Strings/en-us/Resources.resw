@@ -528,6 +528,9 @@
   <data name="ExpanderChatStatistics.Header" xml:space="preserve">
     <value>Chat statistics</value>
   </data>
+  <data name="ExpanderMessages.Header" xml:space="preserve">
+    <value>Messages</value>
+  </data>
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Files</value>
   </data>
@@ -977,6 +980,15 @@
   </data>
   <data name="TextBlockLink.Text" xml:space="preserve">
     <value>Link</value>
+  </data>
+  <data name="TextBlockChat.Text" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="TextBlockUserName.Text" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="TextBlockName.Text" xml:space="preserve">
+    <value>Name</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>

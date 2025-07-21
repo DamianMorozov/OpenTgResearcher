@@ -60,7 +60,7 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
     public partial string SensitiveData { get; set; } = "**********";
     [ObservableProperty]
 	public partial bool IsDisplaySensitiveData { get; set; }
-    public IRelayCommand? IsDisplaySensitiveCommand { get; set; }
+    public IRelayCommand? SetDisplaySensitiveCommand { get; set; }
 
     public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name)
 	{
@@ -76,8 +76,8 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 
     partial void OnIsDisplaySensitiveDataChanged(bool value)
     {
-        if (IsDisplaySensitiveCommand?.CanExecute(value) ?? false)
-            IsDisplaySensitiveCommand.Execute(value);
+        if (SetDisplaySensitiveCommand?.CanExecute(value) ?? false)
+            SetDisplaySensitiveCommand.Execute(value);
     }
 
 	public virtual string ToDebugString() => TgObjectUtils.ToDebugString(this);
@@ -244,13 +244,14 @@ public partial class TgPageViewModelBase : ObservableRecipient, ITgPageViewModel
 		App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
 		{
 			if (sender is not Button button) return;
-			var text = button.Tag.ToString();
-			if (string.IsNullOrEmpty(text)) return;
+			var tag = button.Tag.ToString();
+			if (string.IsNullOrEmpty(tag)) return;
+
 			var dataPackage = new DataPackage();
-			dataPackage.SetText(text);
+			dataPackage.SetText(tag);
 			Clipboard.SetContent(dataPackage);
 			if (!isSilent)
-				await ContentDialogAsync(TgResourceExtensions.GetClipboard(), text);
+				await ContentDialogAsync(TgResourceExtensions.GetClipboard(), tag);
 		});
 	}
 

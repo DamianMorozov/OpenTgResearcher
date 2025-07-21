@@ -48,7 +48,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
-        IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
+        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
         CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         // Updates
@@ -81,6 +81,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     {
         await ReloadUiAsync();
         if (!SettingsService.IsExistsAppStorage) return;
+        
         Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
         MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosDescAsync(
             take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id, isReadOnly: true)];
@@ -168,11 +169,10 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
             IsContact = false,
         })];
 
-        var usersDtosForSave = UserDtos.Where(x => x.Id != App.BusinessLogicManager.ConnectClient.Client?.UserId).ToList();
-        await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync(usersDtosForSave);
+        await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
     }
 
-    private async Task IsDisplaySensitiveAsync()
+    private async Task SetDisplaySensitiveAsync()
     {
         foreach (var userDto in UserDtos)
         {
@@ -252,6 +252,16 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
                 ContentStatisticsDto.VideosCount = files.Count(file => videoExtensions.Contains(Path.GetExtension(file)));
             }
         }
+    }
+
+    internal void OnChatUserClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        var tag = button.Tag.ToString();
+        if (string.IsNullOrEmpty(tag)) return;
+
+        Tuple<long, long> tuple = new(long.Parse(tag), Dto.Id);
+        NavigationService.NavigateTo(typeof(TgUserDetailsViewModel).FullName!, tuple);
     }
 
     #endregion

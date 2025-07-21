@@ -40,7 +40,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
 		SearchCommand = new AsyncRelayCommand(SearchAsync);
         LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, CanLoadMore);
-        IsDisplaySensitiveCommand = new AsyncRelayCommand(IsDisplaySensitiveAsync);
+        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
     #endregion
@@ -55,7 +55,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		await ReloadUiAsync();
 	});
 
-    private async Task IsDisplaySensitiveAsync()
+    private async Task SetDisplaySensitiveAsync()
     {
         foreach (var userDto in Dtos)
         {

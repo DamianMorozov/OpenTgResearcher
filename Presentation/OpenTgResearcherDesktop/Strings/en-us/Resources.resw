@@ -957,6 +957,12 @@
   <data name="TextBlockId.Text" xml:space="preserve">
     <value>ID</value>
   </data>
+  <data name="TextBlockCreated.Text" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="TextBlockChanged.Text" xml:space="preserve">
+    <value>Changed</value>
+  </data>
   <data name="TextBlockDtStart.Text" xml:space="preserve">
     <value>Start date</value>
   </data>
@@ -1271,6 +1277,21 @@
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>Close</value>
+  </data>
+  <data name="SelectorBarItemPageChatDetails.Text" xml:space="preserve">
+    <value>Chat details</value>
+  </data>
+  <data name="SelectorBarItemPageChatParticipants.Text" xml:space="preserve">
+    <value>Chat participants</value>
+  </data>
+  <data name="SelectorBarItemPageChatStatistics.Text" xml:space="preserve">
+    <value>Chat statistics</value>
+  </data>
+  <data name="SelectorBarItemPageContent.Text" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
+    <value>Content statistics</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

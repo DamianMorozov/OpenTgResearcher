@@ -121,6 +121,8 @@ public partial class App : Application
 				services.AddTransient<ShellViewModel>();
 				services.AddTransient<TgBotConnectionPage>();
 				services.AddTransient<TgBotConnectionViewModel>();
+				services.AddTransient<TgChatDetailsInfoPage>();
+				services.AddTransient<TgChatDetailsInfoViewModel>();
 				services.AddTransient<TgChatDetailsPage>();
 				services.AddTransient<TgChatDetailsViewModel>();
 				services.AddTransient<TgChatsPage>();

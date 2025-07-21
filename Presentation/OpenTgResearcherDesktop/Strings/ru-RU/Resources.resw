@@ -1019,6 +1019,12 @@
   <data name="TextBlockId.Text" xml:space="preserve">
     <value>ИД</value>
   </data>
+  <data name="TextBlockCreated.Text" xml:space="preserve">
+    <value>Создано</value>
+  </data>
+  <data name="TextBlockChanged.Text" xml:space="preserve">
+    <value>Изменено</value>
+  </data>
   <data name="TextBlockDtStart.Text" xml:space="preserve">
     <value>Дата начала</value>
   </data>
@@ -1333,6 +1339,21 @@
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>Закрыть</value>
+  </data>
+  <data name="SelectorBarItemPageChatDetails.Text" xml:space="preserve">
+    <value>Детали чата</value>
+  </data>
+  <data name="SelectorBarItemPageChatParticipants.Text" xml:space="preserve">
+    <value>Участники чата</value>
+  </data>
+  <data name="SelectorBarItemPageChatStatistics.Text" xml:space="preserve">
+    <value>Статистика чата</value>
+  </data>
+  <data name="SelectorBarItemPageContent.Text" xml:space="preserve">
+    <value>Содержимое</value>
+  </data>
+  <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
+    <value>Статистика содержимого</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

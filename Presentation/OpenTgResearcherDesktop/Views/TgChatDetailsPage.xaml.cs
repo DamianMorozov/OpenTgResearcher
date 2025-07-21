@@ -65,5 +65,32 @@ public sealed partial class TgChatDetailsPage
     /// <summary> Chat user </summary>
     public void OnChatUserClick(object sender, RoutedEventArgs e) => ViewModel.OnChatUserClick(sender, e);
 
+    /// <summary> Change chat details page </summary>
+    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    {
+        var selectedItem = sender.SelectedItem;
+        int currentSelectedIndex = sender.Items.IndexOf(selectedItem);
+        switch (currentSelectedIndex)
+        {
+            case 0:
+                ContentFrame.Navigate(typeof(TgChatDetailsInfoPage), ViewModel.Dto.Id);
+                break;
+            //case 1:
+            //    pageType = typeof(SamplePage2);
+            //    break;
+            //case 2:
+            //    pageType = typeof(SamplePage3);
+            //    break;
+            //case 3:
+            //    pageType = typeof(SamplePage4);
+            //    break;
+            default:
+                break;
+        }
+        //var slideNavigationTransitionEffect = currentSelectedIndex - previousSelectedIndex > 0 ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft;
+        //ContentFrame.Navigate(pageType, null, new SlideNavigationTransitionInfo() { Effect = slideNavigationTransitionEffect });
+        //previousSelectedIndex = currentSelectedIndex;
+    }
+
     #endregion
 }

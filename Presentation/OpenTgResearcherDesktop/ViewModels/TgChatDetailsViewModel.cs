@@ -31,7 +31,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
     public IRelayCommand ClearDataStorageCommand { get; }
     public IRelayCommand UpdateOnlineCommand { get; }
-    public IRelayCommand UpdateChatSettingsCommand { get; }
     public IRelayCommand SaveChatSettingsCommand { get; }
     public IRelayCommand StopDownloadingCommand { get; }
     public IRelayCommand GetParticipantsCommand { get; }
@@ -44,7 +43,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         // Commands
         ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        UpdateChatSettingsCommand = new AsyncRelayCommand(UpdateChatSettingsAsync);
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
@@ -63,8 +61,21 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         {
             Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
             await LoadDataStorageCoreAsync();
-            await ReloadUiAsync();
         });
+
+    private async Task SetDisplaySensitiveAsync()
+    {
+        foreach (var userDto in UserDtos)
+        {
+            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+        }
+
+        foreach (var messageDto in MessageDtos)
+        {
+            messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+        }
+        await Task.CompletedTask;
+    }
 
     private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
 
@@ -79,18 +90,25 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
     private async Task LoadDataStorageCoreAsync()
     {
-        await ReloadUiAsync();
-        if (!SettingsService.IsExistsAppStorage) return;
-        
-        Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
-        MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosDescAsync(
-            take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id, isReadOnly: true)];
-        foreach (var messageDto in MessageDtos)
+        try
         {
-            messageDto.Directory = Dto.Directory;
+            if (!SettingsService.IsExistsAppStorage) return;
+
+            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+
+            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(
+            take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
+            foreach (var messageDto in MessageDtos)
+            {
+                messageDto.Directory = Dto.Directory;
+            }
+            EmptyData = !MessageDtos.Any();
+            ScrollRequested?.Invoke();
         }
-        EmptyData = !MessageDtos.Any();
-        ScrollRequested?.Invoke();
+        finally
+        {
+            await ReloadUiAsync();
+        }
     }
 
     private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
@@ -114,15 +132,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         {
             IsDownloading = false;
         }
-    });
-
-    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatDetailsCoreAsync, TgResourceExtensions.AskUpdateChatDetails());
-
-    private async Task UpdateChatDetailsCoreAsync() => await LoadDataAsync(async () =>
-    {
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-
-        ChatDetailsDto = await App.BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(Dto.Id);
     });
 
     public async Task SaveChatSettingsAsync() => await ContentDialogAsync(SaveChatSettingsCoreAsync, TgResourceExtensions.AskSettingsSave());
@@ -170,15 +179,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         })];
 
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
-    }
-
-    private async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in UserDtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-        await Task.CompletedTask;
     }
 
     private async Task CalcChatStatisticsAsync() => await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics());

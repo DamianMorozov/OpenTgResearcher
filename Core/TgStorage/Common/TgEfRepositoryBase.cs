@@ -328,12 +328,19 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         return dtos;
     }
 
-    public async Task<List<TDto>> GetListDtosDescAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where,
-        Expression<Func<TEfEntity, TKey>> order, bool isReadOnly = true)
+    public async Task<List<TDto>> GetListDtosAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order)
     {
         var dtos = take > 0
-            ? await GetQuery(isReadOnly).Where(where).OrderByDescending(order).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
-            : await GetQuery(isReadOnly).Where(where).OrderByDescending(order).Select(SelectDto()).ToListAsync();
+            ? await GetQuery(isReadOnly: true).Where(where).OrderBy(order).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+            : await GetQuery(isReadOnly: true).Where(where).OrderBy(order).Select(SelectDto()).ToListAsync();
+        return dtos;
+    }
+
+    public async Task<List<TDto>> GetListDtosDescAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order)
+    {
+        var dtos = take > 0
+            ? await GetQuery(isReadOnly: true).Where(where).OrderByDescending(order).Skip(skip).Take(take).Select(SelectDto()).ToListAsync()
+            : await GetQuery(isReadOnly: true).Where(where).OrderByDescending(order).Select(SelectDto()).ToListAsync();
         return dtos;
     }
 

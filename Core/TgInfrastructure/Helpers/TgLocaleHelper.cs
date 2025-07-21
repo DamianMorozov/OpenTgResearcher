@@ -340,6 +340,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuStorageViewContacts => "View contacts";
 	public string MenuStorageViewFilters => "View filters";
 	public string MenuStorageViewStories => "View stories";
+	public string MenuStorageViewUsers => "View users";
 	public string MenuStorageViewVersions => "View versions";
 	public string MenuSwitchNumber => "Switch menu number";
 	public string MenuTableAppsRecordsCount => "Apps records count";

@@ -4,7 +4,7 @@
 namespace TgInfrastructure.Dtos;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsDto : ObservableRecipient
+public sealed partial class TgChatDetailsDto : TgSensitiveDto
 {
     #region Public and private fields, properties, constructor
 
@@ -51,7 +51,7 @@ public sealed partial class TgChatDetailsDto : ObservableRecipient
 
     #region Public and private methods
 
-    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    //
 
     #endregion
 }

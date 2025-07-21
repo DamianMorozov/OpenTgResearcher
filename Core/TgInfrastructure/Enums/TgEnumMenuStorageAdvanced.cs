@@ -11,5 +11,6 @@ public enum TgEnumMenuStorageAdvanced
     ViewContacts,
     ViewFilters,
     ViewStories,
+    ViewUsers,
     ViewVersions,
 }

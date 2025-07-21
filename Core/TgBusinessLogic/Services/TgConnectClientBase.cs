@@ -3227,6 +3227,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id)
     {
+        if (id <= 0) return new();
+
         var tgDownloadSettings = new TgDownloadSettingsViewModel
         {
             SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { Id = id } }

@@ -19,6 +19,7 @@ internal partial class TgMenuHelper
             TgLocale.MenuStorageResetAutoUpdate,
             TgLocale.MenuStorageViewChats,
             TgLocale.MenuStorageViewContacts,
+            TgLocale.MenuStorageViewUsers,
             TgLocale.MenuStorageViewStories,
             TgLocale.MenuStorageViewVersions
         );
@@ -28,10 +29,12 @@ internal partial class TgMenuHelper
             return TgEnumMenuStorageAdvanced.ResetAutoUpdate;
         if (prompt.Equals(TgLocale.MenuStorageViewChats))
             return TgEnumMenuStorageAdvanced.ViewChats;
-        if (prompt.Equals(TgLocale.MenuStorageViewContacts))
-            return TgEnumMenuStorageAdvanced.ViewContacts;
         if (prompt.Equals(TgLocale.MenuFiltersView))
             return TgEnumMenuStorageAdvanced.ViewFilters;
+        if (prompt.Equals(TgLocale.MenuStorageViewContacts))
+            return TgEnumMenuStorageAdvanced.ViewContacts;
+        if (prompt.Equals(TgLocale.MenuStorageViewUsers))
+            return TgEnumMenuStorageAdvanced.ViewUsers;
         if (prompt.Equals(TgLocale.MenuStorageViewStories))
             return TgEnumMenuStorageAdvanced.ViewStories;
         if (prompt.Equals(TgLocale.MenuStorageViewVersions))
@@ -56,11 +59,14 @@ internal partial class TgMenuHelper
                 case TgEnumMenuStorageAdvanced.ViewChats:
                     await StorageViewChatsAsync(tgDownloadSettings);
                     break;
+                case TgEnumMenuStorageAdvanced.ViewFilters:
+                    await FiltersViewAsync(tgDownloadSettings);
+                    break;
                 case TgEnumMenuStorageAdvanced.ViewContacts:
                     await StorageViewContactsAsync(tgDownloadSettings);
                     break;
-                case TgEnumMenuStorageAdvanced.ViewFilters:
-                    await FiltersViewAsync(tgDownloadSettings);
+                case TgEnumMenuStorageAdvanced.ViewUsers:
+                    await StorageViewUsersAsync(tgDownloadSettings);
                     break;
                 case TgEnumMenuStorageAdvanced.ViewStories:
                     await StorageViewStoriesAsync(tgDownloadSettings);
@@ -97,22 +103,6 @@ internal partial class TgMenuHelper
         }
     }
 
-    /// <summary> View contacts </summary>
-    private async Task StorageViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
-    {
-        await ShowTableViewContactsAsync(tgDownloadSettings);
-
-        var dtos = await BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync();
-        dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.LastName).ThenBy(x => x.FirstName)];
-        var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewContacts, dtos, BusinessLogicManager.StorageManager.UserRepository);
-        //if (dto.Uid != Guid.Empty)
-        //{
-        //    Value = TgEnumMenuMain.ClientConnection;
-        //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupClientConnectionAsync(tgDownloadSettings);
-        //}
-    }
-
     /// <summary> View filters </summary>
     private async Task FiltersViewAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
@@ -129,6 +119,26 @@ internal partial class TgMenuHelper
         //}
     }
 
+    /// <summary> View contacts </summary>
+    private async Task StorageViewContactsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ShowTableViewContactsAsync(tgDownloadSettings);
+
+        var dtos = await BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(0, 0, x => x.IsContact);
+        dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.LastName).ThenBy(x => x.FirstName)];
+        var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewContacts, dtos, BusinessLogicManager.StorageManager.UserRepository);
+    }
+
+    /// <summary> View users </summary>
+    private async Task StorageViewUsersAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    {
+        await ShowTableViewContactsAsync(tgDownloadSettings);
+
+        var dtos = await BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(0, 0, x => !x.IsContact);
+        dtos = [.. dtos.OrderBy(x => x.UserName).ThenBy(x => x.LastName).ThenBy(x => x.FirstName)];
+        var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewContacts, dtos, BusinessLogicManager.StorageManager.UserRepository);
+    }
+
     /// <summary> View stories </summary>
     private async Task StorageViewStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
@@ -137,12 +147,6 @@ internal partial class TgMenuHelper
         var dtos = await BusinessLogicManager.StorageManager.StoryRepository.GetListDtosAsync();
         dtos = [.. dtos.OrderBy(x => x.Id).ThenBy(x => x.Date)];
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewFilters, dtos, BusinessLogicManager.StorageManager.StoryRepository);
-        //if (dto.Uid != Guid.Empty)
-        //{
-        //    Value = TgEnumMenuMain.ClientConnection;
-        //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupClientConnectionAsync(tgDownloadSettings);
-        //}
     }
 
     /// <summary> View versions </summary>
@@ -153,12 +157,6 @@ internal partial class TgMenuHelper
         var dtos = await BusinessLogicManager.StorageManager.VersionRepository.GetListDtosAsync();
         dtos = [.. dtos.OrderBy(x => x.Version)];
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewFilters, dtos, BusinessLogicManager.StorageManager.VersionRepository);
-        //if (dto.Uid != Guid.Empty)
-        //{
-        //    Value = TgEnumMenuMain.ClientConnection;
-        //    tgDownloadSettings = await SetupDownloadSourceByIdAsync(dto.Id);
-        //    await SetupClientConnectionAsync(tgDownloadSettings);
-        //}
     }
 
     #endregion

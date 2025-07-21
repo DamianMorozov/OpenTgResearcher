@@ -4,7 +4,7 @@
 namespace TgStorage.Domain.Messages;
 
 /// <summary> Message DTO </summary>
-public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity, TgEfMessageDto>
+public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageEntity, TgEfMessageDto>
 {
 	#region Public and private fields, properties, constructor
 

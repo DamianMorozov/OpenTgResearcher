@@ -4,14 +4,10 @@
 namespace TgStorage.Domain.Users;
 
 /// <summary> User DTO </summary>
-public sealed partial class TgEfUserDto : TgDtoBase, ITgDto<TgEfUserEntity, TgEfUserDto>
+public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity, TgEfUserDto>
 {
     #region Public and private fields, properties, constructor
 
-    [ObservableProperty]
-    public partial string SensitiveData { get; set; } = "**********";
-    [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; set; }
     [ObservableProperty]
     public partial DateTime DtChanged { get; set; }
     public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";

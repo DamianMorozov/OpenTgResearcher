@@ -210,7 +210,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		await ReloadUiAsync();
 	}
 
-	protected override async Task ReloadUiAsync()
+	public override async Task ReloadUiAsync()
 	{
 		await base.ReloadUiAsync();
 

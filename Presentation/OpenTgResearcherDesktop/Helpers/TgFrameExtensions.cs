@@ -3,8 +3,10 @@
 
 namespace OpenTgResearcherDesktop.Helpers;
 
+/// <summary> Fram extensions </summary>
 public static class TgFrameExtensions
 {
+    /// <summary> Get the ViewModel from the Frame's content </summary>
 	public static object? GetPageViewModel(this Frame frame)
 	{
 		var content = frame.Content;
@@ -16,9 +18,6 @@ public static class TgFrameExtensions
 				if (property.Name.Contains("ViewModel"))
 					return property.GetValue(frame.Content, null);
 			}
-
-		//var property = type?.GetProperty("ViewModel");
-		//return property?.GetValue(frame.Content, null);
 		return null;
 	}
 }

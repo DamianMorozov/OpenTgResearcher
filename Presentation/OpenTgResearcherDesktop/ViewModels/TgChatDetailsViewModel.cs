@@ -9,6 +9,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     #region Public and private fields, properties, constructor
 
     [ObservableProperty]
+    public partial IAppNotificationService AppNotificationService { get; private set; }
+
+    [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
     public partial TgEfSourceDto Dto { get; set; } = null!;
@@ -28,6 +31,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
     [ObservableProperty]
     public partial TgEfContentStatisticsDto ContentStatisticsDto { get; set; } = new();
+    [ObservableProperty]
+    public partial Frame ContentFrame { get; set; } = default!;
 
     public IRelayCommand ClearDataStorageCommand { get; }
     public IRelayCommand UpdateOnlineCommand { get; }
@@ -37,9 +42,11 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     public IRelayCommand CalcChatStatisticsCommand { get; }
     public IRelayCommand CalcContentStatisticsCommand { get; }
 
-    public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger)
+    public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger,
+        IAppNotificationService appNotificationService)
         : base(settingsService, navigationService, logger, nameof(TgChatDetailsViewModel))
     {
+        AppNotificationService = appNotificationService;
         // Commands
         ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
@@ -74,7 +81,17 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         {
             messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
         }
-        await Task.CompletedTask;
+
+        await UpdateCurrentFrameAsync();
+    }
+
+    private async Task UpdateCurrentFrameAsync()
+    {
+        if (ContentFrame.GetPageViewModel() is TgChatDetailsInfoViewModel chatDetailsInfoViewModel)
+        {
+            chatDetailsInfoViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
+            await chatDetailsInfoViewModel.ReloadUiAsync();
+        }
     }
 
     private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
@@ -108,6 +125,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         finally
         {
             await ReloadUiAsync();
+            await SetDisplaySensitiveAsync();
         }
     }
 

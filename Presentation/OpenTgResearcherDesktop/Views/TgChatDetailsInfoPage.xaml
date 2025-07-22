@@ -14,11 +14,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgChatDetailsInfoViewModel}"
     mc:Ignorable="d">
 
-    <common:TgPageBase.Resources>
-        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
-    </common:TgPageBase.Resources>
-
     <!--  Chat details  -->
     <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
         <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
@@ -78,9 +73,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -103,9 +98,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -120,17 +115,23 @@
                     Grid.Row="2"
                     Grid.Column="1"
                     Orientation="Horizontal">
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="7,7,7,2"
+                        Text="{x:Bind ViewModel.ChatDetailsDto.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                     <TextBlock
                         Margin="7,7,7,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
-                        TextAlignment="Left" />
+                        TextAlignment="Left"
+                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <!--  Copy button  -->
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -153,9 +154,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -178,9 +179,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -203,9 +204,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -229,9 +230,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -254,9 +255,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -280,9 +281,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -305,9 +306,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -331,9 +332,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -356,9 +357,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
@@ -382,9 +383,9 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="{x:Bind ViewModel.OnClipboardSilentWriteClick}"
-                        CornerRadius="10"
-                        Tag="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}">
+                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>

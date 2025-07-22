@@ -13,13 +13,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgClientConnectionViewModel}"
     mc:Ignorable="d">
 
-    <common:TgPageBase.Resources>
-        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
-    </common:TgPageBase.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

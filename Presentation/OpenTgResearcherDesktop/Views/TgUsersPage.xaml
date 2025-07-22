@@ -13,11 +13,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgUsersViewModel}"
     mc:Ignorable="d">
 
-    <common:TgPageBase.Resources>
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </common:TgPageBase.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

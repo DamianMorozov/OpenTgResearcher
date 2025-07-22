@@ -15,8 +15,6 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <!--  Messages data template  -->
         <DataTemplate x:Key="MessagesViewTemplate" x:DataType="messages:TgEfMessageDto">
             <StackPanel
@@ -56,9 +54,9 @@
                             <Button
                                 Margin="5,2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="OnClipboardSilentWriteClick"
-                                CornerRadius="10"
-                                Tag="{x:Bind Id, Mode=OneWay}">
+                                Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                                CommandParameter="{x:Bind Id, Mode=OneWay}"
+                                CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
                             </Button>
                             <!--  Message  -->
@@ -80,9 +78,9 @@
                             <Button
                                 Margin="5,2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Click="OnClipboardSilentWriteClick"
-                                CornerRadius="10"
-                                Tag="{x:Bind Message, Mode=OneWay}">
+                                Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                                CommandParameter="{x:Bind Message, Mode=OneWay}"
+                                CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
                             </Button>
                         </StackPanel>
@@ -124,9 +122,9 @@
                     <Button
                         Margin="5,-2,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="OnClipboardSilentWriteClick"
-                        CornerRadius="10"
-                        Tag="{x:Bind ChatDto.Id, Mode=OneWay}">
+                        Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ChatDto.Id, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                     <!--  Name  -->
@@ -148,9 +146,9 @@
                     <Button
                         Margin="5,-2,0,0"
                         HorizontalContentAlignment="Left"
-                        Click="OnClipboardSilentWriteClick"
-                        CornerRadius="10"
-                        Tag="{x:Bind ChatDto.UserName, Mode=OneWay}">
+                        Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                        CommandParameter="{x:Bind ChatDto.UserName, Mode=OneWay}"
+                        CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                     <TextBlock

@@ -11,12 +11,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgLicenseViewModel}"
     mc:Ignorable="d">
 
-    <common:TgPageBase.Resources>
-        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </common:TgPageBase.Resources>
-
     <ScrollView VerticalScrollMode="Auto">
         <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <Grid>

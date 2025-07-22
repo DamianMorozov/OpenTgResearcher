@@ -185,6 +185,7 @@ public partial class ShellViewModel : ObservableRecipient
             if (vm.IsClientConnected)
             {
                 await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+                await ShellUpdatePageAsync();
             }
         });
     }

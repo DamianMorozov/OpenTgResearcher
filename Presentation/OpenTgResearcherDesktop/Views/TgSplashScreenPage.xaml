@@ -12,9 +12,6 @@
 
     <common:TgPageBase.Resources>
         <x:Double x:Key="ProgressBarTrackHeight">30</x:Double>
-        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:TgBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </common:TgPageBase.Resources>
 
     <Grid

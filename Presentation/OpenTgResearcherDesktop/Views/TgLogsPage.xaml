@@ -70,9 +70,9 @@
                                                 Grid.Row="0"
                                                 Grid.Column="1"
                                                 Margin="10,-10,0,0"
-                                                Click="{x:Bind Path=ViewModel.OnClipboardSilentWriteClick}"
-                                                CornerRadius="10"
-                                                Tag="{x:Bind Path=Content, Mode=OneWay}">
+                                                Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                                                CommandParameter="{x:Bind Content, Mode=OneWay}"
+                                                CornerRadius="10">
                                                 <SymbolIcon Symbol="Copy" />
                                             </Button>
                                             <TextBlock

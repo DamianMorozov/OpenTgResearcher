@@ -4,11 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.760] - 2025-07-22
-### Changed
-- Updated README
-
-## [0.6.750] - 2025-07-21
+## [0.6.800] - 2025-07-22
 ### Fixed
 - Fixed online chat update in OpenTgResearcherDesktop
 - Fixed chats page in OpenTgResearcherDesktop
@@ -24,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated documentation
 - Optimized access to storage
 - Updated contacts page in OpenTgResearcherDesktop
+- Updated README
+- Stabilization and optimization of OpenTgResearcherDesktop
 ### Added
 - Added checking messages for deleted messages when rescanning a chat
 - Added display of message link in OpenTgResearcherDesktop

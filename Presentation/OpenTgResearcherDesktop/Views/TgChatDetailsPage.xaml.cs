@@ -13,15 +13,22 @@ public sealed partial class TgChatDetailsPage
     {
         ViewModel = App.GetService<TgChatDetailsViewModel>();
         ViewModel.ScrollRequested = ScrollRequested;
-        
+
         InitializeComponent();
         DataContext = ViewModel;
-        Loaded += PageLoaded;
+        Loaded += OnPageLoaded;
     }
 
     #endregion
 
     #region Public and private methods
+
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
+        PageLoaded(sender, e);
+
+        ViewModel.ContentFrame = ContentFrame;
+    }
 
     private void ScrollRequested()
     {
@@ -35,12 +42,6 @@ public sealed partial class TgChatDetailsPage
         if (ListViewParticipants.Items.Any())
             ListViewParticipants.ScrollIntoView(ListViewParticipants.Items.Last());
     }
-
-    /// <summary> Write text to clipboard </summary>
-    public void OnClipboardWriteClick(object sender, RoutedEventArgs e) => ViewModel.OnClipboardWriteClick(sender, e);
-
-    /// <summary> Silent write text to clipboard </summary>
-    public void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e) => ViewModel.OnClipboardSilentWriteClick(sender, e);
 
     /// <summary> View image </summary>
     private void OnImagePreviewClick(object sender, RoutedEventArgs e)

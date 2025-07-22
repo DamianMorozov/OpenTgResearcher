@@ -13,10 +13,6 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgProxiesViewModel}"
     mc:Ignorable="d">
 
-    <common:TgPageBase.Resources>
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-    </common:TgPageBase.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

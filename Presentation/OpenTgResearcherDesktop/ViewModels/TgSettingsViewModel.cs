@@ -64,8 +64,8 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         SettingsService.AppSession = AppSession;
         await SettingsService.SaveAsync();
         LoadSettingsFromService();
-        await ContentDialogAsync(async () => { await Windows.ApplicationModel.Core.CoreApplication.RequestRestartAsync(string.Empty); },
-			TgResourceExtensions.AskRestartApp(), ContentDialogButton.Primary);
+        //await ContentDialogAsync(async () => { await Windows.ApplicationModel.Core.CoreApplication.RequestRestartAsync(string.Empty); },
+		//TgResourceExtensions.AskRestartApp(), ContentDialogButton.Primary);
     }
 
     private void LoadSettingsFromService()

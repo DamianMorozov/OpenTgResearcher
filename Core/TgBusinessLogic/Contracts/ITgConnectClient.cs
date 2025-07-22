@@ -21,6 +21,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Dictionary<long, TL.ChatBase> DicChatsAll { get; }
 
     public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; }
+    public Func<Task> AfterClientConnectAsync { get; }
 
     public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync();

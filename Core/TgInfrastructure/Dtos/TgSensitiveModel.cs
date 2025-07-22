@@ -3,9 +3,9 @@
 
 namespace TgInfrastructure.Dtos;
 
-/// <summary> Sensitive DTO </summary>
+/// <summary> Sensitive model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public partial class TgSensitiveDto : TgDtoBase
+public partial class TgSensitiveModel : ObservableRecipient
 {
     #region Public and private fields, properties, constructor
 
@@ -14,7 +14,23 @@ public partial class TgSensitiveDto : TgDtoBase
     [ObservableProperty]
     public partial bool IsDisplaySensitiveData { get; set; }
 
-    public TgSensitiveDto() : base() { }
+    public IRelayCommand? SetDisplaySensitiveCommand { get; set; }
+
+    public TgSensitiveModel() : base()
+    {
+        //
+    }
+
+    #endregion
+
+    #region Public and private methods
+
+    partial void OnIsDisplaySensitiveDataChanged(bool value)
+    {
+        if (SetDisplaySensitiveCommand?.CanExecute(value) ?? false)
+            SetDisplaySensitiveCommand.Execute(value);
+    }
+
 
     #endregion
 }

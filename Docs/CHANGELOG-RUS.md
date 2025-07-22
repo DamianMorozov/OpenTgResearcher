@@ -4,6 +4,10 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.760] - 2025-07-22
+### Изменено
+- Обновлена README
+
 ## [0.6.750] - 2025-07-21
 ### Исправлено
 - Исправлено онлайн обновление чатов в OpenTgResearcherDesktop

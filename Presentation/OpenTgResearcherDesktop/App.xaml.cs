@@ -40,7 +40,7 @@ public partial class App : Application
 		// Logging to the application directory
         TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherDesktop, isWebApp: false, isRewrite: true);
 
-        // Create ServiceCollection for EF Core pooling
+        // Create ServiceCollection for EF Core Pooling
         var services = new ServiceCollection();
         services.AddDbContextPool<TgEfDesktopContext>(options =>
         {

@@ -6,6 +6,7 @@
 - Скачивай сообщения чатов в локальное хранилище
 - Просматривай расширенную информацию об участниках чатов
 - Просматривай статистику чатов
+- OSINT инструмент
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
@@ -50,3 +51,6 @@
 
 ## OpenTgResearcherConsole - Поиск ключевых слов в чатах
 <p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>
+
+## Ключевые слова
+ОпенТгРесечер, ОпенТгРесёчер, Опен-Тг-Ресечер, Опен-Тг-Ресёчер, Телеграм, скачать, тгскачать, тг-скачать, ресёчер, ресечер, тгресечер, тг-ресечер, тгресёчер, тг-ресёчер

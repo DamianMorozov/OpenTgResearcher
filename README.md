@@ -6,6 +6,7 @@ Telegram's open researcher and search engine:
 - Download chat messages to local storage
 - View expanded information about chat participants
 - View chat statistics
+- OSINT tool
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
@@ -50,3 +51,6 @@ Telegram's open researcher and search engine:
 
 ## OpenTgResearcherConsole - Search for keywords in chats
 <p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>
+
+## Keywords
+OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-downloader, researcher, tgresearcher, tg-researcher

@@ -13,7 +13,7 @@ public static class Program
         // Set app type
         TgGlobalTools.SetAppType(TgEnumAppType.Console);
 
-        // Create ServiceCollection for EF Core pooling
+        // Create ServiceCollection for EF Core Pooling
         var services = new ServiceCollection();
         services.AddDbContextPool<TgEfConsoleContext>(options =>
         {

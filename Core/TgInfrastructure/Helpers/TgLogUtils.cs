@@ -8,43 +8,96 @@ public static class TgLogUtils
 {
     #region Public and private fields, properties, constructor
 
-    private static string _startupLog = default!;
+    private static string _startupLog = string.Empty;
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	/// <summary> Initialize startup log </summary>
-	public static void InitStartupLog(string appName, bool isWebApp, bool isRewrite)
+    public static string GetLogsDirectory(TgEnumAppType appType) => appType switch
+    {
+        TgEnumAppType.Console => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherConsole, "current"),
+        TgEnumAppType.Desktop => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherDesktop, "current"),
+        TgEnumAppType.Blazor => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs"),
+        _ => string.Empty,
+    };
+
+    /// <summary> Create log </summary>
+    public static void Create(TgEnumAppType appType, bool isAppStart = false)
 	{
 		try
 		{
-            _startupLog = !isWebApp
-                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    appName, "current", $"{appName}-StartupLog.txt")
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", $"{appName}-StartupLog.txt");
+            switch (appType)
+            {
+                case TgEnumAppType.Console:
+                case TgEnumAppType.Desktop:
+                case TgEnumAppType.Blazor:
+                    _startupLog = Path.Combine(GetLogsDirectory(appType), $"Log-{DateTime.Now:yyyy-MM-dd}.txt");
+                    break;
+            }
+            if (string.IsNullOrEmpty(_startupLog)) return;
 
-            if (!string.IsNullOrEmpty(_startupLog) && !Directory.Exists(Path.GetDirectoryName(_startupLog)))
+            // Check directory
+            if (!Directory.Exists(Path.GetDirectoryName(_startupLog)))
 			{
 				Directory.CreateDirectory(Path.GetDirectoryName(_startupLog)!);
             }
 
             // Check rewrite flag
-            if (isRewrite && File.Exists(_startupLog))
-                File.Delete(_startupLog);
-            
-            WriteLog($"App started");
+            if (isAppStart)
+            {
+                if (!File.Exists(_startupLog))
+                    File.CreateText(_startupLog).Close();
+                WriteLog($"App started");
+            }
         }
         catch (Exception ex)
 		{
-            WriteExceptionWithMessage(ex, "App startup log failed!");
+            WriteExceptionWithMessage(ex, "Failed to start app log!");
 		}
+    }
+
+    public static async Task CloseAndFlushAsync()
+    {
+        if (string.IsNullOrEmpty(_startupLog) || !File.Exists(_startupLog)) return;
+        try
+        {
+            // Flush the log file
+            using var stream = new FileStream(_startupLog, FileMode.Append, FileAccess.Write, FileShare.Read);
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            await writer.WriteLineAsync($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] App closed");
+        }
+        catch (Exception ex)
+        {
+            WriteExceptionWithMessage(ex, "Failed to close and flush app log!");
+        }
+    }
+
+    public static void CloseAndFlush()
+    {
+        if (string.IsNullOrEmpty(_startupLog) || !File.Exists(_startupLog)) return;
+        try
+        {
+            // Flush the log file
+            using var stream = new FileStream(_startupLog, FileMode.Append, FileAccess.Write, FileShare.Read);
+            using var writer = new StreamWriter(stream) { AutoFlush = true };
+            writer.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] App closed");
+        }
+        catch (Exception ex)
+        {
+            WriteExceptionWithMessage(ex, "Failed to close and flush app log!");
+        }
     }
 
     private static void WriteCallerCore(string filePath, int lineNumber, string memberName)
     {
         var fileName = TgFileUtils.GetShortFilePath(filePath);
         File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
+    }
+
+    private static void WriteCallerExceptionCore(string filePath, int lineNumber, string memberName)
+    {
+        WriteCallerCore(filePath, lineNumber, memberName);
         File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
         File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
     }
@@ -53,13 +106,6 @@ public static class TgLogUtils
     {
         if (string.IsNullOrEmpty(message)) return;
         File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
-    }
-
-    public static void WriteLog(string message,
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
-    {
-        WriteLog(message);
-        WriteCallerCore(filePath, lineNumber, memberName);
     }
 
     public static void WriteLogWithCaller(string message,
@@ -75,7 +121,7 @@ public static class TgLogUtils
         if (ex.InnerException is not null)
             message += Environment.NewLine + ex.InnerException.Message;
         WriteLog(message);
-        WriteCallerCore(filePath, lineNumber, memberName);
+        WriteCallerExceptionCore(filePath, lineNumber, memberName);
         WriteLog(ex.StackTrace?.ToString() ?? string.Empty);
 
         TgDebugUtils.WriteExceptionToDebug(ex, message, filePath, lineNumber, memberName);

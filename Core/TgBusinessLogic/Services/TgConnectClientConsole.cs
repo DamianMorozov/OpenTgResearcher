@@ -28,20 +28,6 @@ public partial class TgConnectClientConsole(ITgStorageManager storageManager) : 
             finally
             {
                 await CheckClientConnectionReadyAsync();
-                //if (isProxyUpdate && IsReady)
-                //{
-                //	var appResult = await AppRepository.GetCurrentAppAsync();
-                //	if (appResult.IsExists)
-                //	{
-                //		//if (await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync()) != app.ProxyUid)
-                //		//{
-                //		//	app.ProxyUid = await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync());
-                //		//	await AppRepository.SaveAsync(app);
-                //		//}
-                //		appResult.Item.ProxyUid = await ProxyRepository.GetCurrentProxyUidAsync(appResult);
-                //		await AppRepository.SaveAsync(appResult.Item);
-                //	}
-                //}
                 await AfterClientConnectAsync();
             }
         }
@@ -54,7 +40,6 @@ public partial class TgConnectClientConsole(ITgStorageManager storageManager) : 
                 var me = await Bot.GetMe();
                 if (me is null)
                     await ConnectBotConsoleAsync();
-                //await UpdateStateSourceAsync(0, 0, 0, string.Empty);
             }
             catch (Exception ex)
             {

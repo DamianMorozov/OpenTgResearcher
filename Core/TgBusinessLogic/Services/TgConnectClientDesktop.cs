@@ -27,15 +27,6 @@ public sealed partial class TgConnectClientDesktop(ITgStorageManager storageMana
             finally
             {
                 await CheckClientConnectionReadyAsync();
-                //if (isProxyUpdate && IsReady)
-                //{
-                //	var appResult = await AppRepository.GetCurrentAppAsync();
-                //	if (appResult.IsExists)
-                //	{
-                //		appResult.Item.ProxyUid = await ProxyRepository.GetCurrentProxyUidAsync(await AppRepository.GetCurrentAppAsync());
-                //		await AppRepository.SaveAsync(appResult.Item);
-                //	}
-                //}
                 await AfterClientConnectAsync();
             }
         }

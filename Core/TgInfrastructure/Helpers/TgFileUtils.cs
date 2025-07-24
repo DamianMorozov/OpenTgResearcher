@@ -12,7 +12,6 @@ public static class TgFileUtils
 	public static string BaseDirectory = string.Empty;
 	public static string FileAppXmlSettings => !string.IsNullOrEmpty(BaseDirectory) ? Path.Combine(BaseDirectory, "OpenTgResearcher.xml") : string.Empty;
 	public static string FileTgSession => "OpenTgResearcher.session";
-	public static string LogsDirectory = "Logs";
 
 	static TgFileUtils()
 	{

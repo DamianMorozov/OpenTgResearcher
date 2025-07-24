@@ -28,7 +28,8 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 		SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync);
 		SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync);
 		SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync);
-	}
+        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
+    }
 
 	#endregion
 
@@ -36,7 +37,14 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await SettingsLoadCoreAsync();
 
-	private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
+    private async Task SetDisplaySensitiveAsync()
+    {
+        _ = IsDisplaySensitiveData;
+        
+        await Task.CompletedTask;
+    }
+
+    private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
 
 	private async Task SettingsLoadCoreAsync()
 	{
@@ -64,8 +72,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         SettingsService.AppSession = AppSession;
         await SettingsService.SaveAsync();
         LoadSettingsFromService();
-        //await ContentDialogAsync(async () => { await Windows.ApplicationModel.Core.CoreApplication.RequestRestartAsync(string.Empty); },
-		//TgResourceExtensions.AskRestartApp(), ContentDialogButton.Primary);
     }
 
     private void LoadSettingsFromService()
@@ -77,7 +83,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         // Fix windows path
         if (AppSession.Equals(TgFileUtils.FileTgSession))
         {
-            AppSession = Path.Combine(SettingsService.AppFolder, TgFileUtils.FileTgSession);
+            AppSession = Path.Combine(SettingsService.UserDirectory, TgFileUtils.FileTgSession);
         }
         IsExistsAppSession = SettingsService.IsExistsAppSession;
     }

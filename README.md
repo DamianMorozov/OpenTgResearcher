@@ -7,6 +7,7 @@ Telegram's open researcher and search engine:
 - View expanded information about chat participants
 - View chat statistics
 - OSINT tool
+- Parser tool
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>

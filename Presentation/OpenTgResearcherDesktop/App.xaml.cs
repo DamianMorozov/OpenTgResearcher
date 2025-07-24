@@ -38,7 +38,7 @@ public partial class App : Application
         TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
         
 		// Logging to the application directory
-        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherDesktop, isWebApp: false, isRewrite: true);
+        TgLogUtils.Create(TgEnumAppType.Desktop, isAppStart: true);
 
         // Create ServiceCollection for EF Core Pooling
         var services = new ServiceCollection();
@@ -89,7 +89,6 @@ public partial class App : Application
         // Host
         Host = Microsoft.Extensions.Hosting.Host
 			.CreateDefaultBuilder()
-			.UseSerilog()
 			.UseContentRoot(AppContext.BaseDirectory)
 			.ConfigureServices((context, services) =>
 			{
@@ -157,8 +156,6 @@ public partial class App : Application
 				services.AddTransient<TgUsersViewModel>();
 				services.AddTransient<WebViewPage>();
 				services.AddTransient<WebViewViewModel>();
-				// Logger
-				services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 				// Configuration
 				services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
 			})
@@ -173,7 +170,7 @@ public partial class App : Application
 	public void OnProcessExit()
 	{
         Host.Dispose();
-        Log.CloseAndFlush();
+        TgLogUtils.CloseAndFlush();
 
         BusinessLogicManager.Dispose();
         Scope.Dispose();

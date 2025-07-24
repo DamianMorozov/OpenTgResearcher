@@ -40,7 +40,6 @@ global using OpenTgResearcherDesktop.Models;
 global using OpenTgResearcherDesktop.Services;
 global using OpenTgResearcherDesktop.ViewModels;
 global using OpenTgResearcherDesktop.Views;
-global using Serilog;
 global using System.Collections.ObjectModel;
 global using System.Collections.Specialized;
 global using System.Data;

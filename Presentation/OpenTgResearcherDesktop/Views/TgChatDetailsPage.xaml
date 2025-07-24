@@ -65,7 +65,7 @@
                     <Button
                         Margin="5,0,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind Id, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -89,7 +89,7 @@
                     <Button
                         Margin="5,0,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind Link, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -115,7 +115,7 @@
                     <Button
                         Margin="5,-5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind MessageText, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -141,7 +141,7 @@
                     <Button
                         Margin="5,-5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind UserId, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -206,7 +206,7 @@
                             <Button
                                 Margin="5,2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind Id, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -230,7 +230,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind MainUserName, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -254,7 +254,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind AccessHash, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -302,7 +302,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind LastSeenAgoAsString, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -326,7 +326,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind RestrictionReason, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -352,7 +352,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind FirstLastName, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -376,7 +376,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind PhoneNumber, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -400,7 +400,7 @@
                             <Button
                                 Margin="5,-2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind Status, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -640,7 +640,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -720,7 +720,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -755,7 +755,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.Title, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -790,7 +790,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.About, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -832,7 +832,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.Directory, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -864,7 +864,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.FirstId, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -896,7 +896,7 @@
                                     Grid.Column="1"
                                     Margin="10,0,0,0"
                                     HorizontalContentAlignment="Left"
-                                    Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                    Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                     CommandParameter="{x:Bind ViewModel.Dto.Count, Mode=OneWay}"
                                     CornerRadius="10">
                                     <SymbolIcon Symbol="Copy" />
@@ -1311,7 +1311,7 @@
                                             <!--  Copy button  -->
                                             <Button
                                                 Margin="5,-2,0,0"
-                                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                                 CommandParameter="{x:Bind UserDto.Id, Mode=OneWay}"
                                                 CornerRadius="10">
                                                 <SymbolIcon Symbol="Copy" />
@@ -1331,7 +1331,7 @@
                                             <!--  Copy button  -->
                                             <Button
                                                 Margin="5,-2,0,0"
-                                                Command="{Binding ViewModel.ClipboardSilentWriteCommand}"
+                                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                                 CommandParameter="{x:Bind UserDto.FirstLastName, Mode=OneWay}"
                                                 CornerRadius="10">
                                                 <SymbolIcon Symbol="Copy" />

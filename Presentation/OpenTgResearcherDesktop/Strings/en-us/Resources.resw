@@ -549,8 +549,14 @@
   <data name="SettingAppLanguageTooltip" xml:space="preserve">
     <value>Select the language for the application.</value>
   </data>
-  <data name="SettingFolder.Text" xml:space="preserve">
-    <value>Folder</value>
+  <data name="SettingDirectory.Text" xml:space="preserve">
+    <value>Directory</value>
+  </data>
+  <data name="SettingAppDirectory.Text" xml:space="preserve">
+    <value>App directory</value>
+  </data>
+  <data name="SettingUserDirectory.Text" xml:space="preserve">
+    <value>User directory</value>
   </data>
   <data name="AskSettingsDefault" xml:space="preserve">
     <value>Reset the settings to default?</value>
@@ -742,7 +748,13 @@
     <value>Product assignment</value>
   </data>
   <data name="ProductAssignmentDescription.Text" xml:space="preserve">
-    <value>Telegram's open researcher and search engine. Download chats by catalogs. </value>
+    <value>Telegram's open researcher and search engine:
+- Download the chat media files to your disk
+- Download chat messages to local storage
+- View expanded information about chat participants
+- View chat statistics
+- OSINT tool
+- Parser tool</value>
   </data>
   <data name="TemplateColumnEdit.Header" xml:space="preserve">
     <value>Edit</value>
@@ -998,36 +1010,6 @@
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>
-  </data>
-  <data name="DonateUsdtTrc20.Text" xml:space="preserve">
-    <value>Donate through USDT TRC20</value>
-  </data>
-  <data name="DonateUsdtTon.Text" xml:space="preserve">
-    <value>Donate through USDT TON</value>
-  </data>
-  <data name="DonateToncoin.Text" xml:space="preserve">
-    <value>Donate through Toncoin</value>
-  </data>
-  <data name="DonateBitcoin.Text" xml:space="preserve">
-    <value>Donate through Bitcoin</value>
-  </data>
-  <data name="DonateNotcoin.Text" xml:space="preserve">
-    <value>Donate through Notcoin</value>
-  </data>
-  <data name="DonateDogs.Text" xml:space="preserve">
-    <value>Donate through Dogs</value>
-  </data>
-  <data name="DonateHmstr.Text" xml:space="preserve">
-    <value>Donate through Hamster Kombat</value>
-  </data>
-  <data name="DonateX.Text" xml:space="preserve">
-    <value>Donate through X Empire</value>
-  </data>
-  <data name="DonateCatizen.Text" xml:space="preserve">
-    <value>Donate through Catizen</value>
-  </data>
-  <data name="DonateMajor.Text" xml:space="preserve">
-    <value>Donate through Major</value>
   </data>
   <data name="RpcErrorPhonePasswordFlood" xml:space="preserve">
     <value>You have tried logging in too many times</value>

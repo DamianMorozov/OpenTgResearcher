@@ -26,7 +26,9 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 	[ObservableProperty]
 	public partial TgEnumLanguage AppLanguage { get; set; } = TgEnumLanguage.Default;
 	[ObservableProperty]
-	public partial string AppFolder { get; set; } = string.Empty;
+	public partial string AppDirectory { get; set; } = string.Empty;
+    [ObservableProperty]
+	public partial string UserDirectory { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string AppStorage { get; set; } = string.Empty;
 	[ObservableProperty]
@@ -178,16 +180,22 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
 	private async Task SaveWindowYAsync(int value) => await SaveSettingAsync(SettingsKeyWindowY, value);
 
-    /// <summary> Set application folder path </summary>
-	private void SetAppFolder()
+    /// <summary> Set application directory path </summary>
+    private void SetAppDirectory()
+    {
+        AppDirectory = TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop);
+    }
+
+    /// <summary> Set user directory path </summary>
+	private void SetUserDirectory()
 	{
 		try
 		{
-			AppFolder = ApplicationData.Current.LocalFolder.Path;
-			if (!Directory.Exists(AppFolder))
-				AppFolder = AppDomain.CurrentDomain.BaseDirectory;
-			if (!Directory.Exists(AppFolder))
-				AppFolder = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
+			UserDirectory = ApplicationData.Current.LocalFolder.Path;
+			if (!Directory.Exists(UserDirectory))
+				UserDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			if (!Directory.Exists(UserDirectory))
+				UserDirectory = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
 		}
 		catch (Exception ex)
 		{
@@ -203,8 +211,8 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		
 		try
 		{
-			if (!Directory.Exists(AppFolder))
-				AppFolder = AppDomain.CurrentDomain.BaseDirectory;
+			if (!Directory.Exists(UserDirectory))
+				UserDirectory = AppDomain.CurrentDomain.BaseDirectory;
 		}
 		catch (Exception ex)
 		{
@@ -220,8 +228,8 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 		
 		try
 		{
-			if (!Directory.Exists(AppFolder))
-				AppFolder = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
+			if (!Directory.Exists(UserDirectory))
+				UserDirectory = Path.GetDirectoryName(Environment.ProcessPath) ?? string.Empty;
 		}
 		catch (Exception ex)
 		{
@@ -240,12 +248,13 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 	{
 		AppTheme = AppThemes.First(x => x == TgEnumTheme.Default);
 		AppLanguage = AppLanguages.First(x => x == TgEnumLanguage.Default);
-		SetAppFolder();
-		if (Directory.Exists(AppFolder))
+		SetAppDirectory();
+		SetUserDirectory();
+		if (Directory.Exists(UserDirectory))
 		{
-			AppStorage = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgGlobalTools.AppStorage) : string.Empty;
+			AppStorage = Directory.Exists(UserDirectory) ? Path.Combine(UserDirectory, TgGlobalTools.AppStorage) : string.Empty;
 			IsExistsAppStorage = File.Exists(AppStorage);
-			AppSession = Directory.Exists(AppFolder) ? Path.Combine(AppFolder, TgFileUtils.FileTgSession) : string.Empty;
+			AppSession = Directory.Exists(UserDirectory) ? Path.Combine(UserDirectory, TgFileUtils.FileTgSession) : string.Empty;
 			IsExistsAppSession = File.Exists(AppSession);
 		}
 		else

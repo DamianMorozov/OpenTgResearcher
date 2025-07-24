@@ -6,18 +6,16 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 {
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
-	[ObservableProperty]
-	public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
-	public IRelayCommand LoadLogsCommand { get; }
-	public IRelayCommand DeleteLogFileCommand { get; }
+    [ObservableProperty]
+    public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
+    public IRelayCommand DeleteLogFileCommand { get; }
 
 	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLogsViewModel> logger)
 		: base(settingsService, navigationService, logger, nameof(TgLogsViewModel))
 	{
 		// Commands
-		LoadLogsCommand = new AsyncRelayCommand(LoadLogsAsync);
 		DeleteLogFileCommand = new AsyncRelayCommand<TgLogFile>(DeleteLogFileAsync);
 	}
 
@@ -31,31 +29,24 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		await ReloadUiAsync();
 	});
 
-	private async Task LoadLogsAsync() => await LoadLogsCoreAsync();
-
 	private async Task LoadLogsCoreAsync()
 	{
 		try
 		{
-			LogFiles.Clear();
+            LogFiles.Clear();
+            if (!Directory.Exists(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop))) return;
 
-			var appFolder = SettingsService.AppFolder;
-			// Close logger
-			await Log.CloseAndFlushAsync();
-
-			var storageFolder = await StorageFolder.GetFolderFromPathAsync(Path.Combine(appFolder, TgFileUtils.LogsDirectory));
-			var storageFiles = await storageFolder.GetFilesAsync();
-			foreach (var logFile in storageFiles)
-			{
-				if (logFile is null) continue;
-				await TryLoadLogAsync(logFile);
-			}
-
-			// Recreate logger
-			Log.Logger = new LoggerConfiguration()
-				.MinimumLevel.Verbose()
-				.WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
-				.CreateLogger();
+            var files = Directory.GetFiles(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop))
+                .Where(x =>
+                {
+                    var fileName = Path.GetFileName(x);
+                    return fileName.StartsWith("Log-", StringComparison.OrdinalIgnoreCase) && fileName.EndsWith(".txt", StringComparison.OrdinalIgnoreCase);
+                });
+            foreach (var logFile in files)
+            {
+                if (!string.IsNullOrEmpty(logFile))
+                    await TryLoadLogAsync(logFile);
+            }
 		}
 		catch (Exception ex)
 		{
@@ -63,22 +54,22 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		}
 	}
 
-	private async Task TryLoadLogAsync(StorageFile logFile, bool isRetry = false, int attempt = 0)
+	private async Task TryLoadLogAsync(string logFile, bool isRetry = false, int attempt = 0)
 	{
 		const int maxAttempts = 5;
 		try
 		{
 			if (!isRetry)
 			{
-				var content = await File.ReadAllTextAsync(logFile.Path);
-				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), content));
+				var content = await File.ReadAllTextAsync(logFile);
+				LogFiles.Add(new(this, Path.GetFileName(logFile), content));
 			}
 			else
 			{
-				await using var fileStream = new FileStream(logFile.Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				await using var fileStream = new FileStream(logFile, FileMode.Open, FileAccess.Read, FileShare.Read);
 				using var reader = new StreamReader(fileStream);
 				var content = await reader.ReadToEndAsync();
-				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), content));
+				LogFiles.Add(new(this, Path.GetFileName(logFile), content));
 			}
 		}
 		catch (Exception ex)
@@ -92,7 +83,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 			else
 			{
 				TgLogUtils.WriteExceptionWithMessage(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
-				LogFiles.Add(new(this, Path.GetFileName(logFile.Path), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
+				LogFiles.Add(new(this, Path.GetFileName(logFile), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
 			}
 		}
 	}
@@ -111,9 +102,12 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		};
 		dialog.PrimaryButtonClick += async (sender, args) =>
 		{
+            // Wait async operations
 			var deferral = args.GetDeferral();
 			await DeleteLogFileCoreAsync(logFile);
-			deferral.Complete();
+            await LoadLogsCoreAsync();
+            // Complete async operations
+            deferral.Complete();
 		};
 		_ = await dialog.ShowAsync();
 	}
@@ -121,19 +115,20 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 	private async Task DeleteLogFileCoreAsync(TgLogFile? logFile)
 	{
 		if (logFile is null) return;
-		var appFolder = SettingsService.AppFolder;
 		// Close logger
-		await Log.CloseAndFlushAsync();
-		
-		var storageFolder = await StorageFolder.GetFolderFromPathAsync(Path.Combine(appFolder, TgFileUtils.LogsDirectory));
-		var storageFile = await storageFolder.GetFileAsync(logFile.FileName);
-		if (storageFile.IsAvailable)
-		{
-			await storageFile.DeleteAsync();
-			LogFiles.Remove(logFile);
-		}
+		await TgLogUtils.CloseAndFlushAsync();
 
-		await LoadLogsCoreAsync();
+        if (!Directory.Exists(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop))) return;
+        var files = Directory.GetFiles(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop));
+        var file = files.FirstOrDefault(x => x.EndsWith(logFile.FileName));
+        if (file is not null)
+        {
+		    if (File.Exists(file))
+		    {
+			    File.Delete(file);
+			    LogFiles.Remove(logFile);
+		    }
+        }
 	}
 
 	#endregion

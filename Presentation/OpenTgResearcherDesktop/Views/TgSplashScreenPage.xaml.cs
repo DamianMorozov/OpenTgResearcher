@@ -28,12 +28,12 @@ public sealed partial class TgSplashScreenPage
     {
         ViewModel.BackToMainWindow = backToMainWindow;
 
-        // Loading Velopack Installer
-        await ViewModel.LoadingVelopackInstallerAsync();
-        Bindings.Update();
-
         // Loading logging
         await ViewModel.LoadingLoggingAsync();
+        Bindings.Update();
+
+        // Loading Velopack Installer
+        await ViewModel.LoadingVelopackInstallerAsync();
         Bindings.Update();
 
         // Loading storage

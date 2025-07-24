@@ -47,15 +47,10 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         try
         {
             VelopackApp.Build()
-                //.WithBeforeUninstallFastCallback((v) =>
-                //{
-                //	delete / clean up some files before uninstallation
-                //   UpdateLog += $"Uninstalling the {TgConstants.OpenTgResearcherConsole}!";
-                //})
-                //.OnFirstRun((v) =>
-                //{
-                //	UpdateLog += $"Thanks for installing the {TgConstants.OpenTgResearcherConsole}!";
-                //})
+                .OnFirstRun((v) =>
+                {
+                    TgLogUtils.WriteLog($"  Thanks for installing the {TgConstants.OpenTgResearcherDesktop}!");
+                })
                 .Run();
             IsLoadVelopack = true;
             await Task.Delay(250);
@@ -89,11 +84,6 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     {
         try
         {
-            var appFolder = App.GetService<ITgSettingsService>().AppFolder;
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.File(Path.Combine(appFolder, $"{TgFileUtils.LogsDirectory}/Log-.txt"), rollingInterval: RollingInterval.Day, shared: true)
-                .CreateLogger();
             TgLogUtils.WriteLog(TgResourceExtensions.GetLoggerLoading());
             IsLoadLogging = true;
             await Task.Delay(250);

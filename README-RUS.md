@@ -7,6 +7,7 @@
 - Просматривай расширенную информацию об участниках чатов
 - Просматривай статистику чатов
 - OSINT инструмент
+- Парсер инструмент
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>

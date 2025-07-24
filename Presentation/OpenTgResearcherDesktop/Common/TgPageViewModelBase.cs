@@ -58,7 +58,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
 
     public IRelayCommand OnClipboardWriteCommand { get; }
-    public IRelayCommand ClipboardSilentWriteCommand { get; }
+    public IRelayCommand OnClipboardSilentWriteCommand { get; }
 
     public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
     {
@@ -69,7 +69,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
 
         // Commands
         OnClipboardWriteCommand = new AsyncRelayCommand<object>(OnClipboardWriteAsync);
-        ClipboardSilentWriteCommand = new AsyncRelayCommand<object>(OnClipboardSilentWriteAsync);
+        OnClipboardSilentWriteCommand = new AsyncRelayCommand<object>(OnClipboardSilentWriteAsync);
     }
 
     #endregion

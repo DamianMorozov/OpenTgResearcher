@@ -82,7 +82,7 @@ public static class Program
 
         // Loading logging
         tgLog.WriteLine("  Loading logging ...");
-        TgLogUtils.InitStartupLog(TgConstants.OpenTgResearcherConsole, isWebApp: false, isRewrite: true);
+        TgLogUtils.Create(TgEnumAppType.Console, isAppStart: true);
         tgLog.WriteLine("  Loading logging   v");
 
         // Loading storage
@@ -185,16 +185,10 @@ public static class Program
     {
         tgLog.WriteLine("  Loading installer ...");
         // Velopack installer update
-        //await menu.VelopackUpdateAsync(isWait: false, isRelease: true);
         VelopackApp.Build()
-#if WINDOWS
-		.WithBeforeUninstallFastCallback((v) => {
-			// delete / clean up some files before uninstallation
-			tgLog.WriteLine($"  Uninstalling the {TgConstants.OpenTgResearcherConsole}!");
-		})
-#endif
             .OnFirstRun((v) =>
             {
+                TgLogUtils.WriteLog($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
                 tgLog.WriteLine($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
             })
             .Run();

@@ -135,59 +135,86 @@ public partial class ShellViewModel : ObservableRecipient
     private async Task ShellClientConnectAsync()
     {
         if (_eventArgs is null) return;
-        
-        await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
-        {
-            // Trying to find an open page with ViewModel
-            var frame = NavigationService.Frame;
-            if (frame?.Content is TgClientConnectionPage page)
-            {
-                await page.ViewModel.OnNavigatedToAsync(_eventArgs);
-                if (!page.ViewModel.IsClientConnected)
-                {
-                    await page.ViewModel.ClientConnectAsync();
-                    await ShellUpdatePageAsync();
-                }
-                return;
-            }
 
-            // If not found - get through DI
-            var vm = App.GetService<TgClientConnectionViewModel>();
-            await vm.OnNavigatedToAsync(_eventArgs);
-            if (!vm.IsClientConnected)
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource();
+            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
             {
-                await vm.ClientConnectAsync();
-                await ShellUpdatePageAsync();
-            }
-        });
+                try
+                {
+                    // Trying to find an open page with ViewModel
+                    var frame = NavigationService.Frame;
+                    if (frame?.Content is TgClientConnectionPage page)
+                    {
+                        await page.ViewModel.OnNavigatedToAsync(_eventArgs);
+                        if (!page.ViewModel.IsClientConnected)
+                        {
+                            await page.ViewModel.ClientConnectAsync();
+                            await ShellUpdatePageAsync();
+                        }
+                        return;
+                    }
+
+                    // If not found - get through DI
+                    var vm = App.GetService<TgClientConnectionViewModel>();
+                    await vm.OnNavigatedToAsync(_eventArgs);
+                    if (!vm.IsClientConnected)
+                    {
+                        await vm.ClientConnectAsync();
+                        await ShellUpdatePageAsync();
+                    }
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
     }
 
     private async Task ShellClientDisconnectAsync()
     {
         if (_eventArgs is null) return;
-        await App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
-        {
-            // Trying to find an open page with ViewModel
-            var frame = NavigationService.Frame;
-            if (frame?.Content is TgClientConnectionPage page)
-            {
-                await page.ViewModel.OnNavigatedToAsync(_eventArgs);
-                if (page.ViewModel.IsClientConnected)
-                {
-                    page.ViewModel.ClientDisconnectCommand.Execute(null);
-                }
-                return;
-            }
 
-            // If not found - get through DI
-            var vm = App.GetService<TgClientConnectionViewModel>();
-            await vm.OnNavigatedToAsync(_eventArgs);
-            if (vm.IsClientConnected)
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource();
+            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
             {
-                await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
-                await ShellUpdatePageAsync();
-            }
-        });
+                try
+                {
+                    // Trying to find an open page with ViewModel
+                    var frame = NavigationService.Frame;
+                    if (frame?.Content is TgClientConnectionPage page)
+                    {
+                        await page.ViewModel.OnNavigatedToAsync(_eventArgs);
+                        if (page.ViewModel.IsClientConnected)
+                        {
+                            page.ViewModel.ClientDisconnectCommand.Execute(null);
+                        }
+                        return;
+                    }
+
+                    // If not found - get through DI
+                    var vm = App.GetService<TgClientConnectionViewModel>();
+                    await vm.OnNavigatedToAsync(_eventArgs);
+                    if (vm.IsClientConnected)
+                    {
+                        await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+                        await ShellUpdatePageAsync();
+                    }
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
     }
 
     private async Task ShellUpdatePageAsync()

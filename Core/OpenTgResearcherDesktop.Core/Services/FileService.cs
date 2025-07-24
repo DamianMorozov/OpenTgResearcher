@@ -19,7 +19,8 @@ public class FileService : IFileService
 
 	public void Save<T>(string folderPath, string fileName, T content)
 	{
-		if (!Directory.Exists(folderPath))
+        folderPath = folderPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        if (!Directory.Exists(folderPath))
 		{
 			Directory.CreateDirectory(folderPath);
 		}

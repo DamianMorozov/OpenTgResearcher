@@ -114,8 +114,8 @@
                         Grid.Column="2"
                         Margin="5"
                         HorizontalAlignment="Stretch"
-                        ItemsSource="{x:Bind ViewModel.SettingsService.AppLanguages, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.SettingsService.AppLanguage, Mode=TwoWay}" />
+                        ItemsSource="{x:Bind ViewModel.AppLanguages, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.AppLanguage, Mode=TwoWay}" />
                     <!--  Theme  -->
                     <TextBlock
                         x:Uid="SettingAppTheme"
@@ -135,8 +135,8 @@
                         Grid.Column="2"
                         Margin="5"
                         HorizontalAlignment="Stretch"
-                        ItemsSource="{x:Bind ViewModel.SettingsService.AppThemes, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.SettingsService.AppTheme, Mode=TwoWay}" />
+                        ItemsSource="{x:Bind ViewModel.AppThemes, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.AppTheme, Mode=TwoWay}" />
                 </Grid>
             </Expander>
             <!--  Files  -->
@@ -154,6 +154,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -161,35 +162,35 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  App directory  -->
-                    <TextBlock
-                        x:Uid="SettingAppDirectory"
-                        Margin="10,5,10,5"
-                        TextAlignment="Left" />
-                    <!--  Sensitive data  -->
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="5"
-                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="15,5,5,5"
-                        HorizontalAlignment="Stretch"
-                        Text="{x:Bind ViewModel.SettingsService.AppDirectory, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
-                        Grid.Column="3"
-                        Margin="10,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.SettingsService.AppDirectory, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
                     <!--  User directory  -->
                     <TextBlock
                         x:Uid="SettingUserDirectory"
+                        Margin="10,5,10,5"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="5"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="15,5,5,5"
+                        HorizontalAlignment="Stretch"
+                        Text="{x:Bind ViewModel.UserDirectory, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Grid.Column="3"
+                        Margin="10,5,0,0"
+                        HorizontalContentAlignment="Left"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.UserDirectory, Mode=OneWay}"
+                        CornerRadius="10">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  Setting file  -->
+                    <TextBlock
+                        x:Uid="SettingFile"
                         Grid.Row="1"
                         Margin="10,5,10,5"
                         TextAlignment="Left" />
@@ -205,7 +206,7 @@
                         Grid.Column="2"
                         Margin="15,5,5,5"
                         HorizontalAlignment="Stretch"
-                        Text="{x:Bind ViewModel.SettingsService.UserDirectory, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.SettingFile, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
                         Grid.Row="1"
@@ -213,18 +214,48 @@
                         Margin="10,5,0,0"
                         HorizontalContentAlignment="Left"
                         Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.SettingsService.UserDirectory, Mode=OneWay}"
+                        CommandParameter="{x:Bind ViewModel.SettingFile, Mode=OneWay}"
+                        CornerRadius="10">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
+                    <!--  Application directory  -->
+                    <TextBlock
+                        x:Uid="SettingAppDirectory"
+                        Grid.Row="2"
+                        Margin="10,5,10,5"
+                        TextAlignment="Left" />
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Margin="5"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Margin="15,5,5,5"
+                        HorizontalAlignment="Stretch"
+                        Text="{x:Bind ViewModel.ApplicationDirectory, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Button
+                        Grid.Row="2"
+                        Grid.Column="3"
+                        Margin="10,5,0,0"
+                        HorizontalContentAlignment="Left"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
+                        CommandParameter="{x:Bind ViewModel.ApplicationDirectory, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                     <!--  EF storage  -->
                     <TextBlock
                         x:Uid="SettingStorage"
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Margin="10,5,10,5"
                         TextAlignment="Left" />
                     <StackPanel
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Grid.Column="1"
                         Width="40"
                         Margin="5"
@@ -236,20 +267,20 @@
                     </StackPanel>
                     <!--  Sensitive data  -->
                     <TextBlock
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Grid.Column="2"
                         Margin="5,0,0,0"
                         Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                     <TextBox
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Grid.Column="2"
                         Margin="5,0,0,0"
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.AppStorage, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Grid.Column="3"
                         Margin="10,0,0,0"
                         HorizontalContentAlignment="Left"
@@ -261,7 +292,7 @@
                     <!--  Session  -->
                     <TextBlock
                         x:Uid="SettingSession"
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Margin="10,5,10,5"
                         TextAlignment="Left" />
                     <StackPanel
@@ -277,20 +308,20 @@
                     </StackPanel>
                     <!--  Sensitive data  -->
                     <TextBlock
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Grid.Column="2"
                         Margin="5,0,0,0"
                         Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                     <TextBox
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Grid.Column="2"
                         Margin="5,0,0,0"
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.AppSession, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <Button
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Grid.Column="3"
                         Margin="10,0,0,0"
                         HorizontalContentAlignment="Left"

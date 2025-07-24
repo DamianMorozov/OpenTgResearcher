@@ -36,6 +36,9 @@ public sealed partial class TgSplashScreenPage
         await ViewModel.LoadingVelopackInstallerAsync();
         Bindings.Update();
 
+        // Loading settings
+        await ViewModel.LoadingSettingsAsync();
+
         // Loading storage
         await ViewModel.LoadingStorageAsync();
         Bindings.Update();

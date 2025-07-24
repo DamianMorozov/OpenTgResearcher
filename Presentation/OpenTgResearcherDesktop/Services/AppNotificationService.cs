@@ -43,24 +43,29 @@ public sealed class AppNotificationService : IAppNotificationService
 		AppNotificationManager.Default.Register();
 	}
 
-	public void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
+    /// <summary> Handle notification invocations when your app is already running </summary>
+	public async void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
 	{
-		// TODO: Handle notification invocations when your app is already running.
-		//// // Navigate to a specific page based on the notification arguments.
-		//// if (ParseArguments(args.Argument)["action"] == "Settings")
-		//// {
-		////    App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-		////    {
-		////        _navigationService.NavigateTo(typeof(TgSettingsViewModel).FullName!);
-		////    });
-		//// }
-		App.MainWindow.DispatcherQueue.TryEnqueueWithLog(() =>
-		{
-			App.MainWindow.ShowMessageDialogAsync(
-				$"{TgLocaleHelper.Instance.AppVersion}: v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}",
-				TgConstants.OpenTgResearcherDesktop);
-			App.MainWindow.BringToFront();
-		});
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    App.MainWindow.ShowMessageDialogAsync(
+                        $"{TgLocaleHelper.Instance.AppVersion}: v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}",
+                        TgConstants.OpenTgResearcherDesktop);
+                    App.MainWindow.BringToFront();
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
 	}
 
 	public bool Show(string payload)

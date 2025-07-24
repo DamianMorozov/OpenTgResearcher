@@ -14,11 +14,25 @@ public static class TgLogUtils
 
     #region Public and private methods
 
+    public static string GetAppDirectory(TgEnumAppType appType) => appType switch
+    {
+        TgEnumAppType.Console => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherConsole)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+        TgEnumAppType.Desktop => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherDesktop)
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+        TgEnumAppType.Blazor => AppDomain.CurrentDomain.BaseDirectory
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+        _ => string.Empty,
+    };
+
     public static string GetLogsDirectory(TgEnumAppType appType) => appType switch
     {
-        TgEnumAppType.Console => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherConsole, "current"),
-        TgEnumAppType.Desktop => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), TgConstants.OpenTgResearcherDesktop, "current"),
-        TgEnumAppType.Blazor => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs"),
+        TgEnumAppType.Console => Path.Combine(GetAppDirectory(appType), "current")
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+        TgEnumAppType.Desktop => Path.Combine(GetAppDirectory(appType), "current")
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
+        TgEnumAppType.Blazor => Path.Combine(GetAppDirectory(appType), "Logs")
+            .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
         _ => string.Empty,
     };
 

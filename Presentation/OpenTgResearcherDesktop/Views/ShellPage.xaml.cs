@@ -32,10 +32,6 @@ public sealed partial class ShellPage
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        var settingsService = App.GetService<ITgSettingsService>();
-        settingsService.ApplyTheme(settingsService.AppTheme);
-        var theme = TgThemeUtils.GetElementTheme(settingsService.AppTheme);
-        TgTitleBarHelper.UpdateTitleBar(theme);
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
         KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
     }

@@ -82,7 +82,18 @@
                     Glyph="&#xE73E;"
                     Visibility="{x:Bind ViewModel.IsLoadVelopack, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </StackPanel>
-            <!--  Loading storage  -->
+			<!--  Loading settings  -->
+			<StackPanel
+                Margin="0,0,0,10"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+				<TextBlock x:Uid="TextBlockLoadingSettings" Style="{StaticResource SubtitleTextBlockStyle}" />
+				<FontIcon
+                    Margin="20,0,0,0"
+                    Glyph="&#xE73E;"
+                    Visibility="{x:Bind ViewModel.IsLoadSettings, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			</StackPanel>
+			<!--  Loading storage  -->
             <StackPanel
                 Margin="0,0,0,10"
                 VerticalAlignment="Center"

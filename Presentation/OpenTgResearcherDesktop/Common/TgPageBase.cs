@@ -16,13 +16,27 @@ public abstract class TgPageBase : Page
 
     #region Public and private methods
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        App.MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
+
+        if (App.MainWindow?.DispatcherQueue is not null)
         {
-            await ViewModel.OnNavigatedToAsync(e);
-        }, $"{ViewModel.Name}.{nameof(OnNavigatedTo)}");
+            var tcs = new TaskCompletionSource();
+            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+            {
+                try
+                {
+                    await ViewModel.OnNavigatedToAsync(e);
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
     }
 
     protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);

@@ -204,11 +204,24 @@ public partial class App : Application
 
             // MainWindow
             MainWindow ??= new MainWindow();
-            await MainWindow.DispatcherQueue.TryEnqueueWithLogAsync(async () =>
-			{
-                // Activate the app
-                await GetService<IActivationService>().ActivateAsync(args);
-            }, "Application launched");
+            if (MainWindow?.DispatcherQueue is not null)
+            {
+                var tcs = new TaskCompletionSource();
+                await MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+                {
+                    try
+                    {
+                        // Activate the app
+                        await GetService<IActivationService>().ActivateAsync(args);
+                        tcs.SetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                });
+                await tcs.Task;
+            }
 		}
 		catch (Exception ex)
 		{

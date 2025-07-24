@@ -617,6 +617,9 @@
   <data name="SettingUserDirectory.Text" xml:space="preserve">
     <value>Каталог пользователя</value>
   </data>
+  <data name="SettingFile.Text" xml:space="preserve">
+    <value>Файл настроек</value>
+  </data>
   <data name="AskSettingsDefault" xml:space="preserve">
     <value>Сбросить настройки по-умолчанию?</value>
   </data>
@@ -1009,6 +1012,9 @@
   </data>
   <data name="TextBlockLoadingLogging.Text" xml:space="preserve">
     <value>Загрузка логирования</value>
+  </data>
+  <data name="TextBlockLoadingSettings.Text" xml:space="preserve">
+    <value>Загрузка настроек</value>
   </data>
   <data name="TextBlockLoadingStorage.Text" xml:space="preserve">
     <value>Загрузка хранилища</value>

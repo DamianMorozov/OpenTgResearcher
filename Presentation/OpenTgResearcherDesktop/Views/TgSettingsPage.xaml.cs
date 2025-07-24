@@ -15,43 +15,7 @@ public sealed partial class TgSettingsPage
 		
         InitializeComponent();
         DataContext = ViewModel;
-        ComboBoxAppThemes.SelectionChanged += ComboBoxAppThemes_OnSelectionChanged;
-		ComboBoxAppLanguages.SelectionChanged += ComboBoxAppLanguages_OnSelectionChanged;
 		Loaded += PageLoaded;
-	}
-
-	#endregion
-
-	#region Public and private methods
-
-	private void ComboBoxAppThemes_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-	{
-        Task.Run((Func<Task?>)(async () =>
-		{
-			try
-			{
-				await ViewModel.SettingsService.SetAppThemeAsync();
-			}
-			catch (Exception ex)
-			{
-                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred set theme!");
-			}
-		}));
-	}
-
-	private void ComboBoxAppLanguages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-	{
-        Task.Run((Func<Task?>)(async () =>
-		{
-			try
-			{
-				await ViewModel.SettingsService.SetAppLanguageAsync();
-			}
-			catch (Exception ex)
-			{
-                TgLogUtils.WriteExceptionWithMessage(ex, "An error occurred set language!");
-			}
-		}));
 	}
 
 	#endregion

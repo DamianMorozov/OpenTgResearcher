@@ -11,8 +11,9 @@ public interface ITgSettingsService
 	TgEnumLanguage AppLanguage { get; set; }
 	string AppStorage { get; set; }
 	string AppSession { get; set; }
-	string AppDirectory { get; }
 	string UserDirectory { get; }
+	string ApplicationDirectory { get; }
+	string SettingFile { get; }
 	bool IsExistsAppStorage { get; }
 	bool IsExistsAppSession { get; }
 	int WindowWidth { get; }
@@ -20,14 +21,12 @@ public interface ITgSettingsService
 	int WindowX { get; }
 	int WindowY { get; }
 
-    Task SetAppThemeAsync();
-	Task SetAppLanguageAsync();
 	void Default();
 	Task LoadAsync();
 	Task LoadWindowAsync();
 	Task SaveAsync();
 	Task SaveWindowAsync(int width, int height, int x, int y);
-    void ApplyTheme(TgEnumTheme appTheme);
+    void SetTheme(TgEnumTheme appTheme);
 	Task<T?> ReadSettingAsync<T>(string key);
 	Task SaveSettingAsync<T>(string key, T value);
 }

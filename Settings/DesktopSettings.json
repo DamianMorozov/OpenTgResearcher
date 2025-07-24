@@ -1,6 +1,6 @@
 ﻿{
   "LocalSettingsOptions": {
-    "ApplicationDataFolder": "OpenTgResearcherDesktop/ApplicationData",
+    "ApplicationDataFolder": "OpenTgResearcherDesktop",
     "LocalSettingsFile": "TgLocalSettings.json",
     "AppTheme": "Default",
     "AppLanguage": "Default",

@@ -558,6 +558,9 @@
   <data name="SettingUserDirectory.Text" xml:space="preserve">
     <value>User directory</value>
   </data>
+  <data name="SettingFile.Text" xml:space="preserve">
+    <value>Settings file</value>
+  </data>
   <data name="AskSettingsDefault" xml:space="preserve">
     <value>Reset the settings to default?</value>
   </data>
@@ -947,6 +950,9 @@
   </data>
   <data name="TextBlockLoadingLogging.Text" xml:space="preserve">
     <value>Loading logging</value>
+  </data>
+  <data name="TextBlockLoadingSettings.Text" xml:space="preserve">
+    <value>Loading settings</value>
   </data>
   <data name="TextBlockLoadingStorage.Text" xml:space="preserve">
     <value>Loading storage</value>

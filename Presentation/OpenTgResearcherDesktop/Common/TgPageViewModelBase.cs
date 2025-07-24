@@ -116,13 +116,26 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     }
 
     /// <summary> Update state client message </summary>
-    public virtual void UpdateStateProxy(string message)
+    public virtual async Task UpdateStateProxyAsync(string message)
     {
-        App.MainWindow.DispatcherQueue.TryEnqueueWithLog(() =>
+        if (App.MainWindow?.DispatcherQueue is not null)
         {
-            StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-            StateProxyMsg = message;
-        });
+            var tcs = new TaskCompletionSource();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                    StateProxyMsg = message;
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
     }
 
     /// <summary> Update exception message </summary>
@@ -135,18 +148,27 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     /// <summary> Update state source message </summary>
     public async Task UpdateStateSource(long sourceId, int messageId, int count, string message)
     {
-        App.MainWindow.DispatcherQueue.TryEnqueueWithLog(() =>
+        if (App.MainWindow?.DispatcherQueue is not null)
         {
-            float progress = messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count;
-            StateSourceProgress = (int)progress;
-            StateSourceProgressString = progress == 0 ? "{0:00.00} %" : $"{progress:#00.00} %";
-            StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-            StateSourceMsg = $"{messageId} | {message}";
-
-            //long size = await TgDesktopUtils.CalculateDirSizeAsync(StateSourceDirectory);
-            //StateSourceDirectorySizeString = FormatSize(size);
-        });
-        await Task.CompletedTask;
+            var tcs = new TaskCompletionSource();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    float progress = messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count;
+                    StateSourceProgress = (int)progress;
+                    StateSourceProgressString = progress == 0 ? "{0:00.00} %" : $"{progress:#00.00} %";
+                    StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                    StateSourceMsg = $"{messageId} | {message}";
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
     }
 
     protected async Task ContentDialogAsync(string title, string content)

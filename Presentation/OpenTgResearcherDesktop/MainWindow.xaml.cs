@@ -49,7 +49,7 @@ public sealed partial class MainWindow : WindowEx
     private void Settings_ColorValuesChanged(UISettings sender, object args)
     {
         // This calls comes off-thread, hence we will need to dispatch it to current app's thread
-        _dispatcherQueue.TryEnqueueWithLog(TgTitleBarHelper.ApplySystemThemeToCaptionButtons);
+        _dispatcherQueue.TryEnqueue(TgTitleBarHelper.ApplySystemThemeToCaptionButtons);
     }
 
     private async void LoadWindowState()

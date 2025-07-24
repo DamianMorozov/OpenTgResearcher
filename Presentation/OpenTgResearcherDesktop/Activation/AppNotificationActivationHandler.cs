@@ -19,28 +19,25 @@ public class AppNotificationActivationHandler : ActivationHandler<LaunchActivate
 		return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
 	}
 
+    /// <summary> Handle the activation for app notifications </summary>
 	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
 	{
-		// TODO: Handle notification activations.
-
-		//// // Access the AppNotificationActivatedEventArgs.
-		//// var activatedEventArgs = (AppNotificationActivatedEventArgs)AppInstance.GetCurrent().GetActivatedEventArgs().Data;
-
-		//// // Navigate to a specific page based on the notification arguments.
-		//// if (notificationService.ParseArguments(activatedEventArgs.Argument)["action"] == "Settings")
-		//// {
-		////     // Queue navigation with low priority to allow the UI to initialize.
-		////     App.MainWindow.DispatcherQueue.TryEnqueueWithLog(DispatcherQueuePriority.Low, () =>
-		////     {
-		////         navigationService.NavigateTo(typeof(TgSettingsViewModel).FullName!);
-		////     });
-		//// }
-
-		App.MainWindow.DispatcherQueue.TryEnqueueWithLog(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-		{
-			App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation");
-		});
-
-		await Task.CompletedTask;
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation");
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
 	}
 }

@@ -9,7 +9,7 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
     #region Public and private fields, properties, constructor
 
     [ObservableProperty]
-    public partial long Id { get; set; }
+    public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
 
@@ -31,10 +31,7 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
         {
-            if (e?.Parameter is long id)
-            {
-                Id = id;
-            }
+            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
             await LoadDataStorageCoreAsync();
         });
 
@@ -56,13 +53,13 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatDetailsCoreAsync, TgResourceExtensions.AskUpdateChatDetails());
+    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatDetailsCoreAsync, TgResourceExtensions.AskUpdateChatDetails(), useLoadData: true);
 
     private async Task UpdateChatDetailsCoreAsync() => await LoadDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-        ChatDetailsDto = await App.BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(Id);
+        ChatDetailsDto = await App.BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(Uid);
     });
 
     #endregion

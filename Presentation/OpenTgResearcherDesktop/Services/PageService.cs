@@ -15,6 +15,7 @@ public sealed class PageService : IPageService
 		Configure<ListDetailsViewModel, ListDetailsPage>();
 		Configure<TgBotConnectionViewModel, TgBotConnectionPage>();
 		Configure<TgChatDetailsInfoViewModel, TgChatDetailsInfoPage>();
+		Configure<TgChatDetailsParticipantsViewModel, TgChatDetailsParticipantsPage>();
 		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();
 		Configure<TgChatsViewModel, TgChatsPage>();
 		Configure<TgClientConnectionViewModel, TgClientConnectionPage>();

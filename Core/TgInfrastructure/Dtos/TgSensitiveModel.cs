@@ -12,14 +12,11 @@ public partial class TgSensitiveModel : ObservableRecipient
     [ObservableProperty]
     public partial string SensitiveData { get; set; } = "**********";
     [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; set; }
+    public partial bool IsDisplaySensitiveData { get; set; } = true;
 
     public IRelayCommand? SetDisplaySensitiveCommand { get; set; }
 
-    public TgSensitiveModel() : base()
-    {
-        //
-    }
+    public TgSensitiveModel() : base() { }
 
     #endregion
 
@@ -30,7 +27,6 @@ public partial class TgSensitiveModel : ObservableRecipient
         if (SetDisplaySensitiveCommand?.CanExecute(value) ?? false)
             SetDisplaySensitiveCommand.Execute(value);
     }
-
 
     #endregion
 }

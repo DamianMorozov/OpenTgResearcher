@@ -3222,15 +3222,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return new();
     }
 
-    /// <inheritdoc />
-    public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id)
+    private async Task<TgChatDetailsDto> GetChatDetailsByClientCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        if (id <= 0) return new();
-
-        var tgDownloadSettings = new TgDownloadSettingsViewModel
-        {
-            SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { Id = id } }
-        };
         await CreateChatBaseCoreAsync(tgDownloadSettings);
 
         if (Client is null) return new();
@@ -3246,6 +3239,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return FillChatDetailsDto(chatDetails);
         }
         return new();
+    }
+
+    /// <inheritdoc />
+    public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid)
+    {
+        if (uid == Guid.Empty) return new();
+
+        var dto = await StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == uid);
+        var tgDownloadSettings = new TgDownloadSettingsViewModel { SourceVm = new TgEfSourceViewModel { Dto = dto } };
+        return await GetChatDetailsByClientCoreAsync(tgDownloadSettings);
+    }
+
+    /// <inheritdoc />
+    public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id)
+    {
+        if (id <= 0) return new();
+
+        var dto = await StorageManager.SourceRepository.GetDtoAsync(x => x.Id == id);
+        var tgDownloadSettings = new TgDownloadSettingsViewModel { SourceVm = new TgEfSourceViewModel { Dto = dto } };
+        return await GetChatDetailsByClientCoreAsync(tgDownloadSettings);
     }
 
     /// <inheritdoc />

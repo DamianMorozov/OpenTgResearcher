@@ -11,7 +11,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
     [ObservableProperty]
     public partial string SensitiveData { get; set; } = "**********";
     [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; set; }
+    public partial bool IsDisplaySensitiveData { get; set; } = true;
     [ObservableProperty]
 	public partial long Id { get; set; }
 	[ObservableProperty]

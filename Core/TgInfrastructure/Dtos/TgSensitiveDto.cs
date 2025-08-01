@@ -12,7 +12,7 @@ public partial class TgSensitiveDto : TgDtoBase
     [ObservableProperty]
     public partial string SensitiveData { get; set; } = "**********";
     [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; set; }
+    public partial bool IsDisplaySensitiveData { get; set; } = true;
 
     public TgSensitiveDto() : base() { }
 

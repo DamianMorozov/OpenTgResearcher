@@ -9,17 +9,15 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
 {
     #region Public and private fields, properties, constructor
 
+    public ITgLicenseService LicenseService => App.BusinessLogicManager.LicenseService;
     [ObservableProperty]
     public partial ITgSettingsService SettingsService { get; private set; }
     [ObservableProperty]
     public partial INavigationService NavigationService { get; private set; }
     [ObservableProperty]
     public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
-    public ITgLicenseService LicenseService => App.BusinessLogicManager.LicenseService;
-
     [ObservableProperty]
     public partial string Name { get; private set; }
-
     [ObservableProperty]
     public partial TgExceptionViewModel Exception { get; set; } = new();
     [ObservableProperty]
@@ -66,6 +64,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         NavigationService = navigationService;
         Logger = logger;
         Name = name;
+        IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
 
         // Commands
         OnClipboardWriteCommand = new AsyncRelayCommand<object>(OnClipboardWriteAsync);
@@ -92,6 +91,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     public virtual async Task OnNavigatedToAsync(NavigationEventArgs? e) =>
         await LoadDataAsync(async () =>
         {
+            IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
             await Task.CompletedTask;
         });
 
@@ -231,8 +231,32 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
         finally
         {
-            IsPageLoad = false;
             IsEnabledContent = true;
+            IsPageLoad = false;
+        }
+    }
+
+    protected async Task ProcessDataAsync(Func<Task> task, bool isDisabledContent, bool isPageLoad)
+    {
+        try
+        {
+            if (isDisabledContent)
+                IsEnabledContent = false;
+            if (isPageLoad)
+                IsPageLoad = true;
+            if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
+            {
+                DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimit;
+            }
+            await Task.Delay(250);
+            await task();
+        }
+        finally
+        {
+            if (isDisabledContent)
+                IsEnabledContent = true;
+            if (isPageLoad)
+                IsPageLoad = false;
         }
     }
 

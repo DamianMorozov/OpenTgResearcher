@@ -83,7 +83,7 @@ public sealed partial class ShellPage
             DefaultToggleSwitch(toggleSwitch);
             return;
         }
-        viewModelBase.IsDisplaySensitiveData = toggleSwitch.IsOn;
+        ViewModel.NavigationService.IsDisplaySensitiveData = viewModelBase.IsDisplaySensitiveData = toggleSwitch.IsOn;
     }
 
     private void DefaultToggleSwitch(ToggleSwitch toggleSwitch)

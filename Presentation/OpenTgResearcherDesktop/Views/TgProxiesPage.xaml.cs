@@ -11,9 +11,9 @@ public partial class TgProxiesPage
 
 	public TgProxiesPage()
 	{
-		ViewModel = App.GetService<TgProxiesViewModel>();
-
-		InitializeComponent();
+        ViewModel = App.GetService<TgProxiesViewModel>();
+		
+        InitializeComponent();
         DataContext = ViewModel;
         Loaded += PageLoaded;
 	}

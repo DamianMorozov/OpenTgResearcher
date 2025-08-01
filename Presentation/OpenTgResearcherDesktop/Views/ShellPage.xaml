@@ -225,14 +225,14 @@
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource TitleTextBlockStyle}"
                                     Text="{Binding}" />
-                                <!--  Show secret fields  -->
+								<!--  Sensitive data  -->
                                 <ToggleSwitch
                                     x:Name="ToggleSwitchShowSensitiveData"
                                     x:Uid="ToggleSwitchShowSensitiveData"
                                     Grid.Column="2"
                                     Margin="10,5,15,-5"
                                     HorizontalAlignment="Right"
-                                    IsOn="{Binding DataContext.IsShowSecretFields, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay}"
+                                    IsOn="True"
                                     Toggled="ToggleSwitchShowSecretFields_Toggled" />
                             </Grid>
                         </DataTemplate>

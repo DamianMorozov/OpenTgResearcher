@@ -13,5 +13,4 @@
     <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
     <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
 
-
 </ResourceDictionary>

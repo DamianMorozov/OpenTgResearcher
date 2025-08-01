@@ -19,15 +19,12 @@ public partial class ShellViewModel : ObservableRecipient
     public partial string License { get; set; } = string.Empty;
     [ObservableProperty]
     public partial bool IsClientConnected { get; set; }
-    [ObservableProperty]
-    public partial bool IsShowSecretFields { get; set; }
 
     private NavigationEventArgs? _eventArgs;
 
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
     public IAppNotificationService AppNotificationService { get; }
-    public ITgLicenseService LicenseService => App.BusinessLogicManager.LicenseService;
 
     public IRelayCommand ClientConnectCommand { get; }
     public IRelayCommand ClientDisconnectCommand { get; }

@@ -225,7 +225,7 @@
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource TitleTextBlockStyle}"
                                     Text="{Binding}" />
-								<!--  Sensitive data  -->
+                                <!--  Sensitive data  -->
                                 <ToggleSwitch
                                     x:Name="ToggleSwitchShowSensitiveData"
                                     x:Uid="ToggleSwitchShowSensitiveData"

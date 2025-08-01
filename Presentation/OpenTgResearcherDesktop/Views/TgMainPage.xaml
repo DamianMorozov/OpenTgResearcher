@@ -10,181 +10,179 @@
     mc:Ignorable="d">
 
     <ScrollView VerticalScrollMode="Auto">
-        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <!--  About  -->
-                <Expander
-                    x:Uid="ExpanderAbout"
-                    Grid.Row="0"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="True">
-                    <StackPanel Margin="15,0,0,0">
-                        <TextBlock x:Uid="ProductAssignment" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                        <TextBlock x:Uid="ProductAssignmentDescription" Style="{ThemeResource BodyStrongTextBlockStyle}" />
-                    </StackPanel>
-                </Expander>
-                <!--  Official site  -->
-                <Expander
-                    x:Uid="ExpanderOfficialSite"
-                    Grid.Row="1"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_OfficialSite_OpenTgResearcher"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </StackPanel>
-                </Expander>
-                <!--  Download  -->
-                <Expander
-                    x:Uid="ExpanderDownload"
-                    Grid.Row="3"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_Releases_Latest"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_DownloadStatistics"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </StackPanel>
-                </Expander>
-                <!--  GitHub community  -->
-                <Expander
-                    x:Uid="ExpanderGitHub"
-                    Grid.Row="4"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_GitHub_Link"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_GitHub_ReportBug"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_GitHub_Discussions"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </StackPanel>
-                </Expander>
-                <!--  User support  -->
-                <Expander
-                    x:Uid="ExpanderUserSupport"
-                    Grid.Row="5"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_GitHub_OpenTgResearcher"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </StackPanel>
-                </Expander>
-                <!--  Docker  -->
-                <Expander
-                    x:Uid="ExpanderDocker"
-                    Grid.Row="6"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_GitHub_DockerConsole"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </StackPanel>
-                </Expander>
-                <!--  Install Requirements  -->
-                <Expander
-                    x:Uid="ExpanderInstallRequirements"
-                    Grid.Row="7"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                        <TextBlock x:Uid="SettingsPage_GitHub_InstallRequirementsSaveValues" Margin="10,5,0,0" />
-                    </StackPanel>
-                </Expander>
-                <!--  Bug Bounty  -->
-                <Expander
-                    x:Uid="ExpanderBugBounty"
-                    Grid.Row="8"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <HyperlinkButton
-                            x:Uid="SettingsPage_OfficialSite_BugBounty"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </StackPanel>
-                </Expander>
-            </Grid>
-        </ContentControl>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--  About  -->
+            <Expander
+                x:Uid="ExpanderAbout"
+                Grid.Row="0"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <StackPanel Margin="15,0,0,0">
+                    <TextBlock x:Uid="ProductAssignment" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                    <TextBlock x:Uid="ProductAssignmentDescription" Style="{ThemeResource BodyStrongTextBlockStyle}" />
+                </StackPanel>
+            </Expander>
+            <!--  Official site  -->
+            <Expander
+                x:Uid="ExpanderOfficialSite"
+                Grid.Row="1"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_OfficialSite_OpenTgResearcher"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                </StackPanel>
+            </Expander>
+            <!--  Download  -->
+            <Expander
+                x:Uid="ExpanderDownload"
+                Grid.Row="3"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_Releases_Latest"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_DownloadStatistics"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                </StackPanel>
+            </Expander>
+            <!--  GitHub community  -->
+            <Expander
+                x:Uid="ExpanderGitHub"
+                Grid.Row="4"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_GitHub_Link"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_GitHub_ReportBug"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_GitHub_Discussions"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                </StackPanel>
+            </Expander>
+            <!--  User support  -->
+            <Expander
+                x:Uid="ExpanderUserSupport"
+                Grid.Row="5"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_GitHub_OpenTgResearcher"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                </StackPanel>
+            </Expander>
+            <!--  Docker  -->
+            <Expander
+                x:Uid="ExpanderDocker"
+                Grid.Row="6"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_GitHub_DockerConsole"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                </StackPanel>
+            </Expander>
+            <!--  Install Requirements  -->
+            <Expander
+                x:Uid="ExpanderInstallRequirements"
+                Grid.Row="7"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                    <TextBlock x:Uid="SettingsPage_GitHub_InstallRequirementsSaveValues" Margin="10,5,0,0" />
+                </StackPanel>
+            </Expander>
+            <!--  Bug Bounty  -->
+            <Expander
+                x:Uid="ExpanderBugBounty"
+                Grid.Row="8"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="False">
+                <StackPanel Margin="0,-10,0,-5">
+                    <HyperlinkButton
+                        x:Uid="SettingsPage_OfficialSite_BugBounty"
+                        Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        Click="{x:Bind ViewModel.OpenHyperlink}" />
+                </StackPanel>
+            </Expander>
+        </Grid>
     </ScrollView>
 </common:TgPageBase>

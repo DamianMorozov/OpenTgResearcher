@@ -13,191 +13,191 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgBotConnectionViewModel}"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <!--  Load data  -->
-        <views:TgLoadDataPage
-            Grid.Row="0"
-            Margin="0,0,0,10"
-            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
-        <!--  Actions  -->
-        <ContentControl
-            Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <Expander
-                x:Uid="SettingAppActions"
-                Grid.Row="2"
-                Margin="{StaticResource ExpanderMargin}"
-                Padding="{StaticResource ExpanderPadding}"
+    <ScrollView VerticalScrollMode="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!--  Load data  -->
+            <views:TgLoadDataPage
+                Grid.Row="0"
+                Margin="0,0,0,10"
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <!--  Actions  -->
+            <ContentControl
+                Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
-                <Grid Margin="0,-10,0,-10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <!--  TG session  -->
-                    <StackPanel
-                        Grid.Row="0"
-                        Margin="10,5,0,0"
-                        HorizontalAlignment="Left">
-                        <CheckBox
-                            x:Uid="ClientTgSession"
-                            HorizontalContentAlignment="Left"
-                            IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppSession, Mode=OneWay}"
-                            IsEnabled="False" />
-                    </StackPanel>
-                    <!--  Load from storage  -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.AppLoadCommand}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE896;" />
-                            <TextBlock
-                                x:Uid="ActionLoadFromStorage"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Save  -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="5,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.AppSaveCommand}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
-                            <TextBlock
-                                x:Uid="ActionSave"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Clear  -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        Margin="5,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.AppClearCommand}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
-                            <TextBlock
-                                x:Uid="ActionClearView"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Empty  -->
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="4"
-                        Margin="5,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.AppDeleteCommand}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
-                            <TextBlock
-                                x:Uid="ActionDelete"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Link  -->
-                    <Border Grid.Row="1">
-                        <HyperlinkButton
-                            x:Uid="ClientPage_MyTelegram"
-                            Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="{x:Bind ViewModel.OpenHyperlink}" />
-                    </Border>
-                    <!--  Grid  -->
-                    <Grid
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Grid.ColumnSpan="4"
-                        Margin="0,5,0,0">
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <Expander
+                    x:Uid="SettingAppActions"
+                    Grid.Row="2"
+                    Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True">
+                    <Grid Margin="0,-10,0,-10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <!--  Connect  -->
+                        <!--  TG session  -->
+                        <StackPanel
+                            Grid.Row="0"
+                            Margin="10,5,0,0"
+                            HorizontalAlignment="Left">
+                            <CheckBox
+                                x:Uid="ClientTgSession"
+                                HorizontalContentAlignment="Left"
+                                IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppSession, Mode=OneWay}"
+                                IsEnabled="False" />
+                        </StackPanel>
+                        <!--  Load from storage  -->
                         <Button
+                            Grid.Row="0"
+                            Grid.Column="1"
                             Margin="0,0,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.ClientConnectCommand}"
-                            FontWeight="Bold"
-                            IsEnabled="{x:Bind ViewModel.IsFieldsCheck, Mode=OneWay}">
+                            Command="{x:Bind Path=ViewModel.AppLoadCommand}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xE703;" />
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE896;" />
                                 <TextBlock
-                                    x:Uid="ClientConnect"
+                                    x:Uid="ActionLoadFromStorage"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!--  Disconnect  -->
+                        <!--  Save  -->
                         <Button
-                            Grid.Column="1"
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Margin="5,0,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind Path=ViewModel.AppSaveCommand}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
+                                <TextBlock
+                                    x:Uid="ActionSave"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Clear  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="5,0,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind Path=ViewModel.AppClearCommand}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
+                                <TextBlock
+                                    x:Uid="ActionClearView"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Empty  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="4"
                             Margin="5,0,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.ClientDisconnectCommand}"
-                            FontWeight="Bold"
-                            IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                            Command="{x:Bind Path=ViewModel.AppDeleteCommand}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xE8BB;" />
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
                                 <TextBlock
-                                    x:Uid="ClientDisconnect"
+                                    x:Uid="ActionDelete"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
+                        <!--  Link  -->
+                        <Border Grid.Row="1">
+                            <HyperlinkButton
+                                x:Uid="ClientPage_MyTelegram"
+                                Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Click="{x:Bind ViewModel.OpenHyperlink}" />
+                        </Border>
+                        <!--  Grid  -->
+                        <Grid
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="4"
+                            Margin="0,5,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <!--  Connect  -->
+                            <Button
+                                Margin="0,0,5,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.ClientConnectCommand}"
+                                FontWeight="Bold"
+                                IsEnabled="{x:Bind ViewModel.IsFieldsCheck, Mode=OneWay}">
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE703;" />
+                                    <TextBlock
+                                        x:Uid="ClientConnect"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <!--  Disconnect  -->
+                            <Button
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Command="{x:Bind ViewModel.ClientDisconnectCommand}"
+                                FontWeight="Bold"
+                                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE8BB;" />
+                                    <TextBlock
+                                        x:Uid="ClientDisconnect"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Expander>
-        </ContentControl>
-        <!--  Settings in storage  -->
-        <ContentControl
-            Grid.Row="2"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <Expander
-                x:Uid="ExpanderSettingInStorage"
-                Grid.Row="0"
-                Margin="{StaticResource ExpanderMargin}"
-                Padding="{StaticResource ExpanderPadding}"
+                </Expander>
+            </ContentControl>
+            <!--  Settings in storage  -->
+            <ContentControl
+                Grid.Row="2"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
-                <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <Expander
+                    x:Uid="ExpanderSettingInStorage"
+                    Grid.Row="0"
+                    Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -345,25 +345,23 @@
                             TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
                     </Grid>
-                </ScrollView>
-            </Expander>
-        </ContentControl>
-        <!--  Settings without saving  -->
-        <ContentControl
-            Grid.Row="3"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <Expander
-                x:Uid="ExpanderSettingWithoutSaving"
-                Grid.Row="0"
-                Margin="{StaticResource ExpanderMargin}"
-                Padding="{StaticResource ExpanderPadding}"
+                </Expander>
+            </ContentControl>
+            <!--  Settings without saving  -->
+            <ContentControl
+                Grid.Row="3"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
-                <ScrollView HorizontalScrollMode="Disabled" VerticalScrollMode="Auto">
+                IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <Expander
+                    x:Uid="ExpanderSettingWithoutSaving"
+                    Grid.Row="0"
+                    Margin="{StaticResource ExpanderMargin}"
+                    Padding="{StaticResource ExpanderPadding}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    IsExpanded="True">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -619,8 +617,8 @@
                             Text="{x:Bind ViewModel.DataRequest, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </Grid>
-                </ScrollView>
-            </Expander>
-        </ContentControl>
-    </Grid>
+                </Expander>
+            </ContentControl>
+        </Grid>
+    </ScrollView>
 </common:TgPageBase>

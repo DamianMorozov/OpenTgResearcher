@@ -11,186 +11,180 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgLicenseViewModel}"
     mc:Ignorable="d">
 
-    <ScrollView VerticalScrollMode="Auto">
-        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <!--  License & version  -->
-                <Expander
-                    x:Uid="ExpanderLicense"
-                    Grid.Row="0"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="True">
-                    <StackPanel Margin="0,-10,0,-5">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <!--  Clear license  -->
-                            <Button
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="0,5,5,0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.LicenseClearCommand}"
-                                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
-                                    <TextBlock
-                                        x:Uid="ActionLicenseClear"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        HorizontalTextAlignment="Left" />
-                                </StackPanel>
-                            </Button>
-                            <!--  Check license  -->
-                            <Button
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="0,5,5,0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.LicenseCheckCommand}"
-                                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
-                                    <TextBlock
-                                        x:Uid="ActionLicenseCheck"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        HorizontalTextAlignment="Left" />
-                                </StackPanel>
-                            </Button>
-                            <!--  Buy license  -->
-                            <Button
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                Margin="0,5,5,0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.LicenseChangeCommand}"
-                                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
-                                    <TextBlock
-                                        x:Uid="ActionLicenseBuy"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                        </Grid>
-                        <!--  License data  -->
-                        <Grid Margin="0,20,0,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                x:Uid="TextBlockIsConfirmed"
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}" />
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.IsConfirmed, Mode=OneWay}" />
-                            <TextBlock
-                                x:Uid="TextBlockLicenseKey"
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}" />
-                            <!--  Sensitive data  -->
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <!--  LicenseKey  -->
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="TextBlockLicenseDescription"
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}" />
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.LicenseDescription, Mode=OneWay}" />
-                            <TextBlock
-                                x:Uid="TextBlockUserId"
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}" />
-                            <!--  Sensitive data  -->
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <!--  UserId  -->
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.UserId, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="TextBlockExpiration"
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}" />
-                            <TextBlock
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                Margin="10,0,10,0"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind ViewModel.Expiration, Mode=OneWay}" />
-                        </Grid>
+    <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+        <Grid>
+            <!--  License & version  -->
+            <Expander
+                x:Uid="ExpanderLicense"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <!--  Clear license  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.LicenseClearCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                <TextBlock
+                                    x:Uid="ActionLicenseClear"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    HorizontalTextAlignment="Left" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Check license  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.LicenseCheckCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                <TextBlock
+                                    x:Uid="ActionLicenseCheck"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    HorizontalTextAlignment="Left" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Buy license  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.LicenseChangeCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                <TextBlock
+                                    x:Uid="ActionLicenseBuy"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <!--  License data  -->
+                    <Grid Margin="0,20,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock
-                            Margin="10,20,0,0"
-                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind ViewModel.LicenseLog, Mode=OneWay}" />
-                    </StackPanel>
-                </Expander>
-            </Grid>
-        </ContentControl>
-    </ScrollView>
+                            x:Uid="TextBlockIsConfirmed"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.IsConfirmed, Mode=OneWay}" />
+                        <TextBlock
+                            x:Uid="TextBlockLicenseKey"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <!--  LicenseKey  -->
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="TextBlockLicenseDescription"
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.LicenseDescription, Mode=OneWay}" />
+                        <TextBlock
+                            x:Uid="TextBlockUserId"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <!--  Sensitive data  -->
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <!--  UserId  -->
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.UserId, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="TextBlockExpiration"
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.Expiration, Mode=OneWay}" />
+                    </Grid>
+                    <TextBlock
+                        Margin="10,20,0,0"
+                        Style="{ThemeResource BodyStrongTextBlockStyle}"
+                        Text="{x:Bind ViewModel.LicenseLog, Mode=OneWay}" />
+                </StackPanel>
+            </Expander>
+        </Grid>
+    </ContentControl>
 </common:TgPageBase>

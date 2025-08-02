@@ -163,7 +163,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 		if (sender is not DataGrid dataGrid) return;
 		if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
 
-		NavigationService.NavigateTo(typeof(TgChatDetailsViewModel).FullName!, dto.Uid);
+		NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, dto.Uid);
 	}
 
 	private async Task SearchAsync()

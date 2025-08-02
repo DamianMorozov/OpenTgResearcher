@@ -3,15 +3,15 @@
 
 namespace OpenTgResearcherDesktop.Views;
 
-public sealed partial class TgChatDetailsPage
+public sealed partial class TgChatPage
 {
     #region Public and private fields, properties, constructor
 
-    public override TgChatDetailsViewModel ViewModel { get; }
+    public override TgChatViewModel ViewModel { get; }
 
-    public TgChatDetailsPage()
+    public TgChatPage()
     {
-        ViewModel = App.GetService<TgChatDetailsViewModel>();
+        ViewModel = App.GetService<TgChatViewModel>();
 
         InitializeComponent();
         DataContext = ViewModel;
@@ -43,6 +43,9 @@ public sealed partial class TgChatDetailsPage
                 break;
             case nameof(TgChatDetailsStatisticsPage):
                 ContentFrame.Navigate(typeof(TgChatDetailsStatisticsPage), ViewModel.Uid);
+                break;
+            case nameof(TgChatDetailsContentPage):
+                ContentFrame.Navigate(typeof(TgChatDetailsContentPage), ViewModel.Uid);
                 break;
         }
     }

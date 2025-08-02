@@ -79,7 +79,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -104,7 +104,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -135,7 +135,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -160,7 +160,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -185,7 +185,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -210,7 +210,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -236,7 +236,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -261,7 +261,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -287,7 +287,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -312,7 +312,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -338,7 +338,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -363,7 +363,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -389,7 +389,7 @@
                     <Button
                         Margin="5,5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardWriteCommand}"
+                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />

@@ -4,37 +4,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.830] - 2025-07-24
+## [0.6.850] - 2025-08-02
 ### Fixed
-- Fixed online chat update in OpenTgResearcherDesktop
-- Fixed chats page in OpenTgResearcherDesktop
-- Fixed client connection page in OpenTgResearcherDesktop
-- Fixed settings page in OpenTgResearcherDesktop
+- Fixed online chat update in `OpenTgResearcherDesktop`
+- Fixed chats page in `OpenTgResearcherDesktop`
+- Fixed client connection page in `OpenTgResearcherDesktop`
+- Fixed settings page in `OpenTgResearcherDesktop`
 - Fixed client connection
-- Fixed logs page in OpenTgResearcherDesktop
-- Fixed loading and saving settings in OpenTgResearcherDesktop
+- Fixed logs page in `OpenTgResearcherDesktop`
+- Fixed loading and saving settings in `OpenTgResearcherDesktop`
 ### Changed
 - Updated message table in TgStorage
-- Updated main page in OpenTgResearcherDesktop
-- Updated chat details view in OpenTgResearcherConsole
-- Updated chat details view page in OpenTgResearcherDesktop
-- Updated chats view page in OpenTgResearcherDesktop
+- Updated main page in `OpenTgResearcherDesktop`
+- Updated chat details view in `OpenTgResearcherConsole`
+- Updated chat details view page in `OpenTgResearcherDesktop`
+- Updated chats view page in `OpenTgResearcherDesktop`
 - Updated documentation
 - Optimized access to storage
-- Updated contacts page in OpenTgResearcherDesktop
-- Updated README
-- Stabilization and optimization of OpenTgResearcherDesktop
+- Updated contacts page in `OpenTgResearcherDesktop`
+- Updated `README`
+- Stabilization and optimization of `OpenTgResearcherDesktop`
 ### Added
 - Added checking messages for deleted messages when rescanning a chat
-- Added display of message link in OpenTgResearcherDesktop
-- Added chat details view in OpenTgResearcherDesktop
-- Added viewing of chat participants in OpenTgResearcherDesktop
-- Added viewing of chat statistics in OpenTgResearcherDesktop
-- Added viewing of content statistics in OpenTgResearcherDesktop
+- Added display of message link in `OpenTgResearcherDesktop`
+- Added chat details view in `OpenTgResearcherDesktop`
+- Added viewing of chat participants in `OpenTgResearcherDesktop`
+- Added viewing of chat statistics in `OpenTgResearcherDesktop`
+- Added viewing of content statistics in `OpenTgResearcherDesktop`
 - Added users table to the storage
-- Added users page in OpenTgResearcherDesktop
-- Added saving of chat users in OpenTgResearcherDesktop
-- Added messages to the user details page in OpenTgResearcherDesktop
+- Added users page in `OpenTgResearcherDesktop`
+- Added saving of chat users in `OpenTgResearcherDesktop`
+- Added messages to the user details page in `OpenTgResearcherDesktop`
+- Added `Chat details` tab at chat page in `OpenTgResearcherDesktop`
+- Added `Chat participants` tab at chat page in `OpenTgResearcherDesktop`
+- Added `Chat statistics` tab at chat page in `OpenTgResearcherDesktop`
+- Added `Content` tab at chat page in `OpenTgResearcherDesktop`
 
 ## [0.6.600] - 2025-07-12
 ### Fixed

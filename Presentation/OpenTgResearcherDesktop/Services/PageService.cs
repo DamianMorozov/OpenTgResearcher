@@ -14,10 +14,11 @@ public sealed class PageService : IPageService
 		Configure<DataGridViewModel, DataGridPage>();
 		Configure<ListDetailsViewModel, ListDetailsPage>();
 		Configure<TgBotConnectionViewModel, TgBotConnectionPage>();
+		Configure<TgChatDetailsContentViewModel, TgChatDetailsContentPage>();
 		Configure<TgChatDetailsInfoViewModel, TgChatDetailsInfoPage>();
 		Configure<TgChatDetailsParticipantsViewModel, TgChatDetailsParticipantsPage>();
 		Configure<TgChatDetailsStatisticsViewModel, TgChatDetailsStatisticsPage>();
-		Configure<TgChatDetailsViewModel, TgChatDetailsPage>();
+		Configure<TgChatViewModel, TgChatPage>();
 		Configure<TgChatsViewModel, TgChatsPage>();
 		Configure<TgClientConnectionViewModel, TgClientConnectionPage>();
 		Configure<TgFiltersViewModel, TgFiltersPage>();

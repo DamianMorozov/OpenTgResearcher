@@ -12,7 +12,6 @@ public sealed partial class TgChatDetailsStatisticsPage
     public TgChatDetailsStatisticsPage()
     {
         ViewModel = App.GetService<TgChatDetailsStatisticsViewModel>();
-        ViewModel.ScrollRequested = ScrollRequested;
 
         InitializeComponent();
         DataContext = ViewModel;
@@ -26,34 +25,6 @@ public sealed partial class TgChatDetailsStatisticsPage
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         PageLoaded(sender, e);
-    }
-
-    private void ScrollRequested()
-    {
-        // Scroll to the last item in the Messages ListView
-        if (ListViewMessages is null) return;
-        if (ListViewMessages.Items.Any())
-            ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
-    }
-
-    /// <summary> View image </summary>
-    private void OnImagePreviewClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Image img && img.Source is BitmapImage bitmap)
-        {
-            FullScreenImage.Source = bitmap;
-            ViewModel.IsImageViewerVisible = true;
-            Bindings.Update();
-        }
-    }
-
-    /// <summary> Exit from full screen image view </summary>
-    private void OnFullScreenImageTapped(object sender, RoutedEventArgs e)
-    {
-        ViewModel.IsImageViewerVisible = false;
-        //ViewModel.EmptyData = !ViewModel.Messages.Any();
-        FullScreenImage.Source = null;
-        Bindings.Update();
     }
 
     /// <summary> Click on user </summary>

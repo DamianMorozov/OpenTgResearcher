@@ -4,7 +4,7 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
+public sealed partial class TgChatViewModel : TgPageViewModelBase
 {
     #region Public and private fields, properties, constructor
 
@@ -26,10 +26,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool IsImageViewerVisible { get; set; }
     [ObservableProperty]
-    public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
-    [ObservableProperty]
-    public partial TgEfContentStatisticsDto ContentStatisticsDto { get; set; } = new();
-    [ObservableProperty]
     public partial Frame ContentFrame { get; set; } = default!;
 
     public IRelayCommand UpdateOnlineCommand { get; }
@@ -37,9 +33,9 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     public IRelayCommand SaveChatSettingsCommand { get; }
     public IRelayCommand StopDownloadingCommand { get; }
 
-    public TgChatDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsViewModel> logger,
+    public TgChatViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatViewModel> logger,
         IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, logger, nameof(TgChatDetailsViewModel))
+        : base(settingsService, navigationService, logger, nameof(TgChatViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands
@@ -95,6 +91,13 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
         {
             chatDetailsStatisticsViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
             await chatDetailsStatisticsViewModel.ReloadUiAsync();
+        }
+
+        // Content
+        if (ContentFrame.GetPageViewModel() is TgChatDetailsContentViewModel chatDetailsContentViewModel)
+        {
+            chatDetailsContentViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
+            await chatDetailsContentViewModel.ReloadUiAsync();
         }
     }
 

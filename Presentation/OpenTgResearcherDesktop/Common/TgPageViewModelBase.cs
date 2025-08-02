@@ -148,11 +148,11 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     /// <summary> Update state source message </summary>
     public async Task UpdateStateSource(long sourceId, int messageId, int count, string message)
     {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
+        //if (App.MainWindow?.DispatcherQueue is not null)
+        //{
             var tcs = new TaskCompletionSource();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
+            //App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            //{
                 try
                 {
                     float progress = messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count;
@@ -166,9 +166,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
                 {
                     tcs.SetException(ex);
                 }
-            });
+            //});
             await tcs.Task;
-        }
+        //}
     }
 
     protected async Task ContentDialogAsync(string title, string content)

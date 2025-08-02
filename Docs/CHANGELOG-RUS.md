@@ -4,37 +4,41 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.830] - 2025-07-24
+## [0.6.850] - 2025-08-02
 ### Исправлено
-- Исправлено онлайн обновление чатов в OpenTgResearcherDesktop
-- Исправлена страница чатов в OpenTgResearcherDesktop
-- Исправлена страница подключения клиента в OpenTgResearcherDesktop
-- Исправлена страница настроек в OpenTgResearcherDesktop
+- Исправлено онлайн обновление чатов в `OpenTgResearcherDesktop`
+- Исправлена страница чатов в `OpenTgResearcherDesktop`
+- Исправлена страница подключения клиента в `OpenTgResearcherDesktop`
+- Исправлена страница настроек в `OpenTgResearcherDesktop`
 - Исправлено подключение клиента
-- Исправлена страница логов в OpenTgResearcherDesktop
-- Исправлены загрузка и сохранение настроек в OpenTgResearcherDesktop
+- Исправлена страница логов в `OpenTgResearcherDesktop`
+- Исправлены загрузка и сохранение настроек в `OpenTgResearcherDesktop`
 ### Изменено
 - Обновлена таблица сообщений в TgStorage
-- Обновлена главная страница в OpenTgResearcherDesktop
-- Обновлён просмотр деталей чата в OpenTgResearcherConsole
-- Обновлена страница просмотра деталей чата в OpenTgResearcherDesktop
-- Обновлена страница просмотра чатов в OpenTgResearcherDesktop
+- Обновлена главная страница в `OpenTgResearcherDesktop`
+- Обновлён просмотр деталей чата в `OpenTgResearcherConsole`
+- Обновлена страница просмотра деталей чата в `OpenTgResearcherDesktop`
+- Обновлена страница просмотра чатов в `OpenTgResearcherDesktop`
 - Обновлена документация
 - Оптимизировано обращение к хранилищу
-- Обновлена страница контактов в OpenTgResearcherDesktop
-- Обновлена README
-- Стабилизация и оптимизация OpenTgResearcherDesktop
+- Обновлена страница контактов в `OpenTgResearcherDesktop`
+- Обновлена `README`
+- Стабилизация и оптимизация `OpenTgResearcherDesktop`
 ### Добавлено
 - Добавлена проверка сообщений на удалённые при повторном скнировании чата
-- Добавлено отображение ссылки на сообщение в OpenTgResearcherDesktop
-- Добавлен просмотр деталей чата в OpenTgResearcherDesktop
-- Добавлен просмотр участников чата в OpenTgResearcherDesktop
-- Добавлен просмотр статистики чата в OpenTgResearcherDesktop
-- Добавлен просмотр статистики содержимого в OpenTgResearcherDesktop
+- Добавлено отображение ссылки на сообщение в `OpenTgResearcherDesktop`
+- Добавлен просмотр деталей чата в `OpenTgResearcherDesktop`
+- Добавлен просмотр участников чата в `OpenTgResearcherDesktop`
+- Добавлен просмотр статистики чата в `OpenTgResearcherDesktop`
+- Добавлен просмотр статистики содержимого в `OpenTgResearcherDesktop`
 - Добавлена таблица пользователей в хранилище
-- Добавлена страница пользователей в OpenTgResearcherDesktop
-- Добавлено сохранение пользователей чата в OpenTgResearcherDesktop
-- Добавлены сообщения на страницу деталей пользователя в OpenTgResearcherDesktop
+- Добавлена страница пользователей в `OpenTgResearcherDesktop`
+- Добавлено сохранение пользователей чата в `OpenTgResearcherDesktop`
+- Добавлены сообщения на страницу деталей пользователя в `OpenTgResearcherDesktop`
+- Добавлена вкладка `Детали чата` на странице чата в `OpenTgResearcherDesktop`
+- Добавлена вкладка «Участники чата» на странице чата в `OpenTgResearcherDesktop`
+- Добавлена вкладка «Статистика чата» на странице чата в `OpenTgResearcherDesktop`
+- Добавлена вкладка «Содержимое» на странице чата в `OpenTgResearcherDesktop`
 
 ## [0.6.600] - 2025-07-12
 ### Исправлено

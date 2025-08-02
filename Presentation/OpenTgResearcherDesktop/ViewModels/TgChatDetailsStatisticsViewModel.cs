@@ -18,8 +18,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
-    public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = new();
-    [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
     public partial bool EmptyData { get; set; } = true;
@@ -29,12 +27,8 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     public partial bool IsImageViewerVisible { get; set; }
     [ObservableProperty]
     public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
-    [ObservableProperty]
-    public partial TgEfContentStatisticsDto ContentStatisticsDto { get; set; } = new();
 
-    public IRelayCommand GetParticipantsCommand { get; }
     public IRelayCommand CalcChatStatisticsCommand { get; }
-    public IRelayCommand CalcContentStatisticsCommand { get; }
 
     public TgChatDetailsStatisticsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsStatisticsViewModel> logger,
         IAppNotificationService appNotificationService)
@@ -42,10 +36,8 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     {
         AppNotificationService = appNotificationService;
         // Commands
-        GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
-        CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         // Updates
         App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
     }
@@ -67,11 +59,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
             userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
         }
 
-        foreach (var messageDto in MessageDtos)
-        {
-            messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
         await Task.CompletedTask;
     }
 
@@ -83,13 +70,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 
-            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(
-            take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
-            foreach (var messageDto in MessageDtos)
-            {
-                messageDto.Directory = Dto.Directory;
-            }
-            EmptyData = !MessageDtos.Any();
+            EmptyData = false;
             ScrollRequested?.Invoke();
         }
         finally
@@ -99,10 +80,11 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         }
     }
 
-    private async Task GetParticipantsAsync() => await ContentDialogAsync(GetParticipantsCoreAsync, TgResourceExtensions.AskGetParticipants(), useLoadData: true);
-
-    private async Task GetParticipantsCoreAsync()
+    private async Task CalcChatStatisticsAsync() => await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics());
+    
+    private async Task CalcChatStatisticsCoreAsync()
     {
+        ChatStatisticsDto.DefaultValues();
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
         var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
@@ -126,14 +108,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         })];
 
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
-    }
-
-    private async Task CalcChatStatisticsAsync() => await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics());
-    
-    private async Task CalcChatStatisticsCoreAsync()
-    {
-        ChatStatisticsDto.DefaultValues();
-        await GetParticipantsCoreAsync();
 
         ChatStatisticsDto.UsersCount = UserDtos.Where(x => !x.IsBot).Count();
         ChatStatisticsDto.BotsCount = UserDtos.Where(x => x.IsBot).Count();
@@ -172,32 +146,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         foreach (var user in orderedUsers)
         {
             ChatStatisticsDto.UserWithCountDtos.Add(user);
-        }
-    }
-
-    private async Task CalcContentStatisticsAsync() => await ContentDialogAsync(CalcContentStatisticsCoreAsync, TgResourceExtensions.AskCalcContentStatistics());
-    
-    private async Task CalcContentStatisticsCoreAsync()
-    {
-        ContentStatisticsDto.DefaultValues();
-        await GetParticipantsCoreAsync();
-
-        if (Directory.Exists(Dto.Directory))
-        {
-            var files = Directory.GetFiles(Dto.Directory);
-            if (files.Any())
-            {
-                var imageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp" };
-                var audioExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { ".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a", ".wma", ".alac", ".aiff", ".ape", ".opus" };
-                var videoExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
-
-                ContentStatisticsDto.ImagesCount = files.Count(file => imageExtensions.Contains(Path.GetExtension(file)));
-                ContentStatisticsDto.AudiosCount = files.Count(file => audioExtensions.Contains(Path.GetExtension(file)));
-                ContentStatisticsDto.VideosCount = files.Count(file => videoExtensions.Contains(Path.GetExtension(file)));
-            }
         }
     }
 

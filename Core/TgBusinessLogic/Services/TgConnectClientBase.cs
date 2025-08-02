@@ -2608,57 +2608,73 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public async Task DisconnectClientAsync()
     {
-        IsProxyUsage = false;
-        await UpdateStateSourceAsync(0, 0, 0, string.Empty);
-        await UpdateStateProxyAsync(TgLocale.ProxyIsDisconnect);
-        Me = null;
-        if (Client is not null)
+        try
         {
-            Client.OnUpdates -= OnUpdatesClientAsync;
-            Client.OnOther -= OnClientOtherAsync;
-            await Client.DisposeAsync();
-            Client = null;
+            IsProxyUsage = false;
+            await UpdateStateSourceAsync(0, 0, 0, string.Empty);
+            await UpdateStateProxyAsync(TgLocale.ProxyIsDisconnect);
+            Me = null;
+            if (Client is not null)
+            {
+                Client.OnUpdates -= OnUpdatesClientAsync;
+                Client.OnOther -= OnClientOtherAsync;
+                await Client.DisposeAsync();
+                Client = null;
+            }
+            ClientException = new();
+            await CheckClientConnectionReadyAsync();
+            await AfterClientConnectAsync();
         }
-        ClientException = new();
-        await CheckClientConnectionReadyAsync();
-        await AfterClientConnectAsync();
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            await SetClientExceptionAsync(ex);
+        }
     }
 
     public async Task DisconnectBotAsync()
     {
-        // Clear DTO
-        if (BotInfoDto is not null)
+        try
         {
-            BotInfoDto = null;
-        }
+            // Clear DTO
+            if (BotInfoDto is not null)
+            {
+                BotInfoDto = null;
+            }
 
-        // Ensure the connection is closed only after all operations are done
-        if (Bot is not null)
-        {
-            Bot.OnError -= OnErrorBotAsync;
-            Bot.OnMessage -= OnMessageBotAsync;
-            Bot.OnUpdate -= OnUpdateBotAsync;
-            if (Bot.Client is { Disconnected: false })
-                await Bot.Client.DisposeAsync();
-            Bot.Dispose();
-        }
-        Bot = null;
+            // Ensure the connection is closed only after all operations are done
+            if (Bot is not null)
+            {
+                Bot.OnError -= OnErrorBotAsync;
+                Bot.OnMessage -= OnMessageBotAsync;
+                Bot.OnUpdate -= OnUpdateBotAsync;
+                if (Bot.Client is { Disconnected: false })
+                    await Bot.Client.DisposeAsync();
+                Bot.Dispose();
+            }
+            Bot = null;
 
-        // Dispose and nullify the connection only if it's open
-        if (BotSqlConnection is not null)
-        {
-            if (BotSqlConnection.State != System.Data.ConnectionState.Closed)
-                BotSqlConnection.Close();
-            BotSqlConnection.Dispose();
-            BotSqlConnection = null;
-        }
+            // Dispose and nullify the connection only if it's open
+            if (BotSqlConnection is not null)
+            {
+                if (BotSqlConnection.State != System.Data.ConnectionState.Closed)
+                    BotSqlConnection.Close();
+                BotSqlConnection.Dispose();
+                BotSqlConnection = null;
+            }
 
-        // Dispose bot logs
-        if (BotStreamWriterLogs is not null)
+            // Dispose bot logs
+            if (BotStreamWriterLogs is not null)
+            {
+                BotStreamWriterLogs.Close();
+                await BotStreamWriterLogs.DisposeAsync();
+                BotStreamWriterLogs = null;
+            }
+        }
+        catch (Exception ex)
         {
-            BotStreamWriterLogs.Close();
-            await BotStreamWriterLogs.DisposeAsync();
-            BotStreamWriterLogs = null;
+            TgLogUtils.WriteException(ex);
+            await SetClientExceptionAsync(ex);
         }
     }
 

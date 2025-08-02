@@ -18,8 +18,6 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
-    public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = new();
-    [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
     public partial bool EmptyData { get; set; } = true;
@@ -71,11 +69,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
             userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
         }
 
-        foreach (var messageDto in MessageDtos)
-        {
-            messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
+        // Update view-models at current frame
         await UpdateCurrentFrameAsync();
     }
 
@@ -95,6 +89,13 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
             chatDetailsParticipantsViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
             await chatDetailsParticipantsViewModel.ReloadUiAsync();
         }
+
+        // Chat statistics
+        if (ContentFrame.GetPageViewModel() is TgChatDetailsStatisticsViewModel chatDetailsStatisticsViewModel)
+        {
+            chatDetailsStatisticsViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
+            await chatDetailsStatisticsViewModel.ReloadUiAsync();
+        }
     }
 
     private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
@@ -102,9 +103,8 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
     private async Task ClearDataStorageCoreAsync()
     {
         Dto = new();
-        MessageDtos = [];
         UserDtos = [];
-        EmptyData = !MessageDtos.Any();
+        EmptyData = false;
         await Task.CompletedTask;
     }
 
@@ -116,13 +116,7 @@ public sealed partial class TgChatDetailsViewModel : TgPageViewModelBase
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 
-            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(
-            take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
-            foreach (var messageDto in MessageDtos)
-            {
-                messageDto.Directory = Dto.Directory;
-            }
-            EmptyData = !MessageDtos.Any();
+            EmptyData = false;
             ScrollRequested?.Invoke();
         }
         finally

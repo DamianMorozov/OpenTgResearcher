@@ -125,6 +125,8 @@ public partial class App : Application
 				services.AddTransient<TgChatDetailsPage>();
 				services.AddTransient<TgChatDetailsParticipantsPage>();
 				services.AddTransient<TgChatDetailsParticipantsViewModel>();
+				services.AddTransient<TgChatDetailsStatisticsPage>();
+				services.AddTransient<TgChatDetailsStatisticsViewModel>();
 				services.AddTransient<TgChatDetailsViewModel>();
 				services.AddTransient<TgChatsPage>();
 				services.AddTransient<TgChatsViewModel>();

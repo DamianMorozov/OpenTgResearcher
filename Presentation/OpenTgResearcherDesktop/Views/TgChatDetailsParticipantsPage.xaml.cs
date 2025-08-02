@@ -30,39 +30,14 @@ public sealed partial class TgChatDetailsParticipantsPage
 
     private void ScrollRequested()
     {
-        // Scroll to the last item in the Messages ListView
-        if (ListViewMessages is null) return;
-        if (ListViewMessages.Items.Any())
-            ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
-
         // Scroll to the last item in the Participants ListView
         if (ListViewParticipants is null) return;
         if (ListViewParticipants.Items.Any())
             ListViewParticipants.ScrollIntoView(ListViewParticipants.Items.Last());
     }
 
-    /// <summary> View image </summary>
-    private void OnImagePreviewClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Image img && img.Source is BitmapImage bitmap)
-        {
-            FullScreenImage.Source = bitmap;
-            ViewModel.IsImageViewerVisible = true;
-            Bindings.Update();
-        }
-    }
-
-    /// <summary> Exit from full screen image view </summary>
-    private void OnFullScreenImageTapped(object sender, RoutedEventArgs e)
-    {
-        ViewModel.IsImageViewerVisible = false;
-        //ViewModel.EmptyData = !ViewModel.Messages.Any();
-        FullScreenImage.Source = null;
-        Bindings.Update();
-    }
-
-    /// <summary> Chat user </summary>
-    public void OnChatUserClick(object sender, RoutedEventArgs e) => ViewModel.OnChatUserClick(sender, e);
+    /// <summary> Click on user </summary>
+    public void OnUserClick(object sender, RoutedEventArgs e) => ViewModel.OnUserClick(sender, e);
 
     #endregion
 }

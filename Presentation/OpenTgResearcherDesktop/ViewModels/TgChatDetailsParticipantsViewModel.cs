@@ -18,23 +18,13 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
-    public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = new();
-    [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
     public partial bool EmptyData { get; set; } = true;
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
-    [ObservableProperty]
-    public partial bool IsImageViewerVisible { get; set; }
-    [ObservableProperty]
-    public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
-    [ObservableProperty]
-    public partial TgEfContentStatisticsDto ContentStatisticsDto { get; set; } = new();
 
     public IRelayCommand GetParticipantsCommand { get; }
-    public IRelayCommand CalcChatStatisticsCommand { get; }
-    public IRelayCommand CalcContentStatisticsCommand { get; }
 
     public TgChatDetailsParticipantsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsParticipantsViewModel> logger,
         IAppNotificationService appNotificationService)
@@ -44,8 +34,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         // Commands
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
-        CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
-        CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         // Updates
         App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
     }
@@ -67,11 +55,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
             userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
         }
 
-        foreach (var messageDto in MessageDtos)
-        {
-            messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
         await Task.CompletedTask;
     }
 
@@ -82,14 +65,8 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
             if (!SettingsService.IsExistsAppStorage) return;
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
-
-            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(
-            take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
-            foreach (var messageDto in MessageDtos)
-            {
-                messageDto.Directory = Dto.Directory;
-            }
-            EmptyData = !MessageDtos.Any();
+            
+            EmptyData = false;
             ScrollRequested?.Invoke();
         }
         finally
@@ -128,80 +105,8 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
     }
 
-    private async Task CalcChatStatisticsAsync() => await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics());
-    
-    private async Task CalcChatStatisticsCoreAsync()
-    {
-        ChatStatisticsDto.DefaultValues();
-        await GetParticipantsCoreAsync();
-
-        ChatStatisticsDto.UsersCount = UserDtos.Where(x => !x.IsBot).Count();
-        ChatStatisticsDto.BotsCount = UserDtos.Where(x => x.IsBot).Count();
-
-        var dtStartRaw = ChatStatisticsDto.DtStart ?? TgEfChatStatisticsDto.SafeMinDate;
-        var dtEndRaw = ChatStatisticsDto.DtEnd ?? TgEfChatStatisticsDto.SafeMaxDate;
-        // If the minimum date is still obtained (which may contain a dangerous offset) replace
-        var dtStart = dtStartRaw < TgEfChatStatisticsDto.SafeMinDate ? TgEfChatStatisticsDto.SafeMinDate : dtStartRaw;
-        var dtEnd = dtEndRaw > TgEfChatStatisticsDto.SafeMaxDate ? TgEfChatStatisticsDto.SafeMaxDate : dtEndRaw;
-        DateTimeOffset startDate = dtStart.ToUniversalTime().Date;
-        DateTimeOffset tmpEnd = dtEnd.ToUniversalTime().Date;
-        DateTimeOffset endDate;
-        if (tmpEnd < TgEfChatStatisticsDto.SafeMaxDate.Date)
-        {
-            endDate = tmpEnd.AddDays(1).AddTicks(-1);
-        }
-        else
-        {
-            endDate = tmpEnd;
-        }
-
-        foreach (var userDto in UserDtos)
-        {
-            var userWithCountDto = new TgEfUserWithCountDto
-            {
-                UserDto = userDto,
-                Count = await App.BusinessLogicManager.StorageManager.MessageRepository
-                    .GetCountAsync(x => x.SourceId == Dto.Id && x.UserId == userDto.Id &&
-                    x.DtCreated >= startDate.UtcDateTime && x.DtCreated <= endDate.UtcDateTime)
-            };
-            ChatStatisticsDto.UserWithCountDtos.Add(userWithCountDto);
-        }
-        // Order
-        var orderedUsers = ChatStatisticsDto.UserWithCountDtos.OrderByDescending(x => x.Count).ToList();
-        ChatStatisticsDto.UserWithCountDtos.Clear();
-        foreach (var user in orderedUsers)
-        {
-            ChatStatisticsDto.UserWithCountDtos.Add(user);
-        }
-    }
-
-    private async Task CalcContentStatisticsAsync() => await ContentDialogAsync(CalcContentStatisticsCoreAsync, TgResourceExtensions.AskCalcContentStatistics());
-    
-    private async Task CalcContentStatisticsCoreAsync()
-    {
-        ContentStatisticsDto.DefaultValues();
-        await GetParticipantsCoreAsync();
-
-        if (Directory.Exists(Dto.Directory))
-        {
-            var files = Directory.GetFiles(Dto.Directory);
-            if (files.Any())
-            {
-                var imageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp" };
-                var audioExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { ".mp3", ".wav", ".flac", ".aac", ".ogg", ".m4a", ".wma", ".alac", ".aiff", ".ape", ".opus" };
-                var videoExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                    { ".mp4", ".avi", ".mov", ".wmv", ".flv", ".mkv", ".webm" };
-
-                ContentStatisticsDto.ImagesCount = files.Count(file => imageExtensions.Contains(Path.GetExtension(file)));
-                ContentStatisticsDto.AudiosCount = files.Count(file => audioExtensions.Contains(Path.GetExtension(file)));
-                ContentStatisticsDto.VideosCount = files.Count(file => videoExtensions.Contains(Path.GetExtension(file)));
-            }
-        }
-    }
-
-    internal void OnChatUserClick(object sender, RoutedEventArgs e)
+    /// <summary> Click on user </summary>
+    internal void OnUserClick(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button) return;
         var tag = button.Tag.ToString();

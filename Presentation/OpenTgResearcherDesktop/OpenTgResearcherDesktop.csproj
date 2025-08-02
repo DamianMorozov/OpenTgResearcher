@@ -74,6 +74,9 @@
     <Page Update="Views\TgChatDetailsInfoPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\TgChatDetailsStatisticsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\TgChatDetailsParticipantsPage.xaml">
       <SubType>Designer</SubType>
     </Page>

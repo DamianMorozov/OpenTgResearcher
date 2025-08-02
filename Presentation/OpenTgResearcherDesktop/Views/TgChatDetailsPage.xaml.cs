@@ -41,7 +41,8 @@ public sealed partial class TgChatDetailsPage
             case nameof(TgChatDetailsParticipantsPage):
                 ContentFrame.Navigate(typeof(TgChatDetailsParticipantsPage), ViewModel.Uid);
                 break;
-            default:
+            case nameof(TgChatDetailsStatisticsPage):
+                ContentFrame.Navigate(typeof(TgChatDetailsStatisticsPage), ViewModel.Uid);
                 break;
         }
     }

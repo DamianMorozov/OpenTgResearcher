@@ -27,13 +27,13 @@ jobs:
             fetch-depth: 0
       - name: Get latest version from CHANGELOG
         id: get_version
-        run: echo "version=v$(grep '^## \[' CHANGELOG.md | head -n1 | sed 's/^## \[\(.*\)\].*/\1/')" >> $GITHUB_OUTPUT
+        run: echo "version=$(grep '^## \[' Docs/CHANGELOG.md | head -n1 | sed 's/^## \[\(.*\)\].*/\1/')" >> $GITHUB_OUTPUT
       - name: Get release description from CHANGELOG
         id: get_body
         run: |
           {
             echo 'body<<EOF'
-            awk '/^## \[/{i++} i==1{print}' CHANGELOG.md | tail -n +2
+            awk '/^## \[/{i++} i==1{print}' Docs/CHANGELOG.md | tail -n +2
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
       - name: Download OpenTgResearcherConsole artifact

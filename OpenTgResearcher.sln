@@ -67,9 +67,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{7EEAAFF3-9F51-477B-B6C5-1019737A779A}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\action_build_windows.yml = .github\workflows\action_build_windows.yml
-		.github\workflows\branch_main_build.yml = .github\workflows\branch_main_build.yml
 		.github\workflows\action_preview_create.yml = .github\workflows\action_preview_create.yml
-		.github\workflows\branch_preview_build.yml = .github\workflows\branch_preview_build.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop", "Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj", "{FB756D71-7AA6-4BAB-93BD-28B30B0EF1FF}"

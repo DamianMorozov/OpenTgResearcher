@@ -1,4 +1,4 @@
-name: Create new version release
+name: Create new version preview
 
 permissions:
   contents: write
@@ -7,7 +7,7 @@ on:
   push:
     tags:
       - 'v*'
-    branches: [main]
+    branches: [preview]
     paths:
       - 'CHANGELOG.md'
 

@@ -2,8 +2,6 @@ name: Build Windows application
 
 on:
   workflow_call:
-    branches:
-      - preview
     inputs:
       target:
         required: true

@@ -63,19 +63,18 @@ jobs:
       - name: Create annotated Git tag
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-            git tag -a "${{ steps.get_version.outputs.version }}" -m "$(cat <<EOF
+            git tag -a "v${{ steps.get_version.outputs.version }}" -m "$(cat <<EOF
             ${{ steps.get_body.outputs.body }}
             EOF
-              )"
-              git push origin "${{ steps.get_version.outputs.version }}"
-            git push origin "${{ steps.get_version.outputs.version }}"
+            )"
+            git push origin "v${{ steps.get_version.outputs.version }}"
       - name: Create GitHub Release
         if: steps.check_tag.outputs.exists == 'false'
         run: |
             gh auth setup-git
-            gh release create ${{ steps.get_version.outputs.version }} ./artifacts/* \
-            --title "Release ${{ steps.get_version.outputs.version }}" \
-            --notes "${{ steps.get_body.outputs.body }}" \
-            --prerelease
+            gh release create "v${{ steps.get_version.outputs.version }}" ./artifacts/* \
+              --title "v${{ steps.get_version.outputs.version }} Preview" \
+              --notes "${{ steps.get_body.outputs.body }}" \
+              --prerelease
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

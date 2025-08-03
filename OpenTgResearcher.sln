@@ -80,6 +80,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBusinessLogic", "Core\TgB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgInfrastructureTest", "Tests\TgInfrastructureTest\TgInfrastructureTest.csproj", "{5CE42557-44CE-4318-B5C3-9202F432C9EC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Assets\Icon.ico = Docs\Assets\Icon.ico
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -258,6 +263,7 @@ Global
 		{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
 		{BC89CBA1-E87C-4256-90C1-7C472DA48361} = {BC2545B1-7D32-4DBC-BA36-C49AF2536B82}
 		{5CE42557-44CE-4318-B5C3-9202F432C9EC} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {49FCA776-C63B-4C0C-B2B2-E9CA0E5949ED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B5CEF6C8-2885-432D-9D8C-8EDBCEB7AA2C}

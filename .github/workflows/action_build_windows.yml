@@ -1,0 +1,43 @@
+name: Build Windows application
+
+on:
+  workflow_call:
+    branches:
+      - preview
+    inputs:
+      target:
+        required: true
+        type: string
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Setup Nuget Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - name: Install dependencies
+        run: nuget restore OpenTgResearcher.sln
+      - name: Restore OpenTgResearcherConsole
+        run: dotnet restore Presentation/OpenTgResearcherConsole.csproj
+      - name: Build OpenTgResearcherConsole
+        run: dotnet publish Presentation/OpenTgResearcherConsole.csproj -c Release -o publish/OpenTgResearcherConsole /p:DebugType=none /p:DebugSymbols=false
+      - name: Archive OpenTgResearcherConsole
+        run: Compress-Archive -Path publish/* -DestinationPath OpenTgResearcherConsole.zip
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenTgResearcherConsole
+          path: OpenTgResearcherConsole.zip

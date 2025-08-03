@@ -66,6 +66,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{CBC6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{7EEAAFF3-9F51-477B-B6C5-1019737A779A}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\action_build_windows.yml = .github\workflows\action_build_windows.yml
+		.github\workflows\action_release_create.yml = .github\workflows\action_release_create.yml
 		.github\workflows\branch_main_build.yml = .github\workflows\branch_main_build.yml
 		.github\workflows\branch_preview_build.yml = .github\workflows\branch_preview_build.yml
 	EndProjectSection

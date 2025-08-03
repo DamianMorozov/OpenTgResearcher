@@ -1,44 +1,22 @@
 name: Branch Main Build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-    paths:
-      - '**.csproj'
-      - '**.razor'
-      - '**.cs'
-      - '**.csproj'
 
 jobs:
   build:
     runs-on: windows-latest
-
     env:
       GITHUB_ACTIONS: true
-
     steps:
-      - name: Checkout to the repository
-        uses: actions/checkout@v4
-
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2.0.0
         with:
             vs-prerelease: true
-
-      - name: Setup Nuget Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-      
-      - name: Install dependencies
-        run: nuget restore OpenTgResearcher.sln
-
       - name: Build app for Release OpenTgResearcherConsole
         run: msbuild Presentation\OpenTgResearcherConsole\OpenTgResearcherConsole.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"
-
       - name: Build app for Release OpenTgResearcherDesktop
         run: msbuild Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj -t:rebuild -verbosity:quiet -property:Configuration=Release -property:Platform="x64"

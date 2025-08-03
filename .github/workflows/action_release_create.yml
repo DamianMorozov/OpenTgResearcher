@@ -1,0 +1,80 @@
+name: Create new version release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches: [main]
+    paths:
+      - 'CHANGELOG.md'
+
+jobs:
+  build_windows:
+    uses: ./.github/workflows/action_build_windows.yml
+    with:
+      target: windows
+  release:
+    needs: [build_windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+      - name: Get latest version from CHANGELOG
+        id: get_version
+        run: echo "version=v$(grep '^## \[' CHANGELOG.md | head -n1 | sed 's/^## \[\(.*\)\].*/\1/')" >> $GITHUB_OUTPUT
+      - name: Get release description from CHANGELOG
+        id: get_body
+        run: |
+          {
+            echo 'body<<EOF'
+            awk '/^## \[/{i++} i==1{print}' CHANGELOG.md | tail -n +2
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+      - name: Download OpenTgResearcherConsole artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: OpenTgResearcherConsole
+          path: ./artifacts
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Configure Git
+        run: |
+            git config --global user.name "Damian Viktorovich Morozov"
+            git config --global user.email "damian@morozov33.ru"
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Exit if tag already exists
+        if: steps.check_tag.outputs.exists == 'true'
+        run: echo "Tag already exists. Exiting..."
+      - name: Create annotated Git tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+            git tag -a "${{ steps.get_version.outputs.version }}" -m "$(cat <<EOF
+            ${{ steps.get_body.outputs.body }}
+            EOF
+              )"
+              git push origin "${{ steps.get_version.outputs.version }}"
+            git push origin "${{ steps.get_version.outputs.version }}"
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+            gh auth setup-git
+            gh release create ${{ steps.get_version.outputs.version }} ./artifacts/* \
+            --title "Release ${{ steps.get_version.outputs.version }}" \
+            --notes "${{ steps.get_body.outputs.body }}" \
+            --prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -36,10 +36,10 @@ jobs:
             awk '/^## \[/ {i++} i==1 {print}' Docs/CHANGELOG.md
             echo 'EOF'
             } >> "$GITHUB_OUTPUT"
-      - name: Download OpenTgResearcherConsole artifact
+      - name: Download OpenTgResearcherConsole-win-Portable artifact
         uses: actions/download-artifact@v4
         with:
-          name: OpenTgResearcherConsole
+          name: OpenTgResearcherConsole-win-Portable
           path: ./artifacts
       - name: Set up .NET
         uses: actions/setup-dotnet@v4

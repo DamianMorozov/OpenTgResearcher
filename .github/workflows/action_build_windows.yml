@@ -15,6 +15,9 @@ jobs:
         uses: actions/checkout@v4
         with:
             fetch-depth: 0
+      - name: Get latest version from CHANGELOG
+        id: get_version
+        run: echo "version=$(grep '^## \[' Docs/CHANGELOG.md | head -n1 | sed 's/^## \[\(.*\)\].*/\1/')" >> $GITHUB_OUTPUT
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -30,12 +33,32 @@ jobs:
         run: nuget restore OpenTgResearcher.sln
       - name: Restore OpenTgResearcherConsole
         run: dotnet restore Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj
-      - name: Build OpenTgResearcherConsole
-        run: dotnet publish Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj -c Release -o publish/OpenTgResearcherConsole /p:DebugType=none /p:DebugSymbols=false
-      - name: Archive OpenTgResearcherConsole
-        run: Compress-Archive -Path publish/* -DestinationPath OpenTgResearcherConsole.zip
-      - name: Upload artifact
+      - name: Build OpenTgResearcherConsole AnyCPU
+        run: dotnet publish Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj `
+              -c Release `
+              -o output/Console-AnyCPU `
+              --use-current-runtime `
+              --self-contained
+      - name: Cleanup temporary files
+        run: |
+          del output/Console-AnyCPU/OpenTgResearcher.session
+          del output/Console-AnyCPU/OpenTgResearcher.xml
+      - name: Install latest Velopack CLI
+        run: dotnet tool update -g vpk
+      - name: Package with Velopack
+        run: |
+            vpk pack `
+              -u OpenTgResearcherConsole `
+              -v ${{ steps.get_version.outputs.version }} `
+              -p output/Console-AnyCPU `
+              -o output/Installer `
+              -c win-Portable `
+              -i Docs/Assets/Icon.ico `
+              -e OpenTgResearcherConsole.exe
+      - name: Create portable zip
+        run: Compress-Archive -Path output/Console-AnyCPU/* -DestinationPath OpenTgResearcherConsole-win-Portable.zip
+      - name: Upload portable archive
         uses: actions/upload-artifact@v4
         with:
-          name: OpenTgResearcherConsole
-          path: OpenTgResearcherConsole.zip
+          name: OpenTgResearcherConsole-win-Portable
+          path: OpenTgResearcherConsole-win-Portable.zip

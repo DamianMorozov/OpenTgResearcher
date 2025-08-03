@@ -1978,7 +1978,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                 : await Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId);
                             await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
                             // Check deleted messages and mark storage entity
-                            if (messages.Messages.FirstOrDefault()?.From is null)
+                            var firstMessage = messages.Messages.FirstOrDefault();
+                            if (firstMessage is null)
                             {
                                 // Mark storage entity as deleted 
                                 await CheckDeletedMessageAndMarkEntityAsync(tgDownloadSettings2.SourceVm.Dto.Id, sourceFirstId);
@@ -2346,7 +2347,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         }
                         // Store message
                         await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                            TgEnumMessageType.Document, threadNumber, isRetry: false, userId: messageBase.From.ID);
+                            TgEnumMessageType.Document, threadNumber, isRetry: false, userId: messageBase.From?.ID ?? 0);
                         break;
                     case MessageMediaPhoto mediaPhoto:
                         if (mediaPhoto is { photo: Photo photo })
@@ -2383,7 +2384,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                     // Store message
                     await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                        TgEnumMessageType.Document, threadNumber, isRetry: false, userId: messageBase.From.ID);
+                        TgEnumMessageType.Document, threadNumber, isRetry: false, userId: messageBase.From?.ID ?? 0);
                     break;
                 case MessageMediaPhoto mediaPhoto:
                     var messageStr = string.Empty;
@@ -2391,7 +2392,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         messageStr = message.message;
                     await MessageSaveAsync(tgDownloadSettings, messageBase.ID, mediaInfo.DtCreate, mediaInfo.RemoteSize,
                         $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
-                        TgEnumMessageType.Photo, threadNumber, isRetry: false, userId: messageBase.From.ID);
+                        TgEnumMessageType.Photo, threadNumber, isRetry: false, userId: messageBase.From?.ID ?? 0);
                     break;
             }
             // Save user info
@@ -2483,6 +2484,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                     else
                     {
+                        int[] timeOuts = [15_000, 30_000, 45_000];
+                        var canProceed = false;
+                        foreach (var timeOut in timeOuts)
+                        {
+                            if (StorageManager.EfContext.Database.CurrentTransaction is null)
+                            {
+                                canProceed = true;
+                                break;
+                            }
+                            await Task.Delay(timeOut);
+                        }
+                        if (!canProceed && StorageManager.EfContext.Database.CurrentTransaction is not null)
+                        {
+                            throw new InvalidOperationException("Transaction is still active after waiting for timeouts!");
+                        }
                         await StorageManager.MessageRepository.SaveListAsync(MessageEntities);
                         BatchMessagesCount = 0;
                         MessageEntities.Clear();

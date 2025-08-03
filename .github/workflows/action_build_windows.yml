@@ -29,9 +29,9 @@ jobs:
       - name: Install dependencies
         run: nuget restore OpenTgResearcher.sln
       - name: Restore OpenTgResearcherConsole
-        run: dotnet restore Presentation/OpenTgResearcherConsole.csproj
+        run: dotnet restore Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj
       - name: Build OpenTgResearcherConsole
-        run: dotnet publish Presentation/OpenTgResearcherConsole.csproj -c Release -o publish/OpenTgResearcherConsole /p:DebugType=none /p:DebugSymbols=false
+        run: dotnet publish Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj -c Release -o publish/OpenTgResearcherConsole /p:DebugType=none /p:DebugSymbols=false
       - name: Archive OpenTgResearcherConsole
         run: Compress-Archive -Path publish/* -DestinationPath OpenTgResearcherConsole.zip
       - name: Upload artifact

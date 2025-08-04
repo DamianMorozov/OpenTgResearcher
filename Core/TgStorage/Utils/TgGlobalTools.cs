@@ -27,6 +27,7 @@ public static class TgGlobalTools
     public const string RouteBase = "Base";
     public const string RouteChangeLog = "ChangeLog";
     public const string RouteController = "[controller]";
+    public const string RouteCreate = "Create";
     public const string RouteCreated = "Created";
     public const string RouteGet = "Get";
     public const string RouteGetFile = "GetFile";
@@ -34,9 +35,9 @@ public static class TgGlobalTools
     public const string RouteImage = "Image";
     public const string RouteLicense = "License";
     public const string RouteLicenses = "Licenses";
+    public const string RouteLicenseStatistic = "LicenseStatistic";
     public const string RouteMedias = "Medias";
     public const string RoutePost = "Post";
-    public const string RoutePromoStatistic = "PromoStatistic";
     public const string RouteReleases = "Releases";
     public const string RouteRoot = "";
     public const string RouteValid = "Valid";

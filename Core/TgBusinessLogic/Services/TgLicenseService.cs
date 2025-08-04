@@ -156,25 +156,59 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		return result;
 	}
 
-    public async Task<TgApiResult> GetApiPromoStatisticAsync(DateOnly lastPromoDay)
+    public async Task<TgApiResult> GetApiLicenseStatisticAsync(DateOnly lastPromoDay)
     {
         var result = new TgApiResult();
         var promoStatisticSummaryDto = new TgPromoStatisticSummaryDto(lastPromoDay);
         // Search promo license
-        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.LicenseType == TgEnumLicenseType.Test);
-        if (licenseDtos.Any())
+        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.LicenseType != TgEnumLicenseType.Free);
+        if (licenseDtos.Count > 0)
         {
-            var groups = licenseDtos.OrderByDescending(x => x.ValidTo).GroupBy(x => x.ValidTo).ToList();
-            promoStatisticSummaryDto.Items.AddRange(groups.Select(group => new TgPromoStatisticDto
-            {
-                PromoDate = group.Key,
-                TestCount = group.Count(),
-                Limit = 0 // Assuming no limit is set for promo licenses
-            }));
+            var dtNow = DateOnly.FromDateTime(DateTime.UtcNow);
+            // Test group
+            var groupTest = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test && x.ValidTo >= dtNow).ToList();
+            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { TestCount = groupTest.Count, Limit = 0 });
+            // Paid group
+            var groupPaid = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid && x.ValidTo >= dtNow).ToList();
+            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { PaidCount = groupPaid.Count });
+            // Premium group
+            var groupPremium = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium && x.ValidTo >= dtNow).ToList();
+            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { PremiumCount = groupPremium.Count });
             result.IsOk = true;
         }
+        // Order items
+        promoStatisticSummaryDto.Items = [.. promoStatisticSummaryDto.Items
+            .OrderByDescending(x => x.TestCount > 0)
+            .OrderByDescending(x => x.PaidCount > 0)
+            .OrderByDescending(x => x.PremiumCount > 0)
+        ];
         result.Value = promoStatisticSummaryDto;
         return result;
+    }
+
+    /// <inheritdoc />
+    public async Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo, string password)
+    {
+        var result = new TgApiResult();
+        if (userId <= 0)
+        {
+            result.IsOk = false;
+            result.Value = "User ID must be greater than zero!";
+            return await Task.FromResult(result);
+        }
+        var licenseDto = new TgLicenseDto
+        {
+            IsConfirmed = true,
+            LicenseKey = Guid.NewGuid(),
+            LicenseType = licenseType,
+            UserId = userId,
+            ValidTo = validTo
+        };
+        await LicenseUpdateAsync(licenseDto);
+        ActivateLicense(licenseDto.IsConfirmed, licenseDto.LicenseKey, licenseDto.LicenseType, licenseDto.UserId, licenseDto.ValidTo);
+        result.IsOk = true;
+        result.Value = licenseDto;
+        return await Task.FromResult(result);
     }
 
     #endregion

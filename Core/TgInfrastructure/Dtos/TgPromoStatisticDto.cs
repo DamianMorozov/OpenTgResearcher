@@ -7,21 +7,16 @@ public sealed class TgPromoStatisticDto
 {
     #region Public and private fields, properties, constructor
 
-    public DateOnly PromoDate { get; set; } = DateOnly.MinValue;
     public int TestCount { get; set; }
+    public int PaidCount { get; set; }
+    public int PremiumCount { get; set; }
     public int Limit { get; set; }
-
-	public TgPromoStatisticDto(DateOnly promoDate, int testCount, int limit)
-	{
-        PromoDate = promoDate;
-        TestCount = testCount;
-        Limit = limit;
-	}
 
 	public TgPromoStatisticDto()
 	{
-        PromoDate = DateOnly.MinValue;
         TestCount = 0;
+        PaidCount = 0;
+        PremiumCount = 0;
         Limit = 0;
     }
 

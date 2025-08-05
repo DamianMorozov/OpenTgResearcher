@@ -39,10 +39,20 @@ jobs:
               -o output/Console-AnyCPU `
               --use-current-runtime `
               --self-contained
-      - name: Cleanup temporary files
+      - name: Delete session file if exists
+        shell: pwsh
         run: |
-          del output/Console-AnyCPU/OpenTgResearcher.session
-          del output/Console-AnyCPU/OpenTgResearcher.xml
+            $path = "output\Console-AnyCPU\OpenTgResearcher.session"
+            if (Test-Path $path) {
+                Remove-Item $path
+            }
+      - name: Delete xml file if exists
+        shell: pwsh
+        run: |
+            $path = "output\Console-AnyCPU\OpenTgResearcher.xml"
+            if (Test-Path $path) {
+                Remove-Item $path
+            }
       - name: Install latest Velopack CLI
         run: dotnet tool update -g vpk
       - name: Package with Velopack

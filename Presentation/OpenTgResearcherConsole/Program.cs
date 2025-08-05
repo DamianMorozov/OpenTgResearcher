@@ -127,14 +127,8 @@ public static class Program
                     tgLocale.MenuMainExit,
                     tgLocale.MenuMainApp,
                     tgLocale.MenuMainStorage,
-                    tgLocale.MenuMainClientConnection
-                );
-                // Check paid license
-                if (tgMenu.BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
-                {
-                    selectionPrompt.AddChoices(tgLocale.MenuMainBotConnection);
-                }
-                selectionPrompt.AddChoices(
+                    tgLocale.MenuMainClientConnection,
+                    tgLocale.MenuMainBotConnection,
                     tgLocale.MenuMainUpdate,
                     tgLocale.MenuMainLicense
                 );

@@ -54,6 +54,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     public partial bool IsDownloading { get; set; }
     [ObservableProperty]
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
+    [ObservableProperty]
+    public partial bool IsEmptyData { get; set; } = true;
 
     public IRelayCommand OnClipboardWriteCommand { get; }
     public IRelayCommand OnClipboardSilentWriteCommand { get; }

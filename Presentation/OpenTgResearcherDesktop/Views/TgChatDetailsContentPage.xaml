@@ -21,7 +21,7 @@
                 Grid.Column="{x:Bind Direction, Converter={StaticResource EnumToColumnConverter}}"
                 Grid.ColumnSpan="{x:Bind Direction, Converter={StaticResource EnumToColumnSpanConverter}}"
                 Height="Auto"
-                Margin="4"
+                Margin="5"
                 Padding="10,0,0,10"
                 HorizontalAlignment="Stretch"
                 Background="{ThemeResource SystemColorBackgroundBrush}"
@@ -182,12 +182,11 @@
                 <!--  Empty data  -->
                 <TextBlock
                     x:Uid="FieldEmptyData"
-                    Grid.Row="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Visibility="{x:Bind ViewModel.EmptyData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <!--  Data  -->
-                <Grid>
+                <Grid Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />

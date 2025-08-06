@@ -20,8 +20,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
-    public partial bool EmptyData { get; set; } = true;
-    [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
     [ObservableProperty]
     public partial bool IsImageViewerVisible { get; set; }
@@ -107,7 +105,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     {
         Dto = new();
         UserDtos = [];
-        EmptyData = false;
+        IsEmptyData = false;
         await Task.CompletedTask;
     }
 
@@ -119,7 +117,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 
-            EmptyData = false;
+            IsEmptyData = false;
             ScrollRequested?.Invoke();
         }
         finally

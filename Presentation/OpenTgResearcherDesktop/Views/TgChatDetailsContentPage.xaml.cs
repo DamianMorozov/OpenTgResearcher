@@ -51,7 +51,6 @@ public sealed partial class TgChatDetailsContentPage
     private void OnFullScreenImageTapped(object sender, RoutedEventArgs e)
     {
         ViewModel.IsImageViewerVisible = false;
-        //ViewModel.EmptyData = !ViewModel.Messages.Any();
         FullScreenImage.Source = null;
         Bindings.Update();
     }

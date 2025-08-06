@@ -2158,7 +2158,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             else
             {
                 await MessageSaveAsync(tgDownloadSettings, message.ID, message.Date, 0, message.message, TgEnumMessageType.Message, threadNumber, isRetry: false,
-                    userId: messageBase.From.ID);
+                    userId: messageBase.From?.ID ?? 0);
             }
             await UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, message.ID, tgDownloadSettings.SourceVm.Dto.Count,
                 $"Reading the message {message.ID} from {tgDownloadSettings.SourceVm.Dto.Count}");

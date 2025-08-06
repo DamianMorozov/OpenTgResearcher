@@ -2354,7 +2354,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             //var fileReferenceBase64 = Convert.ToBase64String(photo.file_reference);
                             //var fileReferenceHex = BitConverter.ToString(photo.file_reference).Replace("-", "");
-                            await Client.DownloadFileAsync(photo, localFileStream, null,
+                            await Client.DownloadFileAsync(photo, localFileStream, (PhotoSizeBase?)null,
                                 ClientProgressForFile(tgDownloadSettings.SourceVm.Dto.Id, messageBase.ID, mediaInfo.LocalNameWithNumber, threadNumber));
                         }
                         break;

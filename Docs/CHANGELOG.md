@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Opened access to bot in `OpenTgResearcherConsole` for free license
 - Updated `Chats` and `Chat` pages in `OpenTgResearcherDesktop`
+- Updated NuGet packages
 
 ## [0.6.860] - 2025-08-03
 ### Fixed

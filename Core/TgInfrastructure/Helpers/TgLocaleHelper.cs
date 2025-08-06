@@ -239,6 +239,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetIsRewriteFiles => "Enable rewrite exists files";
 	public string MenuDownloadSetIsRewriteMessages => "Enable rewrite exists messages";
 	public string MenuDownloadSetIsSaveMessages => "Enable save messages";
+	public string MenuDownloadSetIsSubscribe => "Subscribe";
 	public string MenuDownloadSetSource => "Setup source (ID/username)";
 	public string MenuDownloadSetSourceFirstIdAuto => "Setup first ID auto";
 	public string MenuDownloadSetSourceFirstIdManual => "Setup first ID manual";

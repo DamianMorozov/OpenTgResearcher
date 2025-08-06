@@ -4,11 +4,12 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.870] - 2025-08-06
+## [0.6.880] - 2025-08-06
 ### Изменено
 - Открыт доступ к боту в `OpenTgResearcherConsole` для бесплатной лицензии
-- Обновлены страницы `Чаты` и `Чат` в `OpenTgResearcherDesktop`
 - Обновлены NuGet пакеты
+- Обновлены страницы `Чаты` и `Чат` в `OpenTgResearcherDesktop`
+- Обновлена таблица `Чаты` в `TgStorage`
 
 ## [0.6.860] - 2025-08-03
 ### Исправлено

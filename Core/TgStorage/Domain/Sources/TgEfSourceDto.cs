@@ -48,6 +48,8 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 	public partial bool IsFileNamingByMessage { get; set; }
 	[ObservableProperty]
 	public partial bool IsRestrictSavingContent { get; set; }
+	[ObservableProperty]
+	public partial bool IsSubscribe { get; set; }
 
 	public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";
 
@@ -87,6 +89,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsUserAccess = false;
 		IsFileNamingByMessage = false;
         IsRestrictSavingContent = false;
+        IsSubscribe = false;
 		IsDownload = false;
 		CurrentFileName = string.Empty;
 	}
@@ -145,6 +148,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		CurrentFileName = dto.CurrentFileName;
 		IsFileNamingByMessage = dto.IsFileNamingByMessage;
         IsRestrictSavingContent = dto.IsRestrictSavingContent;
+        IsSubscribe = dto.IsSubscribe;
 		return this;
 	}
 
@@ -167,6 +171,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsUserAccess = item.IsUserAccess;
 		IsFileNamingByMessage = item.IsFileNamingByMessage;
         IsRestrictSavingContent = item.IsRestrictSavingContent;
+        IsSubscribe = item.IsSubscribe;
 		return this;
 	}
 
@@ -190,6 +195,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsUserAccess = dto.IsUserAccess,
 		IsFileNamingByMessage = dto.IsFileNamingByMessage,
         IsRestrictSavingContent = dto.IsRestrictSavingContent,
+        IsSubscribe = dto.IsSubscribe,
 	};
 
 	public TgEfSourceEntity GetNewEntity() => new()
@@ -210,6 +216,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsUserAccess = IsUserAccess,
 		IsFileNamingByMessage = IsFileNamingByMessage,
         IsRestrictSavingContent = IsRestrictSavingContent,
+        IsSubscribe = IsSubscribe,
 	};
 
 	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;

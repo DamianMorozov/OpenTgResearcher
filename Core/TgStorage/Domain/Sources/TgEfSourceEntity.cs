@@ -20,6 +20,7 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(IsUserAccess))]
 [Index(nameof(IsFileNamingByMessage))]
 [Index(nameof(IsRestrictSavingContent))]
+[Index(nameof(IsSubscribe))]
 public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 {
 	#region Public and private fields, properties, constructor
@@ -114,6 +115,11 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
     [Column(TgEfConstants.ColumnIsRestrictSavingContent, TypeName = "BIT")]
     public bool IsRestrictSavingContent { get; set; }
 
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsSubscribe, TypeName = "BIT")]
+    public bool IsSubscribe { get; set; }
+
     public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
 
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
@@ -151,6 +157,7 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 	    IsUserAccess = this.GetDefaultPropertyBool(nameof(IsUserAccess));
 		IsFileNamingByMessage = this.GetDefaultPropertyBool(nameof(IsFileNamingByMessage));
         IsRestrictSavingContent = this.GetDefaultPropertyBool(nameof(IsRestrictSavingContent));
+        IsSubscribe = this.GetDefaultPropertyBool(nameof(IsSubscribe));
 	    Documents = [];
         Messages = [];
     }
@@ -175,6 +182,7 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
 		IsUserAccess = item.IsUserAccess;
 		IsFileNamingByMessage = item.IsFileNamingByMessage;
         IsRestrictSavingContent = item.IsRestrictSavingContent;
+        IsSubscribe = item.IsSubscribe;
         return this;
 	}
 

@@ -9,7 +9,7 @@ namespace TgStorage.Migrations.TgEfMemory
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
             modelBuilder.Entity("TgStorage.Domain.Apps.TgEfAppEntity", b =>
                 {
@@ -460,6 +460,11 @@ namespace TgStorage.Migrations.TgEfMemory
                         .HasColumnType("BIT")
                         .HasColumnName("IS_RESTRICT_SAVING_CONTENT");
 
+                    b.Property<bool>("IsSubscribe")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_SUBSCRIBE");
+
                     b.Property<bool>("IsUserAccess")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
@@ -501,6 +506,8 @@ namespace TgStorage.Migrations.TgEfMemory
                     b.HasIndex("IsFileNamingByMessage");
 
                     b.HasIndex("IsRestrictSavingContent");
+
+                    b.HasIndex("IsSubscribe");
 
                     b.HasIndex("IsUserAccess");
 

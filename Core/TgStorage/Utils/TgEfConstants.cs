@@ -62,6 +62,7 @@ public static class TgEfConstants
 	public const string ColumnIsEnabled = "IS_ENABLED";
 	public const string ColumnIsFileNamingByMessage = "IS_FILE_NAMING_BY_MESSAGE";
 	public const string ColumnIsRestrictSavingContent = "IS_RESTRICT_SAVING_CONTENT";
+	public const string ColumnIsSubscribe = "IS_SUBSCRIBE";
 	public const string ColumnIsUserAccess = "IS_USER_ACCESS";
 	public const string ColumnLangCode = "LANG_CODE";
 	public const string ColumnLastName = "LAST_NAME";

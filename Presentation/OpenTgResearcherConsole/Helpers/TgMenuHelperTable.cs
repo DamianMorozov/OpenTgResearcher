@@ -600,6 +600,10 @@ internal partial class TgMenuHelper
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsRestrictSavingContent)),
             GetMarkup(tgDownloadSettings.SourceVm.Dto.IsRestrictSavingContent.ToString()));
 
+        // Subscribe
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsSubscribe)),
+            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsSubscribe.ToString()));
+
         // Enabled filters
         var filters = (await BusinessLogicManager.StorageManager.FilterRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
             .Items.Where(f => f.IsEnabled);

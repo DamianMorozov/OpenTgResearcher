@@ -37,6 +37,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 	[ObservableProperty]
 	public partial bool IsRestrictSavingContent { get; set; }
 	[ObservableProperty]
+	public partial bool IsSubscribe { get; set; }
+	[ObservableProperty]
 	public partial bool IsDownload { get; set; }
 	[ObservableProperty]
 	public partial int ProgressPercent { get; set; }
@@ -103,6 +105,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		IsUserAccess = item.IsUserAccess;
 		IsFileNamingByMessage = item.IsFileNamingByMessage;
         IsRestrictSavingContent = item.IsRestrictSavingContent;
+        IsSubscribe = item.IsSubscribe;
 		ProgressPercent = item.Count == 0 ? 0 : item.FirstId * 100 / item.Count;
 		ProgressPercentString = ProgressPercent == 0 ? "{0:00.00} %" : $"{ProgressPercent:#00.00} %";
 		return this;
@@ -124,6 +127,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		IsUserAccess = dto.IsUserAccess,
 		IsFileNamingByMessage = dto.IsFileNamingByMessage,
         IsRestrictSavingContent = dto.IsRestrictSavingContent,
+        IsSubscribe = dto.IsSubscribe,
 	};
 
 	public TgEfSourceEntity GetNewEntity() => new()
@@ -140,6 +144,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		IsUserAccess = IsUserAccess,
 		IsFileNamingByMessage = IsFileNamingByMessage,
         IsRestrictSavingContent = IsRestrictSavingContent,
+        IsSubscribe = IsSubscribe,
 	};
 
 	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;

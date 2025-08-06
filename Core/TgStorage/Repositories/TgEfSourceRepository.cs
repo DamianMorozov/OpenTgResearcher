@@ -146,5 +146,22 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
         await EfContext.SaveChangesAsync();
     }
 
+    /// <inheritdoc />
+    public async Task SetIsSubscribe(bool isSubscribe)
+    {
+        await EfContext.Sources
+            .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsSubscribe, isSubscribe));
+        await EfContext.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task SetIsSubscribe(List<long> chatIds, bool isSubscribe)
+    {
+        await EfContext.Sources
+            .Where(x => chatIds.Contains(x.Id))
+            .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsSubscribe, isSubscribe));
+        await EfContext.SaveChangesAsync();
+    }
+
     #endregion
 }

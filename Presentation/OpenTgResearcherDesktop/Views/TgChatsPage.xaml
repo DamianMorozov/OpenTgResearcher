@@ -170,6 +170,23 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
+                                <!--  Is subscribe  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnIsSubscribe"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ToggleButton
+                                                Margin="2"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                IsChecked="{Binding IsSubscribe, Mode=OneWay}"
+                                                IsEnabled="False" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
                                 <!--  Is access  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnIsAccess"

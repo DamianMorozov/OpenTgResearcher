@@ -816,6 +816,9 @@
   <data name="TemplateColumnIsAccess.Header" xml:space="preserve">
     <value>Access</value>
   </data>
+  <data name="TemplateColumnIsSubscribe.Header" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
   <data name="TemplateColumnIsBot.Header" xml:space="preserve">
     <value>Bot</value>
   </data>
@@ -1157,6 +1160,9 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Naming media files by message</value>
+  </data>
+  <data name="FieldIsSubscribe.Text" xml:space="preserve">
+    <value>Subscribe</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Invite link</value>

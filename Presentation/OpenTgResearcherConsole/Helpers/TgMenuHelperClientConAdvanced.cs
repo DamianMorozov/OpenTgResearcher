@@ -122,6 +122,8 @@ internal partial class TgMenuHelper
 
     private async Task ClientAdvancedSearchAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgEnumSourceType sourceType)
     {
+        await ClientConnectAsync(tgDownloadSettings, isSilent: true);
+
         await ShowTableClientConAdvancedAsync(tgDownloadSettings);
         if (!BusinessLogicManager.ConnectClient.IsReady)
         {

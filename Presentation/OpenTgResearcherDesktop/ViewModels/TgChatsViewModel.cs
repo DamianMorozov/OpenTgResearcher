@@ -66,18 +66,20 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
     private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
 
-    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, bool isReadOnly = true) => 
+    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip) => 
         take > 0
             ? await App.BusinessLogicManager.StorageManager.SourceRepository
-                .GetQuery(isReadOnly)
-                .OrderBy(x => x.Title)
-                .OrderBy(x => x.UserName)
+                .GetQuery(isReadOnly: true)
+                .OrderByDescending(x => x.IsSubscribe)
+                .ThenBy(x => x.UserName)
+                .ThenBy(x => x.Title)
                 .Skip(skip).Take(take)
                 .Select(SelectLiteDto()).ToListAsync()
             : await App.BusinessLogicManager.StorageManager.SourceRepository
-                .GetQuery(isReadOnly)
-                .OrderBy(x => x.Title)
-                .OrderBy(x => x.UserName)
+                .GetQuery(isReadOnly: true)
+                .OrderByDescending(x => x.IsSubscribe)
+                .ThenBy(x => x.UserName)
+                .ThenBy(x => x.Title)
                 .Select(SelectLiteDto()).ToListAsync();
 
     private async Task LoadDataStorageCoreAsync()

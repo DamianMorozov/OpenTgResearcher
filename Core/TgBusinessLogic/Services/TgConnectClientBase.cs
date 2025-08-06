@@ -384,7 +384,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public async Task<Channel?> GetChannelAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         // Collect chats from Telegram.
-        if (!DicChatsAll.Any())
+        if (DicChatsAll.Count == 0)
             await CollectAllChatsAsync();
 
         if (tgDownloadSettings.SourceVm.Dto.IsReady)
@@ -427,7 +427,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public async Task<ChatBase?> GetChatBaseAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         // Collect chats from Telegram.
-        if (!DicChatsAll.Any())
+        if (DicChatsAll.Count == 0)
             await CollectAllChatsAsync();
 
         if (tgDownloadSettings.SourceVm.Dto.IsReady)
@@ -467,7 +467,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public async Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        if (!DicChatsAll.Any())
+        if (DicChatsAll.Count == 0)
             await CollectAllChatsAsync();
         if (tgDownloadSettings.SourceVm.Dto.IsReady)
         {
@@ -527,7 +527,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return [];
     }
 
-    public async Task CollectAllDialogsAsync()
+    public async Task<Dictionary<long, ChatBase>> CollectAllDialogsAsync()
     {
         switch (IsReady)
         {
@@ -535,9 +535,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     var messages = await Client.Messages_GetAllDialogs();
                     FillEnumerableChats(messages.chats);
-                    break;
+                    return messages.chats;
                 }
         }
+        return [];
     }
 
     //public async Task AddChatAsync(string userName)
@@ -589,7 +590,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             case true when Client is not null:
                 {
                     EnumerableUsers = [];
-                    if (chatIds is not null && chatIds.Any())
+                    if (chatIds is not null && chatIds.Count != 0)
                     {
                         foreach (var chatId in chatIds)
                         {
@@ -693,7 +694,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     try
                     {
-                        if (updateShort.Chats.Any())
+                        if (updateShort.Chats.Count != 0)
                         {
                             foreach (var chatBase in updateShort.Chats)
                             {
@@ -732,7 +733,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     try
                     {
-                        if (updates.Chats.Any())
+                        if (updates.Chats.Count != 0)
                         {
                             foreach (var chatBase in updates.Chats)
                             {
@@ -1229,6 +1230,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 if (botChatFullInfo.TLInfo is Messages_ChatFull { full_chat: ChannelFull channelFull })
                 {
                     //if (channelFull.slowmode_seconds > 0)
+                    sourceEntity.IsUserAccess = true;
+                    sourceEntity.IsSubscribe = true;
                     sourceEntity.UserName = botChatFullInfo.Username;
                     sourceEntity.Count = channelFull.read_outbox_max_id > 0 ? channelFull.read_outbox_max_id : channelFull.read_inbox_max_id;
                     sourceEntity.Title = botChatFullInfo.Title;
@@ -1243,6 +1246,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (tgDownloadSettings2.Chat.Base is { } chatBase && await IsChatBaseAccessAsync(chatBase))
             {
                 sourceEntity.IsUserAccess = true;
+                sourceEntity.IsSubscribe = true;
                 sourceEntity.UserName = chatBase.MainUsername ?? string.Empty;
                 // TODO: use smart method from scan chat
                 sourceEntity.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings);
@@ -1593,6 +1597,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task UpdateSourceTgAsync(ChatBase chatBase, int count, bool isUserAccess) =>
         await UpdateSourceTgCoreAsync(chatBase, string.Empty, count, isUserAccess);
 
+    /// <summary> Search sources from Telegram </summary>
     public async Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? chatIds = null)
     {
         if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
@@ -1602,9 +1607,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             switch (sourceType)
             {
                 case TgEnumSourceType.Chat:
-                    await DisableUserAccessForAllChatsAsync(chatIds);
+                    await SetUserAccessForAllChatsAsync(chatIds, isUserAccess: false);
+                    await SetSibscribeForAllChatsAsync(chatIds, isSubscribe: false);
                     await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectChats);
-                    await CollectAllChatsAsync();
+                    chatIds = [.. (await CollectAllChatsAsync()).Select(x => x.Key)];
+                    await SetSibscribeForAllChatsAsync(chatIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
                     // List groups
@@ -1613,9 +1620,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await SearchSourcesTgForChannelsAsync(tgDownloadSettings2, chatIds);
                     break;
                 case TgEnumSourceType.Dialog:
-                    await DisableUserAccessForAllChatsAsync(chatIds);
+                    await SetUserAccessForAllChatsAsync(chatIds, isUserAccess: false);
+                    await SetSibscribeForAllChatsAsync(chatIds, isSubscribe: false);
                     await UpdateStateSourceAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, tgDownloadSettings2.SourceVm.Dto.Count, TgLocale.CollectDialogs);
-                    await CollectAllDialogsAsync();
+                    chatIds = [.. (await CollectAllDialogsAsync()).Select(x => x.Key)];
+                    await SetSibscribeForAllChatsAsync(chatIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChatsAll.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
                     // List groups
@@ -1656,27 +1665,43 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await UpdateTitleAsync(string.Empty);
     }
 
-    /// <summary> Disable user access for all chats </summary>
-    private async Task DisableUserAccessForAllChatsAsync(List<long>? chatIds)
+    /// <summary> Set user access for all chats </summary>
+    private async Task SetUserAccessForAllChatsAsync(List<long>? chatIds, bool isUserAccess)
     {
         try
         {
             if (chatIds is null)
-                await StorageManager.SourceRepository.SetIsUserAccess(isUserAccess: false);
+                await StorageManager.SourceRepository.SetIsUserAccess(isUserAccess);
             else
-                await StorageManager.SourceRepository.SetIsUserAccess(chatIds, isUserAccess: false);
+                await StorageManager.SourceRepository.SetIsUserAccess(chatIds, isUserAccess);
         }
         catch (Exception ex)
         {
             TgLogUtils.WriteException(ex);
-            TgLog.MarkupWarning($"Error disabling user access for all chats: {ex.Message}");
+            TgLog.MarkupWarning($"Error set user access for all chats: {ex.Message}");
+        }
+    }
+
+    /// <summary> Set subscribe for all chats </summary>
+    private async Task SetSibscribeForAllChatsAsync(List<long>? chatIds, bool isSubscribe)
+    {
+        try
+        {
+            if (chatIds is null)
+                await StorageManager.SourceRepository.SetIsSubscribe(isSubscribe);
+            else
+                await StorageManager.SourceRepository.SetIsSubscribe(chatIds, isSubscribe);
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            TgLog.MarkupWarning($"Error set subscribe for all chats: {ex.Message}");
         }
     }
 
     private async Task SearchSourcesTgForChannelsAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<long>? chatIds)
     {
-        var channels = chatIds is not null && chatIds.Any()
-            ? EnumerableChannels.Where(x => chatIds.Contains(x.ID)) : EnumerableChannels;
+        var channels = chatIds is not null && chatIds.Count != 0 ? EnumerableChannels.Where(x => chatIds.Contains(x.ID)) : EnumerableChannels;
         foreach (var channel in channels)
         {
             tgDownloadSettings.SourceScanCurrent++;
@@ -1711,9 +1736,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task SearchSourcesTgForGroupsAsync(ITgDownloadViewModel tgDownloadSettings, List<long>? chatIds)
     {
-        var smallGroups = (chatIds is not null && chatIds.Any()) ? EnumerableSmallGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableSmallGroups;
-        var groups = (chatIds is not null && chatIds.Any()) ? EnumerableGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableGroups;
-        
+        var smallGroups = (chatIds is not null && chatIds.Count != 0) ? EnumerableSmallGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableSmallGroups;
+        var groups = (chatIds is not null && chatIds.Count != 0) ? EnumerableGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableGroups;
+
         await SearchSourcesTgForGroupsCoreAsync(tgDownloadSettings, smallGroups);
         await SearchSourcesTgForGroupsCoreAsync(tgDownloadSettings, groups);
     }
@@ -2437,7 +2462,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 return;
             // Other existing files
             var files = Directory.GetFiles(mediaInfo.LocalPathOnly, mediaInfo.LocalNameOnly).ToList();
-            if (!files.Any())
+            if (files.Count == 0)
                 return;
             foreach (var file in files)
             {
@@ -2529,7 +2554,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task MessageSaveAsync(ITgDownloadViewModel tgDownloadSettings)
     {
         BatchMessagesCount = 0;
-        if (!MessageEntities.Any()) return;
+        if (MessageEntities.Count == 0) return;
         if (tgDownloadSettings.IsSaveMessages)
             await StorageManager.MessageRepository.SaveListAsync(MessageEntities);
         MessageEntities.Clear();
@@ -2981,7 +3006,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 return inputChannel;
 
             long channelAccessHash = 0;
-            if (DicChatsAll.Any())
+            if (DicChatsAll.Count != 0)
             {
                 var chatBase = DicChatsAll.FirstOrDefault(x => x.Key == chatId).Value;
                 if (chatBase is TL.Channel channel)
@@ -3010,7 +3035,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (ChatCache.TryGetValue(chatId, out var chat))
                 return chat;
 
-            if (DicChatsAll.Any())
+            if (DicChatsAll.Count != 0)
             {
                 var chatBase = DicChatsAll.FirstOrDefault(x => x.Key == chatId).Value;
 

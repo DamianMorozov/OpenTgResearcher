@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated NuGet packages
 - Updated `Chats` and `Chat` pages in `OpenTgResearcherDesktop`
 - Updated `Chats` table in `TgStorage`
+### Added
+- Added `Subscription` field when scanning chats
+- Added `Subscription` field to `Chats` display
 
 ## [0.6.860] - 2025-08-03
 ### Fixed

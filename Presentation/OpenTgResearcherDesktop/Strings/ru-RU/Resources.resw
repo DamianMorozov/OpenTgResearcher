@@ -878,6 +878,9 @@
   <data name="TemplateColumnIsAccess.Header" xml:space="preserve">
     <value>Доступ</value>
   </data>
+  <data name="TemplateColumnIsSubscribe.Header" xml:space="preserve">
+    <value>Подписка</value>
+  </data>
   <data name="TemplateColumnIsBot.Header" xml:space="preserve">
     <value>Бот</value>
   </data>
@@ -1219,6 +1222,9 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Именование медиа-файлов по сообщению</value>
+  </data>
+  <data name="FieldIsSubscribe.Text" xml:space="preserve">
+    <value>Подписка</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Ссылка для приглашения</value>

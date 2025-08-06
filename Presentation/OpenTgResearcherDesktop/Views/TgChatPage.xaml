@@ -139,6 +139,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -260,7 +261,7 @@
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.Dto.IsActive, Mode=OneWay}" />
+                                IsOn="{x:Bind ViewModel.Dto.IsSourceActive, Mode=OneWay}" />
                             <!--  IsAutoUpdate  -->
                             <TextBlock
                                 x:Uid="FieldIsAutoUpdate"
@@ -276,15 +277,30 @@
                                 VerticalAlignment="Center"
                                 IsEnabled="False"
                                 IsOn="{x:Bind ViewModel.Dto.IsAutoUpdate, Mode=OneWay}" />
+                            <!--  IsSubscribe  -->
+                            <TextBlock
+                                x:Uid="FieldIsSubscribe"
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Margin="2,10,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsEnabled="False"
+                                IsOn="{x:Bind ViewModel.Dto.IsSubscribe, Mode=OneWay}" />
                             <!--  UserName  -->
                             <TextBlock
                                 x:Uid="FieldUserName"
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Margin="2"
@@ -294,7 +310,6 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
@@ -314,12 +329,12 @@
                             <!--  Title  -->
                             <TextBlock
                                 x:Uid="FieldTitle"
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Margin="2"
@@ -329,7 +344,6 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
@@ -349,12 +363,12 @@
                             <!--  About  -->
                             <TextBlock
                                 x:Uid="FieldAbout"
-                                Grid.Row="5"
+                                Grid.Row="6"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="5"
+                                Grid.Row="6"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Margin="2"
@@ -364,7 +378,6 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
@@ -384,12 +397,12 @@
                             <!--  Directory  -->
                             <TextBlock
                                 x:Uid="FieldDirectory"
-                                Grid.Row="6"
+                                Grid.Row="7"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="6"
+                                Grid.Row="7"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Margin="2"
@@ -400,14 +413,12 @@
                                 </Grid.ColumnDefinitions>
                                 <!--  Sensitive data  -->
                                 <TextBlock
-                                    Grid.Column="0"
                                     Margin="2,10,2,2"
                                     HorizontalAlignment="Stretch"
                                     HorizontalTextAlignment="Left"
                                     Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                                     Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                                 <TextBox
-                                    Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Text="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}"
@@ -426,12 +437,12 @@
                             <!--  FirstId  -->
                             <TextBlock
                                 x:Uid="FieldFirstId"
-                                Grid.Row="7"
+                                Grid.Row="8"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="7"
+                                Grid.Row="8"
                                 Grid.Column="1"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
@@ -440,7 +451,6 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Text="{x:Bind ViewModel.Dto.FirstId, Mode=TwoWay}" />
@@ -458,12 +468,12 @@
                             <!--  Count  -->
                             <TextBlock
                                 x:Uid="FieldCount"
-                                Grid.Row="7"
+                                Grid.Row="8"
                                 Grid.Column="2"
                                 Margin="12,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="7"
+                                Grid.Row="8"
                                 Grid.Column="3"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">

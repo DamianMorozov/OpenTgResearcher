@@ -101,6 +101,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    // TODO: Method isn't correct work
     public async Task SetAppLanguageAsync()
     {
         try

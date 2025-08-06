@@ -110,9 +110,10 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 
     public override string ToConsoleString() =>
         $"{Id,11} | " +
+        $"{(IsSubscribe ? "subscribe" : ""),-9} | " +
         $"{TgDataFormatUtils.GetFormatString(UserName, 25).TrimEnd(),-25} | " +
         $"{(IsUserAccess ? "access" : ""),-6} | " +
-        $"{(IsActive ? "active" : ""),-6} | " +
+        $"{(IsSourceActive ? "active" : ""),-6} | " +
         $"{(IsAutoUpdate ? "auto" : ""),-6} | " +
         $"{GetPercentCountString()} | " +
         $"{TgDataFormatUtils.GetFormatString(Title, 30).TrimEnd(),-30} | " +
@@ -120,6 +121,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 
     public override string ToConsoleHeaderString() =>
         $"{nameof(Id),11} | " +
+        $"Subscribe | " +
         $"{TgDataFormatUtils.GetFormatString(nameof(UserName), 25).TrimEnd(),-25} | " +
         $"Access | " +
         $"Active | " +

@@ -11,4 +11,8 @@ public interface ITgEfSourceRepository : ITgEfRepository<TgEfSourceEntity, TgEfS
     public Task SetIsUserAccess(bool isUserAccess);
     /// <summary> Set user access </summary>
     public Task SetIsUserAccess(List<long> chatIds, bool isUserAccess);
+    /// <summary> Set subscribe </summary>
+    public Task SetIsSubscribe(bool isSubscribe);
+    /// <summary> Set subscribe </summary>
+    public Task SetIsSubscribe(List<long> chatIds, bool isSubscribe);
 }

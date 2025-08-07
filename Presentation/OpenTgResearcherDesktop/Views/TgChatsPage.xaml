@@ -118,19 +118,35 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Filter  -->
+                    <!--  Filter by subscribe  -->
+                    <TextBlock
+                        x:Uid="FieldIsSubscribeFilter"
+                        Grid.Column="0"
+                        Margin="5,7,7,2"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Column="1"
+                        Margin="7,-7,-60,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsEnabled="True"
+                        IsOn="{x:Bind ViewModel.IsFilterBySubscribe, Mode=TwoWay}" />
+                    <!--  Filter word  -->
                     <TextBox
                         x:Uid="FieldFilter"
+                        Grid.Column="2"
                         Margin="0,0,5,10"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
                     <!--  Search  -->
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="3"
                         Margin="5,0,5,10"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
@@ -145,7 +161,7 @@
                     </Button>
                     <ScrollView
                         Grid.Row="1"
-                        Grid.ColumnSpan="2"
+                        Grid.ColumnSpan="4"
                         Margin="0,0,5,0"
                         VerticalScrollMode="Auto">
                         <!--  Data  -->
@@ -155,7 +171,7 @@
                             CanUserSortColumns="False"
                             DoubleTapped="{x:Bind ViewModel.DataGrid_DoubleTapped, Mode=OneWay}"
                             HeadersVisibility="Column"
-                            ItemsSource="{x:Bind ViewModel.FilteredDtos, Mode=OneWay}">
+                            ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
                                 <!--  ID  -->
                                 <controls:DataGridTemplateColumn x:Uid="TemplateColumnId" Width="Auto">

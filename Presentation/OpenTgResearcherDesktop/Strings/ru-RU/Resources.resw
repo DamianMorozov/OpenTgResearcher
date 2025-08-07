@@ -950,6 +950,9 @@
   <data name="TextBlockLoaded" xml:space="preserve">
     <value>Загружено</value>
   </data>
+  <data name="TextBlockSubscribed" xml:space="preserve">
+    <value>Подписано</value>
+  </data>
   <data name="TextBlockFiltered" xml:space="preserve">
     <value>Отфильтровано</value>
   </data>
@@ -1225,6 +1228,9 @@
   </data>
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Подписка</value>
+  </data>
+  <data name="FieldIsSubscribeFilter.Text" xml:space="preserve">
+    <value>Фильтр по подписке</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Ссылка для приглашения</value>

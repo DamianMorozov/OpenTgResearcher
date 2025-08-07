@@ -105,6 +105,7 @@ public static class TgResourceExtensions
 	public static string GetTableNameVersions() => "TableNameVersions".GetLocalizedResource();
 	public static string GetTextBlockFiltered() => "TextBlockFiltered".GetLocalizedResource();
 	public static string GetTextBlockLoaded() => "TextBlockLoaded".GetLocalizedResource();
+	public static string GetTextBlockSubscribed() => "TextBlockSubscribed".GetLocalizedResource();
 	public static string GetTextBlockTotalAmount() => "TextBlockTotalAmount".GetLocalizedResource();
 	public static string GetTgClientLoading() => "TgClientLoading".GetLocalizedResource();
 	public static string GetYesButton() => "YesButton".GetLocalizedResource();

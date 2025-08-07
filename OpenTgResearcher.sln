@@ -57,7 +57,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{49FCA776-C
 		Docs\ISSUE-RUS.md = Docs\ISSUE-RUS.md
 		Docs\ISSUE.md = Docs\ISSUE.md
 		LICENSE.md = LICENSE.md
-		Docs\RELEASES-RUS.md = Docs\RELEASES-RUS.md
 		Docs\RELEASES.md = Docs\RELEASES.md
 		Docs\SCREENSHOTS.md = Docs\SCREENSHOTS.md
 	EndProjectSection

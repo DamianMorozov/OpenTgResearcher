@@ -9,37 +9,41 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
     #region Public and private fields, properties, constructor
 
     [ObservableProperty]
-	public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
-	[ObservableProperty]
-	public partial ObservableCollection<TgEfSourceLiteDto> FilteredDtos { get; set; } = [];
-	[ObservableProperty]
-	public partial string LoadedDataStatistics { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string FilterText { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial int PageSize { get; set; } = 100;
-	[ObservableProperty]
-	public partial int CurrentSkip { get; set; }
-	[ObservableProperty]
-	public partial bool HasMoreItems { get; set; } = true;
-	[ObservableProperty]
-	public partial bool IsLoading { get; set; }
+    public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
     [ObservableProperty]
-    public partial int CountAll { get; set; }
+    public partial string LoadedDataStatistics { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string FilterText { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial int PageSize { get; set; } = 100;
+    [ObservableProperty]
+    public partial int CurrentSkip { get; set; }
+    [ObservableProperty]
+    public partial bool HasMoreItems { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; }
+    [ObservableProperty]
+    public partial bool IsFilterBySubscribe { get; set; } = true;
 
     public IRelayCommand ClearDataStorageCommand { get; }
-	public IRelayCommand UpdateOnlineCommand { get; }
-	public IRelayCommand SearchCommand { get; }
+    public IRelayCommand UpdateOnlineCommand { get; }
+    public IRelayCommand SearchCommand { get; }
     public IRelayCommand LazyLoadCommand { get; }
 
-    public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger) 
-		: base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
-	{
-		// Commands
-		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
-		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-		SearchCommand = new AsyncRelayCommand(SearchAsync);
+    public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger)
+        : base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
+    {
+        // Commands
+        ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+        UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
         LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, CanLoadMore);
+        SearchCommand = new AsyncRelayCommand(async () =>
+        {
+            CurrentSkip = 0;
+            HasMoreItems = true;
+            Dtos.Clear();
+            await LazyLoadAsync();
+        });
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
@@ -50,10 +54,10 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
     private bool CanLoadMore() => HasMoreItems && !IsLoading;
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-	{
-		await LoadDataStorageCoreAsync();
-		await ReloadUiAsync();
-	});
+    {
+        await LoadDataStorageCoreAsync();
+        await ReloadUiAsync();
+    });
 
     private async Task SetDisplaySensitiveAsync()
     {
@@ -66,41 +70,52 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
     private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
 
-    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip) => 
-        take > 0
-            ? await App.BusinessLogicManager.StorageManager.SourceRepository
-                .GetQuery(isReadOnly: true)
-                .OrderByDescending(x => x.IsSubscribe)
-                .ThenBy(x => x.UserName)
-                .ThenBy(x => x.Title)
-                .Skip(skip).Take(take)
-                .Select(SelectLiteDto()).ToListAsync()
-            : await App.BusinessLogicManager.StorageManager.SourceRepository
-                .GetQuery(isReadOnly: true)
-                .OrderByDescending(x => x.IsSubscribe)
-                .ThenBy(x => x.UserName)
-                .ThenBy(x => x.Title)
-                .Select(SelectLiteDto()).ToListAsync();
+    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, string filterText = "", bool isFilterBySubscribe = true)
+    {
+        var query = App.BusinessLogicManager.StorageManager.SourceRepository.GetQuery(isReadOnly: true);
+
+        // Apply subscription filter
+        if (isFilterBySubscribe)
+            query = query.Where(x => x.IsSubscribe);
+
+        // Apply text search
+        if (!string.IsNullOrWhiteSpace(filterText))
+        {
+            var trimmed = filterText.Trim();
+            //var comparison = StringComparison.InvariantCultureIgnoreCase;
+            query = query.Where(x =>
+                EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{trimmed}%") ||
+                EF.Functions.Like(x.UserName, $"%{trimmed}%") ||
+                EF.Functions.Like(x.Title, $"%{trimmed}%"));
+        }
+
+        // Order & pagination
+        query = query.OrderByDescending(x => x.IsSubscribe).ThenBy(x => x.UserName).ThenBy(x => x.Title);
+
+        if (skip > 0) query = query.Skip(skip);
+        if (take > 0) query = query.Take(take);
+
+        // Projection
+        return await query.Select(SelectLiteDto()).ToListAsync();
+    }
 
     private async Task LoadDataStorageCoreAsync()
-	{
-		if (!SettingsService.IsExistsAppStorage) return;
+    {
+        if (!SettingsService.IsExistsAppStorage) return;
 
         CurrentSkip = 0;
         HasMoreItems = true;
-        CountAll = 0;
         Dtos.Clear();
-        FilteredDtos.Clear();
-        
+
         await LazyLoadAsync();
-	}
+    }
 
     public async Task LazyLoadAsync() => await LoadDataAsync(async () =>
     {
         if (IsLoading || !HasMoreItems) return;
         IsLoading = true;
 
-        var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip);
+        var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe);
         if (newItems.Count < PageSize)
             HasMoreItems = false;
 
@@ -111,68 +126,49 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         }
 
         CurrentSkip += newItems.Count;
-        ApplyFilter();
 
         IsLoading = false;
         (LazyLoadCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
 
         // Update loaded data statistics
-        CountAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
-        LoadedDataStatistics = $"{TgResourceExtensions.GetTextBlockFiltered()} {FilteredDtos.Count} | {TgResourceExtensions.GetTextBlockLoaded()} {Dtos.Count} | {TgResourceExtensions.GetTextBlockTotalAmount()} {CountAll}";
+        var countAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
+        var countSubscribed = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe);
+        LoadedDataStatistics = 
+            $"{TgResourceExtensions.GetTextBlockFiltered()} {Dtos.Count} | " +
+            $"{TgResourceExtensions.GetTextBlockSubscribed()} {countSubscribed} | " +
+            $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     });
-
-    public void ApplyFilter()
-    {
-        if (string.IsNullOrWhiteSpace(FilterText))
-        {
-            FilteredDtos = new ObservableCollection<TgEfSourceLiteDto>(Dtos);
-        }
-        else
-        {
-            FilterText = FilterText.Trim();
-            var filtered = Dtos.Where(dto =>
-                dto.Id.ToString().Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||
-                dto.UserName.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase) ||
-                dto.Title.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase)
-                ).ToList();
-            FilteredDtos = new ObservableCollection<TgEfSourceLiteDto>(filtered);
-        }
-    }
 
     private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
 
-	private async Task ClearDataStorageCoreAsync()
-	{
-		Dtos.Clear();
-		FilteredDtos.Clear();
+    private async Task ClearDataStorageCoreAsync()
+    {
+        CurrentSkip = 0;
+        HasMoreItems = true;
+        Dtos.Clear();
         FilterText = string.Empty;
-		await Task.CompletedTask;
-	}
 
-	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
+        await Task.CompletedTask;
+    }
+
+    private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
 
     private async Task UpdateOnlineCoreAsync() => await LoadDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-        var chatIds = !string.IsNullOrEmpty(FilterText) ? FilteredDtos.Select(x => x.Id).ToList() : null;
+        var chatIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
         await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, chatIds);
-        await SearchAsync();
+        await LazyLoadAsync();
     });
 
     public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-	{
-		if (sender is not DataGrid dataGrid) return;
-		if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
+    {
+        if (sender is not DataGrid dataGrid) return;
+        if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
 
-		NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, dto.Uid);
-	}
+        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, dto.Uid);
+    }
 
-	private async Task SearchAsync()
-	{
-		ApplyFilter();
-		await Task.CompletedTask;
-	}
-
-	#endregion
+    #endregion
 }

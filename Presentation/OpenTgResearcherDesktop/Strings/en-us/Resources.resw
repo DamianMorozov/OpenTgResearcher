@@ -888,6 +888,9 @@
   <data name="TextBlockLoaded" xml:space="preserve">
     <value>Loaded</value>
   </data>
+  <data name="TextBlockSubscribed" xml:space="preserve">
+    <value>Subscribed</value>
+  </data>
   <data name="TextBlockFiltered" xml:space="preserve">
     <value>Filtered</value>
   </data>
@@ -1163,6 +1166,9 @@
   </data>
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Subscribe</value>
+  </data>
+  <data name="FieldIsSubscribeFilter.Text" xml:space="preserve">
+    <value>Filter by subscribe</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Invite link</value>

@@ -73,7 +73,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Core", "Core\OpenTgResearcherDesktop.Core\OpenTgResearcherDesktop.Core.csproj", "{F6A1AA94-9746-4F2A-9B1D-7A70F3F12E1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests.MSTest", "Tests\OpenTgResearcherDesktop.Tests.MSTest\OpenTgResearcherDesktop.Tests.MSTest.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests", "Tests\OpenTgResearcherDesktop.Tests.MSTest\OpenTgResearcherDesktop.Tests.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBusinessLogic", "Core\TgBusinessLogic\TgBusinessLogic.csproj", "{BC89CBA1-E87C-4256-90C1-7C472DA48361}"
 EndProject

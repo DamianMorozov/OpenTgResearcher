@@ -215,7 +215,7 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 	private async Task AppLoadCoreAsync()
 	{
 		var appResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
-		AppEntity = appResult.IsExists ? appResult.Item : new();
+		AppEntity = appResult.IsExists && appResult.Item is not null ? appResult.Item : new();
 
 		await ReloadUiAsync();
 	}
@@ -337,8 +337,7 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (sender is not TextBox textBox)
-			return;
+		if (sender is not TextBox textBox) return;
 		if (TgDataFormatUtils.ParseStringToGuid(textBox.Text) == Guid.Empty)
 		{
 			IsFieldsCheck = false;

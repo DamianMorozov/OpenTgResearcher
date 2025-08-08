@@ -205,7 +205,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	private async Task AppLoadCoreAsync()
 	{
 		var appResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
-		AppEntity = appResult.IsExists ? appResult.Item : new();
+		AppEntity = appResult.IsExists && appResult.Item is not null ? appResult.Item : new();
 
 		await ReloadUiAsync();
 	}

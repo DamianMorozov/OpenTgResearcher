@@ -12,46 +12,88 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
 	public TgEfDocumentRepository(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment) { }
 
-	#endregion
+    #endregion
 
-	#region Public and private methods
+    #region Public and private methods
 
-	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetAsync(TgEfDocumentEntity item, bool isReadOnly = true)
+    /// <inheritdoc />
+    public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetAsync(TgEfDocumentEntity item, bool isReadOnly = true)
 	{
-		try
-		{
-			// Find by Uid
-			var itemFind = await GetQuery(isReadOnly)
-				//.Where(x => x.Source != null && x.Uid == item.Uid)
-				.Where(x => x.Uid == item.Uid)
-				//.Include(x => x.Source)
-				.FirstOrDefaultAsync();
-			if (itemFind is not null)
-				return new(TgEnumEntityState.IsExists, itemFind);
-			// Find by SourceId and ID and MessageId
-			itemFind = await GetQuery(isReadOnly)
-				//.Where(x => x.Source != null && x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
-				.Where(x => x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
-				//.Include(x => x.Source)
-				.SingleOrDefaultAsync();
-			return itemFind is not null
-				? new(TgEnumEntityState.IsExists, itemFind)
-				: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists, item);
-		}
-#if DEBUG
-		catch (Exception ex)
-		{
-			Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-			Debug.WriteLine(ex.StackTrace);
-#else
-		catch (Exception)
-		{
-#endif
-			throw;
-		}
+		// Find by Uid
+		var itemFind = await GetQuery(isReadOnly)
+			.Where(x => x.Uid == item.Uid)
+			.FirstOrDefaultAsync();
+		if (itemFind is not null)
+			return new(TgEnumEntityState.IsExists, itemFind);
+		// Find by SourceId and ID and MessageId
+		itemFind = await GetQuery(isReadOnly)
+			.Where(x => x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
+			.SingleOrDefaultAsync();
+			
+        return itemFind is not null
+			? new(TgEnumEntityState.IsExists, itemFind)
+			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists);
 	}
 
-	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
+    /// <inheritdoc />
+    public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetByDtoAsync(TgEfDocumentDto dto, bool isReadOnly = true)
+	{
+		// Find by Uid
+		var itemFind = await GetQuery(isReadOnly)
+			.Where(x => x.Uid == dto.Uid)
+			.FirstOrDefaultAsync();
+		if (itemFind is not null)
+			return new(TgEnumEntityState.IsExists, itemFind);
+		// Find by SourceId and ID and MessageId
+		itemFind = await GetQuery(isReadOnly)
+			.Where(x => x.SourceId == dto.SourceId && x.Id == dto.Id && x.MessageId == dto.MessageId)
+			.SingleOrDefaultAsync();
+			
+        return itemFind is not null
+			? new(TgEnumEntityState.IsExists, itemFind)
+			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists);
+	}
+
+    /// <inheritdoc />
+    public override TgEfStorageResult<TgEfDocumentEntity> Get(TgEfDocumentEntity item, bool isReadOnly = true)
+	{
+		// Find by Uid
+		var itemFind = GetQuery(isReadOnly)
+			.Where(x => x.Uid == item.Uid)
+			.FirstOrDefault();
+		if (itemFind is not null)
+			return new(TgEnumEntityState.IsExists, itemFind);
+		// Find by SourceId and ID and MessageId
+		itemFind = GetQuery(isReadOnly)
+			.Where(x => x.SourceId == item.SourceId && x.Id == item.Id && x.MessageId == item.MessageId)
+			.SingleOrDefault();
+			
+        return itemFind is not null
+			? new(TgEnumEntityState.IsExists, itemFind)
+			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists);
+	}
+
+    /// <inheritdoc />
+    public override TgEfStorageResult<TgEfDocumentEntity> GetByDto(TgEfDocumentDto dto, bool isReadOnly = true)
+	{
+		// Find by Uid
+		var itemFind = GetQuery(isReadOnly)
+			.Where(x => x.Uid == dto.Uid)
+			.FirstOrDefault();
+		if (itemFind is not null)
+			return new(TgEnumEntityState.IsExists, itemFind);
+		// Find by SourceId and ID and MessageId
+		itemFind = GetQuery(isReadOnly)
+			.Where(x => x.SourceId == dto.SourceId && x.Id == dto.Id && x.MessageId == dto.MessageId)
+			.SingleOrDefault();
+			
+        return itemFind is not null
+			? new(TgEnumEntityState.IsExists, itemFind)
+			: new TgEfStorageResult<TgEfDocumentEntity>(TgEnumEntityState.NotExists);
+	}
+
+    /// <inheritdoc />
+    public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
 	{
 		IList<TgEfDocumentEntity> items = take > 0
 			? await GetQuery(isReadOnly)
@@ -63,7 +105,8 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
-	public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfDocumentEntity, bool>> where, bool isReadOnly = true)
+    /// <inheritdoc />
+    public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfDocumentEntity, bool>> where, bool isReadOnly = true)
 	{
 		IList<TgEfDocumentEntity> items = take > 0
 			? await GetQuery(isReadOnly).Where(where)
@@ -75,14 +118,17 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
+    /// <inheritdoc />
     public override async Task<int> GetCountAsync() => await EfContext.Documents.AsNoTracking().CountAsync();
 
+    /// <inheritdoc />
     public override async Task<int> GetCountAsync(Expression<Func<TgEfDocumentEntity, bool>> where) => await EfContext.Documents.AsNoTracking().Where(where).CountAsync();
 
     #endregion
 
     #region Public and private methods - Delete
 
+    /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfDocumentEntity>> DeleteAllAsync()
 	{
 		var storageResult = await GetListAsync(0, 0, isReadOnly: false);

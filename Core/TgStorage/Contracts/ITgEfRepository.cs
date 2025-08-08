@@ -11,17 +11,24 @@ public interface ITgEfRepository<TEfEntity, TDto>
 
     public IQueryable<TEfEntity> GetQuery(bool isReadOnly = true);
 
-	#endregion
+    #endregion
 
-	#region Public and private methods - Read
+    #region Public and private methods - Read
 
-	public Task<bool> CheckExistsAsync(TEfEntity item);
+    /// <summary> Check if the item exists in the storage </summary>
+    public Task<bool> CheckExistsAsync(TEfEntity item);
+    /// <summary> Check if the item exists in the storage </summary>
+	public Task<bool> CheckExistsByDtoAsync(TDto dto);
+    /// <summary> Check if the item exists in the storage </summary>
 	public bool CheckExists(TEfEntity item);
+    /// <summary> Check if the item exists in the storage </summary>
+	public bool CheckExistsByDto(TDto dto);
 	public Task<TgEfStorageResult<TEfEntity>> GetAsync(TEfEntity item, bool isReadOnly = true);
+	public Task<TgEfStorageResult<TEfEntity>> GetByDtoAsync(TDto dto, bool isReadOnly = true);
 	public Task<TEfEntity> GetItemAsync(TEfEntity item, bool isReadOnly = true);
 	public Task<TEfEntity> GetItemWhereAsync(Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
+    /// <summary> Get result of the item from the storage </summary>
 	public TgEfStorageResult<TEfEntity> Get(TEfEntity item, bool isReadOnly = true);
-	public TEfEntity GetItem(TEfEntity item, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetNewAsync(bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetNew(bool isReadOnly = true);
     public TEfEntity GetNewItem(bool isReadOnly = true);

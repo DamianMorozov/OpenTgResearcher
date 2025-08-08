@@ -265,7 +265,7 @@ internal partial class TgMenuHelper
         var firstId = tgDownloadSettings.SourceVm.Dto.FirstId;
         // Find by ID
         var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetAsync(new() { Id = tgDownloadSettings.SourceVm.Dto.Id });
-        if (storageResult.IsExists)
+        if (storageResult.IsExists && storageResult.Item is not null)
         {
             if (string.IsNullOrEmpty(directory))
                 directory = storageResult.Item.Directory;
@@ -283,7 +283,7 @@ internal partial class TgMenuHelper
         var directory = tgDownloadSettings.SourceVm.Dto.Directory;
         // Find by UserName
         var storageResult = await BusinessLogicManager.StorageManager.SourceRepository.GetAsync(new() { UserName = tgDownloadSettings.SourceVm.Dto.UserName });
-        if (storageResult.IsExists)
+        if (storageResult.IsExists && storageResult.Item is not null)
         {
             if (string.IsNullOrEmpty(directory))
                 directory = storageResult.Item.Directory;

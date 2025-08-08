@@ -433,17 +433,21 @@ internal partial class TgMenuHelper
                 // Proxy is found
                 else
                 {
-                    var proxyEntity = (await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item;
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
-                        GetMarkup(proxyEntity.Type.ToString()));
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
-                        GetMarkup(proxyEntity.HostName));
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
-                        GetMarkup(proxyEntity.Port.ToString()));
-                    if (Equals(proxyEntity.Type, TgEnumProxyType.MtProto))
-                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
-                            GetMarkup(proxyEntity.Secret));
+                    var storageResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
+                    if (storageResult.IsExists && storageResult.Item is not null)
+                    {
+                        var proxyEntity = storageResult.Item;
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
+                            GetMarkup(proxyEntity.Type.ToString()));
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
+                            GetMarkup(proxyEntity.HostName));
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
+                            GetMarkup(proxyEntity.Port.ToString()));
+                        if (Equals(proxyEntity.Type, TgEnumProxyType.MtProto))
+                            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
+                                GetMarkup(proxyEntity.Secret));
+                    }
                 }
             }
 
@@ -519,15 +523,15 @@ internal partial class TgMenuHelper
                 else
                 {
                     table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySetup)), GetMarkup(TgLocale.SettingsIsOk));
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type.ToString()));
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.HostName));
-                    table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)),
-                        GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Port.ToString()));
-                    if (Equals((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Type, TgEnumProxyType.MtProto))
-                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)),
-                            GetMarkup((await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid)).Item.Secret));
+                    var storageResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetCurrentProxyAsync(appDto.ProxyUid);
+                    if (storageResult.IsExists && storageResult.Item is not null)
+                    {
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyType)), GetMarkup(storageResult.Item.Type.ToString()));
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyHostName)), GetMarkup(storageResult.Item.HostName));
+                        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxyPort)), GetMarkup(storageResult.Item.Port.ToString()));
+                        if (Equals(storageResult.Item.Type, TgEnumProxyType.MtProto))
+                            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgClientProxySecret)), GetMarkup(storageResult.Item.Secret));
+                    }
                 }
             }
 
@@ -588,7 +592,7 @@ internal partial class TgMenuHelper
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
             GetMarkup(tgDownloadSettings.SourceVm.Dto.IsAutoUpdate.ToString()));
 
-        // Enable creating subdirectories
+        // Creating subdirectories
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsCreatingSubdirectories)),
             GetMarkup(tgDownloadSettings.SourceVm.Dto.IsCreatingSubdirectories.ToString()));
 

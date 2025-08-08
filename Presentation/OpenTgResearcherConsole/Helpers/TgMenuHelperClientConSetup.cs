@@ -139,12 +139,16 @@ internal partial class TgMenuHelper
         if (!storageResult.IsExists)
             await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxy);
         proxy = (await BusinessLogicManager.StorageManager.ProxyRepository.GetAsync(
-            new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false)).Item;
+            new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false)).Item ?? new();
 
-        var appEntity = (await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false)).Item;
-        appEntity.ProxyUid = proxy.Uid;
-        await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
-
+        var storageResultApp = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
+        if (storageResultApp.IsExists && storageResultApp.Item is not null)
+        {
+            var appEntity = storageResultApp.Item;
+            appEntity.ProxyUid = storageResultApp.Item.Uid;
+            await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
+        }
+        
         return proxy;
     }
 
@@ -203,7 +207,7 @@ internal partial class TgMenuHelper
     private string? ConfigClientConsole(string what)
     {
         var appNew = BusinessLogicManager.StorageManager.AppRepository.GetNewItem();
-        var app = BusinessLogicManager.StorageManager.AppRepository.GetCurrentApp(isReadOnly: false).Item;
+        var app = BusinessLogicManager.StorageManager.AppRepository.GetCurrentApp(isReadOnly: false).Item ?? new();
         switch (what)
         {
             case "api_hash":

@@ -136,35 +136,45 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         return storageResult.IsExists;
     }
 
-    public virtual bool CheckExists(TEfEntity item) =>
-        throw new NotImplementedException(TgConstants.UseOverrideMethod);
+    public virtual async Task<bool> CheckExistsByDtoAsync(TDto dto)
+    {
+        var storageResult = await GetByDtoAsync(dto, isReadOnly: true);
+        return storageResult.IsExists;
+    }
+
+    public virtual bool CheckExists(TEfEntity item)
+    {
+        var storageResult = Get(item, isReadOnly: true);
+        return storageResult.IsExists;
+    }
+
+    public virtual bool CheckExistsByDto(TDto dto)
+    {
+        var storageResult = GetByDto(dto, isReadOnly: true);
+        return storageResult.IsExists;
+    }
 
     public virtual async Task<TgEfStorageResult<TEfEntity>> GetAsync(TEfEntity item, bool isReadOnly = true) =>
         await UseOverrideMethodAsync();
 
+    public virtual async Task<TgEfStorageResult<TEfEntity>> GetByDtoAsync(TDto dto, bool isReadOnly = true) =>
+        await UseOverrideMethodAsync();
+
+    public virtual TgEfStorageResult<TEfEntity> Get(TEfEntity item, bool isReadOnly = true) =>
+        throw new NotImplementedException(TgConstants.UseOverrideMethod);
+
+    public virtual TgEfStorageResult<TEfEntity> GetByDto(TDto dto, bool isReadOnly = true) =>
+        throw new NotImplementedException(TgConstants.UseOverrideMethod);
+
     public virtual async Task<TEfEntity> GetItemAsync(TEfEntity item, bool isReadOnly = true) =>
-        (await GetAsync(item, isReadOnly)).Item;
+        (await GetAsync(item, isReadOnly)).Item ?? item;
 
     public async Task<TEfEntity> GetItemWhereAsync(Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true) =>
         await GetQuery(isReadOnly).FirstOrDefaultAsync(where) ?? new();
 
-    public TgEfStorageResult<TEfEntity> Get(TEfEntity item, bool isReadOnly = true)
-    {
-        var task = GetAsync(item, isReadOnly);
-        task.Wait();
-        return task.Result;
-    }
-
-    public TEfEntity GetItem(TEfEntity item, bool isReadOnly = true)
-    {
-        var task = GetItemAsync(item, isReadOnly);
-        task.Wait();
-        return task.Result;
-    }
-
     public virtual async Task<TgEfStorageResult<TEfEntity>> GetNewAsync(bool isReadOnly = true) => await GetAsync(new(), isReadOnly);
 
-    public virtual async Task<TEfEntity> GetNewItemAsync(bool isReadOnly = true) => (await GetNewAsync(isReadOnly)).Item;
+    public virtual async Task<TEfEntity> GetNewItemAsync(bool isReadOnly = true) => (await GetNewAsync(isReadOnly)).Item ?? new();
 
     public TgEfStorageResult<TEfEntity> GetNew(bool isReadOnly = true)
     {
@@ -371,9 +381,9 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                 // Load actual entity
                 storageResult = await GetAsync(item, isReadOnly: false);
                 // Entity is not exists - Create
-                if (!storageResult.IsExists)
+                if (!storageResult.IsExists || storageResult.Item is null)
                 {
-                    //
+                    storageResult.Item = item;
                 }
                 // Entity is existing - Update
                 else
@@ -539,14 +549,15 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         try
         {
             storageResult = await GetAsync(item, isReadOnly: false);
-            // Create.
-            if (!storageResult.IsExists)
+            // Create
+            if (!storageResult.IsExists || storageResult.Item is null)
             {
-                TgGlobalTools.Normilize(storageResult.Item);
-                await EfContext.AddItemAsync(storageResult.Item);
+                TgGlobalTools.Normilize(item);
+                await EfContext.AddItemAsync(item);
                 await EfContext.SaveChangesAsync();
+                storageResult.Item = item;
             }
-            // Update.
+            // Update
             else
             {
                 storageResult.Item.Copy(item, false);
@@ -625,7 +636,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             try
             {
                 var storageResult = await GetAsync(item, isReadOnly: false);
-                if (!storageResult.IsExists)
+                if (!storageResult.IsExists || storageResult.Item is null)
                     return storageResult;
                 EfContext.RemoveItem(storageResult.Item);
                 await EfContext.SaveChangesAsync();
@@ -650,7 +661,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     public virtual async Task<TgEfStorageResult<TEfEntity>> DeleteNewAsync()
     {
         var storageResult = await GetNewAsync(isReadOnly: false);
-        return storageResult.IsExists
+        return storageResult.IsExists && storageResult.Item is not null
             ? await DeleteAsync(storageResult.Item)
             : new(TgEnumEntityState.NotDeleted);
     }

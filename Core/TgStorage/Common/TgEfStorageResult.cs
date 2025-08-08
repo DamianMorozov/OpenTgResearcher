@@ -11,7 +11,7 @@ public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfE
 
 	public TgEnumEntityState State { get; set; }
 
-	public TEfEntity Item { get; set; }
+	public TEfEntity? Item { get; set; }
 
 	public IEnumerable<TEfEntity> Items { get; set; }
 
@@ -20,14 +20,12 @@ public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfE
 	public TgEfStorageResult()
 	{
 		State = TgEnumEntityState.Unknown;
-		Item = new();
 		Items = [];
 	}
 
 	public TgEfStorageResult(TgEnumEntityState state)
 	{
 		State = state;
-		Item = new();
 		Items = [];
 	}
 
@@ -41,15 +39,14 @@ public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfE
 	public TgEfStorageResult(TgEnumEntityState state, IEnumerable<TEfEntity>? items)
 	{
 		State = state;
-		Item = new();
-		Items = items ?? new List<TEfEntity>();
+		Items = items ?? [];
 	}
 
 	#endregion
 
 	#region Public and private methods
 
-	public string ToDebugString() => $"{State} | {Item.Uid} | {Items.Count()}";
+	public string ToDebugString() => Item is not null ? $"{State} | {Item.Uid} | {Items.Count()}" : $"{State} | {Items.Count()}";
 
 	#endregion
 }

@@ -1229,8 +1229,17 @@
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Подписка</value>
   </data>
-  <data name="FieldIsSubscribeFilter.Text" xml:space="preserve">
+  <data name="FieldFilterBySubscribe.Text" xml:space="preserve">
     <value>Фильтр по подписке</value>
+  </data>
+  <data name="FieldFilterById.Text" xml:space="preserve">
+    <value>Фильтр по ИД</value>
+  </data>
+  <data name="FieldFilterByUserName.Text" xml:space="preserve">
+    <value>Фильтр по имени</value>
+  </data>
+  <data name="FieldFilterByTitle.Text" xml:space="preserve">
+    <value>Фильтр по заголовку</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Ссылка для приглашения</value>
@@ -1255,6 +1264,9 @@
   </data>
   <data name="FieldTtlPeriod.Text" xml:space="preserve">
     <value>Период ожидания</value>
+  </data>
+  <data name="FieldTextForFilter.Text" xml:space="preserve">
+    <value>Текст для фильтра</value>
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Введите текст для фильтрации</value>

@@ -1167,8 +1167,17 @@
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Subscribe</value>
   </data>
-  <data name="FieldIsSubscribeFilter.Text" xml:space="preserve">
+  <data name="FieldFilterBySubscribe.Text" xml:space="preserve">
     <value>Filter by subscribe</value>
+  </data>
+  <data name="FieldFilterById.Text" xml:space="preserve">
+    <value>Filter by ID</value>
+  </data>
+  <data name="FieldFilterByUserName.Text" xml:space="preserve">
+    <value>Filter by user name</value>
+  </data>
+  <data name="FieldFilterByTitle.Text" xml:space="preserve">
+    <value>Filter by title</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Invite link</value>
@@ -1196,6 +1205,9 @@
   </data>
   <data name="FieldFilter.PlaceholderText" xml:space="preserve">
     <value>Enter the text to filter</value>
+  </data>
+  <data name="FieldTextForFilter.Text" xml:space="preserve">
+    <value>Text for filter</value>
   </data>
   <data name="FieldLastSeenAgo.Text" xml:space="preserve">
     <value>Last seen ago</value>

@@ -24,6 +24,12 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
     public partial bool IsLoading { get; set; }
     [ObservableProperty]
     public partial bool IsFilterBySubscribe { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsFilterById { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsFilterByUserName { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsFilterByTitle { get; set; } = true;
 
     public IRelayCommand ClearDataStorageCommand { get; }
     public IRelayCommand UpdateOnlineCommand { get; }
@@ -70,7 +76,8 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
     private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectLiteDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
 
-    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, string filterText = "", bool isFilterBySubscribe = true)
+    public async Task<List<TgEfSourceLiteDto>> GetListLiteDtosAsync(int take, int skip, string filterText = "", 
+        bool isFilterBySubscribe = true, bool isFilterById = true, bool isFilterByUserName = true, bool isFilterByTitle = true)
     {
         var query = App.BusinessLogicManager.StorageManager.SourceRepository.GetQuery(isReadOnly: true);
 
@@ -82,11 +89,30 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         if (!string.IsNullOrWhiteSpace(filterText))
         {
             var trimmed = filterText.Trim();
-            //var comparison = StringComparison.InvariantCultureIgnoreCase;
-            query = query.Where(x =>
-                EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{trimmed}%") ||
-                EF.Functions.Like(x.UserName, $"%{trimmed}%") ||
-                EF.Functions.Like(x.Title, $"%{trimmed}%"));
+
+            // Build predicate
+            var predicates = new List<Expression<Func<TgEfSourceEntity, bool>>>();
+            if (isFilterById)
+                predicates.Add(x => EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{trimmed}%"));
+            if (isFilterByUserName)
+                predicates.Add(x => EF.Functions.Like(x.UserName, $"%{trimmed}%"));
+            if (isFilterByTitle)
+                predicates.Add(x => EF.Functions.Like(x.Title, $"%{trimmed}%"));
+            if (predicates.Count > 0)
+            {
+                var param = Expression.Parameter(typeof(TgEfSourceEntity), "x");
+                Expression? body = null;
+                foreach (var p in predicates)
+                {
+                    var invoked = Expression.Invoke(p, param);
+                    body = body == null ? invoked : Expression.OrElse(body, invoked);
+                }
+                if (body is not null)
+                {
+                    var combined = Expression.Lambda<Func<TgEfSourceEntity, bool>>(body, param);
+                    query = query.Where(combined);
+                }
+            }
         }
 
         // Order & pagination
@@ -115,7 +141,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         if (IsLoading || !HasMoreItems) return;
         IsLoading = true;
 
-        var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe);
+        var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe, IsFilterById, IsFilterByUserName, IsFilterByTitle);
         if (newItems.Count < PageSize)
             HasMoreItems = false;
 

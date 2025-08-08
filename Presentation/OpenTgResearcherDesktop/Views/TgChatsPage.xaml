@@ -115,9 +115,12 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
@@ -125,29 +128,70 @@
                     </Grid.ColumnDefinitions>
                     <!--  Filter by subscribe  -->
                     <TextBlock
-                        x:Uid="FieldIsSubscribeFilter"
-                        Grid.Column="0"
-                        Margin="5,7,7,2"
+                        x:Uid="FieldFilterBySubscribe"
+                        Margin="5,0,5,5"
                         TextAlignment="Left" />
                     <ToggleSwitch
                         Grid.Column="1"
-                        Margin="7,-7,-60,0"
+                        Margin="5,-10,-65,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        IsEnabled="True"
                         IsOn="{x:Bind ViewModel.IsFilterBySubscribe, Mode=TwoWay}" />
-                    <!--  Filter word  -->
+                    <!--  Filter by Id  -->
+                    <TextBlock
+                        x:Uid="FieldFilterById"
+                        Grid.Column="2"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Column="3"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
+                    <Grid />
+                    <!--  Filter by UserName  -->
+                    <TextBlock
+                        x:Uid="FieldFilterByUserName"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterByUserName, Mode=TwoWay}" />
+                    <!--  Filter by Title  -->
+                    <TextBlock
+                        x:Uid="FieldFilterByTitle"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterByTitle, Mode=TwoWay}" />
+                    <!--  Text for filter  -->
                     <TextBox
                         x:Uid="FieldFilter"
-                        Grid.Column="2"
-                        Margin="0,0,5,10"
+                        Grid.RowSpan="2"
+                        Grid.Column="4"
+                        Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <!--  Search  -->
                     <Button
-                        Grid.Column="3"
-                        Margin="5,0,5,10"
+                        Grid.RowSpan="2"
+                        Grid.Column="5"
+                        Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Command="{x:Bind ViewModel.SearchCommand}">
@@ -159,9 +203,10 @@
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+                    <!--  Chats table  -->
                     <ScrollView
-                        Grid.Row="1"
-                        Grid.ColumnSpan="4"
+                        Grid.Row="2"
+                        Grid.ColumnSpan="7"
                         Margin="0,0,5,0"
                         VerticalScrollMode="Auto">
                         <!--  Data  -->

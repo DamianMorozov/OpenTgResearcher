@@ -13,7 +13,7 @@ public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEnti
 	[ObservableProperty]
 	public partial long Id { get; set; }
 	[ObservableProperty]
-	public partial long MessageId { get; set; }
+	public partial int MessageId { get; set; }
 	[ObservableProperty]
 	public partial string FileName { get; set; } = string.Empty;
 	[ObservableProperty]

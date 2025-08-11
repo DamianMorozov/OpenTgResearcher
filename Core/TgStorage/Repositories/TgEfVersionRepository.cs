@@ -134,7 +134,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
     #region Public and private methods - ITgEfVersionRepository
 
     /// <inheritdoc />
-    public short LastVersion => 44;
+    public short LastVersion => 45;
 
     /// <inheritdoc />
     public async Task<TgEfVersionEntity> GetLastVersionAsync()
@@ -291,6 +291,9 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
                     break;
                 case 43:
                     await SaveAsync(new() { Version = 44, Description = "Updated sources table" });
+                    break;
+                case 44:
+                    await SaveAsync(new() { Version = 45, Description = "Updated messages table" });
                     break;
             }
             if (versionLast.Version >= LastVersion)

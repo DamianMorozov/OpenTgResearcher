@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfBlazor
 {
     [DbContext(typeof(TgEfBlazorContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20250809053256_UpdatedMessages_AddedPerentId")]
+    partial class UpdatedMessages_AddedPerentId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");

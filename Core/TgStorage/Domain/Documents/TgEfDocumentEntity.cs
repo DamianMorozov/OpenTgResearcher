@@ -42,8 +42,8 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
 
     [DefaultValue(0)]
     [ConcurrencyCheck]
-    [Column(TgEfConstants.ColumnMessageId, TypeName = "LONG(20)")]
-    public long MessageId { get; set; }
+    [Column(TgEfConstants.ColumnMessageId, TypeName = "INT")]
+    public int MessageId { get; set; }
 
     [DefaultValue("")]
     [ConcurrencyCheck]
@@ -77,7 +77,7 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
 	    Id = this.GetDefaultPropertyLong(nameof(Id));
-	    MessageId = this.GetDefaultPropertyLong(nameof(MessageId));
+	    MessageId = this.GetDefaultPropertyInt(nameof(MessageId));
 	    FileName = this.GetDefaultPropertyString(nameof(FileName));
 	    FileSize = this.GetDefaultPropertyLong(nameof(FileSize));
 	    AccessHash = this.GetDefaultPropertyLong(nameof(AccessHash));

@@ -23,9 +23,13 @@ public interface ITgEfRepository<TEfEntity, TDto>
 	public bool CheckExists(TEfEntity item);
     /// <summary> Check if the item exists in the storage </summary>
 	public bool CheckExistsByDto(TDto dto);
+    /// <summary> Get result of the item from the storage </summary>
 	public Task<TgEfStorageResult<TEfEntity>> GetAsync(TEfEntity item, bool isReadOnly = true);
+    /// <summary> Get result of the item from the storage </summary>
 	public Task<TgEfStorageResult<TEfEntity>> GetByDtoAsync(TDto dto, bool isReadOnly = true);
+    /// <summary> Get item from the storage </summary>
 	public Task<TEfEntity> GetItemAsync(TEfEntity item, bool isReadOnly = true);
+    /// <summary> Get item from the storage </summary>
 	public Task<TEfEntity> GetItemWhereAsync(Expression<Func<TEfEntity, bool>> where, bool isReadOnly = true);
     /// <summary> Get result of the item from the storage </summary>
 	public TgEfStorageResult<TEfEntity> Get(TEfEntity item, bool isReadOnly = true);

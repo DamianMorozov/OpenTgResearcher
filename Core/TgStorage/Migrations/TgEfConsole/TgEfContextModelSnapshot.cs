@@ -117,9 +117,9 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("LONG(20)")
                         .HasColumnName("ID");
 
-                    b.Property<long>("MessageId")
+                    b.Property<int>("MessageId")
                         .IsConcurrencyToken()
-                        .HasColumnType("LONG(20)")
+                        .HasColumnType("INT")
                         .HasColumnName("MESSAGE_ID");
 
                     b.Property<long>("SourceId")
@@ -271,9 +271,9 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("DATETIME")
                         .HasColumnName("DT_CREATED");
 
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .IsConcurrencyToken()
-                        .HasColumnType("LONG(20)")
+                        .HasColumnType("INT")
                         .HasColumnName("ID");
 
                     b.Property<bool>("IsDeleted")
@@ -286,6 +286,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .IsRequired()
                         .HasColumnType("NVARCHAR(100)")
                         .HasColumnName("MESSAGE");
+
+                    b.Property<int>("ParentId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT")
+                        .HasColumnName("PARENT_ID");
 
                     b.Property<long>("Size")
                         .IsConcurrencyToken()

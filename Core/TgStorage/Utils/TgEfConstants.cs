@@ -74,6 +74,7 @@ public static class TgEfConstants
 	public const string ColumnMessageId = "MESSAGE_ID";
 	public const string ColumnName = "NAME";
 	public const string ColumnOffset = "OFFSET";
+	public const string ColumnParentId = "PARENT_ID";
 	public const string ColumnPassword = "PASSWORD";
 	public const string ColumnPhoneNumber = "PHONE_NUMBER";
 	public const string ColumnPort = "PORT";

@@ -14,7 +14,9 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
     [ObservableProperty]
 	public partial long SourceId { get; set; }
 	[ObservableProperty]
-	public partial long Id { get; set; }
+	public partial int Id { get; set; }
+	[ObservableProperty]
+	public partial int ParentId { get; set; }
 	[ObservableProperty]
 	public partial TgEnumMessageType Type { get; set; }
 	[ObservableProperty]
@@ -133,6 +135,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		DtCreated = item.DtCreated;
 		SourceId = item.SourceId;
 		Id = item.Id;
+		ParentId = item.ParentId;
         Type = item.Type;
 		Size = item.Size;
 		Message = item.Message;
@@ -151,6 +154,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		DtCreated = dto.DtCreated,
 		SourceId = dto.SourceId,
 		Id = dto.Id,
+        ParentId = dto.ParentId,
 		Type = dto.Type,
 		Size = dto.Size,
 		Message = dto.Message,
@@ -164,6 +168,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		DtCreated = DtCreated,
 		SourceId = SourceId,
 		Id = Id,
+        ParentId = ParentId,
 		Type = Type,
 		Size = Size,
 		Message = Message,

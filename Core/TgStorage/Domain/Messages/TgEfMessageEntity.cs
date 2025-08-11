@@ -37,10 +37,15 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 
 	[DefaultValue(0)]
     [ConcurrencyCheck]
-    [Column(TgEfConstants.ColumnId, TypeName = "LONG(20)")]
-    public long Id { get; set; }
+    [Column(TgEfConstants.ColumnId, TypeName = "INT")]
+    public int Id { get; set; }
 
-	[DefaultValue("0001-01-01 00:00:00")]
+    [DefaultValue(0)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnParentId, TypeName = "INT")]
+    public int ParentId { get; set; }
+
+    [DefaultValue("0001-01-01 00:00:00")]
 	[ConcurrencyCheck]
     [Column(TgEfConstants.ColumnDtCreated, TypeName = "DATETIME")]
     public DateTime DtCreated { get; set; }
@@ -83,7 +88,8 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
-		Id = this.GetDefaultPropertyLong(nameof(Id));
+		Id = this.GetDefaultPropertyInt(nameof(Id));
+        ParentId = this.GetDefaultPropertyInt(nameof(ParentId));
 	    DtCreated = this.GetDefaultPropertyDateTime(nameof(DtCreated));
 		Type = this.GetDefaultPropertyGeneric<TgEnumMessageType>(nameof(Type));
 	    Size = this.GetDefaultPropertyLong(nameof(Size));
@@ -98,6 +104,7 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 			Uid = item.Uid;
 		SourceId = item.SourceId;
 		Id = item.Id;
+        ParentId = item.ParentId;
 		DtCreated = item.DtCreated > DateTime.MinValue ? item.DtCreated : DateTime.Now;
 		Type = item.Type;
 		Size = item.Size;

@@ -34,8 +34,10 @@ public interface ITgEfContext : IDisposable
 	public DbSet<TgEfLicenseEntity> Licenses { get; set; }
 	/// <summary> Message queries </summary>
 	public DbSet<TgEfMessageEntity> Messages { get; set; }
-	/// <summary> Proxy queries </summary>
-	public DbSet<TgEfProxyEntity> Proxies { get; set; }
+    /// <summary> Messages relations queries </summary>
+    public DbSet<TgEfMessageRelationEntity> MessagesRelations { get; set; }
+    /// <summary> Proxy queries </summary>
+    public DbSet<TgEfProxyEntity> Proxies { get; set; }
 	/// <summary> Source queries </summary>
 	public DbSet<TgEfSourceEntity> Sources { get; set; }
 	/// <summary> Stories queries </summary>

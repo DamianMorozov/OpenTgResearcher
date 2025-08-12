@@ -21,10 +21,6 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnApiHash, TypeName = "CHAR(36)")]
@@ -79,7 +75,7 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
     [Column(TgEfConstants.ColumnUseClient, TypeName = "BIT")]
     public bool UseClient { get; set; }
     
-    public TgEfAppEntity() : base()
+    public TgEfAppEntity()
     {
 	    Default();
     }

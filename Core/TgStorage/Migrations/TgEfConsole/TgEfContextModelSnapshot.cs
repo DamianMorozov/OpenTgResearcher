@@ -61,6 +61,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("CHAR(36)")
                         .HasColumnName("PROXY_UID");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<bool>("UseBot")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
@@ -72,6 +77,8 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnName("USE_CLIENT");
 
                     b.HasKey("Uid");
+
+                    b.HasAlternateKey("ApiHash");
 
                     b.HasIndex("ApiHash")
                         .IsUnique();
@@ -121,6 +128,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .IsConcurrencyToken()
                         .HasColumnType("INT")
                         .HasColumnName("MESSAGE_ID");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
 
                     b.Property<long>("SourceId")
                         .IsConcurrencyToken()
@@ -178,6 +190,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("NVARCHAR(128)")
                         .HasColumnName("NAME");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<long>("Size")
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")
@@ -230,6 +247,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("INT(1)")
                         .HasColumnName("LICENSE_TYPE");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<long>("UserId")
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")
@@ -241,6 +263,8 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnName("VALID_TO");
 
                     b.HasKey("Uid");
+
+                    b.HasAlternateKey("LicenseKey");
 
                     b.HasIndex("IsConfirmed");
 
@@ -287,10 +311,10 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("NVARCHAR(100)")
                         .HasColumnName("MESSAGE");
 
-                    b.Property<int>("ParentId")
+                    b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .HasColumnType("INT")
-                        .HasColumnName("PARENT_ID");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
 
                     b.Property<long>("Size")
                         .IsConcurrencyToken()
@@ -331,6 +355,60 @@ namespace TgStorage.Migrations.TgEfConsole
                     b.ToTable("MESSAGES", (string)null);
                 });
 
+            modelBuilder.Entity("TgStorage.Domain.Messages.TgEfMessageRelationEntity", b =>
+                {
+                    b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("CHAR(36)")
+                        .HasColumnName("UID");
+
+                    b.Property<int>("ChildMessageId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT")
+                        .HasColumnName("CHILD_MESSAGE_ID");
+
+                    b.Property<long>("ChildSourceId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("CHILD_SOURCE_ID");
+
+                    b.Property<int>("ParentMessageId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT")
+                        .HasColumnName("PARENT_MESSAGE_ID");
+
+                    b.Property<long>("ParentSourceId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("PARENT_SOURCE_ID");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Uid");
+
+                    b.HasIndex("ChildMessageId");
+
+                    b.HasIndex("ChildSourceId");
+
+                    b.HasIndex("ParentMessageId");
+
+                    b.HasIndex("ParentSourceId");
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
+
+                    b.HasIndex("ChildSourceId", "ChildMessageId");
+
+                    b.HasIndex("ParentSourceId", "ParentMessageId", "ChildSourceId", "ChildMessageId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_MESSAGES_RELATIONS_UNIQUE_LINK");
+
+                    b.ToTable("MESSAGES_RELATIONS", (string)null);
+                });
+
             modelBuilder.Entity("TgStorage.Domain.Proxies.TgEfProxyEntity", b =>
                 {
                     b.Property<Guid>("Uid")
@@ -356,6 +434,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .IsConcurrencyToken()
                         .HasColumnType("INT(5)")
                         .HasColumnName("PORT");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Secret")
                         .IsConcurrencyToken()
@@ -475,6 +558,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("BIT")
                         .HasColumnName("IS_USER_ACCESS");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("Title")
                         .IsConcurrencyToken()
                         .HasMaxLength(256)
@@ -554,7 +642,7 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("DATETIME")
                         .HasColumnName("EXPIRE_DATE");
 
-                    b.Property<long?>("FromId")
+                    b.Property<long>("FromId")
                         .IsConcurrencyToken()
                         .HasColumnType("LONG(20)")
                         .HasColumnName("FROM_ID");
@@ -586,6 +674,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("INT(20)")
                         .HasColumnName("OFFSET");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("Type")
                         .IsConcurrencyToken()
                         .HasMaxLength(128)
@@ -593,6 +686,8 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnName("TYPE");
 
                     b.HasKey("Uid");
+
+                    b.HasAlternateKey("Id", "FromId");
 
                     b.HasIndex("Caption");
 
@@ -606,8 +701,7 @@ namespace TgStorage.Migrations.TgEfConsole
 
                     b.HasIndex("FromName");
 
-                    b.HasIndex("Id")
-                        .IsUnique();
+                    b.HasIndex("Id");
 
                     b.HasIndex("Type");
 
@@ -707,6 +801,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("NVARCHAR(128)")
                         .HasColumnName("RESTRICTION_REASON");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<string>("Status")
                         .IsConcurrencyToken()
                         .HasMaxLength(20)
@@ -731,6 +830,8 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnName("USER_NAMES");
 
                     b.HasKey("Uid");
+
+                    b.HasAlternateKey("Id");
 
                     b.HasIndex("AccessHash");
 
@@ -775,6 +876,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("NVARCHAR(128)")
                         .HasColumnName("DESCRIPTION");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
                     b.Property<short>("Version")
                         .IsConcurrencyToken()
                         .HasMaxLength(4)
@@ -782,6 +888,8 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnName("VERSION");
 
                     b.HasKey("Uid");
+
+                    b.HasAlternateKey("Version");
 
                     b.HasIndex("Description");
 
@@ -825,6 +933,45 @@ namespace TgStorage.Migrations.TgEfConsole
                         .IsRequired();
 
                     b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("TgStorage.Domain.Messages.TgEfMessageRelationEntity", b =>
+                {
+                    b.HasOne("TgStorage.Domain.Sources.TgEfSourceEntity", "ChildSource")
+                        .WithMany()
+                        .HasForeignKey("ChildSourceId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TgStorage.Domain.Sources.TgEfSourceEntity", "ParentSource")
+                        .WithMany()
+                        .HasForeignKey("ParentSourceId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TgStorage.Domain.Messages.TgEfMessageEntity", "ChildMessage")
+                        .WithMany()
+                        .HasForeignKey("ChildSourceId", "ChildMessageId")
+                        .HasPrincipalKey("SourceId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TgStorage.Domain.Messages.TgEfMessageEntity", "ParentMessage")
+                        .WithMany()
+                        .HasForeignKey("ParentSourceId", "ParentMessageId")
+                        .HasPrincipalKey("SourceId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChildMessage");
+
+                    b.Navigation("ChildSource");
+
+                    b.Navigation("ParentMessage");
+
+                    b.Navigation("ParentSource");
                 });
 
             modelBuilder.Entity("TgStorage.Domain.Proxies.TgEfProxyEntity", b =>

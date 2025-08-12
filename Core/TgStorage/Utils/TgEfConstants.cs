@@ -15,6 +15,7 @@ public static class TgEfConstants
 	public const string TableFilters = "FILTERS";
 	public const string TableLicenses = "LICENSES";
 	public const string TableMessages = "MESSAGES";
+	public const string TableMessagesRelations = "MESSAGES_RELATIONS";
 	public const string TableProxies = "PROXIES";
 	public const string TableSources = "SOURCES";
 	public const string TableStories = "STORIES";
@@ -35,6 +36,8 @@ public static class TgEfConstants
 	public const string ColumnBotToken = "BOT_TOKEN";
 	public const string ColumnBotTokenKey = "BOT_TOKEN_KEY";
 	public const string ColumnCaption = "CAPTION";
+	public const string ColumnChildMessageId = "CHILD_MESSAGE_ID";
+	public const string ColumnChildSourceId = "CHILD_SOURCE_ID";
 	public const string ColumnCount = "COUNT";
 	public const string ColumnCountThreads = "COUNT_THREADS";
 	public const string ColumnDate = "DATE";
@@ -75,6 +78,8 @@ public static class TgEfConstants
 	public const string ColumnName = "NAME";
 	public const string ColumnOffset = "OFFSET";
 	public const string ColumnParentId = "PARENT_ID";
+	public const string ColumnParentMessageId = "PARENT_MESSAGE_ID";
+	public const string ColumnParentSourceId = "PARENT_SOURCE_ID";
 	public const string ColumnPassword = "PASSWORD";
 	public const string ColumnPhoneNumber = "PHONE_NUMBER";
 	public const string ColumnPort = "PORT";

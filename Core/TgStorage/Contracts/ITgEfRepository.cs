@@ -38,7 +38,6 @@ public interface ITgEfRepository<TEfEntity, TDto>
     public TEfEntity GetNewItem(bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public Task<IEnumerable<TEfEntity>> GetListItemsAsync(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
-	public TgEfStorageResult<TEfEntity> GetList(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
     public IEnumerable<TEfEntity> GetListItems(TgEnumTableTopRecords topRecords, int skip, bool isReadOnly = true);
 	public Task<TgEfStorageResult<TEfEntity>> GetListAsync(int take, int skip, bool isReadOnly = true);
 	public TgEfStorageResult<TEfEntity> GetList(int take, int skip, bool isReadOnly = true);
@@ -79,12 +78,15 @@ public interface ITgEfRepository<TEfEntity, TDto>
 	public Task<TgEfStorageResult<TEfEntity>> SaveOrRecreateAsync(TEfEntity item, string tableName);
 	public TgEfStorageResult<TEfEntity> SaveOrRecreate(TEfEntity item, string tableName);
 
-	#endregion
+    #endregion
 
-	#region Public and private methods - Remove
+    #region Public and private methods - Remove
 
-	public Task<TgEfStorageResult<TEfEntity>> DeleteAsync(TEfEntity item);
+    /// <summary> Delete item from the storage table </summary>
+    public Task<TgEfStorageResult<TEfEntity>> DeleteAsync(TEfEntity item);
+    /// <summary> Delete new item from the storage table </summary>
 	public Task<TgEfStorageResult<TEfEntity>> DeleteNewAsync();
+    /// <summary> Delete all items from the storage table </summary>
 	public Task<TgEfStorageResult<TEfEntity>> DeleteAllAsync();
 
 	#endregion

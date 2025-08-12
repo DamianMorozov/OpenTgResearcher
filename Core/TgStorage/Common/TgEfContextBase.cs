@@ -8,25 +8,27 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 {
     #region Public and private fields, properties, constructor
 
-    /// <summary> App queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfAppEntity> Apps { get; set; } = null!;
-    /// <summary> Document queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfDocumentEntity> Documents { get; set; } = null!;
-    /// <summary> Filter queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfFilterEntity> Filters { get; set; } = null!;
-    /// <summary> License queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfLicenseEntity> Licenses { get; set; } = null!;
-    /// <summary> Message queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfMessageEntity> Messages { get; set; } = null!;
-    /// <summary> Proxy queries </summary>
+    /// <inheritdoc />
+    public DbSet<TgEfMessageRelationEntity> MessagesRelations { get; set; }
+    /// <inheritdoc />
     public DbSet<TgEfProxyEntity> Proxies { get; set; } = null!;
-    /// <summary> Source queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfSourceEntity> Sources { get; set; } = null!;
-    /// <summary> Stories queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfStoryEntity> Stories { get; set; } = null!;
-    /// <summary> Users queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfUserEntity> Users { get; set; } = null!;
-    /// <summary> Version queries </summary>
+    /// <inheritdoc />
     public DbSet<TgEfVersionEntity> Versions { get; set; } = null!;
 
     public static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
@@ -176,106 +178,149 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Magic string - Define the model - Concurrency tokens
-        // https://learn.microsoft.com/en-us/ef/core/modeling/table-splitting
-        // https://learn.microsoft.com/en-us/aspnet/core/data/ef-mvc/concurrency?view=aspnetcore-9.0&source=docs
-        // This property isn't on the C# class, so we set it up as a "shadow" property and use it for concurrency.
-        modelBuilder.Entity<TgEfAppEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfDocumentEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfFilterEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfLicenseEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfMessageEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfProxyEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfSourceEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfStoryEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfUserEntity>().Property(x => x.RowVersion).IsRowVersion();
-        modelBuilder.Entity<TgEfVersionEntity>().Property(x => x.RowVersion).IsRowVersion();
-        // Ignore
-        modelBuilder.Entity<TgEfAppEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfDocumentEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfFilterEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfLicenseEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfMessageEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfProxyEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfSourceEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfStoryEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfUserEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-        modelBuilder.Entity<TgEfVersionEntity>().Ignore(TgEfConstants.ColumnRowVersion);
-
         // Apps
         modelBuilder.Entity<TgEfAppEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableApps);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.ApiHash });
+            // Link to proxy by single key
+            entity.HasOne(app => app.Proxy)
+                .WithMany(proxy => proxy.Apps)
+                .HasForeignKey(app => app.ProxyUid)
+                .HasPrincipalKey(proxy => proxy.Uid);
         });
-        modelBuilder.Entity<TgEfAppEntity>()
-            .HasOne(app => app.Proxy)
-            .WithMany(proxy => proxy.Apps)
-            .HasForeignKey(app => app.ProxyUid)
-            .HasPrincipalKey(proxy => proxy.Uid);
 
         // Documents
         modelBuilder.Entity<TgEfDocumentEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableDocuments);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Link to source by single key
+            entity.HasOne(document => document.Source)
+                .WithMany(source => source.Documents)
+                .HasForeignKey(document => document.SourceId)
+                .HasPrincipalKey(source => source.Id);
         });
-        modelBuilder.Entity<TgEfDocumentEntity>()
-            .HasOne(document => document.Source)
-            .WithMany(source => source.Documents)
-            .HasForeignKey(document => document.SourceId)
-            .HasPrincipalKey(source => source.Id);
 
         // Filters
         modelBuilder.Entity<TgEfFilterEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableFilters);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
         });
 
         // Licenses
         modelBuilder.Entity<TgEfLicenseEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableLicenses);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.LicenseKey });
         });
-        modelBuilder.Entity<TgEfLicenseEntity>();
 
         // Messages
         modelBuilder.Entity<TgEfMessageEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableMessages);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.SourceId, x.Id });
+            // Link to source by single key
+            entity.HasOne(x => x.Source)
+                .WithMany(x => x.Messages)
+                .HasForeignKey(x => x.SourceId)
+                .HasPrincipalKey(x => x.Id);
         });
-        modelBuilder.Entity<TgEfMessageEntity>()
-            .HasOne(message => message.Source)
-            .WithMany(source => source.Messages)
-            .HasForeignKey(message => message.SourceId)
-            .HasPrincipalKey(source => source.Id);
+
+        // Messages relations
+        modelBuilder.Entity<TgEfMessageRelationEntity>(entity =>
+        {
+            entity.ToTable(TgEfConstants.TableMessagesRelations);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Link to parent message by composite key (SourceId + Id)
+            entity.HasOne(x => x.ParentMessage)
+                .WithMany()
+                .HasForeignKey(x => new { x.ParentSourceId, x.ParentMessageId })
+                .HasPrincipalKey(x => new { x.SourceId, x.Id })
+                .OnDelete(DeleteBehavior.Restrict);
+            // Link to child message by composite key (SourceId + Id)
+            entity.HasOne(x => x.ChildMessage)
+                .WithMany()
+                .HasForeignKey(x => new { x.ChildSourceId, x.ChildMessageId })
+                .HasPrincipalKey(x => new { x.SourceId, x.Id })
+                .OnDelete(DeleteBehavior.Restrict);
+            // Link to parent source by single key
+            entity.HasOne(x => x.ParentSource)
+                .WithMany()
+                .HasForeignKey(x => x.ParentSourceId)
+                .HasPrincipalKey(x => x.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+            // Link to child source by single key
+            entity.HasOne(x => x.ChildSource)
+                .WithMany()
+                .HasForeignKey(x => x.ChildSourceId)
+                .HasPrincipalKey(x => x.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+            // Index
+            entity.HasIndex(x => new { x.ParentSourceId, x.ParentMessageId, x.ChildSourceId, x.ChildMessageId })
+                .IsUnique()
+                .HasDatabaseName($"IX_{TgEfConstants.TableMessagesRelations}_UNIQUE_LINK");
+        });
 
         // Proxies
         modelBuilder.Entity<TgEfProxyEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableProxies);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
         });
 
         // Sources
         modelBuilder.Entity<TgEfSourceEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableSources);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.Id });
         });
 
         // Stories
         modelBuilder.Entity<TgEfStoryEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableStories);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.Id, x.FromId });
         });
 
         // Users
         modelBuilder.Entity<TgEfUserEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableUsers);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.Id });
         });
 
         // Versions
         modelBuilder.Entity<TgEfVersionEntity>(entity =>
         {
             entity.ToTable(TgEfConstants.TableVersions);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Unique key
+            entity.HasAlternateKey(x => new { x.Version });
         });
     }
 

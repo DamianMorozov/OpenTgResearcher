@@ -11,10 +11,6 @@ public sealed class TgEmptyEntity : ITgEfEntity<TgEmptyEntity>
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-	
 	/// <summary> Default constructor </summary>
 	public TgEmptyEntity()
 	{

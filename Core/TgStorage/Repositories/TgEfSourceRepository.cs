@@ -151,21 +151,7 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 
     #endregion
 
-    #region Public and private methods - Delete
-
-    /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfSourceEntity>> DeleteAllAsync()
-	{
-		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
-		if (storageResult.IsExists)
-		{
-			foreach (var item in storageResult.Items)
-			{
-				await DeleteAsync(item);
-			}
-		}
-		return new(storageResult.IsExists ? TgEnumEntityState.IsDeleted : TgEnumEntityState.NotDeleted);
-	}
+    #region Public and private methods - ITgEfSourceRepository
 
     /// <inheritdoc />
     public async Task ResetAutoUpdateAsync()

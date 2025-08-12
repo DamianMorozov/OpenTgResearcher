@@ -22,10 +22,6 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnLicenseKey, TypeName = "CHAR(36)")]
@@ -52,7 +48,7 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 	[Column(TgEfConstants.ColumnIsConfirmed, TypeName = "BIT")]
 	public bool IsConfirmed { get; set; }
 
-	public TgEfLicenseEntity() : base()
+	public TgEfLicenseEntity()
     {
 	    Default();
     }

@@ -23,10 +23,6 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue(0)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnSourceId, TypeName = "LONG(20)")]
@@ -39,11 +35,6 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnId, TypeName = "INT")]
     public int Id { get; set; }
-
-    [DefaultValue(0)]
-    [ConcurrencyCheck]
-    [Column(TgEfConstants.ColumnParentId, TypeName = "INT")]
-    public int ParentId { get; set; }
 
     [DefaultValue("0001-01-01 00:00:00")]
 	[ConcurrencyCheck]
@@ -68,12 +59,13 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
     [DefaultValue(0)]
     [Column(TgEfConstants.ColumnUserId, TypeName = "LONG(20)")]
     public long UserId { get; set; }
+    
     [DefaultValue(false)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnIsDeleted, TypeName = "BIT")]
     public bool IsDeleted { get; set; }
 
-    public TgEfMessageEntity() : base()
+    public TgEfMessageEntity()
     {
         Default();
 	}
@@ -89,7 +81,6 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
 		Id = this.GetDefaultPropertyInt(nameof(Id));
-        ParentId = this.GetDefaultPropertyInt(nameof(ParentId));
 	    DtCreated = this.GetDefaultPropertyDateTime(nameof(DtCreated));
 		Type = this.GetDefaultPropertyGeneric<TgEnumMessageType>(nameof(Type));
 	    Size = this.GetDefaultPropertyLong(nameof(Size));
@@ -104,7 +95,6 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 			Uid = item.Uid;
 		SourceId = item.SourceId;
 		Id = item.Id;
-        ParentId = item.ParentId;
 		DtCreated = item.DtCreated > DateTime.MinValue ? item.DtCreated : DateTime.Now;
 		Type = item.Type;
 		Size = item.Size;

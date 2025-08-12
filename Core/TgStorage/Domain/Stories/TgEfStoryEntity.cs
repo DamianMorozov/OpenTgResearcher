@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Stories;
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(DtChanged))]
-[Index(nameof(Id), IsUnique = true)]
+[Index(nameof(Id))]
 [Index(nameof(FromId))]
 [Index(nameof(FromName))]
 [Index(nameof(Date))]
@@ -24,10 +24,6 @@ public sealed class TgEfStoryEntity : ITgEfEntity<TgEfStoryEntity>
 	[Column(TgEfConstants.ColumnUid, TypeName = "CHAR(36)")]
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
-
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
 
 	[DefaultValue("0001-01-01 00:00:00")]
 	[ConcurrencyCheck]
@@ -88,7 +84,7 @@ public sealed class TgEfStoryEntity : ITgEfEntity<TgEfStoryEntity>
 	[Column(TgEfConstants.ColumnMessage, TypeName = "NVARCHAR(256)")]
 	public string? Message { get; set; } = null!;
 	
-    public TgEfStoryEntity() : base()
+    public TgEfStoryEntity()
     {
         Default();
     }

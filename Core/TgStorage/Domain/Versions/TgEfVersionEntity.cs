@@ -19,10 +19,6 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue(1024)]
     [MaxLength(4)]
     [ConcurrencyCheck]
@@ -35,7 +31,7 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
     [Column(TgEfConstants.ColumnDescription, TypeName = "NVARCHAR(128)")]
     public string Description { get; set; } = null!;
 
-    public TgEfVersionEntity() : base()
+    public TgEfVersionEntity()
     {
         Default();
     }

@@ -23,10 +23,6 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue(true)]
 	[ConcurrencyCheck]
 	[Column(TgEfConstants.ColumnIsEnabled, TypeName = "BIT")]
@@ -59,7 +55,7 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 	[Column(TgEfConstants.ColumnSizeType, TypeName = "INT")]
 	public TgEnumFileSizeType SizeType { get; set; }
 
-	public TgEfFilterEntity() : base()
+	public TgEfFilterEntity()
 	{
 		Default();
 	}

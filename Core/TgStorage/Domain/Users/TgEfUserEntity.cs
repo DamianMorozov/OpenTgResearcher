@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TL;
-
 namespace TgStorage.Domain.Users;
 
 /// <summary> Contact entity </summary>
@@ -29,10 +27,6 @@ public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
 	[Column(TgEfConstants.ColumnUid, TypeName = "CHAR(36)")]
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
-
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
 
 	[DefaultValue("0001-01-01 00:00:00")]
 	[ConcurrencyCheck]
@@ -139,7 +133,7 @@ public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
     [Column(TgEfConstants.ColumnIsDeleted, TypeName = "BIT")]
     public bool IsDeleted { get; set; }
 
-    public TgEfUserEntity() : base()
+    public TgEfUserEntity()
 	{
 		Default();
 	}

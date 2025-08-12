@@ -110,31 +110,10 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 
     #endregion
 
-    #region Public and private methods - Delete
-
-    /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfVersionEntity>> DeleteAllAsync()
-    {
-        var storageResult =
-            await GetListAsync(0, 0, isReadOnly: false);
-        if (storageResult.IsExists)
-        {
-            foreach (var item in storageResult.Items)
-            {
-                await DeleteAsync(item);
-            }
-        }
-        return new(storageResult.IsExists
-            ? TgEnumEntityState.IsDeleted
-            : TgEnumEntityState.NotDeleted);
-    }
-
-    #endregion
-
     #region Public and private methods - ITgEfVersionRepository
 
     /// <inheritdoc />
-    public short LastVersion => 45;
+    public short LastVersion => 46;
 
     /// <inheritdoc />
     public async Task<TgEfVersionEntity> GetLastVersionAsync()
@@ -294,6 +273,9 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
                     break;
                 case 44:
                     await SaveAsync(new() { Version = 45, Description = "Updated messages table" });
+                    break;
+                case 45:
+                    await SaveAsync(new() { Version = 46, Description = "Added messages relations table" });
                     break;
             }
             if (versionLast.Version >= LastVersion)

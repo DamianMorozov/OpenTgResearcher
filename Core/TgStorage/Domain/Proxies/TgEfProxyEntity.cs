@@ -23,10 +23,6 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue(TgEnumProxyType.None)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnType, TypeName = "INT")]
@@ -63,7 +59,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 
     public ICollection<TgEfAppEntity> Apps { get; set; } = null!;
 
-	public TgEfProxyEntity() : base()
+	public TgEfProxyEntity()
     {
         Default();
     }

@@ -89,23 +89,20 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 	{
 		IList<TgEfMessageEntity> items = take > 0
 			? await GetQuery(isReadOnly)
-				//.Include(x => x.Source)
 				.Skip(skip).Take(take).ToListAsync()
 			: await GetQuery(isReadOnly)
-				//.Include(x => x.Source)
 				.ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfMessageEntity, bool>> where, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfMessageEntity>> GetListAsync(int take, int skip, 
+        Expression<Func<TgEfMessageEntity, bool>> where, bool isReadOnly = true)
 	{
 		IList<TgEfMessageEntity> items = take > 0
 			? await GetQuery(isReadOnly).Where(where)
-				//.Include(x => x.Source)
 				.Skip(skip).Take(take).ToListAsync()
 			: await GetQuery(isReadOnly).Where(where)
-				//.Include(x => x.Source)
 				.ToListAsync();
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
@@ -116,6 +113,10 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
     /// <inheritdoc />
     public override async Task<int> GetCountAsync(Expression<Func<TgEfMessageEntity, bool>> where) => await EfContext.Messages.AsNoTracking().Where(where).CountAsync();
 
+    #endregion
+
+    #region Public and private methods - ITgEfMessageRepository
+
     /// <inheritdoc />
     public async Task<long> GetLastIdAsync(long sourceId) => await EfContext.Messages
         .AsNoTracking()
@@ -124,23 +125,61 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
         .Select(x => x.Id)
         .FirstOrDefaultAsync();
 
-    #endregion
+    /// <inheritdoc />
+    public async Task<List<TgEfMessageDto>> GetListDtosWithoutRelationsAsync<TKey>(int take, int skip, 
+        Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order)
+    {
+        // Get IDs of messages that are referenced as children in relations
+        var relatedChildIds = await EfContext.MessagesRelations
+            .AsNoTracking()
+            .Select(r => r.ChildMessageId)
+            .Distinct()
+            .ToListAsync();
 
-    #region Public and private methods - Delete
+        // Filter messages that match the condition and are not in the relatedChildIds
+        var query = (IQueryable<TgEfMessageEntity>)EfContext.Messages
+            .AsNoTracking()
+            .Where(where)
+            .Where(m => !relatedChildIds.Contains(m.Id))
+            .OrderBy(order);
+
+        // Apply pagination
+        if (skip > 0)
+            query = query.Skip(skip);
+        if (take > 0)
+            query = query.Take(take);
+
+        // Project to DTOs using SelectDto expression
+        var dtoQuery = query.Select(SelectDto());
+
+        // Execute query and return result
+        return await dtoQuery.ToListAsync();
+    }
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfMessageEntity>> DeleteAllAsync()
-	{
-		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
-		if (storageResult.IsExists)
-		{
-			foreach (var item in storageResult.Items)
-			{
-				await DeleteAsync(item);
-			}
-		}
-		return new(storageResult.IsExists ? TgEnumEntityState.IsDeleted : TgEnumEntityState.NotDeleted);
-	}
+    public async Task SaveRelationAsync(long parentChatId, int parentMessageId, long childChatId, int childMessageId)
+    {
+        var exists = await EfContext.MessagesRelations
+            .AnyAsync(x =>
+                x.ParentSourceId == parentChatId &&
+                x.ParentMessageId == parentMessageId &&
+                x.ChildSourceId == childChatId &&
+                x.ChildMessageId == childMessageId);
+
+        if (!exists)
+        {
+            var relation = new TgEfMessageRelationEntity
+            {
+                ParentSourceId = parentChatId,
+                ParentMessageId = parentMessageId,
+                ChildSourceId = childChatId,
+                ChildMessageId = childMessageId
+            };
+
+            await EfContext.MessagesRelations.AddAsync(relation);
+            await EfContext.SaveChangesAsync();
+        }
+    }
 
     #endregion
 }

@@ -4,6 +4,7 @@
 namespace TgStorage.Domain.Messages;
 
 /// <summary> Message DTO </summary>
+[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageEntity, TgEfMessageDto>
 {
 	#region Public and private fields, properties, constructor
@@ -15,8 +16,6 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 	public partial long SourceId { get; set; }
 	[ObservableProperty]
 	public partial int Id { get; set; }
-	[ObservableProperty]
-	public partial int ParentId { get; set; }
 	[ObservableProperty]
 	public partial TgEnumMessageType Type { get; set; }
 	[ObservableProperty]
@@ -41,7 +40,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
             var idx = Message.LastIndexOf('|');
             if (idx < 0)
                 return Message.Trim();
-            return Message.Substring(0, idx).Trim();
+            return Message[..idx].Trim();
         }
     }
 
@@ -54,7 +53,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
             var idx = Message.LastIndexOf('|');
             if (idx < 0)
                 return string.Empty;
-            return Message.Substring(idx + 1).Trim();
+            return Message[(idx + 1)..].Trim();
         }
     }
 
@@ -110,8 +109,6 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 
 	#region Public and private methods
 
-	public override string ToString() => $"{DtCreated} | {SourceId} | {Id} | {Type} | {Size} | {Message}";
-
 	public TgEfMessageDto Copy(TgEfMessageDto dto, bool isUidCopy)
 	{
 		base.Copy(dto, isUidCopy);
@@ -135,7 +132,6 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		DtCreated = item.DtCreated;
 		SourceId = item.SourceId;
 		Id = item.Id;
-		ParentId = item.ParentId;
         Type = item.Type;
 		Size = item.Size;
 		Message = item.Message;
@@ -154,7 +150,6 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		DtCreated = dto.DtCreated,
 		SourceId = dto.SourceId,
 		Id = dto.Id,
-        ParentId = dto.ParentId,
 		Type = dto.Type,
 		Size = dto.Size,
 		Message = dto.Message,
@@ -168,7 +163,6 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		DtCreated = DtCreated,
 		SourceId = SourceId,
 		Id = Id,
-        ParentId = ParentId,
 		Type = Type,
 		Size = Size,
 		Message = Message,

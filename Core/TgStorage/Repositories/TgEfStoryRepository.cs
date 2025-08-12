@@ -109,22 +109,4 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
     public override async Task<int> GetCountAsync(Expression<Func<TgEfStoryEntity, bool>> where) => await EfContext.Stories.AsNoTracking().Where(where).CountAsync();
 
     #endregion
-
-    #region Public and private methods - Delete
-
-    /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfStoryEntity>> DeleteAllAsync()
-	{
-		var storageResult = await GetListAsync(0, 0, isReadOnly: false);
-		if (storageResult.IsExists)
-		{
-			foreach (var item in storageResult.Items)
-			{
-				await DeleteAsync(item);
-			}
-		}
-		return new(storageResult.IsExists ? TgEnumEntityState.IsDeleted : TgEnumEntityState.NotDeleted);
-	}
-
-	#endregion
 }

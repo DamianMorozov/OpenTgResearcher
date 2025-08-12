@@ -23,10 +23,6 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[Timestamp]
-	[Column(TgEfConstants.ColumnRowVersion)]
-	public byte[]? RowVersion { get; set; }
-
 	[DefaultValue(0)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnSourceId, TypeName = "LONG(20)")]
@@ -61,7 +57,7 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
     [Column(TgEfConstants.ColumnAccessHash, TypeName = "LONG(20)")]
     public long AccessHash { get; set; }
 
-    public TgEfDocumentEntity() : base()
+    public TgEfDocumentEntity()
     {
 	    Default();
 	}

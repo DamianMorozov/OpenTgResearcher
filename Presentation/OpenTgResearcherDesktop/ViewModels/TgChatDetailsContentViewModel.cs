@@ -75,17 +75,18 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 
-            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(
-                take: 100, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
+            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosWithoutRelationsAsync(
+                take: 1000, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
             foreach (var messageDto in MessageDtos)
             {
                 messageDto.Directory = Dto.Directory;
             }
-            IsEmptyData = !MessageDtos.Any();
-            ScrollRequested?.Invoke();
         }
         finally
         {
+            IsEmptyData = !MessageDtos.Any();
+            ScrollRequested?.Invoke();
+
             await ReloadUiAsync();
             await SetDisplaySensitiveAsync();
         }
@@ -100,7 +101,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         if (Directory.Exists(Dto.Directory))
         {
             var files = Directory.GetFiles(Dto.Directory);
-            if (files.Any())
+            if (files.Length != 0)
             {
                 var imageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                     { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp" };

@@ -19,7 +19,7 @@ public static class TgGlobalTools
     /// <summary> Limit count of download threads </summary>
     public static int DownloadCountThreadsLimit => 100;
     /// <summary> Limit batch of saving messages </summary>
-    public static int BatchMessagesLimit => 100;
+    public static int BatchMessagesLimit => 50;
     /// <summary> EF storage </summary>
     public static string AppStorage = "TgStorage.db";
         

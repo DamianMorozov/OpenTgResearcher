@@ -2780,7 +2780,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteExceptionWithMessage(ex, TgConstants.LogTypeStorage);
             BatchMessagesCount = 0;
             MessageEntities.Clear();
             if (!isRetry)
@@ -2788,7 +2787,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await Task.Delay(500);
                 await SaveMessageAsync(tgDownloadSettings, messageSettings, dtCreated, size, message, messageType, isRetry: true, userId);
             }
-            throw;
+            else
+            {
+                TgLogUtils.WriteExceptionWithMessage(ex, TgConstants.LogTypeStorage);
+                await SetClientExceptionAsync(ex);
+            }
         }
         finally
         {

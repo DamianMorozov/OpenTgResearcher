@@ -129,7 +129,7 @@
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
                         IsExpanded="False">
-                        <Grid Margin="0,0,10,0">
+                        <Grid Margin="0,0,10,5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -513,7 +513,7 @@
                         HorizontalContentAlignment="Stretch"
                         IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
                         IsExpanded="False">
-                        <Grid Margin="0,0,10,0">
+                        <Grid Margin="0,0,10,5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />

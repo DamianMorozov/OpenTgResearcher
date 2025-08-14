@@ -10,7 +10,6 @@ public interface ITgEfEntity<TEfEntity> : ITgDebug
 	#region Public and private fields, properties, constructor
 
 	public Guid Uid { get; set; }
-	public byte[]? RowVersion { get; set; }
 
 	#endregion
 

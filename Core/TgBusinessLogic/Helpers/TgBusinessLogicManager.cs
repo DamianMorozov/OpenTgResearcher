@@ -73,9 +73,63 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     /// <inheritdoc />
     public async Task CreateAndUpdateDbAsync()
     {
+        // Remove duplicate messages from the database
+        await RemoveDuplicateMessagesByDirectSqlAsync();
+        // Apply migration
         await StorageManager.EfContext.MigrateDbAsync();
+        // Fill version table
         await StorageManager.VersionRepository.FillTableVersionsAsync();
+        // Shrink database
         await StorageManager.EfContext.ShrinkDbAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task RemoveDuplicateMessagesAsync()
+    {
+        // Find duplicate messages by SourceId and Id
+        var allMessages = await StorageManager.EfContext.Messages.ToListAsync();
+
+        // Group by SourceId and Id, find duplicates
+        var duplicates = allMessages
+            .GroupBy(x => new { x.SourceId, x.Id })
+            .Where(g => g.Count() > 1)
+            .SelectMany(g => g.OrderBy(x => x.Uid).Skip(1)) // Keep only one
+            .ToList();
+
+        // Log and remove duplicates
+        foreach (var msg in duplicates)
+        {
+            TgLogUtils.WriteLog($"Removed duplicate message: SourceId={msg.SourceId}, Id={msg.Id}, Uid={msg.Uid}");
+        }
+
+        if (duplicates.Count != 0)
+        {
+            StorageManager.EfContext.Messages.RemoveRange(duplicates);
+            await StorageManager.EfContext.SaveChangesAsync();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task RemoveDuplicateMessagesByDirectSqlAsync()
+    {
+        var sql = @"
+DELETE 
+FROM MESSAGES
+WHERE UID IN (
+    SELECT M1.UID
+    FROM MESSAGES M1
+    JOIN (
+        SELECT SOURCE_ID, ID, MIN(UID) AS MIN_UID
+        FROM MESSAGES
+        GROUP BY SOURCE_ID, ID
+        HAVING COUNT(*) > 1
+    ) AS DUPLICATES
+    ON M1.SOURCE_ID = DUPLICATES.SOURCE_ID AND m1.ID = DUPLICATES.ID
+    WHERE M1.UID != DUPLICATES.MIN_UID
+);"
+            .TrimStart('\r', ' ', '\n', '\t').TrimEnd('\r', ' ', '\n', '\t').Replace(Environment.NewLine, " ");
+
+        await StorageManager.EfContext.Database.ExecuteSqlRawAsync(sql);
     }
 
     /// <inheritdoc />

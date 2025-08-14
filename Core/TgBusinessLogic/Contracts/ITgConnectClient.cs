@@ -92,7 +92,9 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
     public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(Messages_ChatFull messagesChatFull);
     /// <summary> Update user </summary>
-    Task UpdateUserAsync(User user, bool isContact);
+    public Task UpdateUserAsync(User user, bool isContact);
     /// <summary> Update users </summary>
-    Task UpdateUsersAsync(List<TgEfUserDto> users);
+    public Task UpdateUsersAsync(List<TgEfUserDto> users);
+    /// <summary> Execute a Telegram call with flood control </summary>
+    public Task<T> ExecuteWithFloodControlAsync<T>(Func<Task<T>> telegramCall);
 }

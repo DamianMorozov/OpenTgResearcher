@@ -370,7 +370,7 @@ internal partial class TgMenuHelper
             // Check if bot is already a member of the chat
             var isMember = false;
             var members = await bot.GetChatMemberList(chatInfo.Id);
-            if (members is not null && members.Any())
+            if (members is not null && members.Length != 0)
             {
                 isMember = members.Any(m => m.User?.Username?.Equals(BotMonitoringUserName, StringComparison.OrdinalIgnoreCase) == true);
             }

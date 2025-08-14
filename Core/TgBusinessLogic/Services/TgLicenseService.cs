@@ -128,7 +128,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
 		var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
-		if (licenseDtos.Any())
+		if (licenseDtos.Count != 0)
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
 			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
@@ -145,7 +145,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		var licenseCountDto = new TgLicenseCountDto();
 		// Search license
 		var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
-		if (licenseDtos.Any())
+		if (licenseDtos.Count != 0)
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
 			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();

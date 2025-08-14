@@ -73,6 +73,7 @@ public partial class App : Application
         containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
         containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
         containerBuilder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
+        containerBuilder.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
         containerBuilder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
         containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
         containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();

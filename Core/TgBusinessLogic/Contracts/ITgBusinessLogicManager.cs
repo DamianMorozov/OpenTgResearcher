@@ -5,18 +5,25 @@ namespace TgBusinessLogic.Contracts;
 
 public interface ITgBusinessLogicManager : IDisposable
 {
+    /// <summary> Storage manager for Telegram data </summary>
     public ITgStorageManager StorageManager { get; }
+    /// <summary> License service for managing licenses </summary>
     public ITgLicenseService LicenseService { get; }
+    /// <summary> Connect client for managing connections to Telegram </summary>
     public ITgConnectClient ConnectClient { get; }
     /// <summary> Backup storage </summary>
-    (bool IsSuccess, string FileName) BackupDb(string storagePath = "");
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "");
     /// <summary> Create and update storage </summary>
-    Task CreateAndUpdateDbAsync();
+    public Task CreateAndUpdateDbAsync();
     /// <summary> Shrink storage </summary>
-    Task ShrinkDbAsync();
+    public Task ShrinkDbAsync();
     /// <summary> Load storage table dtos </summary>
-    Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName, 
+    public Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName, 
         string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName);
     /// <summary> Load storage backup dtos </summary>
-    ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
+    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
+    /// <summary> Remove duplicate messages from the database </summary>
+    public Task RemoveDuplicateMessagesAsync();
+    /// <summary> Remove duplicate messages from the database </summary>
+    public Task RemoveDuplicateMessagesByDirectSqlAsync();
 }

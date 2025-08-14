@@ -8,16 +8,29 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
     #region Public and private fields, properties, constructor
 
     private ILifetimeScope Scope { get; }
+    /// <inheritdoc />
     public ITgEfContext EfContext { get; }
+    /// <inheritdoc />
     public ITgEfAppRepository AppRepository { get; }
+    /// <inheritdoc />
     public ITgEfUserRepository UserRepository { get; }
+    /// <inheritdoc />
     public ITgEfDocumentRepository DocumentRepository { get; }
+    /// <inheritdoc />
     public ITgEfFilterRepository FilterRepository { get; }
+    /// <inheritdoc />
     public ITgEfLicenseRepository LicenseRepository { get; }
+    /// <inheritdoc />
     public ITgEfMessageRepository MessageRepository { get; }
+    /// <inheritdoc />
+    public ITgEfMessageRelationRepository MessageRelationRepository { get; }
+    /// <inheritdoc />
     public ITgEfProxyRepository ProxyRepository { get; }
+    /// <inheritdoc />
     public ITgEfSourceRepository SourceRepository { get; }
+    /// <inheritdoc />
     public ITgEfStoryRepository StoryRepository { get; }
+    /// <inheritdoc />
     public ITgEfVersionRepository VersionRepository { get; }
 
     public TgStorageManager() : base()
@@ -31,6 +44,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         FilterRepository = Scope.Resolve<ITgEfFilterRepository>();
         LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>();
         MessageRepository = Scope.Resolve<ITgEfMessageRepository>();
+        MessageRelationRepository = Scope.Resolve<ITgEfMessageRelationRepository>();
         ProxyRepository = Scope.Resolve<ITgEfProxyRepository>();
         SourceRepository = Scope.Resolve<ITgEfSourceRepository>();
         StoryRepository = Scope.Resolve<ITgEfStoryRepository>();
@@ -48,6 +62,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         FilterRepository = Scope.Resolve<ITgEfFilterRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         MessageRepository = Scope.Resolve<ITgEfMessageRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        MessageRelationRepository = Scope.Resolve<ITgEfMessageRelationRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         ProxyRepository = Scope.Resolve<ITgEfProxyRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         SourceRepository = Scope.Resolve<ITgEfSourceRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         StoryRepository = Scope.Resolve<ITgEfStoryRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
@@ -67,6 +82,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         FilterRepository.Dispose();
         LicenseRepository.Dispose();
         MessageRepository.Dispose();
+        MessageRelationRepository.Dispose();
         ProxyRepository.Dispose();
         SourceRepository.Dispose();
         StoryRepository.Dispose();

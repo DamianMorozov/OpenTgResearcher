@@ -36,6 +36,9 @@ internal sealed class TgEfRepositoryGetCountTests : TgDbContextTestsBase
 	public void TgEf_get_count_messages_async() => GetCountAsync(new TgEfMessageRepository());
 
 	[Test]
+	public void TgEf_get_count_messages_relations_async() => GetCountAsync(new TgEfMessageRelationRepository());
+
+	[Test]
 	public void TgEf_get_count_proxies_async() => GetCountAsync(new TgEfProxyRepository());
 
 	[Test]

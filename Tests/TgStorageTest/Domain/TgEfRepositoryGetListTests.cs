@@ -42,6 +42,9 @@ internal sealed class TgEfRepositoryGetListTests : TgDbContextTestsBase
 	public void Get_messages_async() => GetListAsync(new TgEfMessageRepository());
 
 	[Test]
+	public void Get_messages_relations_async() => GetListAsync(new TgEfMessageRelationRepository());
+
+	[Test]
 	public void Get_proxies_async() => GetListAsync(new TgEfProxyRepository());
 
 	[Test]

@@ -36,6 +36,9 @@ internal sealed class TgEfRepositoryGetFirstTests : TgDbContextTestsBase
 	public void TgEf_get_first_message() => GetFirst(new TgEfMessageRepository());
 
 	[Test]
+	public void TgEf_get_first_message_relation() => GetFirst(new TgEfMessageRelationRepository());
+
+	[Test]
 	public void TgEf_get_first_proxy() => GetFirst(new TgEfProxyRepository());
 
 	[Test]

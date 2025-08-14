@@ -44,6 +44,9 @@ internal sealed class TgEfRepositorySaveTests : TgDbContextTestsBase
 	public void Save_messages_async() => SaveItemAsync(new TgEfMessageRepository());
 
 	[Test]
+	public void Save_messages_relations_async() => SaveItemAsync(new TgEfMessageRelationRepository());
+
+	[Test]
 	public void Save_proxies_async() => SaveItemAsync(new TgEfProxyRepository());
 
 	[Test]

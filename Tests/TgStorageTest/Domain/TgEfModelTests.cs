@@ -38,7 +38,7 @@ internal sealed class TgEfModelTests : TgDbContextTestsBase
             {
                 document.Id.Should().Be((long)0);
                 document.SourceId.Should().Be((long)0);
-                document.MessageId.Should().Be((long)0);
+                document.MessageId.Should().Be(0);
                 document.FileName.Should().Be(string.Empty);
                 document.FileSize.Should().Be((long)0);
                 document.AccessHash.Should().Be((long)0);
@@ -74,7 +74,7 @@ internal sealed class TgEfModelTests : TgDbContextTestsBase
             TestContext.WriteLine(message);
             using (Assert.EnterMultipleScope())
             {
-                message.Id.Should().Be((long)0);
+                message.Id.Should().Be(0);
                 message.SourceId.Should().Be((long)0);
                 message.Type.Should().Be(TgEnumMessageType.Message);
                 message.Size.Should().Be((long)0);

@@ -42,6 +42,9 @@ internal sealed class TgEfRepositoryGetListWhereTests : TgDbContextTestsBase
 	public void Get_messages_where_async() => GetListWhereAsync(new TgEfMessageRepository());
 
 	[Test]
+	public void Get_messages_relations_where_async() => GetListWhereAsync(new TgEfMessageRelationRepository());
+
+	[Test]
 	public void Get_proxies_where_async() => GetListWhereAsync(new TgEfProxyRepository());
 
 	[Test]

@@ -5,28 +5,30 @@ namespace OpenTgResearcherDesktop.Contracts.Services;
 
 public interface ITgSettingsService
 {
-	ObservableCollection<TgEnumTheme> AppThemes { get; }
-	ObservableCollection<TgEnumLanguage> AppLanguages { get; }
-	TgEnumTheme AppTheme { get; set; }
-	TgEnumLanguage AppLanguage { get; set; }
-	string AppStorage { get; set; }
-	string AppSession { get; set; }
-	string UserDirectory { get; }
-	string ApplicationDirectory { get; }
-	string SettingFile { get; }
-	bool IsExistsAppStorage { get; }
-	bool IsExistsAppSession { get; }
-	int WindowWidth { get; }
-	int WindowHeight { get; }
-	int WindowX { get; }
-	int WindowY { get; }
+    public ObservableCollection<TgEnumTheme> AppThemes { get; }
+    public ObservableCollection<TgEnumLanguage> AppLanguages { get; }
+    public TgEnumTheme AppTheme { get; set; }
+    public TgEnumLanguage AppLanguage { get; set; }
+    public string AppStorage { get; set; }
+    public string AppSession { get; set; }
+    public string UserDirectory { get; }
+    public string ApplicationDirectory { get; }
+    public string SettingFile { get; }
+    public bool IsExistsAppStorage { get; }
+    public bool IsExistsAppSession { get; }
+    public int WindowWidth { get; }
+    public int WindowHeight { get; }
+    public int WindowX { get; }
+    public int WindowY { get; }
 
-	void Default();
-	Task LoadAsync();
-	Task LoadWindowAsync();
-	Task SaveAsync();
-	Task SaveWindowAsync(int width, int height, int x, int y);
-    void SetTheme(TgEnumTheme appTheme);
-	Task<T?> ReadSettingAsync<T>(string key);
-	Task SaveSettingAsync<T>(string key, T value);
+    public void Default();
+    public void Load();
+    public void LoadWindow();
+    public void Save();
+    public void SaveWindow(int width, int height, int x, int y);
+    public void SetTheme(TgEnumTheme appTheme);
+    public T? ReadSetting<T>(string key);
+	public void SaveSetting<T>(string key, T value);
+    /// <summary> Setup application storage path </summary>
+    public void SetupAppStorage();
 }

@@ -32,7 +32,7 @@
                     <!--  ID  -->
                     <TextBlock
                         x:Uid="TextBlockCreated"
-                        Margin="5,5,5,0"
+                        Margin="0,5,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}" />
                     <!--  Sensitive data  -->
                     <TextBlock
@@ -65,9 +65,9 @@
                     <Button
                         Margin="5,0,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind Id, Mode=OneWay}"
-                        CornerRadius="10">
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Id, Mode=OneWay}">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                     <!--  Link  -->
@@ -89,43 +89,43 @@
                     <Button
                         Margin="5,0,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind Link, Mode=OneWay}"
-                        CornerRadius="10">
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind Link, Mode=OneWay}">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>
                 <!--  Message  -->
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="0,0,5,5" Orientation="Horizontal">
                     <TextBlock
                         x:Uid="TextBlockMessage"
-                        Margin="5,0,5,0"
+                        Margin="0,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}" />
                     <!--  Sensitive data  -->
                     <TextBlock
                         Margin="10,0,5,0"
                         Text="{x:Bind SensitiveData, Mode=OneWay}"
                         Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <!--  Copy button  -->
+                    <Button
+                        Margin="5,-5,0,0"
+                        HorizontalContentAlignment="Left"
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind MessageText, Mode=OneWay}">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
                     <TextBlock
                         Margin="10,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="{x:Bind MessageText, Mode=OneWay}"
                         Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,-5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind MessageText, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
                 </StackPanel>
                 <!--  Sender  -->
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         x:Uid="TextBlockSender"
-                        Margin="5,0,5,0"
+                        Margin="0,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}" />
                     <!--  Sensitive data  -->
                     <TextBlock
@@ -141,9 +141,9 @@
                     <Button
                         Margin="5,-5,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind UserId, Mode=OneWay}"
-                        CornerRadius="10">
+                        Click="OnClipboardSilentWriteClick"
+                        CornerRadius="10"
+                        Tag="{x:Bind UserId, Mode=OneWay}">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
                 </StackPanel>

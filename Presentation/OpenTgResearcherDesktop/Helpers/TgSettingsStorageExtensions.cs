@@ -17,7 +17,7 @@ public static class TgSettingsStorageExtensions
 	public static async Task SaveAsync<T>(this StorageFolder folder, string name, T content)
 	{
 		var file = await folder.CreateFileAsync(GetFileName(name), CreationCollisionOption.ReplaceExisting);
-		var fileContent = await Json.StringifyAsync(content);
+		var fileContent = JsonUtils.Stringify(content);
 
 		await FileIO.WriteTextAsync(file, fileContent);
 	}
@@ -32,12 +32,12 @@ public static class TgSettingsStorageExtensions
 		var file = await folder.GetFileAsync($"{name}.json");
 		var fileContent = await FileIO.ReadTextAsync(file);
 
-		return await Json.ToObjectAsync<T>(fileContent);
+		return JsonUtils.ToObject<T>(fileContent);
 	}
 
-	public static async Task SaveAsync<T>(this ApplicationDataContainer settings, string key, T value)
+	public static void Save<T>(this ApplicationDataContainer settings, string key, T value)
 	{
-		settings.SaveString(key, await Json.StringifyAsync(value));
+		settings.SaveString(key, JsonUtils.Stringify(value));
 	}
 
 	public static void SaveString(this ApplicationDataContainer settings, string key, string value)
@@ -45,13 +45,13 @@ public static class TgSettingsStorageExtensions
 		settings.Values[key] = value;
 	}
 
-	public static async Task<T?> ReadAsync<T>(this ApplicationDataContainer settings, string key)
+	public static T? Read<T>(this ApplicationDataContainer settings, string key)
 	{
 		object? obj;
 
 		if (settings.Values.TryGetValue(key, out obj))
 		{
-			return await Json.ToObjectAsync<T>((string)obj);
+			return JsonUtils.ToObject<T>((string)obj);
 		}
 
 		return default;

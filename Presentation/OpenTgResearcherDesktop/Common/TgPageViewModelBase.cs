@@ -57,17 +57,20 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial bool IsEmptyData { get; set; } = true;
 
+    /// <inheritdoc />
     public IRelayCommand OnClipboardWriteCommand { get; }
+    /// <inheritdoc />
     public IRelayCommand OnClipboardSilentWriteCommand { get; }
 
-    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
+    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgPageViewModelBase> logger, string name) : base()
     {
         SettingsService = settingsService;
         NavigationService = navigationService;
         Logger = logger;
         Name = name;
         IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
-
+    
         // Commands
         OnClipboardWriteCommand = new AsyncRelayCommand<object>(OnClipboardWriteAsync);
         OnClipboardSilentWriteCommand = new AsyncRelayCommand<object>(OnClipboardSilentWriteAsync);
@@ -150,27 +153,46 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     /// <summary> Update state source message </summary>
     public async Task UpdateStateSource(long sourceId, int messageId, int count, string message)
     {
-        //if (App.MainWindow?.DispatcherQueue is not null)
-        //{
-            var tcs = new TaskCompletionSource();
-            //App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            //{
-                try
+        void UpdateState()
+        {
+            // Get TgChatViewModel
+            var chatVm = App.Locator?.Get<TgChatViewModel>();
+            if (chatVm is not null)
+            {
+                if (chatVm.Dto?.Id == sourceId)
                 {
                     float progress = messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count;
-                    StateSourceProgress = (int)progress;
-                    StateSourceProgressString = progress == 0 ? "{0:00.00} %" : $"{progress:#00.00} %";
-                    StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-                    StateSourceMsg = $"{messageId} | {message}";
-                    tcs.SetResult();
+                    chatVm.Dto.FirstId = messageId;
+                    chatVm.StateSourceProgress = (int)progress;
+                    chatVm.StateSourceProgressString = $"{progress:00.00} %";
+                    chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                    chatVm.StateSourceMsg = $"{messageId} | {message}";
+                }
+            }
+        }
+
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    UpdateState();
+                    tcs.SetResult(true);
                 }
                 catch (Exception ex)
                 {
                     tcs.SetException(ex);
                 }
-            //});
+            });
             await tcs.Task;
-        //}
+        }
+        else
+        {
+            // Background update
+            UpdateState();
+        }
     }
 
     protected async Task ContentDialogAsync(string title, string content)

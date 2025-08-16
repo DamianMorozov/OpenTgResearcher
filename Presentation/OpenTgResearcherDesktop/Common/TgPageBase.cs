@@ -72,5 +72,17 @@ public abstract class TgPageBase : Page
         visual.StartAnimation("Offset", offsetAnimation);
     }
 
+    public void OnClipboardWriteClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        ViewModel.OnClipboardWriteCommand.Execute(button.Tag);
+    }
+
+    public void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        ViewModel.OnClipboardSilentWriteCommand.Execute(button.Tag);
+    }
+
     #endregion
 }

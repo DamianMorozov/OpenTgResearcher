@@ -154,12 +154,15 @@ public partial class ShellViewModel : ObservableRecipient
                     }
 
                     // If not found - get through DI
-                    var vm = App.GetService<TgClientConnectionViewModel>();
-                    await vm.OnNavigatedToAsync(_eventArgs);
-                    if (!vm.IsClientConnected)
+                    var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
+                    if (clientConnectionVm is not null)
                     {
-                        await vm.ClientConnectAsync();
-                        await ShellUpdatePageAsync();
+                        await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
+                        if (!clientConnectionVm.IsClientConnected)
+                        {
+                            await clientConnectionVm.ClientConnectAsync();
+                            await ShellUpdatePageAsync();
+                        }
                     }
                     tcs.SetResult();
                 }
@@ -196,12 +199,15 @@ public partial class ShellViewModel : ObservableRecipient
                     }
 
                     // If not found - get through DI
-                    var vm = App.GetService<TgClientConnectionViewModel>();
-                    await vm.OnNavigatedToAsync(_eventArgs);
-                    if (vm.IsClientConnected)
+                    var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
+                    if (clientConnectionVm is not null)
                     {
-                        await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
-                        await ShellUpdatePageAsync();
+                        await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
+                        if (clientConnectionVm.IsClientConnected)
+                        {
+                            await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+                            await ShellUpdatePageAsync();
+                        }
                     }
                     tcs.SetResult();
                 }

@@ -16,6 +16,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial TgEfSourceDto Dto { get; set; } = null!;
     [ObservableProperty]
+    public partial TgEfSourceDto CommentDto { get; set; } = null!;
+    [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
@@ -63,11 +65,11 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
         }
 
-        // Update view-models at current frame
+        // Update ViewModels at current frame
         await UpdateCurrentFrameAsync();
     }
 
-    /// <summary> Update view-models at current frame </summary>
+    /// <summary> Update ViewModels current frame </summary>
     private async Task UpdateCurrentFrameAsync()
     {
         // Chat details
@@ -104,6 +106,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     private async Task ClearDataStorageCoreAsync()
     {
         Dto = new();
+        CommentDto = new();
         UserDtos = [];
         IsEmptyData = false;
         await Task.CompletedTask;
@@ -116,6 +119,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             if (!SettingsService.IsExistsAppStorage) return;
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+            CommentDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
 
             IsEmptyData = false;
             ScrollRequested?.Invoke();
@@ -140,7 +144,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
             StateSourceDirectory = Dto.Directory;
 
-            await App.BusinessLogicManager.ConnectClient.DownloadAllDataAsync(DownloadSettings);
+            await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
             await DownloadSettings.SourceVm.SaveAsync();
             await LoadDataStorageCoreAsync();
         }
@@ -164,8 +168,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
     private async Task StopDownloadingCoreAsync()
     {
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         App.BusinessLogicManager.ConnectClient.SetForceStopDownloading();
+        await Task.CompletedTask;
     }
 
     #endregion

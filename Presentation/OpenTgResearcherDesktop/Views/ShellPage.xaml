@@ -13,12 +13,6 @@
     x:Name="ShellPageRoot"
     Loaded="OnLoaded">
 
-    <Page.Resources>
-        <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
-    </Page.Resources>
-
     <Grid>
         <Grid
             x:Name="AppTitleBar"

@@ -52,11 +52,11 @@ public sealed partial class MainWindow : WindowEx
         _dispatcherQueue.TryEnqueue(TgTitleBarHelper.ApplySystemThemeToCaptionButtons);
     }
 
-    private async void LoadWindowState()
+    private void LoadWindowState()
     {
         try
         {
-            await _tgSettingsService.LoadWindowAsync();
+            _tgSettingsService.LoadWindow();
 
             if (_tgSettingsService.WindowWidth == 0 && _tgSettingsService.WindowHeight == 0 && _tgSettingsService.WindowX == 0 && _tgSettingsService.WindowY == 0)
             {
@@ -144,11 +144,11 @@ public sealed partial class MainWindow : WindowEx
         }
     }
 
-    private async void SaveWindowState()
+    private void SaveWindowState()
     {
         try
         {
-            await _tgSettingsService.SaveWindowAsync(AppWindow.Size.Width, AppWindow.Size.Height, AppWindow.Position.X, AppWindow.Position.X);
+            _tgSettingsService.SaveWindow(AppWindow.Size.Width, AppWindow.Size.Height, AppWindow.Position.X, AppWindow.Position.X);
         }
         catch (Exception ex)
         {

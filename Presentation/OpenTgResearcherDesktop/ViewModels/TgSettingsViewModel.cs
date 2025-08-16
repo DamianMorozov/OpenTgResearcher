@@ -62,7 +62,11 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 
     #region Public and private methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await SettingsLoadCoreAsync();
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
+    {
+        SettingsLoadCore();
+        await Task.CompletedTask;
+    }
 
     private async Task SetDisplaySensitiveAsync()
     {
@@ -71,11 +75,11 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCoreAsync, TgResourceExtensions.AskSettingsLoad());
+    private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCore, TgResourceExtensions.AskSettingsLoad());
 
-    private async Task SettingsLoadCoreAsync()
+    private void SettingsLoadCore()
     {
-        await SettingsService.LoadAsync();
+        SettingsService.Load();
         LoadSettingsFromService();
     }
 
@@ -90,12 +94,12 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 
     private async Task SettingsSaveAsync()
     {
-        await ContentDialogAsync(SettingsSaveCoreAsync, TgResourceExtensions.AskSettingsSave());
+        await ContentDialogAsync(SettingsSaveCore, TgResourceExtensions.AskSettingsSave());
     }
 
-    private async Task SettingsSaveCoreAsync()
+    private void SettingsSaveCore()
     {
-        await SettingsService.SaveAsync();
+        SettingsService.Save();
         LoadSettingsFromService();
     }
 

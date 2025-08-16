@@ -12,7 +12,7 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial TgEfAppEntity AppEntity { get; set; } = null!;
 	[ObservableProperty]
-	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new();
+	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new(TgGlobalTools.Container);
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyViewModel> ProxiesVms { get; set; } = [];
 	[ObservableProperty]
@@ -63,8 +63,8 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 	public IRelayCommand AppClearCommand { get; }
 	public IRelayCommand AppDeleteCommand { get; }
 
-	public TgBotConnectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
-		ILogger<TgBotConnectionViewModel> logger) 
+	public TgBotConnectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgBotConnectionViewModel> logger, IAppNotificationService appNotificationService) 
 		: base(settingsService, navigationService, logger, nameof(TgBotConnectionViewModel))
 	{
 		AppNotificationService = appNotificationService;
@@ -220,68 +220,67 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 		await ReloadUiAsync();
 	}
 
-	public override async Task ReloadUiAsync()
-	{
-		await base.ReloadUiAsync();
+    public override async Task ReloadUiAsync()
+    {
+        await base.ReloadUiAsync();
 
-		ApiHash = TgDataFormatUtils.ParseGuidToString(AppEntity.ApiHash);
-		ApiId = AppEntity.ApiId;
-		PhoneNumber = AppEntity.PhoneNumber;
-		FirstName = AppEntity.FirstName;
-		LastName = AppEntity.LastName;
-		UseBot = AppEntity.UseBot;
+        ApiHash = TgDataFormatUtils.ParseGuidToString(AppEntity.ApiHash);
+        ApiId = AppEntity.ApiId;
+        PhoneNumber = AppEntity.PhoneNumber;
+        FirstName = AppEntity.FirstName;
+        LastName = AppEntity.LastName;
+        UseBot = AppEntity.UseBot;
         BotTokenKey = AppEntity.BotTokenKey;
         UseClient = AppEntity.UseClient;
 
         UserName = string.Empty;
-		MtProxyUrl = string.Empty;
-		MaxAutoReconnects = string.Empty;
-		FloodRetryThreshold = string.Empty;
-		PingInterval = string.Empty;
-		MaxCodePwdAttempts = string.Empty;
+        MtProxyUrl = string.Empty;
+        MaxAutoReconnects = string.Empty;
+        FloodRetryThreshold = string.Empty;
+        PingInterval = string.Empty;
+        MaxCodePwdAttempts = string.Empty;
 
-		DataRequest = string.Empty;
-		DataRequestEmptyResponse = TgResourceExtensions.GetClientDataRequestEmptyResponse();
+        DataRequest = string.Empty;
+        DataRequestEmptyResponse = TgResourceExtensions.GetClientDataRequestEmptyResponse();
 
-		await ReloadProxyAsync();
-		OnFieldsTextChangedCore();
-	}
+        await ReloadProxyAsync();
+        OnFieldsTextChangedCore();
+    }
 
-	private async Task ReloadProxyAsync()
-	{
-		ProxiesVms.Clear();
-		var storageResult = await App.BusinessLogicManager.StorageManager
+    private async Task ReloadProxyAsync()
+    {
+        ProxiesVms.Clear();
+        var storageResult = await App.BusinessLogicManager.StorageManager
             .ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false);
-		if (storageResult.IsExists)
-		{
-			foreach (TgEfProxyEntity proxy in storageResult.Items)
-			{
-				ProxiesVms.Add(new(proxy));
-			}
-		}
-		// Insert empty proxy if not exists
-		TgEfProxyViewModel? emptyProxyVm = null;
-		var proxiesVmsEmpty = ProxiesVms.Where(x =>
-			x.Dto.Type == TgEnumProxyType.None && (x.Dto.UserName == "No user" || x.Dto.Password == "No password"));
-		if (!proxiesVmsEmpty.Any())
-		{
-			emptyProxyVm = new(new());
-			ProxiesVms.Add(emptyProxyVm);
-		}
-		// Select proxy
-		var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
-		if (AppEntity.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
-		{
-			ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
-		}
-		// Select empty proxy
-		else
-		{
-			ProxyVm = emptyProxyVm;
-		}
-	}
+        if (storageResult.IsExists)
+        {
+            foreach (TgEfProxyEntity proxy in storageResult.Items)
+            {
+                ProxiesVms.Add(new(TgGlobalTools.Container, proxy));
+            }
+        }
+        // Insert empty proxy if not exists
+        TgEfProxyViewModel? emptyProxyVm = null;
+        var proxiesVmsEmpty = ProxiesVms.Where(x => x.IsEmptyProxy);
+        if (!proxiesVmsEmpty.Any())
+        {
+            emptyProxyVm = new(TgGlobalTools.Container, new());
+            ProxiesVms.Add(emptyProxyVm);
+        }
+        // Select proxy
+        var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
+        if (AppEntity.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
+        {
+            ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
+        }
+        // Select empty proxy
+        else
+        {
+            ProxyVm = emptyProxyVm;
+        }
+    }
 
-	private async Task AppSaveAsync() => await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave());
+    private async Task AppSaveAsync() => await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave());
 
 	private async Task AppSaveCoreAsync()
 	{
@@ -308,8 +307,7 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 	{
 		AppEntity = new();
 		ProxiesVms.Clear();
-		if (ProxyVm is not null)
-			ProxyVm.Dto = new();
+		ProxyVm?.Dto = new();
 
 		await ReloadUiAsync();
 		Password = string.Empty;

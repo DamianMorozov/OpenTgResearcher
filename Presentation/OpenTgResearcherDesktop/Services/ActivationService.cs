@@ -14,7 +14,7 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
         try
         {
             // Execute tasks before activation
-            await settingsService.LoadAsync();
+            settingsService.Load();
             // Set the MainWindow Content
             if (App.MainWindow.Content == null)
             {

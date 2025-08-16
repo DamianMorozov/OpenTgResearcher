@@ -256,7 +256,7 @@
     <value>Default</value>
   </data>
   <data name="ExpanderAbout.Header" xml:space="preserve">
-    <value>OpenTgResearcher - Открытый исследователь Telegram</value>
+    <value>OpenTgResearcher - инструмент для анализа Telegram-чатов и скачивания их содержимого</value>
   </data>
   <data name="ExpanderLicense.Header" xml:space="preserve">
     <value>Лицензия</value>
@@ -587,8 +587,14 @@
   <data name="ExpanderChatStatistics.Header" xml:space="preserve">
     <value>Статистика чата</value>
   </data>
+  <data name="ExpanderComments.Header" xml:space="preserve">
+    <value>Комментарии</value>
+  </data>
   <data name="ExpanderMessages.Header" xml:space="preserve">
     <value>Сообщения</value>
+  </data>
+  <data name="ExpanderExtra.Header" xml:space="preserve">
+    <value>Экстра</value>
   </data>
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Файлы</value>

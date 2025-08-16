@@ -6,6 +6,7 @@
     xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:local="using:OpenTgResearcherDesktop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:proxies="using:TgStorage.Domain.Proxies"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -355,8 +356,7 @@
                             Grid.Row="3"
                             Margin="2,7,7,2"
                             FontWeight="Bold"
-                            TextAlignment="Left"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                            TextAlignment="Left" />
                         <ToggleSwitch
                             Grid.Row="3"
                             Grid.Column="1"

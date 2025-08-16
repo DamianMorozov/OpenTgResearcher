@@ -54,7 +54,7 @@
                             <Button
                                 Margin="5,2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind Id, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -78,7 +78,7 @@
                             <Button
                                 Margin="5,2,0,0"
                                 HorizontalContentAlignment="Left"
-                                Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                                Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                                 CommandParameter="{x:Bind Message, Mode=OneWay}"
                                 CornerRadius="10">
                                 <SymbolIcon Symbol="Copy" />
@@ -122,7 +122,7 @@
                     <Button
                         Margin="5,-2,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ChatDto.Id, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
@@ -146,7 +146,7 @@
                     <Button
                         Margin="5,-2,0,0"
                         HorizontalContentAlignment="Left"
-                        Command="{Binding ViewModel.OnClipboardWriteCommand}"
+                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
                         CommandParameter="{x:Bind ChatDto.UserName, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />

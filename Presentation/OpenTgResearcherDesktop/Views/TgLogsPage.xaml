@@ -95,8 +95,8 @@
                                             Grid.Row="0"
                                             Grid.Column="1"
                                             Margin="10,-10,0,0"
-                                            Command="{Binding ViewModel.OnClipboardWriteCommand}"
-                                            CommandParameter="{x:Bind Content, Mode=OneWay}"
+                                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
+                                            CommandParameter="{x:Bind Content}"
                                             CornerRadius="10">
                                             <SymbolIcon Symbol="Copy" />
                                         </Button>

@@ -12,7 +12,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial TgEfAppEntity AppEntity { get; set; } = null!;
 	[ObservableProperty]
-	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new();
+	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new(TgGlobalTools.Container);
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyViewModel> ProxiesVms { get; set; } = [];
 	[ObservableProperty]
@@ -61,8 +61,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	public IRelayCommand AppDeleteCommand { get; }
 
 	public TgClientConnectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
-		ILogger<TgClientConnectionViewModel> logger) 
-		: base(settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
+		ILogger<TgClientConnectionViewModel> logger) : base(settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
 	{
 		AppNotificationService = appNotificationService;
 		IsClientConnected = AppNotificationService.IsClientConnected;
@@ -246,16 +245,15 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		{
 			foreach (TgEfProxyEntity proxy in storageResult.Items)
 			{
-				ProxiesVms.Add(new(proxy));
+				ProxiesVms.Add(new(TgGlobalTools.Container, proxy));
 			}
 		}
 		// Insert empty proxy if not exists
 		TgEfProxyViewModel? emptyProxyVm = null;
-		var proxiesVmsEmpty = ProxiesVms.Where(x =>
-			x.Dto.Type == TgEnumProxyType.None && (x.Dto.UserName == "No user" || x.Dto.Password == "No password"));
+        var proxiesVmsEmpty = ProxiesVms.Where(x => x.IsEmptyProxy);
 		if (!proxiesVmsEmpty.Any())
 		{
-			emptyProxyVm = new(new());
+			emptyProxyVm = new(TgGlobalTools.Container, new());
 			ProxiesVms.Add(emptyProxyVm);
 		}
 		// Select proxy
@@ -298,8 +296,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
 		AppEntity = new();
 		ProxiesVms.Clear();
-		if (ProxyVm is not null)
-			ProxyVm.Dto = new();
+		ProxyVm?.Dto = new();
 
 		await ReloadUiAsync();
 		Password = string.Empty;

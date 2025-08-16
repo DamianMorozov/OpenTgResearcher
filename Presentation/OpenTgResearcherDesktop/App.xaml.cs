@@ -1,181 +1,191 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 namespace OpenTgResearcherDesktop;
 
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
 {
-	#region Public and private fields, properties, constructor
+    #region Public and private fields, properties, constructor
 
-	// The .NET Generic Host provides dependency injection, configuration, logging, and other services.
-	// https://docs.microsoft.com/dotnet/core/extensions/generic-host
-	// https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
-	// https://docs.microsoft.com/dotnet/core/extensions/configuration
-	// https://docs.microsoft.com/dotnet/core/extensions/logging
-	public IHost Host { get; }
+    // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
+    // https://docs.microsoft.com/dotnet/core/extensions/generic-host
+    // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
+    // https://docs.microsoft.com/dotnet/core/extensions/configuration
+    // https://docs.microsoft.com/dotnet/core/extensions/logging
+    public IHost Host { get; }
 
-	public static T GetService<T>() where T : class
-	{
-		if ((Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
-		{
-			throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-		}
-		return service;
-	}
+    public static T GetService<T>() where T : class
+    {
+        if ((Current as App)!.Host.Services.GetRequiredService(typeof(T)) is not T service)
+        {
+            throw new InvalidOperationException($"{typeof(T)} is not registered in DI container or has incorrect type.");
+        }
+        return service;
+    }
 
-	public static WindowEx MainWindow { get; private set; } = default!;
+    public static object GetService(Type type)
+    {
+        var service = (Current as App)!.Host.Services.GetRequiredService(type);
+        if (!type.IsInstanceOfType(service))
+        {
+            throw new InvalidOperationException($"{type} is not registered in DI container or has incorrect type.");
+        }
+        return service;
+    }
+
+    public static WindowEx MainWindow { get; private set; } = default!;
 
     public static UIElement? AppTitlebar { get; set; }
     internal static ITgBusinessLogicManager BusinessLogicManager { get; private set; } = default!;
     private static ILifetimeScope Scope { get; set; } = default!;
+    public static TgViewModelLocator? Locator { get; set; } = default!;
 
     public App()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
 
         // Set app type
         TgGlobalTools.SetAppType(TgEnumAppType.Desktop);
-        
-		// Logging to the application directory
+
+        // Logging to the application directory
         TgLogUtils.Create(TgEnumAppType.Desktop, isAppStart: true);
 
-        // Create ServiceCollection for EF Core Pooling
-        var services = new ServiceCollection();
-        services.AddDbContextPool<TgEfDesktopContext>(options =>
-        {
-            var context = new TgEfDesktopContext();
-            options.UseSqlite(context.GetStoragePath());
-            // Copy by TgEfConsoleContext.OnConfiguring
-            LoggerFactory factory = new();
-            options
-#if DEBUG
-                .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}{nameof(context.ContextId)} {context.ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
-                .EnableDetailedErrors()
-                .EnableSensitiveDataLogging()
-#endif
-                .EnableThreadSafetyChecks()
-                .UseLoggerFactory(factory);
-
-        }, poolSize: 128);
-        var serviceProvider = services.BuildServiceProvider();
-
-        // DI register
-        var containerBuilder = new ContainerBuilder();
-        // Register DbContext from ServiceProvider
-        containerBuilder.Register(c => serviceProvider.GetRequiredService<TgEfDesktopContext>())
-            .As<ITgEfContext>()
-            .InstancePerLifetimeScope();
-        // Registering repositories
-        containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
-        containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
-        containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
-        containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
-        containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
-        containerBuilder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
-        containerBuilder.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
-        containerBuilder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
-        containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
-        containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
-        containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
-        // Registering services
-        containerBuilder.RegisterType<TgEfDesktopContext>().As<ITgEfContext>();
-        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
-        containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>();
-        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
-        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
-        // Building the container
-        TgGlobalTools.Container = containerBuilder.Build();
-
         // Host
-        Host = Microsoft.Extensions.Hosting.Host
-			.CreateDefaultBuilder()
-			.UseContentRoot(AppContext.BaseDirectory)
-			.ConfigureServices((context, services) =>
-			{
-				// Default Activation Handler
-				services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
-				// Other Activation Handlers
-				services.AddTransient<IActivationHandler, AppNotificationActivationHandler>();
-				// Services
-				services.AddSingleton<IAppNotificationService, AppNotificationService>();
-				services.AddSingleton<ITgSettingsService, TgSettingsService>();
-				services.AddTransient<IWebViewService, WebViewService>();
-				services.AddTransient<INavigationViewService, NavigationViewService>();
-				services.AddSingleton<IActivationService, ActivationService>();
-				services.AddSingleton<IPageService, PageService>();
-				services.AddSingleton<INavigationService, NavigationService>();
-				// Core Services
-				services.AddSingleton<ISampleDataService, SampleDataService>();
-				services.AddSingleton<IFileService, FileService>();
-				// Views and ViewModels
-				services.AddTransient<ContentGridDetailPage>();
-				services.AddTransient<ContentGridDetailViewModel>();
-				services.AddTransient<ContentGridPage>();
-				services.AddTransient<ContentGridViewModel>();
-				services.AddTransient<DataGridPage>();
-				services.AddTransient<DataGridViewModel>();
-				services.AddTransient<ListDetailsPage>();
-				services.AddTransient<ListDetailsViewModel>();
-				services.AddTransient<ShellPage>();
-				services.AddTransient<ShellViewModel>();
-				services.AddTransient<TgBotConnectionPage>();
-				services.AddTransient<TgBotConnectionViewModel>();
-				services.AddTransient<TgChatDetailsContentPage>();
-				services.AddTransient<TgChatDetailsContentViewModel>();
-				services.AddTransient<TgChatDetailsInfoPage>();
-				services.AddTransient<TgChatDetailsInfoViewModel>();
-				services.AddTransient<TgChatPage>();
-				services.AddTransient<TgChatDetailsParticipantsPage>();
-				services.AddTransient<TgChatDetailsParticipantsViewModel>();
-				services.AddTransient<TgChatDetailsStatisticsPage>();
-				services.AddTransient<TgChatDetailsStatisticsViewModel>();
-				services.AddTransient<TgChatViewModel>();
-				services.AddTransient<TgChatsPage>();
-				services.AddTransient<TgChatsViewModel>();
-				services.AddTransient<TgClientConnectionPage>();
-				services.AddTransient<TgClientConnectionViewModel>();
-				services.AddTransient<TgFiltersPage>();
-				services.AddTransient<TgFiltersViewModel>();
-				services.AddTransient<TgLicensePage>();
-				services.AddTransient<TgLicenseViewModel>();
-				services.AddTransient<TgLoadDataPage>();
-				services.AddTransient<TgLoadDataViewModel>();
-				services.AddTransient<TgLogsPage>();
-				services.AddTransient<TgLogsViewModel>();
-				services.AddTransient<TgMainPage>();
-				services.AddTransient<TgMainViewModel>();
-				services.AddTransient<TgProxiesPage>();
-				services.AddTransient<TgProxiesViewModel>();
-				services.AddTransient<TgSettingsPage>();
-				services.AddTransient<TgSettingsViewModel>();
-				services.AddTransient<TgSplashScreenPage>();
-				services.AddTransient<TgSplashScreenViewModel>();
-				services.AddTransient<TgStoragePage>();
-				services.AddTransient<TgStorageViewModel>();
-				services.AddTransient<TgStoriesPage>();
-				services.AddTransient<TgStoriesViewModel>();
-				services.AddTransient<TgUpdatePage>();
-				services.AddTransient<TgUpdateViewModel>();
-				services.AddTransient<TgUserDetailsPage>();
-				services.AddTransient<TgUserDetailsViewModel>();
-				services.AddTransient<TgUsersPage>();
-				services.AddTransient<TgUsersViewModel>();
-				services.AddTransient<WebViewPage>();
-				services.AddTransient<WebViewViewModel>();
-				// Configuration
-				services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
-			})
-			.Build();
-		
-		// Exceptions
-		UnhandledException += App_UnhandledException;
+        Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+            .UseContentRoot(AppContext.BaseDirectory)
+            .UseServiceProviderFactory(new AutofacServiceProviderFactory()) // Connecting Autofac
+            .ConfigureServices((context, services) =>
+            {
+                // Startup services
+                services.AddSingleton<IFileService, FileService>();
+                services.AddSingleton<INavigationService, NavigationService>();
+                services.AddSingleton<ITgSettingsService, TgSettingsService>();
+                services.AddSingleton<IPageService, PageService>();
+
+                // Temporary provider for accessing SettingsService
+                var tempProvider = services.BuildServiceProvider();
+                var settingsService = tempProvider.GetRequiredService<ITgSettingsService>();
+                var storagePath = settingsService.AppStorage;
+
+                // Register the DbContext with SQLite
+                services.AddDbContextPool<TgEfDesktopContext>(options =>
+                {
+                    options.UseSqlite($"Data Source={storagePath}");
+#if DEBUG
+                    options
+                        .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
+                        .EnableDetailedErrors()
+                        .EnableSensitiveDataLogging();
+#endif
+                    options
+                        .EnableThreadSafetyChecks()
+                        .UseLoggerFactory(new LoggerFactory());
+                }, poolSize: 128);
+
+                // Default Activation Handler
+                services.AddSingleton<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
+                // Other Activation Handlers
+                services.AddSingleton<IActivationHandler, AppNotificationActivationHandler>();
+                // Services
+                services.AddSingleton<IAppNotificationService, AppNotificationService>();
+                services.AddSingleton<IWebViewService, WebViewService>();
+                services.AddSingleton<INavigationViewService, NavigationViewService>();
+                services.AddSingleton<IActivationService, ActivationService>();
+                services.AddSingleton<ISampleDataService, SampleDataService>();
+                // Views and ViewModels
+                services.AddSingleton<ContentGridDetailPage>();
+                services.AddSingleton<ContentGridDetailViewModel>();
+                services.AddSingleton<ContentGridPage>();
+                services.AddSingleton<ContentGridViewModel>();
+                services.AddSingleton<DataGridPage>();
+                services.AddSingleton<DataGridViewModel>();
+                services.AddSingleton<ListDetailsPage>();
+                services.AddSingleton<ListDetailsViewModel>();
+                services.AddSingleton<ShellPage>();
+                services.AddSingleton<ShellViewModel>();
+                services.AddSingleton<TgBotConnectionPage>();
+                services.AddSingleton<TgBotConnectionViewModel>();
+                services.AddSingleton<TgChatDetailsContentPage>();
+                services.AddSingleton<TgChatDetailsContentViewModel>();
+                services.AddSingleton<TgChatDetailsInfoPage>();
+                services.AddSingleton<TgChatDetailsInfoViewModel>();
+                services.AddSingleton<TgChatPage>();
+                services.AddSingleton<TgChatDetailsParticipantsPage>();
+                services.AddSingleton<TgChatDetailsParticipantsViewModel>();
+                services.AddSingleton<TgChatDetailsStatisticsPage>();
+                services.AddSingleton<TgChatDetailsStatisticsViewModel>();
+                services.AddSingleton<TgChatViewModel>();
+                services.AddSingleton<TgChatsPage>();
+                services.AddSingleton<TgChatsViewModel>();
+                services.AddSingleton<TgClientConnectionPage>();
+                services.AddSingleton<TgClientConnectionViewModel>();
+                services.AddSingleton<TgFiltersPage>();
+                services.AddSingleton<TgFiltersViewModel>();
+                services.AddSingleton<TgLicensePage>();
+                services.AddSingleton<TgLicenseViewModel>();
+                services.AddSingleton<TgLoadDataPage>();
+                services.AddSingleton<TgLoadDataViewModel>();
+                services.AddSingleton<TgLogsPage>();
+                services.AddSingleton<TgLogsViewModel>();
+                services.AddSingleton<TgMainPage>();
+                services.AddSingleton<TgMainViewModel>();
+                services.AddSingleton<TgProxiesPage>();
+                services.AddSingleton<TgProxiesViewModel>();
+                services.AddSingleton<TgSettingsPage>();
+                services.AddSingleton<TgSettingsViewModel>();
+                services.AddSingleton<TgSplashScreenPage>();
+                services.AddSingleton<TgSplashScreenViewModel>();
+                services.AddSingleton<TgStoragePage>();
+                services.AddSingleton<TgStorageViewModel>();
+                services.AddSingleton<TgStoriesPage>();
+                services.AddSingleton<TgStoriesViewModel>();
+                services.AddSingleton<TgUpdatePage>();
+                services.AddSingleton<TgUpdateViewModel>();
+                services.AddSingleton<TgUserDetailsPage>();
+                services.AddSingleton<TgUserDetailsViewModel>();
+                services.AddSingleton<TgUsersPage>();
+                services.AddSingleton<TgUsersViewModel>();
+                services.AddSingleton<WebViewPage>();
+                services.AddSingleton<WebViewViewModel>();
+                // Configuration
+                services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
+            })
+            // Autofac registrations
+            .ConfigureContainer<ContainerBuilder>(containerBuilder =>
+            {
+                containerBuilder.RegisterModule<TgAutofacRepositoryModule>();
+                containerBuilder.RegisterModule<TgAutofacServiceModule>();
+                // Registering the EF context via Host.Services
+                containerBuilder.Register(c =>
+                {
+                    // Temporary provider for accessing SettingsService
+                    var tempProvider = c.Resolve<IServiceProvider>();
+                    var settingsService = tempProvider.GetRequiredService<ITgSettingsService>();
+                    var storagePath = settingsService.AppStorage;
+                    // Create DbContextOptionsBuilder with SQLite connection
+                    var optionsBuilder = new DbContextOptionsBuilder<TgEfDesktopContext>();
+                    optionsBuilder.UseSqlite($"Data Source={storagePath}");
+                    return new TgEfDesktopContext(optionsBuilder.Options);
+                }).As<ITgEfContext>().InstancePerLifetimeScope();
+            })
+            .Build();
+
+        var desktopContext = Host.Services.GetRequiredService<TgEfDesktopContext>();
+
+        // Set the Host as the current application host
+        TgGlobalTools.Container = (IContainer)Host.Services.GetAutofacRoot();
+
+        // Exceptions
+        UnhandledException += App_UnhandledException;
 
         AppDomain.CurrentDomain.ProcessExit += (s, e) => OnProcessExit();
     }
 
-	public void OnProcessExit()
-	{
+    public void OnProcessExit()
+    {
         Host.Dispose();
         TgLogUtils.CloseAndFlush();
 
@@ -190,24 +200,26 @@ public partial class App : Application
     #region Public and private methods
 
     private static void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
-	{
+    {
         // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
         TgLogUtils.WriteException(e.Exception);
         //GetService<IAppNotificationService>().Show(message);
 
         // Set a handled exception to prevent the application from terminating
         e.Handled = true;
-	}
+    }
 
-	protected override async void OnLaunched(LaunchActivatedEventArgs args)
-	{
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
+    {
         try
-		{
-			base.OnLaunched(args);
+        {
+            base.OnLaunched(args);
 
             // TG client loading
             Scope = TgGlobalTools.Container.BeginLifetimeScope();
             BusinessLogicManager = Scope.Resolve<ITgBusinessLogicManager>();
+            // ViewModel localor
+            Locator = new();
 
             // MainWindow
             MainWindow ??= new MainWindow();
@@ -229,12 +241,12 @@ public partial class App : Application
                 });
                 await tcs.Task;
             }
-		}
-		catch (Exception ex)
-		{
+        }
+        catch (Exception ex)
+        {
             TgLogUtils.WriteException(ex);
-		}
-	}
+        }
+    }
 
-	#endregion
+    #endregion
 }

@@ -185,7 +185,7 @@
                         Grid.Column="4"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
+                        VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
                     <Button

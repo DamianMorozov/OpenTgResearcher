@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 global using Autofac;
+global using Autofac.Extensions.DependencyInjection;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using CommunityToolkit.WinUI.UI.Animations;
@@ -41,6 +42,7 @@ global using OpenTgResearcherDesktop.Models;
 global using OpenTgResearcherDesktop.Services;
 global using OpenTgResearcherDesktop.ViewModels;
 global using OpenTgResearcherDesktop.Views;
+global using System.Collections.Concurrent;
 global using System.Collections.ObjectModel;
 global using System.Collections.Specialized;
 global using System.Data;
@@ -64,6 +66,7 @@ global using TgInfrastructure.Dtos;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.Helpers;
 global using TgInfrastructure.ViewModels;
+global using TgStorage.Common;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Apps;
 global using TgStorage.Domain.Filters;

@@ -6,6 +6,7 @@
     xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:local="using:OpenTgResearcherDesktop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:proxies="using:TgStorage.Domain.Proxies"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -316,7 +317,7 @@
                             Margin="2,7,2,2"
                             FontWeight="Bold"
                             TextAlignment="Left"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
                         <ToggleSwitch
                             Grid.Row="3"
                             Grid.Column="1"
@@ -325,7 +326,7 @@
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
                             IsOn="{x:Bind ViewModel.UseBot, Mode=TwoWay}"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
                         <!--  BotToken  -->
                         <TextBlock
                             x:Uid="FieldBotToken"
@@ -334,7 +335,7 @@
                             Margin="12,7,2,2"
                             FontWeight="Bold"
                             TextAlignment="Left"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="3"
                             Grid.Column="3"
@@ -343,7 +344,7 @@
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.LicenseService.CurrentLicense.LicenseType, Converter={StaticResource LicenseTypeToVisibilityConverter}, Mode=OneWay}" />
+                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
                     </Grid>
                 </Expander>
             </ContentControl>

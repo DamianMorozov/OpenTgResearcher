@@ -363,7 +363,7 @@ internal partial class TgMenuHelper
         try
         {
             // Get details about a public chat (even if client is not a member of that chat)
-            tgDownloadSettings.SourceVm = new TgEfSourceViewModel { Dto = new TgEfSourceDto { UserName = chatNameOrId } };
+            tgDownloadSettings.SourceVm = new TgEfSourceViewModel(TgGlobalTools.Container) { Dto = new TgEfSourceDto { UserName = chatNameOrId } };
             await BusinessLogicManager.ConnectClient.CreateChatBaseCoreAsync(tgDownloadSettings);
             var fullChat = await client.GetFullChat(tgDownloadSettings.Chat.Base);
             // Get chat details

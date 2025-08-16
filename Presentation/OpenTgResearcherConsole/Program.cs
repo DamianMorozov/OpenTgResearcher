@@ -36,9 +36,7 @@ public static class Program
         // DI register
         var containerBuilder = new ContainerBuilder();
         // Register DbContext from ServiceProvider
-        containerBuilder.Register(c => serviceProvider.GetRequiredService<TgEfConsoleContext>())
-            .As<ITgEfContext>()
-            .InstancePerLifetimeScope();
+        containerBuilder.Register(c => serviceProvider.GetRequiredService<TgEfConsoleContext>()).As<ITgEfContext>().InstancePerLifetimeScope();
         // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
@@ -53,7 +51,7 @@ public static class Program
         containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
         // Registering services
         containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
-        containerBuilder.RegisterType<TgEfConsoleContext>().As<ITgEfContext>();
+        containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>();
         containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();

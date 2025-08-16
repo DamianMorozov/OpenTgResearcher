@@ -300,14 +300,14 @@ internal partial class TgMenuHelper
         await DownloadSettingsSaveAsync(tgDownloadSettings);
         try
         {
-            await BusinessLogicManager.ConnectClient.DownloadAllDataAsync(tgDownloadSettings);
+            await BusinessLogicManager.ConnectClient.ParseChatAsync(tgDownloadSettings);
         }
         catch (Exception ex)
         {
             CatchException(ex);
             var floodWait = BusinessLogicManager.ConnectClient.Client?.FloodRetryThreshold ?? 60;
             TgLog.MarkupWarning($"Flood control: waiting {floodWait} seconds");
-            await Task.Delay(floodWait * 1_000);
+            await Task.Delay(TimeSpan.FromSeconds(floodWait));
             // Repeat request after waiting
             await DownloadManualAsync(tgDownloadSettings);
         }

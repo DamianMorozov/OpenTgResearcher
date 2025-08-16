@@ -33,6 +33,7 @@ internal abstract class TgDbContextTestsBase : TgDisposable
         // Registering services
         containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
         containerBuilder.RegisterType<TgEfTestContext>().As<ITgEfContext>();
+        containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>();
         containerBuilder.RegisterType<TgConnectClientTest>().As<ITgConnectClientTest>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();

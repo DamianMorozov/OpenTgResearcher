@@ -3,26 +3,30 @@
 
 namespace TgStorage.Domain.Messages;
 
-/// <summary> Message view-model </summary>
+/// <summary> Message ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMessageEntity, TgEfMessageDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfMessageRepository Repository { get; } = new();
-	[ObservableProperty]
+    public override ITgEfMessageRepository Repository { get; }
+
+    [ObservableProperty]
 	public partial TgEfMessageDto Dto { get; set; } = null!;
-	public Action<TgEfMessageViewModel> UpdateAction { get; set; } = _ => { };
 
 
-	public TgEfMessageViewModel(TgEfMessageEntity item) : base()
+	public TgEfMessageViewModel(Autofac.IContainer container, TgEfMessageEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfMessageRepository>();
+        Fill(item);
 	}
 
-	public TgEfMessageViewModel() : base()
+	public TgEfMessageViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfMessageEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfMessageRepository>();
+        TgEfMessageEntity item = new();
 		Fill(item);
 	}
 
@@ -39,9 +43,6 @@ public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMes
 		Dto ??= new();
 		Dto.Copy(item, isUidCopy: true);
 	}
-
-	public async Task<TgEfStorageResult<TgEfMessageEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetNewEntity());
 
 	#endregion
 }

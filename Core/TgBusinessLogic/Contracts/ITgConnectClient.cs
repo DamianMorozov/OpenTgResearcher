@@ -44,14 +44,13 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetupUpdateStateExceptionShort(Func<string, Task> updateStateExceptionShortAsync);
     public void SetupAfterClientConnect(Func<Task> afterClientConnectAsync);
 	public void SetupUpdateException(Func<Exception, Task> updateExceptionAsync);
-	public void SetupUpdateStateItemSource(Func<long, Task> updateStateItemSourceAsync);
 
 	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? chatIds = null);
 	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent);
     public Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings);
 
     public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings);
-	public Task DownloadAllDataAsync(ITgDownloadViewModel tgDownloadSettings);
+	public Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings);
 	public Task MarkHistoryReadAsync();
 	public void SetForceStopDownloading();
 	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings);
@@ -95,6 +94,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task UpdateUserAsync(User user, bool isContact);
     /// <summary> Update users </summary>
     public Task UpdateUsersAsync(List<TgEfUserDto> users);
-    /// <summary> Execute a Telegram call with flood control </summary>
-    public Task<T> ExecuteWithFloodControlAsync<T>(Func<Task<T>> telegramCall);
+    /// <summary> Checks if a file is locked by another process </summary>
+    public bool CheckFileLocked(string filePath);
 }

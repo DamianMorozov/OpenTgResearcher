@@ -7,19 +7,23 @@ public sealed partial class TgEfLicenseViewModel : TgEntityViewModelBase<TgEfLic
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfLicenseRepository Repository { get; } = new();
+	public override ITgEfLicenseRepository Repository { get; }
 
 	[ObservableProperty]
 	public partial TgEfLicenseDto Dto { get; set; } = null!;
 
-	public TgEfLicenseViewModel(TgEfLicenseEntity item) : base()
+	public TgEfLicenseViewModel(Autofac.IContainer container, TgEfLicenseEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfLicenseRepository>();
+        Fill(item);
 	}
 
-	public TgEfLicenseViewModel() : base()
+	public TgEfLicenseViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfLicenseEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfLicenseRepository>();
+        TgEfLicenseEntity item = new();
 		Fill(item);
 	}
 

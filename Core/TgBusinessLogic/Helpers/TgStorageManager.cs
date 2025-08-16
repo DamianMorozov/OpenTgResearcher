@@ -7,9 +7,12 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
 {
     #region Public and private fields, properties, constructor
 
+    /// <summary> Autofac lifetime scope </summary>
     private ILifetimeScope Scope { get; }
     /// <inheritdoc />
     public ITgEfContext EfContext { get; }
+    /// <inheritdoc />
+    public string StoragePath { get; }
     /// <inheritdoc />
     public ITgEfAppRepository AppRepository { get; }
     /// <inheritdoc />
@@ -38,6 +41,10 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         
         EfContext = Scope.Resolve<ITgEfContext>();
+        var connectionString = EfContext.Database.GetDbConnection()?.ConnectionString ?? string.Empty;
+        var builder = new SqliteConnectionStringBuilder(connectionString);
+        StoragePath = builder.DataSource;
+
         AppRepository = Scope.Resolve<ITgEfAppRepository>();
         UserRepository = Scope.Resolve<ITgEfUserRepository>();
         DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>();
@@ -56,6 +63,10 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         
         EfContext = Scope.Resolve<ITgEfContext>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        var connectionString = EfContext.Database.GetDbConnection()?.ConnectionString ?? string.Empty;
+        var builder = new SqliteConnectionStringBuilder(connectionString);
+        StoragePath = builder.DataSource;
+
         AppRepository = Scope.Resolve<ITgEfAppRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         UserRepository = Scope.Resolve<ITgEfUserRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));

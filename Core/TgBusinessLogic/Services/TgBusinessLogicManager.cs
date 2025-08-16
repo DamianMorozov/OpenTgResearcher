@@ -1,7 +1,7 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-namespace TgBusinessLogic.Helpers;
+namespace TgBusinessLogic.Services;
 
 public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicManager
 {
@@ -11,6 +11,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     public ITgStorageManager StorageManager { get; private set; } = default!;
     public ITgLicenseService LicenseService { get; private set; } = default!;
     public ITgConnectClient ConnectClient { get; private set; } = default!;
+    public ITgFloodControlService FloodControlService { get; private set; } = default!;
 
     public TgBusinessLogicManager() : base()
     {
@@ -18,13 +19,19 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
 
         StorageManager = Scope.Resolve<ITgStorageManager>();
         LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(ITgStorageManager), StorageManager));
+        FloodControlService = Scope.Resolve<ITgFloodControlService>();
         ConnectClient = TgGlobalTools.AppType switch
         {
-            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
         };
     }
 
@@ -35,14 +42,19 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         StorageManager = Scope.Resolve<ITgStorageManager>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
             new TypedParameter(typeof(ITgStorageManager), StorageManager));
+        FloodControlService = Scope.Resolve<ITgFloodControlService>();
         ConnectClient = TgGlobalTools.AppType switch
         {
-            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+            TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
             TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
-                new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
-            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(new TypedParameter(typeof(ITgStorageManager), StorageManager)),
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+            TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(
+                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
         };
     }
 
@@ -56,6 +68,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         ConnectClient.Dispose();
         LicenseService.Dispose();
         StorageManager.Dispose();
+        FloodControlService.Dispose();
 
         Scope.Dispose();
     }
@@ -133,11 +146,11 @@ WHERE UID IN (
     }
 
     /// <inheritdoc />
-    public async Task ShrinkDbAsync() => 
+    public async Task ShrinkDbAsync() =>
         await StorageManager.EfContext.ShrinkDbAsync();
 
     /// <inheritdoc />
-    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") => 
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") =>
         StorageManager.EfContext.BackupDb(storagePath);
 
     /// <inheritdoc />

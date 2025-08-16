@@ -3,24 +3,28 @@
 
 namespace TgStorage.Domain.Sources;
 
-/// <summary> Source view-model </summary>
+/// <summary> Source ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSourceEntity, TgEfSourceDto>, ITgEfSourceViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfSourceRepository Repository { get; } = new();
+	public override ITgEfSourceRepository Repository { get; }
     [ObservableProperty]
 	public partial TgEfSourceDto Dto { get; set; } = null!;
 
-    public TgEfSourceViewModel(TgEfSourceEntity item) : base()
+    public TgEfSourceViewModel(Autofac.IContainer container, TgEfSourceEntity item) : base()
     {
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfSourceRepository>();
+        Fill(item);
     }
 
-    public TgEfSourceViewModel() : base()
+    public TgEfSourceViewModel(Autofac.IContainer container) : base()
     {
-		TgEfSourceEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfSourceRepository>();
+        TgEfSourceEntity item = new();
 		Fill(item);
 	}
 

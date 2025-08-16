@@ -4,6 +4,7 @@
 global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;
 global using ProxyLib.Proxy;
 global using System.Collections.Concurrent;

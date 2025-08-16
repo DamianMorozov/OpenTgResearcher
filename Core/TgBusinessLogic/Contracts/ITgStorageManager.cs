@@ -7,6 +7,8 @@ public interface ITgStorageManager : IDisposable
 {
     /// <summary> EF context and repositories for Telegram data storage </summary>
     public ITgEfContext EfContext { get; }
+    /// <summary> Storage file path </summary>
+    public string StoragePath { get; }
     /// <summary> Application repository for managing application settings and configurations </summary>
     public ITgEfAppRepository AppRepository { get; }
     /// <summary> Document repository for managing documents in the Telegram storage </summary>

@@ -3,26 +3,30 @@
 
 namespace TgStorage.Domain.Proxies;
 
-/// <summary> Proxy view-model </summary>
+/// <summary> Proxy ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxyEntity, TgEfProxyDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfProxyRepository Repository { get; } = new();
+	public override ITgEfProxyRepository Repository { get; } 
 	[ObservableProperty]
 	public partial TgEfProxyDto Dto { get; set; } = null!;
 	public Action<TgEfProxyViewModel> UpdateAction { get; set; } = _ => { };
 
 
-	public TgEfProxyViewModel(TgEfProxyEntity item) : base()
+	public TgEfProxyViewModel(Autofac.IContainer container, TgEfProxyEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfProxyRepository>();
+        Fill(item);
 	}
 
-	public TgEfProxyViewModel() : base()
+	public TgEfProxyViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfProxyEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfProxyRepository>();
+        TgEfProxyEntity item = new();
 		Fill(item);
 	}
 
@@ -43,5 +47,8 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
 	public async Task<TgEfStorageResult<TgEfProxyEntity>> SaveAsync() =>
 		await Repository.SaveAsync(Dto.GetNewEntity());
 
-	#endregion
+    /// <summary> Check if the proxy is empty </summary>
+    public bool IsEmptyProxy => Dto.Type == TgEnumProxyType.None && (Dto.UserName == "No user" || Dto.Password == "No password");
+
+    #endregion
 }

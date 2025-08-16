@@ -3,25 +3,29 @@
 
 namespace TgStorage.Domain.Filters;
 
-/// <summary> Contact view-model </summary>
+/// <summary> Contact ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilterEntity, TgEfFilterDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfFilterRepository Repository { get; } = new();
+	public override ITgEfFilterRepository Repository { get; }
 	[ObservableProperty]
 	public partial TgEfFilterDto Dto { get; set; } = null!;
 
 
-	public TgEfFilterViewModel(TgEfFilterEntity item) : base()
+	public TgEfFilterViewModel(Autofac.IContainer container, TgEfFilterEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfFilterRepository>();
+        Fill(item);
 	}
 
-	public TgEfFilterViewModel() : base()
+	public TgEfFilterViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfFilterEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfFilterRepository>();
+        TgEfFilterEntity item = new();
 		Fill(item);
 	}
 

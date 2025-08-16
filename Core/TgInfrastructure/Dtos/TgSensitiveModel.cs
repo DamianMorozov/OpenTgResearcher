@@ -16,7 +16,10 @@ public partial class TgSensitiveModel : ObservableRecipient
 
     public IRelayCommand? SetDisplaySensitiveCommand { get; set; }
 
-    public TgSensitiveModel() : base() { }
+    public TgSensitiveModel() : base()
+    {
+        //
+    }
 
     #endregion
 

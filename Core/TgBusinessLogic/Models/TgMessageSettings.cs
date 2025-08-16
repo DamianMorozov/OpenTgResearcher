@@ -19,6 +19,8 @@ public sealed class TgMessageSettings
     public long CurrentChatId { get; set; }
     /// <summary> Parent chat ID </summary>
     public long ParentChatId { get; set; }
+    /// <summary> Thrown flag for Telegram calls </summary>
+    public bool IsThrow { get; set; }
 
     #endregion
 
@@ -37,7 +39,8 @@ public sealed class TgMessageSettings
             CurrentMessageId = CurrentMessageId,
             ParentMessageId = ParentMessageId,
             CurrentChatId = CurrentChatId,
-            ParentChatId = ParentChatId
+            ParentChatId = ParentChatId,
+            IsThrow = IsThrow
         };
         return copy;
     }

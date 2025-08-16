@@ -163,7 +163,7 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     }
 
     /// <inheritdoc />
-    public async Task SetIsUserAccess(bool isUserAccess)
+    public async Task SetIsUserAccessAsync(bool isUserAccess)
     {
         await EfContext.Sources
             .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsUserAccess, isUserAccess));
@@ -171,7 +171,7 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     }
 
     /// <inheritdoc />
-    public async Task SetIsUserAccess(List<long> chatIds, bool isUserAccess)
+    public async Task SetIsUserAccessAsync(List<long> chatIds, bool isUserAccess)
     {
         await EfContext.Sources
             .Where(x => chatIds.Contains(x.Id))
@@ -180,7 +180,7 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     }
 
     /// <inheritdoc />
-    public async Task SetIsSubscribe(bool isSubscribe)
+    public async Task SetIsSubscribeAsync(bool isSubscribe)
     {
         await EfContext.Sources
             .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsSubscribe, isSubscribe));
@@ -188,12 +188,37 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     }
 
     /// <inheritdoc />
-    public async Task SetIsSubscribe(List<long> chatIds, bool isSubscribe)
+    public async Task SetIsSubscribeAsync(List<long> chatIds, bool isSubscribe)
     {
         await EfContext.Sources
             .Where(x => chatIds.Contains(x.Id))
             .ExecuteUpdateAsync(x => x.SetProperty(s => s.IsSubscribe, isSubscribe));
         await EfContext.SaveChangesAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<TgEfSourceDto> FindCommentDtoSourceAsync(long chatId)
+    {
+        // Find the first relation where the given chatId is used as a child
+        var relation = await EfContext.MessagesRelations
+            .AsNoTracking()
+            .Where(x => x.ParentSourceId == chatId)
+            .OrderByDescending(x => x.ChildMessageId)
+            .FirstOrDefaultAsync();
+
+        if (relation is null)
+            return new TgEfSourceDto(); // Return empty DTO if not found
+
+        // Load the parent source entity
+        var sourceEntity = await EfContext.Sources
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == relation.ChildSourceId);
+
+        if (sourceEntity is null)
+            return new TgEfSourceDto(); // Return empty DTO if parent source not found
+
+        // Convert to DTO
+        return new TgEfSourceDto().Copy(sourceEntity, isUidCopy: true);
     }
 
     #endregion

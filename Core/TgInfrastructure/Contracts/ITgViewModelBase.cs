@@ -3,7 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> Base view-model </summary>
+/// <summary> Base ViewModel </summary>
 public interface ITgViewModelBase : ITgDebug
 {
 	bool IsLoad { get; set; }

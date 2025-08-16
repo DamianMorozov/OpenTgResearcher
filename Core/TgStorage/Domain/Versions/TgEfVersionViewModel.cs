@@ -3,24 +3,28 @@
 
 namespace TgStorage.Domain.Versions;
 
-/// <summary> Version view-model </summary>
+/// <summary> Version ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVersionEntity, TgEfVersionDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfVersionRepository Repository { get; } = new();
+	public override ITgEfVersionRepository Repository { get; }
 	[ObservableProperty]
 	public partial TgEfVersionDto Dto { get; set; } = null!;
 
-	public TgEfVersionViewModel(TgEfVersionEntity item) : base()
+	public TgEfVersionViewModel(Autofac.IContainer container, TgEfVersionEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfVersionRepository>();
+        Fill(item);
 	}
 
-	public TgEfVersionViewModel() : base()
+	public TgEfVersionViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfVersionEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfVersionRepository>();
+        TgEfVersionEntity item = new();
 		Fill(item);
 	}
 

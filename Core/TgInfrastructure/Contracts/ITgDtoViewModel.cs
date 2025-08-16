@@ -3,7 +3,7 @@
 
 namespace TgInfrastructure.Contracts;
 
-/// <summary> DTO view-model </summary>
+/// <summary> DTO ViewModel </summary>
 public interface ITgDtoViewModel : ITgViewModelBase
 {
 	//

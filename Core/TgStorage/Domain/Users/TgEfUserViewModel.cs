@@ -3,25 +3,29 @@
 
 namespace TgStorage.Domain.Users;
 
-/// <summary> User view-model </summary>
+/// <summary> User ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfUserViewModel : TgEntityViewModelBase<TgEfUserEntity, TgEfUserDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfUserRepository Repository { get; } = new();
+	public override ITgEfUserRepository Repository { get; }
 	[ObservableProperty]
 	public partial TgEfUserDto Dto { get; set; } = null!;
 
 
-	public TgEfUserViewModel(TgEfUserEntity item) : base()
+	public TgEfUserViewModel(Autofac.IContainer container, TgEfUserEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfUserRepository>();
+        Fill(item);
 	}
 
-	public TgEfUserViewModel() : base()
+	public TgEfUserViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfUserEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfUserRepository>();
+        TgEfUserEntity item = new();
 		Fill(item);
 	}
 

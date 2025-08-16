@@ -3,23 +3,27 @@
 
 namespace TgStorage.Domain.Apps;
 
-/// <summary> App view-model </summary>
+/// <summary> App ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEntity, TgEfAppDto>, ITgDtoViewModel, IDisposable
 {
     #region Public and private fields, properties, constructor
 
-    public override TgEfAppRepository Repository { get; } = new();
+    public override ITgEfAppRepository Repository { get; }
     [ObservableProperty]
     public partial TgEfAppDto Dto { get; set; } = null!;
 
-    public TgEfAppViewModel(TgEfAppEntity item) : base()
+    public TgEfAppViewModel(Autofac.IContainer container, TgEfAppEntity item) : base()
     {
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfAppRepository>();
         Fill(item);
     }
 
-    public TgEfAppViewModel() : base()
+    public TgEfAppViewModel(Autofac.IContainer container) : base()
     {
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfAppRepository>();
         TgEfAppEntity item = new();
         Fill(item);
     }

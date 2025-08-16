@@ -11,7 +11,7 @@ public abstract partial class TgEntityViewModelBase<TEfEntity, TDto> : TgViewMod
 {
     #region Public and private fields, properties, constructor
 
-    public virtual TgEfRepositoryBase<TEfEntity, TDto> Repository { get; } = null!;
+    public virtual ITgEfRepository<TEfEntity, TDto> Repository { get; } = null!;
 
     #endregion
 

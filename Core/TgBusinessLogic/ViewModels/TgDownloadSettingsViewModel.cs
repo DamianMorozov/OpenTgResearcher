@@ -38,10 +38,10 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 
 	public TgDownloadSettingsViewModel()
 	{
-		ContactVm = new();
-		SourceVm = new();
-		StoryVm = new();
-		VersionVm = new();
+		ContactVm = new(TgGlobalTools.Container);
+		SourceVm = new(TgGlobalTools.Container);
+		StoryVm = new(TgGlobalTools.Container);
+		VersionVm = new(TgGlobalTools.Container);
 		Chat = new();
 	}
 

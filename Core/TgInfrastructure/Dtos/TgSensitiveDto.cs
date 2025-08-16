@@ -14,7 +14,16 @@ public partial class TgSensitiveDto : TgDtoBase
     [ObservableProperty]
     public partial bool IsDisplaySensitiveData { get; set; } = true;
 
-    public TgSensitiveDto() : base() { }
+    public TgSensitiveDto() : base()
+    {
+        //
+    }
+
+    #endregion
+
+    #region Public and private methods
+
+    //
 
     #endregion
 }

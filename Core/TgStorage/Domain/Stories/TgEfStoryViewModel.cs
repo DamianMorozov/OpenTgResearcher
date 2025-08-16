@@ -3,24 +3,28 @@
 
 namespace TgStorage.Domain.Stories;
 
-/// <summary> Story view-model </summary>
+/// <summary> Story ViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfStoryViewModel : TgEntityViewModelBase<TgEfStoryEntity, TgEfStoryDto>, ITgDtoViewModel
 {
 	#region Public and private fields, properties, constructor
 
-	public override TgEfStoryRepository Repository { get; } = new();
+	public override ITgEfStoryRepository Repository { get; }
 	[ObservableProperty]
 	public partial TgEfStoryDto Dto { get; set; } = null!;
 
-	public TgEfStoryViewModel(TgEfStoryEntity item) : base()
+	public TgEfStoryViewModel(Autofac.IContainer container, TgEfStoryEntity item) : base()
 	{
-		Fill(item);
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfStoryRepository>();
+        Fill(item);
 	}
 
-	public TgEfStoryViewModel() : base()
+	public TgEfStoryViewModel(Autofac.IContainer container) : base()
 	{
-		TgEfStoryEntity item = new();
+        var scope = container.BeginLifetimeScope();
+        Repository = scope.Resolve<ITgEfStoryRepository>();
+        TgEfStoryEntity item = new();
 		Fill(item);
 	}
 

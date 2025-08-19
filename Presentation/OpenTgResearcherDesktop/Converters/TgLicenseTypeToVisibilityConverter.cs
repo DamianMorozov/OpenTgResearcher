@@ -10,8 +10,8 @@ public sealed partial class TgLicenseTypeToVisibilityConverter : IValueConverter
 		var visible = Visibility.Collapsed;
 		if (value is TgEnumLicenseType licenseType)
 		{
-			visible = licenseType == TgEnumLicenseType.Test || licenseType == TgEnumLicenseType.Paid || licenseType == TgEnumLicenseType.Premium
-                ? Visibility.Visible : Visibility.Collapsed;
+			visible = licenseType == TgEnumLicenseType.Test || licenseType == TgEnumLicenseType.Paid || licenseType == TgEnumLicenseType.Gift || 
+                licenseType == TgEnumLicenseType.Premium ? Visibility.Visible : Visibility.Collapsed;
 		}
 		return visible;
 	}

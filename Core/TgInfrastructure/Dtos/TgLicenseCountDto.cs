@@ -9,24 +9,28 @@ public sealed class TgLicenseCountDto
 
 	public int TestCount { get; set; }
 	public int PaidCount { get; set; }
-	public int PreimumCount { get; set; }
+	public int GiftCount { get; set; }
+	public int PremiumCount { get; set; }
 	public string Description =>
 		$"Test licenses: {TestCount} pcs." + Environment.NewLine +
 		$"Paid licenses: {PaidCount} pcs." + Environment.NewLine +
-		$"Premium licenses: {PreimumCount} pcs.";
+		$"Gift licenses: {GiftCount} pcs." + Environment.NewLine +
+		$"Premium licenses: {PremiumCount} pcs.";
 
-	public TgLicenseCountDto(int testCount, int paidCount, int preimumCount)
+	public TgLicenseCountDto(int testCount, int paidCount, int giftCount, int premiumCount)
 	{
 		TestCount = testCount;
 		PaidCount = paidCount;
-		PreimumCount = preimumCount;
+        GiftCount = giftCount;
+        PremiumCount = premiumCount;
 	}
 
 	public TgLicenseCountDto()
 	{
 		TestCount = 0;
 		PaidCount = 0;
-		PreimumCount = 0;
+        GiftCount = 0;
+        PremiumCount = 0;
 	}
 
 	#endregion

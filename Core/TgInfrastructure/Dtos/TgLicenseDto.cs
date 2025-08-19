@@ -29,7 +29,8 @@ public sealed partial class TgLicenseDto : ObservableRecipient
     /// <summary> Check paid license </summary>
     public bool CheckPaidLicense() => LicenseType switch
 	{
-		TgEnumLicenseType.Test or TgEnumLicenseType.Paid or TgEnumLicenseType.Premium => IsConfirmed && DateOnly.FromDateTime(DateTime.UtcNow) <= ValidTo,
+		TgEnumLicenseType.Test or TgEnumLicenseType.Paid or TgEnumLicenseType.Gift or TgEnumLicenseType.Premium => 
+            IsConfirmed && DateOnly.FromDateTime(DateTime.UtcNow) <= ValidTo,
 		_ => false,
 	};
 

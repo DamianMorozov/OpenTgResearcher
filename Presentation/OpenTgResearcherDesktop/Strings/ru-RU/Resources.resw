@@ -809,6 +809,9 @@
   <data name="LicensePaidDescription" xml:space="preserve">
     <value>Платная лицензия</value>
   </data>
+  <data name="LicenseGiftDescription" xml:space="preserve">
+    <value>Подарочная лицензия</value>
+  </data>
   <data name="LicensePremiumDescription" xml:space="preserve">
     <value>Премиальная лицензия</value>
   </data>

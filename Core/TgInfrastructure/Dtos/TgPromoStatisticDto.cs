@@ -9,6 +9,7 @@ public sealed class TgPromoStatisticDto
 
     public int TestCount { get; set; }
     public int PaidCount { get; set; }
+    public int GiftCount { get; set; }
     public int PremiumCount { get; set; }
     public int Limit { get; set; }
 
@@ -16,6 +17,7 @@ public sealed class TgPromoStatisticDto
 	{
         TestCount = 0;
         PaidCount = 0;
+        GiftCount = 0;
         PremiumCount = 0;
         Limit = 0;
     }

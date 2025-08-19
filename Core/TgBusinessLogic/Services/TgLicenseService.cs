@@ -46,19 +46,21 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
     public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);
 
 	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription,
-		string licensePaidDescription, string licensePremiumDescription) =>
+		string licensePaidDescription, string licenseGiftDescription, string licensePremiumDescription) =>
 		ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue,
-		licenseFreeDescription, licenseTestDescription, licensePaidDescription, licensePremiumDescription);
+		licenseFreeDescription, licenseTestDescription, licensePaidDescription, licenseGiftDescription, licensePremiumDescription);
 
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo,
 		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
-		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license") =>
+		string licensePaidDescription = "Paid license", string licenseGiftDescription = "Gift license", 
+        string licensePremiumDescription = "Premium license") =>
 		ActivateLicense(isConfirmed, licenseKey, licenseType, userId, DateOnly.FromDateTime(validTo), licenseFreeDescription,
-		licenseTestDescription, licensePaidDescription, licensePremiumDescription);
+		licenseTestDescription, licensePaidDescription, licenseGiftDescription, licensePremiumDescription);
 
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateOnly validTo,
 		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
-		string licensePaidDescription = "Paid license", string licensePremiumDescription = "Premium license")
+		string licensePaidDescription = "Paid license", string licenseGiftDescription = "Gift license", 
+        string licensePremiumDescription = "Premium license")
 	{
 		CurrentLicense = new TgLicenseDto() 
             { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
@@ -72,6 +74,9 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 				break;
 			case TgEnumLicenseType.Paid:
 				CurrentLicense.SetDescription(licensePaidDescription);
+				break;
+			case TgEnumLicenseType.Gift:
+				CurrentLicense.SetDescription(licenseGiftDescription);
 				break;
 			case TgEnumLicenseType.Premium:
 				CurrentLicense.SetDescription(licensePremiumDescription);
@@ -132,7 +137,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
 			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
-			licenseCountDto.PreimumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
+			licenseCountDto.PremiumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
 			result.IsOk = true;
 		}
 		result.Value = licenseCountDto;
@@ -149,7 +154,8 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		{
 			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
 			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
-			licenseCountDto.PreimumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
+			licenseCountDto.PremiumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
+			licenseCountDto.PremiumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
 			result.IsOk = true;
 		}
 		result.Value = licenseCountDto;
@@ -171,6 +177,10 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
             // Paid group
             var groupPaid = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid && x.ValidTo >= dtNow).ToList();
             promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { PaidCount = groupPaid.Count });
+            // Gift group
+            var groupGift = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Gift && x.ValidTo >= dtNow).ToList();
+            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { GiftCount = groupGift.Count });
+            result.IsOk = true;
             // Premium group
             var groupPremium = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium && x.ValidTo >= dtNow).ToList();
             promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { PremiumCount = groupPremium.Count });
@@ -180,6 +190,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         promoStatisticSummaryDto.Items = [.. promoStatisticSummaryDto.Items
             .OrderByDescending(x => x.TestCount > 0)
             .OrderByDescending(x => x.PaidCount > 0)
+            .OrderByDescending(x => x.GiftCount > 0)
             .OrderByDescending(x => x.PremiumCount > 0)
         ];
         result.Value = promoStatisticSummaryDto;

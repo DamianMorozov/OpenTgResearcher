@@ -1208,6 +1208,9 @@
   <data name="FieldPercent.Text" xml:space="preserve">
     <value>Процент</value>
   </data>
+  <data name="FieldPercentOfChatParsing.Text" xml:space="preserve">
+    <value>Процент парсинга чатов</value>
+  </data>
   <data name="FieldSize.Text" xml:space="preserve">
     <value>Размер</value>
   </data>
@@ -1231,6 +1234,9 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Именование медиа-файлов по сообщению</value>
+  </data>
+  <data name="FieldIsParsingComments.Text" xml:space="preserve">
+    <value>Парсинг комментариев</value>
   </data>
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Подписка</value>
@@ -1372,6 +1378,34 @@
   </data>
   <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
     <value>Статистика содержимого</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>из</value>
+  </data>
+  <data name="FloodControl.Text" xml:space="preserve">
+    <value>Защита от Флуда</value>
+  </data>
+  <data name="RunWait.Text" xml:space="preserve">
+    <value>Ожидание: </value>
+  </data>
+  <data name="RunSeconds.Text" xml:space="preserve">
+    <value> секунд(а)</value>
+  </data>
+  <!--  Chats scan   -->
+  <data name="StartScan" xml:space="preserve">
+    <value>Сканирование запущено</value>
+  </data>
+  <data name="StopScan" xml:space="preserve">
+    <value>Сканирование остановлено</value>
+  </data>
+  <data name="ProcessingChats" xml:space="preserve">
+    <value>Обработка чатов</value>
+  </data>
+  <data name="ProcessingGroups" xml:space="preserve">
+    <value>Обработка групп</value>
+  </data>
+  <data name="ProcessingDialogs" xml:space="preserve">
+    <value>Обработка диалогов</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

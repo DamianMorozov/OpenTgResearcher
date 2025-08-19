@@ -1,4 +1,4 @@
-﻿# OpenTgResearcher - Open Telegram Researcher
+﻿# OpenTgResearcher - tool for analyzing Telegram chats and downloading their content
 
 ## Product assignment
 Telegram's open researcher and search engine:

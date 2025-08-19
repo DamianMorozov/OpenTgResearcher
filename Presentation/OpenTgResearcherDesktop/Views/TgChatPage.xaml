@@ -620,6 +620,20 @@
                             IsOn="{x:Bind ViewModel.Dto.IsCreatingSubdirectories, Mode=TwoWay}" />
                         <!--  File naming by message subdirectories  -->
                         <TextBlock
+                            x:Uid="FieldIsParsingComments"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="2,7,7,2"
+                            TextAlignment="Left" />
+                        <ToggleSwitch
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            IsOn="{x:Bind ViewModel.Dto.IsParsingComments, Mode=TwoWay}" />
+                        <!--  File naming by message subdirectories  -->
+                        <TextBlock
                             x:Uid="FieldIsFileNamingByMessage"
                             Grid.Row="3"
                             Grid.Column="2"
@@ -663,7 +677,7 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
-                        <!--  StateSourceProgressString  -->
+                        <!--  ChatProgressMessage  -->
                         <TextBlock
                             x:Uid="FieldPercent"
                             Grid.Row="5"
@@ -677,7 +691,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             IsEnabled="False"
-                            Text="{x:Bind ViewModel.StateSourceProgressString, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
                         <!--  StateSourceDirectory  -->
                         <TextBlock
                             x:Uid="FieldDirectory"

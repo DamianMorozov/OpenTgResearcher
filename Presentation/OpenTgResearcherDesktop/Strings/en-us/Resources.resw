@@ -1146,6 +1146,9 @@
   <data name="FieldPercent.Text" xml:space="preserve">
     <value>Percent</value>
   </data>
+  <data name="FieldPercentOfChatParsing.Text" xml:space="preserve">
+    <value>Percentage of chat parsing</value>
+  </data>
   <data name="FieldSize.Text" xml:space="preserve">
     <value>Size</value>
   </data>
@@ -1169,6 +1172,9 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Naming media files by message</value>
+  </data>
+  <data name="FieldIsParsingComments.Text" xml:space="preserve">
+    <value>Parsing comments</value>
   </data>
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Subscribe</value>
@@ -1311,7 +1317,35 @@
   <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
     <value>Content statistics</value>
   </data>
-  <!--License-->
+  <data name="From" xml:space="preserve">
+    <value>from</value>
+  </data>
+  <data name="FloodControl.Text" xml:space="preserve">
+    <value>Flood Control</value>
+  </data>
+  <data name="RunWait.Text" xml:space="preserve">
+    <value>Wait: </value>
+  </data>
+  <data name="RunSeconds.Text" xml:space="preserve">
+    <value> seconds</value>
+  </data>
+  <!--  Chats scan   -->
+  <data name="StartScan" xml:space="preserve">
+    <value>Scanning started</value>
+  </data>
+  <data name="StopScan" xml:space="preserve">
+    <value>Scanning stopped</value>
+  </data>
+  <data name="ProcessingChats" xml:space="preserve">
+    <value>Chat processing</value>
+  </data>
+  <data name="ProcessingGroups" xml:space="preserve">
+    <value>Group processing</value>
+  </data>
+  <data name="ProcessingDialogs" xml:space="preserve">
+    <value>Dialogue processing</value>
+  </data>
+  <!--  License  -->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">
     <value>Confirmed</value>
   </data>

@@ -36,8 +36,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         // Commands
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
-        // Updates
-        App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
     }
 
     #endregion

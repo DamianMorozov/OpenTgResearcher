@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TL;
-
 namespace OpenTgResearcherDesktop;
 
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
@@ -84,7 +82,16 @@ public partial class App : Application
                         .EnableThreadSafetyChecks()
                         .UseLoggerFactory(new LoggerFactory());
                 }, poolSize: 128);
-
+                // Register FusionCache
+                services.AddFusionCache()
+                    .WithDefaultEntryOptions(new FusionCacheEntryOptions
+                    {
+                        Duration = TimeSpan.FromSeconds(30),
+                        JitterMaxDuration = TimeSpan.FromSeconds(3),
+                        IsFailSafeEnabled = true,
+                        FailSafeMaxDuration = TimeSpan.FromMinutes(1),
+                        EagerRefreshThreshold = 0.8f
+                    });
                 // Default Activation Handler
                 services.AddSingleton<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
                 // Other Activation Handlers

@@ -35,10 +35,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial string StateSourceMsg { get; set; } = string.Empty;
     [ObservableProperty]
-    public partial int StateSourceProgress { get; set; } = 0;
-    [ObservableProperty]
-    public partial string StateSourceProgressString { get; set; } = string.Empty;
-    [ObservableProperty]
     public partial string StateSourceDirectory { get; set; } = string.Empty;
     [ObservableProperty]
     public partial string StateSourceDirectorySizeString { get; set; } = string.Empty;
@@ -57,12 +53,15 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial bool IsEmptyData { get; set; } = true;
 
+    private TgChatViewModel? _chatVm;
+    private TgChatsViewModel? _chatsVm;
+
     /// <inheritdoc />
     public IRelayCommand OnClipboardWriteCommand { get; }
     /// <inheritdoc />
     public IRelayCommand OnClipboardSilentWriteCommand { get; }
 
-    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, 
+    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgPageViewModelBase> logger, string name) : base()
     {
         SettingsService = settingsService;
@@ -70,7 +69,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         Logger = logger;
         Name = name;
         IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
-    
+
         // Commands
         OnClipboardWriteCommand = new AsyncRelayCommand<object>(OnClipboardWriteAsync);
         OnClipboardSilentWriteCommand = new AsyncRelayCommand<object>(OnClipboardSilentWriteAsync);
@@ -150,27 +149,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         await Task.CompletedTask;
     }
 
-    /// <summary> Update state source message </summary>
-    public async Task UpdateStateSource(long sourceId, int messageId, int count, string message)
+    /// <summary> Update chat ViewModel </summary>
+    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message)
     {
-        void UpdateState()
-        {
-            // Get TgChatViewModel
-            var chatVm = App.Locator?.Get<TgChatViewModel>();
-            if (chatVm is not null)
-            {
-                if (chatVm.Dto?.Id == sourceId)
-                {
-                    float progress = messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count;
-                    chatVm.Dto.FirstId = messageId;
-                    chatVm.StateSourceProgress = (int)progress;
-                    chatVm.StateSourceProgressString = $"{progress:00.00} %";
-                    chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-                    chatVm.StateSourceMsg = $"{messageId} | {message}";
-                }
-            }
-        }
-
         if (App.MainWindow?.DispatcherQueue is not null)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -178,7 +159,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
             {
                 try
                 {
-                    UpdateState();
+                    UpdateChatViewModelCore(chatId, messageId, count, ref message);
                     tcs.SetResult(true);
                 }
                 catch (Exception ex)
@@ -190,8 +171,77 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
         else
         {
-            // Background update
-            UpdateState();
+            UpdateChatViewModelCore(chatId, messageId, count, ref message);
+        }
+    }
+
+    private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
+    {
+        _chatVm ??= App.Locator?.Get<TgChatViewModel>();
+        if (_chatVm is not null)
+        {
+            if (_chatVm.Dto?.Id == chatId)
+            {
+                _chatVm.Dto.FirstId = messageId;
+                _chatVm.ChatProgressMessage = $"{(int)(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
+                _chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                _chatVm.StateSourceMsg = $"{messageId} | {message}";
+            }
+        }
+    }
+
+    /// <summary> Update chats ViewModel </summary>
+    public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType)
+    {
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
+        else
+        {
+            UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
+        }
+    }
+
+    private void UpdateChatsViewModelCore(ref int counter, ref int countAll, ref TgEnumChatsMessageType chatsMessageType)
+    {
+        _chatsVm ??= App.Locator?.Get<TgChatsViewModel>();
+        if (_chatsVm is not null)
+        {
+            _chatsVm.ChatsProgressCounter = counter;
+            _chatsVm.ChatsProgressCountAll = countAll;
+            _chatsVm.ChatsProgressString = $"{counter} {TgResourceExtensions.GetFrom()} {countAll}";
+            switch (chatsMessageType)
+            {
+                case TgEnumChatsMessageType.StartScan:
+                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetStartScan();
+                    break;
+                case TgEnumChatsMessageType.ProcessingChats:
+                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetProcessingChats();
+                    break;
+                case TgEnumChatsMessageType.ProcessingGroups:
+                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetProcessingGroups();
+                    break;
+                case TgEnumChatsMessageType.ProcessingDialogs:
+                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetProcessingDialogs();
+                    break;
+                case TgEnumChatsMessageType.StopScan:
+                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetStopScan();
+                    break;
+            }
         }
     }
 

@@ -32,8 +32,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         // Commands
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
-        // Updates
-        App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
     }
 
     #endregion

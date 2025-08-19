@@ -19,8 +19,15 @@ public partial class ShellViewModel : ObservableRecipient
     public partial string License { get; set; } = string.Empty;
     [ObservableProperty]
     public partial bool IsClientConnected { get; set; }
+    [ObservableProperty]
+    public partial int FloodWaitSeconds { get; set; }
+    [ObservableProperty]
+    public partial string FloodMessage { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool IsFloodVisible { get; set; }
 
     private NavigationEventArgs? _eventArgs;
+    private ShellViewModel? _shellVm;
 
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
@@ -42,6 +49,9 @@ public partial class ShellViewModel : ObservableRecipient
         ClientConnectCommand = new AsyncRelayCommand(ShellClientConnectAsync);
         ClientDisconnectCommand = new AsyncRelayCommand(ShellClientDisconnectAsync);
         UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
+
+        // Callback updates UI
+        App.BusinessLogicManager.ConnectClient.SetupUpdateShellViewModel(UpdateShellViewModelAsync);
     }
 
     #endregion
@@ -224,6 +234,43 @@ public partial class ShellViewModel : ObservableRecipient
     {
         if (_eventArgs?.Content is not TgPageBase pageBase) return;
         await pageBase.ViewModel.OnNavigatedToAsync(_eventArgs);
+    }
+
+    /// <summary> Update shell ViewModel </summary>
+    public async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message)
+    {
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
+        else
+        {
+            UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
+        }
+    }
+
+    private void UpdateShellViewModelCore(ref bool isFloodVisible, ref int seconds, ref string message)
+    {
+        _shellVm ??= App.Locator?.Get<ShellViewModel>();
+        if (_shellVm is not null)
+        {
+            _shellVm.IsFloodVisible = isFloodVisible;
+            _shellVm.FloodWaitSeconds = seconds;
+            _shellVm.FloodMessage = message;
+        }
     }
 
     #endregion

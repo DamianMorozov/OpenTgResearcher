@@ -27,6 +27,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public partial bool IsImageViewerVisible { get; set; }
     [ObservableProperty]
     public partial Frame ContentFrame { get; set; } = default!;
+    [ObservableProperty]
+    public partial string ChatProgressMessage { get; set; } = string.Empty;
 
     public IRelayCommand UpdateOnlineCommand { get; }
     public IRelayCommand ClearDataStorageCommand { get; }
@@ -44,8 +46,9 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
-        // Updates
-        App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSource);
+        // Callback updates UI
+        App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateChatViewModelAsync);
+        App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
     }
 
     #endregion
@@ -144,6 +147,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
             StateSourceDirectory = Dto.Directory;
 
+            DownloadSettings.SourceVm.Dto = Dto;
             await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
             await DownloadSettings.SourceVm.SaveAsync();
             await LoadDataStorageCoreAsync();
@@ -162,6 +166,11 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         DownloadSettings.SourceVm.Fill(entity);
         DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
         await DownloadSettings.SourceVm.SaveAsync();
+
+        var commentEntity = CommentDto.GetNewEntity();
+        var commentVm = new TgEfSourceViewModel(TgGlobalTools.Container, commentEntity);
+        commentVm.Dto.DtChanged = DateTime.Now;
+        await commentVm.SaveAsync();
     }
 
     private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());

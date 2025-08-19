@@ -14,6 +14,7 @@
     Loaded="OnLoaded">
 
     <Grid>
+        <!--  App title  -->
         <Grid
             x:Name="AppTitleBar"
             Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
@@ -69,6 +70,7 @@
                 Margin="24,0,12,0"
                 VerticalAlignment="Center"
                 Style="{StaticResource CaptionTextBlockStyle}" />
+            <!--  Connection switch  -->
             <ToggleSwitch
                 Grid.Column="5"
                 Margin="0,0,0,0"
@@ -77,19 +79,20 @@
                 HorizontalContentAlignment="Center"
                 IsEnabled="False"
                 IsOn="{x:Bind ViewModel.IsClientConnected, Mode=OneWay}" />
-            <!--  Connect  -->
+            <!--  Connect button  -->
             <Button
                 x:Uid="ButtonConnect"
                 Grid.Column="6"
                 Margin="-60,0,5,0"
                 Command="{x:Bind ViewModel.ClientConnectCommand}" />
-            <!--  Disconnect  -->
+            <!--  Disconnect button  -->
             <Button
                 x:Uid="ButtonDisconnect"
                 Grid.Column="7"
                 Margin="10,0,0,0"
                 Command="{x:Bind ViewModel.ClientDisconnectCommand}" />
         </Grid>
+        <!--  Navigation  -->
         <NavigationView
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
@@ -234,7 +237,58 @@
                 </behaviors:NavigationViewHeaderBehavior>
             </i:Interaction.Behaviors>
             <Grid Margin="{StaticResource NavigationViewPageContentMargin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Frame x:Name="NavigationFrame" />
+                <!--  Flood Control  -->
+                <Border
+                    Grid.Row="1"
+                    Padding="10,5"
+                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE814;" />
+                            <TextBlock x:Uid="FloodControl" FontWeight="SemiBold" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <!--  Waiting indication  -->
+                            <ProgressRing
+                                Width="16"
+                                Height="16"
+                                Margin="10,0,10,0"
+                                IsActive="True" />
+                            <TextBlock>
+                                <Run x:Uid="RunWait" />
+                                <Run Text="{x:Bind ViewModel.FloodWaitSeconds, Mode=OneWay}" />
+                                <Run x:Uid="RunSeconds" />
+                            </TextBlock>
+                        </StackPanel>
+                        <TextBlock
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Text="{x:Bind ViewModel.FloodMessage, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                </Border>
             </Grid>
         </NavigationView>
     </Grid>

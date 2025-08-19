@@ -13,6 +13,14 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string LoadedDataStatistics { get; set; } = string.Empty;
     [ObservableProperty]
+    public partial string ChatsProgressMessage { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial int ChatsProgressCounter { get; set; }
+    [ObservableProperty]
+    public partial string ChatsProgressString { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial int ChatsProgressCountAll { get; set; }
+    [ObservableProperty]
     public partial string FilterText { get; set; } = string.Empty;
     [ObservableProperty]
     public partial int PageSize { get; set; } = 100;

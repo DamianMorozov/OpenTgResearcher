@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.010] - 2025-08-16
+## [0.7.100] - 2025-08-19
 ### Changed
 - Opened access to bot in `OpenTgResearcherConsole` for free license
 - Updated NuGet packages
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `TgStorage` library
 - Updated `TgBusinessLogic` library
 - Performance and stability improvements in `OpenTgResearcherDesktop`
+- Update of the `Chats` page in `OpenTgResearcherDesktop`
 ### Added
 - Added `Subscription` field when scanning chats
 - Added `Subscription` field to `Chats` page
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added filter settings to the `Chats` page in `OpenTgResearcherDesktop`
 - Added `MessagesRelations` table in `TgStorage`
 - Added reading comments when parsing chat messages
+- Added `Flood Control` indicator in `OpenTgResearcherDesktop`
 
 ## [0.6.860] - 2025-08-03
 ### Fixed

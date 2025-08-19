@@ -13,8 +13,9 @@ public static class Program
         // Set app type
         TgGlobalTools.SetAppType(TgEnumAppType.Console);
 
-        // Register the DbContext with SQLite
+        // Registering .NET DI services
         var services = new ServiceCollection();
+        // Register the DbContext with SQLite
         services.AddDbContextPool<TgEfConsoleContext>(options =>
         {
             var context = new TgEfConsoleContext();
@@ -31,7 +32,6 @@ public static class Program
                 .UseLoggerFactory(factory);
 
         }, poolSize: 128);
-        var serviceProvider = services.BuildServiceProvider();
         // Register FusionCache
         services.AddFusionCache()
             .WithDefaultEntryOptions(new FusionCacheEntryOptions
@@ -42,10 +42,24 @@ public static class Program
                 FailSafeMaxDuration = TimeSpan.FromMinutes(1),
                 EagerRefreshThreshold = 0.8f
             });
-        // DI register
+        var serviceProvider = services.BuildServiceProvider();
+
+        // Get configured FusionCache instance from MS DI
+        var fusionCache = serviceProvider.GetRequiredService<IFusionCache>();
+        // Register the Autofac DI
         var containerBuilder = new ContainerBuilder();
-        // Register DbContext from ServiceProvider
-        containerBuilder.Register(c => serviceProvider.GetRequiredService<TgEfConsoleContext>()).As<ITgEfContext>().InstancePerLifetimeScope();
+        // Make FusionCache available for Autofac graph
+        containerBuilder.RegisterInstance(fusionCache).As<IFusionCache>().SingleInstance();
+        // Registering the EF context
+        containerBuilder.Register(c =>
+        {
+            var desktopContext = new TgEfDesktopContext();
+            var storagePath = desktopContext.GetStoragePath();
+            // Create DbContextOptionsBuilder with SQLite connection
+            var optionsBuilder = new DbContextOptionsBuilder<TgEfDesktopContext>();
+            optionsBuilder.UseSqlite($"Data Source={storagePath}");
+            return new TgEfDesktopContext(optionsBuilder.Options);
+        }).As<ITgEfContext>().InstancePerLifetimeScope();
         // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
@@ -64,7 +78,7 @@ public static class Program
         containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
-        // Building the container
+        // We build a container and take IServiceProvider
         TgGlobalTools.Container = containerBuilder.Build();
 
         // Helpers

@@ -1485,7 +1485,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             await StorageManager.SourceRepository.SaveListAsync(toSave, isRewriteEntities: true);
-            TgLog.MarkupInfo($"[FlushChatBufferAsync] Saved {toSave.Count} chats from buffer");
+            //TgLog.MarkupInfo($"[FlushChatBufferAsync] Saved {toSave.Count} chats from buffer");
         }
         catch (Exception ex)
         {

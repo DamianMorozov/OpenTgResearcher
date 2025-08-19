@@ -600,6 +600,10 @@ internal partial class TgMenuHelper
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsFileNamingByMessage)),
             GetMarkup(tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage.ToString()));
 
+        // Enable parsing comments
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsParsingComments)),
+            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsParsingComments.ToString()));
+
         // Restrict saving content
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsRestrictSavingContent)),
             GetMarkup(tgDownloadSettings.SourceVm.Dto.IsRestrictSavingContent.ToString()));

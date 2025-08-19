@@ -238,6 +238,9 @@ internal partial class TgMenuHelper
     private void DownloadSetIsFileNamingByMessage(TgDownloadSettingsViewModel tgDownloadSettings) =>
         tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsFileNamingByMessage, true);
 
+    private void DownloadSetIsParsingComments(TgDownloadSettingsViewModel tgDownloadSettings) =>
+        tgDownloadSettings.SourceVm.Dto.IsParsingComments = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsParsingComments, true);
+
     private async Task DownloadSetCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         await LoadTgClientSettingsByIdAsync(tgDownloadSettings);

@@ -13,7 +13,7 @@ public static class Program
         // Set app type
         TgGlobalTools.SetAppType(TgEnumAppType.Console);
 
-        // Create ServiceCollection for EF Core Pooling
+        // Register the DbContext with SQLite
         var services = new ServiceCollection();
         services.AddDbContextPool<TgEfConsoleContext>(options =>
         {
@@ -32,7 +32,16 @@ public static class Program
 
         }, poolSize: 128);
         var serviceProvider = services.BuildServiceProvider();
-
+        // Register FusionCache
+        services.AddFusionCache()
+            .WithDefaultEntryOptions(new FusionCacheEntryOptions
+            {
+                Duration = TimeSpan.FromSeconds(30),
+                JitterMaxDuration = TimeSpan.FromSeconds(3),
+                IsFailSafeEnabled = true,
+                FailSafeMaxDuration = TimeSpan.FromMinutes(1),
+                EagerRefreshThreshold = 0.8f
+            });
         // DI register
         var containerBuilder = new ContainerBuilder();
         // Register DbContext from ServiceProvider

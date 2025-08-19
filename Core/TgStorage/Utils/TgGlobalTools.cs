@@ -19,7 +19,7 @@ public static class TgGlobalTools
     /// <summary> Limit count of download threads </summary>
     public static int DownloadCountThreadsLimit => 100;
     /// <summary> Limit batch of saving messages </summary>
-    public static int BatchMessagesLimit => 50;
+    public static int BatchMessagesLimit => 25;
     /// <summary> EF storage </summary>
     public static string AppStorage = "TgStorage.db";
         
@@ -64,6 +64,7 @@ public static class TgGlobalTools
             TgEfFilterEntity filter => new TgEfFilterValidator().Validate(filter),
             TgEfLicenseEntity license => new TgEfLicenseValidator().Validate(license),
             TgEfMessageEntity message => new TgEfMessageValidator().Validate(message),
+            TgEfMessageRelationEntity messageRelation => new TgEfMessageRelationValidator().Validate(messageRelation),
             TgEfSourceEntity source => new TgEfSourceValidator().Validate(source),
             TgEfStoryEntity story => new TgEfStoryValidator().Validate(story),
             TgEfProxyEntity proxy => new TgEfProxyValidator().Validate(proxy),
@@ -83,10 +84,10 @@ public static class TgGlobalTools
             _ => new() { Errors = [new ValidationFailure(nameof(item), "Type error!")] }
         };
 
-    /// <summary> Normilize entity </summary>
+    /// <summary> Normalize entity </summary>
     /// <typeparam name="TEfEntity"> Type of entity </typeparam>
     /// <param name="item"> Entity </param>
-    public static void Normilize<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+    public static void Normalize<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     {
         switch (item)
         {
@@ -103,6 +104,8 @@ public static class TgGlobalTools
             case TgEfLicenseEntity license:
                 break;
             case TgEfMessageEntity message:
+                break;
+            case TgEfMessageRelationEntity messageRelation:
                 break;
             case TgEfSourceEntity source:
                 break;

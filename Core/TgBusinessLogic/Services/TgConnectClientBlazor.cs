@@ -6,11 +6,12 @@ namespace TgBusinessLogic.Services;
 /// <summary> Blazor connection client </summary>
 public sealed partial class TgConnectClientBlazor : TgConnectClientBase, ITgConnectClientBlazor
 {
-    public TgConnectClientBlazor(ITgStorageManager storageManager, ITgFloodControlService floodControlService) : 
-        base(storageManager, floodControlService) { }
+    public TgConnectClientBlazor(ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
+        base(storageManager, floodControlService, cache) { }
 
-    public TgConnectClientBlazor(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager, ITgFloodControlService floodControlService) : 
-        base(webHostEnvironment, storageManager, floodControlService)
+    public TgConnectClientBlazor(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager, ITgFloodControlService floodControlService,
+        IFusionCache cache) : 
+        base(webHostEnvironment, storageManager, floodControlService, cache)
     {
         //
     }

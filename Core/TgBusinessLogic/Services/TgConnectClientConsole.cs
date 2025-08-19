@@ -4,8 +4,8 @@
 namespace TgBusinessLogic.Services;
 
 /// <summary> Console connection client </summary>
-public partial class TgConnectClientConsole(ITgStorageManager storageManager, ITgFloodControlService floodControlService) : 
-    TgConnectClientBase(storageManager, floodControlService), ITgConnectClientConsole
+public partial class TgConnectClientConsole(ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
+    TgConnectClientBase(storageManager, floodControlService, cache), ITgConnectClientConsole
 {
     public override async Task LoginUserAsync(bool isProxyUpdate)
 	{

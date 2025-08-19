@@ -3,9 +3,11 @@
 
 namespace TgInfrastructure.Enums;
 
-public enum TgEnumLicense
+public enum TgEnumChatsMessageType
 {
-	Free = 0,
-	Paid = 1,
-	Premium = 2,
+	StartScan,
+    ProcessingChats,
+    ProcessingGroups,
+    ProcessingDialogs,
+    StopScan,
 }

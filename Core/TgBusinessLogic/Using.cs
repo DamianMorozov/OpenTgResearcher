@@ -42,3 +42,4 @@ global using TgStorage.Helpers;
 global using TgStorage.Models;
 global using TgStorage.Repositories;
 global using TgStorage.Utils;
+global using ZiggyCreatures.Caching.Fusion;

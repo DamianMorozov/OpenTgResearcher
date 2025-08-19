@@ -235,6 +235,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
 	public string MenuDownloadSetIsCreatingSubdirectories => "Enable creating subdirectories";
 	public string MenuDownloadSetIsFileNamingByMessage => "Enable naming media files by message";
+	public string MenuDownloadSetIsParsingComments => "Enable parsing comments";
 	public string MenuDownloadSetIsRestrictSavingContent => "Restrict saving content";
 	public string MenuDownloadSetIsRewriteFiles => "Enable rewrite exists files";
 	public string MenuDownloadSetIsRewriteMessages => "Enable rewrite exists messages";

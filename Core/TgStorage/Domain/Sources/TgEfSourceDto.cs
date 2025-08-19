@@ -47,6 +47,8 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 	[ObservableProperty]
 	public partial bool IsFileNamingByMessage { get; set; }
 	[ObservableProperty]
+	public partial bool IsParsingComments { get; set; }
+	[ObservableProperty]
 	public partial bool IsRestrictSavingContent { get; set; }
 	[ObservableProperty]
 	public partial bool IsSubscribe { get; set; }
@@ -88,6 +90,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsCreatingSubdirectories = false;
 		IsUserAccess = false;
 		IsFileNamingByMessage = false;
+        IsParsingComments = false;
         IsRestrictSavingContent = false;
         IsSubscribe = false;
 		IsDownload = false;
@@ -149,6 +152,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsDownload = dto.IsDownload;
 		CurrentFileName = dto.CurrentFileName;
 		IsFileNamingByMessage = dto.IsFileNamingByMessage;
+        IsParsingComments = dto.IsParsingComments;
         IsRestrictSavingContent = dto.IsRestrictSavingContent;
         IsSubscribe = dto.IsSubscribe;
 		return this;
@@ -172,6 +176,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
 		IsUserAccess = item.IsUserAccess;
 		IsFileNamingByMessage = item.IsFileNamingByMessage;
+        //IsParsingComments = item.IsParsingComments;
         IsRestrictSavingContent = item.IsRestrictSavingContent;
         IsSubscribe = item.IsSubscribe;
 		return this;
@@ -196,6 +201,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
 		IsUserAccess = dto.IsUserAccess,
 		IsFileNamingByMessage = dto.IsFileNamingByMessage,
+        //IsParsingComments = dto.IsParsingComments,
         IsRestrictSavingContent = dto.IsRestrictSavingContent,
         IsSubscribe = dto.IsSubscribe,
 	};
@@ -217,6 +223,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 		IsCreatingSubdirectories = IsCreatingSubdirectories,
 		IsUserAccess = IsUserAccess,
 		IsFileNamingByMessage = IsFileNamingByMessage,
+        //IsParsingComments = IsParsingComments,
         IsRestrictSavingContent = IsRestrictSavingContent,
         IsSubscribe = IsSubscribe,
 	};

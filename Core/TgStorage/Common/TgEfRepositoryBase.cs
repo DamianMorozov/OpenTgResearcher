@@ -430,8 +430,8 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                 var validationResult = TgGlobalTools.GetEfValid(storageResult.Item);
                 if (!validationResult.IsValid)
                     throw new ValidationException(validationResult.Errors);
-                // Normilize entity
-                TgGlobalTools.Normilize(storageResult.Item);
+                // Normalize entity
+                TgGlobalTools.Normalize(storageResult.Item);
                 // Entity is not exists - Create
                 if (!storageResult.IsExists)
                 {
@@ -490,7 +490,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     }
 
     /// <inheritdoc />
-    public virtual async Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isFirstTry = true)
+    public virtual async Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewriteEntities, bool isFirstTry = true)
     {
         var transaction = await EfContext.Database.BeginTransactionAsync();
         await using (transaction)
@@ -505,30 +505,32 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                     // Load actual entity
                     var isExists = await CheckExistsAsync(item);
                     // Entity is not exists - Create
-                    TEfEntity itemNew;
+                    TEfEntity? itemNew = null;
                     if (!isExists)
                     {
                         itemNew = item;
                     }
                     // Entity is existing - Update
-                    else
+                    else if (isRewriteEntities)
                     {
                         itemNew = await GetItemAsync(item, isReadOnly: false);
                         itemNew.Copy(item, isUidCopy: false);
                     }
+                    if (itemNew is null) continue;
+
                     // Validate entity
                     var validationResult = TgGlobalTools.GetEfValid(itemNew);
                     if (!validationResult.IsValid)
                         throw new ValidationException(validationResult.Errors);
-                    // Normilize entity
-                    TgGlobalTools.Normilize(itemNew);
+                    // Normalize entity
+                    TgGlobalTools.Normalize(itemNew);
                     // Entity is not exists - Create
                     if (!isExists)
                     {
                         await EfContext.AddItemAsync(itemNew);
                     }
                     // Entity is existing - Update
-                    else
+                    else if (isRewriteEntities)
                     {
                         EfContext.UpdateItem(itemNew);
                     }
@@ -555,7 +557,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                     var entry = ex.Entries.Single();
                     var databaseValues = await entry.GetDatabaseValuesAsync() ?? throw new Exception("The record you attempted to edit was deleted!");
                     entry.OriginalValues.SetValues(databaseValues);
-                    return await SaveListAsync(array, isFirstTry: false);
+                    return await SaveListAsync(array, isRewriteEntities, isFirstTry: false);
                 }
                 throw;
             }
@@ -575,14 +577,6 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     }
 
     /// <inheritdoc />
-    public bool SaveList(List<TEfEntity> items, bool isFirstTry = true)
-    {
-        var task = SaveListAsync(items);
-        task.Wait();
-        return task.Result;
-    }
-
-    /// <inheritdoc />
     public virtual async Task<TgEfStorageResult<TEfEntity>> SaveWithoutTransactionAsync(TEfEntity item)
     {
         TgEfStorageResult<TEfEntity> storageResult;
@@ -592,7 +586,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             // Create
             if (!storageResult.IsExists || storageResult.Item is null)
             {
-                TgGlobalTools.Normilize(item);
+                TgGlobalTools.Normalize(item);
                 await EfContext.AddItemAsync(item);
                 await EfContext.SaveChangesAsync();
                 storageResult.Item = item;

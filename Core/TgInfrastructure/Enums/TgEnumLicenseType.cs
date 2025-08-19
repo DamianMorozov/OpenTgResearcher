@@ -8,5 +8,6 @@ public enum TgEnumLicenseType
 	Free,
 	Test,
 	Paid,
+	Gift,
 	Premium
 }

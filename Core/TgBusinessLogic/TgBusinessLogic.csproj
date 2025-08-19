@@ -11,6 +11,7 @@
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="WTelegramBot" Version="9.0.2" />
     <PackageReference Include="WTelegramClient" Version="4.3.7" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgInfrastructure\TgInfrastructure.csproj" />

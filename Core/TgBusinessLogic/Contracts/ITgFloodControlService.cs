@@ -1,7 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-
 namespace TgBusinessLogic.Contracts;
 
 // <summary> Interface for flood control service in Telegram operations </summary>
@@ -20,4 +19,8 @@ public interface ITgFloodControlService : IDisposable
     public Task WaitIfFloodAsync(string message);
     /// <summary> Executes Telegram call with flood control retry logic </summary>
     public Task<T> ExecuteWithFloodControlAsync<T>(Func<Task<T>> telegramCall, bool isThrow);
+    /// <summary> Extracts flood wait seconds from the given message </summary>
+    public int TryExtractFloodWaitSeconds(string message);
+    /// <summary> Check flood </summary>
+    public bool IsFlood(string message);
 }

@@ -20,39 +20,25 @@ public sealed class TgChatCache
     #region Public and private methods
 
     /// <summary> Try to add a chat to the dictionary </summary>
-    public bool TryAddChat(long chatId, long accessHash, string directory)
-    {
-        var result = _chatsWithHashes.TryAdd(chatId, accessHash);
-        if (result)
-        {
-            _chatsWithSaved.TryAdd(chatId, false);
-            _chatsWithDirectories.TryAdd(chatId, directory);
-        }
-        return result;
-    }
+    public bool TryAddChat(long chatId, long accessHash, string directory) => 
+        _chatsWithHashes.TryAdd(chatId, accessHash) && 
+        _chatsWithSaved.TryAdd(chatId, false) && 
+        _chatsWithDirectories.TryAdd(chatId, directory);
 
     /// <summary> Try to update a chat in the dictionary </summary>
-    public bool TryUpdateChat(long chatId, long newAccessHash, bool isSaved, string directory)
-    {
-        var result = _chatsWithHashes.TryGetValue(chatId, out var currentHash) && _chatsWithHashes.TryUpdate(chatId, newAccessHash, currentHash);
-        if (_chatsWithSaved.TryGetValue(chatId, out var currentSaved))
-            _chatsWithSaved.TryUpdate(chatId, isSaved, currentSaved);
-        if (_chatsWithDirectories.TryGetValue(chatId, out var currentDirectory))
-            _chatsWithDirectories.TryUpdate(chatId, directory, currentDirectory);
-        return result;
-    }
+    public bool TryUpdateChat(long chatId, long newAccessHash, bool isSaved, string directory) => 
+        _chatsWithHashes.TryGetValue(chatId, out var currentHash) && _chatsWithHashes.TryUpdate(chatId, newAccessHash, currentHash) &&
+        _chatsWithSaved.TryGetValue(chatId, out var currentSaved) && _chatsWithSaved.TryUpdate(chatId, isSaved, currentSaved) &&
+        _chatsWithDirectories.TryGetValue(chatId, out var currentDirectory) && _chatsWithDirectories.TryUpdate(chatId, directory, currentDirectory);
 
     /// <summary> Try to get a chat from the dictionary </summary>
     public bool TryGetChat(long chatId, out long accessHash) => _chatsWithHashes.TryGetValue(chatId, out accessHash);
 
     /// <summary> Try to remove a chat from the dictionary </summary>
-    public bool TryRemoveChat(long chatId)
-    {
-        var result = _chatsWithHashes.TryRemove(chatId, out _);
-        _chatsWithSaved.TryRemove(chatId, out _);
+    public bool TryRemoveChat(long chatId) =>
+        _chatsWithHashes.TryRemove(chatId, out _) &&
+        _chatsWithSaved.TryRemove(chatId, out _) &&
         _chatsWithDirectories.TryRemove(chatId, out _);
-        return result;
-    }
 
     /// <summary> Check if the chat exists in the dictionary </summary>
     public bool ContainsChat(long chatId) => _chatsWithHashes.ContainsKey(chatId);
@@ -79,6 +65,9 @@ public sealed class TgChatCache
 
     /// <summary> Get the chat directory </summary>
     public string GetDirectory(long chatId) => _chatsWithDirectories.TryGetValue(chatId, out var directory) ? directory : string.Empty;
+
+    /// <summary> Check the exists chat directory </summary>
+    public bool CheckExistsDirectory(long chatId) => _chatsWithDirectories.TryGetValue(chatId, out var dir) && Directory.Exists(dir);
 
     /// <summary> Set the chat directory </summary>
     public void SetDirectory(long chatId, string directory) => _chatsWithDirectories.AddOrUpdate(chatId, directory, (_, _) => directory);

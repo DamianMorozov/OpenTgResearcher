@@ -21,7 +21,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     /// <summary> Semaphore to control concurrent access to Telegram API calls </summary>
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     [GeneratedRegex(@"FLOOD_WAIT_(\d+)")]
-    private static partial Regex RegexFloodWait();
+    public static partial Regex RegexFloodWait();
 
     #endregion
 
@@ -99,13 +99,16 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
         return default!;
     }
 
-    /// <summary> Extracts flood wait seconds from the given message </summary>
-    private int TryExtractFloodWaitSeconds(string message)
+    /// <inheritdoc />
+    public int TryExtractFloodWaitSeconds(string message)
     {
         if (string.IsNullOrEmpty(message)) return 0;
         var match = RegexFloodWait().Match(message);
         return match.Success && int.TryParse(match.Groups[1].Value, out var seconds) ? seconds : 0;
     }
+
+    /// <inheritdoc />
+    public bool IsFlood(string message) => TryExtractFloodWaitSeconds(message) > 0;
 
     /// <summary> Extract flood wait seconds from an exception or its inner exceptions </summary>
     private int TryExtractFloodWaitFromException(Exception ex)

@@ -6,7 +6,7 @@ namespace TgInfrastructure.Helpers;
 /// <summary> String utilities </summary>
 public static class TgStringUtils
 {
-    /// <summary> Normilize TG name </summary>
+    /// <summary> Normalize TG name </summary>
     public static string NormilizeTgName(string name, bool isAddAt = true)
     {
         if (name.StartsWith("https://t.me/"))
@@ -18,7 +18,7 @@ public static class TgStringUtils
         return name;
     }
 
-    /// <summary> Normilize names from string to list of names </summary>
+    /// <summary> Normalize names from string to list of names </summary>
     public static List<string> NormilizeTgNames(string names, bool isAddAt = true)
     {
         var separators = new char[] { ',', ';', ' ' };

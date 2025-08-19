@@ -34,6 +34,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 
     public void SetupUpdateTitle(Func<string, Task> updateTitleAsync);
 	public void SetupUpdateStateSource(Func<long, int, int, string, Task> updateStateSourceAsync);
+	public void SetupUpdateChatsViewModel(Func<int, int, TgEnumChatsMessageType, Task> updateChatsViewModel);
+	public void SetupUpdateShellViewModel(Func<bool, int, string, Task> updateShellViewModel);
 	public void SetupUpdateStateFile(Func<long, int, string, long, long, long, bool, int, Task> updateStateFileAsync);
 	public void SetupUpdateStateMessageThread(Func<long, int, string, bool, int, Task> updateStateMessageThreadAsync);
 	public void SetupUpdateStateContact(Func<long, string, string, string, Task> updateStateContactAsync);
@@ -90,8 +92,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id);
     /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
     public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(Messages_ChatFull messagesChatFull);
-    /// <summary> Update user </summary>
-    public Task UpdateUserAsync(User user, bool isContact);
     /// <summary> Update users </summary>
     public Task UpdateUsersAsync(List<TgEfUserDto> users);
     /// <summary> Checks if a file is locked by another process </summary>

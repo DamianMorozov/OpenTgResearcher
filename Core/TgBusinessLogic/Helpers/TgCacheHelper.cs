@@ -8,14 +8,24 @@ public static class TgCacheHelper
 {
     #region Public and private fields, properties, constructor
 
-    public static string GetCacheKeyChatLastCount(long chatId) => $"chat:{chatId}:last-count";
+    public static string GetCacheKeyChat() => $"chat";
+    public static string GetCacheKeyChatLastCount() => $"chat:last-count";
+    public static string GetCacheKeyChatLastCount(long chatId) => $"chat:last-count:{chatId}";
+    public static string GetCacheKeyFullChannel() => $"fullChannel";
     public static string GetCacheKeyFullChannel(long peerId) => $"fullChannel:{peerId}";
+    public static string GetCacheKeyFullChat() => $"fullChat";
     public static string GetCacheKeyFullChat(long peerId) => $"fullChat:{peerId}";
+    public static string GetCacheKeyMessage() => $"message";
     public static string GetCacheKeyMessage(long peerId, int messageId) => $"message:{peerId}:{messageId}";
+    public static string GetCacheKeyMessages() => $"messages";
     public static string GetCacheKeyMessages(long peerId, int messageIdStart, int messageIdEnd) => $"messages:{peerId}:{messageIdStart}-{messageIdEnd}";
+    public static string GetCacheKeyStoryDb() => $"story:db";
     public static string GetCacheKeyStoryDb(long peerId, long storyId) => $"story:db:{peerId}:{storyId}";
+    public static string GetCacheKeyStoryProc() => $"story:proc";
     public static string GetCacheKeyStoryProc(long peerId, long storyId) => $"story:proc:{peerId}:{storyId}";
+    public static string GetCacheKeyUserDb() => $"user:db";
     public static string GetCacheKeyUserDb(long id) => $"user:db:{id}";
+    public static string GetCacheKeyUserProc() => $"user:proc";
     public static string GetCacheKeyUserProc(long id) => $"user:proc:{id}";
 
     public static readonly FusionCacheEntryOptions CacheOptionsFullChat = new()

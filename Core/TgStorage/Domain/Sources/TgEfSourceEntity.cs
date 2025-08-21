@@ -21,7 +21,7 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(IsFileNamingByMessage))]
 [Index(nameof(IsRestrictSavingContent))]
 [Index(nameof(IsSubscribe))]
-public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
+public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
 {
 	#region Public and private fields, properties, constructor
 

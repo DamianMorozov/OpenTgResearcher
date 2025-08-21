@@ -24,6 +24,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public bool IsNotReady => !IsReady;
     public bool IsProxyUsage { get; private set; } = default!;
     public User? Me { get; protected set; } = default!;
+    public SqliteConnection? BotSqlConnection { get; private set; } = default!;
+    protected ITgStorageManager StorageManager { get; set; } = default!;
+    protected ITgFloodControlService FloodControlService { get; set; } = default!;
 
     public ConcurrentDictionary<long, ChatBase> ChatCache { get; private set; } = [];
     public ConcurrentDictionary<long, ChatBase> DicChats { get; private set; } = [];
@@ -60,21 +63,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public Func<string, Task> UpdateStateMessageAsync { get; private set; } = default!;
     public Func<long, int, string, bool, int, Task> UpdateStateMessageThreadAsync { get; private set; } = default!;
 
-    public Microsoft.Data.Sqlite.SqliteConnection? BotSqlConnection { get; private set; } = default!;
-
-    private List<TgEfMessageEntity> MessageEntities { get; set; } = [];
-    private List<TgEfMessageRelationEntity> MessageRelationEntities { get; set; } = [];
-
-    protected ITgStorageManager StorageManager { get; set; } = default!;
-    protected ITgFloodControlService FloodControlService { get; set; } = default!;
-    
-    private readonly List<TgEfSourceEntity> _chatBuffer = [];
-    private readonly Lock _chatBufferLock = new();
-
-    private readonly List<TgEfStoryEntity> _storyBuffer = [];
-    private readonly List<TgEfUserEntity> _userBuffer = [];
-    private readonly Lock _storyBufferLock = new();
-    private readonly Lock _userBufferLock = new();
+    private readonly List<TgEfMessageEntity> _messageBuffer = [];
+    private readonly List<TgEfMessageRelationEntity> _messageRelationBuffer = [];
+    private readonly Lock _messageBufferLock = new();
+    private readonly Lock _messageRelationBufferLock = new();
+    private readonly SemaphoreSlim _saveLock = new(1, 1);
+    private readonly TgBufferCacheHelper<TgEfSourceEntity> _chatBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfStoryEntity> _storyBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfUserEntity> _userBuffer = default!;
 
     protected TgConnectClientBase(ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : base()
     {
@@ -82,7 +78,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         StorageManager = storageManager;
         FloodControlService = floodControlService;
-        _cache = cache;
+        _fusionCache = cache;
+
+        _chatBuffer = new(_fusionCache, TgCacheHelper.GetCacheKeyChat());
+        _storyBuffer = new(_fusionCache, TgCacheHelper.GetCacheKeyStoryProc());
+        _userBuffer = new(_fusionCache, TgCacheHelper.GetCacheKeyUserProc());
     }
 
     protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
@@ -92,7 +92,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         StorageManager = storageManager;
         FloodControlService = floodControlService;
-        _cache = cache;
+        _fusionCache = cache;
     }
 
     #endregion
@@ -105,7 +105,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         var tasks = new List<Task>
         {
             DisconnectClientAsync(),
-            DisconnectBotAsync()
+            DisconnectBotAsync(),
+            ReleaseBuffersAsync(),
         };
         await Task.WhenAll(tasks);
     }
@@ -148,36 +149,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #region FusionCache
 
-    private readonly IFusionCache _cache;
+    private readonly IFusionCache _fusionCache;
 
     private ValueTask<Messages_ChatFull?> GetFullChannelCachedAsync(Channel channel) =>
-        _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyFullChannel(channel.id), 
+        _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyFullChannel(channel.id), 
         _ => TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!), TgCacheHelper.CacheOptionsFullChat);
 
     private ValueTask<Messages_ChatFull?> GetFullChatCachedAsync(ChatBase chatBase) =>
-        _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyFullChat(chatBase.ID), 
+        _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyFullChat(chatBase.ID), 
         _ => TelegramCallAsync(() => Client?.GetFullChat(chatBase) ?? default!), TgCacheHelper.CacheOptionsFullChat);
 
     private ValueTask<Messages_ChatFull?> GetFullChatCachedAsync(long chatId) =>
-        _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyFullChat(chatId), 
+        _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyFullChat(chatId), 
         _ => TelegramCallAsync(() => Client?.Messages_GetFullChat(chatId) ?? default!), TgCacheHelper.CacheOptionsFullChat);
 
     private ValueTask<Messages_MessagesBase> ChannelsGetMessageByIdCachedAsync(Channel channel, int messageId, Func<Task<Messages_MessagesBase>> factory) =>
-        _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyMessage(channel.id, messageId), 
+        _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyMessage(channel.id, messageId), 
         _ => factory(), TgCacheHelper.CacheOptionsChannelMessages);
 
     private ValueTask<int> GetLastCountCachedAsync(long chatId, Func<Task<int>> factory) =>
-        _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyChatLastCount(chatId), _ => factory(), TgCacheHelper.CacheOptionsChannelMessages);
-
-    private ValueTask<int> GetLastCountCachedAsync(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyChatLastCount(tgDownloadSettings.SourceVm.Dto.Id), 
-        _ => GetChannelMessageIdLastAsync(tgDownloadSettings), TgCacheHelper.CacheOptionsChannelMessages);
-
-    private ValueTask<TgEfStoryEntity> GetStoryCachedAsync(long peerId, StoryItem story) => _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyStoryDb(peerId, story.id),
-        _ => CreateOrGetStoryAsync(peerId, story), TgCacheHelper.CacheOptionsChannelMessages);
-
-    private ValueTask<TgEfUserEntity> GetUserCachedAsync(TL.User user, bool isContact) => _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyUserDb(user.id),
-        _ => CreateOrGetUserAsync(user, isContact), TgCacheHelper.CacheOptionsChannelMessages);
+        _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyChatLastCount(chatId), _ => factory(), TgCacheHelper.CacheOptionsChannelMessages);
 
     #endregion
 
@@ -1256,7 +1247,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             tgDownloadSettings2.SourceVm.Dto.FirstId = offset;
             var start = offset + 1;
             var end = offset + partition;
-            var messages = await _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyMessages(chatBase.ID, start, end), 
+            var messages = await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyMessages(chatBase.ID, start, end), 
                 _ => TelegramCallAsync(() => Client.Channels_GetMessages(chatBase as Channel, inputMessages)),
                 TgCacheHelper.CacheOptionsChannelMessages);
 
@@ -1432,12 +1423,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         List<TgEfSourceEntity>? toSave = null;
         try
         {
-            using (_chatBufferLock.EnterScope())
-            {
-                if (_chatBuffer.Count == 0) return;
-                toSave = [.. _chatBuffer];
-                _chatBuffer.Clear();
-            }
+            if (_chatBuffer.Count == 0) return;
+            toSave = _chatBuffer.Flush();
+            _chatBuffer.Clear();
+            await WaitTransactionCompleteAsync();
             await StorageManager.SourceRepository.SaveListAsync(toSave, isRewriteEntities: true);
         }
         catch (Exception ex)
@@ -1448,7 +1437,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             if (toSave is not null)
                 foreach (var item in toSave)
-                    await _cache.RemoveAsync(TgCacheHelper.GetCacheKeyFullChat(item.Id));
+                    await _fusionCache.RemoveAsync(TgCacheHelper.GetCacheKeyFullChat(item.Id));
         }
     }
 
@@ -1527,18 +1516,20 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         IsContact = dto.IsContact
     };
 
-    private async Task<bool> FillBufferStoriesAsync(long peerId, StoryItem story)
+    private async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, StoryItem story)
     {
-        return await _cache.GetOrSetAsync<bool>(TgCacheHelper.GetCacheKeyStoryProc(peerId, story.id),
+        return await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyStoryProc(peerId, story.id),
         async _ =>
         {
             return await TryCatchAsync(async () =>
             {
+                TgEfStoryEntity? storyEntity = null;
                 if (story.entities is not null)
                 {
                     foreach (var message in story.entities)
                     {
-                        var storyEntity = await GetStoryCachedAsync(peerId, story);
+                        storyEntity = await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyStoryDb(peerId, story.id),
+                            _ => CreateOrGetStoryAsync(peerId, story), TgCacheHelper.CacheOptionsChannelMessages); ;
                         if (message is not null)
                         {
                             storyEntity.Type = message.Type;
@@ -1549,31 +1540,33 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         // Switch media type
                         TgEfStoryEntityByMediaType(storyEntity, story.media);
                         // Save at memory
-                        AddBufferStory(storyEntity);
+                        _storyBuffer.Add(storyEntity);
                     }
                 }
                 else
                 {
-                    var storyEntity = await GetStoryCachedAsync(peerId, story);
+                    storyEntity = await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyStoryDb(peerId, story.id),
+                        _ => CreateOrGetStoryAsync(peerId, story), TgCacheHelper.CacheOptionsChannelMessages); ;
                     // Save at memory
-                    AddBufferStory(storyEntity);
+                    _storyBuffer.Add(storyEntity);
                 }
-                return true;
+                return storyEntity;
             });
         }, TgCacheHelper.CacheOptionsProcessMessage);
     }
 
-    public async Task<bool> FillBufferUsersAsync(TL.User user, bool isContact)
+    public async Task<TgEfUserEntity?> FillBufferUsersAsync(TL.User user, bool isContact)
     {
-        return await _cache.GetOrSetAsync<bool>(TgCacheHelper.GetCacheKeyUserProc(user.id),
+        return await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyUserProc(user.id),
         async _ =>
         {
             return await TryCatchAsync(async () =>
             {
-                var userEntity = await GetUserCachedAsync(user, isContact);
+                var userEntity = await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyUserDb(user.id),
+                    _ => CreateOrGetUserAsync(user, isContact), TgCacheHelper.CacheOptionsChannelMessages);
                 // Save at memory
-                AddBufferUser(userEntity);
-                return true;
+                _userBuffer.Add(userEntity);
+                return userEntity;
             });
         }, TgCacheHelper.CacheOptionsProcessMessage);
     }
@@ -1708,30 +1701,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private void AddBufferStory(TgEfStoryEntity entity)
-    {
-        using (_storyBufferLock.EnterScope())
-            _storyBuffer.Add(entity);
-    }
-
-    private void AddBufferUser(TgEfUserEntity entity)
-    {
-        using (_userBufferLock.EnterScope())
-            _userBuffer.Add(entity);
-    }
-
     /// <summary> Flush story buffer to database </summary>
     private async Task FlushStoryBufferAsync()
     {
         List<TgEfStoryEntity>? toSave = null;
         try
         {
-            using (_storyBufferLock.EnterScope())
-            {
-                if (_storyBuffer.Count == 0) return;
-                toSave = [.. _storyBuffer];
-                _storyBuffer.Clear();
-            }
+            if (_storyBuffer.Count == 0) return;
+            toSave = _storyBuffer.Flush();
+            _storyBuffer.Clear();
+            await WaitTransactionCompleteAsync();
             await StorageManager.StoryRepository.SaveListAsync(toSave, isRewriteEntities: true);
         }
         catch (Exception ex)
@@ -1743,8 +1722,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (toSave is not null)
                 foreach (var item in toSave)
                 { 
-                    await _cache.RemoveAsync(TgCacheHelper.GetCacheKeyStoryDb(item.FromId ?? 0, item.Id));
-                    await _cache.RemoveAsync(TgCacheHelper.GetCacheKeyStoryProc(item.FromId ?? 0, item.Id));
+                    await _fusionCache.RemoveAsync(TgCacheHelper.GetCacheKeyStoryDb(item.FromId ?? 0, item.Id));
+                    await _fusionCache.RemoveAsync(TgCacheHelper.GetCacheKeyStoryProc(item.FromId ?? 0, item.Id));
                 }
         }
     }
@@ -1755,12 +1734,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         List<TgEfUserEntity>? toSave = null;
         try
         {
-            using (_userBufferLock.EnterScope())
-            {
-                if (_userBuffer.Count == 0) return;
-                toSave = [.. _userBuffer];
-                _storyBuffer.Clear();
-            }
+            if (_userBuffer.Count == 0) return;
+            toSave = _userBuffer.Flush();
+            _storyBuffer.Clear();
+            await WaitTransactionCompleteAsync();
             await StorageManager.UserRepository.SaveListAsync(toSave, isRewriteEntities: true);
         }
         catch (Exception ex)
@@ -1772,9 +1749,61 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (toSave is not null)
                 foreach (var item in toSave)
                 { 
-                    await _cache.RemoveAsync(TgCacheHelper.GetCacheKeyUserDb(item.Id));
-                    await _cache.RemoveAsync(TgCacheHelper.GetCacheKeyUserProc(item.Id));
+                    await _fusionCache.RemoveAsync(TgCacheHelper.GetCacheKeyUserDb(item.Id));
+                    await _fusionCache.RemoveAsync(TgCacheHelper.GetCacheKeyUserProc(item.Id));
                 }
+        }
+    }
+
+    /// <summary> Flush message buffer to database </summary>
+    private async Task FlushMessageBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce)
+    {
+        if (!isSaveMessages) return;
+        await _saveLock.WaitAsync();
+
+        try
+        {
+            if (_messageBuffer.Count > TgGlobalTools.BatchMessagesLimit || isForce)
+            {
+                await WaitTransactionCompleteAsync();
+                await StorageManager.MessageRepository.SaveListAsync(_messageBuffer, isSaveMessages);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        finally
+        {
+            using (_messageBufferLock.EnterScope())
+                _messageBuffer.Clear();
+            _saveLock.Release();
+        }
+    }
+
+    /// <summary> Flush message buffer to database </summary>
+    private async Task FlushMessageRelationBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce)
+    {
+        if (!isSaveMessages) return;
+        await _saveLock.WaitAsync();
+
+        try
+        {
+            if (_messageRelationBuffer.Count > TgGlobalTools.BatchMessagesLimit || isForce)
+            {
+                await WaitTransactionCompleteAsync();
+                await StorageManager.MessageRelationRepository.SaveListAsync(_messageRelationBuffer, isRewriteMessages);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        finally
+        {
+            using (_messageRelationBufferLock.EnterScope())
+                _messageRelationBuffer.Clear();
+            _saveLock.Release();
         }
     }
 
@@ -1902,8 +1931,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     if (fullChannel?.full_chat is ChannelFull channelFull)
                     {
                         var entity = await BuildSourceEntityAsync(channel, channelFull.about, messagesCount, isUserAccess: true);
-                        using (_chatBufferLock.EnterScope())
-                            _chatBuffer.Add(entity);
+                        _chatBuffer.Add(entity);
                         await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent,
                             tgDownloadSettings.SourceScanCount, $"{channel} | {TgDataFormatUtils.TrimStringEnd(channelFull.about, 40)}");
                     }
@@ -1911,8 +1939,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 else
                 {
                     var entity = await BuildSourceEntityAsync(channel, string.Empty, messagesCount, isUserAccess: true);
-                    using (_chatBufferLock.EnterScope())
-                        _chatBuffer.Add(entity);
+                    _chatBuffer.Add(entity);
                     await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent, tgDownloadSettings.SourceScanCount, $"{channel}");
                 }
             }, async () => {
@@ -1945,9 +1972,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 else
                     entity = await BuildSourceEntityAsync(group, string.Empty, messagesCount, isUserAccess: true);
 
-                using (_chatBufferLock.EnterScope())
-                    _chatBuffer.Add(entity);
-
+                _chatBuffer.Add(entity);
 
                 if (tgDownloadSettings is TgDownloadSettingsViewModel tgDownloadSettings2)
                     await UpdateChatViewModelAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, 0, $"{group} | {messagesCount}");
@@ -2260,7 +2285,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             tgDownloadSettings2.SourceVm.Dto.IsDownload = false;
         }, async () => {
-            await SaveMessagesAsync(tgDownloadSettings, isForce: true);
+            await FlushMessageBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: true);
+            await FlushMessageRelationBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: true);
         });
         await UpdateTitleAsync(string.Empty);
     }
@@ -2564,7 +2590,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Anti-stampede: if a pair of threads process the same message, only one will be executed.
-            await _cache.GetOrSetAsync<bool>(TgCacheHelper.GetCacheKeyMessage(chatId, messageId),
+            _ = await _fusionCache.GetOrSetAsync<bool>(TgCacheHelper.GetCacheKeyMessage(chatId, messageId),
                 async _ =>
                 {
                     // Parse documents and photos
@@ -2586,7 +2612,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         finally
         {
             // We cache the chat message counter briefly (it reloads frequently)
-            var messagesCount = await _cache.GetOrSetAsync(TgCacheHelper.GetCacheKeyChatLastCount(chatId), 
+            var messagesCount = await _fusionCache.GetOrSetAsync(TgCacheHelper.GetCacheKeyChatLastCount(chatId), 
                 async _ => await GetChannelMessageIdLastCoreAsync(chatId), TgCacheHelper.CacheOptionsChannelMessages);
 
 
@@ -3037,57 +3063,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Save messages to the storage </summary>
-    private async Task SaveMessagesAsync(ITgDownloadViewModel tgDownloadSettings, bool isForce)
-    {
-        if (!tgDownloadSettings.IsSaveMessages) return;
-
-        await _saveLock.WaitAsync();
-
-        try
-        {
-            if (MessageEntities.Count > TgGlobalTools.BatchMessagesLimit || isForce)
-            {
-                try
-                {
-                    await WaitTransactionCompleteAsync();
-                    await StorageManager.MessageRepository.SaveListAsync(MessageEntities, tgDownloadSettings.IsRewriteMessages);
-                }
-                catch (Exception ex)
-                {
-                    TgLogUtils.WriteException(ex);
-                }
-                finally
-                {
-                    MessageEntities.Clear();
-                }
-            }
-
-            if (MessageRelationEntities.Count > TgGlobalTools.BatchMessagesLimit || isForce)
-            {
-                try
-                {
-                    await WaitTransactionCompleteAsync();
-                    await StorageManager.MessageRelationRepository.SaveListAsync(MessageRelationEntities, tgDownloadSettings.IsRewriteMessages);
-                }
-                catch (Exception ex)
-                {
-                    TgLogUtils.WriteException(ex);
-                }
-                finally
-                {
-                    MessageRelationEntities.Clear();
-                }
-            }
-        }
-        finally
-        {
-            _saveLock.Release();
-        }
-    }
-
-    private readonly SemaphoreSlim _saveLock = new(1, 1);
-
-    /// <summary> Save messages to the storage </summary>
     /// <exception cref="InvalidOperationException"></exception>
     private async Task SaveMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMessageSettings messageSettings,
         DateTime dtCreated, long size, string message, TgEnumMessageType messageType, bool isRetry, long userId)
@@ -3111,10 +3086,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     UserId = userId,
                 };
                 // Check if the message is not already in the batch
-                if (MessageEntities.FirstOrDefault(x => 
+                if (_messageBuffer.FirstOrDefault(x => 
                     x.Id == messageItem.Id && x.SourceId == messageItem.SourceId && x.UserId == messageItem.UserId) is null)
                 {
-                    MessageEntities.Add(messageItem);
+                    using (_messageBufferLock.EnterScope())
+                        _messageBuffer.Add(messageItem);
                 }
             }
 
@@ -3128,11 +3104,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     ChildSourceId = messageSettings.CurrentChatId,
                     ChildMessageId = messageSettings.CurrentMessageId
                 };
-                if (MessageRelationEntities.FirstOrDefault(
+                if (_messageRelationBuffer.FirstOrDefault(
                     x => x.ParentSourceId == messageSettings.ParentChatId && x.ParentMessageId == messageSettings.ParentMessageId &&
                     x.ChildSourceId == messageSettings.CurrentChatId && x.ChildMessageId == messageSettings.CurrentMessageId) is null)
                 {
-                    MessageRelationEntities.Add(relation);
+                    using (_messageRelationBufferLock.EnterScope())
+                        _messageRelationBuffer.Add(relation);
                 }
             }
 
@@ -3161,7 +3138,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             //await ClientProgressForMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, isStartTask: true, messageSettings.ThreadNumber);
             await ClientProgressForMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, isStartTask: false, messageSettings.ThreadNumber);
             
-            await SaveMessagesAsync(tgDownloadSettings, isForce: false);
+            await FlushMessageBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false);
+            await FlushMessageRelationBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false);
         }
     }
 
@@ -3281,6 +3259,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             TgLogUtils.WriteException(ex);
             await SetClientExceptionAsync(ex);
         }
+    }
+
+    public async Task ReleaseBuffersAsync()
+    {
+        _chatBuffer.Dispose();
+        _storyBuffer.Dispose();
+        _userBuffer.Dispose();
+        await Task.CompletedTask;
     }
 
     protected async Task SetClientExceptionAsync(Exception ex,

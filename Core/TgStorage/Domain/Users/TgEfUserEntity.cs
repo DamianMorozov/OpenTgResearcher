@@ -17,7 +17,7 @@ namespace TgStorage.Domain.Users;
 [Index(nameof(PhoneNumber))]
 [Index(nameof(Status))]
 [Index(nameof(LangCode))]
-public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
+public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
 {
 	#region Public and private fields, properties, constructor
 

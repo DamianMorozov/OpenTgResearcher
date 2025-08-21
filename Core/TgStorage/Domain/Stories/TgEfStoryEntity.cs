@@ -14,7 +14,7 @@ namespace TgStorage.Domain.Stories;
 [Index(nameof(ExpireDate))]
 [Index(nameof(Caption))]
 [Index(nameof(Type))]
-public sealed class TgEfStoryEntity : ITgEfEntity<TgEfStoryEntity>
+public sealed class TgEfStoryEntity : ITgEfIdEntity<TgEfStoryEntity>
 {
 	#region Public and private fields, properties, constructor
 

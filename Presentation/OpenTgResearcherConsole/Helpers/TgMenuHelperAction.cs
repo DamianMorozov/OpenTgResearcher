@@ -39,22 +39,17 @@ internal partial class TgMenuHelper
 	{
 		if (!isSkipCheckTgSettings && !await CheckTgSettingsWithWarningAsync(tgDownloadSettings))
 			return;
-		AnsiConsole.Progress()
+		await AnsiConsole.Progress()
 			.AutoRefresh(false)
 			.AutoClear(true)
 			.HideCompleted(true)
 			.Columns(GetProgressColumns())
-			.Start(progressContext =>
-			{
-				var task = RunTaskProgressCoreAsync(progressContext, tgDownloadSettings, func, isScanCount);
-				task.Wait();
-			});
+			.StartAsync(async progressContext => await RunTaskProgressCoreAsync(progressContext, tgDownloadSettings, func, isScanCount));
 		TgLog.MarkupLine(TgLocale.WaitDownloadCompleteWithQuit);
 		while (!tgDownloadSettings.SourceVm.Dto.IsComplete)
 		{
 			var key = Console.ReadKey();
-			if (key.KeyChar == 'q' || key.KeyChar == 'Q')
-				break;
+			if (key.KeyChar == 'q' || key.KeyChar == 'Q') break;
 			TgLog.MarkupLine(TgLocale.WaitDownloadCompleteWithQuit);
 		}
 	}
@@ -62,10 +57,7 @@ internal partial class TgMenuHelper
 	private async Task RunTaskProgressCoreAsync(ProgressContext progressContext, TgDownloadSettingsViewModel tgDownloadSettings,
 		Func<TgDownloadSettingsViewModel, Task> func, bool isScanCount)
 	{
-		var swChat = Stopwatch.StartNew();
-		//var swMessage = Stopwatch.StartNew();
 		var stringLimit = Console.WindowWidth / 2 - 10;
-		//var progressTaskDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the message", stringLimit).TrimEnd();
 		var progressSourceDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the source", stringLimit).TrimEnd();
 		// progressMessages
 		var progressMessages = new List<ProgressTask>();
@@ -74,13 +66,11 @@ internal partial class TgMenuHelper
 		progressSource.Value = 0;
 		// Setup
 		BusinessLogicManager.ConnectClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
-		BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-		BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
+        BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
+        BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
 		BusinessLogicManager.ConnectClient.SetupUpdateStateMessageThread(UpdateStateMessageThreadAsync);
 		// Task
 		await func(tgDownloadSettings);
-		// Finish
-		swChat.Stop();
 		//swMessage.Stop();
 		var progressMessagesStarted = progressMessages.Where(x => x.IsStarted).ToList();
 		foreach (var progress in progressMessagesStarted)
@@ -88,10 +78,10 @@ internal partial class TgMenuHelper
 		if (progressSource.IsStarted)
 			progressSource.StopTask();
 		var messageFinally = isScanCount
-			? $"{GetStatus(swChat, tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
-			: $"{GetStatus(swChat, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}";
-		await UpdateStateSourceAsync(0, 0, 0, messageFinally);
-		return;
+			? $"{GetStatus(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
+			: $"{GetStatus(tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}";
+        await UpdateChatViewModelAsync(0, 0, 0, messageFinally);
+        return;
 
 		// Update console title
 		async Task UpdateConsoleTitleAsync(string title)
@@ -99,20 +89,20 @@ internal partial class TgMenuHelper
 			Console.Title = string.IsNullOrEmpty(title) ? $"{TgConstants.OTR}" : $"{TgConstants.OTR} {title}";
 			await Task.CompletedTask;
 		}
-		// Update source
-		async Task UpdateStateSourceAsync(long sourceId, int messageId, int count, string message)
-		{
-			progressSource.Description = TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd();
-			if (tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
-			{
-				if (messageId > 0)
-					progressSource.Value = messageId;
-			}
-			progressContext.Refresh();
-			await Task.CompletedTask;
-		}
-		// Update file
-		async Task UpdateStateFileAsync(long sourceId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
+        // Update source
+        async Task UpdateChatViewModelAsync(long sourceId, int messageId, int count, string message)
+        {
+            progressSource.Description = TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd();
+            if (tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
+            {
+                if (messageId > 0)
+                    progressSource.Value = messageId;
+            }
+            progressContext.Refresh();
+            await Task.CompletedTask;
+        }
+        // Update file
+        async Task UpdateStateFileAsync(long sourceId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
 			bool isStartTask, int threadNumber)
 		{
 			if (!tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId)) return;
@@ -149,14 +139,6 @@ internal partial class TgMenuHelper
 					tgDownloadSettings.SourceVm.Dto.CurrentFileTransmitted = 0;
 					tgDownloadSettings.SourceVm.Dto.CurrentFileSpeed = 0;
 				}
-				// State
-				//if (!swMessage.IsRunning)
-				//	swMessage.Start();
-				//else if (swMessage.Elapsed > TimeSpan.FromMilliseconds(1_000))
-				//{
-				//	swMessage.Reset();
-				//	progressContext.Refresh();
-				//}
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
@@ -191,9 +173,6 @@ internal partial class TgMenuHelper
 					progress.Value = 100;
 					progress.StopTask();
 				}
-				// State
-				//if (!swMessage.IsRunning)
-				//	swMessage.Start();
 				progressContext.Refresh();
 				await Task.CompletedTask;
 			}
@@ -205,29 +184,24 @@ internal partial class TgMenuHelper
 	}
 
 	public async Task RunTaskStatusAsync(TgDownloadSettingsViewModel tgDownloadSettings, Func<TgDownloadSettingsViewModel, Task> func,
-		bool isSkipCheckTgSettings, bool isScanCount, bool isWaitComplete)
+		bool isSkipCheckTgSettings, bool isScanCount, bool isWaitComplete, bool isUpdateChatViewModel = true)
 	{
 		if (!isSkipCheckTgSettings && !await CheckTgSettingsWithWarningAsync(tgDownloadSettings))
 			return;
-		AnsiConsole.Status()
+		await AnsiConsole.Status()
 			.AutoRefresh(false)
 			.Spinner(Spinner.Known.Star)
 			.SpinnerStyle(Style.Parse("green"))
-			.Start("Thinking...", statusContext =>
-			{
-				var task = RunTaskStatusCoreAsync(statusContext, tgDownloadSettings, func, isScanCount);
-				task.Wait();
-			});
-		TgLog.MarkupLine(TgLocale.WaitDownloadComplete);
+			.StartAsync("Thinking...", statusContext => RunTaskStatusCoreAsync(statusContext, tgDownloadSettings, func, isScanCount, isUpdateChatViewModel));
 		while (isWaitComplete && !tgDownloadSettings.SourceVm.Dto.IsComplete)
 		{
 			Console.ReadKey();
-			TgLog.MarkupLine(TgLocale.WaitDownloadComplete);
+			TgLog.WriteLine($"  {TgLocale.WaitDownloadComplete}");
 		}
 	}
 
 	private async Task RunTaskStatusCoreAsync(StatusContext statusContext, TgDownloadSettingsViewModel tgDownloadSettings,
-		Func<TgDownloadSettingsViewModel, Task> func, bool isScanCount)
+		Func<TgDownloadSettingsViewModel, Task> func, bool isScanCount, bool isUpdateChatViewModel)
 	{
 		statusContext.Spinner(Spinner.Known.Star);
 		statusContext.SpinnerStyle(Style.Parse("green"));
@@ -239,51 +213,44 @@ internal partial class TgMenuHelper
 				  $"Progress {tgDownloadSettings.SourceVm.Dto.ProgressPercentString}";
 		// Setup
 		BusinessLogicManager.ConnectClient.SetupUpdateTitle(UpdateConsoleTitleAsync);
-		BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
 		BusinessLogicManager.ConnectClient.SetupUpdateStateContact(UpdateStateContactAsync);
-		BusinessLogicManager.ConnectClient.SetupUpdateStateStory(UpdateStateStoryAsync);
 		BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
 		BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
-		// Task
-		var sw = Stopwatch.StartNew();
-		await func(tgDownloadSettings);
-		sw.Stop();
-		// Update console title
-		async Task UpdateConsoleTitleAsync(string title)
+        if (isUpdateChatViewModel)
+            BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
+		BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
+		BusinessLogicManager.ConnectClient.SetupUpdateShellViewModel(UpdateShellViewModelAsync);
+        // Task
+    	await func(tgDownloadSettings);
+        return;
+
+        // Update console title
+        async Task UpdateConsoleTitleAsync(string title)
 		{
 			Console.Title = string.IsNullOrEmpty(title) ? $"{TgConstants.OTR}" : $"{TgConstants.OTR} {title}";
 			await Task.CompletedTask;
 		}
-		// Update source
-		async Task UpdateStateSourceAsync(long sourceId, int messageId, int count, string message)
-		{
-			if (string.IsNullOrEmpty(message))
-				return;
-			statusContext.Status(TgLog.GetMarkupString(isScanCount
-				? $"{GetStatus(tgDownloadSettings.SourceScanCount, messageId),15} | {message,40}"
-				: GetFileStatus(message)));
-			statusContext.Refresh();
-			await Task.CompletedTask;
-		}
-		// Update state source
-		await UpdateStateSourceAsync(0, 0, 0, isScanCount
-			? $"{GetStatus(sw, tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
-			: $"{GetStatus(sw, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}");
-		return;
+        // Update source
+        async Task UpdateChatViewModelAsync(long sourceId, int messageId, int count, string message)
+        {
+            if (string.IsNullOrEmpty(message))
+                return;
+            statusContext.Status(TgLog.GetMarkupString(isScanCount
+                ? $"{GetStatus(tgDownloadSettings.SourceScanCount, messageId),15} | {message,40}"
+                : GetFileStatus(message)));
+            statusContext.Refresh();
+            await Task.CompletedTask;
+        }
+        // Update chat ViewModel
+        //await UpdateChatViewModelAsync(0, 0, 0, isScanCount
+        //    ? $"{GetStatus(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent)}"
+        //    : $"{GetStatus(tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count)}");
 
 		// Update contact
 		async Task UpdateStateContactAsync(long id, string firstName, string lastName, string userName)
 		{
 			statusContext.Status(TgLog.GetMarkupString(
 				$"{GetStatus(tgDownloadSettings.SourceScanCount, id),15} | {firstName,20} | {lastName,20} | {userName,20}"));
-			statusContext.Refresh();
-			await Task.CompletedTask;
-		}
-		// Update story
-		async Task UpdateStateStoryAsync(long id, int messageId, int count, string caption)
-		{
-			statusContext.Status(TgLog.GetMarkupString(
-				$"{GetStatus(tgDownloadSettings.SourceScanCount, id),15} | {caption,30}"));
 			statusContext.Refresh();
 			await Task.CompletedTask;
 		}
@@ -328,13 +295,57 @@ internal partial class TgMenuHelper
 			statusContext.Refresh();
 			await Task.CompletedTask;
 		}
+        // Update chats ViewModel
+        async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType)
+        {
+            switch (chatsMessageType)
+            {
+                case TgEnumChatsMessageType.StartScan:
+                    statusContext.Status(TgLog.GetMarkupString($" Start parsing"));
+                    break;
+                case TgEnumChatsMessageType.ProcessingChats:
+                    statusContext.Status(TgLog.GetMarkupString($" Process parsing chats: {counter} from {countAll}"));
+                    break;
+                case TgEnumChatsMessageType.ProcessingDialogs:
+                    statusContext.Status(TgLog.GetMarkupString($" Process parsing dialogs: {counter} from {countAll}"));
+                    break;
+                case TgEnumChatsMessageType.ProcessingGroups:
+                    statusContext.Status(TgLog.GetMarkupString($" Process parsing groups: {counter} from {countAll}"));
+                    break;
+                case TgEnumChatsMessageType.ProcessingStories:
+                    statusContext.Status(TgLog.GetMarkupString($" Process parsing stories: {counter} from {countAll}"));
+                    break;
+                case TgEnumChatsMessageType.ProcessingUsers:
+                    statusContext.Status(TgLog.GetMarkupString($" Process parsing users: {counter} from {countAll}"));
+                    break;
+                case TgEnumChatsMessageType.StopScan:
+                    statusContext.Status(TgLog.GetMarkupString($" Stop parsing"));
+                    break;
+                default:
+                    break;
+            }
+            statusContext.Refresh();
+            await Task.CompletedTask;
+        }
+        // Update shell ViewModel
+        async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message)
+        {
+            if (isFloodVisible)
+            {
+                if (!string.IsNullOrEmpty(message))
+                    statusContext.Status(TgLog.GetMarkupString($" Flood control: wait {seconds} seconds | {message}"));
+                else
+                    statusContext.Status(TgLog.GetMarkupString($" Flood control: wait {seconds} seconds"));
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(message))
+                    statusContext.Status(TgLog.GetMarkupString(message));
+            }
+            statusContext.Refresh();
+            await Task.CompletedTask;
+        }
 	}
-
-
-	private static string GetStatus(Stopwatch sw, long count, long current) =>
-		count is 0 && current is 0
-			? $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | "
-			: $"{TgLog.GetDtShortStamp()} | {sw.Elapsed} | {TgDataUtils.CalcSourceProgress(count, current):#00.00} % | {TgDataUtils.GetLongString(current)} / {TgDataUtils.GetLongString(count)}";
 
 	private static string GetStatus(long count, long current) =>
 		count is 0 && current is 0

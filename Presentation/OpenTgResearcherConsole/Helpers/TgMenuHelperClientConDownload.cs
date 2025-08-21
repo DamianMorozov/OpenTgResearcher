@@ -257,8 +257,6 @@ internal partial class TgMenuHelper
     private async Task DownloadSettingsSaveAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         await tgDownloadSettings.SourceVm.SaveAsync();
-        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count,
-            TgLocale.SettingsChat);
     }
 
     private async Task LoadTgClientSettingsByIdAsync(TgDownloadSettingsViewModel tgDownloadSettings)

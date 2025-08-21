@@ -9,7 +9,7 @@ internal partial class TgMenuHelper
 {
     #region Public and private methods
 
-    private TgEnumMenuClientConAdvanced SetMenuClientConAdvanced()
+    private static TgEnumMenuClientConAdvanced SetMenuClientConAdvanced()
     {
         var selectionPrompt = new SelectionPrompt<string>()
             .Title($"  {TgLocale.MenuSwitchNumber}")
@@ -21,7 +21,7 @@ internal partial class TgMenuHelper
             TgLocale.MenuClientAdvancedAutoViewEvents,
             TgLocale.MenuClientAdvancedSearchContacts,
             TgLocale.MenuClientAdvancedSearchChats,
-            TgLocale.MenuClientAdvancedSearchDialogs,
+            //TgLocale.MenuClientAdvancedSearchDialogs,
             TgLocale.MenuClientAdvancedSearchStories,
             TgLocale.MenuClientAdvancedMarkAllMessagesAsRead,
             TgLocale.MenuStorageViewChats
@@ -59,11 +59,12 @@ internal partial class TgMenuHelper
             switch (menu)
             {
                 case TgEnumMenuClientConAdvanced.AdvancedStartAutoDownload:
-                    await RunTaskStatusAsync(tgDownloadSettings, ClientAdvancedStartAutoDownloadAsync,
+                    await RunTaskStatusAsync(tgDownloadSettings, ClientAdvancedStartAutoDownloadAsync, 
                         isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
                     break;
                 case TgEnumMenuClientConAdvanced.AdvancedAutoViewEvents:
-                    await RunTaskStatusAsync(tgDownloadSettings, ClientAdvancedAutoViewEventsAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
+                    await RunTaskStatusAsync(tgDownloadSettings, ClientAdvancedAutoViewEventsAsync, 
+                        isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
                     break;
                 case TgEnumMenuClientConAdvanced.AdvancedSearchChats:
                     await ClientAdvancedSearchAsync(tgDownloadSettings, TgEnumSourceType.Chat);
@@ -100,7 +101,7 @@ internal partial class TgMenuHelper
             var tgDownloadSettings = await SetupDownloadSourceByIdAsync(chat.Id);
             // StatusContext
             var chatId = string.IsNullOrEmpty(chat.UserName) ? $"{chat.Id}" : $"{chat.Id} | @{chat.UserName}";
-            await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(chat.Id, chat.FirstId, chat.Count,
+            await BusinessLogicManager.ConnectClient.UpdateChatViewModelAsync(chat.Id, chat.FirstId, chat.Count,
                 chat.Count <= 0
                     ? $"The source {chatId} hasn't any messages!"
                     : $"The source {chatId} has {chat.Count} messages.");
@@ -113,8 +114,6 @@ internal partial class TgMenuHelper
     private async Task ClientAdvancedAutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         BusinessLogicManager.ConnectClient.IsClientUpdateStatus = true;
-        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
-            tgDownloadSettings.SourceVm.Dto.Count, "Client auto view updates is started");
         TgLog.TypeAnyKeyForReturn();
         BusinessLogicManager.ConnectClient.IsClientUpdateStatus = false;
         await Task.CompletedTask;
@@ -132,8 +131,10 @@ internal partial class TgMenuHelper
             return;
         }
 
-        await RunTaskStatusAsync(tgDownloadSettings, async _ => { await BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, sourceType); },
-            isSkipCheckTgSettings: true, isScanCount: true, isWaitComplete: true);
+        await RunTaskStatusAsync(tgDownloadSettings, _ => BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(tgDownloadSettings, sourceType),
+            isSkipCheckTgSettings: true, isScanCount: true, isWaitComplete: true, isUpdateChatViewModel: false);
+        
+        TgLog.TypeAnyKeyForReturn();
     }
 
     private async Task ClientAdvancedMarkAllMessagesAsReadAsync(TgDownloadSettingsViewModel tgDownloadSettings)

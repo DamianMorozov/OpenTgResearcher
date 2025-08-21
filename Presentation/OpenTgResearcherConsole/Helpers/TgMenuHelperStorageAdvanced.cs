@@ -53,8 +53,7 @@ internal partial class TgMenuHelper
 			switch (menu)
             {
                 case TgEnumMenuStorageAdvanced.ResetAutoUpdate:
-                    await RunTaskStatusAsync(tgDownloadSettings, StorageResetAutoDownloadAsync,
-                        isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
+                    await RunTaskStatusAsync(tgDownloadSettings, StorageResetAutoDownloadAsync, isSkipCheckTgSettings: true, isScanCount: false, isWaitComplete: true);
                     break;
                 case TgEnumMenuStorageAdvanced.ViewChats:
                     await StorageViewChatsAsync(tgDownloadSettings);

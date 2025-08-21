@@ -174,7 +174,7 @@ internal sealed partial class TgMenuHelper
 	private async Task LicenseBuyAsync() => await WebSiteOpenAsync(BusinessLogicManager.LicenseService.MenuWebSiteGlobalLicenseBuyUrl);
 
 	/// <summary> Open web-site </summary>
-	private async Task WebSiteOpenAsync(string url)
+	private static async Task WebSiteOpenAsync(string url)
 	{
 		try
 		{

@@ -63,7 +63,7 @@ internal partial class TgMenuHelper
     private async Task BotAutoViewEventsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         BusinessLogicManager.ConnectClient.IsBotUpdateStatus = true;
-        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
+        await BusinessLogicManager.ConnectClient.UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.FirstId,
             tgDownloadSettings.SourceVm.Dto.Count, "Bot auto view updates is started");
         TgLog.TypeAnyKeyForReturn();
         BusinessLogicManager.ConnectClient.IsBotUpdateStatus = false;

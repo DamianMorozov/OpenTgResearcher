@@ -318,7 +318,7 @@ internal partial class TgMenuHelper
         if (ClientForSendData is null) return;
 
         BusinessLogicManager.ConnectClient.ClearCaches();
-        if (!BusinessLogicManager.ConnectClient.DicChatsAll.Any())
+        if (!BusinessLogicManager.ConnectClient.DicChats.Any())
             await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
 
         ClientForSendData.OnUpdates -= OnClientUpdatesAsync;
@@ -582,7 +582,7 @@ internal partial class TgMenuHelper
         if (ClientForSendData is null) return;
 
         BusinessLogicManager.ConnectClient.ClearCaches();
-        if (!BusinessLogicManager.ConnectClient.DicChatsAll.Any())
+        if (!BusinessLogicManager.ConnectClient.DicChats.Any())
             await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
 
         ClientMonitoringVm.IsStartSearching = true;
@@ -601,7 +601,7 @@ internal partial class TgMenuHelper
         try
         {
             // Get chats
-            var chats = BusinessLogicManager.ConnectClient.DicChatsAll.Values.Where(x => !string.IsNullOrEmpty(x.MainUsername))
+            var chats = BusinessLogicManager.ConnectClient.DicChats.Values.Where(x => !string.IsNullOrEmpty(x.MainUsername))
                 .Where(chat => ClientMonitoringVm.IsSearchAtAllChats || ClientMonitoringVm.ChatNames.Contains(chat.MainUsername.ToUpper()))
                 .ToList();
 
@@ -631,18 +631,8 @@ internal partial class TgMenuHelper
         TL.ChatBase chatBase, TL.MessageBase message)
     {
         if (message is not TL.Message msg) return;
-
-        // StatusContext
-        var chatId = string.IsNullOrEmpty(chatBase.MainUsername) ? $"{chatBase.ID}" : $"{chatBase.ID} | @{chatBase.MainUsername}";
-        await BusinessLogicManager.ConnectClient.UpdateStateSourceAsync(chatBase.ID, 
-            tgDownloadSettings.SourceVm.Dto.FirstId, tgDownloadSettings.SourceVm.Dto.Count,
-            tgDownloadSettings.SourceVm.Dto.Count <= 0
-                ? $"The source {chatId}: hasn't any messages!"
-                : $"The source {chatId}: read {tgDownloadSettings.SourceVm.Dto.FirstId} from {tgDownloadSettings.SourceVm.Dto.Count} messages.");
-
         // Send message
         await SendMonitoredMessageAsync(msg, msg.Peer.ID, isMessageTextAtOneString: true);
-
         tgDownloadSettings.SourceVm.Dto.FirstId = tgDownloadSettings.SourceVm.Dto.Count - message.ID + 1;
     }
 

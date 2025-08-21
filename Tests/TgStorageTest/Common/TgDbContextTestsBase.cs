@@ -18,6 +18,17 @@ internal abstract class TgDbContextTestsBase : TgDisposable
 
         // DI register
         var containerBuilder = new ContainerBuilder();
+        // Register FusionCache
+        containerBuilder.RegisterInstance<IFusionCache>(new FusionCache(
+            new FusionCacheOptions { DefaultEntryOptions =
+                {
+                    Duration = TimeSpan.FromSeconds(30),
+                    JitterMaxDuration = TimeSpan.FromSeconds(3),
+                    IsFailSafeEnabled = true,
+                    FailSafeMaxDuration = TimeSpan.FromMinutes(1),
+                    EagerRefreshThreshold = 0.8f
+                }}))
+            .SingleInstance();
         // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();

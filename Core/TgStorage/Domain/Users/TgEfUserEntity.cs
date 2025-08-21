@@ -172,10 +172,12 @@ public sealed class TgEfUserEntity : ITgEfEntity<TgEfUserEntity>
 	public TgEfUserEntity Copy(TgEfUserEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
+        {
 			Uid = item.Uid;
+            // Unique key
+            Id = item.Id;
+        }
 		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
-		if (Id == this.GetDefaultPropertyLong(nameof(Id)))
-			Id = item.Id;
 		AccessHash = item.AccessHash;
 		IsActive = item.IsActive;
 		IsBot = item.IsBot;

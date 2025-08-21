@@ -7,7 +7,9 @@ public enum TgEnumChatsMessageType
 {
 	StartScan,
     ProcessingChats,
-    ProcessingGroups,
     ProcessingDialogs,
+    ProcessingGroups,
+    ProcessingStories,
+    ProcessingUsers,
     StopScan,
 }

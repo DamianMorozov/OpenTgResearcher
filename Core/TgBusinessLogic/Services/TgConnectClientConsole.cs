@@ -19,7 +19,6 @@ public partial class TgConnectClientConsole(ITgStorageManager storageManager, IT
             {
                 if (Me is null || !Me.IsActive)
                     Me = await Client.LoginUserIfNeeded();
-                await UpdateStateSourceAsync(0, 0, 0, string.Empty);
             }
             catch (Exception ex)
             {

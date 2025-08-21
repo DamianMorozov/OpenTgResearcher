@@ -161,10 +161,12 @@ public sealed class TgEfSourceEntity : ITgEfEntity<TgEfSourceEntity>
     public TgEfSourceEntity Copy(TgEfSourceEntity item, bool isUidCopy)
     {
 		if (isUidCopy)
+        {
 			Uid = item.Uid;
+            // Unique key
+            Id = item.Id;
+        }
 		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
-		if (Id == this.GetDefaultPropertyLong(nameof(Id)))
-			Id = item.Id;
 		AccessHash = item.AccessHash;
 		IsActive = item.IsActive;
 		FirstId = item.FirstId;

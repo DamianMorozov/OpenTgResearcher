@@ -52,9 +52,11 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
     public TgEfVersionEntity Copy(TgEfVersionEntity item, bool isUidCopy)
 	{
 		if (isUidCopy)
+        {
 			Uid = item.Uid;
-		if (Version == this.GetDefaultPropertyShort(nameof(Version)))
-			Version = item.Version;
+            // Unique key
+            Version = item.Version;
+        }
 		Description = item.Description;
         return this;
 	}

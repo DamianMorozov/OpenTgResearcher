@@ -104,8 +104,7 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
 	{
 		if (isUidCopy)
 			Uid = item.Uid;
-		if (ApiHash == this.GetDefaultPropertyGuid(nameof(ApiHash)))
-			ApiHash = item.ApiHash;
+		ApiHash = item.ApiHash;
 	    ApiId = item.ApiId;
 		FirstName = item.FirstName;
 		LastName = item.LastName;

@@ -114,11 +114,13 @@ public sealed class TgEfStoryEntity : ITgEfEntity<TgEfStoryEntity>
     public TgEfStoryEntity Copy(TgEfStoryEntity item, bool isUidCopy)
     {
 		if (isUidCopy)
+        {
 			Uid = item.Uid;
-		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
-		if (Id == this.GetDefaultPropertyLong(nameof(Id)))
+            // Unique key
 			Id = item.Id;
-		FromId = item.FromId;
+            FromId = item.FromId;
+        }
+		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
 		FromName = item.FromName;
 		Date = item.Date;
 		ExpireDate = item.ExpireDate;

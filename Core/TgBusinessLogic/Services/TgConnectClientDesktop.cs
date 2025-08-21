@@ -18,7 +18,6 @@ public sealed partial class TgConnectClientDesktop(ITgStorageManager storageMana
             try
             {
                 Me = await Client.LoginUserIfNeeded();
-                await UpdateStateSourceAsync(0, 0, 0, string.Empty);
             }
             catch (Exception ex)
             {

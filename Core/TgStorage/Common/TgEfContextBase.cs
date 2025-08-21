@@ -64,7 +64,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     #region IDisposable
 
     /// <summary> Locker object </summary>
-    public object Locker { get; } = new();
+    public Lock Locker { get; } = new();
     /// <summary> To detect redundant calls </summary>
     private bool _disposed;
 
@@ -104,7 +104,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     protected void Dispose(bool disposing)
     {
         if (_disposed) return;
-        lock (Locker)
+        using (Locker.EnterScope())
         {
             // Release managed resources
             if (disposing)

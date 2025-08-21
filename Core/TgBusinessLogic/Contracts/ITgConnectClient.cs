@@ -18,10 +18,11 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
 
-    public Dictionary<long, TL.ChatBase> DicChatsAll { get; }
+    public ConcurrentDictionary<long, TL.ChatBase> DicChats { get; }
 
-    public Func<long, int, int, string, Task> UpdateStateSourceAsync { get; }
     public Func<Task> AfterClientConnectAsync { get; }
+    public Func<long, int, int, string, Task> UpdateChatViewModelAsync { get; }
+    public Func<int, int, TgEnumChatsMessageType, Task> UpdateChatsViewModelAsync { get; }
 
     public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync();
@@ -30,16 +31,15 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task ConnectBotConsoleAsync();
 	public Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config);
 
-	public Task<Dictionary<long, TL.ChatBase>> CollectAllChatsAsync();
+	public Task<IEnumerable<long>> CollectAllChatsAsync();
 
     public void SetupUpdateTitle(Func<string, Task> updateTitleAsync);
-	public void SetupUpdateStateSource(Func<long, int, int, string, Task> updateStateSourceAsync);
-	public void SetupUpdateChatsViewModel(Func<int, int, TgEnumChatsMessageType, Task> updateChatsViewModel);
+    public void SetupUpdateChatViewModel(Func<long, int, int, string, Task> updateChatViewModelAsync);
+    public void SetupUpdateChatsViewModel(Func<int, int, TgEnumChatsMessageType, Task> updateChatsViewModel);
 	public void SetupUpdateShellViewModel(Func<bool, int, string, Task> updateShellViewModel);
 	public void SetupUpdateStateFile(Func<long, int, string, long, long, long, bool, int, Task> updateStateFileAsync);
 	public void SetupUpdateStateMessageThread(Func<long, int, string, bool, int, Task> updateStateMessageThreadAsync);
 	public void SetupUpdateStateContact(Func<long, string, string, string, Task> updateStateContactAsync);
-	public void SetupUpdateStateStory(Func<long, int, int, string, Task> updateStateStoryAsync);
 	public void SetupUpdateStateMessage(Func<string, Task> updateStateMessageAsync);
 	public void SetupUpdateStateProxy(Func<string, Task> updateStateProxyAsync);
 	public void SetupUpdateStateException(Func<string, int, string, string, Task> updateStateExceptionAsync);

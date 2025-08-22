@@ -481,12 +481,9 @@ internal partial class TgMenuHelper
             // User name, user id, user active
             if (BusinessLogicManager.ConnectClient.Me is null)
             {
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)),
-                    GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)),
-                    GetMarkup(TgLocale.SettingsIsNeedSetup));
-                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)),
-                    GetMarkup(TgLocale.SettingsIsNeedSetup));
+                //table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserName)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                //table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserId)), GetMarkup(TgLocale.SettingsIsNeedSetup));
+                table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgClientUserIsActive)), GetMarkup(TgLocale.SettingsIsNeedSetup));
             }
             else
             {
@@ -562,10 +559,10 @@ internal partial class TgMenuHelper
 
         // Destination directory
         if (string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.Directory))
-            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgSettingsDestDirectory)),
+            table.AddRow(GetMarkup(TgLocale.WarningMessage(TgLocale.TgSettingsDestinationDirectory)),
                 GetMarkup(TgLocale.SettingsIsNeedSetup));
         else
-            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgSettingsDestDirectory)),
+            table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.TgSettingsDestinationDirectory)),
                 GetMarkup(TgLogHelper.Instance.GetMarkupString(tgDownloadSettings.SourceVm.Dto.Directory, isReplaceSpec: true)));
 
         // First/last ID

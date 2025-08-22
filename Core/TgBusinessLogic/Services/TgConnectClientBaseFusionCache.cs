@@ -3,6 +3,8 @@
 
 using TL;
 
+using ZiggyCreatures.Caching.Fusion;
+
 namespace TgBusinessLogic.Services;
 
 public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
@@ -15,21 +17,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private readonly TgBufferCacheHelper<TgEfSourceEntity> _chatBuffer = default!;
     private readonly TgBufferCacheHelper<TgEfStoryEntity> _storyBuffer = default!;
     private readonly TgBufferCacheHelper<TgEfUserEntity> _userBuffer = default!;
-
-    private ValueTask<Messages_ChatFull?> GetCachedFullChannelAsync(Channel channel) =>
-        Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id), factory: _ => TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!), TgCacheUtils.CacheOptionsFullChat);
-
-    private ValueTask<Messages_ChatFull?> GetCachedFullChatAsync(ChatBase chatBase) =>
-        Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(chatBase.ID), factory: _ => TelegramCallAsync(() => Client?.GetFullChat(chatBase) ?? default!), TgCacheUtils.CacheOptionsFullChat);
-
-    private ValueTask<Messages_ChatFull?> GetCachedFullChatAsync(long chatId) =>
-        Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(chatId), factory: _ => TelegramCallAsync(() => Client?.Messages_GetFullChat(chatId) ?? default!), TgCacheUtils.CacheOptionsFullChat);
-
-    private ValueTask<Messages_MessagesBase> GetCachedChannelMessageAsync(Channel channel, int messageId, Func<Task<Messages_MessagesBase>> factory) =>
-        Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(channel.id, messageId), factory: _ => factory(), TgCacheUtils.CacheOptionsChannelMessages);
-
-    private ValueTask<int> GetCachedChatLastCountAsync(long chatId, Func<Task<int>> factory) =>
-        Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyChatLastCount(chatId), factory: _ => factory(), TgCacheUtils.CacheOptionsChannelMessages);
 
     /// <summary> Wait for the transaction to complete </summary>
     /// <exception cref="InvalidOperationException"></exception>
@@ -198,6 +185,48 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 _userBuffer.Add(entity);
             return entity;
         });
+
+    private async Task<int> TryGetCacheChatLastCountSafeAsync(long chatId)
+    {
+        var key = TgCacheUtils.GetCacheKeyChatLastCountV2(chatId);
+
+        try
+        {
+            var maybe = await Cache.TryGetAsync<int>(key, TgCacheUtils.CacheOptionsChannelMessages);
+            if (maybe.HasValue)
+                return maybe.Value;
+            // Cache miss: compute and set
+            var fresh = await GetChannelMessageIdLastCoreAsync(chatId);
+            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages);
+            return fresh;
+        }
+        catch (InvalidCastException)
+        {
+            // Old/broken type under the same key: purge and refresh
+            await Cache.RemoveAsync(key);
+            var fresh = await GetChannelMessageIdLastCoreAsync(chatId);
+            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages);
+            return fresh;
+        }
+    }
+
+    private Func<FusionCacheFactoryExecutionContext<T>, CancellationToken, Task<T>> SafeFactory<T>(
+        Func<FusionCacheFactoryExecutionContext<T>, CancellationToken, Task<T>> factory)
+    {
+        return async (ctx, ct) =>
+        {
+            if (IsForceStopDownloading)
+            {
+                return default!;
+            }
+
+            var task = factory?.Invoke(ctx, ct);
+            if (task == null)
+                return default!;
+
+            return await task.ConfigureAwait(false);
+        };
+    }
 
     #endregion
 }

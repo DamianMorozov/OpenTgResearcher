@@ -1005,7 +1005,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         Messages_ChatFull? fullChannel = null;
         try
         {
-            fullChannel = await GetCachedFullChannelAsync(channel);
+            fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id), 
+                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
+                TgCacheUtils.CacheOptionsFullChat);
             if (isSave)
             {
                 await StorageManager.SourceRepository.SaveAsync(new() { Id = channel.id, UserName = channel.username, Title = channel.title });
@@ -1036,7 +1038,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return chatFull;
         try
         {
-            chatFull = await GetCachedFullChatAsync(chatBase);
+            chatFull = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(chatBase.ID), 
+                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.GetFullChat(chatBase) ?? default!)), 
+                TgCacheUtils.CacheOptionsFullChat);
             if (chatFull is null) return chatFull;
             if (!isSilent)
             {
@@ -1087,7 +1091,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 if (chatBase is Chat chatBaseObj)
                 {
-                    var full = await GetCachedFullChatAsync(chatBaseObj.ID);
+                    var full = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(chatBaseObj.ID),
+                        factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Messages_GetFullChat(chatBaseObj.ID) ?? default!)), 
+                        TgCacheUtils.CacheOptionsFullChat);
                     if (full is TL.Messages_ChatFull chatFull && chatFull.full_chat is TL.ChatFull chatFullObj)
                     {
                         if (chatFullObj.flags.HasFlag(User.Flags.has_access_hash))
@@ -1124,18 +1130,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task<int> GetChannelMessageIdAsync(ITgDownloadViewModel? tgDownloadSettings, TgEnumPosition position)
     {
-        if (Client is null)
-            return 0;
-        if (tgDownloadSettings is null)
-            return 0;
-        if (tgDownloadSettings.Chat.Base is not { } chatBase)
-            return 0;
-        if (chatBase.ID is 0)
-            return 0;
+        if (Client is null) return 0;
+        if (tgDownloadSettings is null) return 0;
+        if (tgDownloadSettings.Chat.Base is not { } chatBase) return 0;
+        if (chatBase.ID is 0) return 0;
 
         if (chatBase is Channel channel)
         {
-            var fullChannel = await GetCachedFullChannelAsync(channel);
+            var fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id),
+                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
+                TgCacheUtils.CacheOptionsFullChat);
             if (fullChannel is null) return 0;
             if (fullChannel.full_chat is not ChannelFull channelFull) return 0;
             var isAccessToMessages = await TelegramCallAsync(() => Client.Channels_ReadMessageContents(channel));
@@ -1175,7 +1179,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task<int> GetChannelMessageIdLastCoreAsync(Channel channel)
     {
-        var fullChannel = await GetCachedFullChannelAsync(channel);
+        var fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id),
+            factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
+            TgCacheUtils.CacheOptionsFullChat);
         if (fullChannel is null) return 0;
         if (fullChannel.full_chat is not ChannelFull channelFull) return 0;
         return channelFull.read_inbox_max_id;
@@ -1216,28 +1222,33 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             var start = offset + 1;
             var end = offset + partition;
             var messages = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessages(chatBase.ID, start, end),
-                factory: _ => TelegramCallAsync(() => Client.Channels_GetMessages(chatBase as Channel, inputMessages)),
+                factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, ct) => await TelegramCallAsync(() => Client.Channels_GetMessages(chatBase as Channel, inputMessages))),
                 TgCacheUtils.CacheOptionsChannelMessages);
 
-            for (var i = messages.Offset; i < messages.Count; i++)
+            if (messages is not null)
             {
-                // Skip first message.
-                if (!isSkipChannelCreate)
+                for (var i = messages.Offset; i < messages.Count; i++)
                 {
-                    var msg = messages.Messages[i].ToString();
-                    // Magic String. It needs refactoring.
-                    if (Equals(msg, $"{chatBase.ID} [ChannelCreate]"))
+                    // Skip first message.
+                    if (!isSkipChannelCreate)
                     {
-                        isSkipChannelCreate = true;
+                        var msg = messages.Messages[i].ToString();
+                        // Magic String. It needs refactoring.
+                        if (Equals(msg, $"{chatBase.ID} [ChannelCreate]"))
+                        {
+                            isSkipChannelCreate = true;
+                        }
+                    }
+                    // Check message exists.
+                    else if (messages.Messages[i].Date > DateTime.MinValue)
+                    {
+                        result = offset + i + 1;
+                        break;
                     }
                 }
-                // Check message exists.
-                else if (messages.Messages[i].Date > DateTime.MinValue)
-                {
-                    result = offset + i + 1;
-                    break;
-                }
             }
+            else 
+                break;
             if (result < max)
                 break;
             offset += partition;
@@ -1672,7 +1683,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     //var messagesCount = await GetCachedChatLastCountAsync(channel.ID, () => GetChannelMessageIdLastAsync(tgDownloadSettings));
                     if (channel.IsChannel)
                     {
-                        var fullChannel = await GetCachedFullChannelAsync(channel);
+                        var fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id),
+                            factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
+                            TgCacheUtils.CacheOptionsFullChat);
                         if (fullChannel?.full_chat is ChannelFull channelFull)
                         {
                             var entity = await BuildChatEntityAsync(channel, channelFull.about, messagesCount: 0, isUserAccess: true);
@@ -1965,13 +1978,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             if (Client is null) return;
 
                             var messages = channel is not null
-                                ? await GetCachedChannelMessageAsync(channel, sourceFirstId, 
-                                    () => TelegramCallAsync(() => Client.Channels_GetMessages(channel, sourceFirstId)))
+                                ? await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(channel.id, sourceFirstId),
+                                    factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, ct) => await TelegramCallAsync(() => Client.Channels_GetMessages(channel, sourceFirstId))), 
+                                    TgCacheUtils.CacheOptionsChannelMessages)
                                 : await TelegramCallAsync(() => Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId));
 
                             await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
                             // Check deleted messages and mark storage entity
-                            var firstMessage = messages.Messages.FirstOrDefault();
+                            var firstMessage = messages?.Messages.FirstOrDefault();
                             if (firstMessage is null)
                             {
                                 // Mark message entity as deleted 
@@ -1979,11 +1993,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             }
                             else
                             {
-                                foreach (var message in messages.Messages)
+                                if (messages is not null)
                                 {
-                                    // Check message exists
-                                    if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
-                                        downloadTasks.Add(ParseChatMessageAsync(tgDownloadSettings2, messageBase, chatCache, messageSettings, forumTopicSettings));
+                                    foreach (var message in messages.Messages)
+                                    {
+                                        // Check message exists
+                                        if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
+                                            downloadTasks.Add(ParseChatMessageAsync(tgDownloadSettings2, messageBase, chatCache, messageSettings, forumTopicSettings));
+                                    }
                                 }
                             }
                         });
@@ -2011,16 +2028,20 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
                             if (Bot.Client is null) return;
                             var messages2 = channel is not null
-                                ? await GetCachedChannelMessageAsync(channel, sourceFirstId,
-                                    () => TelegramCallAsync(() => Bot.Client.Channels_GetMessages(channel, sourceFirstId)))
+                                ? await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(channel.id, sourceFirstId),
+                                    factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, ct) => await TelegramCallAsync(() => Bot.Client.Channels_GetMessages(channel, sourceFirstId))), 
+                                    TgCacheUtils.CacheOptionsChannelMessages)
                                 : await TelegramCallAsync(() => Bot.Client.GetMessages(tgDownloadSettings.Chat.Base, sourceFirstId));
 
                             await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(sourceLastId, sourceFirstId):#00.00} %");
-                            foreach (var message in messages2.Messages)
+                            if (messages2 is not null)
                             {
-                                // Check message exists
-                                if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
-                                    downloadTasks.Add(ParseChatMessageAsync(tgDownloadSettings2, messageBase, chatCache, messageSettings, forumTopicSettings));
+                                foreach (var message in messages2.Messages)
+                                {
+                                    // Check message exists
+                                    if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
+                                        downloadTasks.Add(ParseChatMessageAsync(tgDownloadSettings2, messageBase, chatCache, messageSettings, forumTopicSettings));
+                                }
                             }
                         });
                     }
@@ -2354,8 +2375,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Anti-stampede: if a pair of threads process the same message, only one will be executed
-            _ = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(chatId, messageId),
-                factory: async _ =>
+            _ = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessageProcessed(chatId, messageId),
+                factory: SafeFactory<bool>(async (ctx, ct) =>
                 {
                     // Parse documents and photos
                     if ((message.flags & Message.Flags.has_media) is not 0)
@@ -2371,15 +2392,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             message.message, TgEnumMessageType.Message, isRetry: false, userId: authorId);
                     }
                     return true;
-                }, TgCacheUtils.CacheOptionsProcessMessage);
+                }), TgCacheUtils.CacheOptionsProcessMessage);
         }
         finally
         {
-            // We cache the chat message counter briefly (it reloads frequently)
-            var messagesCount = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyChatLastCount(chatId),
-                factory: async _ => await GetChannelMessageIdLastCoreAsync(chatId), TgCacheUtils.CacheOptionsChannelMessages);
-
-
+            var messagesCount = await TryGetCacheChatLastCountSafeAsync(chatId);
             // Update download progress for the message
             await UpdateChatViewModelAsync(chatId, messageId, messagesCount, $"Reading the message {messageId} from {messagesCount}");
         }
@@ -3515,13 +3532,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Get details about a public chat (even if client is not a member of that chat)
         if (tgDownloadSettings.Chat.Base is not null)
         {
-            var fullChat = await GetCachedFullChatAsync(tgDownloadSettings.Chat.Base);
+            var chatFull = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(tgDownloadSettings.Chat.Base.ID),
+                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.GetFullChat(tgDownloadSettings.Chat.Base) ?? default!)), 
+                TgCacheUtils.CacheOptionsFullChat);
             WTelegram.Types.ChatFullInfo? chatDetails;
-            if (fullChat is null)
+            if (chatFull is null)
                 TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
             else
             {
-                chatDetails = ConvertToChatFullInfo(fullChat);
+                chatDetails = ConvertToChatFullInfo(chatFull);
                 await GetParticipantsAsync(chatDetails.Id);
                 return FillChatDetailsDto(chatDetails);
             }
@@ -3556,13 +3575,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Get details about a public chat (even if client is not a member of that chat)
         if (tgDownloadSettings.Chat.Base is not null)
         {
-            var fullChat = await GetCachedFullChatAsync(tgDownloadSettings.Chat.Base);
+            var chatFull = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(tgDownloadSettings.Chat.Base.ID),
+                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.GetFullChat(tgDownloadSettings.Chat.Base) ?? default!)), 
+                TgCacheUtils.CacheOptionsFullChat);
             WTelegram.Types.ChatFullInfo? chatDetails;
-            if (fullChat is null)
+            if (chatFull is null)
                 TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
             else
             {
-                chatDetails = ConvertToChatFullInfo(fullChat);
+                chatDetails = ConvertToChatFullInfo(chatFull);
                 return FillChatDetailsDto(chatDetails);
             }
         }

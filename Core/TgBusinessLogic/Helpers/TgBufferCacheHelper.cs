@@ -135,13 +135,6 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
         }
     }
 
-    public TEfEntity GetFromCache(object id)
-    {
-        CheckIfDisposed();
-        
-        return Cache.TryGet<TEfEntity>($"{_cachePrefix}:{id}");
-    }
-
     private string GetCacheKey(TEfEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);

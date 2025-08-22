@@ -50,6 +50,8 @@ internal abstract class TgDbContextTestsBase : TgDisposable
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
         // Building the container
         TgGlobalTools.Container = containerBuilder.Build();
+        // Clear FusionCache on startup
+        TgGlobalTools.Container.Resolve<IFusionCache>().ClearAll();
 
         // TgGlobalTools
         Scope = TgGlobalTools.Container.BeginLifetimeScope();

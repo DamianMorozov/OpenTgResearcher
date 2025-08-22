@@ -10,7 +10,9 @@ public static class TgCacheUtils
 
     public static SemaphoreSlim SaveLock { get; } = new(initialCount: 1, maxCount: 1);
     public static string GetCacheKeyChatLastCount(long chatId) => $"{GetCacheKeyChatLastCountPrefix}:{chatId}";
-    public static string GetCacheKeyChatLastCountPrefix() => $"chat:last-count";
+    public static string GetCacheKeyChatLastCountPrefix() => $"chatLastCount";
+    public static string GetCacheKeyChatLastCountV2(long chatId) => $"{GetCacheKeyChatLastCountV2Prefix}:{chatId}";
+    public static string GetCacheKeyChatLastCountV2Prefix() => $"chatLastCountV2";
     public static string GetCacheKeyChatPrefix() => $"chat";
     public static string GetCacheKeyFullChannel(long peerId) => $"{GetCacheKeyFullChannelPrefix}:{peerId}";
     public static string GetCacheKeyFullChannelPrefix() => $"fullChannel";
@@ -18,8 +20,9 @@ public static class TgCacheUtils
     public static string GetCacheKeyFullChatPrefix() => $"fullChat";
     public static string GetCacheKeyMessage(long peerId, int messageId) => $"{GetCacheKeyMessagePrefix}:{peerId}:{messageId}";
     public static string GetCacheKeyMessagePrefix() => $"message";
+    public static string GetCacheKeyMessageProcessed(long chatId, int messageId) => $"messageProcessed:{chatId}:{messageId}";
     public static string GetCacheKeyMessageRelation(long parentSourceId, int parentMessageId, long childSourceId, int childMessageId) => $"{GetCacheKeyMessageRelationPrefix}:{parentSourceId}:{parentMessageId}:{childSourceId}:{childMessageId}";
-    public static string GetCacheKeyMessageRelationPrefix() => $"message-relation";
+    public static string GetCacheKeyMessageRelationPrefix() => $"messageRelation";
     public static string GetCacheKeyMessages(long peerId, int messageIdStart, int messageIdEnd) => $"{GetCacheKeyMessagesPrefix}:{peerId}:{messageIdStart}-{messageIdEnd}";
     public static string GetCacheKeyMessagesPrefix() => $"messages";
     public static string GetCacheKeyStory(long peerId, long storyId) => $"{GetCacheKeyStoryPrefix}:{peerId}:{storyId}";
@@ -59,6 +62,20 @@ public static class TgCacheUtils
         FactorySoftTimeout = TimeSpan.FromSeconds(5),
         FactoryHardTimeout = TimeSpan.FromSeconds(15)
     };
+
+    #endregion
+
+    #region Public and private methods
+
+    public static async Task ClearAllAsync(this IFusionCache cache)
+    {
+        await cache.RemoveAsync("*");
+    }
+
+    public static void ClearAll(this IFusionCache cache)
+    {
+        cache.Remove("*");
+    }
 
     #endregion
 }

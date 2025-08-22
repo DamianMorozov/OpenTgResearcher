@@ -184,6 +184,8 @@ public partial class App : Application
 
         // Set the Host as the current application host
         TgGlobalTools.Container = (IContainer)Host.Services.GetAutofacRoot();
+        // Clear FusionCache on startup
+        TgGlobalTools.Container.Resolve<IFusionCache>().ClearAll();
 
         // Exceptions
         UnhandledException += App_UnhandledException;

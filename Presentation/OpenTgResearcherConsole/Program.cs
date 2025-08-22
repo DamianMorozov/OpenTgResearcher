@@ -80,6 +80,8 @@ public static class Program
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
         // We build a container and take IServiceProvider
         TgGlobalTools.Container = containerBuilder.Build();
+        // Clear FusionCache on startup
+        TgGlobalTools.Container.Resolve<IFusionCache>().ClearAll();
 
         // Helpers
         var tgLocale = TgLocaleHelper.Instance;
@@ -129,8 +131,7 @@ public static class Program
         //}
 
         // Check multiple instances
-        if (tgMenu.CheckMultipleInstances())
-            return;
+        if (tgMenu.CheckMultipleInstances()) return;
 
         // Any key
         tgLog.WriteLine("");

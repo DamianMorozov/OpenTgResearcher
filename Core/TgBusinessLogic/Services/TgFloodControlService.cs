@@ -55,7 +55,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 #if DEBUG
             Debug.WriteLine($"[FloodControl] Detected FLOOD_WAIT_{waitSeconds}. Waiting...");
 #endif
-            await Task.Delay(TimeSpan.FromSeconds(waitSeconds + 1));
+            await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
         }
         finally
         {
@@ -104,7 +104,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     {
         if (string.IsNullOrEmpty(message)) return 0;
         var match = RegexFloodWait().Match(message);
-        return match.Success && int.TryParse(match.Groups[1].Value, out var seconds) ? seconds : 0;
+        return match.Success && int.TryParse(match.Groups[1].Value, out var seconds) ? seconds + 1 : 0;
     }
 
     /// <inheritdoc />

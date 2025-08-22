@@ -24,12 +24,17 @@ public sealed class TgViewModelLocator
                 _viewModelsByType[type] = instance;
                 _viewModelsByName[type.Name] = instance;
             }
+#if DEBUG
             catch (Exception ex)
             {
-#if DEBUG
                 TgLogUtils.WriteException(ex);
-#endif
             }
+#else
+            catch (Exception)
+            {
+                //
+            }
+#endif
         }
     }
 

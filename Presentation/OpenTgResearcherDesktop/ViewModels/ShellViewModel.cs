@@ -28,6 +28,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     private NavigationEventArgs? _eventArgs;
     private ShellViewModel? _shellVm;
+    private CancellationTokenSource? _floodCts;
 
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
@@ -247,6 +248,16 @@ public partial class ShellViewModel : ObservableRecipient
                 try
                 {
                     UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
+                    // Start countdown if visible
+                    if (isFloodVisible && seconds > 0)
+                    {
+                        StartFloodCountdown(seconds);
+                    }
+                    else
+                    {
+                        _floodCts?.Cancel();
+                    }
+
                     tcs.SetResult(true);
                 }
                 catch (Exception ex)
@@ -259,6 +270,11 @@ public partial class ShellViewModel : ObservableRecipient
         else
         {
             UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
+            // Start countdown if visible
+            if (isFloodVisible && seconds > 0)
+                StartFloodCountdown(seconds);
+            else
+                _floodCts?.Cancel();
         }
     }
 
@@ -271,6 +287,44 @@ public partial class ShellViewModel : ObservableRecipient
             _shellVm.FloodWaitSeconds = seconds;
             _shellVm.FloodMessage = message;
         }
+    }
+
+    private void StartFloodCountdown(int seconds)
+    {
+        // Stop old timer if exists
+        _floodCts?.Cancel();
+        _floodCts = new CancellationTokenSource();
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                while (seconds > 0 && !_floodCts.Token.IsCancellationRequested)
+                {
+                    await Task.Delay(1000, _floodCts.Token);
+                    seconds--;
+
+                    App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        FloodWaitSeconds = seconds;
+                    });
+                }
+
+                // Hide when time is up
+                if (!_floodCts.Token.IsCancellationRequested)
+                {
+                    App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        IsFloodVisible = false;
+                        FloodMessage = string.Empty;
+                    });
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // ignore
+            }
+        }, _floodCts.Token);
     }
 
     #endregion

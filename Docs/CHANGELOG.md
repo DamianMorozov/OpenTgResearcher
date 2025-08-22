@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `MessagesRelations` table in `TgStorage`
 - Added reading comments when parsing chat messages
 - Added `Flood Control` indicator in `OpenTgResearcherDesktop`
+- Added a countdown timer for flood protection in `OpenTgResearcherDesktop`
 - Added `Gift` type license
 
 ## [0.6.860] - 2025-08-03

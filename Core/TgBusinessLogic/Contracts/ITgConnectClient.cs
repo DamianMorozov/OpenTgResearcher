@@ -56,7 +56,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public Task MarkHistoryReadAsync();
 	public void SetForceStopDownloading();
 	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings);
-	public Task ScanSourcesTgDesktopAsync(TgEnumSourceType sourceType, Func<ITgEfSourceViewModel, Task> afterScanAsync);
     /// <summary> Get user id </summary>
     public Task<long> GetUserIdAsync();
     /// <summary> Checks if the client connection is ready </summary>

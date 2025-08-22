@@ -13,7 +13,7 @@ public interface ITgFloodControlService : IDisposable
     /// <summary> Delay between retries </summary>
     public int WaitFallbackFlood { get; }
     /// <summary> Wait timeouts in seconds for retrying Telegram API calls </summary>
-    public int[] WaitTimeOuts { get; }
+    public int[] WaitSeconds { get; }
 
     /// <summary> Waits if flood control message is detected in logs </summary>
     public Task WaitIfFloodAsync(string message);

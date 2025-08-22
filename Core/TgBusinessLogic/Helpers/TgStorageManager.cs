@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 namespace TgBusinessLogic.Helpers;
 
 public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
@@ -107,6 +109,50 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
     public override void ReleaseUnmanagedResources()
     {
         //
+    }
+
+    #endregion
+
+    #region Public and private methods
+
+    /// <inheritdoc />
+    public async Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story)
+    {
+        var storageResult = await StoryRepository.GetByDtoAsync(new() { FromId = peerId, Id = story.id });
+        var storyEntity = storageResult.IsExists && storageResult.Item is not null ? storageResult.Item : new();
+        storyEntity.DtChanged = DateTime.UtcNow;
+        storyEntity.Id = story.id;
+        storyEntity.FromId = story.from_id?.ID ?? peerId;
+        storyEntity.Date = story.date;
+        storyEntity.ExpireDate = story.expire_date;
+        storyEntity.Caption = story.caption;
+        return storyEntity;
+    }
+
+    /// <inheritdoc />
+    public async Task<TgEfUserEntity> CreateOrGetUserAsync(TL.User user, bool isContact)
+    {
+        var storageResult = await UserRepository.GetByDtoAsync(new() { Id = user.id });
+        var userEntity = storageResult.IsExists && storageResult.Item is not null ? storageResult.Item : new();
+        userEntity.DtChanged = DateTime.UtcNow;
+        userEntity.Id = user.id;
+        userEntity.AccessHash = user.access_hash;
+        userEntity.IsActive = user.IsActive;
+        userEntity.IsBot = user.IsBot;
+        userEntity.FirstName = user.first_name;
+        userEntity.LastName = user.last_name;
+        userEntity.UserName = user.username;
+        userEntity.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames.ToList());
+        userEntity.PhoneNumber = user.phone;
+        userEntity.Status = user.status is null ? string.Empty : user.status.ToString();
+        userEntity.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason.ToList());
+        userEntity.LangCode = user.lang_code;
+        userEntity.StoriesMaxId = user.stories_max_id;
+        userEntity.BotInfoVersion = user.bot_info_version.ToString();
+        userEntity.BotInlinePlaceholder = user.bot_inline_placeholder is null ? string.Empty : user.bot_inline_placeholder.ToString();
+        userEntity.BotActiveUsers = user.bot_active_users;
+        userEntity.IsContact = isContact;
+        return userEntity;
     }
 
     #endregion

@@ -17,7 +17,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     /// <inheritdoc />
     public int WaitFallbackFlood { get; } = 10;
     /// <inheritdoc />
-    public int[] WaitTimeOuts { get; } = [15, 30, 45, 60];
+    public int[] WaitSeconds { get; } = [15, 30, 45, 60];
     /// <summary> Semaphore to control concurrent access to Telegram API calls </summary>
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     [GeneratedRegex(@"FLOOD_WAIT_(\d+)")]

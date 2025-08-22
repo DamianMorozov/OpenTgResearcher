@@ -5,7 +5,6 @@ using TL;
 
 namespace TgBusinessLogic.Services;
 
-/// <summary> Base connection client </summary>
 public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
 {
     #region Public and private methods - Client events

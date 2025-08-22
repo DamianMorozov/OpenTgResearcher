@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TL;
+
 namespace TgBusinessLogic.Contracts;
 
 public interface ITgStorageManager : IDisposable
@@ -31,4 +33,8 @@ public interface ITgStorageManager : IDisposable
     public ITgEfUserRepository UserRepository { get; }
     /// <summary> Version repository for managing version information in the Telegram storage </summary>
     public ITgEfVersionRepository VersionRepository { get; }
+    /// <summary> Create or get a story entity based on peer ID and story item </summary>
+    public Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story);
+    /// <summary> Create or get a user entity based on the Telegram user and contact status </summary>
+    public Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact);
 }

@@ -403,7 +403,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgGetDialogsInfo => "Getting all dialogs info";
 	public string TgMustClientConnect => "You must connect the client before";
 	public string TgMustSetSettings => "You must setup the settings before";
-	public string TgSettingsDestDirectory => "Destination";
+	public string TgSettingsDestinationDirectory => "Destination";
 	public string TgSettingsSourceFirstLastId => "First/last ID";
 	public string TgSetupApiHash => "Type API hash";
 	public string TgSetupAppId => "Type APP ID";

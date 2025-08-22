@@ -97,15 +97,20 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         if (!string.IsNullOrWhiteSpace(filterText))
         {
             var trimmed = filterText.Trim();
+            var searchText = trimmed;
+            var searchTextWithoutAt = trimmed.StartsWith("@") ? trimmed[1..] : trimmed;
 
             // Build predicate
             var predicates = new List<Expression<Func<TgEfSourceEntity, bool>>>();
+
             if (isFilterById)
-                predicates.Add(x => EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{trimmed}%"));
+                predicates.Add(x => EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{searchText}%")
+                    || EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{searchTextWithoutAt}%"));
             if (isFilterByUserName)
-                predicates.Add(x => EF.Functions.Like(x.UserName, $"%{trimmed}%"));
+                predicates.Add(x => EF.Functions.Like(x.UserName, $"%{searchText}%") || EF.Functions.Like(x.UserName, $"%{searchTextWithoutAt}%"));
             if (isFilterByTitle)
-                predicates.Add(x => EF.Functions.Like(x.Title, $"%{trimmed}%"));
+                predicates.Add(x => EF.Functions.Like(x.Title, $"%{searchText}%") || EF.Functions.Like(x.Title, $"%{searchTextWithoutAt}%"));
+            
             if (predicates.Count > 0)
             {
                 var param = Expression.Parameter(typeof(TgEfSourceEntity), "x");

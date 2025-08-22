@@ -47,7 +47,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         // Callback updates UI
-        App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateChatViewModelAsync);
+        App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
     }
 
@@ -167,10 +167,13 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
         await DownloadSettings.SourceVm.SaveAsync();
 
-        var commentEntity = CommentDto.GetNewEntity();
-        var commentVm = new TgEfSourceViewModel(TgGlobalTools.Container, commentEntity);
-        commentVm.Dto.DtChanged = DateTime.Now;
-        await commentVm.SaveAsync();
+        if (CommentDto.Id > 0)
+        {
+            var commentEntity = CommentDto.GetNewEntity();
+            var commentVm = new TgEfSourceViewModel(TgGlobalTools.Container, commentEntity);
+            commentVm.Dto.DtChanged = DateTime.Now;
+            await commentVm.SaveAsync();
+        }
     }
 
     private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());

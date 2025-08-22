@@ -82,11 +82,7 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
         
         // Delegates
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateProxy(UpdateStateProxyAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateSource(UpdateStateSourceAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateMessage(UpdateStateMessageAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
-        //App.BusinessLogicManager.ConnectClient.SetupUpdateStateExceptionShort(UpdateStateExceptionShortAsync);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
     }
 

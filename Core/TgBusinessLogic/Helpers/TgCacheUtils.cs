@@ -67,15 +67,9 @@ public static class TgCacheUtils
 
     #region Public and private methods
 
-    public static async Task ClearAllAsync(this IFusionCache cache)
-    {
-        await cache.RemoveAsync("*");
-    }
+    public static async Task ClearAllAsync(this IFusionCache cache) => await cache.RemoveAsync("*");
 
-    public static void ClearAll(this IFusionCache cache)
-    {
-        cache.Remove("*");
-    }
+    public static void ClearAll(this IFusionCache cache) => cache.Remove("*");
 
     #endregion
 }

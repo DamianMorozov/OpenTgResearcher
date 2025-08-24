@@ -33,15 +33,7 @@ public static class Program
 
         }, poolSize: 128);
         // Register FusionCache
-        services.AddFusionCache()
-            .WithDefaultEntryOptions(new FusionCacheEntryOptions
-            {
-                Duration = TimeSpan.FromSeconds(30),
-                JitterMaxDuration = TimeSpan.FromSeconds(3),
-                IsFailSafeEnabled = true,
-                FailSafeMaxDuration = TimeSpan.FromMinutes(1),
-                EagerRefreshThreshold = 0.8f
-            });
+        services.AddFusionCache().WithDefaultEntryOptions(TgCacheUtils.CacheOptionsChannelMessages);
         var serviceProvider = services.BuildServiceProvider();
 
         // Get configured FusionCache instance from MS DI
@@ -53,12 +45,12 @@ public static class Program
         // Registering the EF context
         containerBuilder.Register(c =>
         {
-            var desktopContext = new TgEfDesktopContext();
-            var storagePath = desktopContext.GetStoragePath();
+            var consoleContext = new TgEfConsoleContext();
+            var storagePath = consoleContext.GetStoragePath();
             // Create DbContextOptionsBuilder with SQLite connection
-            var optionsBuilder = new DbContextOptionsBuilder<TgEfDesktopContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<TgEfConsoleContext>();
             optionsBuilder.UseSqlite($"Data Source={storagePath}");
-            return new TgEfDesktopContext(optionsBuilder.Options);
+            return new TgEfConsoleContext(optionsBuilder.Options);
         }).As<ITgEfContext>().InstancePerLifetimeScope();
         // Registering repositories
         containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();

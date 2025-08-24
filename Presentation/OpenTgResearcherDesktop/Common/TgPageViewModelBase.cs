@@ -180,10 +180,10 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         _chatVm ??= App.Locator?.Get<TgChatViewModel>();
         if (_chatVm is not null)
         {
-            if (_chatVm.Dto?.Id == chatId)
+            if (_chatVm.Dto?.Id == chatId && _chatVm.Dto?.FirstId < messageId)
             {
                 _chatVm.Dto.FirstId = messageId;
-                _chatVm.ChatProgressMessage = $"{(int)(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
+                _chatVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
                 _chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
                 _chatVm.StateSourceMsg = $"{messageId} | {message}";
             }

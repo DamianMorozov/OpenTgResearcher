@@ -1137,9 +1137,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         if (chatBase is Channel channel)
         {
-            var fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id),
-                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
-                TgCacheUtils.CacheOptionsFullChat);
+            var fullChannel = await GetFullChannelSafeAsync(channel);
             if (fullChannel is null) return 0;
             if (fullChannel.full_chat is not ChannelFull channelFull) return 0;
             var isAccessToMessages = await TelegramCallAsync(() => Client.Channels_ReadMessageContents(channel));
@@ -1168,6 +1166,32 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return 0;
     }
 
+    private async Task<TL.Messages_ChatFull?> GetFullChannelSafeAsync(Channel channel)
+    {
+        var key = TgCacheUtils.GetCacheKeyFullChannel(channel.id);
+
+        try
+        {
+            // Try to retrieve from cache in a strictly typed manner
+            var maybe = await Cache.TryGetAsync<TL.Messages_ChatFull?>(key, TgCacheUtils.CacheOptionsFullChat);
+            if (maybe.HasValue)
+                return maybe.Value;
+
+            // Cache miss → retrieve from server and save
+            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
+            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
+            return fresh;
+        }
+        catch (InvalidCastException)
+        {
+            // There is another type in the cache → clear and reload
+            await Cache.RemoveAsync(key);
+            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
+            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
+            return fresh;
+        }
+    }
+
     public async Task<int> GetChannelMessageIdLastAsync(ITgDownloadViewModel? tgDownloadSettings) =>
         await GetChannelMessageIdAsync(tgDownloadSettings, TgEnumPosition.Last);
 
@@ -1189,13 +1213,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task<int> GetChannelMessageIdLastCoreAsync(long chatId)
     {
-        var messagesCount = 0;
-        var cacheChannel = EnumerableChannels.FirstOrDefault(x => x.ID == chatId);
-        if (cacheChannel is not null)
+        var channel = EnumerableChannels.FirstOrDefault(x => x.ID == chatId);
+        if (channel is not null)
+            return await GetChannelMessageIdLastCoreAsync(channel);
+        else
         {
-            messagesCount = await GetChannelMessageIdLastCoreAsync(cacheChannel);
+            var group = EnumerableGroups.FirstOrDefault(x => x.ID == chatId);
+            if (group is not null)
+                return await GetChannelMessageIdLastCoreAsync(group);
         }
-        return messagesCount;
+        return 0;
     }
 
     public async Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings) =>
@@ -1211,7 +1238,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         var inputMessages = new InputMessage[partition];
         var offset = 0;
         var isSkipChannelCreate = false;
-        // While.
+        // While
         while (offset < max)
         {
             for (var i = 0; i < partition; i++)
@@ -1873,6 +1900,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
         _tgDownloadSettings = tgDownloadSettings2;
+        // Clear cache
+        await Cache.ClearAllAsync();
         // Check force stop parsing
         IsForceStopDownloading = false;
         await CreateChatAsync(tgDownloadSettings, isSilent: false);
@@ -2000,6 +2029,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                         // Check message exists
                                         if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
                                             downloadTasks.Add(ParseChatMessageAsync(tgDownloadSettings2, messageBase, chatCache, messageSettings, forumTopicSettings));
+                                        else
+                                            await UpdateChatViewModelAsync(messageSettings.CurrentChatId, message.ID, tgDownloadSettings2.SourceVm.Dto.Count, "Empty message");
                                     }
                                 }
                             }
@@ -2216,8 +2247,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             if (headMessage is null) return;
 
                             // Save the `thread header` itself as plain text (optional)
+                            var authorId = headMessage.From?.ID ?? messageSettings.CurrentChatId;
                             await SaveMessagesAsync(tgDownloadSettings, rootSettings, headMessage.Date, size: 0,
-                                headMessage.message, TgEnumMessageType.Message, isRetry: false, userId: headMessage.From?.ID ?? 0);
+                                headMessage.message, TgEnumMessageType.Message, isRetry: false, authorId);
 
                             // Paginate replies to the thread strictly by (discussionPeer, headMessage.ID)
                             int offsetId = 0;
@@ -2252,94 +2284,98 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             }
 
                             if (stop) return;
-
-                            // TODO: fix here
-                            //foreach (var rootMessage in discussionMessage.messages)
-                            //{
-                            //    // Check force stop parsing
-                            //    if (CheckShouldStop) { stop = true; break; }
-                            //    // Add chat from Storage to Cache
-                            //    await AddChatFromStorageToCacheAsync(chatCache, rootMessage.Peer.ID);
-                            //    // Check the exists chat directory
-                            //    await CheckExistsChatWithDirectoryAsync(chatCache, messageSettings, accessHash, rootMessage);
-                            //    // Get chat from Cache
-                            //    if (chatCache.TryGetChat(rootMessage.Peer.ID, out var discussionHash))
-                            //    {
-                            //        var discussionPeer = GetInputPeer(rootMessage.Peer, discussionHash);
-                            //        if (discussionPeer == null) return;
-
-                            //        TL.Channel? discussionChannel = null;
-                            //        if (discussionMessage.chats is not null && 
-                            //            discussionMessage.chats.TryGetValue(rootMessage.Peer.ID, out var chatBase) && chatBase is TL.Channel ch)
-                            //        {
-                            //            discussionChannel = ch;
-                            //        }
-                            //        else
-                            //        {
-                            //            // fallback: get channel via API
-                            //            if (discussionPeer is InputPeerChannel ipc)
-                            //            {
-                            //                var channels = await TelegramCallAsync(() => Client.Channels_GetChannels(
-                            //                    new InputChannel(ipc.ID, ipc.access_hash)), messageSettings.IsThrow);
-                            //                discussionChannel = channels?.chats?.Values.OfType<TL.Channel>().FirstOrDefault(c => c.ID == rootMessage.Peer.ID);
-                            //            }
-                            //        }
-                            //        if (discussionChannel is not null)
-                            //        {
-                            //            CheckEnumerableChatCache(discussionChannel);
-                            //            await SaveAtStorageAccessHashForChatAsync(chatCache, discussionChannel, parentChatId: messageSettings.CurrentChatId);
-
-                            //            // Save plain text message
-                            //            if (rootMessage is Message msg)
-                            //                await SaveMessagesAsync(tgDownloadSettings, rootSettings, rootMessage.Date, size: 0,
-                            //                    msg.message, TgEnumMessageType.Message, isRetry: false, userId: rootMessage.From?.ID ?? 0);
-
-                            //            // Try to get replies to this comment
-                            //            if (rootMessage is MessageBase commentBase)
-                            //            {
-                            //                int offsetId = 0;
-                            //                const int limit = 100;
-                            //                while (true)
-                            //                {
-                            //                    if (CheckShouldStop) { stop = true; break; }
-
-                            //                    var repliesBase = await TelegramCallAsync(() =>
-                            //                        Client.Messages_GetReplies(discussionPeer, msg_id: commentBase.ID, offset_id: offsetId, 
-                            //                        offset_date: default, add_offset: 0, limit: limit, max_id: 0, min_id: 0, hash: 0L));
-
-                            //                    if (repliesBase is null || repliesBase.Count == 0) break;
-
-                            //                    foreach (var replyMessage in repliesBase.Messages)
-                            //                    {
-                            //                        if (CheckShouldStop) { stop = true; break; }
-                            //                        // Save plain text message
-                            //                        if (replyMessage is Message rpl)
-                            //                        {
-                            //                            var replySettings = messageSettings.Clone();
-                            //                            replySettings.ParentChatId = replySettings.CurrentChatId;
-                            //                            replySettings.ParentMessageId = replySettings.CurrentMessageId;
-                            //                            replySettings.CurrentChatId = replyMessage.Peer.ID;
-                            //                            replySettings.CurrentMessageId = replyMessage.ID;
-                            //                            // Parse Telegram chat message core logic
-                            //                            //await ParseChatMessageCoreAsync(tgDownloadSettings, rpl, chatCache, forumTopicSettings, message, replySettings);
-                            //                            await ParseChatMessageCoreAsync(tgDownloadSettings, rpl, chatCache, forumTopicSettings, rpl, replySettings);
-                            //                        }
-                            //                    }
-
-                            //                    offsetId = repliesBase.Messages.Last().ID;
-                            //                    if (repliesBase.Messages.Length < limit)
-                            //                        break;
-                            //                }
-                            //            }
-                            //        }
-                            //    }
-                            //}
-                            if (stop) return;
+                            await ParseChatMessageToDoAsync();
                         }
                     }
                 }
             }
         });
+    }
+
+    // TODO: fix here
+    private async Task ParseChatMessageToDoAsync()
+    {
+        //foreach (var rootMessage in discussionMessage.messages)
+        //{
+        //    // Check force stop parsing
+        //    if (CheckShouldStop) { stop = true; break; }
+        //    // Add chat from Storage to Cache
+        //    await AddChatFromStorageToCacheAsync(chatCache, rootMessage.Peer.ID);
+        //    // Check the exists chat directory
+        //    await CheckExistsChatWithDirectoryAsync(chatCache, messageSettings, accessHash, rootMessage);
+        //    // Get chat from Cache
+        //    if (chatCache.TryGetChat(rootMessage.Peer.ID, out var discussionHash))
+        //    {
+        //        var discussionPeer = GetInputPeer(rootMessage.Peer, discussionHash);
+        //        if (discussionPeer == null) return;
+
+        //        TL.Channel? discussionChannel = null;
+        //        if (discussionMessage.chats is not null && 
+        //            discussionMessage.chats.TryGetValue(rootMessage.Peer.ID, out var chatBase) && chatBase is TL.Channel ch)
+        //        {
+        //            discussionChannel = ch;
+        //        }
+        //        else
+        //        {
+        //            // fallback: get channel via API
+        //            if (discussionPeer is InputPeerChannel ipc)
+        //            {
+        //                var channels = await TelegramCallAsync(() => Client.Channels_GetChannels(
+        //                    new InputChannel(ipc.ID, ipc.access_hash)), messageSettings.IsThrow);
+        //                discussionChannel = channels?.chats?.Values.OfType<TL.Channel>().FirstOrDefault(c => c.ID == rootMessage.Peer.ID);
+        //            }
+        //        }
+        //        if (discussionChannel is not null)
+        //        {
+        //            CheckEnumerableChatCache(discussionChannel);
+        //            await SaveAtStorageAccessHashForChatAsync(chatCache, discussionChannel, parentChatId: messageSettings.CurrentChatId);
+
+        //            // Save plain text message
+        //            if (rootMessage is Message msg)
+        //                await SaveMessagesAsync(tgDownloadSettings, rootSettings, rootMessage.Date, size: 0,
+        //                    msg.message, TgEnumMessageType.Message, isRetry: false, userId: rootMessage.From?.ID ?? 0);
+
+        //            // Try to get replies to this comment
+        //            if (rootMessage is MessageBase commentBase)
+        //            {
+        //                int offsetId = 0;
+        //                const int limit = 100;
+        //                while (true)
+        //                {
+        //                    if (CheckShouldStop) { stop = true; break; }
+
+        //                    var repliesBase = await TelegramCallAsync(() =>
+        //                        Client.Messages_GetReplies(discussionPeer, msg_id: commentBase.ID, offset_id: offsetId, 
+        //                        offset_date: default, add_offset: 0, limit: limit, max_id: 0, min_id: 0, hash: 0L));
+
+        //                    if (repliesBase is null || repliesBase.Count == 0) break;
+
+        //                    foreach (var replyMessage in repliesBase.Messages)
+        //                    {
+        //                        if (CheckShouldStop) { stop = true; break; }
+        //                        // Save plain text message
+        //                        if (replyMessage is Message rpl)
+        //                        {
+        //                            var replySettings = messageSettings.Clone();
+        //                            replySettings.ParentChatId = replySettings.CurrentChatId;
+        //                            replySettings.ParentMessageId = replySettings.CurrentMessageId;
+        //                            replySettings.CurrentChatId = replyMessage.Peer.ID;
+        //                            replySettings.CurrentMessageId = replyMessage.ID;
+        //                            // Parse Telegram chat message core logic
+        //                            //await ParseChatMessageCoreAsync(tgDownloadSettings, rpl, chatCache, forumTopicSettings, message, replySettings);
+        //                            await ParseChatMessageCoreAsync(tgDownloadSettings, rpl, chatCache, forumTopicSettings, rpl, replySettings);
+        //                        }
+        //                    }
+
+        //                    offsetId = repliesBase.Messages.Last().ID;
+        //                    if (repliesBase.Messages.Length < limit)
+        //                        break;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        await Task.CompletedTask;
     }
 
     /// <summary> Check the exists chat directory </summary>
@@ -2386,10 +2422,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     // Save plain text message
                     else
                     {
-                        //var authorId = messageBase.From?.ID ?? 0; // Do not substitute ChatId if there is no author
-                        var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
+                        var authorId = message.From?.ID ?? messageSettings.CurrentChatId;
                         await SaveMessagesAsync(tgDownloadSettings, messageSettings, message.Date, size: 0,
-                            message.message, TgEnumMessageType.Message, isRetry: false, userId: authorId);
+                            message.message, TgEnumMessageType.Message, isRetry: false, authorId);
                     }
                     return true;
                 }), TgCacheUtils.CacheOptionsProcessMessage);
@@ -2727,8 +2762,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     case MessageMediaDocument { document: Document doc }:
                         await TelegramCallAsync(() => Client.DownloadFileAsync(doc, localFileStream, null, ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)));
+                        var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
                         await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                            TgEnumMessageType.Document, isRetry: false, userId: messageBase.From?.ID ?? 0);
+                            TgEnumMessageType.Document, isRetry: false, authorId);
                         break;
                     case MessageMediaPhoto { photo: Photo photo }:
                         //var fileReferenceBase64 = Convert.ToBase64String(photo.file_reference);
@@ -2744,6 +2780,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Save message
         if (Client is not null)
         {
+            var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
             switch (messageMedia)
             {
                 case MessageMediaDocument mediaDocument:
@@ -2761,7 +2798,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         await StorageManager.DocumentRepository.SaveAsync(doc);
                     }
                     await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                        TgEnumMessageType.Document, isRetry: false, userId: messageBase.From?.ID ?? 0);
+                        TgEnumMessageType.Document, isRetry: false, authorId);
                     break;
                 case MessageMediaPhoto mediaPhoto:
                     var messageStr = string.Empty;
@@ -2769,10 +2806,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         messageStr = message.message;
                     await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize,
                         $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
-                        TgEnumMessageType.Photo, isRetry: false, userId: messageBase.From?.ID ?? 0);
+                        TgEnumMessageType.Photo, isRetry: false, authorId);
                     break;
             }
-            // Save user info
         }
 
         // Set file date time
@@ -2831,7 +2867,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Save messages to the storage </summary>
     /// <exception cref="InvalidOperationException"></exception>
     private async Task SaveMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMessageSettings messageSettings,
-        DateTime dtCreated, long size, string message, TgEnumMessageType messageType, bool isRetry, long userId)
+        DateTime dtCreated, long size, string message, TgEnumMessageType messageType, bool isRetry, long authorId)
     {
         if (!tgDownloadSettings.IsSaveMessages) return;
 
@@ -2839,7 +2875,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Save message entity
-            if (userId > 0 && messageSettings.CurrentMessageId > 0 && messageSettings.CurrentChatId > 0)
+            if (authorId > 0 && messageSettings.CurrentMessageId > 0 && messageSettings.CurrentChatId > 0)
             {
                 var messageItem = new TgEfMessageEntity
                 {
@@ -2849,7 +2885,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     Type = messageType,
                     Size = size,
                     Message = message,
-                    UserId = userId,
+                    UserId = authorId,
                 };
                 // Check if the message is not already in the batch
                 if (_messageBuffer.FirstOrDefault(x => x.Id == messageItem.Id && x.SourceId == messageItem.SourceId && x.UserId == messageItem.UserId) is null)
@@ -2885,7 +2921,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (!isRetry)
             {
                 await Task.Delay(TimeSpan.FromSeconds(FloodControlService.WaitFallbackFast));
-                await SaveMessagesAsync(tgDownloadSettings, messageSettings, dtCreated, size, message, messageType, isRetry: true, userId);
+                await SaveMessagesAsync(tgDownloadSettings, messageSettings, dtCreated, size, message, messageType, isRetry: true, authorId);
             }
             else
             {

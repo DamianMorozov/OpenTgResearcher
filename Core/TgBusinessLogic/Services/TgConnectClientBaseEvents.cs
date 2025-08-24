@@ -7,7 +7,7 @@ namespace TgBusinessLogic.Services;
 
 public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
 {
-    #region Public and private methods - Client events
+    #region Methods - Client events
 
     private async Task OnClientOtherAsync(TL.IObject obj)
     {
@@ -36,7 +36,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #endregion
 
-    #region Public and private methods - Bot events
+    #region Methods - Bot events
 
     private async Task OnErrorBotAsync(Exception ex, HandleErrorSource source)
     {

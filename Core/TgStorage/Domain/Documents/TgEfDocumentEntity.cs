@@ -14,7 +14,7 @@ namespace TgStorage.Domain.Documents;
 [Index(nameof(AccessHash))]
 public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -64,7 +64,7 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

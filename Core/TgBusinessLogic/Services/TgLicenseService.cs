@@ -5,7 +5,7 @@ namespace TgBusinessLogic.Services;
 
 public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public string MenuWebSiteGlobalUrl => "https://opentgresearcher.online/";
 	public string MenuWebSiteGlobalLicenseBuyUrl => "https://opentgresearcher.online/licenses/";
@@ -41,7 +41,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);
 

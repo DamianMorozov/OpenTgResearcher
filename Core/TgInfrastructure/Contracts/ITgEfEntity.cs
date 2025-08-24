@@ -7,13 +7,13 @@ namespace TgInfrastructure.Contracts;
 public interface ITgEfEntity<TEfEntity> : ITgDebug 
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public Guid Uid { get; set; }
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public TEfEntity Copy(TEfEntity item, bool isUidCopy);
 

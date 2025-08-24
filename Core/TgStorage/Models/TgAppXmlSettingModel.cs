@@ -7,7 +7,7 @@ namespace TgStorage.Models;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed class TgAppXmlSettingModel(string name, string value) : ITgDebug
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public string Name { get; set; } = name;
 	public string Value { get; set; } = value;
@@ -16,7 +16,7 @@ public sealed class TgAppXmlSettingModel(string name, string value) : ITgDebug
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => $"{Name} | {Value}";
 

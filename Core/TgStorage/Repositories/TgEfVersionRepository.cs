@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> Version repository </summary>
 public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity, TgEfVersionDto>, ITgEfVersionRepository
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public TgEfVersionRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetAsync(TgEfVersionEntity item, bool isReadOnly = true)
@@ -110,7 +110,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
 
     #endregion
 
-    #region Public and private methods - ITgEfVersionRepository
+    #region Methods - ITgEfVersionRepository
 
     /// <inheritdoc />
     public short LastVersion => 46;

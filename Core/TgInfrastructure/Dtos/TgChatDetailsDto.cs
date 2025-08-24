@@ -6,7 +6,7 @@ namespace TgInfrastructure.Dtos;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatDetailsDto : TgSensitiveDto
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial string Title { get; set; } = string.Empty;
@@ -49,7 +49,7 @@ public sealed partial class TgChatDetailsDto : TgSensitiveDto
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     //
 

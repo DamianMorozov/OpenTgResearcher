@@ -8,7 +8,7 @@ public interface ITgDto<TEfEntity, TDto> : ITgDebug
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public bool IsLoad { get; set; }
 	public Guid Uid { get; set; }
@@ -16,7 +16,7 @@ public interface ITgDto<TEfEntity, TDto> : ITgDebug
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToString();
     public string ToConsoleString();

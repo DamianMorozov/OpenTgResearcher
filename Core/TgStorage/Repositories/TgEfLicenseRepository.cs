@@ -5,7 +5,7 @@ namespace TgStorage.Repositories;
 
 public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity, TgEfLicenseDto>, ITgEfLicenseRepository
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfLicenseRepository() : base() { }
 
@@ -13,7 +13,7 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetAsync(TgEfLicenseEntity item, bool isReadOnly = true)
@@ -117,7 +117,7 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 
     #endregion
 
-    #region Public and private methods - ITgEfAppRepository
+    #region Methods - ITgEfAppRepository
 
     /// <inheritdoc />
     public async Task<TgEfStorageResult<TgEfLicenseEntity>> GetCurrentAppAsync(bool isReadOnly = true)

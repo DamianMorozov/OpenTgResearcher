@@ -6,7 +6,7 @@ namespace TgInfrastructure.Dtos;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgLicenseDto : ObservableRecipient
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial string Description { get; private set; } = string.Empty;
@@ -24,7 +24,7 @@ public sealed partial class TgLicenseDto : ObservableRecipient
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <summary> Check paid license </summary>
     public bool CheckPaidLicense() => LicenseType switch

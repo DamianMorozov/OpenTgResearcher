@@ -8,7 +8,7 @@ namespace TgBusinessLogic.Helpers;
 public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string cachePrefix, TimeSpan? cacheDuration = null) : ITgDisposable
     where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private readonly IFusionCache Cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly List<TEfEntity> _buffer = [];
@@ -72,7 +72,7 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public int Count
     {

@@ -9,7 +9,7 @@ namespace TgBusinessLogic.Services;
 /// <summary> Base connection client </summary>
 public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
     private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
@@ -120,7 +120,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #endregion
 
-    #region Public and private methods - Flood control
+    #region Methods - Flood control
 
     /// <summary> Creates an action for logging Telegram messages with flood control </summary>
     private Action<int, string> BuildTelegramLogAction() => async (level, message) => await ProcessLogAndCheckFloodAsync(level, message);
@@ -159,7 +159,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() => $"{TgDataUtils.GetIsReady(IsReady)} | {Me}";
 
@@ -3056,7 +3056,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private async Task<T?> TryCatchAsync<T>(Func<Task<T>> call, Func<Task>? callFinally = null, 
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
@@ -3184,7 +3184,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #endregion
 
-    #region Public and private methods - Connections
+    #region Methods - Connections
 
     /// <inheritdoc />
     public async Task<bool> CheckClientConnectionReadyAsync()

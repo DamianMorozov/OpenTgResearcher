@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> Filter repository </summary>
 public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, TgEfFilterDto>, ITgEfFilterRepository
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfFilterRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfFilterEntity>> GetAsync(TgEfFilterEntity item, bool isReadOnly = true)

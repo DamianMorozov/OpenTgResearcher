@@ -6,7 +6,7 @@ namespace TgStorage.Common;
 /// <summary> Empty entity </summary>
 public sealed class TgEmptyEntity : ITgEfEntity<TgEmptyEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	public Guid Uid { get; set; }
@@ -19,7 +19,7 @@ public sealed class TgEmptyEntity : ITgEfEntity<TgEmptyEntity>
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => $"{Uid}";
 

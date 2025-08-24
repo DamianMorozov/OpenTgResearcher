@@ -6,7 +6,7 @@ namespace TgInfrastructure.Helpers;
 // <summary> Data utilities </summary>
 public static class TgDataUtils
 {
-	#region Public and private methods
+	#region Methods
 
     public static string GetIsAutoUpdate(bool isAutoUpdate) => $"{(isAutoUpdate ? "<Auto update>" : "<Not update>")}";
 	

@@ -5,7 +5,7 @@ namespace TgInfrastructure.Dtos;
 
 public sealed class TgLicenseCountDto
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public int TestCount { get; set; }
 	public int PaidCount { get; set; }

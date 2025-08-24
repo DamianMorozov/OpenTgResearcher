@@ -6,7 +6,7 @@ namespace TgInfrastructure.Helpers;
 /// <summary> Data format utilities </summary>
 public static class TgDataFormatUtils
 {
-	#region Public and private methods - ISerializable
+	#region Methods - ISerializable
 
 	public static XmlReaderSettings GetXmlReaderSettings() => new()
 	{

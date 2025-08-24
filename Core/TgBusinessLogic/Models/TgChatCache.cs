@@ -6,7 +6,7 @@ namespace TgBusinessLogic.Models;
 /// <summary> Chat cache </summary>
 public sealed class TgChatCache
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     /// <summary> ConcurrentDictionary with chats and access hash </summary>
     private readonly ConcurrentDictionary<long, long> _chatsWithHashes = new();
@@ -17,7 +17,7 @@ public sealed class TgChatCache
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <summary> Try to add a chat to the dictionary </summary>
     public bool TryAddChat(long chatId, long accessHash, string directory) => 

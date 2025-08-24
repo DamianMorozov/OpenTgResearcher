@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Messages;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMessageEntity, TgEfMessageDto>, ITgDtoViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
     public override ITgEfMessageRepository Repository { get; }
 
@@ -32,7 +32,7 @@ public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMes
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString() ?? string.Empty;
 

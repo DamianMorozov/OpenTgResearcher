@@ -6,7 +6,7 @@ namespace TgInfrastructure.Helpers;
 /// <summary> Date time utilities </summary>
 public static class TgDtUtils
 {
-	#region Public and private methods
+	#region Methods
 
 	/// <summary>
 	/// Get DateTime from unix long.

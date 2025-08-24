@@ -13,7 +13,7 @@ public sealed class TgLocaleHelper : ObservableObject
 
     #endregion
 
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
     
     public string AppInfo => "App info";
     public string Field => "Field";

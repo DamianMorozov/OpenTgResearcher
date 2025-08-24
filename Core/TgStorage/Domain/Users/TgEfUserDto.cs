@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Users;
 /// <summary> User DTO </summary>
 public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity, TgEfUserDto>
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial DateTime DtChanged { get; set; }

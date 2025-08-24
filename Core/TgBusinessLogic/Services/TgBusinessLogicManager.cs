@@ -5,7 +5,7 @@ namespace TgBusinessLogic.Services;
 
 public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicManager
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private ILifetimeScope Scope { get; } = default!;
     public ITgStorageManager StorageManager { get; private set; } = default!;
@@ -88,7 +88,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public async Task CreateAndUpdateDbAsync()

@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Messages;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfMessageRelationDto : TgSensitiveDto, ITgDto<TgEfMessageRelationEntity, TgEfMessageRelationDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
     [ObservableProperty]
 	public partial long ParentSourceId { get; set; }
@@ -28,7 +28,7 @@ public sealed partial class TgEfMessageRelationDto : TgSensitiveDto, ITgDto<TgEf
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
     public TgEfMessageRelationDto Copy(TgEfMessageRelationDto dto, bool isUidCopy)
 	{

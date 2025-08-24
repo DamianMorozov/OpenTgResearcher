@@ -6,7 +6,7 @@ namespace TgInfrastructure.Dtos;
 /// <summary> Represents information about a Telegram bot, including its configuration and metadata </summary>
 public sealed class TgBotInfoDto
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public string Username { get; set; } = default!;
     public string Id { get; set; } = default!;

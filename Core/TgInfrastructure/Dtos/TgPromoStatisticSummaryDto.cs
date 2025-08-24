@@ -5,7 +5,7 @@ namespace TgInfrastructure.Dtos;
 
 public sealed class TgPromoStatisticSummaryDto
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public DateOnly LastPromoDay { get; set; } = DateOnly.MinValue;
     public List<TgPromoStatisticDto> Items { get; set; }

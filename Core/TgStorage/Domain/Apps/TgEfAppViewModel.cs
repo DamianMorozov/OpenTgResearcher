@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Apps;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEntity, TgEfAppDto>, ITgDtoViewModel, IDisposable
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public override ITgEfAppRepository Repository { get; }
     [ObservableProperty]
@@ -86,7 +86,7 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override string ToString() => Dto.ToString() ?? string.Empty;
 

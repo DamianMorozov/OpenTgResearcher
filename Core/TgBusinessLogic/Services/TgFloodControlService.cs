@@ -8,7 +8,7 @@ namespace TgBusinessLogic.Services;
 /// <summary> Flood control manager for Telegram operations </summary>
 public sealed partial class TgFloodControlService : TgDisposable, ITgFloodControlService
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     /// <inheritdoc />
     public int MaxRetryCount { get; } = 5;
@@ -41,7 +41,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public async Task WaitIfFloodAsync(string message)

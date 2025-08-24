@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Apps;
 /// <summary> App DTO </summary>
 public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAppDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial Guid ApiHash { get; set; }
@@ -54,7 +54,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => $"{ApiHash} | {ApiId}";
 	

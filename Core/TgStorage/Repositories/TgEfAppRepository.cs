@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> App repository </summary>
 public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAppDto>, ITgEfAppRepository
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfAppRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfAppEntity>> GetAsync(TgEfAppEntity item, bool isReadOnly = true)
@@ -106,7 +106,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 
     #endregion
 
-    #region Public and private methods - ITgEfAppRepository
+    #region Methods - ITgEfAppRepository
 
     /// <inheritdoc />
     public async Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync(bool isReadOnly = true)

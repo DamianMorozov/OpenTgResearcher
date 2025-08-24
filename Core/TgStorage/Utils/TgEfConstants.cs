@@ -7,7 +7,7 @@ namespace TgStorage.Utils;
 /// <summary> SQL constants </summary>
 public static class TgEfConstants
 {
-	#region Public and private fields, properties, constructor - Tables
+	#region Fields, properties, constructor - Tables
 
 	public const string TableApps = "APPS";
 	public const string TableBots = "BOTS";
@@ -24,7 +24,7 @@ public static class TgEfConstants
 
     #endregion
 
-	#region Public and private fields, properties, constructor - Columns
+	#region Fields, properties, constructor - Columns
 
 	public const string ColumnAbout = "ABOUT";
 	public const string ColumnAccessHash = "ACCESS_HASH";

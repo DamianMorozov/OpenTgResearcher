@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Sources;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSourceEntity, TgEfSourceDto>, ITgEfSourceViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override ITgEfSourceRepository Repository { get; }
     [ObservableProperty]
@@ -30,7 +30,7 @@ public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSour
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString();
 

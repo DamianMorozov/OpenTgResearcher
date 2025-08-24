@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Messages;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageEntity, TgEfMessageDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial DateTime DtCreated { get; set; }
@@ -107,7 +107,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public TgEfMessageDto Copy(TgEfMessageDto dto, bool isUidCopy)
 	{

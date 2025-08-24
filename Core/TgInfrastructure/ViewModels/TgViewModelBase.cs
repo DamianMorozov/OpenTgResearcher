@@ -7,14 +7,14 @@ namespace TgInfrastructure.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public abstract partial class TgViewModelBase : ObservableRecipient, ITgViewModelBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial bool IsLoad { get; set; }
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public virtual string ToDebugString() => $"{TgDataUtils.GetIsLoad(IsLoad)}";
 

@@ -14,7 +14,7 @@ namespace TgStorage.Domain.Proxies;
 [Index(nameof(Secret))]
 public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<TgEfProxyEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -66,7 +66,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() =>
         $"{TgEfConstants.TableProxies} | {Uid} | {Type} | {HostName} | {Port} | {UserName} | {Password} | " +

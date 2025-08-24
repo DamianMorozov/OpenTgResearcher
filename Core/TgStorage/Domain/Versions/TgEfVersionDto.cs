@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Versions;
 /// <summary> Proxy DTO </summary>
 public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity, TgEfVersionDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial short Version { get; set; }
@@ -21,7 +21,7 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override string ToConsoleString() => 
         $"{Version,3} | " +

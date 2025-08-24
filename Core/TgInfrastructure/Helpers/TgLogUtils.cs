@@ -6,13 +6,13 @@ namespace TgInfrastructure.Helpers;
 /// <summary> Log utils </summary>
 public static class TgLogUtils
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private static string _startupLog = string.Empty;
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public static string GetAppDirectory(TgEnumAppType appType) => appType switch
     {

@@ -8,7 +8,7 @@ public class TgValidatorDtoBase<TEfEntity, TDto> : AbstractValidator<TDto>, ITgD
     where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public TgValidatorDtoBase()
 	{
@@ -18,7 +18,7 @@ public class TgValidatorDtoBase<TEfEntity, TDto> : AbstractValidator<TDto>, ITgD
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() => string.Empty;
 

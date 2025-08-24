@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Users;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfUserViewModel : TgEntityViewModelBase<TgEfUserEntity, TgEfUserDto>, ITgDtoViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override ITgEfUserRepository Repository { get; }
 	[ObservableProperty]
@@ -31,7 +31,7 @@ public sealed partial class TgEfUserViewModel : TgEntityViewModelBase<TgEfUserEn
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString() ?? string.Empty;
 

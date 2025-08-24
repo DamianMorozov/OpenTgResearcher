@@ -7,7 +7,7 @@ namespace TgStorage.Validators;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed class TgEfAppValidator : TgEfValidatorBase<TgEfAppEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfAppValidator()
 	{

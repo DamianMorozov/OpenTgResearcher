@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> Document repository </summary>
 public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEntity, TgEfDocumentDto>, ITgEfDocumentRepository
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfDocumentRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfDocumentEntity>> GetAsync(TgEfDocumentEntity item, bool isReadOnly = true)

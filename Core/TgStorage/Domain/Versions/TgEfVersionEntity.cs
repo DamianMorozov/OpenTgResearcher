@@ -10,7 +10,7 @@ namespace TgStorage.Domain.Versions;
 [Index(nameof(Description))]
 public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -38,7 +38,7 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

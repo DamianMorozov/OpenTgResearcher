@@ -9,7 +9,7 @@ namespace TgStorage.Models;
 [XmlRoot("App", Namespace = "", IsNullable = true)]
 public sealed class TgAppXmlModel : ObservableObject, ITgDebug
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("")]
 	[XmlElement("FileSession")]
@@ -30,7 +30,7 @@ public sealed class TgAppXmlModel : ObservableObject, ITgDebug
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
     public string ToDebugString() => 
 	    $"{nameof(XmlFileSession)}: {XmlFileSession} | {nameof(XmlEfStorage)}: {XmlEfStorage}";

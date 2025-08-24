@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Proxies;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxyEntity, TgEfProxyDto>, ITgDtoViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override ITgEfProxyRepository Repository { get; } 
 	[ObservableProperty]
@@ -32,7 +32,7 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString() ?? string.Empty;
 

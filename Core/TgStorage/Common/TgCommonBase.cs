@@ -7,7 +7,7 @@ namespace TgStorage.Common;
 [DebuggerDisplay("{ToDebugString()}")]
 public abstract class TgCommonBase : ITgDebug
 {
-    #region Public and private methods
+    #region Methods
 
     public virtual string ToDebugString() => throw new NotImplementedException(TgConstants.UseOverrideMethod);
 

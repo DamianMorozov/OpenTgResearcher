@@ -6,14 +6,14 @@ namespace TgBusinessLogic.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgDownloadChat : ObservableRecipient, ITgDebug
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial TL.ChatBase? Base { get; set; }
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => $"{(Base is not null ? Base.ID : string.Empty)} | {GetUserName()}";
 

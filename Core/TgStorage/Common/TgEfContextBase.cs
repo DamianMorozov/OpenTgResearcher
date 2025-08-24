@@ -6,7 +6,7 @@ namespace TgStorage.Common;
 /// <summary> Base DB context </summary>
 public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     /// <inheritdoc />
     public DbSet<TgEfAppEntity> Apps { get; set; } = null!;
@@ -118,7 +118,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     #endregion
 
-    #region Public and private methods - EF Core
+    #region Methods - EF Core
 
     public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
@@ -137,7 +137,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public string GetStoragePath(string contentRootPath = "")

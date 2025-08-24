@@ -6,7 +6,7 @@
 ///// <summary> SQL table fill </summary>
 //public interface ITgDbFillEntity<TEntity> : ITgDbEntity where TEntity : new()
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	public TEntity Fill(TEntity item, bool isUidCopy);
 

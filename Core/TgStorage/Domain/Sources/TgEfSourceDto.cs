@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Sources;
 /// <summary> Source DTO </summary>
 public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, TgEfSourceDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial long Id { get; set; }
@@ -99,7 +99,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string GetPercentCountString()
     {

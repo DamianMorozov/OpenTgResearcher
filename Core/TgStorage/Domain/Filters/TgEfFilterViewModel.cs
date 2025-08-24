@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Filters;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilterEntity, TgEfFilterDto>, ITgDtoViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override ITgEfFilterRepository Repository { get; }
 	[ObservableProperty]
@@ -31,7 +31,7 @@ public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilt
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString() ?? string.Empty;
 

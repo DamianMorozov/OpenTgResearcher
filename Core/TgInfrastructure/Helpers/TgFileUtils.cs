@@ -6,7 +6,7 @@ namespace TgInfrastructure.Helpers;
 /// <summary> File utils </summary>
 public static class TgFileUtils
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private static TgLogHelper TgLog => TgLogHelper.Instance;
 	public static string BaseDirectory = string.Empty;
@@ -27,7 +27,7 @@ public static class TgFileUtils
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public static string GetShortFilePath(string filePath) => string.IsNullOrEmpty(filePath) ? string.Empty : Path.GetFileName(filePath);
     

@@ -8,7 +8,7 @@ namespace TgStorage.Utils;
 /// <summary> Global tools </summary>
 public static class TgGlobalTools
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public static TgEnumAppType AppType { get; private set; }
 
@@ -45,7 +45,7 @@ public static class TgGlobalTools
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public static void SetAppType(TgEnumAppType appType) => AppType = appType;
 

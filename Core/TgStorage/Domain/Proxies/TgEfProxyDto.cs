@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Proxies;
 /// <summary> Proxy DTO </summary>
 public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, TgEfProxyDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial TgEnumProxyType Type { get; set; }
@@ -34,7 +34,7 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, Tg
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => $"{Type} | {HostName} | {Port} | {UserName} | {Password} | {Secret}";
 

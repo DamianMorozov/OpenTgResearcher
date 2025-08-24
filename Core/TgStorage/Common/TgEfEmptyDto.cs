@@ -6,7 +6,7 @@ namespace TgStorage.Common;
 /// <summary> Empty DTO </summary>
 public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEmptyEntity, TgEfEmptyDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfEmptyDto() : base()
 	{
@@ -15,7 +15,7 @@ public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEmptyEntity, TgEf
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => base.ToString();
 

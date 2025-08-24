@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> User repository </summary>
 public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEfUserDto>, ITgEfUserRepository
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfUserRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfUserEntity>> GetAsync(TgEfUserEntity item, bool isReadOnly = true)

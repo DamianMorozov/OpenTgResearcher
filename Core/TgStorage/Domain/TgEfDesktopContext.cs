@@ -6,7 +6,7 @@ namespace TgStorage.Domain;
 /// <summary> Desktop DB context </summary>
 public sealed class TgEfDesktopContext : TgEfContextBase, ITgEfContext
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public TgEfDesktopContext() : base() { }
     
@@ -14,7 +14,7 @@ public sealed class TgEfDesktopContext : TgEfContextBase, ITgEfContext
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -14,14 +14,14 @@ public sealed class TgLogHelper : ITgHelper
 
 	#endregion
 
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	private Action<string> _markupLine = _ => { };
 	private Action<string> _markupLineStamp = _ => { };
 
     #endregion
 
-	#region Public and private methods
+	#region Methods
 
     public string ToDebugString() => "";
 

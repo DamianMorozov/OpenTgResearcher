@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Filters;
 /// <summary> Filter DTO </summary>
 public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, TgEfFilterDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial bool IsEnabled { get; set; }
@@ -42,7 +42,7 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, 
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string GetStringForFilterType() => FilterType switch
     {

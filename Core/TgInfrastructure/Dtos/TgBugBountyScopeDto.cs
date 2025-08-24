@@ -6,7 +6,7 @@ namespace TgInfrastructure.Dtos;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgBugBountyScopeDto : ObservableRecipient
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial string Icon { get; set; } = string.Empty;
@@ -19,7 +19,7 @@ public sealed partial class TgBugBountyScopeDto : ObservableRecipient
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

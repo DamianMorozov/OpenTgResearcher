@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> Message repository </summary>
 public sealed class TgEfMessageRelationRepository : TgEfRepositoryBase<TgEfMessageRelationEntity, TgEfMessageRelationDto>, ITgEfMessageRelationRepository
 {	
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfMessageRelationRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfMessageRelationRepository : TgEfRepositoryBase<TgEfMessa
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfMessageRelationEntity>> GetAsync(TgEfMessageRelationEntity item, bool isReadOnly = true)

@@ -23,7 +23,7 @@ namespace TgStorage.Domain.Sources;
 [Index(nameof(IsSubscribe))]
 public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -127,7 +127,7 @@ public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() =>
         $"{TgEfConstants.TableSources} | {Uid} | {Id} | {(IsAutoUpdate ? "a" : " ")} | {(FirstId == Count ? "v" : "x")} | {UserName} | " +

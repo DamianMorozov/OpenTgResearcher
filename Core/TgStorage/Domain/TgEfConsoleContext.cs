@@ -6,7 +6,7 @@ namespace TgStorage.Domain;
 /// <summary> Console DB context </summary>
 public sealed class TgEfConsoleContext : TgEfContextBase, ITgEfContext
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public TgEfConsoleContext() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfConsoleContext : TgEfContextBase, ITgEfContext
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

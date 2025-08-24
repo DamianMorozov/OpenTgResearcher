@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Users;
 /// <summary> Content statistics DTO </summary>
 public sealed partial class TgEfContentStatisticsDto : TgDtoBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial int ImagesCount { get; set; }
@@ -23,7 +23,7 @@ public sealed partial class TgEfContentStatisticsDto : TgDtoBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public void DefaultValues()
     {

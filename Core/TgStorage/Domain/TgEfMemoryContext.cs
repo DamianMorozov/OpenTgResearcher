@@ -6,7 +6,7 @@ namespace TgStorage.Domain;
 /// <summary> Memory DB context </summary>
 public sealed class TgEfMemoryContext : TgEfContextBase, ITgEfContext
 {
-    #region Public and private methods
+    #region Methods
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -7,7 +7,7 @@ namespace TgStorage.Common;
 public class TgEfValidatorBase<TEfEntity> : AbstractValidator<TEfEntity>, ITgDebug
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public TgEfValidatorBase()
 	{
@@ -17,7 +17,7 @@ public class TgEfValidatorBase<TEfEntity> : AbstractValidator<TEfEntity>, ITgDeb
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() => string.Empty;
 

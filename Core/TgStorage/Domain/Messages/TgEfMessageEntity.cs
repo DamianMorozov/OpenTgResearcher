@@ -14,7 +14,7 @@ namespace TgStorage.Domain.Messages;
 [Index(nameof(Message))]
 public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -72,7 +72,7 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

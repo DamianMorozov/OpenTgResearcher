@@ -7,7 +7,7 @@ namespace TgInfrastructure.Dtos;
 
 public sealed partial class TgClientMonitoringViewModel : ObservableRecipient
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial List<string> ChatNames { get; set; } = [];
@@ -46,7 +46,7 @@ public sealed partial class TgClientMonitoringViewModel : ObservableRecipient
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public void Default()
     {

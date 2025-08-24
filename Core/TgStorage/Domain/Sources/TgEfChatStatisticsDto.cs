@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Users;
 /// <summary> Chat statistics DTO </summary>
 public sealed partial class TgEfChatStatisticsDto : TgDtoBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public static readonly DateTimeOffset SafeMinDate = new(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
     public static readonly DateTimeOffset SafeMaxDate = new(9999, 12, 31, 23, 59, 59, TimeSpan.Zero);
@@ -29,7 +29,7 @@ public sealed partial class TgEfChatStatisticsDto : TgDtoBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public void DefaultValues()
     {

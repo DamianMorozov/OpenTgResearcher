@@ -6,7 +6,7 @@ namespace TgStorage.Repositories;
 /// <summary> Proxy repository </summary>
 public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEfProxyRepository() : base() { }
 
@@ -14,7 +14,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public override async Task<TgEfStorageResult<TgEfProxyEntity>> GetAsync(TgEfProxyEntity item, bool isReadOnly = true)
@@ -114,7 +114,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 
     #endregion
 
-    #region Public and private methods - ITgEfProxyRepository
+    #region Methods - ITgEfProxyRepository
 
     /// <inheritdoc />
     public async Task<TgEfStorageResult<TgEfProxyEntity>> GetCurrentProxyAsync(Guid? uid)

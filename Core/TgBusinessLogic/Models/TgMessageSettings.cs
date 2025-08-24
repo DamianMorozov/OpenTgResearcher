@@ -7,7 +7,7 @@ namespace TgBusinessLogic.Models;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed class TgMessageSettings
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     /// <summary> Thread number </summary>
     public int ThreadNumber { get; set; }
@@ -24,7 +24,7 @@ public sealed class TgMessageSettings
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

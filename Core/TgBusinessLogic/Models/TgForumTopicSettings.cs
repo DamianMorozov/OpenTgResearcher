@@ -8,7 +8,7 @@ namespace TgBusinessLogic.Models;
 /// <summary> Forum topic settings </summary>
 public sealed class TgForumTopicSettings
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     /// <summary> Root topic of the forum, usually with ID = 1 </summary>
     public ForumTopicBase? RootTopic { get; set; }
@@ -17,7 +17,7 @@ public sealed class TgForumTopicSettings
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <summary> Set topics from the forum topics response </summary>
     public void SetTopics(Messages_ForumTopics forumTopics)

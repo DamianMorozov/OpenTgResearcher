@@ -7,7 +7,7 @@ namespace TgInfrastructure.Contracts;
 public interface ITgEfIdEntity<TEfEntity> : ITgEfEntity<TEfEntity>
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public long Id { get; set; }
 

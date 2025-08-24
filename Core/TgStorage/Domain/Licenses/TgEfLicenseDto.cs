@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Apps;
 /// <summary> App DTO </summary>
 public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity, TgEfLicenseDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial Guid LicenseKey { get; set; }
@@ -43,7 +43,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => $"{LicenseKey} | {UserId}";
 	

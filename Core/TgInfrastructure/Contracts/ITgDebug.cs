@@ -6,7 +6,7 @@ namespace TgInfrastructure.Contracts;
 /// <summary> Debug </summary>
 public interface ITgDebug
 {
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString();
 

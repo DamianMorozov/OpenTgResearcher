@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Stories;
 /// <summary> Proxy DTO </summary>
 public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, TgEfStoryDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial DateTime DtChanged { get; set; }
@@ -52,7 +52,7 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, Tg
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";
 

@@ -7,7 +7,7 @@ namespace TgStorage.Common;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfEntity<TEfEntity>, new ()
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgEnumEntityState State { get; set; }
 
@@ -44,7 +44,7 @@ public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfE
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => Item is not null ? $"{State} | {Item.Uid} | {Items.Count()}" : $"{State} | {Items.Count()}";
 

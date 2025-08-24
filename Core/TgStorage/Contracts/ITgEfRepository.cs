@@ -7,13 +7,13 @@ public interface ITgEfRepository<TEfEntity, TDto>
 	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
-    #region Public and private methods
+    #region Methods
 
     public IQueryable<TEfEntity> GetQuery(bool isReadOnly = true);
 
     #endregion
 
-    #region Public and private methods - Read
+    #region Methods - Read
 
     /// <summary> Check if the item exists in the storage </summary>
     public Task<bool> CheckExistsAsync(TEfEntity item);
@@ -54,7 +54,7 @@ public interface ITgEfRepository<TEfEntity, TDto>
 
     #endregion
 
-    #region Public and private methods - Read DTO
+    #region Methods - Read DTO
 
     public Expression<Func<TEfEntity, TDto>> SelectDto();
 	public Task<TDto> GetDtoAsync(Expression<Func<TEfEntity, bool>> where);
@@ -67,7 +67,7 @@ public interface ITgEfRepository<TEfEntity, TDto>
 
 	#endregion
 
-	#region Public and private methods - Write
+	#region Methods - Write
 
 	public Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity item, bool isFirstTry = true);
 	public TgEfStorageResult<TEfEntity> Save(TEfEntity item);
@@ -79,7 +79,7 @@ public interface ITgEfRepository<TEfEntity, TDto>
 
     #endregion
 
-    #region Public and private methods - Remove
+    #region Methods - Remove
 
     /// <summary> Delete item from the storage table </summary>
     public Task<TgEfStorageResult<TEfEntity>> DeleteAsync(TEfEntity item);

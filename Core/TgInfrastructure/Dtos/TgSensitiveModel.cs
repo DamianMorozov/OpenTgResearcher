@@ -7,7 +7,7 @@ namespace TgInfrastructure.Dtos;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgSensitiveModel : ObservableRecipient
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial string SensitiveData { get; set; } = "**********";
@@ -23,7 +23,7 @@ public partial class TgSensitiveModel : ObservableRecipient
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     partial void OnIsDisplaySensitiveDataChanged(bool value)
     {

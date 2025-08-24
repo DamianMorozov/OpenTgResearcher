@@ -6,7 +6,7 @@ namespace TgStorage.Domain;
 /// <summary> Blazor DB context </summary>
 public sealed class TgEfBlazorContext(IWebHostEnvironment webHostEnvironment) : TgEfContextBase, ITgEfContext
 {
-    #region Public and private methods
+    #region Methods
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

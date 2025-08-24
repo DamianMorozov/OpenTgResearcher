@@ -7,7 +7,7 @@ namespace TgInfrastructure.Dtos;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgDtoBase : ObservableRecipient
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial bool IsLoad { get; set; }
@@ -25,7 +25,7 @@ public partial class TgDtoBase : ObservableRecipient
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public virtual string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

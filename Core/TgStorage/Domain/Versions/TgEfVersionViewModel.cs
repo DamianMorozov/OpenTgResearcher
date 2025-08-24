@@ -7,7 +7,7 @@ namespace TgStorage.Domain.Versions;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVersionEntity, TgEfVersionDto>, ITgDtoViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override ITgEfVersionRepository Repository { get; }
 	[ObservableProperty]
@@ -30,7 +30,7 @@ public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVer
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString() ?? string.Empty;
 

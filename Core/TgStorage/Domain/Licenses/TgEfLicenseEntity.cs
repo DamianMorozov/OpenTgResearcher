@@ -13,7 +13,7 @@ namespace TgStorage.Domain.Licenses;
 [Index(nameof(IsConfirmed))]
 public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -55,7 +55,7 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

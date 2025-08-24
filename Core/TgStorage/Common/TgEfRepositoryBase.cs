@@ -9,7 +9,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     protected ILifetimeScope Scope { get; }
     protected ITgEfContext EfContext { get; }
@@ -45,7 +45,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public virtual string ToDebugString() => typeof(TEfEntity) switch
@@ -133,7 +133,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
 
     #endregion
 
-    #region Public and private methods - Read
+    #region Methods - Read
 
     /// <inheritdoc />
     public virtual async Task<bool> CheckExistsAsync(TEfEntity item)
@@ -339,7 +339,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
 
     #endregion
 
-    #region Public and private methods - Read DTO
+    #region Methods - Read DTO
 
     /// <inheritdoc />
     public Expression<Func<TEfEntity, TDto>> SelectDto() => item => new TDto().GetNewDto(item);
@@ -401,7 +401,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
 
     #endregion
 
-    #region Public and private methods - Write
+    #region Methods - Write
 
     /// <inheritdoc />
     public virtual async Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity? item, bool isFirstTry = true)
@@ -663,7 +663,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
 
     #endregion
 
-    #region Public and private methods - Remove
+    #region Methods - Remove
 
     /// <inheritdoc />
     public virtual async Task<TgEfStorageResult<TEfEntity>> DeleteAsync(TEfEntity item)

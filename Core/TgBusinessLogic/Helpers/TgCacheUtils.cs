@@ -6,7 +6,7 @@ namespace TgBusinessLogic.Helpers;
 /// <summary> Fusion cache helper </summary>
 public static class TgCacheUtils
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public static SemaphoreSlim SaveLock { get; } = new(initialCount: 1, maxCount: 1);
     public static string GetCacheKeyChatLastCount(long chatId) => $"{GetCacheKeyChatLastCountPrefix}:{chatId}";
@@ -65,7 +65,7 @@ public static class TgCacheUtils
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public static async Task ClearAllAsync(this IFusionCache cache) => await cache.RemoveAsync("*");
 

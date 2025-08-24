@@ -14,7 +14,7 @@ public sealed class TgAppSettingsHelper : ITgHelper
 
 	#endregion
 
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("")]
 	public string AppVersion { get; set; }
@@ -40,7 +40,7 @@ public sealed class TgAppSettingsHelper : ITgHelper
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => AppXml.ToDebugString();
 

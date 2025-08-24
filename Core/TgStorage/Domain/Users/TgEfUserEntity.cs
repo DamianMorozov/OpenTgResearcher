@@ -19,7 +19,7 @@ namespace TgStorage.Domain.Users;
 [Index(nameof(LangCode))]
 public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	[Key]
@@ -140,7 +140,7 @@ public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

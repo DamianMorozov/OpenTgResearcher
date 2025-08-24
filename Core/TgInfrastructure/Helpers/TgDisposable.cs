@@ -6,7 +6,7 @@ namespace TgInfrastructure.Helpers;
 /// <summary> Disposable base class </summary>
 public abstract class TgDisposable : ObservableRecipient, ITgDisposable
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgDisposable()
 	{

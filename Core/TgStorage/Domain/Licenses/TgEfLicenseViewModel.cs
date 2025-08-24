@@ -5,7 +5,7 @@ namespace TgStorage.Domain.Licenses;
 
 public sealed partial class TgEfLicenseViewModel : TgEntityViewModelBase<TgEfLicenseEntity, TgEfLicenseDto>, ITgDtoViewModel
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override ITgEfLicenseRepository Repository { get; }
 
@@ -29,7 +29,7 @@ public sealed partial class TgEfLicenseViewModel : TgEntityViewModelBase<TgEfLic
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => Dto.ToString() ?? string.Empty;
 

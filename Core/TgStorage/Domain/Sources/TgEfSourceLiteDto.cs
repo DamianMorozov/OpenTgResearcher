@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Sources;
 /// <summary> Source DTO </summary>
 public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEntity, TgEfSourceLiteDto>
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial string SensitiveData { get; set; } = "**********";
@@ -65,7 +65,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override string ToString() => ProgressPercentString;
 

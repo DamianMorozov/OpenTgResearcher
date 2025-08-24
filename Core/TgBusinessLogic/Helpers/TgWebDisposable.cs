@@ -5,7 +5,7 @@ namespace TgBusinessLogic.Helpers;
 
 public abstract class TgWebDisposable : TgDisposable
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public TgWebDisposable() : base()
 	{

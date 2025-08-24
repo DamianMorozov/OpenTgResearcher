@@ -9,13 +9,13 @@ public abstract partial class TgEntityViewModelBase<TEfEntity, TDto> : TgViewMod
     where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
     where TDto : class, ITgDto<TEfEntity, TDto>, new()
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public virtual ITgEfRepository<TEfEntity, TDto> Repository { get; } = null!;
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override string ToDebugString() => $"{TgDataUtils.GetIsLoad(IsLoad)}";
 

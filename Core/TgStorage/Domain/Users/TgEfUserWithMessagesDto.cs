@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Users;
 /// <summary> User messages DTO </summary>
 public sealed partial class TgEfUserWithMessagesDto : TgSensitiveDto
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial TgEfUserDto UserDto { get; set; } = default!;
@@ -29,7 +29,7 @@ public sealed partial class TgEfUserWithMessagesDto : TgSensitiveDto
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public void DefaultValues()
     {

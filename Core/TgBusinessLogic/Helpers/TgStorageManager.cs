@@ -7,7 +7,7 @@ namespace TgBusinessLogic.Helpers;
 
 public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     /// <summary> Autofac lifetime scope </summary>
     private ILifetimeScope Scope { get; }
@@ -113,7 +113,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <inheritdoc />
     public async Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story)

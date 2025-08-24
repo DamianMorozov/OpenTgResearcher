@@ -6,7 +6,7 @@ namespace TgStorage.Domain.Documents;
 /// <summary> Contact DTO </summary>
 public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEntity, TgEfDocumentDto>
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial long SourceId { get; set; }

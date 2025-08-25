@@ -1,6 +1,7 @@
 ﻿# Download statistics
 
 - GitHub all releases   ![GitHub all releases](https://img.shields.io/github/downloads/DamianMorozov/OpenTgResearcher/total?style=social)
+- GitHub v0.7.140		![GitHub v0.7.140](https://img.shields.io/github/downloads/DamianMorozov/OpenTgResearcher/v0.7.140/total?style=social)
 - GitHub v0.7.130		![GitHub v0.7.130](https://img.shields.io/github/downloads/DamianMorozov/OpenTgResearcher/v0.7.130/total?style=social)
 - GitHub v0.7.120		![GitHub v0.7.120](https://img.shields.io/github/downloads/DamianMorozov/OpenTgResearcher/v0.7.120/total?style=social)
 - GitHub v0.6.900		![GitHub v0.6.900](https://img.shields.io/github/downloads/DamianMorozov/OpenTgResearcher/v0.6.900/total?style=social)

@@ -14,7 +14,7 @@
 
 //	#endregion
 
-//	#region Public and private fields, properties, constructor
+//	#region Fields, properties, constructor
 
 //	public TgXpoContext ContextManager => TgXpoContext.Instance;
 //	public TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;

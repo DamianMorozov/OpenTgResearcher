@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Common;
 
 public abstract class TgPageBase : Page
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public virtual ITgPageViewModel ViewModel => null!;
     public Grid? GridContent { get; set; }
@@ -14,7 +14,7 @@ public abstract class TgPageBase : Page
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {

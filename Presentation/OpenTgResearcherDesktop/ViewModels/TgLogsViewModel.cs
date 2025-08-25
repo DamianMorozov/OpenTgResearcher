@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
@@ -21,7 +21,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 	{

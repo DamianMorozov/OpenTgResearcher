@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatsViewModel : TgPageViewModelBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
@@ -63,7 +63,7 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private bool CanLoadMore() => HasMoreItems && !IsLoading;
 

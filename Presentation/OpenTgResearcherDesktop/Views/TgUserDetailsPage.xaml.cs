@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class TgUserDetailsPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override TgUserDetailsViewModel ViewModel { get; }
 

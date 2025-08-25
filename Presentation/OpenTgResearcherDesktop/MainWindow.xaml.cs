@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop;
 
 public sealed partial class MainWindow : WindowEx
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue = default!;
     private readonly UISettings _settings = default!;
@@ -40,7 +40,7 @@ public sealed partial class MainWindow : WindowEx
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     /// <summary> Handle the Closed event </summary>
 	private void MainWindow_Closed(object sender, WindowEventArgs args) => SaveWindowState();

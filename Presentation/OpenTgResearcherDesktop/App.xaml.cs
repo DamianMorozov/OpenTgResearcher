@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop;
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
     // https://docs.microsoft.com/dotnet/core/extensions/generic-host
@@ -198,7 +198,7 @@ public partial class App : Application
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private static void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {

@@ -8,7 +8,7 @@ namespace OpenTgResearcherDesktop.Helpers;
 // https://github.com/microsoft/TemplateStudio/issues/4516
 internal sealed class TgTitleBarHelper
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	private const int WAINACTIVE = 0x00;
 	private const int WAACTIVE = 0x01;
@@ -16,7 +16,7 @@ internal sealed class TgTitleBarHelper
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	[DllImport("user32.dll")]
 	private static extern IntPtr GetActiveWindow();

@@ -6,7 +6,7 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal sealed partial class TgMenuHelper
 {
-	#region Public and private methods
+	#region Methods
 
 	private static TgEnumMenuLicense SetMenuLicense()
 	{

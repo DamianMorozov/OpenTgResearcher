@@ -7,7 +7,7 @@ namespace TgStorageTest.Domain;
 [TestFixture]
 internal sealed class TgEfRepositoryGetCountWhereTests : TgDbContextTestsBase
 {
-	#region Public and private methods
+	#region Methods
 
 	private void GetCountWhereAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()

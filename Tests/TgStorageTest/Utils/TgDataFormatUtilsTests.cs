@@ -6,7 +6,7 @@ namespace TgStorageTest.Utils;
 [TestFixture]
 public class TgDataFormatUtilsTests
 {
-	#region Public and private methods
+	#region Methods
 
 	[Test]
 	public void DataFormatUtils_CheckFileAtMask_AreEqual()

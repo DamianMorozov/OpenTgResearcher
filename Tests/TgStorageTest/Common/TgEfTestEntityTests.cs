@@ -6,7 +6,7 @@
 //[TestFixture]
 //internal sealed class TgEfTestEntityTests
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	[Test]
 //	public void Get_default_properties()

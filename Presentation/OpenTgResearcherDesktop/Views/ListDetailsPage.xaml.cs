@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ListDetailsPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public ListDetailsViewModel ViewModel { get; }
 
@@ -19,7 +19,7 @@ public sealed partial class ListDetailsPage
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private void OnViewStateChanged(object sender, ListDetailsViewState e)
 	{

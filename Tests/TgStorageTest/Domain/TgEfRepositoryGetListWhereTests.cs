@@ -7,7 +7,7 @@ namespace TgStorageTest.Domain;
 [TestFixture]
 internal sealed class TgEfRepositoryGetListWhereTests : TgDbContextTestsBase
 {
-	#region Public and private methods
+	#region Methods
 
 	private void GetListWhereAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()

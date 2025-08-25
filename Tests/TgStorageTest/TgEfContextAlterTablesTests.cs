@@ -6,7 +6,7 @@
 //[TestFixture]
 //internal sealed class TgEfContextAlterTablesTests : TgDbContextTestsBase
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	[Test]
 //	public void Alter_apps_no_case_uid()

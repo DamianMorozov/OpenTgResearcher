@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 
 public partial class ShellViewModel : ObservableRecipient
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial bool IsBackEnabled { get; set; }
@@ -57,7 +57,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private void OnNavigated(object sender, NavigationEventArgs e)
     {

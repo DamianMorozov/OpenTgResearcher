@@ -6,7 +6,7 @@
 //[TestFixture]
 //internal class TgStorageHelperDeleteNewTests : TgDbContextTestsBase
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	[Test]
 //	public void Delete_new_records()

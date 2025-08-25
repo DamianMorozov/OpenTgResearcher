@@ -7,7 +7,7 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
-    #region Public and private methods
+    #region Methods
 
     private static TgEnumMenuClientConAdvanced SetMenuClientConAdvanced()
     {

@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.Helpers;
 /// <summary> Desktop utils </summary>
 public static class TgDesktopUtils
 {
-	#region Public and private methods
+	#region Methods
 
 	//public static async Task<bool> CheckFileStorageExistsAsync(string fullPath)
 	//{

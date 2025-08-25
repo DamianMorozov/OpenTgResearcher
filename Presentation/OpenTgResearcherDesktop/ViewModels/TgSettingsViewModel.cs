@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgSettingsViewModel : TgPageViewModelBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial ObservableCollection<TgEnumTheme> AppThemes { get; set; } = [];
@@ -60,7 +60,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {

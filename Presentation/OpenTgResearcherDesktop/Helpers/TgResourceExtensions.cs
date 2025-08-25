@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.Helpers;
 
 public static class TgResourceExtensions
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private static ResourceLoader LocalResourceLoader { get; } = new();
 
@@ -14,7 +14,7 @@ public static class TgResourceExtensions
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
     internal static string GetProcessingChats() => "ProcessingChats".GetLocalizedResource();
     internal static string GetProcessingDialogs() => "ProcessingDialogs".GetLocalizedResource();

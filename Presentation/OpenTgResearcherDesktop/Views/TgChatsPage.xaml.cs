@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class TgChatsPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override TgChatsViewModel ViewModel { get; }
 
@@ -20,7 +20,7 @@ public sealed partial class TgChatsPage
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	//
 

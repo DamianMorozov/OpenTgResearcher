@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgUsersViewModel : TgPageViewModelBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial TgEnumSourceType SourceType { get; set; } = TgEnumSourceType.Default;
@@ -30,7 +30,7 @@ public sealed partial class TgUsersViewModel : TgPageViewModelBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
         {

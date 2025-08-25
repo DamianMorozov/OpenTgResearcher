@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public partial class TgProxiesPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override TgProxiesViewModel ViewModel { get; }
 

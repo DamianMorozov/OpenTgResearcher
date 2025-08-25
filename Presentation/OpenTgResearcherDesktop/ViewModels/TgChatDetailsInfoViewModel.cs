@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
@@ -25,7 +25,7 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
         {

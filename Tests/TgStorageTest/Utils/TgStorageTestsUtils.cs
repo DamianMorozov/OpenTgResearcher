@@ -7,7 +7,7 @@ namespace TgStorageTest.Utils;
 [TestFixture]
 internal sealed class TgStorageTestsUtils : TgDbContextTestsBase
 {
-	#region Public and private methods
+	#region Methods
 
 	[Test]
 	public void Check_version_last_async()

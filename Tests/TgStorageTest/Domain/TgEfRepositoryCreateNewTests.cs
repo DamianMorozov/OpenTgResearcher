@@ -7,7 +7,7 @@
 //[TestFixture]
 //internal sealed class TgEfRepositoryCreateNewTests : TgDbContextTestsBase
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	[Test]
 //    public void Get_table_models()

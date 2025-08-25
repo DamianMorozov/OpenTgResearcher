@@ -7,7 +7,7 @@ namespace OpenTgResearcherDesktop.Services;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgSettingsService : ObservableRecipient, ITgSettingsService
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private const string SettingsKeyAppTheme = nameof(LocalSettingsOptions.AppTheme);
     private const string SettingsKeyAppLanguage = nameof(LocalSettingsOptions.AppLanguage);
@@ -95,11 +95,11 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
-    // TODO: Method isn't correct work
+    // TODO: Fix here
     public void SetAppLanguage()
     {
         try

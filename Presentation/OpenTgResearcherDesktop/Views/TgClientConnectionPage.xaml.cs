@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class TgClientConnectionPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override TgClientConnectionViewModel ViewModel { get; }
 
@@ -20,7 +20,7 @@ public sealed partial class TgClientConnectionPage
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	private void OnApiHashTextChanged(object sender, TextChangedEventArgs e) => ViewModel.OnApiHashTextChanged(sender, e);
 

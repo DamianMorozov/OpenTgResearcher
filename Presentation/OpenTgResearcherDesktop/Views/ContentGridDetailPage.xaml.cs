@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ContentGridDetailPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public ContentGridDetailViewModel ViewModel { get; }
 
@@ -19,7 +19,7 @@ public sealed partial class ContentGridDetailPage
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
 	{

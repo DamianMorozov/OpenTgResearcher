@@ -7,13 +7,13 @@ namespace OpenTgResearcherDesktop.ViewModels;
 public partial class TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgMainViewModel> logger)
 	: TgPageViewModelBase(settingsService, navigationService, logger, nameof(TgMainViewModel))
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
     //
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 	{

@@ -7,7 +7,7 @@ namespace OpenTgResearcherDesktop.Common;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public ITgLicenseService LicenseService => App.BusinessLogicManager.LicenseService;
     [ObservableProperty]
@@ -77,7 +77,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public virtual string ToDebugString() => TgObjectUtils.ToDebugString(this);
 

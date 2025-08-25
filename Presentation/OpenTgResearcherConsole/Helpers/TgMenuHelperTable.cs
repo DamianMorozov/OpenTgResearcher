@@ -6,7 +6,7 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
-    #region Public and private methods
+    #region Methods
 
     private async Task ShowTableCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, Action<Table> fillTableColumns,
         Func<TgDownloadSettingsViewModel, Table, Task> fillTableRowsAsync)

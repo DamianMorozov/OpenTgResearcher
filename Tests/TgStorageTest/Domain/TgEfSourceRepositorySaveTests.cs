@@ -7,7 +7,7 @@ namespace TgStorageTest.Domain;
 [TestFixture]
 internal sealed class TgEfSourceRepositorySaveTests : TgDbContextTestsBase
 {
-	#region Public and private methods
+	#region Methods
 
 	[Test]
 	public void Save_sources_async()

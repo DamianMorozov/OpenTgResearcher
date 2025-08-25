@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.Services;
 public sealed class AppNotificationService : IAppNotificationService
 {
 	//private readonly INavigationService _navigationService;
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	private bool _isClientConnected;
 	public bool IsClientConnected
@@ -35,7 +35,7 @@ public sealed class AppNotificationService : IAppNotificationService
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public void Initialize()
 	{

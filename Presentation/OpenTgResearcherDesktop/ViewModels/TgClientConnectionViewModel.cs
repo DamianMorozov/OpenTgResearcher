@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	private IAppNotificationService AppNotificationService { get; }
 	[ObservableProperty]
@@ -83,7 +83,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(AppLoadCoreAsync);
 

@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgSplashScreenViewModel : TgPageViewModelBase
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     [ObservableProperty]
     public partial string AppVersion { get; set; } = string.Empty;
@@ -39,7 +39,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private async Task ContinueAsync()
     {

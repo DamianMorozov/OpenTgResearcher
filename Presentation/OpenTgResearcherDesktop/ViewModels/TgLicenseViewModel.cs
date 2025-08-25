@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLicenseViewModel : TgPageViewModelBase
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial string AppVersionFull { get; set; } = string.Empty;
@@ -49,7 +49,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 	{

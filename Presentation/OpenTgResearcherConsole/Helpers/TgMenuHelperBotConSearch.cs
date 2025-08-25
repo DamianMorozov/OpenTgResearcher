@@ -8,7 +8,7 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     private List<string> BotMonitoringChatNames { get; set; } = [];
     private List<string> BotMonitoringKeywords { get; set; } = [];
@@ -18,7 +18,7 @@ internal partial class TgMenuHelper
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private TgEnumMenuBotConSearch SetMenuBotConSearch()
     {

@@ -6,7 +6,7 @@
 //[TestFixture]
 //internal sealed class TgEfContextUpdateTablesTests : TgDbContextTestsBase
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	[Test]
 //	public void Upper_uid_at_apps()

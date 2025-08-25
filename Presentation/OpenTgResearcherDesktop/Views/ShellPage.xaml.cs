@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ShellPage
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public ShellViewModel ViewModel { get; }
     private bool _isHandlingToggle = false;
@@ -28,7 +28,7 @@ public sealed partial class ShellPage
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {

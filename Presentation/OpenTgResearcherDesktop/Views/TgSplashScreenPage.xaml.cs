@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.Views;
 [SupportedOSPlatform("windows10.0.17763.0")]
 public sealed partial class TgSplashScreenPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override TgSplashScreenViewModel ViewModel { get; }
 
@@ -22,7 +22,7 @@ public sealed partial class TgSplashScreenPage
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     public async Task LoadSplashScreenAsync(Action backToMainWindow)
     {

@@ -8,14 +8,14 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal partial class TgMenuHelper
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     public TgClientMonitoringViewModel ClientMonitoringVm { get; set; } = new();
     public Client? ClientForSendData { get; set; }
 
     #endregion
 
-    #region Public and private methods
+    #region Methods
 
     private TgEnumMenuClientConSearch SetMenuClientConSearch()
     {

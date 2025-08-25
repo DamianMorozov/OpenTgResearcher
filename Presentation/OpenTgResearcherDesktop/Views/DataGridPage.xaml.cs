@@ -7,7 +7,7 @@ namespace OpenTgResearcherDesktop.Views;
 // For more details, see the documentation at https://docs.microsoft.com/windows/communitytoolkit/controls/datagrid.
 public sealed partial class DataGridPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public DataGridViewModel ViewModel { get; }
 

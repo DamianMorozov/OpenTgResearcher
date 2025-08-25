@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ListDetailsDetailControl
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public SampleOrder? ListDetailsMenuItem
 	{
@@ -23,7 +23,7 @@ public sealed partial class ListDetailsDetailControl
 
 	#endregion
 
-	#region Public and private methods
+	#region Methods
 
 	private static void OnListDetailsMenuItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{

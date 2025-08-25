@@ -6,7 +6,7 @@
 //[TestFixture]
 //internal class TgXpoCheckTablesTests : TgDbContextTestsBase
 //{
-//	#region Public and private methods
+//	#region Methods
 
 //	[Test]
 //	public void Check_table_apps()

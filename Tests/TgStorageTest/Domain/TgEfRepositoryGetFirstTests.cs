@@ -7,7 +7,7 @@ namespace TgStorageTest.Domain;
 [TestFixture]
 internal sealed class TgEfRepositoryGetFirstTests : TgDbContextTestsBase
 {
-	#region Public and private methods
+	#region Methods
 
 	private void GetFirst<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()

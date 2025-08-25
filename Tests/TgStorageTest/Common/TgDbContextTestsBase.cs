@@ -6,7 +6,7 @@ namespace TgStorageTest.Common;
 
 internal abstract class TgDbContextTestsBase : TgDisposable
 {
-    #region Public and private fields, properties, constructor
+    #region Fields, properties, constructor
 
     protected ITgBusinessLogicManager BusinessLogicManager { get; }
     private ILifetimeScope Scope { get; }

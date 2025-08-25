@@ -5,7 +5,7 @@ namespace OpenTgResearcherDesktop.Views;
 
 public partial class TgStoragePage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public override TgStorageViewModel ViewModel { get; }
 

@@ -6,7 +6,7 @@ namespace OpenTgResearcherDesktop.Views;
 // To learn more about WebView2, see https://docs.microsoft.com/microsoft-edge/webview2/.
 public sealed partial class WebViewPage
 {
-	#region Public and private fields, properties, constructor
+	#region Fields, properties, constructor
 
 	public WebViewViewModel ViewModel { get; }
 

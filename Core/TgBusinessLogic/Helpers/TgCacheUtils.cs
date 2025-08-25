@@ -11,8 +11,6 @@ public static class TgCacheUtils
     public static SemaphoreSlim SaveLock { get; } = new(initialCount: 1, maxCount: 1);
     public static string GetCacheKeyChatLastCount(long chatId) => $"{GetCacheKeyChatLastCountPrefix}:{chatId}";
     public static string GetCacheKeyChatLastCountPrefix() => $"chatLastCount";
-    public static string GetCacheKeyChatLastCountV2(long chatId) => $"{GetCacheKeyChatLastCountV2Prefix}:{chatId}";
-    public static string GetCacheKeyChatLastCountV2Prefix() => $"chatLastCountV2";
     public static string GetCacheKeyChatPrefix() => $"chat";
     public static string GetCacheKeyFullChannel(long peerId) => $"{GetCacheKeyFullChannelPrefix}:{peerId}";
     public static string GetCacheKeyFullChannelPrefix() => $"fullChannel";

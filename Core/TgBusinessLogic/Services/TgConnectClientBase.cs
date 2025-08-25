@@ -23,25 +23,25 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public bool IsReady { get; private set; } = default!;
     public bool IsNotReady => !IsReady;
     public bool IsProxyUsage { get; private set; } = default!;
-    public User? Me { get; protected set; } = default!;
+    public TL.User? Me { get; protected set; } = default!;
     public SqliteConnection? BotSqlConnection { get; private set; } = default!;
     protected ITgStorageManager StorageManager { get; set; } = default!;
     protected ITgFloodControlService FloodControlService { get; set; } = default!;
 
-    public ConcurrentDictionary<long, ChatBase> ChatCache { get; private set; } = [];
-    public ConcurrentDictionary<long, ChatBase> DicChats { get; private set; } = [];
-    public ConcurrentDictionary<long, ChatBase> DicChatsUpdated { get; private set; } = [];
-    public ConcurrentDictionary<long, InputChannel> InputChannelCache { get; private set; } = [];
-    public ConcurrentDictionary<long, StoryItem> DicStories { get; private set; } = [];
-    public ConcurrentDictionary<long, User> DicUsers { get; private set; } = [];
-    public ConcurrentDictionary<long, User> DicUsersUpdated { get; private set; } = [];
-    public ConcurrentDictionary<long, User> UserCache { get; private set; } = [];
-    public ConcurrentQueue<Channel> EnumerableChannels { get; private set; } = [];
-    public ConcurrentQueue<Channel> EnumerableGroups { get; private set; } = [];
-    public ConcurrentQueue<ChatBase> EnumerableChats { get; private set; } = [];
-    public ConcurrentQueue<ChatBase> EnumerableSmallGroups { get; private set; } = [];
-    public ConcurrentQueue<DialogBase> EnumerableDialogs { get; private set; } = [];
-    public ConcurrentQueue<User> EnumerableUsers { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.ChatBase> ChatCache { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.ChatBase> DicChats { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.ChatBase> DicChatsUpdated { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.InputChannel> InputChannelCache { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.StoryItem> DicStories { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.User> DicUsers { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.User> DicUsersUpdated { get; private set; } = [];
+    public ConcurrentDictionary<long, TL.User> UserCache { get; private set; } = [];
+    public ConcurrentQueue<TL.Channel> EnumerableChannels { get; private set; } = [];
+    public ConcurrentQueue<TL.Channel> EnumerableGroups { get; private set; } = [];
+    public ConcurrentQueue<TL.ChatBase> EnumerableChats { get; private set; } = [];
+    public ConcurrentQueue<TL.ChatBase> EnumerableSmallGroups { get; private set; } = [];
+    public ConcurrentQueue<TL.DialogBase> EnumerableDialogs { get; private set; } = [];
+    public ConcurrentQueue<TL.User> EnumerableUsers { get; private set; } = [];
 
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
@@ -404,7 +404,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public string GetUserUpdatedName(long id) => DicUsersUpdated.TryGetValue(ReduceChatId(id), out var user) ? user.username : string.Empty;
 
-    public async Task<Channel?> GetChannelAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task<TL.Channel?> GetChannelAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         // Collect chats from Telegram
         if (DicChats.IsEmpty)
@@ -415,7 +415,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             tgDownloadSettings.SourceVm.Dto.Id = ReduceChatId(tgDownloadSettings.SourceVm.Dto.Id);
             foreach (var chat in DicChats)
             {
-                if (chat.Value is Channel channel && Equals(channel.id, tgDownloadSettings.SourceVm.Dto.Id) &&
+                if (chat.Value is TL.Channel channel && Equals(channel.id, tgDownloadSettings.SourceVm.Dto.Id) &&
                     await IsChatBaseAccessAsync(channel))
                     return channel;
             }
@@ -424,7 +424,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             foreach (var chat in DicChats)
             {
-                if (chat.Value is Channel channel && Equals(channel.username, tgDownloadSettings.SourceVm.Dto.UserName) &&
+                if (chat.Value is TL.Channel channel && Equals(channel.username, tgDownloadSettings.SourceVm.Dto.UserName) &&
                     await IsChatBaseAccessAsync(channel))
                     return channel;
             }
@@ -433,22 +433,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (tgDownloadSettings.SourceVm.Dto.Id is 0 or 1)
             tgDownloadSettings.SourceVm.Dto.Id = await GetPeerIdAsync(tgDownloadSettings.SourceVm.Dto.UserName);
 
-        Messages_Chats? messagesChats = null;
+        TL.Messages_Chats? messagesChats = null;
         if (Me is not null)
-            messagesChats = await TelegramCallAsync(() => Client.Channels_GetChannels(new InputChannel(tgDownloadSettings.SourceVm.Dto.Id, Me.access_hash)),
+            messagesChats = await TelegramCallAsync(() => Client.Channels_GetChannels(new TL.InputChannel(tgDownloadSettings.SourceVm.Dto.Id, Me.access_hash)),
                 isThrow: false);
         if (messagesChats is not null)
         {
             foreach (var chat in messagesChats.chats)
             {
-                if (chat.Value is Channel channel && Equals(channel.ID, tgDownloadSettings.SourceVm.Dto.Id))
+                if (chat.Value is TL.Channel channel && Equals(channel.ID, tgDownloadSettings.SourceVm.Dto.Id))
                     return channel;
             }
         }
         return null;
     }
 
-    public async Task<ChatBase?> GetChatBaseAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task<TL.ChatBase?> GetChatBaseAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         // Collect chats from Telegram.
         if (DicChats.IsEmpty)
@@ -475,7 +475,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (tgDownloadSettings.SourceVm.Dto.Id is 0)
             tgDownloadSettings.SourceVm.Dto.Id = await GetPeerIdAsync(tgDownloadSettings.SourceVm.Dto.UserName);
 
-        Messages_Chats? messagesChats = null;
+        TL.Messages_Chats? messagesChats = null;
         if (Me is not null)
             messagesChats = await TelegramCallAsync(Client.Channels_GetGroupsForDiscussion);
 
@@ -511,7 +511,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    public async Task<Bots_BotInfo?> GetBotInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    public async Task<TL.Bots_BotInfo?> GetBotInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         if (tgDownloadSettings.SourceVm.Dto.Id is 0)
             tgDownloadSettings.SourceVm.Dto.Id = await GetPeerIdAsync(tgDownloadSettings.SourceVm.Dto.UserName);
@@ -519,9 +519,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             tgDownloadSettings.SourceVm.Dto.Id = ReduceChatId(tgDownloadSettings.SourceVm.Dto.Id);
         if (!tgDownloadSettings.SourceVm.Dto.IsReady)
             return null;
-        Bots_BotInfo? botInfo = null;
+        TL.Bots_BotInfo? botInfo = null;
         if (Me is not null)
-            botInfo = await Client.Bots_GetBotInfo("en", new InputUser(tgDownloadSettings.SourceVm.Dto.Id, 0));
+            botInfo = await Client.Bots_GetBotInfo("en", new TL.InputUser(tgDownloadSettings.SourceVm.Dto.Id, 0));
         return botInfo;
     }
 
@@ -533,8 +533,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return chat.ToString() ?? string.Empty;
     }
 
-    public string GetPeerUpdatedName(Peer peer) => peer is PeerUser user ? GetUserUpdatedName(user.user_id)
-        : peer is PeerChat or PeerChannel ? GetChatUpdatedName(peer.ID) : $"Peer {peer.ID}";
+    public string GetPeerUpdatedName(TL.Peer peer) => peer is TL.PeerUser user ? GetUserUpdatedName(user.user_id)
+        : peer is TL.PeerChat or TL.PeerChannel ? GetChatUpdatedName(peer.ID) : $"TL.Peer {peer.ID}";
 
     /// <summary> Collect all chats from Telegram </summary>
     public async Task<IEnumerable<long>> CollectAllChatsAsync()
@@ -578,7 +578,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             foreach (var chatId in chatIds)
             {
                 var participants = await GetParticipantsAsync(chatId);
-                Dictionary<long, User> users = [];
+                Dictionary<long, TL.User> users = [];
                 foreach (var user in participants)
                     users.Add(user.id, user);
                 FillEnumerableUsers(users);
@@ -593,15 +593,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (!IsReady || Client is null) return;
 
         var storiesBase = await TelegramCallAsync(() => Client.Stories_GetAllStories());
-        if (storiesBase is Stories_AllStories allStories)
+        if (storiesBase is TL.Stories_AllStories allStories)
         {
             FillEnumerableStories([.. allStories.peer_stories]);
         }
     }
 
-    private void FillEnumerableChats(Dictionary<long, ChatBase> chats)
+    private void FillEnumerableChats(Dictionary<long, TL.ChatBase> chats)
     {
-        DicChats = new ConcurrentDictionary<long, ChatBase>(chats.ToDictionary());
+        DicChats = new ConcurrentDictionary<long, TL.ChatBase>(chats.ToDictionary());
         EnumerableChats.Clear();
         EnumerableChannels.Clear();
         EnumerableSmallGroups.Clear();
@@ -614,44 +614,44 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             EnumerableChats.Enqueue(chat.Value);
             switch (chat.Value)
             {
-                case Chat smallGroup when (smallGroup.flags & Chat.Flags.deactivated) is 0:
+                case TL.Chat smallGroup when (smallGroup.flags & TL.Chat.Flags.deactivated) is 0:
                     EnumerableSmallGroups.Enqueue(chat.Value);
                     break;
-                case Channel { IsGroup: true } group:
+                case TL.Channel { IsGroup: true } group:
                     EnumerableGroups.Enqueue(group);
                     break;
-                case Channel channel:
+                case TL.Channel channel:
                     EnumerableChannels.Enqueue(channel);
                     break;
             }
         }
     }
 
-    private void FillEnumerableDialogs(DialogBase[] dialogs)
+    private void FillEnumerableDialogs(TL.DialogBase[] dialogs)
     {
         EnumerableDialogs.Clear();
         if (dialogs == null || dialogs.Length == 0) return;
 
         // Sort
         var dialogsSorted = dialogs
-            //.OrderBy(d => d.Peer is ChatBase cb ? cb.MainUsername : string.Empty)
-            //.ThenBy(d => d.Peer is ChatBase cb ? cb.ID : 0)
+            //.OrderBy(d => d.TL.Peer is TL.ChatBase cb ? cb.MainUsername : string.Empty)
+            //.ThenBy(d => d.TL.Peer is TL.ChatBase cb ? cb.ID : 0)
             .ToList();
 
         foreach (var dialog in dialogsSorted)
         {
             EnumerableDialogs.Enqueue(dialog);
-            //if (dialog.Peer is ChatBase chatBase)
+            //if (dialog.TL.Peer is TL.ChatBase chatBase)
             //{
             //    switch (chatBase)
             //    {
-            //        case Chat smallGroup when (smallGroup.flags & Chat.Flags.deactivated) is 0:
+            //        case TL.Chat smallGroup when (smallGroup.flags & TL.Chat.Flags.deactivated) is 0:
             //            EnumerableDialogSmallGroups.Enqueue(dialog);
             //            break;
-            //        case Channel { IsGroup: true } group:
+            //        case TL.Channel { IsGroup: true } group:
             //            EnumerableDialogGroups.Enqueue(dialog);
             //            break;
-            //        case Channel channel:
+            //        case TL.Channel channel:
             //            EnumerableDialogChannels.Enqueue(dialog);
             //            break;
             //    }
@@ -659,7 +659,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private void AddEnumerableChats(Dictionary<long, ChatBase> chats)
+    private void AddEnumerableChats(Dictionary<long, TL.ChatBase> chats)
     {
         foreach (var chat in chats)
             if (!DicChats.ContainsKey(chat.Key))
@@ -672,15 +672,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 EnumerableChats.Enqueue(chat.Value);
             switch (chat.Value)
             {
-                case Chat smallGroup when (smallGroup.flags & Chat.Flags.deactivated) is 0:
+                case TL.Chat smallGroup when (smallGroup.flags & TL.Chat.Flags.deactivated) is 0:
                     if (EnumerableSmallGroups.Contains(chat.Value))
                         EnumerableSmallGroups.Enqueue(chat.Value);
                     break;
-                case Channel { IsGroup: true } group:
+                case TL.Channel { IsGroup: true } group:
                     if (EnumerableGroups.Contains(chat.Value))
                         EnumerableGroups.Enqueue(group);
                     break;
-                case Channel channel:
+                case TL.Channel channel:
                     if (EnumerableChannels.Contains(chat.Value))
                         EnumerableChannels.Enqueue(channel);
                     break;
@@ -688,9 +688,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private void FillEnumerableUsers(Dictionary<long, User> users)
+    private void FillEnumerableUsers(Dictionary<long, TL.User> users)
     {
-        DicUsers = new ConcurrentDictionary<long, User>(users.ToDictionary());
+        DicUsers = new ConcurrentDictionary<long, TL.User>(users.ToDictionary());
         EnumerableUsers.Clear();
         // Sort
         var usersSorted = users.OrderBy(i => i.Value.username).ThenBy(i => i.Value.ID);
@@ -700,7 +700,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private void FillEnumerableStories(List<PeerStories> peerStories)
+    private void FillEnumerableStories(List<TL.PeerStories> peerStories)
     {
         DicStories.Clear();
 
@@ -708,11 +708,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         var peerStoriesSorted = peerStories.OrderBy(i => i.stories.Rank).ToArray();
         foreach (var peerStory in peerStoriesSorted)
             foreach (var storyBase in peerStory.stories)
-                if (storyBase is StoryItem story)
+                if (storyBase is TL.StoryItem story)
                     DicStories.AddOrUpdate(peerStory.peer.ID, story, (key, oldValue) => story);
     }
 
-    private async Task OnUpdateShortClientAsync(UpdateShort updateShort)
+    private async Task OnUpdateShortClientAsync(TL.UpdateShort updateShort)
     {
         try
         {
@@ -727,7 +727,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             foreach (var chatBase in updateShort.Chats)
                             {
-                                if (chatBase.Value is Channel { IsActive: true } channel)
+                                if (chatBase.Value is TL.Channel { IsActive: true } channel)
                                 {
                                     await SwitchUpdateTypeAsync(update, channel);
                                 }
@@ -751,7 +751,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task OnUpdateClientUpdatesAsync(UpdatesBase updates)
+    private async Task OnUpdateClientUpdatesAsync(TL.UpdatesBase updates)
     {
         try
         {
@@ -766,7 +766,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             foreach (var chatBase in updates.Chats)
                             {
-                                if (chatBase.Value is Channel { IsActive: true } channel)
+                                if (chatBase.Value is TL.Channel { IsActive: true } channel)
                                 {
                                     await SwitchUpdateTypeAsync(update, channel);
                                 }
@@ -790,8 +790,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    // https://corefork.telegram.org/type/Update
-    private async Task SwitchUpdateTypeAsync(Update update, Channel? channel = null)
+    // https://corefork.telegram.org/type/TL.Update
+    private async Task SwitchUpdateTypeAsync(TL.Update update, TL.Channel? channel = null)
     {
         await UpdateTitleAsync(TgDataFormatUtils.GetTimeFormat(DateTime.Now));
         //var channelLabel = channel is null ? string.Empty :
@@ -817,16 +817,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Delete messages [{string.Join(", ", updateDeleteMessages.messages)}]{channelLabel}");
         //        break;
         //    case UpdateChatUserTyping updateChatUserTyping:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Chat user typing [{updateChatUserTyping}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Chat user typing [{updateChatUserTyping}]{channelLabel}");
         //        break;
         //    case UpdateChatParticipants { participants: ChatParticipants chatParticipants }:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Chat participants [{chatParticipants.ChatId} | {string.Join(", ", chatParticipants.Participants.Length)}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Chat participants [{chatParticipants.ChatId} | {string.Join(", ", chatParticipants.Participants.Length)}]{channelLabel}");
         //        break;
         //    case UpdateUserStatus updateUserStatus:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"User status [{updateUserStatus.user_id} | {updateUserStatus}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.User status [{updateUserStatus.user_id} | {updateUserStatus}]{channelLabel}");
         //        break;
         //    case UpdateUserName updateUserName:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"User name [{updateUserName.user_id} | {string.Join(", ", updateUserName.usernames.Select(item => item.username))}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.User name [{updateUserName.user_id} | {string.Join(", ", updateUserName.usernames.Select(item => item.username))}]{channelLabel}");
         //        break;
         //    case UpdateNewEncryptedMessage updateNewEncryptedMessage:
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"New encrypted message [{updateNewEncryptedMessage}]{channelLabel}");
@@ -841,10 +841,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Encrypted message read [{updateEncryptedMessagesRead}]{channelLabel}");
         //        break;
         //    case UpdateChatParticipantAdd updateChatParticipantAdd:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Chat participant add [{updateChatParticipantAdd}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Chat participant add [{updateChatParticipantAdd}]{channelLabel}");
         //        break;
         //    case UpdateChatParticipantDelete updateChatParticipantDelete:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Chat participant delete [{updateChatParticipantDelete}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Chat participant delete [{updateChatParticipantDelete}]{channelLabel}");
         //        break;
         //    case UpdateDcOptions updateDcOptions:
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Dc options [{string.Join(", ", updateDcOptions.dc_options.Select(item => item.id))}]{channelLabel}");
@@ -859,7 +859,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Privacy [{updatePrivacy}]{channelLabel}");
         //        break;
         //    case UpdateUserPhone updateUserPhone:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"User phone [{updateUserPhone}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.User phone [{updateUserPhone}]{channelLabel}");
         //        break;
         //    case UpdateReadHistoryInbox updateReadHistoryInbox:
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Read history inbox [{updateReadHistoryInbox}]{channelLabel}");
@@ -880,31 +880,31 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Edit message [{updateEditMessage}]{channelLabel}");
         //        break;
         //    case UpdateUserTyping updateUserTyping:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"User typing [{updateUserTyping}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.User typing [{updateUserTyping}]{channelLabel}");
         //        break;
         //    case UpdateChannelMessageViews updateChannelMessageViews:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Channel message views [{updateChannelMessageViews}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Channel message views [{updateChannelMessageViews}]{channelLabel}");
         //        break;
         //    case UpdateChannel updateChannel:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Channel [{updateChannel}]");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Channel [{updateChannel}]");
         //        break;
         //    case UpdateChannelReadMessagesContents updateChannelReadMessages:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Channel read messages [{string.Join(", ", updateChannelReadMessages.messages)}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Channel read messages [{string.Join(", ", updateChannelReadMessages.messages)}]{channelLabel}");
         //        break;
         //    case UpdateChannelUserTyping updateChannelUserTyping:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Channel user typing [{updateChannelUserTyping}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Channel user typing [{updateChannelUserTyping}]{channelLabel}");
         //        break;
         //    case UpdateMessagePoll updateMessagePoll:
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Message poll [{updateMessagePoll}]{channelLabel}");
         //        break;
         //    case UpdateChannelTooLong updateChannelTooLong:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Channel too long [{updateChannelTooLong}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Channel too long [{updateChannelTooLong}]{channelLabel}");
         //        break;
         //    case UpdateReadChannelInbox updateReadChannelInbox:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Channel inbox [{updateReadChannelInbox}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Channel inbox [{updateReadChannelInbox}]{channelLabel}");
         //        break;
         //    case UpdateChatParticipantAdmin updateChatParticipantAdmin:
-        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"Chat participant admin[{updateChatParticipantAdmin}]{channelLabel}");
+        //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"TL.Chat participant admin[{updateChatParticipantAdmin}]{channelLabel}");
         //        break;
         //    case UpdateNewStickerSet updateNewStickerSet:
         //        await UpdateChatViewModelAsync(sourceId, 0, 0, $"New sticker set [{updateNewStickerSet}]{channelLabel}");
@@ -933,7 +933,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //}
     }
 
-    private async Task OnClientOtherAuthSentCodeAsync(Auth_SentCodeBase authSentCode)
+    private async Task OnClientOtherAuthSentCodeAsync(TL.Auth_SentCodeBase authSentCode)
     {
 #if DEBUG
         try
@@ -949,12 +949,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await Task.CompletedTask;
     }
 
-    public static IEnumerable<ChatBase> SortListChats(IList<ChatBase> chats)
+    public static IEnumerable<TL.ChatBase> SortListChats(IList<TL.ChatBase> chats)
     {
         if (!chats.Any())
             return chats;
-        List<ChatBase> result = [];
-        List<ChatBase> chatsOrders = [.. chats.OrderBy(x => x.Title)];
+        List<TL.ChatBase> result = [];
+        List<TL.ChatBase> chatsOrders = [.. chats.OrderBy(x => x.Title)];
         foreach (var chatOrder in chatsOrders)
         {
             var chatNew = chats.First(x => Equals(x.Title, chatOrder.Title));
@@ -964,12 +964,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return result;
     }
 
-    public static IEnumerable<Channel> SortListChannels(IList<Channel> channels)
+    public static IEnumerable<TL.Channel> SortListChannels(IList<TL.Channel> channels)
     {
         if (!channels.Any())
             return channels;
-        List<Channel> result = [];
-        List<Channel> channelsOrders = [.. channels.OrderBy(x => x.username)];
+        List<TL.Channel> result = [];
+        List<TL.Channel> channelsOrders = [.. channels.OrderBy(x => x.username)];
         foreach (var chatOrder in channelsOrders)
         {
             var chatNew = channels.First(x => Equals(x.Title, chatOrder.Title));
@@ -979,7 +979,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return result;
     }
 
-    public async Task PrintChatsInfoAsync(Dictionary<long, ChatBase> dicChats, string name, bool isSave)
+    public async Task PrintChatsInfoAsync(Dictionary<long, TL.ChatBase> dicChats, string name, bool isSave)
     {
         TgLog.MarkupInfo($"Found {name}: {dicChats.Count}");
         TgLog.MarkupInfo(TgLocale.TgGetDialogsInfo);
@@ -989,7 +989,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 switch (dicChat.Value)
                 {
-                    case Channel channel:
+                    case TL.Channel channel:
                         await PrintChatsInfoChannelAsync(channel, false, false, isSave);
                         break;
                     default:
@@ -1000,9 +1000,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task<Messages_ChatFull?> PrintChatsInfoChannelAsync(Channel channel, bool isFull, bool isSilent, bool isSave)
+    private async Task<TL.Messages_ChatFull?> PrintChatsInfoChannelAsync(TL.Channel channel, bool isFull, bool isSilent, bool isSave)
     {
-        Messages_ChatFull? fullChannel = null;
+        TL.Messages_ChatFull? fullChannel = null;
         try
         {
             fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id), 
@@ -1016,7 +1016,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 if (fullChannel is not null)
                 {
-                    if (fullChannel.full_chat is ChannelFull channelFull)
+                    if (fullChannel.full_chat is TL.ChannelFull channelFull)
                         TgLog.MarkupLine(GetChannelFullInfo(channelFull, channel, isFull));
                     else
                         TgLog.MarkupLine(GetChatFullBaseInfo(fullChannel.full_chat, channel, isFull));
@@ -1031,9 +1031,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return fullChannel;
     }
 
-    private async Task<Messages_ChatFull?> PrintChatsInfoChatBaseAsync(ChatBase chatBase, bool isFull, bool isSilent)
+    private async Task<TL.Messages_ChatFull?> PrintChatsInfoChatBaseAsync(TL.ChatBase chatBase, bool isFull, bool isSilent)
     {
-        Messages_ChatFull? chatFull = null;
+        TL.Messages_ChatFull? chatFull = null;
         if (Client is null)
             return chatFull;
         try
@@ -1044,7 +1044,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (chatFull is null) return chatFull;
             if (!isSilent)
             {
-                if (chatFull.full_chat is ChannelFull channelFull)
+                if (chatFull.full_chat is TL.ChannelFull channelFull)
                     TgLog.MarkupLine(GetChannelFullInfo(channelFull, chatBase, isFull));
                 else
                     TgLog.MarkupLine(GetChatFullBaseInfo(chatFull.full_chat, chatBase, isFull));
@@ -1058,9 +1058,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return chatFull;
     }
 
-    public static string GetChatInfo(ChatBase chatBase) => $"{chatBase.ID} | {chatBase.Title}";
+    public static string GetChatInfo(TL.ChatBase chatBase) => $"{chatBase.ID} | {chatBase.Title}";
 
-    public static string GetChannelFullInfo(ChannelFull channelFull, ChatBase chatBase, bool isFull)
+    public static string GetChannelFullInfo(TL.ChannelFull channelFull, TL.ChatBase chatBase, bool isFull)
     {
         var result = GetChatInfo(chatBase);
         if (isFull)
@@ -1068,7 +1068,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return result;
     }
 
-    public static string GetChatFullBaseInfo(ChatFullBase chatFull, ChatBase chatBase, bool isFull)
+    public static string GetChatFullBaseInfo(TL.ChatFullBase chatFull, TL.ChatBase chatBase, bool isFull)
     {
         var result = GetChatInfo(chatBase);
         if (isFull)
@@ -1077,7 +1077,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Check access rights for chat </summary>
-    public async Task<bool> IsChatBaseAccessAsync(ChatBase chatBase)
+    public async Task<bool> IsChatBaseAccessAsync(TL.ChatBase chatBase)
     {
         if (chatBase is null || chatBase.ID is 0)
             return false;
@@ -1089,21 +1089,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             var result = false;
             await TryCatchAsync(async () =>
             {
-                if (chatBase is Chat chatBaseObj)
+                if (chatBase is TL.Chat chatBaseObj)
                 {
                     var full = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(chatBaseObj.ID),
                         factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Messages_GetFullChat(chatBaseObj.ID) ?? default!)), 
                         TgCacheUtils.CacheOptionsFullChat);
                     if (full is TL.Messages_ChatFull chatFull && chatFull.full_chat is TL.ChatFull chatFullObj)
                     {
-                        if (chatFullObj.flags.HasFlag(User.Flags.has_access_hash))
+                        if (chatFullObj.flags.HasFlag(TL.User.Flags.has_access_hash))
                         {
                             result = true;
                             return;
                         }
                     }
                 }
-                if (chatBase is Channel channelBase)
+                if (chatBase is TL.Channel channelBase)
                 {
                     if (channelBase.flags.HasFlag(TL.Channel.Flags.has_access_hash))
                     {
@@ -1135,11 +1135,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (tgDownloadSettings.Chat.Base is not { } chatBase) return 0;
         if (chatBase.ID is 0) return 0;
 
-        if (chatBase is Channel channel)
+        if (chatBase is TL.Channel channel)
         {
-            var fullChannel = await GetFullChannelSafeAsync(channel);
+            var fullChannel = await TryGetFullChannelSafeAsync(channel);
             if (fullChannel is null) return 0;
-            if (fullChannel.full_chat is not ChannelFull channelFull) return 0;
+            if (fullChannel.full_chat is not TL.ChannelFull channelFull) return 0;
             var isAccessToMessages = await TelegramCallAsync(() => Client.Channels_ReadMessageContents(channel));
             if (isAccessToMessages)
             {
@@ -1166,48 +1166,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return 0;
     }
 
-    private async Task<TL.Messages_ChatFull?> GetFullChannelSafeAsync(Channel channel)
-    {
-        var key = TgCacheUtils.GetCacheKeyFullChannel(channel.id);
-
-        try
-        {
-            // Try to retrieve from cache in a strictly typed manner
-            var maybe = await Cache.TryGetAsync<TL.Messages_ChatFull?>(key, TgCacheUtils.CacheOptionsFullChat);
-            if (maybe.HasValue)
-                return maybe.Value;
-
-            // Cache miss → retrieve from server and save
-            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
-            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
-            return fresh;
-        }
-        catch (InvalidCastException)
-        {
-            // There is another type in the cache → clear and reload
-            await Cache.RemoveAsync(key);
-            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
-            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
-            return fresh;
-        }
-    }
-
     public async Task<int> GetChannelMessageIdLastAsync(ITgDownloadViewModel? tgDownloadSettings) =>
         await GetChannelMessageIdAsync(tgDownloadSettings, TgEnumPosition.Last);
 
-    private static int GetChannelMessageIdLastCore(ChannelFull channelFull) =>
+    private static int GetChannelMessageIdLastCore(TL.ChannelFull channelFull) =>
         channelFull.read_inbox_max_id;
 
-    private static int GetChannelMessageIdLastCore(ChatFullBase chatFullBase) =>
-        chatFullBase is ChannelFull channelFull ? channelFull.read_inbox_max_id : 0;
+    private static int GetChannelMessageIdLastCore(TL.ChatFullBase chatFullBase) =>
+        chatFullBase is TL.ChannelFull channelFull ? channelFull.read_inbox_max_id : 0;
 
-    private async Task<int> GetChannelMessageIdLastCoreAsync(Channel channel)
+    private async Task<int> GetChannelMessageIdLastCoreAsync(TL.Channel channel)
     {
         var fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id),
             factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
             TgCacheUtils.CacheOptionsFullChat);
         if (fullChannel is null) return 0;
-        if (fullChannel.full_chat is not ChannelFull channelFull) return 0;
+        if (fullChannel.full_chat is not TL.ChannelFull channelFull) return 0;
         return channelFull.read_inbox_max_id;
     }
 
@@ -1228,14 +1202,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public async Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings) =>
         await GetChannelMessageIdAsync(tgDownloadSettings, TgEnumPosition.First);
 
-    private async Task<int> SetChannelMessageIdFirstCoreAsync(ITgDownloadViewModel tgDownloadSettings, ChatBase chatBase,
-        ChatFullBase chatFullBase)
+    private async Task<int> SetChannelMessageIdFirstCoreAsync(ITgDownloadViewModel tgDownloadSettings, TL.ChatBase chatBase,
+        TL.ChatFullBase chatFullBase)
     {
         if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return 0;
-        var max = chatFullBase is ChannelFull channelFull ? channelFull.read_inbox_max_id : 0;
+        var max = chatFullBase is TL.ChannelFull channelFull ? channelFull.read_inbox_max_id : 0;
         var result = max;
         var partition = 200;
-        var inputMessages = new InputMessage[partition];
+        var inputMessages = new TL.InputMessage[partition];
         var offset = 0;
         var isSkipChannelCreate = false;
         // While
@@ -1249,7 +1223,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             var start = offset + 1;
             var end = offset + partition;
             var messages = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessages(chatBase.ID, start, end),
-                factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, ct) => await TelegramCallAsync(() => Client.Channels_GetMessages(chatBase as Channel, inputMessages))),
+                factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, ct) => await TelegramCallAsync(() => Client.Channels_GetMessages(chatBase as TL.Channel, inputMessages))),
                 TgCacheUtils.CacheOptionsChannelMessages);
 
             if (messages is not null)
@@ -1299,7 +1273,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (Bot is not null)
         {
             var botChatFullInfo = await GetChatDetailsForBot(sourceDto.Id, sourceDto.UserName);
-            if (botChatFullInfo?.TLInfo is Messages_ChatFull { full_chat: ChannelFull channelFull })
+            if (botChatFullInfo?.TLInfo is TL.Messages_ChatFull { full_chat: TL.ChannelFull channelFull })
             {
                 sourceEntity.IsUserAccess = true;
                 sourceEntity.IsSubscribe = true;
@@ -1324,7 +1298,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 // FullChat cache
                 var chatFull = await PrintChatsInfoChatBaseAsync(chatBase, isFull: true, isSilent);
                 sourceEntity.Title = chatBase.Title;
-                if (chatFull?.full_chat is ChannelFull chatBaseFull)
+                if (chatFull?.full_chat is TL.ChannelFull chatBaseFull)
                 {
                     sourceEntity.Id = ReduceChatId(chatBaseFull.ID);
                     sourceEntity.About = chatBaseFull.About;
@@ -1383,11 +1357,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             TgLog.MarkupWarning($"Error in GetChatDetailsFromBot: {ex.Message}");
         }
 
-        TgLog.MarkupWarning($"Chat not found by id ({dtoId}) or username ({dtoUserName})");
+        TgLog.MarkupWarning($"TL.Chat not found by id ({dtoId}) or username ({dtoUserName})");
         return null;
     }
 
-    /// <summary> Update source from Telegram </summary>
+    /// <summary> TL.Update source from Telegram </summary>
     public async Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings)
     {
         if (sourceVm is not TgEfSourceViewModel sourceVm2) return;
@@ -1397,9 +1371,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Build chat entity from Telegram chat </summary>
-    private async Task<TgEfSourceEntity> BuildChatEntityAsync(ChatBase chat, string about, int messagesCount, bool isUserAccess)
+    private async Task<TgEfSourceEntity> BuildChatEntityAsync(TL.ChatBase chat, string about, int messagesCount, bool isUserAccess)
     {
-        var accessHash = chat is Channel ch ? ch.access_hash : 0;
+        var accessHash = chat is TL.Channel ch ? ch.access_hash : 0;
 
         var storageResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = chat.ID });
         var entity = storageResult.IsExists && storageResult.Item is not null
@@ -1437,7 +1411,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             var existingUser = existingUsers.FirstOrDefault(u => u.Id == userDto.Id);
             if (existingUser is not null)
             {
-                // Update
+                // TL.Update
                 UpdateUserEntityFromDto(existingUser, userDto);
             }
             else
@@ -1451,7 +1425,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await StorageManager.EfContext.SaveChangesAsync();
     }
 
-    /// <summary> Update user entity from DTO </summary>
+    /// <summary> TL.Update user entity from DTO </summary>
     private static void UpdateUserEntityFromDto(TgEfUserEntity entity, TgEfUserDto dto)
     {
         entity.DtChanged = DateTime.UtcNow;
@@ -1494,66 +1468,66 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         IsContact = dto.IsContact
     };
 
-    private static void TgEfStoryEntityByMessageType(TgEfStoryEntity storyNew, MessageEntity message)
+    private static void TgEfStoryEntityByMessageType(TgEfStoryEntity storyNew, TL.MessageEntity message)
     {
         if (message is null)
             return;
         switch (message.GetType())
         {
-            case var cls when cls == typeof(MessageEntityUnknown):
+            case var cls when cls == typeof(TL.MessageEntityUnknown):
                 break;
-            case var cls when cls == typeof(MessageEntityMention):
+            case var cls when cls == typeof(TL.MessageEntityMention):
                 break;
-            case var cls when cls == typeof(MessageEntityHashtag):
+            case var cls when cls == typeof(TL.MessageEntityHashtag):
                 break;
-            case var cls when cls == typeof(MessageEntityBotCommand):
+            case var cls when cls == typeof(TL.MessageEntityBotCommand):
                 break;
-            case var cls when cls == typeof(MessageEntityUrl):
+            case var cls when cls == typeof(TL.MessageEntityUrl):
                 break;
-            case var cls when cls == typeof(MessageEntityEmail):
+            case var cls when cls == typeof(TL.MessageEntityEmail):
                 break;
-            case var cls when cls == typeof(MessageEntityBold):
+            case var cls when cls == typeof(TL.MessageEntityBold):
                 break;
-            case var cls when cls == typeof(MessageEntityItalic):
+            case var cls when cls == typeof(TL.MessageEntityItalic):
                 break;
-            case var cls when cls == typeof(MessageEntityCode):
+            case var cls when cls == typeof(TL.MessageEntityCode):
                 break;
-            case var cls when cls == typeof(MessageEntityPre):
+            case var cls when cls == typeof(TL.MessageEntityPre):
                 break;
-            case var cls when cls == typeof(MessageEntityTextUrl):
+            case var cls when cls == typeof(TL.MessageEntityTextUrl):
                 break;
-            case var cls when cls == typeof(MessageEntityMentionName):
+            case var cls when cls == typeof(TL.MessageEntityMentionName):
                 break;
-            case var cls when cls == typeof(InputMessageEntityMentionName):
+            case var cls when cls == typeof(TL.InputMessageEntityMentionName):
                 break;
-            case var cls when cls == typeof(MessageEntityPhone):
+            case var cls when cls == typeof(TL.MessageEntityPhone):
                 break;
-            case var cls when cls == typeof(MessageEntityCashtag):
+            case var cls when cls == typeof(TL.MessageEntityCashtag):
                 break;
-            case var cls when cls == typeof(MessageEntityUnderline):
+            case var cls when cls == typeof(TL.MessageEntityUnderline):
                 break;
-            case var cls when cls == typeof(MessageEntityStrike):
+            case var cls when cls == typeof(TL.MessageEntityStrike):
                 break;
-            case var cls when cls == typeof(MessageEntityBankCard):
+            case var cls when cls == typeof(TL.MessageEntityBankCard):
                 break;
-            case var cls when cls == typeof(MessageEntitySpoiler):
+            case var cls when cls == typeof(TL.MessageEntitySpoiler):
                 break;
-            case var cls when cls == typeof(MessageEntityCustomEmoji):
+            case var cls when cls == typeof(TL.MessageEntityCustomEmoji):
                 break;
-            case var cls when cls == typeof(MessageEntityBlockquote):
+            case var cls when cls == typeof(TL.MessageEntityBlockquote):
                 break;
         }
     }
 
-    private static void TgEfStoryEntityByMediaType(TgEfStoryEntity storyNew, MessageMedia media)
+    private static void TgEfStoryEntityByMediaType(TgEfStoryEntity storyNew, TL.MessageMedia media)
     {
         if (media is null)
             return;
         switch (media.GetType())
         {
-            case var cls when cls == typeof(MessageMediaContact):
+            case var cls when cls == typeof(TL.MessageMediaContact):
                 break;
-            case var cls when cls == typeof(MessageMediaDice):
+            case var cls when cls == typeof(TL.MessageMediaDice):
                 break;
             case var cls when cls == typeof(MessageMediaDocument):
                 break;
@@ -1713,7 +1687,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         var fullChannel = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChannel(channel.id),
                             factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, ct) => await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!)), 
                             TgCacheUtils.CacheOptionsFullChat);
-                        if (fullChannel?.full_chat is ChannelFull channelFull)
+                        if (fullChannel?.full_chat is TL.ChannelFull channelFull)
                         {
                             var entity = await BuildChatEntityAsync(channel, channelFull.about, messagesCount: 0, isUserAccess: true);
                             _chatBuffer.Add(entity);
@@ -1741,7 +1715,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task<int> SearchGroupsAsync(ITgDownloadViewModel tgDownloadSettings, IEnumerable<ChatBase> groups, int counter, int countAll)
+    private async Task<int> SearchGroupsAsync(ITgDownloadViewModel tgDownloadSettings, IEnumerable<TL.ChatBase> groups, int counter, int countAll)
     {
         foreach (var group in groups)
         {
@@ -1756,7 +1730,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 // last-count from FusionCache
                 //var messagesCount = await GetCachedChatLastCountAsync(group.ID, () => GetChannelMessageIdLastAsync(tgDownloadSettings));
                 TgEfSourceEntity entity;
-                if (group is Channel ch)
+                if (group is TL.Channel ch)
                     entity = await BuildChatEntityAsync(ch, string.Empty, messagesCount: 0, isUserAccess: true);
                 else
                     entity = await BuildChatEntityAsync(group, string.Empty, messagesCount: 0, isUserAccess: true);
@@ -1820,7 +1794,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     //    {
     //        switch (sourceType)
     //        {
-    //            case TgEnumSourceType.Chat:
+    //            case TgEnumSourceType.TL.Chat:
     //                await UpdateChatViewModelAsync(0, 0, 0, TgLocale.CollectChats);
     //                switch (IsReady)
     //                {
@@ -1864,7 +1838,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     //                    var fullChannel = await GetCachedFullChannelAsync(channel);
     //                    if (fullChannel is not null)
     //                    {
-    //                        if (fullChannel.full_chat is ChannelFull channelFull)
+    //                        if (fullChannel.full_chat is TL.ChannelFull channelFull)
     //                        {
     //                            source.About = channelFull.about;
     //                            source.UserName = channel.username;
@@ -1923,11 +1897,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             tgDownloadSettings2.SourceVm.Dto.IsDownload = true;
             TgForumTopicSettings forumTopicSettings = new();
-            Channel? channel = null;
+            TL.Channel? channel = null;
             WTelegram.Types.ChatFullInfo? botChatFullInfo = null;
 
-            if (tgDownloadSettings.Chat.Base is Channel)
-                channel = tgDownloadSettings.Chat.Base as Channel;
+            if (tgDownloadSettings.Chat.Base is TL.Channel)
+                channel = tgDownloadSettings.Chat.Base as TL.Channel;
 
             var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
             if (appDto.UseClient && channel is not null)
@@ -2220,14 +2194,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                 discussionChat = discussionMessage.chats.Values.OfType<TL.Channel>().FirstOrDefault(c => c.IsGroup);
 
                             // Fallback: if group is not found, we will try to take linked_chat_id from the source channel
-                            if (discussionChat is null && messageBase.Peer is PeerChannel srcPc)
+                            if (discussionChat is null && messageBase.Peer is TL.PeerChannel srcPc)
                                 discussionChat = discussionMessage.chats?.Values.OfType<TL.Channel>().FirstOrDefault(c => c.ID != srcPc.ID && c.IsGroup);
 
                             // As a last resort — request by access_hash
                             if (discussionChat is null && inputPeer is InputPeerChannel ipc)
                             {
                                 var channels = await TelegramCallAsync(() =>
-                                    Client.Channels_GetChannels(new InputChannel(ipc.ID, ipc.access_hash)), messageSettings.IsThrow);
+                                    Client.Channels_GetChannels(new TL.InputChannel(ipc.ID, ipc.access_hash)), messageSettings.IsThrow);
                                 discussionChat = channels?.chats?.Values.OfType<TL.Channel>().FirstOrDefault(c => c.IsGroup);
                             }
                             if (discussionChat is null) return;
@@ -2239,11 +2213,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             // Building peer supergroups
                             if (!chatCache.TryGetChat(discussionChat.ID, out var discussionHash)) return;
 
-                            var discussionPeer = GetInputPeer(new PeerChannel { channel_id = discussionChat.ID }, discussionHash);
+                            var discussionPeer = GetInputPeer(new TL.PeerChannel { channel_id = discussionChat.ID }, discussionHash);
                             if (discussionPeer is null) return;
 
                             // Find the `thread head` in the messages (specifically, the message from the supergroup).
-                            var headMessage = discussionMessage.messages.OfType<Message>().FirstOrDefault(m => m.Peer is PeerChannel pc && pc.ID == discussionChat.ID);
+                            var headMessage = discussionMessage.messages.OfType<Message>().FirstOrDefault(m => m.Peer is TL.PeerChannel pc && pc.ID == discussionChat.ID);
                             if (headMessage is null) return;
 
                             // Save the `thread header` itself as plain text (optional)
@@ -2300,18 +2274,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //    // Check force stop parsing
         //    if (CheckShouldStop) { stop = true; break; }
         //    // Add chat from Storage to Cache
-        //    await AddChatFromStorageToCacheAsync(chatCache, rootMessage.Peer.ID);
+        //    await AddChatFromStorageToCacheAsync(chatCache, rootMessage.TL.Peer.ID);
         //    // Check the exists chat directory
         //    await CheckExistsChatWithDirectoryAsync(chatCache, messageSettings, accessHash, rootMessage);
         //    // Get chat from Cache
-        //    if (chatCache.TryGetChat(rootMessage.Peer.ID, out var discussionHash))
+        //    if (chatCache.TryGetChat(rootMessage.TL.Peer.ID, out var discussionHash))
         //    {
-        //        var discussionPeer = GetInputPeer(rootMessage.Peer, discussionHash);
+        //        var discussionPeer = GetInputPeer(rootMessage.TL.Peer, discussionHash);
         //        if (discussionPeer == null) return;
 
         //        TL.Channel? discussionChannel = null;
         //        if (discussionMessage.chats is not null && 
-        //            discussionMessage.chats.TryGetValue(rootMessage.Peer.ID, out var chatBase) && chatBase is TL.Channel ch)
+        //            discussionMessage.chats.TryGetValue(rootMessage.TL.Peer.ID, out var chatBase) && chatBase is TL.Channel ch)
         //        {
         //            discussionChannel = ch;
         //        }
@@ -2321,8 +2295,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //            if (discussionPeer is InputPeerChannel ipc)
         //            {
         //                var channels = await TelegramCallAsync(() => Client.Channels_GetChannels(
-        //                    new InputChannel(ipc.ID, ipc.access_hash)), messageSettings.IsThrow);
-        //                discussionChannel = channels?.chats?.Values.OfType<TL.Channel>().FirstOrDefault(c => c.ID == rootMessage.Peer.ID);
+        //                    new TL.InputChannel(ipc.ID, ipc.access_hash)), messageSettings.IsThrow);
+        //                discussionChannel = channels?.chats?.Values.OfType<TL.Channel>().FirstOrDefault(c => c.ID == rootMessage.TL.Peer.ID);
         //            }
         //        }
         //        if (discussionChannel is not null)
@@ -2359,7 +2333,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         //                            var replySettings = messageSettings.Clone();
         //                            replySettings.ParentChatId = replySettings.CurrentChatId;
         //                            replySettings.ParentMessageId = replySettings.CurrentMessageId;
-        //                            replySettings.CurrentChatId = replyMessage.Peer.ID;
+        //                            replySettings.CurrentChatId = replyMessage.TL.Peer.ID;
         //                            replySettings.CurrentMessageId = replyMessage.ID;
         //                            // Parse Telegram chat message core logic
         //                            //await ParseChatMessageCoreAsync(tgDownloadSettings, rpl, chatCache, forumTopicSettings, message, replySettings);
@@ -2432,7 +2406,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         finally
         {
             var messagesCount = await TryGetCacheChatLastCountSafeAsync(chatId);
-            // Update download progress for the message
+            // TL.Update download progress for the message
             await UpdateChatViewModelAsync(chatId, messageId, messagesCount, $"Reading the message {messageId} from {messagesCount}");
         }
     }
@@ -2450,12 +2424,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Check if the chat is already in the enumerable collections and add it if not </summary>
-    private void CheckEnumerableChatCache(ChatBase chatBase)
+    private void CheckEnumerableChatCache(TL.ChatBase chatBase)
     {
         if (!EnumerableChats.Contains(chatBase))
             EnumerableChats.Enqueue(chatBase);
 
-        if (chatBase is Channel channel)
+        if (chatBase is TL.Channel channel)
         {
             if (!channel.IsGroup && !EnumerableChannels.Contains(chatBase))
                 EnumerableChannels.Enqueue(channel);
@@ -2558,15 +2532,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return chatEntity.Directory ?? string.Empty;
     }
 
-    /// <summary> Get input Peer </summary>
-    private static InputPeer? GetInputPeer(Peer peer, long accessHash)
+    /// <summary> Get input TL.Peer </summary>
+    private static InputPeer? GetInputPeer(TL.Peer peer, long accessHash)
     {
         InputPeer? inputPeer = null;
-        if (peer is PeerUser peerUser)
+        if (peer is TL.PeerUser peerUser)
             inputPeer = new InputPeerUser(peerUser.ID, accessHash);
-        else if (peer is PeerChat peerChat)
+        else if (peer is TL.PeerChat peerChat)
             inputPeer = new InputPeerChat(peerChat.ID);
-        else if (peer is PeerChannel peerChannel)
+        else if (peer is TL.PeerChannel peerChannel)
             inputPeer = new InputPeerChannel(peerChannel.ID, accessHash);
         return inputPeer;
     }
@@ -2580,12 +2554,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         cloneSettings.ParentMessageId = commentBase.ID;
         await ParseChatMessageAsync(tgDownloadSettings, commentBase, chatCache, cloneSettings, forumTopicSettings);
         var messagesCount = await GetChannelMessageIdLastCoreAsync(cloneSettings.CurrentChatId);
-        // Update download progress for the comment
+        // TL.Update download progress for the comment
         await UpdateChatViewModelAsync(cloneSettings.CurrentChatId, cloneSettings.CurrentMessageId, messagesCount,
             $"Reading the comment {cloneSettings.CurrentMessageId} from {messagesCount}");
     }
 
-    private TgMediaInfoModel GetMediaInfo(MessageMedia messageMedia, TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase,
+    private TgMediaInfoModel GetMediaInfo(TL.MessageMedia messageMedia, TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase,
         TgChatCache chatCache, TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings)
     {
         var extensionName = string.Empty;
@@ -2737,7 +2711,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Parse the message and download media files if they exist </summary>
-    private async Task DownloadMediaFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, MessageMedia messageMedia,
+    private async Task DownloadMediaFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TL.MessageMedia messageMedia,
         TgChatCache chatCache, TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings)
     {
         var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, chatCache, messageSettings, forumTopicSettings);
@@ -3272,7 +3246,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             if (!string.IsNullOrEmpty(chatBase.MainUsername))
                 return chatBase.MainUsername;
-            if (chatBase is Channel channel && !string.IsNullOrEmpty(channel.username))
+            if (chatBase is TL.Channel channel && !string.IsNullOrEmpty(channel.username))
                 return channel.username;
         }
         return string.Empty;
@@ -3287,9 +3261,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         TgStringUtils.FormatChatLink(GetChatUserName(chatId), chatId);
 
     /// <inheritdoc />
-    public async Task<(string, string)> GetUserLink(long chatId, int messageId, Peer? peer)
+    public async Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer)
     {
-        if (peer is not PeerUser peerUser) return GetChatUserLink(chatId);
+        if (peer is not TL.PeerUser peerUser) return GetChatUserLink(chatId);
         if (chatId == peerUser.user_id) return GetChatUserLink(chatId);
 
         try
@@ -3315,7 +3289,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Get input channel </summary>
-    private InputChannel? GetInputChannelFromUserChats(long chatId)
+    private TL.InputChannel? GetInputChannelFromUserChats(long chatId)
     {
         try
         {
@@ -3329,7 +3303,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 var chatBase = DicChats.FirstOrDefault(x => x.Key == chatId).Value;
                 if (chatBase is TL.Channel channel)
                     channelAccessHash = channel.access_hash;
-                var result = new InputChannel(chatId, channelAccessHash);
+                var result = new TL.InputChannel(chatId, channelAccessHash);
 
                 // Optimization: update cache
                 InputChannelCache.TryAdd(chatId, result);
@@ -3345,7 +3319,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Get chat </summary>
-    private ChatBase? GetChatBaseFromUserChats(long chatId)
+    private TL.ChatBase? GetChatBaseFromUserChats(long chatId)
     {
         try
         {
@@ -3370,7 +3344,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return null;
     }
 
-    private InputChannel? GetInputChannelFromChatBase(ChatBase? chatBase)
+    private TL.InputChannel? GetInputChannelFromChatBase(TL.ChatBase? chatBase)
     {
         if (chatBase is null) return null;
 
@@ -3381,7 +3355,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         long channelAccessHash = 0;
         if (chatBase is TL.Channel channel)
             channelAccessHash = channel.access_hash;
-        var result = new InputChannel(chatBase.ID, channelAccessHash);
+        var result = new TL.InputChannel(chatBase.ID, channelAccessHash);
 
         // Optimization: update cache
         InputChannelCache.TryAdd(chatBase.ID, result);
@@ -3390,7 +3364,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <inheritdoc />
-    public async Task<User?> GetParticipantAsync(long chatId, long? userId)
+    public async Task<TL.User?> GetParticipantAsync(long chatId, long? userId)
     {
         var chatBase = GetChatBaseFromUserChats(chatId);
         var inputChannel = GetInputChannelFromChatBase(chatBase);
@@ -3404,7 +3378,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             // Get one participant: need access hash
             try
             {
-                var response = await TelegramCallAsync(() => Client.Channels_GetParticipant(inputChannel, new InputUser((long)userId, access_hash: 0)));
+                var response = await TelegramCallAsync(() => Client.Channels_GetParticipant(inputChannel, new TL.InputUser((long)userId, access_hash: 0)));
                 if (response is not null)
                 {
                     // Optimization: update cache
@@ -3484,7 +3458,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <inheritdoc />
     public async Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings,
-        long chatId, Func<TgDownloadSettingsViewModel, ChatBase, MessageBase, Task> func)
+        long chatId, Func<TgDownloadSettingsViewModel, TL.ChatBase, MessageBase, Task> func)
     {
         var chatBase = GetChatBaseFromUserChats(chatId);
         if (chatBase is null) return;
@@ -3651,7 +3625,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         var chatFullInfo = new WTelegram.Types.ChatFullInfo();
 
-        if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is not ChatBase chatBase)
+        if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is not TL.ChatBase chatBase)
             return new WTelegram.Types.ChatFullInfo();
 
         chatFullInfo.Title = chatBase.Title;
@@ -3710,7 +3684,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     ? "allows custom emojis as reactions" : "does not allow the use of custom emojis as a reaction";
                 chatDetailsDto.TtlPeriod = channelFull.TtlPeriod;
             }
-            if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is ChatBase chatBase)
+            if (messagesChatFull.chats.Select(x => x.Value).FirstOrDefault() is TL.ChatBase chatBase)
             {
                 chatDetailsDto.IsActiveChat = chatBase.IsActive;
                 chatDetailsDto.IsBanned = chatBase.IsBanned();

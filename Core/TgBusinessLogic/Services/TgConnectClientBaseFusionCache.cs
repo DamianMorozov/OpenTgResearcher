@@ -3,8 +3,6 @@
 
 using TL;
 
-using ZiggyCreatures.Caching.Fusion;
-
 namespace TgBusinessLogic.Services;
 
 public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
@@ -139,7 +137,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             });
 
     /// <summary> Fills the buffer with stories for a specific peer </summary>
-    public async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, StoryItem story) =>
+    public async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, TL.StoryItem story) =>
         await TryCatchAsync(async () =>
         {
             TgEfStoryEntity? entity = null;
@@ -186,15 +184,45 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return entity;
         });
 
-    private async Task<int> TryGetCacheChatLastCountSafeAsync(long chatId)
+    /// <summary> Safely tries to get full channel information, utilizing caching to minimize API calls </summary>
+    private async Task<TL.Messages_ChatFull?> TryGetFullChannelSafeAsync(TL.Channel channel)
     {
-        var key = TgCacheUtils.GetCacheKeyChatLastCountV2(chatId);
+        var key = TgCacheUtils.GetCacheKeyFullChannel(channel.id);
 
         try
         {
+            // Try to retrieve from cache in a strictly typed manner
+            var maybe = await Cache.TryGetAsync<TL.Messages_ChatFull?>(key, TgCacheUtils.CacheOptionsFullChat);
+            if (maybe.HasValue)
+                return maybe.Value;
+
+            // Cache miss: retrieve from server and save
+            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
+            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
+            return fresh;
+        }
+        catch (InvalidCastException)
+        {
+            // There is another type in the cache: clear and reload
+            await Cache.RemoveAsync(key);
+            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
+            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
+            return fresh;
+        }
+    }
+
+    /// <summary> Safely tries to get the last message ID of a channel, utilizing caching to minimize API calls </summary>
+    private async Task<int> TryGetCacheChatLastCountSafeAsync(long chatId)
+    {
+        var key = TgCacheUtils.GetCacheKeyChatLastCount(chatId);
+
+        try
+        {
+            // Try to retrieve from cache in a strictly typed manner
             var maybe = await Cache.TryGetAsync<int>(key, TgCacheUtils.CacheOptionsChannelMessages);
             if (maybe.HasValue)
                 return maybe.Value;
+
             // Cache miss: compute and set
             var fresh = await GetChannelMessageIdLastCoreAsync(chatId);
             await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages);
@@ -202,7 +230,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (InvalidCastException)
         {
-            // Old/broken type under the same key: purge and refresh
+            // There is another type in the cache: clear and reload
             await Cache.RemoveAsync(key);
             var fresh = await GetChannelMessageIdLastCoreAsync(chatId);
             await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages);

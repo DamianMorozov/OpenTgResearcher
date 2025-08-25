@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TL;
-
 namespace TgBusinessLogic.Services;
 
 public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectClient
@@ -13,7 +11,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         if (!IsClientUpdateStatus)
             return;
-        if (obj is Auth_SentCodeBase authSentCode)
+        if (obj is TL.Auth_SentCodeBase authSentCode)
             await OnClientOtherAuthSentCodeAsync(authSentCode);
     }
 
@@ -28,9 +26,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         if (!IsClientUpdateStatus)
             return;
-        if (updateBase is UpdateShort updateShort)
+        if (updateBase is TL.UpdateShort updateShort)
             await OnUpdateShortClientAsync(updateShort);
-        if (updateBase is UpdatesBase updates)
+        if (updateBase is TL.UpdatesBase updates)
             await OnUpdateClientUpdatesAsync(updates);
     }
 

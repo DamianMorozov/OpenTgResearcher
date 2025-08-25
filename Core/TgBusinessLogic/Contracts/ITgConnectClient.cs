@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TL;
-
 namespace TgBusinessLogic.Contracts;
 
 /// <summary> Telegram client </summary>
@@ -72,11 +70,11 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     /// <summary> Get user link </summary>
     public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer);
     /// <summary> Get chat participant information </summary>
-    Task<User?> GetParticipantAsync(long chatId, long? userId);
+    Task<TL.User?> GetParticipantAsync(long chatId, long? userId);
     /// <summary> Get chat participants information </summary>
     Task<List<TL.User>> GetParticipantsAsync(long chatId);
     /// <summary> Make an action with messages in a chat </summary>
-    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, ChatBase, MessageBase, Task> func);
+    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, TL.ChatBase, TL.MessageBase, Task> func);
     /// <summary> Get the last message ID in a chat </summary>
     Task<int> GetChatLastMessageIdAsync(long chatId);
     /// <summary> Clear caches </summary>
@@ -90,7 +88,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     /// <summary> Get chat details </summary>
     public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id);
     /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
-    public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(Messages_ChatFull messagesChatFull);
+    public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(TL.Messages_ChatFull messagesChatFull);
     /// <summary> Update users </summary>
     public Task UpdateUsersAsync(List<TgEfUserDto> users);
     /// <summary> Checks if a file is locked by another process </summary>

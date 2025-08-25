@@ -9,6 +9,7 @@ global using Microsoft.EntityFrameworkCore;
 global using ProxyLib.Proxy;
 global using System.Collections.Concurrent;
 global using System.Collections.ObjectModel;
+global using System.Data;
 global using System.Diagnostics;
 global using System.Runtime.CompilerServices;
 global using System.Text.RegularExpressions;

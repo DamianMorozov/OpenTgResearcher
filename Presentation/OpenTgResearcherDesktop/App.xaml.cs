@@ -36,7 +36,7 @@ public partial class App : Application
 
     public static WindowEx MainWindow { get; private set; } = default!;
 
-    public static UIElement? AppTitlebar { get; set; }
+    public static UIElement? AppTitleBar { get; set; }
     internal static ITgBusinessLogicManager BusinessLogicManager { get; private set; } = default!;
     private static ILifetimeScope Scope { get; set; } = default!;
     public static TgViewModelLocator? Locator { get; set; } = default!;
@@ -219,7 +219,9 @@ public partial class App : Application
             // TG client loading
             Scope = TgGlobalTools.Container.BeginLifetimeScope();
             BusinessLogicManager = Scope.Resolve<ITgBusinessLogicManager>();
-            // ViewModel localor
+            // Create and update storage
+            await BusinessLogicManager.CreateAndUpdateDbAsync();
+            // ViewModel locator
             Locator = new();
 
             // MainWindow

@@ -22,6 +22,8 @@ public interface ITgBusinessLogicManager : IDisposable
         string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName);
     /// <summary> Load storage backup dtos </summary>
     public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
+    /// <summary> Check if table exists in the database </summary>
+    Task<bool> CheckTableExistsAsync(string tableName = "");
     /// <summary> Remove duplicate messages from the database </summary>
     public Task RemoveDuplicateMessagesAsync();
     /// <summary> Remove duplicate messages from the database </summary>

@@ -93,8 +93,11 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     /// <inheritdoc />
     public async Task CreateAndUpdateDbAsync()
     {
-        // Remove duplicate messages from the database
-        await RemoveDuplicateMessagesByDirectSqlAsync();
+        if (await CheckTableExistsAsync())
+        {
+            // Remove duplicate messages from the database
+            await RemoveDuplicateMessagesByDirectSqlAsync();
+        }
         // Apply migration
         await StorageManager.EfContext.MigrateDbAsync();
         // Fill version table
@@ -127,6 +130,45 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
             StorageManager.EfContext.Messages.RemoveRange(duplicates);
             await StorageManager.EfContext.SaveChangesAsync();
         }
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> CheckTableExistsAsync(string tableName = "")
+    {
+        if (string.IsNullOrWhiteSpace(tableName))
+            tableName = "__EFMigrationsHistory";
+
+        var connection = StorageManager.EfContext.Database.GetDbConnection();
+        if (connection.State != ConnectionState.Open)
+            await connection.OpenAsync();
+
+        // For SQLite
+        if (connection.GetType().Name.Contains("Sqlite", StringComparison.OrdinalIgnoreCase))
+        {
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName";
+            var param = cmd.CreateParameter();
+            param.ParameterName = "@tableName";
+            param.Value = tableName;
+            cmd.Parameters.Add(param);
+
+            var result = await cmd.ExecuteScalarAsync();
+            return result != null;
+        }
+
+        // For other DBMSs via INFORMATION_SCHEMA
+        using var cmd2 = connection.CreateCommand();
+        cmd2.CommandText = @"
+        SELECT 1 
+        FROM INFORMATION_SCHEMA.TABLES 
+        WHERE TABLE_NAME = @tableName";
+        var param2 = cmd2.CreateParameter();
+        param2.ParameterName = "@tableName";
+        param2.Value = tableName;
+        cmd2.Parameters.Add(param2);
+
+        var exists = await cmd2.ExecuteScalarAsync();
+        return exists != null;
     }
 
     /// <inheritdoc />

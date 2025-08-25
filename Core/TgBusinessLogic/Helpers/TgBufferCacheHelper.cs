@@ -4,17 +4,18 @@
 namespace TgBusinessLogic.Helpers;
 
 /// <summary> A stream-safe buffer of entities for subsequent batch storage </summary>
-/// <typeparam name="TEfEntity">EF entity type</typeparam>
-public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string cachePrefix, TimeSpan? cacheDuration = null) : ITgDisposable
-    where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+/// <typeparam name="TEntity">EF entity type</typeparam>
+public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cachePrefix, Func<TEntity, string> cacheKeySelector, TimeSpan? cacheDuration = null) 
+    : ITgDisposable where TEntity : class
 {
     #region Fields, properties, constructor
 
     private readonly IFusionCache Cache = cache ?? throw new ArgumentNullException(nameof(cache));
-    private readonly List<TEfEntity> _buffer = [];
+    private readonly List<TEntity> _buffer = [];
     private readonly Lock _bufferLock = new();
-    private readonly string _cachePrefix = cachePrefix ?? typeof(TEfEntity).Name;
+    private readonly string _cachePrefix = cachePrefix ?? throw new ArgumentNullException(nameof(cachePrefix));
     private readonly TimeSpan _cacheDuration = cacheDuration ?? TimeSpan.FromMinutes(5);
+    private readonly Func<TEntity, string> _cacheKeySelector = cacheKeySelector ?? throw new ArgumentNullException(nameof(cacheKeySelector));
 
     #endregion
 
@@ -86,11 +87,11 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
     }
 
     /// <summary> Add a single entity to the buffer </summary>
-    public void Add(TEfEntity entity)
+    public void Add(TEntity entity)
     {
         CheckIfDisposed();
-        
         ArgumentNullException.ThrowIfNull(entity);
+        
         using (_bufferLock.EnterScope())
             _buffer.Add(entity);
 
@@ -100,11 +101,11 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
     }
 
     /// <summary> Add a collection of entities to the buffer </summary>
-    public void AddRange(IList<TEfEntity> entities)
+    public void AddRange(IList<TEntity> entities)
     {
         CheckIfDisposed();
-
         ArgumentNullException.ThrowIfNull(entities);
+
         using (_bufferLock.EnterScope())
         {
             _buffer.AddRange(entities);
@@ -126,44 +127,30 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
         }
     }
 
-    private void RemoveFromCache(IEnumerable<TEfEntity> entities)
+    private void RemoveFromCache(IEnumerable<TEntity> entities)
     {
         foreach (var entity in entities)
         {
-            var key = GetCacheKey(entity);
-            Cache.Remove(key);
+            Cache.Remove(GetCacheKey(entity));
         }
     }
 
-    private string GetCacheKey(TEfEntity entity)
+    private string GetCacheKey(TEntity entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        // For entities implementing ITgEfIdEntity: use its Id property
-        if (entity is ITgEfIdEntity<TEfEntity> idEntity)
-            return $"{_cachePrefix}:{idEntity.Id}";
-
-        // For TgEfMessageEntity: combine SourceId and Id
-        if (entity is TgEfMessageEntity messageEntity)
-            return $"{_cachePrefix}:{messageEntity.SourceId}:{messageEntity.Id}";
-
-        // For TgEfMessageRelationEntity: combine all parent and child identifiers
-        if (entity is TgEfMessageRelationEntity relationEntity)
-            return $"{_cachePrefix}:{relationEntity.ParentSourceId}:{relationEntity.ParentMessageId}:{relationEntity.ChildSourceId}:{relationEntity.ChildMessageId}";
-
-        // Optional: handle unknown entity types explicitly
-        throw new NotSupportedException(
-            $"Entity type '{entity.GetType().Name}' is not supported for cache key generation.");
+        var key = _cacheKeySelector(entity);
+        return $"{_cachePrefix}:{key}";
     }
 
     /// <summary> Flush the buffer and return a copy of the entities </summary>
-    public List<TEfEntity> Flush()
+    private List<TEntity> Flush()
     {
         CheckIfDisposed();
 
         using (_bufferLock.EnterScope())
         {
-            var copy = new List<TEfEntity>(_buffer);
+            var copy = new List<TEntity>(_buffer);
             _buffer.Clear();
 
             // Invalidate cache for all items
@@ -174,7 +161,7 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
     }
 
     /// <summary> Flush the buffer if the predicate returns true or if forced </summary>
-    public async Task FlushAsync(bool isSaveMessages, bool isForce, Func<IList<TEfEntity>, Task> saveAction, Func<IList<TEfEntity>, Task>? postSaveAction = null)
+    public async Task FlushAsync(bool isSaveMessages, bool isForce, Func<IList<TEntity>, Task> saveAction, Func<IList<TEntity>, Task>? postSaveAction = null)
     {
         if (!isSaveMessages) return;
 
@@ -204,19 +191,25 @@ public sealed class TgBufferCacheHelper<TEfEntity>(IFusionCache cache, string ca
     }
 
     /// <summary> Returns the first element in the buffer that matches the optional predicate or default/null if none is found </summary>
-    public TEfEntity? FirstOrDefault(Func<TEfEntity, bool>? predicate = null)
+    public TEntity? FirstOrDefault(Func<TEntity, bool>? predicate = null)
     {
         CheckIfDisposed();
 
         using (_bufferLock.EnterScope())
         {
-            if (_buffer.Count == 0)
-                return null;
+            return _buffer.Count == 0 ? null : predicate is null ? _buffer.FirstOrDefault() : _buffer.FirstOrDefault(predicate);
+        }
+    }
 
-            if (predicate is null)
-                return _buffer.FirstOrDefault();
+    /// <summary> Returns a single element in the buffer that matches the optional predicate or default/null if none is found </summary>
+    public TEntity? GetItem(Func<TEntity, bool>? predicate = null) => FirstOrDefault(predicate);
 
-            return _buffer.FirstOrDefault(predicate);
+    /// <summary> Returns a copy of the list of entities in the buffer that match the optional predicate or all if none is provided </summary>
+    public List<TEntity> GetList(Func<TEntity, bool>? predicate = null)
+    {
+        using (_bufferLock.EnterScope())
+        {
+            return predicate is null ? [.. _buffer] : [.. _buffer.Where(predicate)];
         }
     }
 

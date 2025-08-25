@@ -73,11 +73,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         FloodControlService = floodControlService;
         // FusionCache
         Cache = cache ?? throw new ArgumentNullException(nameof(cache));
-        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix());
-        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix());
-        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix());
-        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix());
-        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix());
+        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), entity => $"{entity.Id}");
+        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), entity => $"{entity.SourceId}:{entity.Id}");
+        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
+        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
+        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
     }
 
     protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
@@ -89,11 +89,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         FloodControlService = floodControlService;
         // FusionCache
         Cache = cache;
-        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix());
-        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix());
-        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix());
-        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix());
-        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix());
+        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), entity => $"{entity.Id}");
+        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), entity => $"{entity.SourceId}:{entity.Id}");
+        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
+        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
+        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
     }
 
     #endregion

@@ -35,7 +35,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public ConcurrentDictionary<long, TL.StoryItem> DicStories { get; private set; } = [];
     public ConcurrentDictionary<long, TL.User> DicUsers { get; private set; } = [];
     public ConcurrentDictionary<long, TL.User> DicUsersUpdated { get; private set; } = [];
-    public ConcurrentDictionary<long, TL.User> UserCache { get; private set; } = [];
     public ConcurrentQueue<TL.Channel> EnumerableChannels { get; private set; } = [];
     public ConcurrentQueue<TL.Channel> EnumerableGroups { get; private set; } = [];
     public ConcurrentQueue<TL.ChatBase> EnumerableChats { get; private set; } = [];
@@ -78,6 +77,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
         _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
+        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.id}");
     }
 
     protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
@@ -94,6 +94,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
         _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
+        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.id}");
     }
 
     #endregion
@@ -3033,15 +3034,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    public async Task ReleaseBuffersAsync()
-    {
-        _chatBuffer.Dispose();
-        _storyBuffer.Dispose();
-        _userBuffer.Dispose();
-        Cache.Dispose();
-        await Task.CompletedTask;
-    }
-
     protected async Task SetClientExceptionAsync(Exception ex,
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
     {
@@ -3269,7 +3261,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Optimization: check cache
-            if (UserCache.TryGetValue(peerUser.user_id, out var user))
+            if (_tlUserBuffer.GetItem(x => x.id == peerUser.user_id) is TL.User user)
                 return TgStringUtils.FormatUserLink(user.username, user.id, string.Join(" ", user.first_name, user.last_name));
 
             // Retrieving data through a chat participant
@@ -3278,7 +3270,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 return GetChatUserLink(chatId);
 
             // Optimization: update cache
-            UserCache.TryAdd(userData.id, userData);
+            _tlUserBuffer.Add(userData);
             return TgStringUtils.FormatUserLink(userData.username, userData.id, string.Join(" ", userData.first_name, userData.last_name));
         }
         catch (Exception ex)
@@ -3373,7 +3365,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Optimization: check cache
         if (userId is not null)
         {
-            if (UserCache.TryGetValue((long)userId, out var user))
+            if (_tlUserBuffer.GetItem(x => x.id == userId) is TL.User user)
                 return user;
             // Get one participant: need access hash
             try
@@ -3385,7 +3377,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     var userData = response.users.FirstOrDefault(x => x.Value.id == userId).Value;
                     if (userData is not null)
                     {
-                        UserCache.TryAdd((long)userId, userData);
+                        _tlUserBuffer.Add(userData);
                         return userData;
                     }
                 }
@@ -3415,14 +3407,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         if (userItem.Value.id == userId)
                         {
                             // Optimization: update cache
-                            UserCache.TryAdd(userItem.Value.id, userItem.Value);
+                            _tlUserBuffer.Add(userItem.Value);
                             return userItem.Value;
                         }
                     }
                     else
                     {
                         // Optimization: update cache
-                        UserCache.TryAdd(userItem.Value.id, userItem.Value);
+                        _tlUserBuffer.Add(userItem.Value);
                     }
                 }
 
@@ -3443,14 +3435,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         await GetChatDetailsByClientAsync(chatId);
 
-        UserCache.Clear();
+        _tlUserBuffer.Clear();
         await GetParticipantAsync(chatId, null);
 
         // Sort participants
-        var userList = UserCache
-            .OrderByDescending(x => x.Key == Client?.UserId)
-            .ThenBy(x => x.Value.LastSeenAgo)
-            .Select(x => x.Value)
+        var userList = _tlUserBuffer.GetList()
+            .OrderByDescending(x => x.id == Client?.UserId)
+            .ThenBy(x => x.LastSeenAgo)
+            .Select(x => x)
             .ToList();
 
         return userList;
@@ -3526,7 +3518,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         InputChannelCache.Clear();
         ChatCache.Clear();
-        UserCache.Clear();
+        _tlUserBuffer.Clear();
     }
 
     /// <inheritdoc />

@@ -84,6 +84,8 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
         var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
+        var userIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
+        var usersDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
         UserDtos = [.. participants.Select(x => new TgEfUserDto()
         {
             IsDisplaySensitiveData = IsDisplaySensitiveData,
@@ -101,7 +103,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
             RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
             LangCode = x.lang_code,
             IsContact = false,
-        })];
+        }), ..usersDtos];
 
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
 
@@ -136,6 +138,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
             };
             ChatStatisticsDto.UserWithCountDtos.Add(userWithCountDto);
         }
+        
         // Order
         var orderedUsers = ChatStatisticsDto.UserWithCountDtos.OrderByDescending(x => x.Count).ToList();
         ChatStatisticsDto.UserWithCountDtos.Clear();

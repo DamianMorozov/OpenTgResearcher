@@ -181,5 +181,13 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
         }
     }
 
+    /// <inheritdoc />
+    public async Task<List<long>> GetUserIdsFromMessagesAsync(Expression<Func<TgEfMessageEntity, bool>> where) => 
+        await GetQuery(isReadOnly: true)
+            .Where(where)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync();
+
     #endregion
 }

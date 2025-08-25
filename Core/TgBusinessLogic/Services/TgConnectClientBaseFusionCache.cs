@@ -15,6 +15,20 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private readonly TgBufferCacheHelper<TgEfSourceEntity> _chatBuffer = default!;
     private readonly TgBufferCacheHelper<TgEfStoryEntity> _storyBuffer = default!;
     private readonly TgBufferCacheHelper<TgEfUserEntity> _userBuffer = default!;
+    private readonly TgBufferCacheHelper<TL.User> _tlUserBuffer = default!;
+
+    /// <summary> Release all buffers and cache </summary>
+    public async Task ReleaseBuffersAsync()
+    {
+        _messageBuffer.Dispose();
+        _messageRelationBuffer.Dispose();
+        _chatBuffer.Dispose();
+        _storyBuffer.Dispose();
+        _userBuffer.Dispose();
+        _tlUserBuffer.Dispose();
+        Cache.Dispose();
+        await Task.CompletedTask;
+    }
 
     /// <summary> Wait for the transaction to complete </summary>
     /// <exception cref="InvalidOperationException"></exception>

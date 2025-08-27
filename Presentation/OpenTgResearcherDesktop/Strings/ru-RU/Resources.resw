@@ -183,6 +183,9 @@
   <data name="Shell_Logs.Content" xml:space="preserve">
     <value>Логи</value>
   </data>
+  <data name="Shell_Hardware.Content" xml:space="preserve">
+    <value>Оборудование</value>
+  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Загрузка...</value>
   </data>
@@ -662,6 +665,12 @@
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Обновить онлайн?</value>
   </data>
+  <data name="AskStartMonitoring" xml:space="preserve">
+    <value>Запустить мониторинг?</value>
+  </data>
+  <data name="AskStopMonitoring" xml:space="preserve">
+    <value>Остановить мониторинг?</value>
+  </data>
   <data name="AskUpdateChatDetails" xml:space="preserve">
     <value>Обновить детали чата?</value>
   </data>
@@ -1024,6 +1033,9 @@
   </data>
   <data name="TextBlockLoadingNotifications.Text" xml:space="preserve">
     <value>Загрузка уведомлений</value>
+  </data>
+  <data name="TextBlockLoadingHardwareResourceMonitoring.Text" xml:space="preserve">
+    <value>Мониторинг аппаратных ресурсов</value>
   </data>
   <data name="TextBlockLoadingLogging.Text" xml:space="preserve">
     <value>Загрузка логирования</value>
@@ -1432,7 +1444,7 @@
   <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
     <value>Код состояния</value>
   </data>
-  <data name="MenuLicenseIsNotCofirmed" xml:space="preserve">
+  <data name="MenuLicenseIsNotConfirmed" xml:space="preserve">
     <value>Не подтверждено</value>
   </data>
   <data name="MenuLicenseUpdatedSuccessfully" xml:space="preserve">

@@ -51,6 +51,10 @@ public sealed partial class TgSplashScreenPage
         await ViewModel.LoadingNotificationsAsync();
         Bindings.Update();
 
+        // Loading hardware control
+        await ViewModel.LoadingHardwareControlAsync();
+        Bindings.Update();
+
         // Loading complete
         await ViewModel.LoadingCompleteAsync();
         Bindings.Update();

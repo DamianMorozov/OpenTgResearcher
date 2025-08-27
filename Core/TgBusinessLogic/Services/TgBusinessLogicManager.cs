@@ -102,8 +102,6 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         await StorageManager.EfContext.MigrateDbAsync();
         // Fill version table
         await StorageManager.VersionRepository.FillTableVersionsAsync();
-        // Shrink database
-        await StorageManager.EfContext.ShrinkDbAsync();
     }
 
     /// <inheritdoc />

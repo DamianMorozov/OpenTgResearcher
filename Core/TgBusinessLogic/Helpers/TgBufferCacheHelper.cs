@@ -31,7 +31,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     public void CheckIfDisposed()
     {
         if (_disposed)
-            throw new ObjectDisposedException($"{nameof(TgDisposable)}: {TgConstants.ObjectHasBeenDisposedOff}!");
+            throw new ObjectDisposedException($"{nameof(TgBufferCacheHelper<TEntity>)}: {TgConstants.ObjectHasBeenDisposedOff}!");
     }
 
     /// <summary> Release managed resources </summary>
@@ -163,6 +163,8 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     /// <summary> Flush the buffer if the predicate returns true or if forced </summary>
     public async Task FlushAsync(bool isSaveMessages, bool isForce, Func<IList<TEntity>, Task> saveAction, Func<IList<TEntity>, Task>? postSaveAction = null)
     {
+        CheckIfDisposed();
+
         if (!isSaveMessages) return;
 
         await TgCacheUtils.SaveLock.WaitAsync();
@@ -201,12 +203,11 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
         }
     }
 
-    /// <summary> Returns a single element in the buffer that matches the optional predicate or default/null if none is found </summary>
-    public TEntity? GetItem(Func<TEntity, bool>? predicate = null) => FirstOrDefault(predicate);
-
     /// <summary> Returns a copy of the list of entities in the buffer that match the optional predicate or all if none is provided </summary>
     public List<TEntity> GetList(Func<TEntity, bool>? predicate = null)
     {
+        CheckIfDisposed();
+
         using (_bufferLock.EnterScope())
         {
             return predicate is null ? [.. _buffer] : [.. _buffer.Where(predicate)];

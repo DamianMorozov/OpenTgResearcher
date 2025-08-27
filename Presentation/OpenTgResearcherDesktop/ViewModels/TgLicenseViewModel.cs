@@ -115,7 +115,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 					var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
 					if (licenseDto?.IsConfirmed != true)
 					{
-						LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotCofirmed()}: {response.StatusCode}" + Environment.NewLine;
+						LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotConfirmed()}: {response.StatusCode}" + Environment.NewLine;
 						continue;
 					}
 

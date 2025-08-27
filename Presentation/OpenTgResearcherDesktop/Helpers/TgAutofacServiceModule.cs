@@ -13,5 +13,6 @@ internal sealed class TgAutofacServiceModule : Autofac.Module
         containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
         containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
+        containerBuilder.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
     }
 }

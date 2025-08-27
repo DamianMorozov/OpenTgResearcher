@@ -3261,7 +3261,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Optimization: check cache
-            if (_tlUserBuffer.GetItem(x => x.id == peerUser.user_id) is TL.User user)
+            if (_tlUserBuffer.FirstOrDefault(x => x.id == peerUser.user_id) is TL.User user)
                 return TgStringUtils.FormatUserLink(user.username, user.id, string.Join(" ", user.first_name, user.last_name));
 
             // Retrieving data through a chat participant
@@ -3365,7 +3365,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Optimization: check cache
         if (userId is not null)
         {
-            if (_tlUserBuffer.GetItem(x => x.id == userId) is TL.User user)
+            if (_tlUserBuffer.FirstOrDefault(x => x.id == userId) is TL.User user)
                 return user;
             // Get one participant: need access hash
             try

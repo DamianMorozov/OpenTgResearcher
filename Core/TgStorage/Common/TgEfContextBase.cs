@@ -75,7 +75,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     public void CheckIfDisposed()
     {
         if (_disposed)
-            throw new ObjectDisposedException($"{nameof(TgDisposable)}: {TgConstants.ObjectHasBeenDisposedOff}!");
+            throw new ObjectDisposedException($"{nameof(TgEfContextBase)}: {TgConstants.ObjectHasBeenDisposedOff}!");
     }
 
     /// <summary> Release managed resources </summary>

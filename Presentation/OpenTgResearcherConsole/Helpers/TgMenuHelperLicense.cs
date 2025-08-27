@@ -105,7 +105,7 @@ internal sealed partial class TgMenuHelper
                         if (licenseDto?.IsConfirmed != true)
                         {
                             if (!isSilent)
-                                await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseIsNotCofirmed}: {response.StatusCode}"]);
+                                await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"{TgLocale.MenuLicenseIsNotConfirmed}: {response.StatusCode}"]);
                             continue;
                         }
 

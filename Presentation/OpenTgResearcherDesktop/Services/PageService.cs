@@ -18,10 +18,11 @@ public sealed class PageService : IPageService
 		Configure<TgChatDetailsInfoViewModel, TgChatDetailsInfoPage>();
 		Configure<TgChatDetailsParticipantsViewModel, TgChatDetailsParticipantsPage>();
 		Configure<TgChatDetailsStatisticsViewModel, TgChatDetailsStatisticsPage>();
-		Configure<TgChatViewModel, TgChatPage>();
 		Configure<TgChatsViewModel, TgChatsPage>();
+		Configure<TgChatViewModel, TgChatPage>();
 		Configure<TgClientConnectionViewModel, TgClientConnectionPage>();
 		Configure<TgFiltersViewModel, TgFiltersPage>();
+		Configure<TgHardwareControlViewModel, TgHardwareControlPage>();
 		Configure<TgLicenseViewModel, TgLicensePage>();
 		Configure<TgLoadDataViewModel, TgLoadDataPage>();
 		Configure<TgLogsViewModel, TgLogsPage>();

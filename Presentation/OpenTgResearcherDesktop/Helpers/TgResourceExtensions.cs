@@ -47,7 +47,9 @@ public static class TgResourceExtensions
 	internal static string AskSettingsDelete() => "AskSettingsDelete".GetLocalizedResource();
 	internal static string AskSettingsLoad() => "AskSettingsLoad".GetLocalizedResource();
 	internal static string AskSettingsSave() => "AskSettingsSave".GetLocalizedResource();
+	internal static string AskStartMonitoring() => "AskStartMonitoring".GetLocalizedResource();
 	internal static string AskStopDownloading() => "AskStopDownloading".GetLocalizedResource();
+	internal static string AskStopMonitoring() => "AskStopMonitoring".GetLocalizedResource();
 	internal static string AskUpdateChatDetails() => "AskUpdateChatDetails".GetLocalizedResource();
 	internal static string AskUpdateOnline() => "AskUpdateOnline".GetLocalizedResource();
 	internal static string AskUpdatePage() => "AskUpdatePage".GetLocalizedResource();
@@ -83,7 +85,7 @@ public static class TgResourceExtensions
 	internal static string GetManualDeleteFile(string fileName) => $"{"GetManualDeleteFile".GetLocalizedResource()}: {fileName}";
 	internal static string GetMenuClientIsQuery() => "MenuClientIsQuery".GetLocalizedResource();
 	internal static string GetMenuLicenseCheckServer() => "MenuLicenseCheckServer".GetLocalizedResource();
-	internal static string GetMenuLicenseIsNotCofirmed() => "MenuLicenseIsNotCofirmed".GetLocalizedResource();
+	internal static string GetMenuLicenseIsNotConfirmed() => "MenuLicenseIsNotConfirmed".GetLocalizedResource();
 	internal static string GetMenuLicenseResponseStatusCode() => "MenuLicenseResponseStatusCode".GetLocalizedResource();
 	internal static string GetMenuLicenseUpdatedSuccessfully() => "MenuLicenseUpdatedSuccessfully".GetLocalizedResource();
 	internal static string GetMenuLicenseUserNotLoggedIn() => "MenuLicenseUserNotLoggedIn".GetLocalizedResource();

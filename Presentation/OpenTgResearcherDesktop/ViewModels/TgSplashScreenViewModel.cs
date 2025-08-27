@@ -8,22 +8,15 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
-    [ObservableProperty]
-    public partial string AppVersion { get; set; } = string.Empty;
-    [ObservableProperty]
-    public partial bool IsLoadVelopack { get; set; }
-    [ObservableProperty]
-    public partial bool IsLoadNotifications { get; set; }
-    [ObservableProperty]
-    public partial bool IsLoadSettings { get; set; }
-    [ObservableProperty]
-    public partial bool IsLoadLogging { get; set; }
-    [ObservableProperty]
-    public partial bool IsLoadStorage { get; set; }
-    [ObservableProperty]
-    public partial bool IsLoadLicense { get; set; }
-    [ObservableProperty]
-    public partial bool IsLoadComplete { get; set; }
+    [ObservableProperty] public partial bool IsLoadComplete { get; set; }
+    [ObservableProperty] public partial bool IsLoadHardwareResourceMonitoring { get; set; }
+    [ObservableProperty] public partial bool IsLoadLicense { get; set; }
+    [ObservableProperty] public partial bool IsLoadLogging { get; set; }
+    [ObservableProperty] public partial bool IsLoadNotifications { get; set; }
+    [ObservableProperty] public partial bool IsLoadSettings { get; set; }
+    [ObservableProperty] public partial bool IsLoadStorage { get; set; }
+    [ObservableProperty] public partial bool IsLoadVelopack { get; set; }
+    [ObservableProperty] public partial string AppVersion { get; set; } = string.Empty;
 
     public Action BackToMainWindow { get; internal set; } = () => { };
     public IRelayCommand ContinueCommand { get; }
@@ -49,7 +42,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     }
 
     /// <summary> Loading logging </summary>
-    public async Task LoadingLoggingAsync()
+    internal async Task LoadingLoggingAsync()
     {
         try
         {
@@ -64,7 +57,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     }
 
     /// <summary> Loading Velopack Installer </summary>
-    public async Task LoadingVelopackInstallerAsync()
+    internal async Task LoadingVelopackInstallerAsync()
     {
         try
         {
@@ -84,7 +77,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     }
 
     /// <summary> Loading settings </summary>
-    public async Task LoadingSettingsAsync()
+    internal async Task LoadingSettingsAsync()
     {
         try
         {
@@ -93,7 +86,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
             var theme = TgThemeUtils.GetElementTheme(settingsService.AppTheme);
             TgTitleBarHelper.UpdateTitleBar(theme);
             IsLoadSettings = true;
-            await Task.Delay(250);
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
@@ -102,7 +95,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     }
 
     /// <summary> Loading storage </summary>
-    public async Task LoadingStorageAsync()
+    internal async Task LoadingStorageAsync()
     {
         try
         {
@@ -115,7 +108,6 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
             TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
             TgLogUtils.WriteLog(TgResourceExtensions.GetStorageLoading());
             IsLoadStorage = true;
-            await Task.Delay(250);
         }
         catch (Exception ex)
         {
@@ -124,15 +116,13 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     }
 
     /// <summary> Loading license </summary>
-    public async Task LoadingLicenseAsync()
+    internal async Task LoadingLicenseAsync()
     {
         try
         {
             await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
             TgLogUtils.WriteLog(TgResourceExtensions.GetLicenseLoading());
             IsLoadLicense = true;
-            await Task.Delay(250);
-
         }
         catch (Exception ex)
         {
@@ -141,7 +131,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     }
 
     /// <summary> Loading notifications </summary>
-    public async Task LoadingNotificationsAsync()
+    internal async Task LoadingNotificationsAsync()
     {
         try
         {
@@ -150,7 +140,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
             notificationService.Show(string.Format("AppNotificationSamplePayload".GetLocalizedResource(), AppContext.BaseDirectory));
             TgLogUtils.WriteLog(TgResourceExtensions.GetNotificationLoading());
             IsLoadNotifications = true;
-            await Task.Delay(250);
+            await Task.CompletedTask;
         }
         catch (Exception ex)
         {
@@ -158,8 +148,24 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
+    /// <summary> Loading hardware resource monitoring </summary>
+    internal async Task LoadingHardwareControlAsync()
+    {
+        try
+        {
+            var hardwareControlService = App.GetService<ITgHardwareResourceMonitoringService>();
+            await hardwareControlService.StartMonitoringAsync();
+            IsLoadHardwareResourceMonitoring = true;
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            throw;
+        }
+    }
+
     /// <summary> Loading complete </summary>
-    public async Task LoadingCompleteAsync()
+    internal async Task LoadingCompleteAsync()
     {
         IsLoadComplete = true;
         await Task.Delay(250);

@@ -59,6 +59,7 @@ global using System.Web;
 global using System;
 global using TgBusinessLogic.Contracts;
 global using TgBusinessLogic.Helpers;
+global using TgBusinessLogic.Models;
 global using TgBusinessLogic.Services;
 global using TgBusinessLogic.ViewModels;
 global using TgInfrastructure.Contracts;

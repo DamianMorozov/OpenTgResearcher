@@ -124,6 +124,9 @@
   <data name="Shell_Logs.Content" xml:space="preserve">
     <value>Logs</value>
   </data>
+  <data name="Shell_Hardware.Content" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
   </data>
@@ -603,6 +606,12 @@
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Update online?</value>
   </data>
+  <data name="AskStartMonitoring" xml:space="preserve">
+    <value>Start monitoring?</value>
+  </data>
+  <data name="AskStopMonitoring" xml:space="preserve">
+    <value>Stop monitoring?</value>
+  </data>
   <data name="AskUpdateChatDetails" xml:space="preserve">
     <value>Update chat details?</value>
   </data>
@@ -962,6 +971,9 @@
   </data>
   <data name="TextBlockLoadingNotifications.Text" xml:space="preserve">
     <value>Loading notifications</value>
+  </data>
+  <data name="TextBlockLoadingHardwareResourceMonitoring.Text" xml:space="preserve">
+    <value>Hardware resource monitoring</value>
   </data>
   <data name="TextBlockLoadingLogging.Text" xml:space="preserve">
     <value>Loading logging</value>
@@ -1370,7 +1382,7 @@
   <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
     <value>Status code</value>
   </data>
-  <data name="MenuLicenseIsNotCofirmed" xml:space="preserve">
+  <data name="MenuLicenseIsNotConfirmed" xml:space="preserve">
     <value>Is not cofirmed</value>
   </data>
   <data name="MenuLicenseUpdatedSuccessfully" xml:space="preserve">

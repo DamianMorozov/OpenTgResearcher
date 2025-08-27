@@ -166,6 +166,12 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--  Hardware control  -->
+                <NavigationViewItem x:Uid="Shell_Hardware" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareControlViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A5;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <!--  Logs  -->
                 <NavigationViewItem x:Uid="Shell_Logs" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel">
                     <NavigationViewItem.Icon>

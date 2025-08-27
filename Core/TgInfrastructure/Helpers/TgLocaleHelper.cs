@@ -280,7 +280,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuLicenseFolowThisLink => "Follow this link";
 	public string MenuLicenseInfo => "View license info";
 	public string MenuLicenseIsConfirmed => "Confirmed";
-	public string MenuLicenseIsNotCofirmed => "Is not cofirmed";
+	public string MenuLicenseIsNotConfirmed => "Is not cofirmed";
 	public string MenuLicenseKey => "License key";
 	public string MenuLicenseRequestError => "Request error";
 	public string MenuLicenseResponseStatusCode => "Status code";

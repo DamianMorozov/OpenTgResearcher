@@ -3,6 +3,7 @@
 
 global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
+global using LibreHardwareMonitor.Hardware;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.Data.Sqlite;
 global using Microsoft.EntityFrameworkCore;

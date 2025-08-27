@@ -82,28 +82,8 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     {
         ChatStatisticsDto.DefaultValues();
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-
-        var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
-        var userIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
-        var usersDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
-        UserDtos = [.. participants.Select(x => new TgEfUserDto()
-        {
-            IsDisplaySensitiveData = IsDisplaySensitiveData,
-            Id = x.id,
-            IsContactActive = x.IsActive,
-            IsBot = x.IsBot,
-            LastSeenAgo = x.LastSeenAgo,
-            UserName = x.MainUsername,
-            AccessHash = x.access_hash,
-            FirstName = x.first_name,
-            LastName = x.last_name,
-            UserNames = x.usernames is null ? string.Empty : string.Join("|", x.usernames.ToList()),
-            PhoneNumber = x.phone,
-            Status = x.status?.ToString() ?? string.Empty,
-            RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
-            LangCode = x.lang_code,
-            IsContact = false,
-        }), ..usersDtos];
+        
+        await MergeUsersWithPlaceholdersAsync();
 
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
 
@@ -138,7 +118,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
             };
             ChatStatisticsDto.UserWithCountDtos.Add(userWithCountDto);
         }
-        
+
         // Order
         var orderedUsers = ChatStatisticsDto.UserWithCountDtos.OrderByDescending(x => x.Count).ToList();
         ChatStatisticsDto.UserWithCountDtos.Clear();
@@ -146,6 +126,52 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         {
             ChatStatisticsDto.UserWithCountDtos.Add(user);
         }
+    }
+
+    private async Task MergeUsersWithPlaceholdersAsync()
+    {
+        var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
+        var userIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
+        var usersDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
+
+        // Collect all existing IDs
+        var existingIds = new HashSet<long>(participants.Select(p => p.id).Concat(usersDtos.Select(u => u.Id)));
+        // Find missing IDs
+        var missingIds = userIds.Where(id => !existingIds.Contains(id));
+        // Create placeholder users for missing IDs
+        var placeholderUsers = missingIds.Select(id => new TgEfUserDto
+        {
+            Id = id,
+            IsDisplaySensitiveData = IsDisplaySensitiveData,
+            IsBot = false,
+            IsContact = false
+        }).ToList();
+
+        UserDtos = [.. 
+            // Participants from Telegram
+            participants.Select(x => new TgEfUserDto()
+            {
+                IsDisplaySensitiveData = IsDisplaySensitiveData,
+                Id = x.id,
+                IsContactActive = x.IsActive,
+                IsBot = x.IsBot,
+                LastSeenAgo = x.LastSeenAgo,
+                UserName = x.MainUsername,
+                AccessHash = x.access_hash,
+                FirstName = x.first_name,
+                LastName = x.last_name,
+                UserNames = x.usernames is null ? string.Empty : string.Join("|", x.usernames.ToList()),
+                PhoneNumber = x.phone,
+                Status = x.status?.ToString() ?? string.Empty,
+                RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
+                LangCode = x.lang_code,
+                IsContact = false,
+            }), 
+            // Users from Users table
+            ..usersDtos,
+            // Users from Messages table
+            ..placeholderUsers
+            ];
     }
 
     /// <summary> Click on user </summary>

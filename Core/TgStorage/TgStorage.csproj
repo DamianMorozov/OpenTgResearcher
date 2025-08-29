@@ -38,7 +38,7 @@
     </PackageReference>
     <PackageReference Include="ProxyLib" Version="1.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="WTelegramClient" Version="4.3.8" />
+    <PackageReference Include="WTelegramClient" Version="4.3.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgInfrastructure\TgInfrastructure.csproj" />

@@ -15,11 +15,15 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     internal static Style StyleMain => new(Color.White, null, Decoration.Bold | Decoration.Conceal | Decoration.Italic);
     internal TgEnumMenuMain Value { get; set; }
     internal ITgBusinessLogicManager BusinessLogicManager { get; } = default!;
+    /// <summary> Hardware resource monitoring service </summary>
+    internal ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; private set; } = default!;
     private static Mutex? _instanceMutex;
 
     public TgMenuHelper()
     {
-        BusinessLogicManager = TgGlobalTools.Container.Resolve<ITgBusinessLogicManager>();
+        var scope = TgGlobalTools.Container.BeginLifetimeScope();
+        BusinessLogicManager = scope.Resolve<ITgBusinessLogicManager>();
+        HardwareResourceMonitoringService = scope.Resolve<ITgHardwareResourceMonitoringService>();
     }
 
     #endregion
@@ -30,6 +34,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     public override void ReleaseManagedResources()
     {
         BusinessLogicManager.Dispose();
+        HardwareResourceMonitoringService.Dispose();
         _instanceMutex?.Dispose();
         ClientForSendData?.Dispose();
         BotForSendData?.Dispose();

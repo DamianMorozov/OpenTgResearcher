@@ -71,7 +71,7 @@ internal partial class TgMenuHelper
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 
 		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
-		var backupResult = BusinessLogicManager.BackupDb();
+		var backupResult = BusinessLogicManager.StorageManager.BackupDb();
 		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
 		TgLog.WriteLine(backupResult.IsSuccess ? $"  {TgLocale.MenuStorageBackupSuccess}" : $"  {TgLocale.MenuStorageBackupFailed}");
         TgLog.TypeAnyKeyForReturn();
@@ -82,7 +82,7 @@ internal partial class TgMenuHelper
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageDbShrink)) return;
 
-        await BusinessLogicManager.ShrinkDbAsync();
+        await BusinessLogicManager.StorageManager.ShrinkDbAsync();
 		TgLog.WriteLine($"  {TgLocale.MenuStorageTablesShrinkFinished}");
         TgLog.TypeAnyKeyForReturn();
 	}

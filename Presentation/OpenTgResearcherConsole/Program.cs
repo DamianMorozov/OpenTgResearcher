@@ -7,8 +7,7 @@ public static class Program
 {
     public static async Task Main()
     {
-        // Uncomment for make screen record
-        //WaitForMakeScreenRecord(seconds: 5);
+        WaitForMakeScreenRecord();
 
         // Set app type
         TgGlobalTools.SetAppType(TgEnumAppType.Console);
@@ -19,7 +18,7 @@ public static class Program
         services.AddDbContextPool<TgEfConsoleContext>(options =>
         {
             var context = new TgEfConsoleContext();
-            options.UseSqlite(context.GetStoragePath());
+            options.UseSqlite(context.GetDataSource());
             // Copy by TgEfConsoleContext.OnConfiguring
             LoggerFactory factory = new();
             options
@@ -45,11 +44,10 @@ public static class Program
         // Registering the EF context
         containerBuilder.Register(c =>
         {
-            var consoleContext = new TgEfConsoleContext();
-            var storagePath = consoleContext.GetStoragePath();
+            var context = new TgEfConsoleContext();
             // Create DbContextOptionsBuilder with SQLite connection
             var optionsBuilder = new DbContextOptionsBuilder<TgEfConsoleContext>();
-            optionsBuilder.UseSqlite($"Data Source={storagePath}");
+            optionsBuilder.UseSqlite(context.GetDataSource());
             return new TgEfConsoleContext(optionsBuilder.Options);
         }).As<ITgEfContext>().InstancePerLifetimeScope();
         // Registering repositories
@@ -65,16 +63,14 @@ public static class Program
         containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
         containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
         // Registering services
-        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>().SingleInstance();
+        containerBuilder.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
         containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
         containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>().SingleInstance();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
-        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
         containerBuilder.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
+        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
         // We build a container and take IServiceProvider
         TgGlobalTools.Container = containerBuilder.Build();
-        // Clear FusionCache on startup
-        TgGlobalTools.Container.Resolve<IFusionCache>().ClearAll();
 
         // Helpers
         var tgLocale = TgLocaleHelper.Instance;
@@ -102,10 +98,13 @@ public static class Program
         TgLogUtils.Create(TgEnumAppType.Console, isAppStart: true);
         tgLog.WriteLine("  Loading logging   v");
 
+        // Clear FusionCache on startup
+        await tgMenu.BusinessLogicManager.Cache.ClearAllAsync();
+
         // Loading storage
         tgLog.WriteLine("  Loading storage ...");
         await Task.Delay(250);
-        await tgMenu.BusinessLogicManager.CreateAndUpdateDbAsync();
+        await tgMenu.BusinessLogicManager.StorageManager.CreateAndUpdateDbAsync();
         await tgMenu.SetStorageVersionAsync();
         tgLog.WriteLine("  Loading storage   v");
 
@@ -206,15 +205,17 @@ public static class Program
     }
 
     /// <summary> Wait for make screen record </summary>
-    private static void WaitForMakeScreenRecord(int seconds)
+    private static void WaitForMakeScreenRecord(int seconds = 3)
     {
+#if DEBUG
         for (int i = seconds; i > 0; i--)
         {
             Console.WriteLine("Wait for make screen record");
             Console.Write($"Seconds left: {i}");
-            Thread.Sleep(1_000);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             Console.Clear();
         }
-        Thread.Sleep(3_000);
+        Thread.Sleep(TimeSpan.FromSeconds(seconds));
+#endif
     }
 }

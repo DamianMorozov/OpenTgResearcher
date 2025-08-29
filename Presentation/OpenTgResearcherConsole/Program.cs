@@ -65,11 +65,12 @@ public static class Program
         containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
         containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
         // Registering services
-        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>();
-        containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>();
-        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>();
-        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>();
-        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>();
+        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>().SingleInstance();
+        containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
+        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>().SingleInstance();
+        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
+        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
+        containerBuilder.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
         // We build a container and take IServiceProvider
         TgGlobalTools.Container = containerBuilder.Build();
         // Clear FusionCache on startup

@@ -5,7 +5,7 @@ using TL;
 
 namespace TgBusinessLogic.Contracts;
 
-public interface ITgStorageManager : IDisposable
+public interface ITgStorageService : IDisposable
 {
     /// <summary> EF context and repositories for Telegram data storage </summary>
     public ITgEfContext EfContext { get; }
@@ -37,4 +37,21 @@ public interface ITgStorageManager : IDisposable
     public Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story);
     /// <summary> Create or get a user entity based on the Telegram user and contact status </summary>
     public Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact);
+    /// <summary> Check if table exists in the database </summary>
+    Task<bool> CheckTableExistsAsync(string tableName = "");
+    /// <summary> Remove duplicate messages from the database </summary>
+    public Task RemoveDuplicateMessagesAsync();
+    /// <summary> Remove duplicate messages from the database </summary>
+    public Task RemoveDuplicateMessagesByDirectSqlAsync();
+    /// <summary> Backup storage </summary>
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "");
+    /// <summary> Create and update storage </summary>
+    public Task CreateAndUpdateDbAsync();
+    /// <summary> Shrink storage </summary>
+    public Task ShrinkDbAsync();
+    /// <summary> Load storage table dtos </summary>
+    public Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName,
+        string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName);
+    /// <summary> Load storage backup dtos </summary>
+    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
 }

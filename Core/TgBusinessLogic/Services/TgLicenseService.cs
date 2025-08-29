@@ -11,14 +11,14 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 	public string MenuWebSiteGlobalLicenseBuyUrl => "https://opentgresearcher.online/licenses/";
 	public TgLicenseDto CurrentLicense { get; private set; } = default!;
     
-    private ITgStorageManager StorageManager { get; } = default!;
+    private ITgStorageService StorageManager { get; } = default!;
 
-    public TgLicenseService(ITgStorageManager storageManager) : base()
+    public TgLicenseService(ITgStorageService storageManager) : base()
     {
         StorageManager = storageManager;
     }
 
-    public TgLicenseService(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager) : base(webHostEnvironment)
+    public TgLicenseService(IWebHostEnvironment webHostEnvironment, ITgStorageService storageManager) : base(webHostEnvironment)
     {
         StorageManager = storageManager;
     }

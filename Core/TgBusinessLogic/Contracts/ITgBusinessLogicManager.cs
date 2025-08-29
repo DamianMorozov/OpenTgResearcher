@@ -6,26 +6,13 @@ namespace TgBusinessLogic.Contracts;
 public interface ITgBusinessLogicManager : IDisposable
 {
     /// <summary> Storage manager for Telegram data </summary>
-    public ITgStorageManager StorageManager { get; }
+    public ITgStorageService StorageManager { get; }
     /// <summary> License service for managing licenses </summary>
     public ITgLicenseService LicenseService { get; }
     /// <summary> Connect client for managing connections to Telegram </summary>
     public ITgConnectClient ConnectClient { get; }
-    /// <summary> Backup storage </summary>
-    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "");
-    /// <summary> Create and update storage </summary>
-    public Task CreateAndUpdateDbAsync();
-    /// <summary> Shrink storage </summary>
-    public Task ShrinkDbAsync();
-    /// <summary> Load storage table dtos </summary>
-    public Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName, 
-        string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName);
-    /// <summary> Load storage backup dtos </summary>
-    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");
-    /// <summary> Check if table exists in the database </summary>
-    Task<bool> CheckTableExistsAsync(string tableName = "");
-    /// <summary> Remove duplicate messages from the database </summary>
-    public Task RemoveDuplicateMessagesAsync();
-    /// <summary> Remove duplicate messages from the database </summary>
-    public Task RemoveDuplicateMessagesByDirectSqlAsync();
+    /// <summary> Flood control service for managing flood control </summary>
+    public ITgFloodControlService FloodControlService { get; }
+    /// <summary> FusionCache </summary>
+    public IFusionCache Cache { get; }
 }

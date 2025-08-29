@@ -72,11 +72,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 	~TgEfContextBase() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed()
-    {
-        if (_disposed)
-            throw new ObjectDisposedException($"{nameof(TgEfContextBase)}: {TgConstants.ObjectHasBeenDisposedOff}!");
-    }
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
     /// <summary> Release managed resources </summary>
     public virtual void ReleaseManagedResources()
@@ -140,7 +136,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     #region Methods
 
     /// <inheritdoc />
-    public string GetStoragePath(string contentRootPath = "")
+    public string GetDataSource(string contentRootPath = "")
     {
         var storagePath = TgGlobalTools.AppType switch
         {

@@ -25,7 +25,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public bool IsProxyUsage { get; private set; } = default!;
     public TL.User? Me { get; protected set; } = default!;
     public SqliteConnection? BotSqlConnection { get; private set; } = default!;
-    protected ITgStorageManager StorageManager { get; set; } = default!;
+    protected ITgStorageService StorageManager { get; set; } = default!;
     protected ITgFloodControlService FloodControlService { get; set; } = default!;
 
     public ConcurrentDictionary<long, TL.ChatBase> ChatCache { get; private set; } = [];
@@ -64,7 +64,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private ITgDownloadViewModel? _tgDownloadSettings;
 
-    protected TgConnectClientBase(ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : base()
+    protected TgConnectClientBase(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : base()
     {
         InitializeClient();
         // Services
@@ -80,7 +80,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.id}");
     }
 
-    protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageManager storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
+    protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
         base(webHostEnvironment)
     {
         InitializeClient();

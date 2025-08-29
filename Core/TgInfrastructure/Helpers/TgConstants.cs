@@ -9,7 +9,6 @@ public sealed class TgConstants
     public static string LinkTelegramApps => "https://my.telegram.org/auth?to=apps";
     public static string LinkTelegramAppsTitle => "Telegram";
     public static string LinkTelegramBot => "https://t.me/BotFather";
-    public static string ObjectHasBeenDisposedOff => "Object has been disposed off!";
     public static string UseOverrideMethod => "Use override method!";
 	public static string LinkDockerHub => "https://hub.docker.com/r/damianmorozov/tgdownloader-blazor";
 	public static string LinkDockerHubTitle => "DockerHub";

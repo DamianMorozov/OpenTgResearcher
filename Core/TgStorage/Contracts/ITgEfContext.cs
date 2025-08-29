@@ -45,8 +45,8 @@ public interface ITgEfContext : IDisposable
 	/// <summary> Version queries </summary>
 	public DbSet<TgEfVersionEntity> Versions { get; set; }
 
-	/// <summary> Get storage path </summary>
-	protected string GetStoragePath(string contentRootPath = "");
+	/// <summary> Get data source storage path </summary>
+	protected string GetDataSource(string contentRootPath = "");
 	/// <summary> Shrink storage </summary>
 	public Task ShrinkDbAsync();
 	/// <summary> Migrate storage </summary>

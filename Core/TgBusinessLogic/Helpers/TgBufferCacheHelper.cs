@@ -28,11 +28,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
 	~TgBufferCacheHelper() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed()
-    {
-        if (_disposed)
-            throw new ObjectDisposedException($"{nameof(TgBufferCacheHelper<TEntity>)}: {TgConstants.ObjectHasBeenDisposedOff}!");
-    }
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
     /// <summary> Release managed resources </summary>
     public void ReleaseManagedResources()

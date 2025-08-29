@@ -41,11 +41,7 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
 	~TgEfAppViewModel() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed()
-    {
-        if (_disposed)
-            throw new ObjectDisposedException($"{nameof(TgEfAppViewModel)}: {TgConstants.ObjectHasBeenDisposedOff}!");
-    }
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
     /// <summary> Release managed resources </summary>
     public void ReleaseManagedResources()

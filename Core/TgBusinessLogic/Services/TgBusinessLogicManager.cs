@@ -8,7 +8,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     #region Fields, properties, constructor
 
     private ILifetimeScope Scope { get; } = default!;
-    public ITgStorageManager StorageManager { get; private set; } = default!;
+    public ITgStorageService StorageManager { get; private set; } = default!;
     public ITgLicenseService LicenseService { get; private set; } = default!;
     public ITgConnectClient ConnectClient { get; private set; } = default!;
     public ITgFloodControlService FloodControlService { get; private set; } = default!;
@@ -18,26 +18,26 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
 
-        StorageManager = Scope.Resolve<ITgStorageManager>();
-        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(ITgStorageManager), StorageManager));
+        StorageManager = Scope.Resolve<ITgStorageService>();
+        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(ITgStorageService), StorageManager));
         FloodControlService = Scope.Resolve<ITgFloodControlService>();
         Cache = Scope.Resolve<IFusionCache>();
         ConnectClient = TgGlobalTools.AppType switch
         {
             TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
                 new TypedParameter(typeof(IFusionCache), Cache)),
             TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
                 new TypedParameter(typeof(IFusionCache), Cache)),
             TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
                 new TypedParameter(typeof(IFusionCache), Cache)),
             TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
                 new TypedParameter(typeof(IFusionCache), Cache)),
             TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
                 new TypedParameter(typeof(IFusionCache), Cache)),
         };
     }
@@ -46,22 +46,22 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
 
-        StorageManager = Scope.Resolve<ITgStorageManager>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
-        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
-            new TypedParameter(typeof(ITgStorageManager), StorageManager));
+        StorageManager = Scope.Resolve<ITgStorageService>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment), new TypedParameter(typeof(ITgStorageService), StorageManager));
         FloodControlService = Scope.Resolve<ITgFloodControlService>();
+        Cache = Scope.Resolve<IFusionCache>();
         ConnectClient = TgGlobalTools.AppType switch
         {
             TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
             TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
             TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
             TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
             TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(
-                new TypedParameter(typeof(ITgStorageManager), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
         };
     }
 
@@ -76,8 +76,10 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         LicenseService.Dispose();
         StorageManager.Dispose();
         FloodControlService.Dispose();
+        Cache.Dispose();
 
         Scope.Dispose();
+        TgGlobalTools.Container.Dispose();
     }
 
     /// <summary> Release unmanaged resources </summary>
@@ -89,139 +91,6 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     #endregion
 
     #region Methods
-
-    /// <inheritdoc />
-    public async Task CreateAndUpdateDbAsync()
-    {
-        if (await CheckTableExistsAsync())
-        {
-            // Remove duplicate messages from the database
-            await RemoveDuplicateMessagesByDirectSqlAsync();
-        }
-        // Apply migration
-        await StorageManager.EfContext.MigrateDbAsync();
-        // Fill version table
-        await StorageManager.VersionRepository.FillTableVersionsAsync();
-    }
-
-    /// <inheritdoc />
-    public async Task RemoveDuplicateMessagesAsync()
-    {
-        // Find duplicate messages by SourceId and Id
-        var allMessages = await StorageManager.EfContext.Messages.ToListAsync();
-
-        // Group by SourceId and Id, find duplicates
-        var duplicates = allMessages
-            .GroupBy(x => new { x.SourceId, x.Id })
-            .Where(g => g.Count() > 1)
-            .SelectMany(g => g.OrderBy(x => x.Uid).Skip(1)) // Keep only one
-            .ToList();
-
-        // Log and remove duplicates
-        foreach (var msg in duplicates)
-        {
-            TgLogUtils.WriteLog($"Removed duplicate message: SourceId={msg.SourceId}, Id={msg.Id}, Uid={msg.Uid}");
-        }
-
-        if (duplicates.Count != 0)
-        {
-            StorageManager.EfContext.Messages.RemoveRange(duplicates);
-            await StorageManager.EfContext.SaveChangesAsync();
-        }
-    }
-
-    /// <inheritdoc />
-    public async Task<bool> CheckTableExistsAsync(string tableName = "")
-    {
-        if (string.IsNullOrWhiteSpace(tableName))
-            tableName = "__EFMigrationsHistory";
-
-        var connection = StorageManager.EfContext.Database.GetDbConnection();
-        if (connection.State != ConnectionState.Open)
-            await connection.OpenAsync();
-
-        // For SQLite
-        if (connection.GetType().Name.Contains("Sqlite", StringComparison.OrdinalIgnoreCase))
-        {
-            using var cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName";
-            var param = cmd.CreateParameter();
-            param.ParameterName = "@tableName";
-            param.Value = tableName;
-            cmd.Parameters.Add(param);
-
-            var result = await cmd.ExecuteScalarAsync();
-            return result != null;
-        }
-
-        // For other DBMSs via INFORMATION_SCHEMA
-        using var cmd2 = connection.CreateCommand();
-        cmd2.CommandText = @"
-        SELECT 1 
-        FROM INFORMATION_SCHEMA.TABLES 
-        WHERE TABLE_NAME = @tableName";
-        var param2 = cmd2.CreateParameter();
-        param2.ParameterName = "@tableName";
-        param2.Value = tableName;
-        cmd2.Parameters.Add(param2);
-
-        var exists = await cmd2.ExecuteScalarAsync();
-        return exists != null;
-    }
-
-    /// <inheritdoc />
-    public async Task RemoveDuplicateMessagesByDirectSqlAsync()
-    {
-        var sql = @"
-DELETE 
-FROM MESSAGES
-WHERE UID IN (
-    SELECT M1.UID
-    FROM MESSAGES M1
-    JOIN (
-        SELECT SOURCE_ID, ID, MIN(UID) AS MIN_UID
-        FROM MESSAGES
-        GROUP BY SOURCE_ID, ID
-        HAVING COUNT(*) > 1
-    ) AS DUPLICATES
-    ON M1.SOURCE_ID = DUPLICATES.SOURCE_ID AND m1.ID = DUPLICATES.ID
-    WHERE M1.UID != DUPLICATES.MIN_UID
-);"
-            .TrimStart('\r', ' ', '\n', '\t').TrimEnd('\r', ' ', '\n', '\t').Replace(Environment.NewLine, " ");
-
-        await StorageManager.EfContext.Database.ExecuteSqlRawAsync(sql);
-    }
-
-    /// <inheritdoc />
-    public async Task ShrinkDbAsync() =>
-        await StorageManager.EfContext.ShrinkDbAsync();
-
-    /// <inheritdoc />
-    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") =>
-        StorageManager.EfContext.BackupDb(storagePath);
-
-    /// <inheritdoc />
-    public async Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName,
-        string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName)
-    {
-        var appDtos = new TgStorageTableDto(appsName, await StorageManager.AppRepository.GetListCountAsync());
-        var chatsDtos = new TgStorageTableDto(chatsName, await StorageManager.SourceRepository.GetListCountAsync());
-        var usersDtos = new TgStorageTableDto(contactsName, await StorageManager.UserRepository.GetListCountAsync());
-        var documentsDtos = new TgStorageTableDto(documentsName, await StorageManager.DocumentRepository.GetListCountAsync());
-        var filtersDtos = new TgStorageTableDto(filtersName, await StorageManager.FilterRepository.GetListCountAsync());
-        var messagesDtos = new TgStorageTableDto(messagesName, await StorageManager.MessageRepository.GetListCountAsync());
-        var proxiesDtos = new TgStorageTableDto(proxiesName, await StorageManager.ProxyRepository.GetListCountAsync());
-        var storiesDtos = new TgStorageTableDto(storiesName, await StorageManager.StoryRepository.GetListCountAsync());
-        var versionsDtos = new TgStorageTableDto(versionsName, await StorageManager.VersionRepository.GetListCountAsync());
-
-        // Order
-        ObservableCollection<TgStorageTableDto> dtos = [appDtos, chatsDtos, usersDtos, documentsDtos, filtersDtos, messagesDtos, proxiesDtos, storiesDtos, versionsDtos];
-        return [.. dtos.OrderBy(x => x.Name)];
-    }
-
-    /// <inheritdoc />
-    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "") =>
-        StorageManager.EfContext.LoadStorageBackupDtos(storagePath);
 
     #endregion
 }

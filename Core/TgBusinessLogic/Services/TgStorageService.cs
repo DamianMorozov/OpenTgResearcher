@@ -3,9 +3,9 @@
 
 using TL;
 
-namespace TgBusinessLogic.Helpers;
+namespace TgBusinessLogic.Services;
 
-public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
+public sealed class TgStorageService : TgWebDisposable, ITgStorageService
 {
     #region Fields, properties, constructor
 
@@ -38,7 +38,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
     /// <inheritdoc />
     public ITgEfVersionRepository VersionRepository { get; }
 
-    public TgStorageManager() : base()
+    public TgStorageService() : base()
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         
@@ -60,7 +60,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         VersionRepository = Scope.Resolve<ITgEfVersionRepository>();
     }
 
-    public TgStorageManager(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment)
+    public TgStorageService(IWebHostEnvironment webHostEnvironment) : base(webHostEnvironment)
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         
@@ -130,7 +130,7 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
     }
 
     /// <inheritdoc />
-    public async Task<TgEfUserEntity> CreateOrGetUserAsync(TL.User user, bool isContact)
+    public async Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact)
     {
         var storageResult = await UserRepository.GetByDtoAsync(new() { Id = user.id });
         var userEntity = storageResult.IsExists && storageResult.Item is not null ? storageResult.Item : new();
@@ -154,6 +154,137 @@ public sealed class TgStorageManager : TgWebDisposable, ITgStorageManager
         userEntity.IsContact = isContact;
         return userEntity;
     }
+
+    /// <inheritdoc />
+    public async Task<bool> CheckTableExistsAsync(string tableName = "")
+    {
+        if (string.IsNullOrWhiteSpace(tableName))
+            tableName = "__EFMigrationsHistory";
+
+        var connection = EfContext.Database.GetDbConnection();
+        if (connection.State != ConnectionState.Open)
+            await connection.OpenAsync();
+
+        // For SQLite
+        if (connection.GetType().Name.Contains("Sqlite", StringComparison.OrdinalIgnoreCase))
+        {
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name=@tableName";
+            var param = cmd.CreateParameter();
+            param.ParameterName = "@tableName";
+            param.Value = tableName;
+            cmd.Parameters.Add(param);
+
+            var result = await cmd.ExecuteScalarAsync();
+            return result != null;
+        }
+
+        // For other DBMSs via INFORMATION_SCHEMA
+        using var cmd2 = connection.CreateCommand();
+        cmd2.CommandText = @"
+        SELECT 1 
+        FROM INFORMATION_SCHEMA.TABLES 
+        WHERE TABLE_NAME = @tableName";
+        var param2 = cmd2.CreateParameter();
+        param2.ParameterName = "@tableName";
+        param2.Value = tableName;
+        cmd2.Parameters.Add(param2);
+
+        var exists = await cmd2.ExecuteScalarAsync();
+        return exists != null;
+    }
+
+    /// <inheritdoc />
+    public async Task RemoveDuplicateMessagesAsync()
+    {
+        // Find duplicate messages by SourceId and Id
+        var allMessages = await EfContext.Messages.ToListAsync();
+
+        // Group by SourceId and Id, find duplicates
+        var duplicates = allMessages
+            .GroupBy(x => new { x.SourceId, x.Id })
+            .Where(g => g.Count() > 1)
+            .SelectMany(g => g.OrderBy(x => x.Uid).Skip(1)) // Keep only one
+            .ToList();
+
+        // Log and remove duplicates
+        foreach (var msg in duplicates)
+        {
+            TgLogUtils.WriteLog($"Removed duplicate message: SourceId={msg.SourceId}, Id={msg.Id}, Uid={msg.Uid}");
+        }
+
+        if (duplicates.Count != 0)
+        {
+            EfContext.Messages.RemoveRange(duplicates);
+            await EfContext.SaveChangesAsync();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task RemoveDuplicateMessagesByDirectSqlAsync()
+    {
+        var sql = @"
+DELETE 
+FROM MESSAGES
+WHERE UID IN (
+    SELECT M1.UID
+    FROM MESSAGES M1
+    JOIN (
+        SELECT SOURCE_ID, ID, MIN(UID) AS MIN_UID
+        FROM MESSAGES
+        GROUP BY SOURCE_ID, ID
+        HAVING COUNT(*) > 1
+    ) AS DUPLICATES
+    ON M1.SOURCE_ID = DUPLICATES.SOURCE_ID AND m1.ID = DUPLICATES.ID
+    WHERE M1.UID != DUPLICATES.MIN_UID
+);"
+            .TrimStart('\r', ' ', '\n', '\t').TrimEnd('\r', ' ', '\n', '\t').Replace(Environment.NewLine, " ");
+
+        await EfContext.Database.ExecuteSqlRawAsync(sql);
+    }
+
+    /// <inheritdoc />
+    public async Task CreateAndUpdateDbAsync()
+    {
+        if (await CheckTableExistsAsync())
+        {
+            // Remove duplicate messages from the database
+            await RemoveDuplicateMessagesByDirectSqlAsync();
+        }
+        // Apply migration
+        await EfContext.MigrateDbAsync();
+        // Fill version table
+        await VersionRepository.FillTableVersionsAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task ShrinkDbAsync() => await EfContext.ShrinkDbAsync();
+
+    /// <inheritdoc />
+    public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") => EfContext.BackupDb(storagePath);
+
+    /// <inheritdoc />
+    public async Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName,
+        string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName)
+    {
+        var appDtos = new TgStorageTableDto(appsName, await AppRepository.GetListCountAsync());
+        var chatsDtos = new TgStorageTableDto(chatsName, await SourceRepository.GetListCountAsync());
+        var usersDtos = new TgStorageTableDto(contactsName, await UserRepository.GetListCountAsync());
+        var documentsDtos = new TgStorageTableDto(documentsName, await DocumentRepository.GetListCountAsync());
+        var filtersDtos = new TgStorageTableDto(filtersName, await FilterRepository.GetListCountAsync());
+        var messagesDtos = new TgStorageTableDto(messagesName, await MessageRepository.GetListCountAsync());
+        var proxiesDtos = new TgStorageTableDto(proxiesName, await ProxyRepository.GetListCountAsync());
+        var storiesDtos = new TgStorageTableDto(storiesName, await StoryRepository.GetListCountAsync());
+        var versionsDtos = new TgStorageTableDto(versionsName, await VersionRepository.GetListCountAsync());
+
+        // Order
+        ObservableCollection<TgStorageTableDto> dtos = [appDtos, chatsDtos, usersDtos, documentsDtos, filtersDtos, messagesDtos, proxiesDtos, storiesDtos, versionsDtos];
+        return [.. dtos.OrderBy(x => x.Name)];
+    }
+
+    /// <inheritdoc />
+    public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "") =>
+        EfContext.LoadStorageBackupDtos(storagePath);
 
     #endregion
 }

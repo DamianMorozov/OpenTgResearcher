@@ -14,7 +14,7 @@ public sealed class TgEfMemoryContext : TgEfContextBase, ITgEfContext
 
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlite(GetStoragePath());
+            optionsBuilder.UseSqlite(GetDataSource());
         }
     }
 

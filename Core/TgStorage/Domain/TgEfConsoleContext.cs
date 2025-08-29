@@ -22,7 +22,7 @@ public sealed class TgEfConsoleContext : TgEfContextBase, ITgEfContext
 
         if (!optionsBuilder.IsConfigured)
         {
-		    optionsBuilder.UseSqlite(GetStoragePath());
+		    optionsBuilder.UseSqlite(GetDataSource());
         }
     }
 

@@ -26,11 +26,7 @@ public abstract class TgDisposable : ObservableRecipient, ITgDisposable
 	~TgDisposable() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed()
-    {
-        if (_disposed)
-            throw new ObjectDisposedException($"{nameof(TgDisposable)}: {TgConstants.ObjectHasBeenDisposedOff}!");
-    }
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
     /// <summary> Release managed resources </summary>
     public virtual void ReleaseManagedResources() =>

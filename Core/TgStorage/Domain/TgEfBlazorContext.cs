@@ -14,7 +14,7 @@ public sealed class TgEfBlazorContext(IWebHostEnvironment webHostEnvironment) : 
 
         if (!optionsBuilder.IsConfigured)
         {
-		    optionsBuilder.UseSqlite(GetStoragePath(webHostEnvironment.ContentRootPath));
+		    optionsBuilder.UseSqlite(GetDataSource(webHostEnvironment.ContentRootPath));
         }
     }
 

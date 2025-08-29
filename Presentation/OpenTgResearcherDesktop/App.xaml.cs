@@ -13,9 +13,9 @@ public partial class App : Application
     // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
     // https://docs.microsoft.com/dotnet/core/extensions/configuration
     // https://docs.microsoft.com/dotnet/core/extensions/logging
-    public IHost Host { get; }
+    internal IHost Host { get; }
 
-    public static T GetService<T>() where T : class
+    internal static T GetService<T>() where T : class
     {
         if ((Current as App)!.Host.Services.GetRequiredService(typeof(T)) is not T service)
         {
@@ -24,7 +24,7 @@ public partial class App : Application
         return service;
     }
 
-    public static object GetService(Type type)
+    internal static object GetService(Type type)
     {
         var service = (Current as App)!.Host.Services.GetRequiredService(type);
         if (!type.IsInstanceOfType(service))
@@ -34,12 +34,12 @@ public partial class App : Application
         return service;
     }
 
-    public static WindowEx MainWindow { get; private set; } = default!;
+    internal static WindowEx MainWindow { get; private set; } = default!;
 
-    public static UIElement? AppTitleBar { get; set; }
+    internal static UIElement? AppTitleBar { get; private set; }
     internal static ITgBusinessLogicManager BusinessLogicManager { get; private set; } = default!;
-    private static ILifetimeScope Scope { get; set; } = default!;
-    public static TgViewModelLocator? Locator { get; set; } = default!;
+    internal static ILifetimeScope Scope { get; private set; } = default!;
+    internal static TgViewModelLocator? Locator { get; set; } = default!;
 
     public App()
     {
@@ -178,8 +178,6 @@ public partial class App : Application
 
         // Set the Host as the current application host
         TgGlobalTools.Container = (IContainer)Host.Services.GetAutofacRoot();
-        // Clear FusionCache on startup
-        TgGlobalTools.Container.Resolve<IFusionCache>().ClearAll();
 
         // Exceptions
         UnhandledException += App_UnhandledException;
@@ -193,7 +191,6 @@ public partial class App : Application
         TgLogUtils.CloseAndFlush();
 
         BusinessLogicManager.Dispose();
-        Scope.Dispose();
 
         GC.SuppressFinalize(this);
     }
@@ -222,7 +219,9 @@ public partial class App : Application
             Scope = TgGlobalTools.Container.BeginLifetimeScope();
             BusinessLogicManager = Scope.Resolve<ITgBusinessLogicManager>();
             // Create and update storage
-            await BusinessLogicManager.CreateAndUpdateDbAsync();
+            await BusinessLogicManager.StorageManager.CreateAndUpdateDbAsync();
+            // Clear FusionCache on startup
+            await BusinessLogicManager.Cache.ClearAllAsync();
             // ViewModel locator
             Locator = new();
 

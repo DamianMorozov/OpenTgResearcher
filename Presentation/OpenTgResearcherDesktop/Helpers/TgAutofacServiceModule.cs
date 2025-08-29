@@ -8,11 +8,11 @@ internal sealed class TgAutofacServiceModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder containerBuilder)
     {
-        containerBuilder.RegisterType<TgStorageManager>().As<ITgStorageManager>().SingleInstance();
+        containerBuilder.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
         containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
         containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>().SingleInstance();
         containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
-        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
         containerBuilder.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
+        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
     }
 }

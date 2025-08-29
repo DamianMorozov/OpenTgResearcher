@@ -8,7 +8,6 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
-    private readonly ITgHardwareResourceMonitoringService _hardwareControlService;
     [ObservableProperty]
     public partial int CpuApp { get; set; }
     [ObservableProperty]
@@ -18,6 +17,8 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial int MemoryTotalUsage { get; set; }
 
+    private ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; }
+
     public IRelayCommand StartMonitorCommand { get; }
     public IRelayCommand StopMonitorCommand { get; }
 
@@ -25,8 +26,9 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
         ITgHardwareResourceMonitoringService tgHardwareControlService)
         : base(settingsService, navigationService, logger, nameof(TgHardwareControlViewModel))
     {
-        _hardwareControlService = tgHardwareControlService;
-        _hardwareControlService.MetricsUpdated += OnMetricsUpdated;
+        var scope = TgGlobalTools.Container.BeginLifetimeScope();
+        HardwareResourceMonitoringService = scope.Resolve<ITgHardwareResourceMonitoringService>();
+        HardwareResourceMonitoringService.MetricsUpdated += OnMetricsUpdated;
         // Commands
         StartMonitorCommand = new AsyncRelayCommand(StartMonitorAsync);
         StopMonitorCommand = new AsyncRelayCommand(StopMonitorAsync);
@@ -80,7 +82,7 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
     {
         try
         {
-            await _hardwareControlService.StartMonitoringAsync();
+            await HardwareResourceMonitoringService.StartMonitoringAsync();
         }
         catch (Exception ex)
         {
@@ -98,7 +100,7 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
     {
         try
         {
-            await _hardwareControlService.StopMonitoringAsync(isClose: false);
+            await HardwareResourceMonitoringService.StopMonitoringAsync(isClose: false);
         }
         catch (Exception ex)
         {

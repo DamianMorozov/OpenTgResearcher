@@ -66,7 +66,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
 
         try
         {
-            StorageTableDtos = await App.BusinessLogicManager.LoadStorageTableDtosAsync(
+            StorageTableDtos = await App.BusinessLogicManager.StorageManager.LoadStorageTableDtosAsync(
                 TgResourceExtensions.GetTableNameApps(),
                 TgResourceExtensions.GetTableNameChats(),
                 TgResourceExtensions.GetTableNameUsers(),
@@ -108,7 +108,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     {
         if (!SettingsService.IsExistsAppStorage) return;
 
-        StorageBackupDtos = App.BusinessLogicManager.LoadStorageBackupDtos(SettingsService.AppStorage);
+        StorageBackupDtos = App.BusinessLogicManager.StorageManager.LoadStorageBackupDtos(SettingsService.AppStorage);
         await Task.CompletedTask;
     }
 
@@ -121,7 +121,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
         try
         {
             StorageLog = string.Empty;
-            var backupResult = App.BusinessLogicManager.BackupDb(SettingsService.AppStorage);
+            var backupResult = App.BusinessLogicManager.StorageManager.BackupDb(SettingsService.AppStorage);
             StorageLog = $"{TgResourceExtensions.ActionStorageCreateBackupFile()}: {backupResult.FileName}";
             StorageLog = backupResult.IsSuccess
                 ? TgResourceExtensions.ActionStorageCreateBackupSuccess() : TgResourceExtensions.ActionStorageCreateBackupFailed();
@@ -141,7 +141,7 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
         try
         {
             StorageLog = string.Empty;
-            await App.BusinessLogicManager.ShrinkDbAsync();
+            await App.BusinessLogicManager.StorageManager.ShrinkDbAsync();
             await LoadStorageBackupDtosAsync();
         }
         finally

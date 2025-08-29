@@ -18,12 +18,16 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     [ObservableProperty] public partial bool IsLoadVelopack { get; set; }
     [ObservableProperty] public partial string AppVersion { get; set; } = string.Empty;
 
+    private ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; }
+
     public Action BackToMainWindow { get; internal set; } = () => { };
     public IRelayCommand ContinueCommand { get; }
 
     public TgSplashScreenViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSplashScreenViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
     {
+        var scope = TgGlobalTools.Container.BeginLifetimeScope();
+        HardwareResourceMonitoringService = scope.Resolve<ITgHardwareResourceMonitoringService>();
         // App version + Storage version + License
         AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
         // Commands
@@ -100,7 +104,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         try
         {
             // Create and update storage
-            await App.BusinessLogicManager.CreateAndUpdateDbAsync();
+            await App.BusinessLogicManager.StorageManager.CreateAndUpdateDbAsync();
             // Storage version
             var versionRepository = new TgEfVersionRepository();
             var versionsResult = await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
@@ -153,8 +157,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     {
         try
         {
-            var hardwareControlService = App.GetService<ITgHardwareResourceMonitoringService>();
-            await hardwareControlService.StartMonitoringAsync();
+            await HardwareResourceMonitoringService.StartMonitoringAsync();
             IsLoadHardwareResourceMonitoring = true;
         }
         catch (Exception ex)

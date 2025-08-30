@@ -57,14 +57,14 @@ jobs:
         run: dotnet tool update -g vpk
       - name: Package with Velopack
         run: |
-            vpk pack `
-              -u OpenTgResearcherConsole `
-              -v ${{ steps.get_version.outputs.version }} `
-              -p output/Console-AnyCPU `
-              -o output/Installer `
-              -c win-Portable `
-              -i Docs/Assets/Icon.ico `
-              -e OpenTgResearcherConsole.exe
+          vpk pack `
+            -p "output/Console-AnyCPU" `
+            -v "${{ steps.get_version.outputs.version }}" `
+            -u "OpenTgResearcherConsole" `
+            -o "output/Installer" `
+            -c "win-Portable" `
+            -i "Docs/Assets/Icon.ico" `
+            -e "OpenTgResearcherConsole.exe"
       - name: Create portable zip
         run: Compress-Archive -Path output/Console-AnyCPU/* -DestinationPath OpenTgResearcherConsole-win-Portable.zip
       - name: Upload portable archive

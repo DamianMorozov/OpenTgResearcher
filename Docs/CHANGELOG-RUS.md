@@ -5,6 +5,8 @@
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.7.160] - 2025-08-29
+### Исправлено
+- Исправлен ГитХаб workflow
 ### Изменено
 - Обновлены NuGet пакеты
 - Обновлён проект тестов `TgStorageTests`

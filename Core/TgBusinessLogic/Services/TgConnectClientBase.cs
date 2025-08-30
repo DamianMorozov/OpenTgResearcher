@@ -2166,8 +2166,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             messageSettings.CurrentMessageId = messageBase.ID;
             var rootSettings = messageSettings.Clone();
 
-            // Add chat from Storage to Cache
-            await AddChatFromStorageToCacheAsync(chatCache, messageSettings.CurrentChatId);
             // Get chat from Cache
             if (chatCache.TryGetChat(messageSettings.CurrentChatId, out var accessHash) &&
                 (messageSettings.ParentMessageId == 0 || messageSettings.ParentMessageId != messageSettings.CurrentMessageId))
@@ -2414,12 +2412,30 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task AddChatFromStorageToCacheAsync(TgChatCache chatCache, long chatId)
     {
+        var needUpdate = false;
+
         if (!chatCache.TryGetChat(chatId, out _))
         {
-            var chatResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = chatId });
-            if (chatResult.IsExists && chatResult.Item is { } chatEntity)
+            needUpdate = true;
+        }
+        else
+        {
+            var directory = chatCache.GetDirectory(chatId);
+            if (string.IsNullOrEmpty(directory))
             {
-                chatCache.TryAddChat(chatEntity.Id, chatEntity.AccessHash, chatEntity.Directory ?? string.Empty);
+                needUpdate = true;
+            }
+        }
+
+        if (needUpdate)
+        {
+            var chatResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = chatId });
+            if (chatResult is { IsExists: true, Item: { } chatEntity })
+            {
+                if (!chatCache.TryGetChat(chatId, out _))
+                    chatCache.TryAddChat(chatEntity.Id, chatEntity.AccessHash, chatEntity.Directory ?? string.Empty);
+                else
+                    chatCache.TryUpdateChat(chatEntity.Id, chatEntity.AccessHash, false, chatEntity.Directory ?? string.Empty);
             }
         }
     }
@@ -2637,9 +2653,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 < 1000000000 => $"{messageBase.ID:000000000}",
                 _ => $"{messageBase.ID}"
             };
-        // Join with directory
-        //mediaInfo.LocalPathOnly = tgDownloadSettings.SourceVm.Dto.Directory;
-        // TODO: fix folder
+
         mediaInfo.LocalPathOnly = chatCache.GetDirectory(messageSettings.CurrentChatId);
         // Creating subdirectories
         if (!string.IsNullOrEmpty(mediaInfo.RemoteName) &&
@@ -2716,6 +2730,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task DownloadMediaFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TL.MessageMedia messageMedia,
         TgChatCache chatCache, TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings)
     {
+        // Add chat from Storage to Cache
+        await AddChatFromStorageToCacheAsync(chatCache, messageSettings.CurrentChatId);
         var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, chatCache, messageSettings, forumTopicSettings);
         if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly)) return;
 
@@ -2729,7 +2745,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             Client = Bot.Client;
 
         // Download new file
-        if (!File.Exists(mediaInfo.LocalPathWithNumber))
+        if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.LocalPathWithNumber))
         {
             await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
             if (Client is not null)

@@ -14,23 +14,27 @@ public static class Program
 
         // Registering .NET DI services
         var services = new ServiceCollection();
+
+        // Get storage path
+        var context = new TgEfConsoleContext();
+        var storagePath = context.GetDataSource();
+
         // Register the DbContext with SQLite
         services.AddDbContextPool<TgEfConsoleContext>(options =>
         {
-            var context = new TgEfConsoleContext();
-            options.UseSqlite(context.GetDataSource());
+            options.UseSqlite(storagePath);
             // Copy by TgEfConsoleContext.OnConfiguring
-            LoggerFactory factory = new();
             options
 #if DEBUG
-                .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}{nameof(context.ContextId)} {context.ContextId}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
+                .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging()
 #endif
                 .EnableThreadSafetyChecks()
-                .UseLoggerFactory(factory);
+                .UseLoggerFactory(new LoggerFactory());
 
         }, poolSize: 128);
+
         // Register FusionCache
         services.AddFusionCache().WithDefaultEntryOptions(TgCacheUtils.CacheOptionsChannelMessages);
         var serviceProvider = services.BuildServiceProvider();
@@ -38,11 +42,11 @@ public static class Program
         // Get configured FusionCache instance from MS DI
         var fusionCache = serviceProvider.GetRequiredService<IFusionCache>();
         // Register the Autofac DI
-        var containerBuilder = new ContainerBuilder();
+        var cb = new ContainerBuilder();
         // Make FusionCache available for Autofac graph
-        containerBuilder.RegisterInstance(fusionCache).As<IFusionCache>().SingleInstance();
+        cb.RegisterInstance(fusionCache).As<IFusionCache>().SingleInstance();
         // Registering the EF context
-        containerBuilder.Register(c =>
+        cb.Register(c =>
         {
             var context = new TgEfConsoleContext();
             // Create DbContextOptionsBuilder with SQLite connection
@@ -51,26 +55,27 @@ public static class Program
             return new TgEfConsoleContext(optionsBuilder.Options);
         }).As<ITgEfContext>().InstancePerLifetimeScope();
         // Registering repositories
-        containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
-        containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
-        containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
-        containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
-        containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
-        containerBuilder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
-        containerBuilder.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
-        containerBuilder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
-        containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
-        containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
-        containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
+        cb.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
+        cb.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
+        cb.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
+        cb.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
+        cb.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
+        cb.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
+        cb.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
+        cb.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
+        cb.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
+        cb.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
+        cb.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
         // Registering services
-        containerBuilder.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
-        containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
-        containerBuilder.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>().SingleInstance();
-        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
-        containerBuilder.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
-        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
+        cb.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
+        cb.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
+        cb.RegisterType<TgConnectClientConsole>().As<ITgConnectClientConsole>().SingleInstance();
+        cb.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
+        cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
+        cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
         // We build a container and take IServiceProvider
-        TgGlobalTools.Container = containerBuilder.Build();
+        var container = cb.Build();
+        TgGlobalTools.Container = container;
 
         // Helpers
         var tgLocale = TgLocaleHelper.Instance;

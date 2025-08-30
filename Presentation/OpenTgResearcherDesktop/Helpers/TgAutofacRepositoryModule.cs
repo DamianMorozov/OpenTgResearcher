@@ -6,18 +6,18 @@ namespace OpenTgResearcherDesktop.Helpers;
 /// <summary> Autofac module for repositories </summary>
 internal sealed class TgAutofacRepositoryModule : Autofac.Module
 {
-    protected override void Load(ContainerBuilder containerBuilder)
+    protected override void Load(ContainerBuilder cb)
     {
-        containerBuilder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
-        containerBuilder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
-        containerBuilder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
-        containerBuilder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
-        containerBuilder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
-        containerBuilder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
-        containerBuilder.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
-        containerBuilder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
-        containerBuilder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
-        containerBuilder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
-        containerBuilder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
+        cb.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
+        cb.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
+        cb.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
+        cb.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
+        cb.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
+        cb.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
+        cb.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
+        cb.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
+        cb.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
+        cb.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
+        cb.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
     }
 }

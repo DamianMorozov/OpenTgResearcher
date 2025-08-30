@@ -6,13 +6,13 @@ namespace OpenTgResearcherDesktop.Helpers;
 /// <summary> Autofac module for services </summary>
 internal sealed class TgAutofacServiceModule : Autofac.Module
 {
-    protected override void Load(ContainerBuilder containerBuilder)
+    protected override void Load(ContainerBuilder cb)
     {
-        containerBuilder.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
-        containerBuilder.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
-        containerBuilder.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>().SingleInstance();
-        containerBuilder.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
-        containerBuilder.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
-        containerBuilder.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
+        cb.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
+        cb.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
+        cb.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>().SingleInstance();
+        cb.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
+        cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
+        cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
     }
 }

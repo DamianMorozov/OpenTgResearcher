@@ -63,25 +63,26 @@ public partial class App : Application
                 services.AddSingleton<ITgSettingsService, TgSettingsService>();
                 services.AddSingleton<IPageService, PageService>();
 
-                // Temporary provider for accessing SettingsService
+                // Get storage path
                 var tempProvider = services.BuildServiceProvider();
                 var settingsService = tempProvider.GetRequiredService<ITgSettingsService>();
-                var storagePath = settingsService.AppStorage;
+                var storagePath = $"Data Source={settingsService.AppStorage}";
 
                 // Register the DbContext with SQLite
                 services.AddDbContextPool<TgEfDesktopContext>(options =>
                 {
-                    options.UseSqlite($"Data Source={storagePath}");
-#if DEBUG
+                    options.UseSqlite();
+                    // Copy by TgEfConsoleContext.OnConfiguring
                     options
+#if DEBUG
                         .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
                         .EnableDetailedErrors()
-                        .EnableSensitiveDataLogging();
+                        .EnableSensitiveDataLogging()
 #endif
-                    options
                         .EnableThreadSafetyChecks()
                         .UseLoggerFactory(new LoggerFactory());
                 }, poolSize: 128);
+                
                 // Register FusionCache
                 services.AddFusionCache().WithDefaultEntryOptions(TgCacheUtils.CacheOptionsChannelMessages);
                 // Default Activation Handler
@@ -155,12 +156,12 @@ public partial class App : Application
                 services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
             })
             // Autofac registrations
-            .ConfigureContainer<ContainerBuilder>(containerBuilder =>
+            .ConfigureContainer<ContainerBuilder>(cb =>
             {
-                containerBuilder.RegisterModule<TgAutofacRepositoryModule>();
-                containerBuilder.RegisterModule<TgAutofacServiceModule>();
+                cb.RegisterModule<TgAutofacRepositoryModule>();
+                cb.RegisterModule<TgAutofacServiceModule>();
                 // Registering the EF context via Host.Services
-                containerBuilder.Register(c =>
+                cb.Register(c =>
                 {
                     // Temporary provider for accessing SettingsService
                     var tempProvider = c.Resolve<IServiceProvider>();

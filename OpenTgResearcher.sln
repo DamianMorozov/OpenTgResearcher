@@ -26,11 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgStorage", "Core\TgStorage
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgAssertCoreTests", "Tests\TgAssertCoreTests\TgAssertCoreTests.csproj", "{66FF43B1-B16B-48FA-B371-C2D0787D36C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherConsoleTest", "Tests\OpenTgResearcherConsoleTest\OpenTgResearcherConsoleTest.csproj", "{AF806805-F79B-4BA0-8E26-EE03B54DE63C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherConsoleTests", "Tests\OpenTgResearcherConsoleTests\OpenTgResearcherConsoleTests.csproj", "{AF806805-F79B-4BA0-8E26-EE03B54DE63C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgDownloaderTest", "Tests\TgDownloaderTest\TgDownloaderTest.csproj", "{1758339F-22AB-4EA2-B577-4662A8663FB5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgStorageTest", "Tests\TgStorageTest\TgStorageTest.csproj", "{17CE2A7E-AE56-43E8-AB4B-6504B3484167}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgStorageTests", "Tests\TgStorageTests\TgStorageTests.csproj", "{17CE2A7E-AE56-43E8-AB4B-6504B3484167}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherConsole", "Presentation\OpenTgResearcherConsole\OpenTgResearcherConsole.csproj", "{5A12C18B-8DA6-4D47-93D3-9D1AA49BEF62}"
 EndProject
@@ -73,16 +71,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Core", "Core\OpenTgResearcherDesktop.Core\OpenTgResearcherDesktop.Core.csproj", "{F6A1AA94-9746-4F2A-9B1D-7A70F3F12E1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests", "Tests\OpenTgResearcherDesktop.Tests.MSTest\OpenTgResearcherDesktop.Tests.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests", "Tests\OpenTgResearcherDesktop.Tests.MSTests\OpenTgResearcherDesktop.Tests.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBusinessLogic", "Core\TgBusinessLogic\TgBusinessLogic.csproj", "{BC89CBA1-E87C-4256-90C1-7C472DA48361}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgInfrastructureTest", "Tests\TgInfrastructureTest\TgInfrastructureTest.csproj", "{5CE42557-44CE-4318-B5C3-9202F432C9EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgInfrastructureTests", "Tests\TgInfrastructureTests\TgInfrastructureTests.csproj", "{5CE42557-44CE-4318-B5C3-9202F432C9EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\Assets\Icon.ico = Docs\Assets\Icon.ico
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgBusinessLogicTests", "Tests\TgBusinessLogicTests\TgBusinessLogicTests.csproj", "{26C1A89D-680B-933A-152C-8CDA24857186}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,18 +130,6 @@ Global
 		{AF806805-F79B-4BA0-8E26-EE03B54DE63C}.Release|x64.Build.0 = Release|x64
 		{AF806805-F79B-4BA0-8E26-EE03B54DE63C}.Release|x86.ActiveCfg = Release|x86
 		{AF806805-F79B-4BA0-8E26-EE03B54DE63C}.Release|x86.Build.0 = Release|x86
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Debug|x64.ActiveCfg = Debug|x64
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Debug|x64.Build.0 = Debug|x64
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Debug|x86.ActiveCfg = Debug|x86
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Debug|x86.Build.0 = Debug|x86
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Release|x64.ActiveCfg = Release|x64
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Release|x64.Build.0 = Release|x64
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Release|x86.ActiveCfg = Release|x86
-		{1758339F-22AB-4EA2-B577-4662A8663FB5}.Release|x86.Build.0 = Release|x86
 		{17CE2A7E-AE56-43E8-AB4B-6504B3484167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17CE2A7E-AE56-43E8-AB4B-6504B3484167}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17CE2A7E-AE56-43E8-AB4B-6504B3484167}.Debug|x64.ActiveCfg = Debug|x64
@@ -244,6 +232,18 @@ Global
 		{5CE42557-44CE-4318-B5C3-9202F432C9EC}.Release|x64.Build.0 = Release|x64
 		{5CE42557-44CE-4318-B5C3-9202F432C9EC}.Release|x86.ActiveCfg = Release|x86
 		{5CE42557-44CE-4318-B5C3-9202F432C9EC}.Release|x86.Build.0 = Release|x86
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Debug|x64.ActiveCfg = Debug|x64
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Debug|x64.Build.0 = Debug|x64
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Debug|x86.ActiveCfg = Debug|x86
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Debug|x86.Build.0 = Debug|x86
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Release|x64.ActiveCfg = Release|x64
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Release|x64.Build.0 = Release|x64
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Release|x86.ActiveCfg = Release|x86
+		{26C1A89D-680B-933A-152C-8CDA24857186}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -252,7 +252,6 @@ Global
 		{3F5FE133-3178-468E-9017-EC97874A3DA6} = {BC2545B1-7D32-4DBC-BA36-C49AF2536B82}
 		{66FF43B1-B16B-48FA-B371-C2D0787D36C2} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
 		{AF806805-F79B-4BA0-8E26-EE03B54DE63C} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
-		{1758339F-22AB-4EA2-B577-4662A8663FB5} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
 		{17CE2A7E-AE56-43E8-AB4B-6504B3484167} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
 		{5A12C18B-8DA6-4D47-93D3-9D1AA49BEF62} = {3F563803-8BCB-4477-89CF-91167A8F887C}
 		{FC689594-30C9-45D2-B8DB-7079E752984B} = {BC2545B1-7D32-4DBC-BA36-C49AF2536B82}
@@ -263,6 +262,7 @@ Global
 		{BC89CBA1-E87C-4256-90C1-7C472DA48361} = {BC2545B1-7D32-4DBC-BA36-C49AF2536B82}
 		{5CE42557-44CE-4318-B5C3-9202F432C9EC} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {49FCA776-C63B-4C0C-B2B2-E9CA0E5949ED}
+		{26C1A89D-680B-933A-152C-8CDA24857186} = {53975472-4A48-4B67-8AF5-029EF31DEA39}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B5CEF6C8-2885-432D-9D8C-8EDBCEB7AA2C}

@@ -179,19 +179,16 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
             return result != null;
         }
 
-        // For other DBMSs via INFORMATION_SCHEMA
+        // For other DBMSs
         using var cmd2 = connection.CreateCommand();
-        cmd2.CommandText = @"
-        SELECT 1 
-        FROM INFORMATION_SCHEMA.TABLES 
-        WHERE TABLE_NAME = @tableName";
+        cmd2.CommandText = @"SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @tableName";
         var param2 = cmd2.CreateParameter();
         param2.ParameterName = "@tableName";
         param2.Value = tableName;
         cmd2.Parameters.Add(param2);
 
-        var exists = await cmd2.ExecuteScalarAsync();
-        return exists != null;
+        var result2 = await cmd2.ExecuteScalarAsync();
+        return result2 != null;
     }
 
     /// <inheritdoc />

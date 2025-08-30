@@ -29,12 +29,10 @@ public abstract class TgDisposable : ObservableRecipient, ITgDisposable
     public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
     /// <summary> Release managed resources </summary>
-    public virtual void ReleaseManagedResources() =>
-        throw new NotImplementedException(TgConstants.UseOverrideMethod);
+    public virtual void ReleaseManagedResources() { }
 
     /// <summary> Release unmanaged resources </summary>
-    public virtual void ReleaseUnmanagedResources() =>
-        throw new NotImplementedException(TgConstants.UseOverrideMethod);
+    public virtual void ReleaseUnmanagedResources() { }
 
     /// <summary> Dispose pattern </summary>
     public void Dispose()

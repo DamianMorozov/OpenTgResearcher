@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <Version>0.7.150.0</Version>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TUnit" Version="0.57.1" />
+    <PackageReference Include="TUnit.Core" Version="0.57.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\TgBusinessLogic\TgBusinessLogic.csproj" />
+    <ProjectReference Include="..\TgStorageTests\TgStorageTests.csproj" />
+  </ItemGroup>
+</Project>

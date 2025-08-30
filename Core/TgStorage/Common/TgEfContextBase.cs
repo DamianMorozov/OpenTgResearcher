@@ -146,7 +146,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
                 ? TgAppSettingsHelper.Instance.AppXml.XmlEfStorage : TgGlobalTools.AppStorage,
             TgEnumAppType.Blazor => Path.Combine(contentRootPath, TgGlobalTools.AppStorage),
             TgEnumAppType.Desktop => TgGlobalTools.AppStorage,
-            TgEnumAppType.Test => @"c:\OpenTgResearcher\TgStorage\TgStorageTest.db",
+            TgEnumAppType.Test => @"c:\OpenTgResearcher\TgStorage\TgStorageTests.db",
             _ => throw new ArgumentOutOfRangeException(nameof(TgGlobalTools.AppType), TgGlobalTools.AppType, null)
         };
         // Concatenation

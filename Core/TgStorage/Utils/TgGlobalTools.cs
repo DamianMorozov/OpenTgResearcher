@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using ValidationResult = FluentValidation.Results.ValidationResult;
-
 namespace TgStorage.Utils;
 
 /// <summary> Global tools </summary>
@@ -54,7 +52,7 @@ public static class TgGlobalTools
     /// <summary> Validate entity </summary>
     /// <typeparam name="TEfEntity"> Type of entity </typeparam>
     /// <param name="item"> Entity </param>
-    public static ValidationResult GetEfValid<TEfEntity>(TEfEntity item)
+    public static FluentValidation.Results.ValidationResult GetEfValid<TEfEntity>(TEfEntity item)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
         item switch
         {
@@ -75,7 +73,7 @@ public static class TgGlobalTools
     /// <summary> Validate DTO </summary>
     /// <typeparam name="TDto"> Type of DTO </typeparam>
     /// <param name="item"> DTO </param>
-    public static ValidationResult GetValidDto<TEfEntity, TDto>(TDto item)
+    public static FluentValidation.Results.ValidationResult GetValidDto<TEfEntity, TDto>(TDto item)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
         where TDto : class, ITgDto<TEfEntity, TDto>, new() =>
         item switch

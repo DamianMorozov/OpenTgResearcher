@@ -2639,6 +2639,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             };
         // Join with directory
         //mediaInfo.LocalPathOnly = tgDownloadSettings.SourceVm.Dto.Directory;
+        // TODO: fix folder
         mediaInfo.LocalPathOnly = chatCache.GetDirectory(messageSettings.CurrentChatId);
         // Creating subdirectories
         if (!string.IsNullOrEmpty(mediaInfo.RemoteName) &&

@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using ValidationException = FluentValidation.ValidationException;
-
 namespace TgStorage.Common;
 
 public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfRepository<TEfEntity, TDto>, IDisposable
@@ -429,7 +427,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                 // Validate entity
                 var validationResult = TgGlobalTools.GetEfValid(storageResult.Item);
                 if (!validationResult.IsValid)
-                    throw new ValidationException(validationResult.Errors);
+                    throw new FluentValidation.ValidationException(validationResult.Errors);
                 // Normalize entity
                 TgGlobalTools.Normalize(storageResult.Item);
                 // Entity is not exists - Create
@@ -521,7 +519,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                     // Validate entity
                     var validationResult = TgGlobalTools.GetEfValid(itemNew);
                     if (!validationResult.IsValid)
-                        throw new ValidationException(validationResult.Errors);
+                        throw new FluentValidation.ValidationException(validationResult.Errors);
                     // Normalize entity
                     TgGlobalTools.Normalize(itemNew);
                     // Entity is not exists - Create
@@ -597,7 +595,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                 storageResult.Item.Copy(item, false);
                 var validationResult = TgGlobalTools.GetEfValid(storageResult.Item);
                 if (!validationResult.IsValid)
-                    throw new ValidationException(validationResult.Errors);
+                    throw new FluentValidation.ValidationException(validationResult.Errors);
                 await EfContext.SaveChangesAsync();
             }
             storageResult.State = TgEnumEntityState.IsSaved;

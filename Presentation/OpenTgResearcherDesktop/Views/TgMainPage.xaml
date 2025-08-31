@@ -65,7 +65,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="False">
-                <StackPanel Margin="0,-10,0,-5">
+                <StackPanel Margin="0,0,0,-5">
                     <HyperlinkButton
                         x:Uid="SettingsPage_Releases_Latest"
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -89,7 +89,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="False">
-                <StackPanel Margin="0,-10,0,-5">
+                <StackPanel Margin="0,0,0,-5">
                     <HyperlinkButton
                         x:Uid="SettingsPage_GitHub_Link"
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -155,7 +155,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsExpanded="False">
-                <StackPanel Margin="0,-10,0,-5">
+                <StackPanel Margin="0,0,0,-5">
                     <HyperlinkButton
                         x:Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram"
                         Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"

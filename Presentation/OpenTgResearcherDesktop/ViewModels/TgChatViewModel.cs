@@ -24,8 +24,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
     [ObservableProperty]
-    public partial bool IsImageViewerVisible { get; set; }
-    [ObservableProperty]
     public partial Frame ContentFrame { get; set; } = default!;
     [ObservableProperty]
     public partial string ChatProgressMessage { get; set; } = string.Empty;

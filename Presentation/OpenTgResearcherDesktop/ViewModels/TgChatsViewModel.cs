@@ -50,22 +50,14 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         // Commands
         ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, CanLoadMore);
-        SearchCommand = new AsyncRelayCommand(async () =>
-        {
-            CurrentSkip = 0;
-            HasMoreItems = true;
-            Dtos.Clear();
-            await LazyLoadAsync();
-        });
+        LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, () => HasMoreItems && !IsLoading);
+        SearchCommand = new AsyncRelayCommand(LazyLoadWrapperAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
     #endregion
 
     #region Methods
-
-    private bool CanLoadMore() => HasMoreItems && !IsLoading;
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
     {
@@ -149,43 +141,69 @@ public sealed partial class TgChatsViewModel : TgPageViewModelBase
         await LazyLoadAsync();
     }
 
+    public async Task LazyLoadWrapperAsync()
+    {
+        CurrentSkip = 0;
+        HasMoreItems = true;
+        Dtos.Clear();
+        await LazyLoadAsync();
+    }
+
     public async Task LazyLoadAsync() => await LoadDataAsync(async () =>
     {
         if (IsLoading || !HasMoreItems) return;
-        IsLoading = true;
 
-        var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe, IsFilterById, IsFilterByUserName, IsFilterByTitle);
-        if (newItems.Count < PageSize)
-            HasMoreItems = false;
-
-        foreach (var item in newItems)
+        try
         {
-            item.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            Dtos.Add(item);
+            IsLoading = true;
+
+            var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe, IsFilterById, IsFilterByUserName, IsFilterByTitle);
+            if (newItems.Count < PageSize)
+                HasMoreItems = false;
+
+            foreach (var item in newItems)
+            {
+                item.IsDisplaySensitiveData = IsDisplaySensitiveData;
+                Dtos.Add(item);
+            }
+
+            CurrentSkip += newItems.Count;
         }
-
-        CurrentSkip += newItems.Count;
-
-        IsLoading = false;
-        (LazyLoadCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
-
-        // Update loaded data statistics
-        var countAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
-        var countSubscribed = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe);
-        LoadedDataStatistics = 
-            $"{TgResourceExtensions.GetTextBlockFiltered()} {Dtos.Count} | " +
-            $"{TgResourceExtensions.GetTextBlockSubscribed()} {countSubscribed} | " +
-            $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
+        finally
+        {
+            await AfterDataUpdateAsync();
+        }
     });
 
     private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
 
     private async Task ClearDataStorageCoreAsync()
     {
-        CurrentSkip = 0;
-        HasMoreItems = true;
-        Dtos.Clear();
-        FilterText = string.Empty;
+        try
+        {
+            CurrentSkip = 0;
+            HasMoreItems = true;
+            Dtos.Clear();
+            FilterText = string.Empty;
+        }
+        finally
+        {
+            await AfterDataUpdateAsync();
+        }
+    }
+
+    private async Task AfterDataUpdateAsync()
+    {
+        IsLoading = false;
+        (LazyLoadCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
+
+        // Update loaded data statistics
+        var countAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
+        var countSubscribed = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe);
+        LoadedDataStatistics =
+            $"{TgResourceExtensions.GetTextBlockFiltered()} {Dtos.Count} | " +
+            $"{TgResourceExtensions.GetTextBlockSubscribed()} {countSubscribed} | " +
+            $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
 
         await Task.CompletedTask;
     }

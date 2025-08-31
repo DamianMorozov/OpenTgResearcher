@@ -22,8 +22,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
     [ObservableProperty]
-    public partial bool IsImageViewerVisible { get; set; }
-    [ObservableProperty]
     public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
 
     public IRelayCommand CalcChatStatisticsCommand { get; }

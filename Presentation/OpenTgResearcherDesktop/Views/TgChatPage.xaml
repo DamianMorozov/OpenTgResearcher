@@ -17,7 +17,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!--  Load data  -->
         <views:TgLoadDataPage
@@ -1123,17 +1123,18 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <SelectorBar SelectionChanged="SelectorBar_SelectionChanged">
+                        <SelectorBar Margin="0,-10,0,-10" SelectionChanged="SelectorBar_SelectionChanged">
                             <SelectorBarItem x:Uid="SelectorBarItemPageChatDetails" Tag="TgChatDetailsInfoPage" />
                             <SelectorBarItem x:Uid="SelectorBarItemPageChatParticipants" Tag="TgChatDetailsParticipantsPage" />
                             <SelectorBarItem x:Uid="SelectorBarItemPageChatStatistics" Tag="TgChatDetailsStatisticsPage" />
                             <SelectorBarItem x:Uid="SelectorBarItemPageContent" Tag="TgChatDetailsContentPage" />
-                            <!--<SelectorBarItem x:Uid="SelectorBarItemPageContentStatistics" Tag="TgChatDetailsContentStatisticsPage" />-->
                         </SelectorBar>
                         <!--  Frame  -->
-                        <ScrollView Grid.Row="2" VerticalScrollMode="Auto">
-                            <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
-                        </ScrollView>
+                        <Frame
+                            x:Name="ContentFrame"
+                            Grid.Row="1"
+                            Margin="-5,5,-5,-10"
+                            IsNavigationStackEnabled="False" />
                     </Grid>
                 </Expander>
             </ContentControl>

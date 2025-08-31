@@ -27,8 +27,20 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     public partial bool IsImageViewerVisible { get; set; }
     [ObservableProperty]
     public partial TgEfContentStatisticsDto ContentStatisticsDto { get; set; } = new();
+    [ObservableProperty]
+    public partial string LoadedDataStatistics { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial int PageSize { get; set; } = 100;
+    [ObservableProperty]
+    public partial int CurrentSkip { get; set; }
+    [ObservableProperty]
+    public partial bool HasMoreMessages { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsLoading { get; set; }
 
     public IRelayCommand CalcContentStatisticsCommand { get; }
+    public IRelayCommand LazyLoadMessagesCommand { get; }
+    public IRelayCommand ClearDataStorageCommand { get; }
 
     public TgChatDetailsContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsContentViewModel> logger,
         IAppNotificationService appNotificationService)
@@ -38,6 +50,8 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         // Commands
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
+        LazyLoadMessagesCommand = new AsyncRelayCommand(LazyLoadMessagesAsync, () => HasMoreMessages && !IsLoading);
+        ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
     }
 
     #endregion
@@ -67,18 +81,17 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
 
     private async Task LoadDataStorageCoreAsync()
     {
+        if (!SettingsService.IsExistsAppStorage) return;
+
         try
         {
-            if (!SettingsService.IsExistsAppStorage) return;
-
+            CurrentSkip = 0;
+            HasMoreMessages = true;
+            MessageDtos.Clear();
+            
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 
-            MessageDtos = [.. await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosWithoutRelationsAsync(
-                take: 1000, skip: 0, where: x => x.SourceId == Dto.Id, order: x => x.Id)];
-            foreach (var messageDto in MessageDtos)
-            {
-                messageDto.Directory = Dto.Directory;
-            }
+            await LazyLoadMessagesAsync();
         }
         finally
         {
@@ -88,6 +101,65 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             await ReloadUiAsync();
             await SetDisplaySensitiveAsync();
         }
+    }
+
+    public async Task LazyLoadMessagesAsync() => await LoadDataAsync(async () =>
+    {
+        if (IsLoading || !HasMoreMessages) return;
+
+        try
+        {
+            IsLoading = true;
+
+            //var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe, IsFilterById, IsFilterByUserName, IsFilterByTitle);
+            var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosWithoutRelationsAsync(
+                PageSize, CurrentSkip, where: x => x.SourceId == Dto.Id, order: x => x.Id);
+            if (newItems.Count < PageSize)
+                HasMoreMessages = false;
+
+            foreach (var item in newItems)
+            {
+                item.IsDisplaySensitiveData = IsDisplaySensitiveData;
+                item.Directory = Dto.Directory;
+                MessageDtos.Add(item);
+            }
+
+            CurrentSkip += newItems.Count;
+        }
+        finally
+        {
+            await AfterDataUpdateAsync();
+        }
+    });
+
+    private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
+
+    private async Task ClearDataStorageCoreAsync()
+    {
+        try
+        {
+            CurrentSkip = 0;
+            HasMoreMessages = true;
+            MessageDtos.Clear();
+        }
+        finally
+        {
+            await AfterDataUpdateAsync();
+        }
+    }
+
+    private async Task AfterDataUpdateAsync()
+    {
+        IsLoading = false;
+        (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
+
+        // Update loaded data statistics
+        var countAll = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
+        LoadedDataStatistics =
+            $"{TgResourceExtensions.GetTextBlockFiltered()} {MessageDtos.Count} | " +
+            $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
+
+        await Task.CompletedTask;
     }
 
     private async Task CalcContentStatisticsAsync() => await ContentDialogAsync(CalcContentStatisticsCoreAsync, TgResourceExtensions.AskCalcContentStatistics());

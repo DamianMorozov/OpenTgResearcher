@@ -84,5 +84,15 @@ public abstract class TgPageBase : Page
         ViewModel.OnClipboardSilentWriteCommand.Execute(button.Tag);
     }
 
+    /// <summary> Open url </summary>
+    public void OnOpenHyperlink(object sender, RoutedEventArgs e)
+    {
+        if (sender is not HyperlinkButton hyperlinkButton) return;
+        if (hyperlinkButton.Tag is not string tag) return;
+
+        var url = TgDesktopUtils.ExtractUrl(tag);
+        Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+    }
+
     #endregion
 }

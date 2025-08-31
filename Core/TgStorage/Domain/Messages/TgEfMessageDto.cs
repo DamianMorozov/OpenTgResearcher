@@ -29,6 +29,8 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
     [ObservableProperty]
     public partial long UserId { get; set; }
     [ObservableProperty]
+    public partial string UserContact { get; set; }
+    [ObservableProperty]
     public partial bool IsDeleted { get; set; }
 
     public string MessageText
@@ -102,6 +104,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
         Direction = TgEnumDirection.Default;
         Directory = string.Empty;
         UserId = 0;
+        UserContact = string.Empty;
         IsDeleted = false;
     }
 
@@ -121,6 +124,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 		Direction = dto.Direction;
         Directory = dto.Directory;
         UserId = dto.UserId;
+        UserContact = dto.UserContact;
         IsDeleted = dto.IsDeleted;
         return this;
 	}

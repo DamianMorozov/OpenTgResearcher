@@ -88,7 +88,8 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             CurrentSkip = 0;
             HasMoreMessages = true;
             MessageDtos.Clear();
-            
+            UserDtos.Clear();
+
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
 
             await LazyLoadMessagesAsync();
@@ -111,6 +112,9 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         {
             IsLoading = true;
 
+            if (UserDtos.Count == 0)
+                UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, where: x => x.Id > 0, order: x => x.Id)];
+
             //var newItems = await GetListLiteDtosAsync(PageSize, CurrentSkip, FilterText, IsFilterBySubscribe, IsFilterById, IsFilterByUserName, IsFilterByTitle);
             var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosWithoutRelationsAsync(
                 PageSize, CurrentSkip, where: x => x.SourceId == Dto.Id, order: x => x.Id);
@@ -121,6 +125,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             {
                 item.IsDisplaySensitiveData = IsDisplaySensitiveData;
                 item.Directory = Dto.Directory;
+                item.UserContact = UserDtos.FirstOrDefault(x => x.Id == item.UserId)?.GetDisplayName() ?? string.Empty;
                 MessageDtos.Add(item);
             }
 

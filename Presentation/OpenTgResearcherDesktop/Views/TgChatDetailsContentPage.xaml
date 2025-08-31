@@ -143,6 +143,19 @@
                             <SymbolIcon Symbol="Copy" />
                         </Button>
                         <TextBlock
+                            Margin="0,5,0,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind UserContact, Mode=OneWay}"
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <Button
+                            Margin="0,0,0,0"
+                            HorizontalContentAlignment="Left"
+                            Click="OnClipboardSilentWriteClick"
+                            CornerRadius="10"
+                            Tag="{x:Bind UserContact, Mode=OneWay}">
+                            <SymbolIcon Symbol="Copy" />
+                        </Button>
+                        <TextBlock
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="·" />

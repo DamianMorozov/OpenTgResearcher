@@ -233,5 +233,8 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         _ => status,
     };
 
+    public string GetDisplayName() =>
+        !string.IsNullOrEmpty(FirstLastName) ? FirstLastName : UserName;
+
     #endregion
 }

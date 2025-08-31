@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated NuGet packages
 - Updated the `TgStorageTests` test project
 - Updated the `Chat Content` page in `OpenTgResearcherDesktop`
+- Updated the `Chat Statistics` page in `OpenTgResearcherDesktop`
 ### Added
 - Added a hardware resource monitoring service
 - Added the `TgBusinessLogicTests` test project

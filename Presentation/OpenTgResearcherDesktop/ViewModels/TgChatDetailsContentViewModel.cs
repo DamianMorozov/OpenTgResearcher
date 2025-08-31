@@ -125,7 +125,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             {
                 item.IsDisplaySensitiveData = IsDisplaySensitiveData;
                 item.Directory = Dto.Directory;
-                item.UserContact = UserDtos.FirstOrDefault(x => x.Id == item.UserId)?.GetDisplayName() ?? string.Empty;
+                item.UserContact = UserDtos.FirstOrDefault(x => x.Id == item.UserId)?.DisplayName ?? string.Empty;
                 MessageDtos.Add(item);
             }
 

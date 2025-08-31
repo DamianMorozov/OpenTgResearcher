@@ -54,6 +54,7 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
     public partial int BotActiveUsers { get; set; }
     [ObservableProperty]
     public partial bool IsDownload { get; set; }
+    public string DisplayName => !string.IsNullOrEmpty(FirstLastName) ? FirstLastName : UserName;
 
     public TgEfUserDto() : base()
     {
@@ -232,9 +233,6 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         "Recently" => nameof(TL.UserStatusRecently),
         _ => status,
     };
-
-    public string GetDisplayName() =>
-        !string.IsNullOrEmpty(FirstLastName) ? FirstLastName : UserName;
 
     #endregion
 }

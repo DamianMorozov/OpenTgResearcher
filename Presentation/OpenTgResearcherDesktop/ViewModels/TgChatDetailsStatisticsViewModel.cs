@@ -79,11 +79,14 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     private async Task CalcChatStatisticsCoreAsync()
     {
         ChatStatisticsDto.DefaultValues();
+        ChatStatisticsDto.UserWithCountDtos.Clear();
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         
         await MergeUsersWithPlaceholdersAsync();
-
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
+
+        // Unique users
+        var distinctUsers = UserDtos.GroupBy(u => u.Id).Select(g => g.First()).ToList();
 
         ChatStatisticsDto.UsersCount = UserDtos.Where(x => !x.IsBot).Count();
         ChatStatisticsDto.BotsCount = UserDtos.Where(x => x.IsBot).Count();
@@ -95,34 +98,21 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         var dtEnd = dtEndRaw > TgEfChatStatisticsDto.SafeMaxDate ? TgEfChatStatisticsDto.SafeMaxDate : dtEndRaw;
         DateTimeOffset startDate = dtStart.ToUniversalTime().Date;
         DateTimeOffset tmpEnd = dtEnd.ToUniversalTime().Date;
-        DateTimeOffset endDate;
-        if (tmpEnd < TgEfChatStatisticsDto.SafeMaxDate.Date)
-        {
-            endDate = tmpEnd.AddDays(1).AddTicks(-1);
-        }
-        else
-        {
-            endDate = tmpEnd;
-        }
+        DateTimeOffset endDate = (tmpEnd < TgEfChatStatisticsDto.SafeMaxDate.Date) ? tmpEnd.AddDays(1).AddTicks(-1) : tmpEnd;
 
-        foreach (var userDto in UserDtos)
-        {
-            var userWithCountDto = new TgEfUserWithCountDto
-            {
-                UserDto = userDto,
-                Count = await App.BusinessLogicManager.StorageManager.MessageRepository
-                    .GetCountAsync(x => x.SourceId == Dto.Id && x.UserId == userDto.Id &&
-                    x.DtCreated >= startDate.UtcDateTime && x.DtCreated <= endDate.UtcDateTime)
-            };
-            ChatStatisticsDto.UserWithCountDtos.Add(userWithCountDto);
-        }
+        
+        var list = await Task.WhenAll(distinctUsers.Select(async u => new TgEfUserWithCountDto { UserDto = u,
+            Count = await App.BusinessLogicManager.StorageManager.MessageRepository
+                .GetCountAsync(x =>
+                    x.SourceId == Dto.Id &&
+                    x.UserId == u.Id &&
+                    x.DtCreated >= startDate.UtcDateTime &&
+                    x.DtCreated <= endDate.UtcDateTime)
+        }));
 
-        // Order
-        var orderedUsers = ChatStatisticsDto.UserWithCountDtos.OrderByDescending(x => x.Count).ToList();
-        ChatStatisticsDto.UserWithCountDtos.Clear();
-        foreach (var user in orderedUsers)
+        foreach (var dto in list.OrderByDescending(x => x.Count).ThenBy(x => x.UserDto.DisplayName, StringComparer.CurrentCultureIgnoreCase))
         {
-            ChatStatisticsDto.UserWithCountDtos.Add(user);
+            ChatStatisticsDto.UserWithCountDtos.Add(dto);
         }
     }
 

@@ -19,7 +19,7 @@
         <DataTemplate x:Key="ParticipantsStatisticsViewTemplate" x:DataType="users:TgEfUserWithCountDto">
             <Button
                 Margin="-5,5,5,-5"
-                HorizontalAlignment="Stretch"
+                HorizontalAlignment="Left"
                 Click="OnUserClick"
                 CornerRadius="10"
                 Tag="{x:Bind UserDto.Id, Mode=OneWay}">
@@ -29,18 +29,15 @@
                     Spacing="10">
                     <!--  Id  -->
                     <TextBlock x:Uid="FieldId" Margin="20,0,0,0" />
-                    <!--  Sensitive data  -->
                     <TextBlock
                         Margin="0,5,5,0"
                         Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
                         Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                    <!--  Id  -->
                     <TextBlock
                         Width="Auto"
                         Margin="0,0,0,0"
                         Text="{x:Bind UserDto.Id}"
                         Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <!--  Copy button  -->
                     <Button
                         Margin="5,-2,0,0"
                         Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
@@ -48,32 +45,41 @@
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
-                    <!--  FirstLastName  -->
-                    <TextBlock x:Uid="FieldFirstName" Margin="20,0,0,0" />
-                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="·" />
+                    <!--  DisplayName  -->
                     <TextBlock
                         Margin="0,5,5,0"
                         Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
                         Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                    <!--  FirstLastName  -->
                     <TextBlock
                         Margin="0,0,0,0"
-                        Text="{x:Bind UserDto.FirstLastName}"
+                        Text="{x:Bind UserDto.DisplayName}"
                         Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <!--  Copy button  -->
                     <Button
                         Margin="5,-2,0,0"
                         Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind UserDto.FirstLastName, Mode=OneWay}"
+                        CommandParameter="{x:Bind UserDto.DisplayName, Mode=OneWay}"
                         CornerRadius="10">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
-                    <!--  Count  -->
-                    <TextBlock x:Uid="FieldMessagesCount" Margin="20,0,0,0" />
                     <TextBlock
-                        Margin="5,0,0,0"
+                        Margin="5,0,5,0"
+                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Text="·" />
+                    <!--  Messages count  -->
+                    <TextBlock x:Uid="FieldMessagesCount" />
+                    <TextBlock
+                        Margin="0,5,5,0"
+                        Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="0,0,0,0"
                         FontWeight="SemiBold"
-                        Text="{x:Bind Count}" />
+                        Text="{x:Bind Count}"
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Button>
         </DataTemplate>

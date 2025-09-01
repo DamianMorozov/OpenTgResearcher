@@ -102,7 +102,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         await StorageManager.AppRepository.SetUseBotAsync(false);
     }
 
-    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto)
+    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto, bool isUidCopy)
 	{
 		var licenseEntity = new TgEfLicenseEntity
 		{
@@ -113,8 +113,9 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 			ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
 		};
 
-        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync();
-		var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date);
+        var today = DateTime.UtcNow.Date;
+        var currentLicenseDto = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0,
+            x => x.IsConfirmed && x.ValidTo.Date >= today);
         if (currentLicenseDto is null)
 		{
 			await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
@@ -127,78 +128,39 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		}
 	}
 
-	public async Task<TgApiResult> GetApiCreatedAsync()
-	{
-		var result = new TgApiResult();
-		var licenseCountDto = new TgLicenseCountDto();
-		// Search license
-		var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
-		if (licenseDtos.Count != 0)
-		{
-			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
-			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
-			licenseCountDto.PremiumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
-			result.IsOk = true;
-		}
-		result.Value = licenseCountDto;
-		return result;
-	}
-
-	public async Task<TgApiResult> GetApiValidAsync()
-	{
-		var result = new TgApiResult();
-		var licenseCountDto = new TgLicenseCountDto();
-		// Search license
-		var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
-		if (licenseDtos.Count != 0)
-		{
-			licenseCountDto.TestCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
-			licenseCountDto.PaidCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
-			licenseCountDto.PremiumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
-			licenseCountDto.PremiumCount = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
-			result.IsOk = true;
-		}
-		result.Value = licenseCountDto;
-		return result;
-	}
-
     public async Task<TgApiResult> GetApiLicenseStatisticAsync(DateOnly lastPromoDay)
     {
         var result = new TgApiResult();
-        var promoStatisticSummaryDto = new TgPromoStatisticSummaryDto(lastPromoDay);
-        // Search promo license
-        var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.LicenseType != TgEnumLicenseType.Free);
-        if (licenseDtos.Count > 0)
+        var licenseCountDto = new TgLicenseCountDto() { LastPromoDay = lastPromoDay };
+
+        // Search created licenses
+        var licenseCreatedDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
+        if (licenseCreatedDtos.Count != 0)
         {
-            var dtNow = DateOnly.FromDateTime(DateTime.UtcNow);
-            // Test group
-            var groupTest = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test && x.ValidTo >= dtNow).ToList();
-            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { TestCount = groupTest.Count, Limit = 0 });
-            // Paid group
-            var groupPaid = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid && x.ValidTo >= dtNow).ToList();
-            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { PaidCount = groupPaid.Count });
-            // Gift group
-            var groupGift = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Gift && x.ValidTo >= dtNow).ToList();
-            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { GiftCount = groupGift.Count });
-            result.IsOk = true;
-            // Premium group
-            var groupPremium = licenseDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium && x.ValidTo >= dtNow).ToList();
-            promoStatisticSummaryDto.Items.Add(new TgPromoStatisticDto { PremiumCount = groupPremium.Count });
+            licenseCountDto.CreatedTestCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
+            licenseCountDto.CreatedPaidCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
+            licenseCountDto.CreatedGiftCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Gift).Count();
+            licenseCountDto.CreatedPremiumCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
             result.IsOk = true;
         }
-        // Order items
-        promoStatisticSummaryDto.Items = [.. promoStatisticSummaryDto.Items
-            .OrderByDescending(x => x.TestCount > 0)
-            .OrderByDescending(x => x.PaidCount > 0)
-            .OrderByDescending(x => x.GiftCount > 0)
-            .OrderByDescending(x => x.PremiumCount > 0)
-        ];
-        result.Value = promoStatisticSummaryDto;
+
+        // Search valid licenses
+        var licenseValidDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
+        if (licenseValidDtos.Count != 0)
+        {
+            licenseCountDto.ValidTestCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
+            licenseCountDto.ValidPaidCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
+            licenseCountDto.ValidGiftCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Gift).Count();
+            licenseCountDto.ValidPremiumCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
+            result.IsOk = true;
+        }
+
+        result.Value = licenseCountDto;
         return result;
     }
 
     /// <inheritdoc />
-    public async Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo, string password)
+    public async Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo, string password, Guid? uid = null, Guid? licenseKey = null)
     {
         var result = new TgApiResult();
         if (userId <= 0)
@@ -210,12 +172,12 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         var licenseDto = new TgLicenseDto
         {
             IsConfirmed = true,
-            LicenseKey = Guid.NewGuid(),
+            LicenseKey = licenseKey ?? Guid.NewGuid(),
             LicenseType = licenseType,
             UserId = userId,
             ValidTo = validTo
         };
-        await LicenseUpdateAsync(licenseDto);
+        await LicenseUpdateAsync(licenseDto, isUidCopy: uid is not null && licenseKey is not null);
         ActivateLicense(licenseDto.IsConfirmed, licenseDto.LicenseKey, licenseDto.LicenseType, licenseDto.UserId, licenseDto.ValidTo);
         result.IsOk = true;
         result.Value = licenseDto;

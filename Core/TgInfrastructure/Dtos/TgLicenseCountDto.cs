@@ -5,33 +5,17 @@ namespace TgInfrastructure.Dtos;
 
 public sealed class TgLicenseCountDto
 {
-	#region Fields, properties, constructor
+    #region Fields, properties, constructor
 
-	public int TestCount { get; set; }
-	public int PaidCount { get; set; }
-	public int GiftCount { get; set; }
-	public int PremiumCount { get; set; }
-	public string Description =>
-		$"Test licenses: {TestCount} pcs." + Environment.NewLine +
-		$"Paid licenses: {PaidCount} pcs." + Environment.NewLine +
-		$"Gift licenses: {GiftCount} pcs." + Environment.NewLine +
-		$"Premium licenses: {PremiumCount} pcs.";
-
-	public TgLicenseCountDto(int testCount, int paidCount, int giftCount, int premiumCount)
-	{
-		TestCount = testCount;
-		PaidCount = paidCount;
-        GiftCount = giftCount;
-        PremiumCount = premiumCount;
-	}
-
-	public TgLicenseCountDto()
-	{
-		TestCount = 0;
-		PaidCount = 0;
-        GiftCount = 0;
-        PremiumCount = 0;
-	}
+    public DateOnly LastPromoDay { get; set; } = DateOnly.MinValue;
+    public int CreatedGiftCount { get; set; }
+	public int CreatedPaidCount { get; set; }
+	public int CreatedPremiumCount { get; set; }
+	public int CreatedTestCount { get; set; }
+	public int ValidGiftCount { get; set; }
+	public int ValidPaidCount { get; set; }
+	public int ValidPremiumCount { get; set; }
+	public int ValidTestCount { get; set; }
 
 	#endregion
 }

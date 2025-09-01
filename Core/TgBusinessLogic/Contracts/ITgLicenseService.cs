@@ -20,10 +20,8 @@ public interface ITgLicenseService : IDisposable
         string licenseGiftDescription, string licensePremiumDescription);
 	public Task LicenseActivateAsync();
 	public Task LicenseClearAsync();
-	public Task LicenseUpdateAsync(TgLicenseDto licenseDto);
-	public Task<TgApiResult> GetApiCreatedAsync();
-	public Task<TgApiResult> GetApiValidAsync();
+	public Task LicenseUpdateAsync(TgLicenseDto licenseDto, bool isUidCopy);
     public Task<TgApiResult> GetApiLicenseStatisticAsync(DateOnly lastPromoDay);
     /// <summary> Create a new license for the user with the specified ID </summary>
-    public Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo, string password);
+    public Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo, string password, Guid? uid = null, Guid? licenseKey = null);
 }

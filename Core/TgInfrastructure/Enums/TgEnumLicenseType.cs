@@ -5,9 +5,9 @@ namespace TgInfrastructure.Enums;
 
 public enum TgEnumLicenseType
 {
-	Free,
-	Test,
-	Paid,
-	Gift,
-	Premium
+	Free = 0,
+	Test = 1,
+	Paid = 2,
+	Gift = 3,
+	Premium = 4
 }

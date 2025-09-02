@@ -9,8 +9,6 @@ public abstract class TgPageBase : Page
 
     public virtual ITgPageViewModel ViewModel => null!;
     public Grid? GridContent { get; set; }
-    public double FadeAnimationDuration { get; private set; } = 10.0;
-    public double OffsetAnimationDuration { get; private set; } = 10.0;
 
     #endregion
 
@@ -43,33 +41,41 @@ public abstract class TgPageBase : Page
 
     protected void PageLoadedWithAnimation(object sender, RoutedEventArgs e)
     {
-        StartEntranceAnimation();
+        if (GridContent is not null)
+        {
+            // Get the visual representation of the element
+            var visual = ElementCompositionPreview.GetElementVisual(GridContent);
+            visual.Opacity = 0;
+            visual.Offset = new System.Numerics.Vector3(0, 400, 0);
+            GridContent.Visibility = Visibility.Visible;
+
+            var compositor = visual.Compositor;
+
+            // Create easing function for fast start and smooth end
+            var easeOut = compositor.CreateCubicBezierEasingFunction(
+                new System.Numerics.Vector2(0.0f, 0.0f), // Start point of curve
+                new System.Numerics.Vector2(0.2f, 1.0f)  // End point of curve
+            );
+
+            // Create fade animation with easing
+            var fadeAnimation = compositor.CreateScalarKeyFrameAnimation();
+            fadeAnimation.Duration = TimeSpan.FromSeconds(5.0); // Slower fade
+            fadeAnimation.InsertKeyFrame(0, 0);
+            fadeAnimation.InsertKeyFrame(1, 1, easeOut);
+
+            // Create offset animation with easing
+            var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+            offsetAnimation.Duration = TimeSpan.FromSeconds(3.0); // Slower movement
+            offsetAnimation.InsertKeyFrame(0, new System.Numerics.Vector3(0, 400, 0));
+            offsetAnimation.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0), easeOut);
+
+            // Start both animations
+            visual.StartAnimation("Opacity", fadeAnimation);
+            visual.StartAnimation("Offset", offsetAnimation);
+        }
+
+        // Notify ViewModel that the page is loaded
         ViewModel.OnLoaded(XamlRoot);
-    }
-
-    private void StartEntranceAnimation()
-    {
-        if (GridContent is null) return;
-
-        var visual = ElementCompositionPreview.GetElementVisual(GridContent);
-        visual.Opacity = 0;
-        visual.Offset = new System.Numerics.Vector3(0, 400, 0);
-        GridContent.Visibility = Visibility.Visible;
-
-        var compositor = visual.Compositor;
-
-        var fadeAnimation = compositor.CreateScalarKeyFrameAnimation();
-        fadeAnimation.Duration = TimeSpan.FromSeconds(FadeAnimationDuration);
-        fadeAnimation.InsertKeyFrame(0, 0);
-        fadeAnimation.InsertKeyFrame(1, 1);
-
-        var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-        offsetAnimation.Duration = TimeSpan.FromSeconds(OffsetAnimationDuration);
-        offsetAnimation.InsertKeyFrame(0, new System.Numerics.Vector3(0, 400, 0));
-        offsetAnimation.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0));
-
-        visual.StartAnimation("Opacity", fadeAnimation);
-        visual.StartAnimation("Offset", offsetAnimation);
     }
 
     public void OnClipboardWriteClick(object sender, RoutedEventArgs e)

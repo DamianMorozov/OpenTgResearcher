@@ -74,9 +74,6 @@
 	  <None Include="..\..\LICENSE.md" Link="Docs\LICENSE.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Include="..\..\README-RUS.md" Link="Docs\README-RUS.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	  <None Include="..\..\README.md" Link="Docs\README.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

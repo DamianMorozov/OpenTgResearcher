@@ -1125,9 +1125,18 @@
                         </Grid.RowDefinitions>
                         <SelectorBar Margin="0,-10,0,-10" SelectionChanged="SelectorBar_SelectionChanged">
                             <SelectorBarItem x:Uid="SelectorBarItemPageChatDetails" Tag="TgChatDetailsInfoPage" />
-                            <SelectorBarItem x:Uid="SelectorBarItemPageChatParticipants" Tag="TgChatDetailsParticipantsPage" />
-                            <SelectorBarItem x:Uid="SelectorBarItemPageChatStatistics" Tag="TgChatDetailsStatisticsPage" />
-                            <SelectorBarItem x:Uid="SelectorBarItemPageContent" Tag="TgChatDetailsContentPage" />
+                            <SelectorBarItem
+                                x:Uid="SelectorBarItemPageChatParticipants"
+                                Tag="TgChatDetailsParticipantsPage"
+                                Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <SelectorBarItem
+                                x:Uid="SelectorBarItemPageChatStatistics"
+                                Tag="TgChatDetailsStatisticsPage"
+                                Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <SelectorBarItem
+                                x:Uid="SelectorBarItemPageContent"
+                                Tag="TgChatDetailsContentPage"
+                                Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </SelectorBar>
                         <!--  Frame  -->
                         <Frame

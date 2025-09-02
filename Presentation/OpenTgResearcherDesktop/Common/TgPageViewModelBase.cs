@@ -9,7 +9,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
 {
     #region Fields, properties, constructor
 
-    public ITgLicenseService LicenseService => App.BusinessLogicManager.LicenseService;
     [ObservableProperty]
     public partial ITgSettingsService SettingsService { get; private set; }
     [ObservableProperty]
@@ -52,6 +51,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
     [ObservableProperty]
     public partial bool IsEmptyData { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsPaidLicense { get; set; }
 
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
@@ -307,6 +308,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             IsEnabledContent = true;
             IsPageLoad = false;
+            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
         }
     }
 
@@ -331,6 +333,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
                 IsEnabledContent = true;
             if (isPageLoad)
                 IsPageLoad = false;
+            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
         }
     }
 

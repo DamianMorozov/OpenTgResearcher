@@ -423,16 +423,16 @@
     <value>Проверка обновлений предварительного просмотра</value>
   </data>
   <data name="ActionLicenseClear.Text" xml:space="preserve">
-    <value>Очистить лицензию</value>
+    <value>Очистить текущую лицензию</value>
   </data>
   <data name="ActionLicenseCheck.Text" xml:space="preserve">
-    <value>Проверить текущую или получить тестовую лицензию</value>
+    <value>Провить текущую лицензию онлайн</value>
   </data>
   <data name="ActionLicenseCheckMsg" xml:space="preserve">
-    <value>Проверить текущую или получить тестовую лицензию</value>
+    <value>Провить свою текущую лицензию онлайн</value>
   </data>
   <data name="ActionLicenseBuy.Text" xml:space="preserve">
-    <value>Сменить лицензию</value>
+    <value>Сменить свою лицензию</value>
   </data>
   <data name="ActionLicenseBuyMsg" xml:space="preserve">
     <value>Сменить лицензию</value>

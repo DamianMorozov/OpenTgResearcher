@@ -364,13 +364,13 @@
     <value>Checking for preview updates</value>
   </data>
   <data name="ActionLicenseClear.Text" xml:space="preserve">
-    <value>Clear license</value>
+    <value>Clear current license</value>
   </data>
   <data name="ActionLicenseCheck.Text" xml:space="preserve">
-    <value>Check current or get test license</value>
+    <value>Check your current license online</value>
   </data>
   <data name="ActionLicenseCheckMsg" xml:space="preserve">
-    <value>Check current or get test license</value>
+    <value>Check your current license online</value>
   </data>
   <data name="ActionLicenseBuy.Text" xml:space="preserve">
     <value>Buy license</value>

@@ -49,7 +49,7 @@
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
-                        <!--  Check license  -->
+                        <!--  Clear current license  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="1"

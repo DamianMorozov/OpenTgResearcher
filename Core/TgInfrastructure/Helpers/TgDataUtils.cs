@@ -4,9 +4,16 @@
 namespace TgInfrastructure.Helpers;
 
 // <summary> Data utilities </summary>
-public static class TgDataUtils
+public static partial class TgDataUtils
 {
-	#region Methods
+    #region Fields, properties, constructor
+
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex RegexMultipleSpace();
+
+    #endregion
+
+    #region Methods
 
     public static string GetIsAutoUpdate(bool isAutoUpdate) => $"{(isAutoUpdate ? "<Auto update>" : "<Not update>")}";
 	
@@ -67,10 +74,10 @@ public static class TgDataUtils
 	    }
 	    cleaned = sb.ToString();
 	    // Replace multiple spaces by one
-	    cleaned = Regex.Replace(cleaned, @"\s+", " ");
+	    cleaned = RegexMultipleSpace().Replace(cleaned, " ");
 	    // Trim
 	    return cleaned.Trim();
     }
 
-	#endregion
+    #endregion
 }

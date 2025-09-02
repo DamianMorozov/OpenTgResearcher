@@ -163,7 +163,7 @@ internal partial class TgMenuHelper
             TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
             return;
         }
-        input = TgStringUtils.NormilizeTgName(input);
+        input = TgStringUtils.NormalizedTgName(input);
 
         // Get details about a user via the public username (even if not in discussion with bot)
         var inputUser = await bot.InputUser(input);
@@ -242,7 +242,7 @@ internal partial class TgMenuHelper
             TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
             return;
         }
-        BotMonitoringUserName = TgStringUtils.NormilizeTgName(userNameInput);
+        BotMonitoringUserName = TgStringUtils.NormalizedTgName(userNameInput);
         var inputUser = await bot.InputUser(BotMonitoringUserName);
         if (inputUser is { user_id: var userId })
         {
@@ -260,7 +260,7 @@ internal partial class TgMenuHelper
             TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
             return;
         }
-        var chatNames = TgStringUtils.NormilizeTgNames(chatNamesInput);
+        var chatNames = TgStringUtils.NormalizedTgNames(chatNamesInput);
 
         // Get the list of keywords to filter messages
         var keywordsInput = AnsiConsole.Ask<string>($"  {TgLocale.MenuSetKeywordsForMessageFiltering}:");

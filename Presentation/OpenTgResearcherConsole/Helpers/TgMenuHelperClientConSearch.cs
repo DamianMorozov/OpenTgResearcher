@@ -161,7 +161,7 @@ internal partial class TgMenuHelper
             TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
             return;
         }
-        input = TgStringUtils.NormilizeTgName(input, isAddAt: false);
+        input = TgStringUtils.NormalizedTgName(input, isAddAt: false);
 
         // Get details about a user via the public username (even if not in discussion with client)
         var inputUser = await GetInputUserAsync(client, input);
@@ -219,7 +219,7 @@ internal partial class TgMenuHelper
         ClientMonitoringVm.IsSendMessages = AskQuestionYesNoReturnPositive(TgLocale.MenuClientSendMessages);
         if (!ClientMonitoringVm.IsSendMessages)
         {
-            ClientMonitoringVm.UserName = TgStringUtils.NormilizeTgName(ClientForSendData.User.MainUsername, isAddAt: false);
+            ClientMonitoringVm.UserName = TgStringUtils.NormalizedTgName(ClientForSendData.User.MainUsername, isAddAt: false);
             var inputUser = await GetInputUserAsync(ClientForSendData, ClientMonitoringVm.UserName);
             if (inputUser is { user_id: var userId })
             {
@@ -243,7 +243,7 @@ internal partial class TgMenuHelper
                 TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
                 return;
             }
-            ClientMonitoringVm.UserName = TgStringUtils.NormilizeTgName(userNameInput, isAddAt: false);
+            ClientMonitoringVm.UserName = TgStringUtils.NormalizedTgName(userNameInput, isAddAt: false);
             var inputUser = await GetInputUserAsync(ClientForSendData, ClientMonitoringVm.UserName);
             if (inputUser is { user_id: var userId })
             {
@@ -269,7 +269,7 @@ internal partial class TgMenuHelper
                 TgLog.WriteLine(TgLocale.MenuSetUserNameIsEmpty);
                 return chatNames;
             }
-            chatNames = TgStringUtils.NormilizeTgNames(chatNamesInput, isAddAt: false);
+            chatNames = TgStringUtils.NormalizedTgNames(chatNamesInput, isAddAt: false);
         }
         return chatNames;
     }

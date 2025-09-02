@@ -7,7 +7,7 @@ namespace TgInfrastructure.Helpers;
 public static class TgStringUtils
 {
     /// <summary> Normalize TG name </summary>
-    public static string NormilizeTgName(string name, bool isAddAt = true)
+    public static string NormalizedTgName(string name, bool isAddAt = true)
     {
         if (name.StartsWith("https://t.me/"))
             name = name.Substring(13, name.Length - 13);
@@ -19,11 +19,11 @@ public static class TgStringUtils
     }
 
     /// <summary> Normalize names from string to list of names </summary>
-    public static List<string> NormilizeTgNames(string names, bool isAddAt = true)
+    public static List<string> NormalizedTgNames(string names, bool isAddAt = true)
     {
         var separators = new char[] { ',', ';', ' ' };
         var list = names.Split(separators, StringSplitOptions.RemoveEmptyEntries)
-            .Select(name => NormilizeTgName(name.Trim(), isAddAt).ToLower())
+            .Select(name => NormalizedTgName(name.Trim(), isAddAt).ToLower())
             .ToList();
         return list;
     }

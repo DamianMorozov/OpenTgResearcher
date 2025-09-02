@@ -3554,7 +3554,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<TgChatDetailsDto> GetChatDetailsByClientAsync(string userName, TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        userName = TgStringUtils.NormilizeTgName(userName, isAddAt: false);
+        userName = TgStringUtils.NormalizedTgName(userName, isAddAt: false);
 
         tgDownloadSettings.SourceVm = new TgEfSourceViewModel(TgGlobalTools.Container) { Dto = new TgEfSourceDto { UserName = userName } };
         await CreateChatBaseCoreAsync(tgDownloadSettings);
@@ -3583,7 +3583,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<TgChatDetailsDto> GetChatDetailsByBotAsync(string userName)
     {
-        userName = TgStringUtils.NormilizeTgName(userName, isAddAt: false);
+        userName = TgStringUtils.NormalizedTgName(userName, isAddAt: false);
 
         if (Bot is null) return new();
 

@@ -12,9 +12,9 @@ public class TgStringUtilsTests
     [TestCase("https://t.me/username", false, ExpectedResult = "username")]
     [TestCase("@username", false, ExpectedResult = "username")]
     [TestCase("username", false, ExpectedResult = "username")]
-    public string NormilizeTgName_ReturnsExpected(string input, bool isAddAt)
+    public string NormalizedTgName_ReturnsExpected(string input, bool isAddAt)
     {
-        return TgStringUtils.NormilizeTgName(input, isAddAt);
+        return TgStringUtils.NormalizedTgName(input, isAddAt);
     }
 
     [TestCase("UserOne", true, new[] { "@userone" })]
@@ -27,72 +27,72 @@ public class TgStringUtilsTests
     [TestCase(" UserOne ,  UserTwo;UserThree ", false, new[] { "userone", "usertwo", "userthree" })]
     [TestCase("", true, new string[0])]
     [TestCase("", false, new string[0])]
-    public void NormilizeTgNames_ReturnsExpected(string input, bool isAddAt, string[] expected)
+    public void NormalizedTgNames_ReturnsExpected(string input, bool isAddAt, string[] expected)
     {
-        var result = TgStringUtils.NormilizeTgNames(input, isAddAt);
+        var result = TgStringUtils.NormalizedTgNames(input, isAddAt);
         Assert.That(result, Is.EqualTo(expected));
     }
 
     [Test]
-    public void NormilizeTgNames_SingleName_AddAt()
+    public void NormalizedTgNames_SingleName_AddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames("UserOne", isAddAt: true);
+        var result = TgStringUtils.NormalizedTgNames("UserOne", isAddAt: true);
         Assert.That(result, Is.EqualTo(new List<string> { "@userone" }));
     }
 
     [Test]
-    public void NormilizeTgNames_SingleName_NoAddAt()
+    public void NormalizedTgNames_SingleName_NoAddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames("UserOne", isAddAt: false);
+        var result = TgStringUtils.NormalizedTgNames("UserOne", isAddAt: false);
         Assert.That(result, Is.EqualTo(new List<string> { "userone" }));
     }
 
     [Test]
-    public void NormilizeTgNames_CommaSeparated_AddAt()
+    public void NormalizedTgNames_CommaSeparated_AddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames("UserOne,UserTwo,UserThree", isAddAt: true);
+        var result = TgStringUtils.NormalizedTgNames("UserOne,UserTwo,UserThree", isAddAt: true);
         Assert.That(result, Is.EqualTo(new List<string> { "@userone", "@usertwo", "@userthree" }));
     }
 
     [Test]
-    public void NormilizeTgNames_CommaSeparated_NoAddAt()
+    public void NormalizedTgNames_CommaSeparated_NoAddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames("UserOne,UserTwo,UserThree", isAddAt: false);
+        var result = TgStringUtils.NormalizedTgNames("UserOne,UserTwo,UserThree", isAddAt: false);
         Assert.That(result, Is.EqualTo(new List<string> { "userone", "usertwo", "userthree" }));
     }
 
     [Test]
-    public void NormilizeTgNames_SemicolonAndSpaceSeparated_AddAt()
+    public void NormalizedTgNames_SemicolonAndSpaceSeparated_AddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames("UserOne; UserTwo UserThree", isAddAt: true);
+        var result = TgStringUtils.NormalizedTgNames("UserOne; UserTwo UserThree", isAddAt: true);
         Assert.That(result, Is.EqualTo(new List<string> { "@userone", "@usertwo", "@userthree" }));
     }
 
     [Test]
-    public void NormilizeTgNames_SemicolonAndSpaceSeparated_NoAddAt()
+    public void NormalizedTgNames_SemicolonAndSpaceSeparated_NoAddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames("UserOne; UserTwo UserThree", isAddAt: false);
+        var result = TgStringUtils.NormalizedTgNames("UserOne; UserTwo UserThree", isAddAt: false);
         Assert.That(result, Is.EqualTo(new List<string> { "userone", "usertwo", "userthree" }));
     }
 
     [Test]
-    public void NormilizeTgNames_MixedSeparatorsAndSpaces_AddAt()
+    public void NormalizedTgNames_MixedSeparatorsAndSpaces_AddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames(" UserOne ,  UserTwo;UserThree ", isAddAt: true);
+        var result = TgStringUtils.NormalizedTgNames(" UserOne ,  UserTwo;UserThree ", isAddAt: true);
         Assert.That(result, Is.EqualTo(new List<string> { "@userone", "@usertwo", "@userthree" }));
     }
 
     [Test]
-    public void NormilizeTgNames_MixedSeparatorsAndSpaces_NoAddAt()
+    public void NormalizedTgNames_MixedSeparatorsAndSpaces_NoAddAt()
     {
-        var result = TgStringUtils.NormilizeTgNames(" UserOne ,  UserTwo;UserThree ", isAddAt: false);
+        var result = TgStringUtils.NormalizedTgNames(" UserOne ,  UserTwo;UserThree ", isAddAt: false);
         Assert.That(result, Is.EqualTo(new List<string> { "userone", "usertwo", "userthree" }));
     }
 
     [Test]
-    public void NormilizeTgNames_EmptyString()
+    public void NormalizedTgNames_EmptyString()
     {
-        var result = TgStringUtils.NormilizeTgNames("");
+        var result = TgStringUtils.NormalizedTgNames("");
         Assert.That(result, Is.EqualTo(new List<string>()));
     }
 }

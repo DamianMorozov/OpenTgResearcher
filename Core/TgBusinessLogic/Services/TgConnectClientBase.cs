@@ -2378,35 +2378,41 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task ParseChatMessageCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TgChatCache chatCache, 
         TgForumTopicSettings forumTopicSettings, Message message, TgMessageSettings messageSettings)
     {
+        // Capture IDs for clarity
         var chatId = messageSettings.CurrentChatId;
         var messageId = messageSettings.CurrentMessageId;
 
         try
         {
-            // Anti-stampede: if a pair of threads process the same message, only one will be executed
+            // Ensure message is processed only once using cache
             _ = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessageProcessed(chatId, messageId),
                 factory: SafeFactory<bool>(async (ctx, ct) =>
                 {
-                    // Parse documents and photos
-                    if ((message.flags & Message.Flags.has_media) is not 0)
-                    {
-                        await DownloadMediaFromMessageAsync(tgDownloadSettings, messageBase, message.media, chatCache, messageSettings, forumTopicSettings);
-                    }
-                    // Save plain text message
-                    else
-                    {
-                        var authorId = message.From?.ID ?? messageSettings.CurrentChatId;
-                        await SaveMessagesAsync(tgDownloadSettings, messageSettings, message.Date, size: 0,
-                            message.message, TgEnumMessageType.Message, isRetry: false, authorId);
-                    }
+                    await HandleMessageContentAsync(tgDownloadSettings, messageBase, chatCache, forumTopicSettings, message, messageSettings, ct);
                     return true;
                 }), TgCacheUtils.CacheOptionsProcessMessage);
         }
         finally
         {
-            var messagesCount = await TryGetCacheChatLastCountSafeAsync(chatId);
-            // TL.Update download progress for the message
-            await UpdateChatViewModelAsync(chatId, messageId, messagesCount, $"Reading the message {messageId} from {messagesCount}");
+            // Update UI or state after processing
+            var totalMessages = await TryGetCacheChatLastCountSafeAsync(chatId);
+            await UpdateChatViewModelAsync(chatId, messageId, totalMessages, $"Reading message {messageId} of {totalMessages}");
+        }
+    }
+
+    private async Task HandleMessageContentAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TgChatCache chatCache, 
+        TgForumTopicSettings forumTopicSettings, Message message, TgMessageSettings messageSettings, CancellationToken ct)
+    {
+        // Parse documents and photos
+        if ((message.flags & Message.Flags.has_media) != 0)
+        {
+            await DownloadMediaFromMessageAsync(tgDownloadSettings, messageBase, message.media, chatCache, messageSettings, forumTopicSettings);
+        }
+        // Save plain text message
+        else
+        {
+            var authorId = message.From?.ID ?? messageSettings.CurrentChatId;
+            await SaveMessagesAsync(tgDownloadSettings, messageSettings, message.Date, size: 0, message.message, TgEnumMessageType.Message, isRetry: false, authorId);
         }
     }
 
@@ -2753,7 +2759,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 switch (messageMedia)
                 {
                     case MessageMediaDocument { document: Document doc }:
-                        await TelegramCallAsync(() => Client.DownloadFileAsync(doc, localFileStream, null, ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)));
+                        await TelegramCallAsync(() => Client.DownloadFileAsync(doc, localFileStream, null, 
+                            ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)));
                         var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
                         await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
                             TgEnumMessageType.Document, isRetry: false, authorId);
@@ -2925,7 +2932,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             TgCacheUtils.SaveLock.Release();
 
-            //await ClientProgressForMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, isStartTask: true, messageSettings.ThreadNumber);
             await ClientProgressForMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, isStartTask: false, messageSettings.ThreadNumber);
             
             await FlushMessageBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false);
@@ -2955,21 +2961,28 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private Client.ProgressCallback ClientProgressForFile(TgMessageSettings messageSettings, string fileName)
     {
-        var sw = Stopwatch.StartNew();
-        var isStartTask = true;
-        return async (transmitted, size) =>
+        // Start stopwatch for measuring transfer speed
+        var stopwatch = Stopwatch.StartNew();
+
+        // Capture required values to avoid closure over mutable object
+        var chatId = messageSettings.CurrentChatId;
+        var messageId = messageSettings.CurrentMessageId;
+        var threadNumber = messageSettings.ThreadNumber;
+        var shortName = Path.GetFileName(fileName);
+
+        return async (transmitted, totalSize) =>
         {
-            if (string.IsNullOrEmpty(fileName))
-            {
-                isStartTask = false;
-            }
-            else
-            {
-                isStartTask = true;
-                var fileSpeed = transmitted <= 0 || sw.Elapsed.Seconds <= 0 ? 0 : transmitted / sw.Elapsed.Seconds;
-                await UpdateStateFileAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId,
-                    Path.GetFileName(fileName), size > 0 ? size : 0, transmitted, fileSpeed > 0 ? fileSpeed : 0, isStartTask, messageSettings.ThreadNumber);
-            }
+            // Skip if file name is not provided
+            if (string.IsNullOrEmpty(shortName)) return;
+
+            // Calculate elapsed time in seconds
+            var elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+
+            // Calculate speed in bytes per second
+            long speed = elapsedSeconds > 0 ? (long)(transmitted / elapsedSeconds) : 0;
+
+            // Update file transfer state
+            await UpdateStateFileAsync(chatId, messageId, shortName, totalSize > 0 ? totalSize : 0, transmitted, speed, true, threadNumber);
         };
     }
 

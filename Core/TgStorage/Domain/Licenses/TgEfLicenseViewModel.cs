@@ -31,7 +31,7 @@ public sealed partial class TgEfLicenseViewModel : TgEntityViewModelBase<TgEfLic
 
 	#region Methods
 
-	public override string ToString() => Dto.ToString() ?? string.Empty;
+	public override string ToString() => Dto.ToString();
 
 	public override string ToDebugString() => Dto.ToDebugString();
 

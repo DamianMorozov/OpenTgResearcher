@@ -397,6 +397,13 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         return await GetQuery(isReadOnly: true).Where(where).CountAsync();
     }
 
+    /// <inheritdoc />
+    public async Task<TDto?> GetFirstOrDefaultAsync(Expression<Func<TEfEntity, bool>> where)
+    {
+        var dto = await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).FirstOrDefaultAsync();
+        return dto;
+    }
+    
     #endregion
 
     #region Methods - Write

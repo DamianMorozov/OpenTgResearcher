@@ -64,12 +64,13 @@ public interface ITgEfRepository<TEfEntity, TDto>
     public Task<List<TDto>> GetListDtosDescAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order);
     public Task<int> GetListCountAsync();
 	public Task<int> GetListCountAsync(Expression<Func<TEfEntity, bool>> where);
+    public Task<TDto?> GetFirstOrDefaultAsync(Expression<Func<TEfEntity, bool>> where);
 
-	#endregion
+    #endregion
 
-	#region Methods - Write
+    #region Methods - Write
 
-	public Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity item, bool isFirstTry = true);
+    public Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity item, bool isFirstTry = true);
 	public TgEfStorageResult<TEfEntity> Save(TEfEntity item);
 	public Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewriteEntities, bool isFirstTry = true);
 	public Task<TgEfStorageResult<TEfEntity>> SaveWithoutTransactionAsync(TEfEntity item);

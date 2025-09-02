@@ -56,12 +56,9 @@ public sealed partial class TgExceptionViewModel : TgViewModelBase
 		Exception = ex;
 	}
 
-	public void Clear()
-	{
-		Exception = null;
-	}
+	public void Clear() => Default();
 
-	private string GetInnerException(Exception ex) =>
+	private static string GetInnerException(Exception ex) =>
 		ex.InnerException is null ? ex.Message : ex.Message + Environment.NewLine + GetInnerException(ex.InnerException);
 
 	#endregion

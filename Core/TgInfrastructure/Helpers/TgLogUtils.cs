@@ -48,6 +48,10 @@ public static class TgLogUtils
                 case TgEnumAppType.Blazor:
                     _startupLog = Path.Combine(GetLogsDirectory(appType), $"Log-{DateTime.Now:yyyy-MM-dd}.txt");
                     break;
+                case TgEnumAppType.Memory:
+                    break;
+                case TgEnumAppType.Test:
+                    break;
             }
             if (string.IsNullOrEmpty(_startupLog)) return;
 

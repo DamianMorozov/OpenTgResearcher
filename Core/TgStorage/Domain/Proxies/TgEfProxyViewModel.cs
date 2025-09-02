@@ -34,7 +34,7 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
 
 	#region Methods
 
-	public override string ToString() => Dto.ToString() ?? string.Empty;
+	public override string ToString() => Dto.ToString();
 
 	public override string ToDebugString() => Dto.ToDebugString();
 

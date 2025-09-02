@@ -27,7 +27,9 @@ public static class TgGlobalTools
     public const string RouteController = "[controller]";
     public const string RouteCreate = "Create";
     public const string RouteCreated = "Created";
+    public const string RouteDelete = "Delete";
     public const string RouteGet = "Get";
+    public const string RouteGetList = "GetList";
     public const string RouteGetFile = "GetFile";
     public const string RouteGetFiles = "GetFiles";
     public const string RouteImage = "Image";

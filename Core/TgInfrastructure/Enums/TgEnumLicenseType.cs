@@ -9,5 +9,5 @@ public enum TgEnumLicenseType
 	Test = 1,
 	Paid = 2,
 	Gift = 3,
-	Premium = 4
+	Premium = 4,
 }

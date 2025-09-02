@@ -350,6 +350,13 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     }
 
     /// <inheritdoc />
+    public async Task<int> DeleteDtoAsync(Expression<Func<TEfEntity, bool>> where)
+    {
+        int result = await GetQuery().Where(where).ExecuteDeleteAsync();
+        return result;
+    }
+
+    /// <inheritdoc />
     public async Task<List<TDto>> GetListDtosAsync(int take = 0, int skip = 0)
     {
         var dtos = take > 0
@@ -685,6 +692,34 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                 await EfContext.SaveChangesAsync();
                 await transaction.CommitAsync();
                 return new(TgEnumEntityState.IsDeleted);
+            }
+#if DEBUG
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+                Debug.WriteLine(ex.StackTrace);
+#else
+			catch (Exception)
+			{
+#endif
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public virtual async Task<TgEfStorageResult<TEfEntity>> DeleteAsync(Expression<Func<TEfEntity, bool>> where)
+    {
+        var transaction = await EfContext.Database.BeginTransactionAsync();
+        await using (transaction)
+        {
+            try
+            {
+                var result = await DeleteDtoAsync(where);
+                await EfContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return result > 0 ? new(TgEnumEntityState.IsDeleted) : new(TgEnumEntityState.NotDeleted);
             }
 #if DEBUG
             catch (Exception ex)

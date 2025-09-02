@@ -127,7 +127,7 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
 
     /// <inheritdoc />
     public async Task<List<TgEfMessageDto>> GetListDtosWithoutRelationsAsync<TKey>(int take, int skip, 
-        Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order)
+        Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order, bool isOrderDesc = false)
     {
         // Get IDs of messages that are referenced as children in relations
         var relatedChildIds = await EfContext.MessagesRelations
@@ -140,8 +140,10 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
         var query = (IQueryable<TgEfMessageEntity>)EfContext.Messages
             .AsNoTracking()
             .Where(where)
-            .Where(m => !relatedChildIds.Contains(m.Id))
-            .OrderBy(order);
+            .Where(m => !relatedChildIds.Contains(m.Id));
+
+        // Order
+        query = !isOrderDesc ? query.OrderBy(order) : query.OrderByDescending(order);
 
         // Apply pagination
         if (skip > 0)

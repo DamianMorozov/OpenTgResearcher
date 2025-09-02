@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed GitHub workflow
 - Fixed bugs in media comment parsing
+- Fixed loading messages on the `Chat` page in `OpenTgResearcherDesktop`
 ### Changed
 - Updated NuGet packages
 - Updated the `TgStorageTests` test project

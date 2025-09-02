@@ -5,26 +5,42 @@ namespace TgStorage.Models;
 
 public sealed class TgMediaInfoModel(string remote, long size, DateTime dtCreate)
 {
-	public string RemoteName { get; set; } = remote;
-	public long RemoteSize { get; set; } = size;
-	public DateTime DtCreate { get; set; } = dtCreate;
-	public string Number { get; set; } = string.Empty;
-	public bool IsJoinFileNameWithMessageId { get; set; }
-	public string LocalNameOnly { get; set; } = remote;
-	public string LocalNameWithNumber => IsJoinFileNameWithMessageId ? $"{Number} {LocalNameOnly}" : LocalNameOnly;
-	public string LocalPathOnly { get; set; } = string.Empty;
-	public string LocalPathWithNumber => Path.Combine(LocalPathOnly, LocalNameWithNumber);
-	private static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
+    #region Fields, properties, constructor
 
-	public TgMediaInfoModel() : this(string.Empty, 0, default) { }
+    public string RemoteName { get; set; } = remote;
+    public long RemoteSize { get; set; } = size;
+    public DateTime DtCreate { get; set; } = dtCreate;
+    public string Number { get; set; } = string.Empty;
+    public bool IsJoinFileNameWithMessageId { get; set; }
+    public string LocalNameOnly { get; set; } = remote;
+    public string LocalNameWithNumber => IsJoinFileNameWithMessageId ? $"{Number} {LocalNameOnly}" : LocalNameOnly;
+    public string LocalPathOnly { get; set; } = string.Empty;
+    public string LocalPathWithNumber => Path.Combine(LocalPathOnly, LocalNameWithNumber);
+    private static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
 
-	public void Normalize(bool isJoinFileNameWithMessageId)
-	{
-		IsJoinFileNameWithMessageId = isJoinFileNameWithMessageId;
-		LocalNameOnly = LocalNameOnly.Trim();
-		// Replace characters in the file name depending on the OS
-		LocalNameOnly = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? LocalNameOnly.Replace("/", "\\") : LocalNameOnly.Replace("\\", "/");
-		// Replace invalid characters for file names 
-		LocalNameOnly = InvalidChars.Aggregate(LocalNameOnly, (current, c) => current.Replace(c.ToString(), "_"));
-	}
+    public TgMediaInfoModel() : this(string.Empty, 0, default) { }
+
+    #endregion
+
+    #region Methods
+
+    public void Normalize(bool isJoinFileNameWithMessageId)
+    {
+        IsJoinFileNameWithMessageId = isJoinFileNameWithMessageId;
+
+        // Trim whitespace and replace path separators according to OS
+        LocalNameOnly = LocalNameOnly.Trim();
+        LocalNameOnly = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) 
+            ? LocalNameOnly.Replace("/", "\\")
+            : LocalNameOnly.Replace("\\", "/");
+
+        // Substitute invalid filename chars with underscore
+        foreach (var c in InvalidChars)
+            LocalNameOnly = LocalNameOnly.Replace(c.ToString(), "_");
+
+        // Guarantee single extension at the end of name
+        LocalNameOnly = TgStringUtils.EnsureSingleExtension(LocalNameOnly);
+    }
+
+    #endregion
 }

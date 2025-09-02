@@ -2568,20 +2568,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return inputPeer;
     }
 
-    /// <summary> Download comment data </summary>
-    private async Task DownloadCommentAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase commentBase, TgChatCache chatCache,
-        TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings)
-    {
-        var cloneSettings = messageSettings.Clone();
-        //cloneSettings.ParentId = messageSettings.MessageId;
-        cloneSettings.ParentMessageId = commentBase.ID;
-        await ParseChatMessageAsync(tgDownloadSettings, commentBase, chatCache, cloneSettings, forumTopicSettings);
-        var messagesCount = await GetChannelMessageIdLastCoreAsync(cloneSettings.CurrentChatId);
-        // TL.Update download progress for the comment
-        await UpdateChatViewModelAsync(cloneSettings.CurrentChatId, cloneSettings.CurrentMessageId, messagesCount,
-            $"Reading the comment {cloneSettings.CurrentMessageId} from {messagesCount}");
-    }
-
     private TgMediaInfoModel GetMediaInfo(TL.MessageMedia messageMedia, TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase,
         TgChatCache chatCache, TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings)
     {
@@ -2594,8 +2580,19 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     if (!string.IsNullOrEmpty(document.Filename) && Path.GetExtension(document.Filename).TrimStart('.') is { } str)
                         extensionName = str;
-                    var fileName = tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage && messageBase is Message message
-                        ? $"{message.message}.{extensionName}" : document.Filename;
+                    string fileName;
+                    if (tgDownloadSettings.SourceVm.Dto.IsFileNamingByMessage && messageBase is Message msg)
+                    {
+                        // Build from message text without duplicating extension
+                        var baseFromMessage = TgStringUtils.SanitizeForFileName(msg.message);
+                        fileName = TgStringUtils.EnsureSingleExtension(baseFromMessage, extensionName);
+                    }
+                    else
+                    {
+                        // Keep original filename as-is
+                        fileName = document.Filename;
+                    }
+
                     if (!string.IsNullOrEmpty(document.Filename) && CheckFileAtFilter(document.Filename, extensionName, document.size))
                     {
                         mediaInfo = new(fileName, document.size, document.date);
@@ -2603,28 +2600,38 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                     if (document.attributes.Length > 0)
                     {
+                        // Video document attribute branch
                         if (document.attributes.Any(x => x is DocumentAttributeVideo))
                         {
                             extensionName = "mp4";
                             if (CheckFileAtFilter(string.Empty, extensionName, document.size))
                             {
-                                mediaInfo = new($"{document.ID}.{extensionName}", document.size, document.date);
+                                var baseName = document.ID.ToString();
+                                var safeName = TgStringUtils.EnsureSingleExtension(baseName, extensionName);
+                                mediaInfo = new(safeName, document.size, document.date);
                                 break;
                             }
                         }
+                        // Audio document attribute branch
                         if (document.attributes.Any(x => x is DocumentAttributeAudio))
                         {
                             extensionName = "mp3";
                             if (CheckFileAtFilter(string.Empty, extensionName, document.size))
                             {
-                                mediaInfo = new($"{document.ID}.{extensionName}", document.size, document.date);
+                                var baseName = document.ID.ToString();
+                                var safeName = TgStringUtils.EnsureSingleExtension(baseName, extensionName);
+                                mediaInfo = new(safeName, document.size, document.date);
                                 break;
                             }
                         }
                     }
+
+                    // Fallback when document.Filename is empty
                     if (string.IsNullOrEmpty(document.Filename) && CheckFileAtFilter(string.Empty, extensionName, document.size))
                     {
-                        mediaInfo = new($"{messageBase.ID}.{extensionName}", document.size, document.date);
+                        var baseName = messageBase.ID.ToString();
+                        var safeName = TgStringUtils.EnsureSingleExtension(baseName, extensionName);
+                        mediaInfo = new(safeName, document.size, document.date);
                         break;
                     }
                 }
@@ -2633,10 +2640,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 if (mediaPhoto is { photo: Photo photo })
                 {
                     extensionName = "jpg";
-                    //return photo.sizes.Select(x => ($"{photo.ID} {x.Width}x{x.Height}.{GetPhotoExt(x.Type)}", Convert.ToInt64(x.FileSize), photo.date, string.Empty, string.Empty)).ToArray();
-                    //var fileName = tgDownloadSettings.IsJoinFileNameWithMessageId && messageBase is TL.Message message
-                    //	? $"{message.message}.{extensionName}" : $"{photo.ID}.{extensionName}";
-                    var fileName = $"{photo.ID}.{extensionName}";
+                    var baseName = photo.ID.ToString();
+                    var fileName = TgStringUtils.EnsureSingleExtension(baseName, extensionName);
                     if (CheckFileAtFilter(fileName, extensionName, photo.sizes.Last().FileSize))
                     {
                         mediaInfo = new(fileName, photo.sizes.Last().FileSize, photo.date);
@@ -2645,6 +2650,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 }
                 break;
         }
+
         mediaInfo ??= new();
         // Join ID
         if (!string.IsNullOrEmpty(mediaInfo.LocalNameOnly))

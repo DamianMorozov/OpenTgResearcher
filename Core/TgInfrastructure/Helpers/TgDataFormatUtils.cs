@@ -109,7 +109,7 @@ public static class TgDataFormatUtils
             return string.Empty;
 
         // Find the index of the first line break
-        int newLineIndex = value.IndexOfAny(new[] { '\r', '\n' });
+        int newLineIndex = value.IndexOfAny(['\r', '\n']);
 
         // If there is a line break and it is before len, trim to it
         int trimIndex = (newLineIndex >= 0 && newLineIndex < len) ? newLineIndex : len;

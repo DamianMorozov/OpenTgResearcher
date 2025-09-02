@@ -102,7 +102,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         await StorageManager.AppRepository.SetUseBotAsync(false);
     }
 
-    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto, bool isUidCopy)
+    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto, bool isUidCopy = false)
 	{
 		var licenseEntity = new TgEfLicenseEntity
 		{
@@ -123,7 +123,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 		else
 		{
 			var licenseExists = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-			licenseExists.Copy(licenseEntity, isUidCopy: false);
+			licenseExists.Copy(licenseEntity, isUidCopy: isUidCopy);
 			await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
 		}
 	}

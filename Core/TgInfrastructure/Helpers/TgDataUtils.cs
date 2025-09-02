@@ -29,6 +29,9 @@ public static class TgDataUtils
     public static double CalcSourceProgress(long count, long current) =>
         count is 0 ? 0 : (double)(current * 100) / count;
 
+    public static string GetLongString(long current) =>
+        current > 999 ? $"{current:### ###}" : $"{current:###}";
+
     public static Version? GetTrimVersion(Version? version)
     {
         if (version is null) return null;

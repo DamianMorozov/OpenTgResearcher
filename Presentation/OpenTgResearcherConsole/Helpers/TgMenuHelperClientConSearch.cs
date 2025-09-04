@@ -576,7 +576,7 @@ internal partial class TgMenuHelper
     }
 
     /// <summary> Subscribe to start search for keywords in chats </summary>
-    private async Task ClientSearchForKeywordsInChatsSubscribeAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    private async Task ClientSearchForKeywordsInChatsSubscribeAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default)
     {
         if (ClientMonitoringVm.IsStartSearching) return;
         if (ClientForSendData is null) return;
@@ -586,14 +586,14 @@ internal partial class TgMenuHelper
             await BusinessLogicManager.ConnectClient.CollectAllChatsAsync();
 
         ClientMonitoringVm.IsStartSearching = true;
-        await ClientSearchForKeywordsInChatsProcessAllChatsAsync(tgDownloadSettings);
+        await ClientSearchForKeywordsInChatsProcessAllChatsAsync(tgDownloadSettings, ct);
 
         TgLog.WriteLine($"  {TgLocale.MenuClientSearchingStarted}");
         ClientMonitoringVm.IsStartSearching = false;
     }
 
     /// <summary> Process all chats for search keywords </summary>
-    private async Task ClientSearchForKeywordsInChatsProcessAllChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
+    private async Task ClientSearchForKeywordsInChatsProcessAllChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default)
     {
         if (ClientForSendData is not Client client) return;
         if (!ClientMonitoringVm.IsStartSearching) return;
@@ -609,13 +609,13 @@ internal partial class TgMenuHelper
             {
                 if (chat is null) continue;
                 // Get the last message ID in a chat 
-                tgDownloadSettings.SourceVm.Dto.Count = await BusinessLogicManager.ConnectClient.GetChatLastMessageIdAsync(chat.ID);
+                tgDownloadSettings.SourceVm.Dto.Count = await BusinessLogicManager.ConnectClient.GetChatLastMessageIdAsync(chat.ID, ct);
                 // Update table
                 await ShowTableClientConSearchAsync();
 
                 await RunTaskProgressAsync(tgDownloadSettings, async (tgDownloadSettings) => {
                     await BusinessLogicManager.ConnectClient.MakeFuncWithMessagesAsync(tgDownloadSettings, 
-                        chat.ID, ClientSearchForKeywordsInChatsProcessAllMessagesInChatAsync);
+                        chat.ID, ClientSearchForKeywordsInChatsProcessAllMessagesInChatAsync, ct);
                 }, isSkipCheckTgSettings: true, isScanCount: false);
             }
         }

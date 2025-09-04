@@ -141,46 +141,46 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             IsDownloading = true;
             if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-            await SaveChatSettingsCoreAsync();
+            await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
 
-            StateSourceDirectory = Dto.Directory;
-
-            DownloadSettings.SourceVm.Dto = Dto;
             await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
-            await DownloadSettings.SourceVm.SaveAsync();
-            await LoadDataStorageCoreAsync();
         }
         finally
         {
             IsDownloading = false;
+            await LoadDataStorageCoreAsync();
         }
     }, isDisabledContent: true, isPageLoad: false);
 
-    public async Task SaveChatSettingsAsync() => await ContentDialogAsync(SaveChatSettingsCoreAsync, TgResourceExtensions.AskSettingsSave());
+    public async Task SaveChatSettingsAsync() => await ContentDialogAsync(
+        async () => await SaveChatSettingsCoreAsync(isLoadDataStorage: true), TgResourceExtensions.AskSettingsSave());
 
-    private async Task SaveChatSettingsCoreAsync()
+    private async Task SaveChatSettingsCoreAsync(bool isLoadDataStorage)
     {
-        var entity = Dto.GetNewEntity();
-        DownloadSettings.SourceVm.Fill(entity);
-        DownloadSettings.SourceVm.Dto.DtChanged = DateTime.Now;
-        await DownloadSettings.SourceVm.SaveAsync();
-
-        if (CommentDto.Id > 0)
+        try
         {
-            var commentEntity = CommentDto.GetNewEntity();
-            var commentVm = new TgEfSourceViewModel(TgGlobalTools.Container, commentEntity);
-            commentVm.Dto.DtChanged = DateTime.Now;
-            await commentVm.SaveAsync();
+            Dto.DtChanged = DateTime.UtcNow;
+            DownloadSettings.SourceVm.Dto = Dto;
+            var entity = Dto.GetEntity();
+            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(entity);
+
+            if (CommentDto.Id > 0)
+            {
+                CommentDto.DtChanged = DateTime.UtcNow;
+                var comment = CommentDto.GetEntity();
+                await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(comment);
+            }
+        }
+        finally
+        {
+            if (isLoadDataStorage)
+                await LoadDataStorageCoreAsync();
         }
     }
 
     private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());
 
-    private async Task StopDownloadingCoreAsync()
-    {
-        App.BusinessLogicManager.ConnectClient.SetForceStopDownloading();
-        await Task.CompletedTask;
-    }
+    private async Task StopDownloadingCoreAsync() => await App.BusinessLogicManager.ConnectClient.SetForceStopDownloadingAsync();
 
     #endregion
 }

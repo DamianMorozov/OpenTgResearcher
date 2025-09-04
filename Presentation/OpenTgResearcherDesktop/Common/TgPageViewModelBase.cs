@@ -34,10 +34,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial string StateSourceMsg { get; set; } = string.Empty;
     [ObservableProperty]
-    public partial string StateSourceDirectory { get; set; } = string.Empty;
-    [ObservableProperty]
-    public partial string StateSourceDirectorySizeString { get; set; } = string.Empty;
-    [ObservableProperty]
     public partial XamlRoot? XamlRootVm { get; set; }
     [ObservableProperty]
     public partial bool IsPageLoad { get; set; }

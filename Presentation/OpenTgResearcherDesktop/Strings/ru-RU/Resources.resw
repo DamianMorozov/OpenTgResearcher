@@ -1136,6 +1136,9 @@
   <data name="FieldIsActive.Text" xml:space="preserve">
     <value>Активно</value>
   </data>
+  <data name="FieldIsDownloading.Text" xml:space="preserve">
+    <value>Идёт загрузка</value>
+  </data>
   <data name="FieldIsBanned.Text" xml:space="preserve">
     <value>Запрещено</value>
   </data>
@@ -1174,6 +1177,9 @@
   </data>
   <data name="FieldUserNames.Text" xml:space="preserve">
     <value>Имена пользователя</value>
+  </data>
+  <data name="FieldLink.Text" xml:space="preserve">
+    <value>Ссылка</value>
   </data>
   <data name="FieldPhoneNumber.Text" xml:space="preserve">
     <value>Номер телефона</value>

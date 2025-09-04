@@ -136,22 +136,22 @@ internal partial class TgMenuHelper
         } while (menu is not TgEnumMenuClientConDownload.Return);
     }
 
-    private async Task<TgDownloadSettingsViewModel> SetupDownloadSourceByIdAsync(long id)
+    private async Task<TgDownloadSettingsViewModel> SetupDownloadSourceByIdAsync(long id, CancellationToken ct = default)
     {
         var tgDownloadSettings = SetupDownloadSourceByIdCore(id);
         await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
-        await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+        await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true, ct);
         return tgDownloadSettings;
     }
 
-    private async Task<TgDownloadSettingsViewModel> DownloadSetSourceAsync()
+    private async Task<TgDownloadSettingsViewModel> DownloadSetSourceAsync(CancellationToken ct = default)
     {
         var tgDownloadSettings = SetupDownloadSourceCore();
         if (string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.UserName))
             await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
         else
             await LoadTgClientSettingsByNameAsync(tgDownloadSettings);
-        await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true);
+        await BusinessLogicManager.ConnectClient.CreateChatAsync(tgDownloadSettings, isSilent: true, ct);
         return tgDownloadSettings;
     }
 

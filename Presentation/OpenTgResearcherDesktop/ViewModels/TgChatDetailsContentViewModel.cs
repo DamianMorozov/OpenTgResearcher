@@ -120,7 +120,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
                 var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
 
                 // Load newest messages first by ordering descending
-                var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosWithoutRelationsAsync(take: PageSize, skip: CurrentSkip,
+                var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: CurrentSkip,
                     where: x => x.SourceId == Dto.Id, order: x => x.Id, isOrderDesc: true);
 
                 // Update skip counter for next portion
@@ -139,13 +139,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
                     MessageDtos.Insert(0, item);
                 }
 
-                IsLoading = false;
-
-                (LazyLoadMessagesCommand as AsyncRelayCommand)?
-                    .NotifyCanExecuteChanged();
-
-                var filtered = MessageDtos.Count;
-                LoadedDataStatistics = $"{TgResourceExtensions.GetTextBlockFiltered()} {filtered} | {TgResourceExtensions.GetTextBlockTotalAmount()} {totalCount}";
+                (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
             }
             finally
             {
@@ -175,10 +169,8 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
 
         // Update loaded data statistics
-        var countAll = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
-        LoadedDataStatistics =
-            $"{TgResourceExtensions.GetTextBlockFiltered()} {MessageDtos.Count} | " +
-            $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
+        var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
+        LoadedDataStatistics = $"{TgResourceExtensions.GetTextBlockFiltered()} {MessageDtos.Count} | " + $"{TgResourceExtensions.GetTextBlockTotalAmount()} {totalCount}";
 
         await Task.CompletedTask;
     }

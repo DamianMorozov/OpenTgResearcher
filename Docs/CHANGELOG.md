@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the `TgBusinessLogicTests` test project
 - Added description of adding a license to `OpenTgResearcherDesktop`
 - Added media file download progress to the `Chat Content` page in `OpenTgResearcherDesktop`
+- Added downloading of covers for media files
 
 ## [0.7.140] - 2025-08-25
 ### Fixed

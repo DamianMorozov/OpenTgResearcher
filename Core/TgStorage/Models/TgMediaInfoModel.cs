@@ -16,6 +16,7 @@ public sealed class TgMediaInfoModel(string remote, long size, DateTime dtCreate
     public string LocalNameWithNumber => IsJoinFileNameWithMessageId ? $"{Number} {LocalNameOnly}" : LocalNameOnly;
     public string LocalPathOnly { get; set; } = string.Empty;
     public string LocalPathWithNumber => Path.Combine(LocalPathOnly, LocalNameWithNumber);
+    public string ThumbnailPathWithNumber => Path.Combine(LocalPathOnly, Path.GetFileNameWithoutExtension(LocalNameWithNumber) + TgFileUtils.ExtensionThumbnail);
     private static readonly char[] InvalidChars = Path.GetInvalidFileNameChars();
 
     public TgMediaInfoModel() : this(string.Empty, 0, default) { }

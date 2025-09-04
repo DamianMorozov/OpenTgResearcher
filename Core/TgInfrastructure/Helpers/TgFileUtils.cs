@@ -12,8 +12,9 @@ public static class TgFileUtils
 	public static string BaseDirectory = string.Empty;
 	public static string FileAppXmlSettings => !string.IsNullOrEmpty(BaseDirectory) ? Path.Combine(BaseDirectory, "OpenTgResearcher.xml") : string.Empty;
 	public static string FileTgSession => "OpenTgResearcher.session";
+    public static string ExtensionThumbnail => ".thumb.jpg";
 
-	static TgFileUtils()
+    static TgFileUtils()
 	{
 		try
 		{
@@ -148,8 +149,7 @@ public static class TgFileUtils
 		}
 	}
 
-	public static long CalculateFileSize(string file) =>
-		!File.Exists(file) ? 0L : new FileInfo(file).Length;
+	public static long CalculateFileSize(string file) => !File.Exists(file) ? 0L : new FileInfo(file).Length;
 
 	public static string GetFileSizeAsString(long value) =>
 		value > 0

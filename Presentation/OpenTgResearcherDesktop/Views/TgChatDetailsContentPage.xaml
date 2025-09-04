@@ -46,11 +46,7 @@
                         Grid.Row="0"
                         Orientation="Horizontal"
                         Spacing="5">
-                        <!--  Changed  -->
-                        <!--<TextBlock
-                            x:Uid="TextBlockCreated"
-                            Margin="0,5,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}" />-->
+                        <!--  DtChangedString  -->
                         <TextBlock
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
@@ -147,18 +143,6 @@
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind UserContact, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <Button
-                            Margin="0,0,0,0"
-                            HorizontalContentAlignment="Left"
-                            Click="OnClipboardSilentWriteClick"
-                            CornerRadius="10"
-                            Tag="{x:Bind UserContact, Mode=OneWay}">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="·" />
                         <!--  Message deleted  -->
                         <TextBlock
                             x:Uid="TextBlockMessageDeleted"
@@ -205,6 +189,25 @@
                                 Stretch="Uniform"
                                 Tapped="OnImagePreviewClick"
                                 Visibility="{x:Bind IsImageExists, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Border>
+                        <!--  Thumb preview  -->
+                        <Border
+                            Grid.Column="1"
+                            MaxWidth="400"
+                            MaxHeight="300"
+                            Margin="5,0,5,0"
+                            HorizontalAlignment="Left"
+                            BorderBrush="{ThemeResource SystemAccentColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Image
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Source="{x:Bind ThumbFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
+                                Stretch="Uniform"
+                                Tapped="OnImagePreviewClick"
+                                Visibility="{x:Bind IsThumbExists, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Border>
                         <!--  Message  -->
                         <TextBlock

@@ -36,7 +36,7 @@ public sealed partial class TgChatDetailsContentPage
             ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
     }
 
-    /// <summary> View image </summary>
+    /// <summary> View preview click - open image </summary>
     private void OnImagePreviewClick(object sender, RoutedEventArgs e)
     {
         if (sender is Image img && img.Source is BitmapImage bitmap)
@@ -45,6 +45,26 @@ public sealed partial class TgChatDetailsContentPage
             ViewModel.IsImageViewerVisible = true;
             Bindings.Update();
         }
+    }
+
+    /// <summary> Media preview click - open media player </summary>
+    private void OnMediaPreviewClick(object sender, TappedRoutedEventArgs e)
+    {
+        if (sender is Image img && img.Tag is string mediaPath)
+        {
+            OpenMediaPlayer(mediaPath);
+        }
+    }
+
+    // Opens a media file in the system's default player
+    private void OpenMediaPlayer(string mediaPath)
+    {
+        if (string.IsNullOrWhiteSpace(mediaPath) || !File.Exists(mediaPath)) return;
+
+        // Launch default app for this file type
+        Task.Run((Func<Task?>)(async () => {
+            _ = Windows.System.Launcher.LaunchFileAsync(await Windows.Storage.StorageFile.GetFileFromPathAsync(mediaPath));
+        }));
     }
 
     /// <summary> Exit from full screen image view </summary>

@@ -69,7 +69,38 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
                 if (string.IsNullOrEmpty(FileName)) return string.Empty;
 
                 var fullPath = Path.Combine(Directory, FileName);
-                if (File.Exists(fullPath))
+                if (File.Exists(fullPath) && !fullPath.EndsWith(TgFileUtils.ExtensionThumbnail) &&
+                    (fullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || fullPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                    return fullPath;
+                return string.Empty;
+            }
+#if DEBUG
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex, TgConstants.LogTypeStorage);
+                Debug.WriteLine(ex.StackTrace);
+            }
+#else
+        catch (Exception)
+        {
+            //
+        }
+#endif
+            return string.Empty;
+        }
+    }
+
+    public string ThumbFullPath
+    {
+        get
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Directory)) return string.Empty;
+                if (string.IsNullOrEmpty(FileName)) return string.Empty;
+
+                var fullPath = Path.Combine(Directory, FileName);
+                if (File.Exists(fullPath) && fullPath.EndsWith(TgFileUtils.ExtensionThumbnail, StringComparison.OrdinalIgnoreCase))
                     return fullPath;
                 return string.Empty;
             }
@@ -90,6 +121,8 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
     }
 
     public bool IsImageExists => !string.IsNullOrEmpty(ImageFullPath);
+
+    public bool IsThumbExists => !string.IsNullOrEmpty(ThumbFullPath);
 
     public string Link => TgStringUtils.FormatChatLink(string.Empty, SourceId, (int)Id).Item2;
 

@@ -134,36 +134,42 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
         .FirstOrDefaultAsync();
 
     /// <inheritdoc />
-    public async Task<List<TgEfMessageDto>> GetListDtosWithoutRelationsAsync<TKey>(int take, int skip, 
+    public async Task<List<TgEfMessageDto>> GetListDtosAsync<TKey>(int take, int skip, 
         Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order, bool isOrderDesc = false)
     {
-        // Get IDs of messages that are referenced as children in relations
-        var relatedChildIds = await EfContext.MessagesRelations
-            .AsNoTracking()
-            .Select(r => r.ChildMessageId)
-            .Distinct()
-            .ToListAsync();
-
-        // Filter messages that match the condition and are not in the relatedChildIds
-        var query = (IQueryable<TgEfMessageEntity>)EfContext.Messages
-            .AsNoTracking()
-            .Where(where)
-            .Where(m => !relatedChildIds.Contains(m.Id));
+        // Filter messages that match the condition
+        var query = EfContext.Messages.AsNoTracking().Where(where);
 
         // Order
         query = !isOrderDesc ? query.OrderBy(order) : query.OrderByDescending(order);
 
         // Apply pagination
-        if (skip > 0)
-            query = query.Skip(skip);
-        if (take > 0)
-            query = query.Take(take);
-
-        // Project to DTOs using SelectDto expression
-        var dtoQuery = query.Select(SelectDto());
+        if (skip > 0) query = query.Skip(skip);
+        if (take > 0) query = query.Take(take);
 
         // Execute query and return result
-        return await dtoQuery.ToListAsync();
+        return await query.Select(SelectDto()).ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<List<TgEfMessageDto>> GetListDtosWithoutRelationsAsync<TKey>(int take, int skip, 
+        Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order, bool isOrderDesc = false)
+    {
+        // Get IDs of messages that are referenced as children in relations
+        var queryRelationChildIds = EfContext.MessagesRelations.AsNoTracking().Select(r => r.ChildMessageId).Distinct();
+
+        // Filter messages that match the condition and are not in the relatedChildIds
+        var query = EfContext.Messages.AsNoTracking().Where(where).Where(m => !queryRelationChildIds.Contains(m.Id));
+
+        // Order
+        query = !isOrderDesc ? query.OrderBy(order) : query.OrderByDescending(order);
+
+        // Apply pagination
+        if (skip > 0) query = query.Skip(skip);
+        if (take > 0) query = query.Take(take);
+
+        // Execute query and return result
+        return await query.Select(SelectDto()).ToListAsync();
     }
 
     /// <inheritdoc />

@@ -7,6 +7,9 @@ public interface ITgEfMessageRepository : ITgEfRepository<TgEfMessageEntity, TgE
 {
     /// <summary> Get last ID </summary>
     public Task<long> GetLastIdAsync(long sourceId);
+    /// <summary> Get list of DTOs </summary>
+    public Task<List<TgEfMessageDto>> GetListDtosAsync<TKey>(int take, int skip,
+        Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order, bool isOrderDesc = false);
     /// <summary> Get list of DTOs without relations </summary>
     public Task<List<TgEfMessageDto>> GetListDtosWithoutRelationsAsync<TKey>(int take, int skip, 
         Expression<Func<TgEfMessageEntity, bool>> where, Expression<Func<TgEfMessageEntity, TKey>> order, bool isOrderDesc = false);

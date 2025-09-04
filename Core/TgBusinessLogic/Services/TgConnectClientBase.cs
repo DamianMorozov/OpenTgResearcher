@@ -2490,28 +2490,28 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     //    await Task.CompletedTask;
     //}
 
-    /// <summary> Check the exists chat directory </summary>
-    private async Task CheckExistsChatWithDirectoryAsync(TgChatCache chatCache, TgMessageSettings messageSettings, MessageBase rootMessage)
-    {
-        if (chatCache.CheckExistsDirectory(rootMessage.Peer.ID)) return;
+    ///// <summary> Check the exists chat directory </summary>
+    //private async Task CheckExistsChatWithDirectoryAsync(TgChatCache chatCache, TgMessageSettings messageSettings, MessageBase rootMessage)
+    //{
+    //    if (chatCache.CheckExistsDirectory(rootMessage.Peer.ID)) return;
 
-        // Check if the chat is already in the enumerable collections
-        var channelFind = EnumerableChannels.FirstOrDefault(x => x.ID == rootMessage.Peer.ID);
-        if (channelFind is not null)
-        {
-            CheckEnumerableChatCache(channelFind);
-            await SaveAtStorageAccessHashForChatAsync(chatCache, channelFind, messageSettings.CurrentChatId);
-            return;
-        }
+    //    // Check if the chat is already in the enumerable collections
+    //    var channelFind = EnumerableChannels.FirstOrDefault(x => x.ID == rootMessage.Peer.ID);
+    //    if (channelFind is not null)
+    //    {
+    //        CheckEnumerableChatCache(channelFind);
+    //        await SaveAtStorageAccessHashForChatAsync(chatCache, channelFind, messageSettings.CurrentChatId);
+    //        return;
+    //    }
 
-        // Check if the chat is already in the enumerable groups
-        var groupFind = EnumerableGroups.FirstOrDefault(x => x.ID == rootMessage.Peer.ID);
-        if (groupFind is not null)
-        {
-            CheckEnumerableChatCache(groupFind);
-            await SaveAtStorageAccessHashForChatAsync(chatCache, groupFind, messageSettings.CurrentChatId);
-        }
-    }
+    //    // Check if the chat is already in the enumerable groups
+    //    var groupFind = EnumerableGroups.FirstOrDefault(x => x.ID == rootMessage.Peer.ID);
+    //    if (groupFind is not null)
+    //    {
+    //        CheckEnumerableChatCache(groupFind);
+    //        await SaveAtStorageAccessHashForChatAsync(chatCache, groupFind, messageSettings.CurrentChatId);
+    //    }
+    //}
 
     /// <summary> Parse Telegram chat message core logic </summary>
     private async Task ParseChatMessageCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TgChatCache chatCache,
@@ -2900,7 +2900,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task DownloadMediaFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TL.MessageMedia messageMedia,
         TgChatCache chatCache, TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings, CancellationToken ct)
     {
-        // Early exit if cancellation requested
         if (CheckShouldStop(ct)) return;
 
         // Add chat from Storage to Cache
@@ -2908,98 +2907,150 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         var mediaInfo = GetMediaInfo(messageMedia, tgDownloadSettings, messageBase, chatCache, messageSettings, forumTopicSettings);
         if (string.IsNullOrEmpty(mediaInfo.LocalNameOnly)) return;
 
-        // Delete files
-        await DeleteExistsFilesAsync(tgDownloadSettings, mediaInfo, ct);
-
-        // Move exists file at current directory
         await MoveExistsFilesAtCurrentDirAsync(tgDownloadSettings, mediaInfo, ct);
 
         if (Client is null && Bot is not null)
             Client = Bot.Client;
 
-        // Download new file
-        if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.LocalPathWithNumber))
+        await DeleteEmptyOrLessSizeFilesAsync(tgDownloadSettings, mediaInfo, ct);
+
+        // Download media thumbnail if exists
+        await DownloadMediaThumbnailFromMessageAsync(tgDownloadSettings, messageMedia, mediaInfo, ct);
+
+        // Download media file if exists
+        await DownloadMediaFileFromMessageAsync(tgDownloadSettings, messageBase, messageMedia, messageSettings, mediaInfo, ct);
+
+        // Save message
+        var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
+        switch (messageMedia)
         {
-            await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
+            case MessageMediaDocument { document: Document document }:
+                {
+                    TgEfDocumentEntity doc = new()
+                    {
+                        Id = document.ID,
+                        SourceId = tgDownloadSettings.SourceVm.Dto.Id,
+                        MessageId = messageBase.ID,
+                        FileName = mediaInfo.LocalPathWithNumber,
+                        FileSize = mediaInfo.RemoteSize,
+                        AccessHash = document.access_hash
+                    };
+                    await StorageManager.DocumentRepository.SaveAsync(doc, ct: ct);
+                }
+                await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
+                    TgEnumMessageType.Document, isRetry: false, authorId, ct);
+                break;
+
+            case MessageMediaPhoto { photo: Photo photo }:
+                var messageStr = string.Empty;
+                if (messageBase is TL.Message message)
+                    messageStr = message.message;
+                await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize,
+                    $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
+                    TgEnumMessageType.Photo, isRetry: false, authorId, ct);
+                break;
+        }
+
+        // Update date time for files
+        UpdateFilesDateTime(mediaInfo);
+    }
+
+    /// <summary> Download media thumbnail if exists </summary>
+    private async Task DownloadMediaThumbnailFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageMedia messageMedia, TgMediaInfoModel mediaInfo, CancellationToken ct)
+    {
+        if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.ThumbnailPathWithNumber))
+        {
             if (Client is not null)
             {
                 switch (messageMedia)
                 {
                     case MessageMediaDocument { document: Document doc }:
-                        // Call Telegram API with cancellation support
-                        await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, null,
-                            ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
-                        var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
-                        await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                            TgEnumMessageType.Document, isRetry: false, authorId, ct);
-                        break;
-                    case MessageMediaPhoto { photo: Photo photo }:
-                        //var fileReferenceBase64 = Convert.ToBase64String(photo.file_reference);
-                        //var fileReferenceHex = BitConverter.ToString(photo.file_reference).Replace("-", "");
-                        // Call Telegram API with cancellation support
-                        await TelegramCallAsync(apiCt => Client.DownloadFileAsync(photo, localFileStream, (PhotoSizeBase?)null,
-                            ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
+                        {
+                            // Select best quality thumbnail
+                            var thumb = doc.thumbs?.OfType<PhotoSizeBase>().OrderByDescending(x => x.FileSize).FirstOrDefault();
+                            if (thumb is not null)
+                            {
+                                await DeleteEmptyOrLessSizeThumbFilesAsync(tgDownloadSettings, mediaInfo, ct);
+                                await using var localFileStream = File.Create(mediaInfo.ThumbnailPathWithNumber);
+                                // Call Telegram API with cancellation support
+                                await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, thumb), isThrow: false, ct);
+                                localFileStream.Close();
+                            }
+                        }
                         break;
                 }
             }
-            localFileStream.Close();
-        }
-
-        // Save message
-        if (Client is not null)
-        {
-            var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
-            switch (messageMedia)
-            {
-                case MessageMediaDocument mediaDocument:
-                    if ((mediaDocument.flags & MessageMediaDocument.Flags.has_document) is not 0 && mediaDocument.document is Document document)
-                    {
-                        TgEfDocumentEntity doc = new()
-                        {
-                            Id = document.ID,
-                            SourceId = tgDownloadSettings.SourceVm.Dto.Id,
-                            MessageId = messageBase.ID,
-                            FileName = mediaInfo.LocalPathWithNumber,
-                            FileSize = mediaInfo.RemoteSize,
-                            AccessHash = document.access_hash
-                        };
-                        await StorageManager.DocumentRepository.SaveAsync(doc, ct: ct);
-                    }
-                    await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                        TgEnumMessageType.Document, isRetry: false, authorId, ct);
-                    break;
-                case MessageMediaPhoto mediaPhoto:
-                    var messageStr = string.Empty;
-                    if (messageBase is TL.Message message)
-                        messageStr = message.message;
-                    await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize,
-                        $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
-                        TgEnumMessageType.Photo, isRetry: false, authorId, ct);
-                    break;
-            }
-        }
-
-        // Set file date time
-        if (File.Exists(mediaInfo.LocalPathWithNumber))
-        {
-            File.SetCreationTimeUtc(mediaInfo.LocalPathWithNumber, mediaInfo.DtCreate);
-            File.SetLastAccessTimeUtc(mediaInfo.LocalPathWithNumber, mediaInfo.DtCreate);
-            File.SetLastWriteTimeUtc(mediaInfo.LocalPathWithNumber, mediaInfo.DtCreate);
         }
     }
 
-    private async Task DeleteExistsFilesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
+    /// <summary> Download media file if exists </summary>
+    private async Task DownloadMediaFileFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, MessageMedia messageMedia, TgMessageSettings messageSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
-        if (!tgDownloadSettings.IsRewriteFiles) return;
+        if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.LocalPathWithNumber))
+        {
+            if (Client is not null)
+            {
+                switch (messageMedia)
+                {
+                    case MessageMediaDocument { document: Document doc }:
+                        {
+                            await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
+                            // Call Telegram API with cancellation support
+                            await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, null,
+                                ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
+                            var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
+                            await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
+                                TgEnumMessageType.Document, isRetry: false, authorId, ct);
+                            localFileStream.Close();
+                        }
+                        break;
 
+                    case MessageMediaPhoto { photo: Photo photo }:
+                        {
+                            // Select best quality photo
+                            var thumb = photo.sizes?.OfType<PhotoSizeBase>().OrderByDescending(x => x.FileSize).FirstOrDefault();
+                            if (thumb is not null)
+                            {
+                                await DeleteEmptyOrLessSizeThumbFilesAsync(tgDownloadSettings, mediaInfo, ct);
+                                await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
+                                // Call Telegram API with cancellation support
+                                await TelegramCallAsync(apiCt => Client.DownloadFileAsync(photo, localFileStream, thumb), isThrow: false, ct);
+                                localFileStream.Close();
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    /// <summary> Delete empty or less size files </summary>
+    private async Task DeleteEmptyOrLessSizeFilesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
+    {
         await TryCatchAsync(async () =>
         {
             if (File.Exists(mediaInfo.LocalPathWithNumber))
             {
                 var fileSize = TgFileUtils.CalculateFileSize(mediaInfo.LocalPathWithNumber);
                 // If file size is less then original size
-                if (fileSize == 0 || fileSize < mediaInfo.RemoteSize)
+                if (fileSize == 0 || (fileSize < mediaInfo.RemoteSize && tgDownloadSettings.IsRewriteFiles))
                     File.Delete(mediaInfo.LocalPathWithNumber);
+            }
+            await Task.CompletedTask;
+        }, ct: ct);
+    }
+
+    /// <summary> Delete empty or less size files </summary>
+    private async Task DeleteEmptyOrLessSizeThumbFilesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
+    {
+        await TryCatchAsync(async () =>
+        {
+            if (File.Exists(mediaInfo.ThumbnailPathWithNumber))
+            {
+                var fileSize = TgFileUtils.CalculateFileSize(mediaInfo.ThumbnailPathWithNumber);
+                // If file size is less then original size
+                if (fileSize == 0)
+                    File.Delete(mediaInfo.ThumbnailPathWithNumber);
             }
             await Task.CompletedTask;
         }, ct: ct);
@@ -3008,8 +3059,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Move existing files at the current directory </summary>
     private async Task MoveExistsFilesAtCurrentDirAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
-        if (!tgDownloadSettings.IsJoinFileNameWithMessageId)
-            return;
+        if (!tgDownloadSettings.IsJoinFileNameWithMessageId) return;
+
         await TryCatchAsync(async () =>
         {
             // File is already exists and size is correct
@@ -3030,6 +3081,24 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             await Task.CompletedTask;
         }, ct: ct);
+    }
+
+    /// <summary> Update date time for files </summary>
+    private static void UpdateFilesDateTime(TgMediaInfoModel mediaInfo)
+    {
+        if (File.Exists(mediaInfo.ThumbnailPathWithNumber))
+        {
+            File.SetCreationTimeUtc(mediaInfo.ThumbnailPathWithNumber, mediaInfo.DtCreate);
+            File.SetLastAccessTimeUtc(mediaInfo.ThumbnailPathWithNumber, mediaInfo.DtCreate);
+            File.SetLastWriteTimeUtc(mediaInfo.ThumbnailPathWithNumber, mediaInfo.DtCreate);
+        }
+
+        if (File.Exists(mediaInfo.LocalPathWithNumber))
+        {
+            File.SetCreationTimeUtc(mediaInfo.LocalPathWithNumber, mediaInfo.DtCreate);
+            File.SetLastAccessTimeUtc(mediaInfo.LocalPathWithNumber, mediaInfo.DtCreate);
+            File.SetLastWriteTimeUtc(mediaInfo.LocalPathWithNumber, mediaInfo.DtCreate);
+        }
     }
 
     /// <summary> Save messages to the storage </summary>

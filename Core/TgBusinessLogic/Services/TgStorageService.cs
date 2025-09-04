@@ -130,28 +130,36 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
     }
 
     /// <inheritdoc />
-    public async Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact)
+    public async Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, CancellationToken ct = default)
     {
-        var storageResult = await UserRepository.GetByDtoAsync(new() { Id = user.id });
-        var userEntity = storageResult.IsExists && storageResult.Item is not null ? storageResult.Item : new();
+        // Try to get existing user from repository
+        var storageResult = await UserRepository.GetByDtoAsync(new() { Id = user.id }, ct: ct);
+
+        // Use existing entity or create a new one
+        var userEntity = storageResult.IsExists && storageResult.Item is not null
+            ? storageResult.Item
+            : new TgEfUserEntity();
+
+        // Update entity fields
         userEntity.DtChanged = DateTime.UtcNow;
         userEntity.Id = user.id;
         userEntity.AccessHash = user.access_hash;
         userEntity.IsActive = user.IsActive;
         userEntity.IsBot = user.IsBot;
-        userEntity.FirstName = user.first_name;
-        userEntity.LastName = user.last_name;
-        userEntity.UserName = user.username;
-        userEntity.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames.ToList());
-        userEntity.PhoneNumber = user.phone;
-        userEntity.Status = user.status is null ? string.Empty : user.status.ToString();
-        userEntity.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason.ToList());
-        userEntity.LangCode = user.lang_code;
+        userEntity.FirstName = user.first_name ?? string.Empty;
+        userEntity.LastName = user.last_name ?? string.Empty;
+        userEntity.UserName = user.username ?? string.Empty;
+        userEntity.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames);
+        userEntity.PhoneNumber = user.phone ?? string.Empty;
+        userEntity.Status = user.status?.ToString() ?? string.Empty;
+        userEntity.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason);
+        userEntity.LangCode = user.lang_code ?? string.Empty;
         userEntity.StoriesMaxId = user.stories_max_id;
         userEntity.BotInfoVersion = user.bot_info_version.ToString();
-        userEntity.BotInlinePlaceholder = user.bot_inline_placeholder is null ? string.Empty : user.bot_inline_placeholder.ToString();
+        userEntity.BotInlinePlaceholder = user.bot_inline_placeholder?.ToString() ?? string.Empty;
         userEntity.BotActiveUsers = user.bot_active_users;
         userEntity.IsContact = isContact;
+
         return userEntity;
     }
 

@@ -16,9 +16,9 @@ public interface ITgFloodControlService : IDisposable
     public int[] WaitSeconds { get; }
 
     /// <summary> Waits if flood control message is detected in logs </summary>
-    public Task WaitIfFloodAsync(string message);
+    public Task WaitIfFloodAsync(string message, CancellationToken ct);
     /// <summary> Executes Telegram call with flood control retry logic </summary>
-    public Task<T> ExecuteWithFloodControlAsync<T>(Func<Task<T>> telegramCall, bool isThrow);
+    public Task<T> ExecuteWithFloodControlAsync<T>(Func<CancellationToken, Task<T>> telegramCall, bool isThrow, CancellationToken ct);
     /// <summary> Extracts flood wait seconds from the given message </summary>
     public int TryExtractFloodWaitSeconds(string message);
     /// <summary> Check flood </summary>

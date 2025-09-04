@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgBusinessLogic.Models;
+
 using TL;
 
 namespace TgBusinessLogic.Services;
@@ -32,127 +34,154 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <summary> Wait for the transaction to complete </summary>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task WaitTransactionCompleteAsync(CancellationToken cancellationToken = default)
+    public async Task WaitTransactionCompleteAsync(CancellationToken ct = default)
     {
-        // Calculate total timeout based on configured wait times
-        var maxWaitSeconds = FloodControlService.WaitSeconds.Sum();
-        var timeout = TimeSpan.FromSeconds(maxWaitSeconds);
-        var start = DateTime.UtcNow;
-        // Delay tuning parameters
-        var minDelay = TimeSpan.FromMilliseconds(100); // shortest delay between checks
-        var maxDelay = TimeSpan.FromSeconds(2);        // longest delay allowed
-        var delay = minDelay;
-
-        // Threshold for final phase (e.g., last 15% of timeout)
-        var finalPhaseThreshold = TimeSpan.FromSeconds(maxWaitSeconds * 0.15);
-
-        while (StorageManager.EfContext.Database.CurrentTransaction is not null)
+        try
         {
-            var elapsed = DateTime.UtcNow - start;
-            var remaining = timeout - elapsed;
+            // Calculate total timeout based on configured wait times
+            var maxWaitSeconds = FloodControlService.WaitSeconds.Sum();
+            var timeout = TimeSpan.FromSeconds(maxWaitSeconds);
+            var start = DateTime.UtcNow;
+            // Delay tuning parameters
+            var minDelay = TimeSpan.FromMilliseconds(100); // shortest delay between checks
+            var maxDelay = TimeSpan.FromSeconds(2);        // longest delay allowed
+            var delay = minDelay;
 
-            // Stop waiting if total timeout is exceeded
-            if (elapsed > timeout)
-                throw new InvalidOperationException("Transaction is still active after waiting for timeouts!");
+            // Threshold for final phase (e.g., last 15% of timeout)
+            var finalPhaseThreshold = TimeSpan.FromSeconds(maxWaitSeconds * 0.15);
 
-            // Log status every 5 seconds for debugging/tracking purposes
-            if ((int)elapsed.TotalSeconds % 5 == 0)
-                TgLogUtils.WriteLog($"Still waiting for transaction to complete... elapsed: {elapsed.TotalSeconds:F1}s");
-
-            await Task.Delay(delay, cancellationToken);
-
-            // Adjust delay dynamically:
-            if (remaining <= finalPhaseThreshold)
+            while (StorageManager.EfContext.Database.CurrentTransaction is not null)
             {
-                // Final phase: reduce delay to check more often
-                delay = minDelay;
+                if (CheckShouldStop(ct)) return;
+
+                var elapsed = DateTime.UtcNow - start;
+                var remaining = timeout - elapsed;
+
+                // Stop waiting if total timeout is exceeded
+                if (elapsed > timeout)
+                    throw new InvalidOperationException("Transaction is still active after waiting for timeouts!");
+
+                // Log status every 5 seconds for debugging/tracking purposes
+                if ((int)elapsed.TotalSeconds % 5 == 0)
+                    TgLogUtils.WriteLog($"Still waiting for transaction to complete... elapsed: {elapsed.TotalSeconds:F1}s");
+
+                await Task.Delay(delay, ct);
+
+                // Adjust delay dynamically:
+                if (remaining <= finalPhaseThreshold)
+                {
+                    // Final phase: reduce delay to check more often
+                    delay = minDelay;
+                }
+                else
+                {
+                    // Ramp-up phase: gradually increase delay until maxDelay
+                    if (delay < maxDelay)
+                        delay = TimeSpan.FromMilliseconds(Math.Min(delay.TotalMilliseconds * 2, maxDelay.TotalMilliseconds));
+                }
             }
-            else
-            {
-                // Ramp-up phase: gradually increase delay until maxDelay
-                if (delay < maxDelay)
-                    delay = TimeSpan.FromMilliseconds(Math.Min(delay.TotalMilliseconds * 2, maxDelay.TotalMilliseconds));
-            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Quietly exit without logging in
         }
     }
 
     /// <summary> Flush chat buffer to database </summary>
-    private async Task FlushChatBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce) =>
+    private async Task FlushChatBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
         await _chatBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.SourceRepository.SaveListAsync(list, isRewriteMessages);
+                await StorageManager.SourceRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
             },
             postSaveAction: async list =>
             {
                 foreach (var item in list)
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyFullChat(item.Id));
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyFullChat(item.Id), token: ct);
             });
 
     /// <summary> Flush story buffer to database </summary>
-    private async Task FlushStoryBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce) =>
+    private async Task FlushStoryBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
         await _storyBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.StoryRepository.SaveListAsync(list, isRewriteMessages);
+                await StorageManager.StoryRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
             },
             postSaveAction: async list =>
             {
                 foreach (var item in list)
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyStory(item.FromId ?? 0, item.Id));
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyStory(item.FromId ?? 0, item.Id), token: ct);
             });
 
     /// <summary> Flush user buffer to database </summary>
-    private async Task FlushUserBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce) =>
+    private async Task FlushUserBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
         await _userBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.UserRepository.SaveListAsync(list, isRewriteMessages);
+                await StorageManager.UserRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
             },
             postSaveAction: async list =>
             {
                 foreach (var item in list)
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyUser(item.Id));
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyUser(item.Id), token: ct);
             });
 
     /// <summary> Flush message buffer to database </summary>
-    private async Task FlushMessageBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce) =>
+    private async Task FlushMessageBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
         await _messageBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
+                if (CheckShouldStop(ct)) return;
                 await WaitTransactionCompleteAsync();
-                await StorageManager.MessageRepository.SaveListAsync(list, isRewriteMessages);
+                
+                if (CheckShouldStop(ct)) return;
+                await StorageManager.MessageRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
+
+                if (CheckShouldStop(ct)) return;
+                if (list.Count > 0 && _downloadSettings is not null)
+                {
+                    var maxId = list.Max(x => x.Id);
+                    var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, maxId);
+                    if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
+                    {
+                        _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
+                        // Save updated FirstId to database
+                        await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto.GetEntity(), ct: ct);
+                    }
+                }
             },
             postSaveAction: async list =>
             {
                 foreach (var item in list)
                 {
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessage(item.SourceId, item.Id));
+                    if (CheckShouldStop(ct)) return;
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessage(item.SourceId, item.Id), token: ct);
                 }
             });
 
     /// <summary> Flush message buffer to database </summary>
-    private async Task FlushMessageRelationBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce) =>
+    private async Task FlushMessageRelationBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
         await _messageRelationBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.MessageRelationRepository.SaveListAsync(list, isRewriteMessages);
+                await StorageManager.MessageRelationRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
             },
             postSaveAction: async list =>
             {
                 foreach (var item in list)
                 {
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessageRelation(item.ParentSourceId, item.ParentMessageId, item.ChildSourceId, item.ChildMessageId));
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessageRelation(item.ParentSourceId, item.ParentMessageId, item.ChildSourceId, item.ChildMessageId), 
+                        token: ct);
                 }
             });
 
     /// <summary> Fills the buffer with stories for a specific peer </summary>
-    public async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, TL.StoryItem story) =>
-        await TryCatchAsync(async () =>
+    public async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, TL.StoryItem story, CancellationToken ct = default) =>
+        await TryGetCatchAsync(async () =>
         {
             TgEfStoryEntity? entity = null;
             if (story.entities is not null)
@@ -160,7 +189,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 foreach (var message in story.entities)
                 {
                     entity = await StorageManager.CreateOrGetStoryAsync(peerId, story);
-                    await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), entity, TgCacheUtils.CacheOptionsChannelMessages);
+                    await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), entity, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
                     if (message is not null)
                     {
                         entity.Type = message.Type;
@@ -178,95 +207,142 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             else
             {
                 entity = await StorageManager.CreateOrGetStoryAsync(peerId, story);
-                await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), entity, TgCacheUtils.CacheOptionsChannelMessages);
+                await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), entity, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
                 // Save at memory
                 if (_storyBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
                     _storyBuffer.Add(entity);
             }
             return entity;
-        });
+        }, ct: ct);
 
-    /// <summary> Fills the buffer with users </summary>
-    public async Task<TgEfUserEntity?> FillBufferUsersAsync(TL.User user, bool isContact) =>
-        await TryCatchAsync(async () =>
+    /// <summary> Fills the buffer with users with cancellation and exception handling </summary>
+    public async Task<TgEfUserEntity?> FillBufferUsersAsync(TL.User user, bool isContact, CancellationToken ct = default) =>
+        await TryGetCatchAsync(async () =>
         {
-            var entity = await StorageManager.CreateOrGetUserAsync(user, isContact);
-            await Cache.SetAsync(TgCacheUtils.GetCacheKeyUser(user.id), entity, TgCacheUtils.CacheOptionsChannelMessages);
-            // Save at memory
+            // Create or get user entity from storage
+            var entity = await StorageManager.CreateOrGetUserAsync(user, isContact, ct);
+
+            await Cache.SetAsync(TgCacheUtils.GetCacheKeyUser(user.id), entity, TgCacheUtils.CacheOptionsChannelMessages, ct);
+
+            // Save to in-memory buffer if not already present
             if (_userBuffer.FirstOrDefault(x => x.Id == user.id) is null)
                 _userBuffer.Add(entity);
             return entity;
-        });
+        }, ct: ct);
 
-    /// <summary> Safely tries to get full channel information, utilizing caching to minimize API calls </summary>
-    private async Task<TL.Messages_ChatFull?> TryGetFullChannelSafeAsync(TL.Channel channel)
+    /// <summary> Safely tries to get full channel information, utilizing caching to minimize API calls with cancellation and exception handling </summary>
+    private async Task<TL.Messages_ChatFull?> TryGetFullChannelSafeAsync(TL.Channel channel, CancellationToken ct = default)
     {
         var key = TgCacheUtils.GetCacheKeyFullChannel(channel.id);
 
         try
         {
             // Try to retrieve from cache in a strictly typed manner
-            var maybe = await Cache.TryGetAsync<TL.Messages_ChatFull?>(key, TgCacheUtils.CacheOptionsFullChat);
+            var maybe = await Cache.TryGetAsync<TL.Messages_ChatFull?>(key, TgCacheUtils.CacheOptionsFullChat, ct);
             if (maybe.HasValue)
                 return maybe.Value;
 
             // Cache miss: retrieve from server and save
-            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
-            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
-            return fresh;
+            return await TryGetFullChannelSafeCoreAsync(channel, key, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            // Quietly exit without logging in
+            return default;
         }
         catch (InvalidCastException)
         {
             // There is another type in the cache: clear and reload
-            await Cache.RemoveAsync(key);
-            var fresh = await TelegramCallAsync(() => Client?.Channels_GetFullChannel(channel) ?? default!);
-            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat);
-            return fresh;
+            await Cache.RemoveAsync(key, token: ct);
+            return await TryGetFullChannelSafeCoreAsync(channel, key, ct);
         }
     }
 
-    /// <summary> Safely tries to get the last message ID of a channel, utilizing caching to minimize API calls </summary>
-    private async Task<int> TryGetCacheChatLastCountSafeAsync(long chatId)
+    /// <summary> Retrieves full channel info from Telegram API and caches it </summary>
+    private async Task<TL.Messages_ChatFull?> TryGetFullChannelSafeCoreAsync(TL.Channel channel, string key, CancellationToken ct)
+    {
+        // Call Telegram API with cancellation support
+        var fresh = await TelegramCallAsync<TL.Messages_ChatFull?>(
+            apiCt => Client?.Channels_GetFullChannel(channel) ?? default!, isThrow: false, ct);
+
+        // Save to cache
+        await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat, ct);
+        return fresh;
+    }
+
+    /// <summary> Safely tries to get the last message ID of a channel, utilizing caching to minimize API calls with cancellation and exception handling </summary>
+    private async Task<int> TryGetCacheChatLastCountSafeAsync(long chatId, CancellationToken ct)
     {
         var key = TgCacheUtils.GetCacheKeyChatLastCount(chatId);
 
         try
         {
             // Try to retrieve from cache in a strictly typed manner
-            var maybe = await Cache.TryGetAsync<int>(key, TgCacheUtils.CacheOptionsChannelMessages);
+            var maybe = await Cache.TryGetAsync<int>(key, TgCacheUtils.CacheOptionsChannelMessages, ct);
             if (maybe.HasValue)
                 return maybe.Value;
 
             // Cache miss: compute and set
-            var fresh = await GetChannelMessageIdLastCoreAsync(chatId);
-            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages);
-            return fresh;
+            return await TryGetCacheChatLastCountSafeCoreAsync(chatId, key, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            // Quietly exit without logging in
+            return default;
         }
         catch (InvalidCastException)
         {
             // There is another type in the cache: clear and reload
-            await Cache.RemoveAsync(key);
-            var fresh = await GetChannelMessageIdLastCoreAsync(chatId);
-            await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages);
-            return fresh;
+            await Cache.RemoveAsync(key, token: ct);
+            return await TryGetCacheChatLastCountSafeCoreAsync(chatId, key, ct);
         }
     }
 
+    /// <summary> Retrieves last message ID of a channel and caches it </summary>
+    private async Task<int> TryGetCacheChatLastCountSafeCoreAsync(long chatId, string key, CancellationToken ct)
+    {
+        // Compute last message ID
+        var fresh = await GetChannelMessageIdLastCoreAsync(chatId, ct);
+
+        // Save to cache
+        await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsChannelMessages, ct);
+        return fresh;
+    }
+
+    /// <summary> Wraps a factory with unified cancellation support and safe exception handling </summary>
     private Func<FusionCacheFactoryExecutionContext<T>, CancellationToken, Task<T>> SafeFactory<T>(
         Func<FusionCacheFactoryExecutionContext<T>, CancellationToken, Task<T>> factory)
     {
-        return async (ctx, ct) =>
+        return async (ctx, innerCt) =>
         {
-            if (IsForceStopDownloading)
+            // Combine external cancellation token with download token
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(innerCt, DownloadToken);
+            var ct = linkedCts.Token;
+
+            // Return default if cancellation already requested
+            if (CheckShouldStop(ct))
+                return default!;
+
+            try
             {
+                // Invoke the provided factory with the combined token
+                var task = factory?.Invoke(ctx, ct);
+                if (task == null)
+                    return default!;
+
+                return await task.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Return default on cancellation without throwing
                 return default!;
             }
-
-            var task = factory?.Invoke(ctx, ct);
-            if (task == null)
+            catch (Exception ex)
+            {
+                // Log other exceptions and return default
+                TgLogUtils.WriteException(ex);
                 return default!;
-
-            return await task.ConfigureAwait(false);
+            }
         };
     }
 

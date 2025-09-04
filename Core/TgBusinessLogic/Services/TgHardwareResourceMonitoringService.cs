@@ -87,7 +87,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
     public event EventHandler<TgHardwareMetrics>? MetricsUpdated;
 
     /// <inheritdoc />
-    public async Task StartMonitoringAsync(TimeSpan? interval = null, CancellationToken cancellationToken = default)
+    public async Task StartMonitoringAsync(TimeSpan? interval = null, CancellationToken ct = default)
     {
         CheckIfDisposed();
 
@@ -97,7 +97,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
                 return;
 
             _interval = interval ?? TimeSpan.FromSeconds(1);
-            _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
             // Initialization of the base point for calculating the CPU process
             _lastProcCpu = _process.TotalProcessorTime;
@@ -137,13 +137,13 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
             _computer.Close();
     }
 
-    private async Task RunAsync(CancellationToken token)
+    private async Task RunAsync(CancellationToken ct)
     {
         double cpuTotal = 0;
         double memUsedGb = 0;
         double memTotalGb = 0;
 
-        while (!token.IsCancellationRequested)
+        while (!ct.IsCancellationRequested)
         {
             try
             {
@@ -217,7 +217,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
             try
             {
                 //await Task.Delay(_interval, token).ConfigureAwait(false);
-                await Task.Delay(_interval, token);
+                await Task.Delay(_interval, ct);
             }
             catch (OperationCanceledException) { break; }
         }

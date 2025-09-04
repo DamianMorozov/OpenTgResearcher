@@ -29,7 +29,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task ConnectBotConsoleAsync();
 	public Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config);
 
-	public Task<IEnumerable<long>> CollectAllChatsAsync();
+	public Task<IEnumerable<long>> CollectAllChatsAsync(CancellationToken ct = default);
 
     public void SetupUpdateTitle(Func<string, Task> updateTitleAsync);
     public void SetupUpdateChatViewModel(Func<long, int, int, string, Task> updateChatViewModelAsync);
@@ -46,16 +46,16 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetupUpdateException(Func<Exception, Task> updateExceptionAsync);
 
 	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? chatIds = null);
-	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent);
+	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent, CancellationToken ct = default);
     public Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings);
 
-    public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings);
+    public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings, CancellationToken ct = default);
 	public Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings);
-	public Task MarkHistoryReadAsync();
-	public void SetForceStopDownloading();
-	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings);
+	public Task MarkHistoryReadAsync(CancellationToken ct = default);
+	public Task SetForceStopDownloadingAsync();
+	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings, CancellationToken ct = default);
     /// <summary> Get user id </summary>
-    public Task<long> GetUserIdAsync();
+    public Task<long> GetUserIdAsync(CancellationToken ct = default);
     /// <summary> Checks if the client connection is ready </summary>
     public Task<bool> CheckClientConnectionReadyAsync();
     /// <summary> Checks if the bot connection is ready </summary>
@@ -68,25 +68,25 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     /// <summary> Gets the chat user link </summary>
     public (string, string) GetChatUserLink(long chatId);
     /// <summary> Get user link </summary>
-    public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer);
+    public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer, CancellationToken ct = default);
     /// <summary> Get chat participant information </summary>
-    Task<TL.User?> GetParticipantAsync(long chatId, long? userId);
+    Task<TL.User?> GetParticipantAsync(long chatId, long? userId, CancellationToken ct);
     /// <summary> Get chat participants information </summary>
-    Task<List<TL.User>> GetParticipantsAsync(long chatId);
+    Task<List<TL.User>> GetParticipantsAsync(long chatId, CancellationToken ct = default);
     /// <summary> Make an action with messages in a chat </summary>
-    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, TL.ChatBase, TL.MessageBase, Task> func);
+    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, TL.ChatBase, TL.MessageBase, Task> func, CancellationToken ct = default);
     /// <summary> Get the last message ID in a chat </summary>
-    Task<int> GetChatLastMessageIdAsync(long chatId);
+    Task<int> GetChatLastMessageIdAsync(long chatId, CancellationToken ct);
     /// <summary> Clear caches </summary>
     public void ClearCaches();
     /// <summary> Get chat details </summary>
-    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(string userName, TgDownloadSettingsViewModel tgDownloadSettings);
+    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(string userName, TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default);
     /// <summary> Get chat details </summary>
     public Task<TgChatDetailsDto> GetChatDetailsByBotAsync(string userName);
     /// <summary> Get chat details </summary>
-    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid);
+    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid, CancellationToken ct = default);
     /// <summary> Get chat details </summary>
-    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id);
+    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(long id, CancellationToken ct);
     /// <summary> Convert TL.Messages_ChatFull to WTelegram.Types.ChatFullInfo </summary>
     public WTelegram.Types.ChatFullInfo ConvertToChatFullInfo(TL.Messages_ChatFull messagesChatFull);
     /// <summary> Update users </summary>

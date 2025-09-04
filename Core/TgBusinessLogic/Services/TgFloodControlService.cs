@@ -44,18 +44,23 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     #region Methods
 
     /// <inheritdoc />
-    public async Task WaitIfFloodAsync(string message)
+    public async Task WaitIfFloodAsync(string message, CancellationToken ct)
     {
         var waitSeconds = TryExtractFloodWaitSeconds(message);
         if (waitSeconds <= 0) return;
 
-        await _semaphore.WaitAsync();
+        await _semaphore.WaitAsync(ct);
         try
         {
 #if DEBUG
             Debug.WriteLine($"[FloodControl] Detected FLOOD_WAIT_{waitSeconds}. Waiting...");
 #endif
-            await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
+            await Task.Delay(TimeSpan.FromSeconds(waitSeconds), ct);
+        }
+        catch (OperationCanceledException)
+        {
+            // Return default immediately when cancellation requested
+            return;
         }
         finally
         {
@@ -64,17 +69,25 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     }
 
     /// <inheritdoc />
-    public async Task<T> ExecuteWithFloodControlAsync<T>(Func<Task<T>> telegramCall, bool isThrow)
+    public async Task<T> ExecuteWithFloodControlAsync<T>(Func<CancellationToken, Task<T>> telegramCall, bool isThrow, CancellationToken ct)
     {
         for (int attempt = 0; attempt < MaxRetryCount; attempt++)
         {
-            await _semaphore.WaitAsync();
+            // Check cancellation before acquiring semaphore
+            if (ct.IsCancellationRequested)
+                return await Task.FromCanceled<T>(ct);
+
+            await _semaphore.WaitAsync(ct);
             try
             {
-                return await telegramCall();
+                return await telegramCall(ct);
             }
             catch (Exception ex)
             {
+                // Check cancellation after exception
+                if (ct.IsCancellationRequested)
+                    return await Task.FromCanceled<T>(ct);
+
                 var floodWaitSeconds = TryExtractFloodWaitFromException(ex);
                 if (floodWaitSeconds > 0)
                 {

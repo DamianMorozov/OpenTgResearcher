@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.200] - 2025-09-02
+## [0.7.220] - 2025-09-04
 ### Fixed
 - Fixed GitHub workflow
 - Fixed bugs in media comment parsing
 - Fixed loading messages on the `Chat` page in `OpenTgResearcherDesktop`
-- Improved file name generation
+- Fixed file name generation
+- Fixed chat parsing stoppage
+- Fixed saving the first chat ID at the moment of parsing stoppage
 ### Changed
 - Updated NuGet packages
 - Updated the `TgStorageTests` test project

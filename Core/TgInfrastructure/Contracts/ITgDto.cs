@@ -24,8 +24,7 @@ public interface ITgDto<TEfEntity, TDto> : ITgDebug
     public TDto Copy(TDto dto, bool isUidCopy);
 	public TDto Copy(TEfEntity item, bool isUidCopy);
 	public TDto GetNewDto(TEfEntity item);
-    public TEfEntity GetNewEntity(TDto dto);
-	public TEfEntity GetNewEntity();
+    public TEfEntity GetEntity();
 
     #endregion
 }

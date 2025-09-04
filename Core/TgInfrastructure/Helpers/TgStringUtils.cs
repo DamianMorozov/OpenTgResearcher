@@ -13,9 +13,9 @@ public static class TgStringUtils
     {
         if (name.StartsWith("https://t.me/"))
             name = name.Substring(13, name.Length - 13);
-        if (isAddAt && !name.StartsWith("@"))
+        if (isAddAt && !name.StartsWith('@'))
             name = $"@{name}";
-        if (!isAddAt && name.StartsWith("@"))
+        if (!isAddAt && name.StartsWith('@'))
             name = name.Substring(1, name.Length - 1);
         return name;
     }

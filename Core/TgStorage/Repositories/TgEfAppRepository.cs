@@ -17,23 +17,26 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
     #region Methods
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetAsync(TgEfAppEntity item, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetAsync(TgEfAppEntity item, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
 			.Where(x => x.Uid == item.Uid)
-			.FirstOrDefaultAsync();
-		if (itemFind is not null)
+			.FirstOrDefaultAsync(ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by ApiHash
-		itemFind = await GetQuery(isReadOnly).Where(x => x.ApiHash == item.ApiHash).Include(x => x.Proxy).SingleOrDefaultAsync();
-		return itemFind is not null
+		
+        // Find by ApiHash
+		itemFind = await GetQuery(isReadOnly).Where(x => x.ApiHash == item.ApiHash).Include(x => x.Proxy).SingleOrDefaultAsync(ct);
+		
+        return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
 			: new TgEfStorageResult<TgEfAppEntity>(TgEnumEntityState.NotExists);
 	}
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetByDtoAsync(TgEfAppDto dto, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetByDtoAsync(TgEfAppDto dto, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
@@ -55,11 +58,14 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 		var itemFind = GetQuery(isReadOnly)
 			.Where(x => x.Uid == item.Uid)
 			.FirstOrDefault();
+
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
+
 		// Find by ApiHash
 		itemFind = GetQuery(isReadOnly).Where(x => x.ApiHash == item.ApiHash).Include(x => x.Proxy).SingleOrDefault();
-		return itemFind is not null
+		
+        return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
 			: new TgEfStorageResult<TgEfAppEntity>(TgEnumEntityState.NotExists);
 	}
@@ -81,28 +87,31 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 	}
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetListAsync(int take, int skip, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		IList<TgEfAppEntity> items = take > 0
-			? await GetQuery(isReadOnly).Include(x => x.Proxy).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Include(x => x.Proxy).ToListAsync();
+			? await GetQuery(isReadOnly).Include(x => x.Proxy).Skip(skip).Take(take).ToListAsync(ct)
+			: await GetQuery(isReadOnly).Include(x => x.Proxy).ToListAsync(ct);
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfAppEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfAppEntity, bool>> where, 
+        bool isReadOnly = true, CancellationToken ct = default)
 	{
 		IList<TgEfAppEntity> items = take > 0
-			? await GetQuery(isReadOnly).Where(where).Include(x => x.Proxy).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).Include(x => x.Proxy).ToListAsync();
-		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
+			? await GetQuery(isReadOnly).Where(where).Include(x => x.Proxy).Skip(skip).Take(take).ToListAsync(ct)
+			: await GetQuery(isReadOnly).Where(where).Include(x => x.Proxy).ToListAsync(ct);
+		
+        return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync() => await EfContext.Apps.AsNoTracking().CountAsync();
+    public override async Task<int> GetCountAsync(CancellationToken ct = default) => await EfContext.Apps.AsNoTracking().CountAsync(ct);
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync(Expression<Func<TgEfAppEntity, bool>> where) => await EfContext.Apps.AsNoTracking().Where(where).CountAsync();
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfAppEntity, bool>> where, CancellationToken ct = default) => 
+        await EfContext.Apps.AsNoTracking().Where(where).CountAsync(ct);
 
     #endregion
 
@@ -131,7 +140,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 	}
 
     /// <inheritdoc />
-    public async Task<TgEfAppDto> GetCurrentDtoAsync() => await
+    public async Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => await
 		EfContext.Apps.AsTracking()
 			.Where(x => x.Uid != Guid.Empty)
 			.Select(x => new TgEfAppDto() {
@@ -146,7 +155,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
                 BotTokenKey = x.BotTokenKey, 
                 UseClient = x.UseClient,
             })
-			.FirstOrDefaultAsync()
+			.FirstOrDefaultAsync(ct)
 		?? new();
 
     /// <inheritdoc />

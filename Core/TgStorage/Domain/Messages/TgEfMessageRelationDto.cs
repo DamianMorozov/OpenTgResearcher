@@ -53,16 +53,7 @@ public sealed partial class TgEfMessageRelationDto : TgSensitiveDto, ITgDto<TgEf
 
 	public TgEfMessageRelationDto GetNewDto(TgEfMessageRelationEntity item) => new TgEfMessageRelationDto().Copy(item, isUidCopy: true);
 
-	public TgEfMessageRelationEntity GetNewEntity(TgEfMessageRelationDto dto) => new()
-	{
-		Uid = dto.Uid,
-        ParentSourceId = dto.ParentSourceId,
-        ParentMessageId = dto.ParentMessageId,
-        ChildSourceId = dto.ChildSourceId,
-        ChildMessageId = dto.ChildMessageId,
-    };
-
-	public TgEfMessageRelationEntity GetNewEntity() => new()
+	public TgEfMessageRelationEntity GetEntity() => new()
 	{
 		Uid = Uid,
         ParentSourceId = ParentSourceId,

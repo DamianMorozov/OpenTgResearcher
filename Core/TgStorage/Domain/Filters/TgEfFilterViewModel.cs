@@ -43,8 +43,7 @@ public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilt
 		Dto.Copy(item, isUidCopy: true);
 	}
 
-	public async Task<TgEfStorageResult<TgEfFilterEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetNewEntity());
+	public async Task<TgEfStorageResult<TgEfFilterEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
 
 	#endregion
 }

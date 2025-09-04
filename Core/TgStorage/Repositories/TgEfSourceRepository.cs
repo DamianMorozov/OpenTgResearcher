@@ -17,26 +17,30 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     #region Methods
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetAsync(TgEfSourceEntity item, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetAsync(TgEfSourceEntity item, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
-			.FirstOrDefaultAsync(x => x.Uid == item.Uid);
-		if (itemFind is not null)
+			.FirstOrDefaultAsync(x => x.Uid == item.Uid, ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by ID
+		
+        // Find by ID
 		if (item.Id > 0)
 		{
 			itemFind = await GetQuery(isReadOnly)
-				.FirstOrDefaultAsync(x => x.Id == item.Id);
+				.FirstOrDefaultAsync(x => x.Id == item.Id, ct);
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
-		// Find by UserName
+		
+        // Find by UserName
 		if (!string.IsNullOrEmpty(item.UserName))
 		{
-			itemFind = await GetQuery(isReadOnly).FirstOrDefaultAsync(x => x.UserName == item.UserName);
-			if (itemFind is not null)
+			itemFind = await GetQuery(isReadOnly).FirstOrDefaultAsync(x => x.UserName == item.UserName, ct);
+			
+            if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
 		
@@ -44,25 +48,28 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 	}
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetByDtoAsync(TgEfSourceDto dto, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetByDtoAsync(TgEfSourceDto dto, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
-			.FirstOrDefaultAsync(x => x.Uid == dto.Uid);
-		if (itemFind is not null)
+			.FirstOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by ID
+		
+        // Find by ID
 		if (dto.Id > 0)
 		{
 			itemFind = await GetQuery(isReadOnly)
-				.FirstOrDefaultAsync(x => x.Id == dto.Id);
+				.FirstOrDefaultAsync(x => x.Id == dto.Id, ct);
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
-		// Find by UserName
+		
+        // Find by UserName
 		if (!string.IsNullOrEmpty(dto.UserName))
 		{
-			itemFind = await GetQuery(isReadOnly).FirstOrDefaultAsync(x => x.UserName == dto.UserName);
+			itemFind = await GetQuery(isReadOnly).FirstOrDefaultAsync(x => x.UserName == dto.UserName, ct);
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
@@ -76,9 +83,11 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 		// Find by Uid
 		var itemFind = GetQuery(isReadOnly)
 			.FirstOrDefault(x => x.Uid == item.Uid);
-		if (itemFind is not null)
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by ID
+		
+        // Find by ID
 		if (item.Id > 0)
 		{
 			itemFind = GetQuery(isReadOnly)
@@ -86,7 +95,8 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
-		// Find by UserName
+		
+        // Find by UserName
 		if (!string.IsNullOrEmpty(item.UserName))
 		{
 			itemFind = GetQuery(isReadOnly).FirstOrDefault(x => x.UserName == item.UserName);
@@ -125,29 +135,33 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 	}
 
     /// <inheritdoc />
-	public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetListAsync(int take, int skip, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		IList<TgEfSourceEntity> items = take > 0 
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync() 
-			: await GetQuery(isReadOnly).ToListAsync();
+			? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync(ct) 
+			: await GetQuery(isReadOnly).ToListAsync(ct);
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-	public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfSourceEntity, bool>> where, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfSourceEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfSourceEntity, bool>> where, 
+        bool isReadOnly = true, CancellationToken ct = default)
 	{
 		var query = isReadOnly ? EfContext.Sources.AsNoTracking() : EfContext.Sources.AsTracking();
-		IList<TgEfSourceEntity> items = take > 0 
-			? await query.Where(where).Skip(skip).Take(take).ToListAsync() 
-			: await query.Where(where).ToListAsync();
+		
+        IList<TgEfSourceEntity> items = take > 0 
+			? await query.Where(where).Skip(skip).Take(take).ToListAsync(ct) 
+			: await query.Where(where).ToListAsync(ct);
+
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync() => await EfContext.Sources.AsNoTracking().CountAsync();
+    public override async Task<int> GetCountAsync(CancellationToken ct = default) => await EfContext.Sources.AsNoTracking().CountAsync(ct);
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync(Expression<Func<TgEfSourceEntity, bool>> where) => await EfContext.Sources.AsNoTracking().Where(where).CountAsync();
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfSourceEntity, bool>> where, CancellationToken ct = default) => 
+        await EfContext.Sources.AsNoTracking().Where(where).CountAsync(ct);
 
     #endregion
 
@@ -206,16 +220,22 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
             .OrderByDescending(x => x.ChildMessageId)
             .FirstOrDefaultAsync();
 
+        // Return empty DTO if not found
         if (relation is null)
-            return new TgEfSourceDto(); // Return empty DTO if not found
+            return new TgEfSourceDto();
 
         // Load the parent source entity
         var sourceEntity = await EfContext.Sources
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == relation.ChildSourceId);
 
+        // Return empty DTO if parent source not found
         if (sourceEntity is null)
-            return new TgEfSourceDto(); // Return empty DTO if parent source not found
+            return new TgEfSourceDto();
+
+        // Return empty DTO if source is the same
+        if (chatId == sourceEntity.Id)
+            return new TgEfSourceDto();
 
         // Convert to DTO
         return new TgEfSourceDto().Copy(sourceEntity, isUidCopy: true);

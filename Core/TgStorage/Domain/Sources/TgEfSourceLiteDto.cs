@@ -113,24 +113,7 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 
 	public TgEfSourceLiteDto GetNewDto(TgEfSourceEntity item) => new TgEfSourceLiteDto().Copy(item, isUidCopy: true);
 
-	public TgEfSourceEntity GetNewEntity(TgEfSourceLiteDto dto) => new()
-	{
-		Uid = dto.Uid,
-		Id = dto.Id,
-		IsActive = dto.IsSourceActive,
-		UserName = dto.UserName,
-		Title = dto.Title,
-		FirstId = dto.FirstId,
-		Count = dto.Count,
-		IsAutoUpdate = dto.IsAutoUpdate,
-		IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
-		IsUserAccess = dto.IsUserAccess,
-		IsFileNamingByMessage = dto.IsFileNamingByMessage,
-        IsRestrictSavingContent = dto.IsRestrictSavingContent,
-        IsSubscribe = dto.IsSubscribe,
-	};
-
-	public TgEfSourceEntity GetNewEntity() => new()
+	public TgEfSourceEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		Id = Id,

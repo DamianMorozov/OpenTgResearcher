@@ -64,18 +64,7 @@ public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEnti
 
 	public TgEfDocumentDto GetNewDto(TgEfDocumentEntity item) => new TgEfDocumentDto().Copy(item, isUidCopy: true);
 
-	public TgEfDocumentEntity GetNewEntity(TgEfDocumentDto dto) => new()
-	{
-		Uid = dto.Uid,
-		SourceId = dto.SourceId,
-		Id = dto.Id,
-		MessageId = dto.MessageId,
-		FileName = dto.FileName,
-		FileSize = dto.FileSize,
-		AccessHash = dto.AccessHash,
-	};
-
-	public TgEfDocumentEntity GetNewEntity() => new()
+	public TgEfDocumentEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		SourceId = SourceId,

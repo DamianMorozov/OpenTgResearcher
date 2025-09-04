@@ -98,18 +98,7 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, 
 
 	public TgEfFilterDto GetNewDto(TgEfFilterEntity item) => new TgEfFilterDto().Copy(item, isUidCopy: true);
 
-	public TgEfFilterEntity GetNewEntity(TgEfFilterDto dto) => new()
-	{
-		Uid = dto.Uid,
-		IsEnabled = dto.IsEnabled,
-		FilterType = dto.FilterType,
-		Name = dto.Name,
-		Mask = dto.Mask,
-		Size = dto.Size,
-		SizeType = dto.SizeType,
-	};
-
-	public TgEfFilterEntity GetNewEntity() => new()
+	public TgEfFilterEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		IsEnabled = IsEnabled,

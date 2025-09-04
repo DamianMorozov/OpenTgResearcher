@@ -113,22 +113,7 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgDto<TgEfStoryEntity, Tg
 
 	public TgEfStoryDto GetNewDto(TgEfStoryEntity item) => new TgEfStoryDto().Copy(item, isUidCopy: true);
 
-	public TgEfStoryEntity GetNewEntity(TgEfStoryDto dto) => new()
-	{
-		Uid = dto.Uid,
-		DtChanged = dto.DtChanged,
-		Id = dto.Id,
-		FromId = dto.FromId,
-		FromName = dto.FromName,
-		Date = dto.Date,
-		ExpireDate = dto.ExpireDate,
-		Caption = dto.Caption,
-		Type = dto.Type,
-		Offset = dto.Offset,
-		Message = dto.Message,
-	};
-
-	public TgEfStoryEntity GetNewEntity() => new()
+	public TgEfStoryEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		DtChanged = DtChanged,

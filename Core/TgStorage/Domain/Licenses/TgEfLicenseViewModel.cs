@@ -41,8 +41,7 @@ public sealed partial class TgEfLicenseViewModel : TgEntityViewModelBase<TgEfLic
 		Dto.Copy(item, isUidCopy: true);
 	}
 
-	public async Task<TgEfStorageResult<TgEfLicenseEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetNewEntity());
+	public async Task<TgEfStorageResult<TgEfLicenseEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
 
 	#endregion
 }

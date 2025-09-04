@@ -16,17 +16,20 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
     #region Methods
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetAsync(TgEfLicenseEntity item, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetAsync(TgEfLicenseEntity item, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
 			.Where(x => x.Uid == item.Uid)
-			.FirstOrDefaultAsync();
-		if (itemFind is not null)
+			.FirstOrDefaultAsync(ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by LicenseKey
-		itemFind = await GetQuery(isReadOnly).Where(x => x.LicenseKey == item.LicenseKey).SingleOrDefaultAsync();
-		if (itemFind is not null)
+		
+        // Find by LicenseKey
+		itemFind = await GetQuery(isReadOnly).Where(x => x.LicenseKey == item.LicenseKey).SingleOrDefaultAsync(ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 			
         return itemFind is not null
@@ -35,17 +38,20 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 	}
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetByDtoAsync(TgEfLicenseDto dto, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetByDtoAsync(TgEfLicenseDto dto, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
 			.Where(x => x.Uid == dto.Uid)
-			.FirstOrDefaultAsync();
-		if (itemFind is not null)
+			.FirstOrDefaultAsync(ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by LicenseKey
-		itemFind = await GetQuery(isReadOnly).Where(x => x.LicenseKey == dto.LicenseKey).SingleOrDefaultAsync();
-		if (itemFind is not null)
+		
+        // Find by LicenseKey
+		itemFind = await GetQuery(isReadOnly).Where(x => x.LicenseKey == dto.LicenseKey).SingleOrDefaultAsync(ct);
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 			
         return itemFind is not null
@@ -60,11 +66,14 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 		var itemFind = GetQuery(isReadOnly)
 			.Where(x => x.Uid == item.Uid)
 			.FirstOrDefault();
-		if (itemFind is not null)
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by LicenseKey
+		
+        // Find by LicenseKey
 		itemFind = GetQuery(isReadOnly).Where(x => x.LicenseKey == item.LicenseKey).SingleOrDefault();
-		if (itemFind is not null)
+		
+        if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 			
         return itemFind is not null
@@ -92,28 +101,31 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 	}
 
     /// <inheritdoc />
-	public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetListAsync(int take, int skip, bool isReadOnly = true, CancellationToken ct = default)
 	{
 		IList<TgEfLicenseEntity> items = take > 0
-			? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).ToListAsync();
+			? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync(ct)
+			: await GetQuery(isReadOnly).ToListAsync(ct);
 		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-	public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfLicenseEntity, bool>> where, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfLicenseEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfLicenseEntity, bool>> where, 
+        bool isReadOnly = true, CancellationToken ct = default)
 	{
 		IList<TgEfLicenseEntity> items = take > 0
-			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync()
-			: await GetQuery(isReadOnly).Where(where).ToListAsync();
-		return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
+			? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync(ct)
+			: await GetQuery(isReadOnly).Where(where).ToListAsync(ct);
+		
+        return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
 	}
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync() => await EfContext.Licenses.AsNoTracking().CountAsync();
+    public override async Task<int> GetCountAsync(CancellationToken ct = default) => await EfContext.Licenses.AsNoTracking().CountAsync(ct);
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync(Expression<Func<TgEfLicenseEntity, bool>> where) => await EfContext.Licenses.AsNoTracking().Where(where).CountAsync();
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfLicenseEntity, bool>> where, CancellationToken ct = default) => 
+        await EfContext.Licenses.AsNoTracking().Where(where).CountAsync(ct);
 
     #endregion
 

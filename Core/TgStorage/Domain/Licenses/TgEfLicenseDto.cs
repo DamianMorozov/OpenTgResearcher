@@ -72,17 +72,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 
 	public TgEfLicenseDto GetNewDto(TgEfLicenseEntity item) => new TgEfLicenseDto().Copy(item, isUidCopy: true);
 
-	public TgEfLicenseEntity GetNewEntity(TgEfLicenseDto dto) => new()
-	{
-		Uid = dto.Uid,
-		LicenseKey = dto.LicenseKey,
-		UserId = dto.UserId,
-		LicenseType = dto.LicenseType,
-		ValidTo = DateTime.Parse($"{dto.ValidTo:yyyy-MM-d}"),
-		IsConfirmed = dto.IsConfirmed,
-	};
-
-	public TgEfLicenseEntity GetNewEntity() => new()
+	public TgEfLicenseEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		LicenseKey = LicenseKey,

@@ -91,27 +91,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 
 	public TgEfAppDto GetNewDto(TgEfAppEntity item) => new TgEfAppDto().Copy(item, isUidCopy: true);
 
-    public TgEfAppEntity GetNewEntity(TgEfAppDto dto)
-    {
-        var item = new TgEfAppEntity()
-        {
-            Uid = dto.Uid,
-            ApiHash = dto.ApiHash,
-            ApiId = dto.ApiId,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            PhoneNumber = dto.PhoneNumber,
-            ProxyUid = dto.ProxyUid,
-            BotTokenKey = dto.BotTokenKey,
-        };
-        if (dto.UseBot)
-            item.SetUseBot(dto.UseBot);
-        else if (dto.UseClient)
-            item.SetUseClient(dto.UseClient);
-        return item;
-    }
-
-    public TgEfAppEntity GetNewEntity()
+    public TgEfAppEntity GetEntity()
     {
         var item = new TgEfAppEntity()
         {

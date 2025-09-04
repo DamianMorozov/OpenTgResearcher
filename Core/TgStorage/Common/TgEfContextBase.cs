@@ -116,9 +116,9 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     #region Methods - EF Core
 
-    public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken ct = default)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
-        await AddAsync(entity, cancellationToken);
+        await AddAsync(entity, ct);
 
     public EntityEntry<TEfEntity> AddItem<TEfEntity>(TEfEntity entity)
         where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Add(entity);

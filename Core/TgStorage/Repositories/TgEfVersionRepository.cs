@@ -17,16 +17,18 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
     #region Methods
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetAsync(TgEfVersionEntity item, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetAsync(TgEfVersionEntity item, bool isReadOnly = true, CancellationToken ct = default)
     {
         // Find by Uid
         var itemFind = await GetQuery(isReadOnly)
             .Where(x => x.Uid == item.Uid)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
+        
         if (itemFind is not null)
             return new(TgEnumEntityState.IsExists, itemFind);
+        
         // Find by Version
-        itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Version == item.Version);
+        itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Version == item.Version, ct);
 
         return itemFind is not null
             ? new(TgEnumEntityState.IsExists, itemFind)
@@ -34,16 +36,18 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
     }
 
     /// <inheritdoc />
-    public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetByDtoAsync(TgEfVersionDto dto, bool isReadOnly = true)
+    public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetByDtoAsync(TgEfVersionDto dto, bool isReadOnly = true, CancellationToken ct = default)
     {
         // Find by Uid
         var itemFind = await GetQuery(isReadOnly)
             .Where(x => x.Uid == dto.Uid)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
+        
         if (itemFind is not null)
             return new(TgEnumEntityState.IsExists, itemFind);
+        
         // Find by Version
-        itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Version == dto.Version);
+        itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Version == dto.Version, ct);
 
         return itemFind is not null
             ? new(TgEnumEntityState.IsExists, itemFind)
@@ -57,8 +61,10 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
         var itemFind = GetQuery(isReadOnly)
             .Where(x => x.Uid == item.Uid)
             .FirstOrDefault();
+        
         if (itemFind is not null)
             return new(TgEnumEntityState.IsExists, itemFind);
+        
         // Find by Version
         itemFind = GetQuery(isReadOnly).SingleOrDefault(x => x.Version == item.Version);
 
@@ -85,28 +91,31 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
     }
 
     /// <inheritdoc />
-	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetListAsync(int take, int skip, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetListAsync(int take, int skip, bool isReadOnly = true, CancellationToken ct = default)
     {
         IList<TgEfVersionEntity> items = take > 0
-            ? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync()
-            : await GetQuery(isReadOnly).ToListAsync();
+            ? await GetQuery(isReadOnly).Skip(skip).Take(take).ToListAsync(ct)
+            : await GetQuery(isReadOnly).ToListAsync(ct);
         return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
     }
 
     /// <inheritdoc />
-	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfVersionEntity, bool>> where, bool isReadOnly = true)
+	public override async Task<TgEfStorageResult<TgEfVersionEntity>> GetListAsync(int take, int skip, Expression<Func<TgEfVersionEntity, bool>> where, 
+        bool isReadOnly = true, CancellationToken ct = default)
     {
         IList<TgEfVersionEntity> items = take > 0
-            ? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync()
-            : await GetQuery(isReadOnly).Where(where).ToListAsync();
+            ? await GetQuery(isReadOnly).Where(where).Skip(skip).Take(take).ToListAsync(ct)
+            : await GetQuery(isReadOnly).Where(where).ToListAsync(ct);
+
         return new(items.Any() ? TgEnumEntityState.IsExists : TgEnumEntityState.NotExists, items);
     }
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync() => await EfContext.Versions.AsNoTracking().CountAsync();
+    public override async Task<int> GetCountAsync(CancellationToken ct = default) => await EfContext.Versions.AsNoTracking().CountAsync(ct);
 
     /// <inheritdoc />
-    public override async Task<int> GetCountAsync(Expression<Func<TgEfVersionEntity, bool>> where) => await EfContext.Versions.AsNoTracking().Where(where).CountAsync();
+    public override async Task<int> GetCountAsync(Expression<Func<TgEfVersionEntity, bool>> where, CancellationToken ct = default) => 
+        await EfContext.Versions.AsNoTracking().Where(where).CountAsync(ct);
 
     #endregion
 
@@ -122,7 +131,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
         var defaultVersion = new TgEfVersionEntity().Version;
         var versions = (await GetListAsync(TgEnumTableTopRecords.All, 0)).Items
             .Where(x => x.Version != defaultVersion).OrderBy(x => x.Version).ToList();
-        if (versions.Any())
+        if (versions.Count != 0)
             versionLast = versions[^1];
         return versionLast;
     }

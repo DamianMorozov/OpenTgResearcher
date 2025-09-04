@@ -10,8 +10,8 @@ public interface ITgEfContext : IDisposable
 
     /// <summary> Provides access to database related information and operations for this context </summary>
     public DatabaseFacade Database { get; }
-	public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
-	public ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken cancellationToken = default)
+	public Task<int> SaveChangesAsync(CancellationToken ct = default);
+	public ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken ct = default)
 		where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
 	public EntityEntry<TEfEntity> AddItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
 	/// <summary> Update entity </summary>

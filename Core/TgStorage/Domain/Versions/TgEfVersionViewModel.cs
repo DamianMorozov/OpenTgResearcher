@@ -42,8 +42,7 @@ public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVer
 		Dto.Copy(item, isUidCopy: true);
 	}
 
-	public async Task<TgEfStorageResult<TgEfVersionEntity>> SaveAsync() =>
-		await Repository.SaveAsync(Dto.GetNewEntity());
+	public async Task<TgEfStorageResult<TgEfVersionEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
 
 	#endregion
 }

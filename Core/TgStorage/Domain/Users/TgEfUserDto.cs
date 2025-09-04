@@ -161,31 +161,7 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
 
     public TgEfUserDto GetNewDto(TgEfUserEntity item) => new TgEfUserDto().Copy(item, isUidCopy: true);
 
-    public TgEfUserEntity GetNewEntity(TgEfUserDto dto) => new()
-    {
-        Uid = dto.Uid,
-        DtChanged = dto.DtChanged,
-        Id = dto.Id,
-        AccessHash = dto.AccessHash,
-        IsActive = dto.IsContactActive,
-        IsBot = dto.IsBot,
-        FirstName = dto.FirstName,
-        LastName = dto.LastName,
-        UserName = dto.UserName,
-        UserNames = dto.UserNames,
-        PhoneNumber = dto.PhoneNumber,
-        Status = GetShortStatus(dto.Status),
-        RestrictionReason = dto.RestrictionReason,
-        LangCode = dto.LangCode,
-        IsContact = dto.IsContact,
-        IsDeleted = dto.IsDeleted,
-        StoriesMaxId = dto.StoriesMaxId,
-        BotInfoVersion = dto.BotInfoVersion,
-        BotInlinePlaceholder = dto.BotInlinePlaceholder,
-        BotActiveUsers = dto.BotActiveUsers,
-    };
-
-    public TgEfUserEntity GetNewEntity() => new()
+    public TgEfUserEntity GetEntity() => new()
     {
         Uid = Uid,
         DtChanged = DtChanged,

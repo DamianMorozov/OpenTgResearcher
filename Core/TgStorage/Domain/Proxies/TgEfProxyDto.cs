@@ -65,18 +65,7 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, Tg
 
 	public TgEfProxyDto GetNewDto(TgEfProxyEntity item) => new TgEfProxyDto().Copy(item, isUidCopy: true);
 
-	public TgEfProxyEntity GetNewEntity(TgEfProxyDto dto) => new()
-	{
-		Uid = dto.Uid,
-		Type = dto.Type,
-		HostName = dto.HostName,
-		Port = dto.Port,
-		UserName = dto.UserName,
-		Password = dto.Password,
-		Secret = dto.Secret,
-	};
-
-	public TgEfProxyEntity GetNewEntity() => new()
+	public TgEfProxyEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		Type = Type,

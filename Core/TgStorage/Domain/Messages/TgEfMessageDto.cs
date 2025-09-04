@@ -148,20 +148,7 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
 
 	public TgEfMessageDto GetNewDto(TgEfMessageEntity item) => new TgEfMessageDto().Copy(item, isUidCopy: true);
 
-	public TgEfMessageEntity GetNewEntity(TgEfMessageDto dto) => new()
-	{
-		Uid = dto.Uid,
-		DtCreated = dto.DtCreated,
-		SourceId = dto.SourceId,
-		Id = dto.Id,
-		Type = dto.Type,
-		Size = dto.Size,
-		Message = dto.Message,
-        UserId = dto.UserId,
-        IsDeleted = dto.IsDeleted,
-    };
-
-	public TgEfMessageEntity GetNewEntity() => new()
+	public TgEfMessageEntity GetEntity() => new()
 	{
 		Uid = Uid,
 		DtCreated = DtCreated,

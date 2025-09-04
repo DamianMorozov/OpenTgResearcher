@@ -1161,6 +1161,9 @@
   <data name="FieldMessage.Text" xml:space="preserve">
     <value>Message</value>
   </data>
+  <data name="FieldMedia.Text" xml:space="preserve">
+    <value>Media</value>
+  </data>
   <data name="FieldProgress.Text" xml:space="preserve">
     <value>Progress</value>
   </data>
@@ -1245,6 +1248,9 @@
   <data name="FieldLastSeenAgo.Text" xml:space="preserve">
     <value>Last seen ago</value>
   </data>
+  <data name="FieldNotFound.Text" xml:space="preserve">
+    <value>Not found</value>
+  </data>
   <data name="ButtonFilter.Content" xml:space="preserve">
     <value>Filter</value>
   </data>
@@ -1319,6 +1325,12 @@
   </data>
   <data name="ViewImage" xml:space="preserve">
     <value>View image</value>
+  </data>
+  <data name="Transmitted" xml:space="preserve">
+    <value>Transmitted</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Speed</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>Close</value>

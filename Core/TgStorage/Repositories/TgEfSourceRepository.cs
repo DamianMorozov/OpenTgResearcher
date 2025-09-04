@@ -214,11 +214,11 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
     public async Task<TgEfSourceDto> FindCommentDtoSourceAsync(long chatId)
     {
         // Find the first relation where the given chatId is used as a child
-        var relation = await EfContext.MessagesRelations
+        var query = EfContext.MessagesRelations
             .AsNoTracking()
             .Where(x => x.ParentSourceId == chatId)
-            .OrderByDescending(x => x.ChildMessageId)
-            .FirstOrDefaultAsync();
+            .OrderByDescending(x => x.ChildMessageId);
+        var relation = await query.FirstOrDefaultAsync();
 
         // Return empty DTO if not found
         if (relation is null)

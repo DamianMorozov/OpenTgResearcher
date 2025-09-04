@@ -1223,6 +1223,9 @@
   <data name="FieldMessage.Text" xml:space="preserve">
     <value>Сообщение</value>
   </data>
+  <data name="FieldMedia.Text" xml:space="preserve">
+    <value>Медиа</value>
+  </data>
   <data name="FieldProgress.Text" xml:space="preserve">
     <value>Прогресс</value>
   </data>
@@ -1307,6 +1310,9 @@
   <data name="FieldLastSeenAgo.Text" xml:space="preserve">
     <value>Был последний раз</value>
   </data>
+  <data name="FieldNotFound.Text" xml:space="preserve">
+    <value>Не найдено</value>
+  </data>
   <data name="ButtonFilter.Content" xml:space="preserve">
     <value>Фильтровать</value>
   </data>
@@ -1381,6 +1387,12 @@
   </data>
   <data name="ViewImage" xml:space="preserve">
     <value>Просмотр изображения</value>
+  </data>
+  <data name="Transmitted" xml:space="preserve">
+    <value>Передано</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Скорость</value>
   </data>
   <data name="CloseButton" xml:space="preserve">
     <value>Закрыть</value>

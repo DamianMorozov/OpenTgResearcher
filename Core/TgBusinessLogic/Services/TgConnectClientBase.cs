@@ -2057,23 +2057,28 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Finalize current download session </summary>
     private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
     {
-        _downloadSettings = null;
-
-        // Dispose download token
-        _downloadCts?.Dispose();
-        _downloadCts = null;
-        DownloadToken = CancellationToken.None;
-
-        // Dispose log token
-        _logCts?.Dispose();
-        _logCts = null;
-        LogToken = CancellationToken.None;
-
-        if (!CheckShouldStop(ct))
+        try
         {
-            await FlushMessageBufferAsync(settings.IsSaveMessages, settings.IsRewriteMessages, isForce: true, ct);
-            await FlushMessageRelationBufferAsync(settings.IsSaveMessages, settings.IsRewriteMessages, isForce: true, ct);
-            await UpdateTitleAsync(string.Empty);
+            // Dispose download token
+            _downloadCts?.Dispose();
+            _downloadCts = null;
+            DownloadToken = CancellationToken.None;
+
+            // Dispose log token
+            _logCts?.Dispose();
+            _logCts = null;
+            LogToken = CancellationToken.None;
+
+            if (!CheckShouldStop(ct))
+            {
+                await FlushMessageBufferAsync(settings.IsSaveMessages, settings.IsRewriteMessages, isForce: true, ct);
+                await FlushMessageRelationBufferAsync(settings.IsSaveMessages, settings.IsRewriteMessages, isForce: true, ct);
+                await UpdateTitleAsync(string.Empty);
+            }
+        }
+        finally
+        {
+            _downloadSettings = null;
         }
     }
 

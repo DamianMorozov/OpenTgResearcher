@@ -90,10 +90,10 @@ internal partial class TgMenuHelper
 			await Task.CompletedTask;
 		}
         // Update source
-        async Task UpdateChatViewModelAsync(long sourceId, int messageId, int count, string message)
+        async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message)
         {
             progressSource.Description = TgDataFormatUtils.GetFormatStringWithStrongLength(message, stringLimit).TrimEnd();
-            if (tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
+            if (tgDownloadSettings.SourceVm.Dto.Id.Equals(chatId))
             {
                 if (messageId > 0)
                     progressSource.Value = messageId;
@@ -102,10 +102,10 @@ internal partial class TgMenuHelper
             await Task.CompletedTask;
         }
         // Update file
-        async Task UpdateStateFileAsync(long sourceId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
+        async Task UpdateStateFileAsync(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
 			bool isStartTask, int threadNumber)
 		{
-			if (!tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId)) return;
+			if (!tgDownloadSettings.SourceVm.Dto.Id.Equals(chatId)) return;
 			try
 			{
 				//var progressDescription = $"Thread {(threadNumber + 1):00}: Message {messageId} {TgDataFormatUtils.GetFormatStringWithStrongLength(fileName, stringLimit).TrimEnd()}";
@@ -264,11 +264,12 @@ internal partial class TgMenuHelper
 			await Task.CompletedTask;
 		}
 		// Update download file state
-		async Task UpdateStateFileAsync(long sourceId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
-			bool isFileNewDownload, int threadNumber)
+		async Task UpdateStateFileAsync(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
+			bool isStartTask, int threadNumber)
 		{
 			// Download job
-			if (!string.IsNullOrEmpty(fileName) && !isFileNewDownload && tgDownloadSettings.SourceVm.Dto.Id.Equals(sourceId))
+			//if (!string.IsNullOrEmpty(fileName) && !isFileNewDownload && tgDownloadSettings.SourceVm.Dto.Id.Equals(chatId))
+			if (!string.IsNullOrEmpty(fileName) && tgDownloadSettings.SourceVm.Dto.Id.Equals(chatId))
 			{
 				// Download status job
 				tgDownloadSettings.SourceVm.Dto.FirstId = messageId;

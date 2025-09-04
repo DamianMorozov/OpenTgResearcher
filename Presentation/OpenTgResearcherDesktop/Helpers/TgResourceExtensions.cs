@@ -1,7 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-
 namespace OpenTgResearcherDesktop.Helpers;
 
 public static class TgResourceExtensions
@@ -16,6 +15,8 @@ public static class TgResourceExtensions
 
 	#region Methods
 
+    internal static object GetSpeed() => "Speed".GetLocalizedResource();
+    internal static object GetTransmitted() => "Transmitted".GetLocalizedResource();
     internal static string GetProcessingChats() => "ProcessingChats".GetLocalizedResource();
     internal static string GetProcessingDialogs() => "ProcessingDialogs".GetLocalizedResource();
     internal static string GetProcessingGroups() => "ProcessingGroups".GetLocalizedResource();

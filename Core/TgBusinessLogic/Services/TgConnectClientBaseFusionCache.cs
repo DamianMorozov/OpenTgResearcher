@@ -141,9 +141,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await StorageManager.MessageRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
 
                 if (CheckShouldStop(ct)) return;
-                if (list.Count > 0 && _downloadSettings is not null)
+                if (_downloadSettings is not null && list.Count > 0)
                 {
-                    var maxId = list.Max(x => x.Id);
+                    var maxId = list.Where(x => x.SourceId == _downloadSettings.SourceVm.Dto.Id).Max(x => x.Id);
                     var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, maxId);
                     if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
                     {
@@ -159,6 +159,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     if (CheckShouldStop(ct)) return;
                     await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessage(item.SourceId, item.Id), token: ct);
+                }
+
+                if (CheckShouldStop(ct)) return;
+                if (_downloadSettings is not null && isForce)
+                {
+                    var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, _downloadSettings.SourceVm.Dto.Count);
+                    _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
+                    // Save updated FirstId to database
+                    await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto.GetEntity(), ct: ct);
                 }
             });
 

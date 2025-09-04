@@ -34,6 +34,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial string StateSourceMsg { get; set; } = string.Empty;
     [ObservableProperty]
+    public partial string StateSourceMedia { get; set; } = string.Empty;
+    [ObservableProperty]
     public partial XamlRoot? XamlRootVm { get; set; }
     [ObservableProperty]
     public partial bool IsPageLoad { get; set; }
@@ -146,47 +148,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         await Task.CompletedTask;
     }
 
-    /// <summary> Update chat ViewModel </summary>
-    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message)
-    {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    UpdateChatViewModelCore(chatId, messageId, count, ref message);
-                    tcs.SetResult(true);
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
-        else
-        {
-            UpdateChatViewModelCore(chatId, messageId, count, ref message);
-        }
-    }
-
-    private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
-    {
-        _chatVm ??= App.Locator?.Get<TgChatViewModel>();
-        if (_chatVm is not null)
-        {
-            if (_chatVm.Dto?.Id == chatId && _chatVm.Dto?.FirstId < messageId)
-            {
-                _chatVm.Dto.FirstId = messageId;
-                _chatVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
-                _chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-                _chatVm.StateSourceMsg = $"{messageId} | {message}";
-            }
-        }
-    }
-
     /// <summary> Update chats ViewModel </summary>
     public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType)
     {
@@ -238,6 +199,111 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
                 case TgEnumChatsMessageType.StopScan:
                     _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetStopScan();
                     break;
+            }
+        }
+    }
+
+    /// <summary> Update chat message ViewModel </summary>
+    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message)
+    {
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    UpdateChatViewModelCore(chatId, messageId, count, ref message);
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
+        else
+        {
+            UpdateChatViewModelCore(chatId, messageId, count, ref message);
+        }
+    }
+
+    private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
+    {
+        _chatVm ??= App.Locator?.Get<TgChatViewModel>();
+        if (_chatVm is not null)
+        {
+            if (_chatVm.Dto?.Id == chatId && _chatVm.Dto?.FirstId < messageId)
+            {
+                _chatVm.Dto.FirstId = messageId;
+                _chatVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
+                _chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                _chatVm.StateSourceMsg = $"{messageId} | {message}";
+            }
+        }
+    }
+
+    /// <summary> Update chat media ViewModel </summary>
+    public async Task UpdateStateFileAsync(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
+        bool isStartTask, int threadNumber)
+    {
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            await tcs.Task;
+        }
+        else
+        {
+            UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
+        }
+    }
+
+    private void UpdateStateFileCore(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
+        bool isStartTask, int threadNumber)
+    {
+        _chatVm ??= App.Locator?.Get<TgChatViewModel>();
+        if (_chatVm is not null)
+        {
+            if (_chatVm.Dto?.Id == chatId)
+            {
+                // Download job
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    // Download status job
+                    DownloadSettings.SourceVm.Dto.FirstId = messageId;
+                    DownloadSettings.SourceVm.Dto.CurrentFileName = fileName;
+                    DownloadSettings.SourceVm.Dto.CurrentFileSize = fileSize;
+                    DownloadSettings.SourceVm.Dto.CurrentFileTransmitted = transmitted;
+                    DownloadSettings.SourceVm.Dto.CurrentFileSpeed = fileSpeed;
+                }
+                // Download reset
+                else
+                {
+                    // Download status reset
+                    DownloadSettings.SourceVm.Dto.FirstId = messageId;
+                    DownloadSettings.SourceVm.Dto.CurrentFileName = string.Empty;
+                    DownloadSettings.SourceVm.Dto.CurrentFileSize = 0;
+                    DownloadSettings.SourceVm.Dto.CurrentFileTransmitted = 0;
+                    DownloadSettings.SourceVm.Dto.CurrentFileSpeed = 0;
+                }
+                // State
+                _chatVm.StateSourceMedia = string.IsNullOrEmpty(fileName) ? string.Empty
+                    : $"{fileName} | " +
+                    $"{TgResourceExtensions.GetTransmitted()} {DownloadSettings.SourceVm.Dto.CurrentFileProgressPercentString} | " +
+                    $"{TgResourceExtensions.GetSpeed()} {DownloadSettings.SourceVm.Dto.CurrentFileSpeedKBString}";
             }
         }
     }

@@ -63,12 +63,12 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
     public string CurrentFileProgressPercentString =>
         (CurrentFileProgress == 0 ? "{0:00.00}" : $"{CurrentFileProgress:#00.00}") + " %";
     public string CurrentFileProgressMBString =>
-        (CurrentFileTransmitted == 0 ? "{0:0.00}" : $"{(float)CurrentFileTransmitted / 1024 / 1024:### ##0.00}") + " from " +
-        (CurrentFileSize == 0 ? "{0:0.00}" : $"{(float)CurrentFileSize / 1024 / 1024:### ##0.00}") + " MB";
+        (CurrentFileTransmitted == 0 ? "{0:0}" : $"{(float)CurrentFileTransmitted / 1024 / 1024:### ##0}") + " from " +
+        (CurrentFileSize == 0 ? "{0:0}" : $"{(float)CurrentFileSize / 1024 / 1024:### ##0}") + " MB";
     public string CurrentFileSpeedKBString =>
-        (CurrentFileSpeed == 0 ? "{0:0.00}" : $"{(float)CurrentFileSpeed / 1024:### 000.00}") + " KB/sec";
+        (CurrentFileSpeed == 0 ? "{0:0}" : $"{(float)CurrentFileSpeed / 1024:### 000}") + " KB/sec";
     public string CurrentFileSpeedMBString =>
-        (CurrentFileSpeed == 0 ? "{0:0.00}" : $"{(float)CurrentFileSpeed / 1024 / 1024:##0.00}") + " MB/sec";
+        (CurrentFileSpeed == 0 ? "{0:0}" : $"{(float)CurrentFileSpeed / 1024 / 1024:##0}") + " MB/sec";
     public bool IsReadySourceDirectory => !string.IsNullOrEmpty(Directory) && System.IO.Directory.Exists(Directory);
     public string IsReadySourceDirectoryDescription => IsReadySourceDirectory
         ? $"{TgLocaleHelper.Instance.TgDirectoryIsExists}." : $"{TgLocaleHelper.Instance.TgDirectoryIsNotExists}!";

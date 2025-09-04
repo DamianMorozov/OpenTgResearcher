@@ -169,10 +169,10 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
             if (Count <= TgGlobalTools.BatchMessagesLimit && !isForce) return;
 
             var toSave = Flush();
-            if (toSave.Count == 0) return;
-
-            await saveAction(toSave);
-
+            if (toSave.Count > 0)
+            {
+                await saveAction(toSave);
+            }
             if (postSaveAction is not null)
             {
                 await postSaveAction(toSave);

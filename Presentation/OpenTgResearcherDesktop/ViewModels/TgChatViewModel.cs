@@ -14,9 +14,11 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto Dto { get; set; } = null!;
+    public partial TgEfSourceDto Dto { get; set; } = default!;
     [ObservableProperty]
-    public partial TgEfSourceDto CommentDto { get; set; } = null!;
+    public partial TgEfSourceDto DiscussionDto { get; set; } = default!;
+    [ObservableProperty]
+    public partial bool IsDiscussionDtoExists { get; set; }
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
@@ -45,8 +47,9 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         // Callback updates UI
-        App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
+        App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
+        App.BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
     }
 
     #endregion
@@ -107,7 +110,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     private async Task ClearDataStorageCoreAsync()
     {
         Dto = new();
-        CommentDto = new();
+        DiscussionDto = new();
+        IsDiscussionDtoExists = DiscussionDto.Id > 0;
         UserDtos = [];
         IsEmptyData = false;
         await Task.CompletedTask;
@@ -120,7 +124,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             if (!SettingsService.IsExistsAppStorage) return;
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
-            CommentDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
+            DiscussionDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
+            IsDiscussionDtoExists = DiscussionDto.Id > 0;
 
             IsEmptyData = false;
             ScrollRequested?.Invoke();
@@ -159,15 +164,17 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     {
         try
         {
+            // Update and save current chat
             Dto.DtChanged = DateTime.UtcNow;
             DownloadSettings.SourceVm.Dto = Dto;
             var entity = Dto.GetEntity();
             await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(entity);
 
-            if (CommentDto.Id > 0)
+            // Update and save discussion chat if exists
+            if (IsDiscussionDtoExists)
             {
-                CommentDto.DtChanged = DateTime.UtcNow;
-                var comment = CommentDto.GetEntity();
+                DiscussionDto.DtChanged = DateTime.UtcNow;
+                var comment = DiscussionDto.GetEntity();
                 await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(comment);
             }
         }

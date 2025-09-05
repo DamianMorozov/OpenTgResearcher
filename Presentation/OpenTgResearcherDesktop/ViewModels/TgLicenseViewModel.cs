@@ -103,7 +103,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
             foreach (var apiUrl in apiURLs)
 			{
-                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/Get?userId={userId}", userId))
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteGet}?userId={userId}", userId))
                     break;
 			}
 		}
@@ -135,8 +135,16 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
             var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
             if (licenseDto?.IsConfirmed != true)
             {
-                LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotConfirmed()}: {response.StatusCode}" + Environment.NewLine;
-                return false;
+                var licenseEfDto = JsonSerializer.Deserialize<TgEfLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+                if (licenseEfDto?.IsConfirmed != true)
+                {
+                    LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotConfirmed()}: {response.StatusCode}" + Environment.NewLine;
+                    return false;
+                }
+                else
+                {
+                    licenseDto = new TgLicenseDto(licenseEfDto.LicenseKey, licenseEfDto.LicenseType, licenseEfDto.UserId, licenseEfDto.ValidTo, licenseEfDto.IsConfirmed);
+                }
             }
 
             // Updating an existing license or creating a new license
@@ -168,7 +176,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
             foreach (var apiUrl in apiURLs)
             {
-                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/RequestCommunity?userId={userId}", userId))
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteCreateCommunity}?userId={userId}", userId))
                     break;
             }
         }

@@ -96,30 +96,36 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         await StorageManager.AppRepository.SetUseBotAsync(false);
     }
 
-    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto, bool isUidCopy = false)
+    /// <summary> Updates existing license or creates a new one if it does not exist </summary>
+    public async Task LicenseUpdateAsync(TgLicenseDto licenseDto)
 	{
-		var licenseEntity = new TgEfLicenseEntity
-		{
-			IsConfirmed = licenseDto.IsConfirmed,
-			LicenseKey = licenseDto.LicenseKey,
-			LicenseType = licenseDto.LicenseType,
-			UserId = licenseDto.UserId,
-			ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
-		};
+        try
+        {
+            var licenseEntity = new TgEfLicenseEntity
+            {
+                IsConfirmed = licenseDto.IsConfirmed,
+                LicenseKey = licenseDto.LicenseKey,
+                LicenseType = licenseDto.LicenseType,
+                UserId = licenseDto.UserId,
+                ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
+            };
 
-        var today = DateTime.UtcNow.Date;
-        var currentLicenseDto = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0,
-            x => x.IsConfirmed && x.ValidTo.Date >= today);
-        if (currentLicenseDto is null)
-		{
-			await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
-		}
-		else
-		{
-			var licenseExists = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-			licenseExists.Copy(licenseEntity, isUidCopy: isUidCopy);
-			await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
-		}
+            var listDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
+            if (listDtos is null || listDtos.Count == 0)
+            {
+                await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
+            }
+            else
+            {
+                var licenseExists = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
+                licenseExists.Copy(licenseEntity, isUidCopy: false);
+                await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
 	}
 
     public async Task<TgApiResult> GetApiLicenseStatisticAsync(DateOnly lastPromoDay)
@@ -156,7 +162,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
     }
 
     /// <inheritdoc />
-    public async Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo, string password, Guid? uid = null, Guid? licenseKey = null)
+    public async Task<TgApiResult> CreateAsync(long userId, TgEnumLicenseType licenseType, DateOnly validTo)
     {
         var result = new TgApiResult();
         if (userId <= 0)
@@ -165,8 +171,8 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
             result.Value = "User ID must be greater than zero!";
             return await Task.FromResult(result);
         }
-        var licenseDto = new TgLicenseDto(licenseKey ?? Guid.NewGuid(), licenseType, userId, validTo, isConfirmed: true);
-        await LicenseUpdateAsync(licenseDto, isUidCopy: uid is not null && licenseKey is not null);
+        var licenseDto = new TgLicenseDto(licenseKey: Guid.NewGuid(), licenseType, userId, validTo, isConfirmed: true);
+        await LicenseUpdateAsync(licenseDto);
         ActivateLicense(licenseDto.IsConfirmed, licenseDto.LicenseKey, licenseDto.LicenseType, licenseDto.UserId, licenseDto.ValidTo);
         result.IsOk = true;
         result.Value = licenseDto;

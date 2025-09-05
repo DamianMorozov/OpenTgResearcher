@@ -90,7 +90,7 @@ internal sealed partial class TgMenuHelper
             {
                 foreach (var apiUrl in apiURLs)
                 {
-                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/Get?userId={userId}", userId, tgDownloadSettings, isSilent))
+                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteGet}?userId={userId}", userId, tgDownloadSettings, isSilent))
                         break;
                 }
             }
@@ -122,7 +122,7 @@ internal sealed partial class TgMenuHelper
             {
                 foreach (var apiUrl in apiURLs)
                 {
-                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/RequestCommunity?userId={userId}", userId, tgDownloadSettings, isSilent))
+                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteCreateCommunity}?userId={userId}", userId, tgDownloadSettings, isSilent))
                         break;
                 }
             }
@@ -169,9 +169,17 @@ internal sealed partial class TgMenuHelper
             var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
             if (licenseDto?.IsConfirmed != true)
             {
-                if (!isSilent)
-                    await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"  {TgLocale.MenuLicenseIsNotConfirmed}: {response.StatusCode}"]);
-                return false;
+                var licenseEfDto = JsonSerializer.Deserialize<TgEfLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+                if (licenseEfDto?.IsConfirmed != true)
+                {
+                    if (!isSilent)
+                        await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"  {TgLocale.MenuLicenseIsNotConfirmed}: {response.StatusCode}"]);
+                    return false;
+                }
+                else
+                {
+                    licenseDto = new TgLicenseDto(licenseEfDto.LicenseKey, licenseEfDto.LicenseType, licenseEfDto.UserId, licenseEfDto.ValidTo, licenseEfDto.IsConfirmed);
+                }
             }
 
             // Updating an existing license or creating a new license

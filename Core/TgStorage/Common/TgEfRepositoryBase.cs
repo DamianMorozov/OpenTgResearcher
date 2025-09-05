@@ -412,9 +412,16 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     }
 
     /// <inheritdoc />
-    public async Task<TDto?> GetFirstOrDefaultAsync(Expression<Func<TEfEntity, bool>> where, CancellationToken ct = default)
+    public async Task<TDto?> GetFirstOrDefaultAsync<TKey>(Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order, CancellationToken ct = default)
     {
-        var dto = await GetQuery(isReadOnly: true).Where(where).Select(SelectDto()).FirstOrDefaultAsync(ct);
+        var dto = await GetQuery(isReadOnly: true).Where(where).OrderBy(order).Select(SelectDto()).FirstOrDefaultAsync(ct);
+        return dto;
+    }
+    
+    /// <inheritdoc />
+    public async Task<TDto?> GetFirstOrDefaultDescAsync<TKey>(Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order, CancellationToken ct = default)
+    {
+        var dto = await GetQuery(isReadOnly: true).Where(where).OrderByDescending(order).Select(SelectDto()).FirstOrDefaultAsync(ct);
         return dto;
     }
     

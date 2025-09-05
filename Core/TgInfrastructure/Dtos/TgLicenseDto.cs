@@ -45,6 +45,11 @@ public sealed partial class TgLicenseDto : ObservableRecipient
         IsConfirmed = isConfirmed;
     }
 
+    public TgLicenseDto()
+    {
+        //
+    }
+
     #endregion
 
     #region Methods

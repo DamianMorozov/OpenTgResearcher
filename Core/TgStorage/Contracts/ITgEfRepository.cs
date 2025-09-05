@@ -65,7 +65,8 @@ public interface ITgEfRepository<TEfEntity, TDto>
     public Task<List<TDto>> GetListDtosDescAsync<TKey>(int take, int skip, Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order, CancellationToken ct = default);
     public Task<int> GetListCountAsync(CancellationToken ct = default);
 	public Task<int> GetListCountAsync(Expression<Func<TEfEntity, bool>> where, CancellationToken ct = default);
-    public Task<TDto?> GetFirstOrDefaultAsync(Expression<Func<TEfEntity, bool>> where, CancellationToken ct = default);
+    public Task<TDto?> GetFirstOrDefaultAsync<TKey>(Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order, CancellationToken ct = default);
+    public Task<TDto?> GetFirstOrDefaultDescAsync<TKey>(Expression<Func<TEfEntity, bool>> where, Expression<Func<TEfEntity, TKey>> order, CancellationToken ct = default);
 
     #endregion
 

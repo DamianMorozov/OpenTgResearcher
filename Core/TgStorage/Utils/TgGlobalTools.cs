@@ -21,17 +21,19 @@ public static class TgGlobalTools
     /// <summary> EF storage </summary>
     public static string AppStorage = "TgStorage.db";
         
+    public const string DeleteByType = "DeleteByType";
     public const string HttpHeaderContentTypeJson = "application/json";
     public const string RouteBase = "Base";
     public const string RouteChangeLog = "ChangeLog";
     public const string RouteController = "[controller]";
     public const string RouteCreate = "Create";
+    public const string RouteCreateCommunity = "CreateCommunity";
     public const string RouteCreated = "Created";
     public const string RouteDelete = "Delete";
     public const string RouteGet = "Get";
-    public const string RouteGetList = "GetList";
     public const string RouteGetFile = "GetFile";
     public const string RouteGetFiles = "GetFiles";
+    public const string RouteGetList = "GetList";
     public const string RouteImage = "Image";
     public const string RouteLicense = "License";
     public const string RouteLicenses = "Licenses";

@@ -367,10 +367,16 @@
     <value>Clear current license</value>
   </data>
   <data name="ActionLicenseCheck.Text" xml:space="preserve">
-    <value>Check your current license online</value>
+    <value>Check current license</value>
   </data>
   <data name="ActionLicenseCheckMsg" xml:space="preserve">
-    <value>Check your current license online</value>
+    <value>Check current license</value>
+  </data>
+  <data name="ActionLicenseRequestCommunity.Text" xml:space="preserve">
+    <value>Request community license</value>
+  </data>
+  <data name="ActionLicenseRequestCommunityMsg" xml:space="preserve">
+    <value>Request community license</value>
   </data>
   <data name="ActionLicenseBuy.Text" xml:space="preserve">
     <value>Buy license</value>
@@ -747,14 +753,14 @@
   <data name="ClientDataRequestEmptyResponse" xml:space="preserve">
     <value>Empty</value>
   </data>
-  <data name="LicenseFreeDescription" xml:space="preserve">
-    <value>Free license</value>
+  <data name="LicenseNoDescription" xml:space="preserve">
+    <value>No license</value>
   </data>
   <data name="LicensePaidDescription" xml:space="preserve">
     <value>Paid license</value>
   </data>
-  <data name="LicenseTestDescription" xml:space="preserve">
-    <value>Test license</value>
+  <data name="LicenseCommunityDescription" xml:space="preserve">
+    <value>Community license</value>
   </data>
   <data name="LicenseGiftDescription" xml:space="preserve">
     <value>Gift license</value>
@@ -1400,8 +1406,11 @@
   <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
     <value>Status code</value>
   </data>
+  <data name="MenuLicense" xml:space="preserve">
+    <value>License</value>
+  </data>
   <data name="MenuLicenseIsNotConfirmed" xml:space="preserve">
-    <value>Is not cofirmed</value>
+    <value>Is not confirmed</value>
   </data>
   <data name="MenuLicenseUpdatedSuccessfully" xml:space="preserve">
     <value>License updated successfully</value>
@@ -1416,6 +1425,9 @@
     <value>Remove license?</value>
   </data>
   <data name="AskLicenseCheck" xml:space="preserve">
-    <value>To verify the license, the user ID is passed, continue?</value>
+    <value>To verify the license, the user ID is transmitted. Continue?</value>
+  </data>
+  <data name="AskLicenseRequestCommunity" xml:space="preserve">
+    <value>Request community license. Continue?</value>
   </data>
 </root>

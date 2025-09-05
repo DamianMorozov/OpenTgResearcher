@@ -261,10 +261,10 @@ internal partial class TgMenuHelper
     private async Task FillTableRowsLicenseFullInfoAsync(TgDownloadSettingsViewModel tgDownloadSettings, Table table)
     {
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseIsConfirmed)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.IsConfirmed.ToString()));
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.GetLicenseKeyString()));
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseKey)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.GetLicenseKeyString));
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseDescription)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.Description));
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuUserId)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.GetUserIdString()));
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseExpiration)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.GetValidToString()));
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuUserId)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.GetUserIdString));
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuLicenseExpiration)), GetMarkup(BusinessLogicManager.LicenseService.CurrentLicense.GetValidToString));
         await Task.CompletedTask;
     }
 
@@ -615,17 +615,7 @@ internal partial class TgMenuHelper
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuFiltersEnabledCount)), GetMarkup($"{filters.Count()}"));
 
         // Count of threads
-        switch (BusinessLogicManager.LicenseService.CurrentLicense.LicenseType)
-        {
-            case TgEnumLicenseType.Test:
-            case TgEnumLicenseType.Paid:
-            case TgEnumLicenseType.Premium:
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByPaidLicense)), GetMarkup($"{tgDownloadSettings.CountThreads}"));
-                break;
-            default:
-                table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreadsByFreeLicense)), GetMarkup($"{tgDownloadSettings.CountThreads}"));
-                break;
-        }
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreads)), GetMarkup($"{tgDownloadSettings.CountThreads}"));
 
         // User access
         if (tgDownloadSettings.SourceVm.Dto.IsUserAccess)

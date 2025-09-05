@@ -30,7 +30,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	public IRelayCommand LicenseShowInfoCommand { get; }
 	public IRelayCommand LicenseClearCommand { get; }
 	public IRelayCommand LicenseCheckCommand { get; }
-	public IRelayCommand LicenseChangeCommand { get; }
+	public IRelayCommand LicenseRequestCommunityCommand { get; }
+	public IRelayCommand LicenseBuyCommand { get; }
 
 	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgLicenseViewModel))
@@ -44,7 +45,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		LicenseShowInfoCommand = new AsyncRelayCommand(LicenseShowInfoAsync);
 		LicenseClearCommand = new AsyncRelayCommand(LicenseClearAsync);
 		LicenseCheckCommand = new AsyncRelayCommand(LicenseCheckAsync);
-		LicenseChangeCommand = new AsyncRelayCommand(LicenseChangeAsync);
+        LicenseRequestCommunityCommand = new AsyncRelayCommand(LicenseRequestCommunityAsync);
+		LicenseBuyCommand = new AsyncRelayCommand(LicenseBuyAsync);
 	}
 
 	#endregion
@@ -64,10 +66,10 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		try
 		{
 			IsConfirmed = App.BusinessLogicManager.LicenseService.CurrentLicense.IsConfirmed.ToString();
-			LicenseKey = App.BusinessLogicManager.LicenseService.CurrentLicense.GetLicenseKeyString();
+			LicenseKey = App.BusinessLogicManager.LicenseService.CurrentLicense.GetLicenseKeyString;
 			LicenseDescription = App.BusinessLogicManager.LicenseService.CurrentLicense.Description;
-			UserId = App.BusinessLogicManager.LicenseService.CurrentLicense.GetUserIdString();
-			Expiration = App.BusinessLogicManager.LicenseService.CurrentLicense.GetValidToString();
+			UserId = App.BusinessLogicManager.LicenseService.CurrentLicense.GetUserIdString;
+			Expiration = App.BusinessLogicManager.LicenseService.CurrentLicense.GetValidToString;
 		}
 		catch (Exception ex)
 		{
@@ -85,6 +87,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		await LicenseShowInfoAsync();
 	}
 
+    /// <summary> Check current license </summary>
 	private async Task LicenseCheckAsync() => await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck());
 
 	private async Task LicenseCheckCoreAsync()
@@ -100,7 +103,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
             foreach (var apiUrl in apiURLs)
 			{
-                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, userId))
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/Get?userId={userId}", userId))
                     break;
 			}
 		}
@@ -115,17 +118,16 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 	}
 
-    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, long userId)
+    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, string url, long userId)
     {
         try
         {
-            var url = $"{apiUrl}License/Get?userId={userId}";
             var response = await httpClient.GetAsync(url);
             LicenseLog += $"{TgResourceExtensions.GetMenuLicenseCheckServer()}: {apiUrl}" + Environment.NewLine;
             
             if (!response.IsSuccessStatusCode)
             {
-                LicenseLog += $"{TgResourceExtensions.GetMenuLicenseResponseStatusCode()}: {response.StatusCode}" + Environment.NewLine;
+                LicenseLog += $"{TgResourceExtensions.GetMenuLicense()}: {response.StatusCode}" + Environment.NewLine;
                 return false;
             }
 
@@ -150,7 +152,39 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task LicenseChangeAsync()
+    /// <summary> Request community license </summary>
+	private async Task LicenseRequestCommunityAsync() => await ContentDialogAsync(LicenseRequestCommunityCoreAsync, TgResourceExtensions.AskLicenseRequestCommunity());
+
+    private async Task LicenseRequestCommunityCoreAsync()
+    {
+        var userId = await App.BusinessLogicManager.ConnectClient.GetUserIdAsync();
+
+        try
+        {
+            LicenseLog = TgResourceExtensions.GetActionLicenseRequestCommunityMsg() + Environment.NewLine;
+
+            var apiURLs = new[] { App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl };
+            using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) };
+
+            foreach (var apiUrl in apiURLs)
+            {
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/RequestCommunity?userId={userId}", userId))
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        finally
+        {
+            await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
+            await LicenseShowInfoAsync();
+        }
+    }
+
+    /// <summary> Buy license </summary>
+    private async Task LicenseBuyAsync()
 	{
 		try
 		{

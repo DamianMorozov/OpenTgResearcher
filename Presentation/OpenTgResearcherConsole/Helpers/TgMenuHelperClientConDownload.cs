@@ -29,10 +29,7 @@ internal partial class TgMenuHelper
             TgLocale.MenuDownloadSetIsFileNamingByMessage
         );
         // Check paid license
-        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
-            selectionPrompt.AddChoice(TgLocale.MenuDownloadSetCountThreadsByPaidLicense);
-        else
-            selectionPrompt.AddChoice(TgLocale.MenuDownloadSetCountThreadsByFreeLicense);
+        selectionPrompt.AddChoice(TgLocale.MenuDownloadSetCountThreads);
         selectionPrompt.AddChoices(
             TgLocale.MenuSaveSettings,
             TgLocale.MenuManualDownload);
@@ -60,9 +57,7 @@ internal partial class TgMenuHelper
             return TgEnumMenuClientConDownload.DownloadSetIsCreatingSubdirectories;
         if (prompt.Equals(TgLocale.MenuDownloadSetIsFileNamingByMessage))
             return TgEnumMenuClientConDownload.DownloadSetIsFileNamingByMessage;
-        if (prompt.Equals(TgLocale.MenuDownloadSetCountThreadsByFreeLicense))
-            return TgEnumMenuClientConDownload.DownloadSetCountThreads;
-        if (prompt.Equals(TgLocale.MenuDownloadSetCountThreadsByPaidLicense))
+        if (prompt.Equals(TgLocale.MenuDownloadSetCountThreads))
             return TgEnumMenuClientConDownload.DownloadSetCountThreads;
         if (prompt.Equals(TgLocale.MenuSaveSettings))
             return TgEnumMenuClientConDownload.DownloadSettingsSave;
@@ -244,7 +239,7 @@ internal partial class TgMenuHelper
     private async Task DownloadSetCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
-        tgDownloadSettings.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreadsByFreeLicense}:"));
+        tgDownloadSettings.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreads}:"));
         if (tgDownloadSettings.CountThreads < 1)
             tgDownloadSettings.CountThreads = 1;
         else

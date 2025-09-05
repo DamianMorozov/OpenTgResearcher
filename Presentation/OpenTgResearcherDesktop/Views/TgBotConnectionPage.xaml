@@ -316,8 +316,7 @@
                             Grid.Row="3"
                             Margin="2,7,2,2"
                             FontWeight="Bold"
-                            TextAlignment="Left"
-                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
+                            TextAlignment="Left" />
                         <ToggleSwitch
                             Grid.Row="3"
                             Grid.Column="1"
@@ -325,8 +324,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.UseBot, Mode=TwoWay}"
-                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
+                            IsOn="{x:Bind ViewModel.UseBot, Mode=TwoWay}" />
                         <!--  BotToken  -->
                         <TextBlock
                             x:Uid="FieldBotToken"
@@ -334,8 +332,7 @@
                             Grid.Column="2"
                             Margin="12,7,2,2"
                             FontWeight="Bold"
-                            TextAlignment="Left"
-                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
+                            TextAlignment="Left" />
                         <TextBox
                             Grid.Row="3"
                             Grid.Column="3"
@@ -343,8 +340,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.BotTokenKey, Mode=TwoWay}"
-                            TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
-                            Visibility="{Binding Converter={StaticResource LicenseTypeToVisibilityConverter}}" />
+                            TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}" />
                     </Grid>
                 </Expander>
             </ContentControl>

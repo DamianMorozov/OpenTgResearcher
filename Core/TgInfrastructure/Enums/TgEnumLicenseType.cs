@@ -3,10 +3,11 @@
 
 namespace TgInfrastructure.Enums;
 
+/// <summary> License type </summary>
 public enum TgEnumLicenseType
 {
-	Free = 0,
-	Test = 1,
+	No = 0,
+	Community = 1,
 	Paid = 2,
 	Gift = 3,
 	Premium = 4,

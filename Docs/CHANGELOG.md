@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.220] - 2025-09-04
+## [0.7.230] - 2025-09-05
 ### Fixed
 - Fixed GitHub workflow
 - Fixed bugs in media comment parsing
@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added description of adding a license to `OpenTgResearcherDesktop`
 - Added media file download progress to the `Chat Content` page in `OpenTgResearcherDesktop`
 - Added downloading of covers for media files
+- Added community license request
 
 ## [0.7.140] - 2025-08-25
 ### Fixed

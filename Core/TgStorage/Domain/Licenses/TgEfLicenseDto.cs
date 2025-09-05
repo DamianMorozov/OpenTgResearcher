@@ -9,15 +9,15 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 	#region Fields, properties, constructor
 
 	[ObservableProperty]
-	public partial Guid LicenseKey { get; set; }
-	[ObservableProperty]
+	public partial Guid LicenseKey { get; set; } = Guid.Empty;
+    [ObservableProperty]
 	public partial long UserId { get; set; }
 	[ObservableProperty]
-	public partial TgEnumLicenseType LicenseType { get; set; }
-	[ObservableProperty]
+	public partial TgEnumLicenseType LicenseType { get; set; } = TgEnumLicenseType.No;
+    [ObservableProperty]
     [JsonConverter(typeof(TgDateOnlyJsonConverter))]
-    public partial DateOnly ValidTo { get; set; }
-	[ObservableProperty]
+    public partial DateOnly ValidTo { get; set; } = DateOnly.MinValue;
+    [ObservableProperty]
 	public partial bool IsConfirmed { get; set; }
 
 	public string ApiHashString
@@ -34,10 +34,7 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 
 	public TgEfLicenseDto() : base()
 	{
-		LicenseKey = Guid.Empty;
 		UserId = 0;
-		LicenseType = TgEnumLicenseType.Free;
-		ValidTo = DateOnly.MinValue;
 		IsConfirmed = false;
 	}
 

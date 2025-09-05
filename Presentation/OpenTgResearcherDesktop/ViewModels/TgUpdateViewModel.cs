@@ -1,6 +1,8 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+using TgBusinessLogic.Services;
+
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -45,7 +47,15 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 			TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
 			log.AppendLine($"{TgConstants.OpenTgResearcherDesktop} {TgAppSettingsHelper.Instance.AppVersion}");
 			log.AppendLine("Checking updates on the link github.com");
-			var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
+
+            // Check the current license for preview
+            if (isPreview && App.BusinessLogicManager.LicenseService.CurrentLicense.LicenseType < TgEnumLicenseType.Community)
+            {
+                log.AppendLine("To check the preview version, you need to obtain a license");
+                return;
+            }
+
+            var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
 			// Check for new version
 			var newVersion = await mgr.CheckForUpdatesAsync();
 			if (newVersion is null)

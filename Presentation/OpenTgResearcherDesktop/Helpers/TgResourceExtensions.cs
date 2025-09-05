@@ -42,6 +42,7 @@ public static class TgResourceExtensions
 	internal static string AskGetParticipants() => "AskGetParticipants".GetLocalizedResource();
 	internal static string AskLicenseCheck() => "AskLicenseCheck".GetLocalizedResource();
 	internal static string AskLicenseClear() => "AskLicenseClear".GetLocalizedResource();
+	internal static string AskLicenseRequestCommunity() => "AskLicenseRequestCommunity".GetLocalizedResource();
 	internal static string AskRestartApp() => "AskRestartApp".GetLocalizedResource();
 	internal static string AskSettingsClear() => "AskSettingsClear".GetLocalizedResource();
 	internal static string AskSettingsDefault() => "AskSettingsDefault".GetLocalizedResource();
@@ -60,6 +61,7 @@ public static class TgResourceExtensions
 	internal static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalizedResource();
 	internal static string GetActionCheckLicenseMsg() => "ActionLicenseCheckMsg".GetLocalizedResource();
 	internal static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalizedResource();
+	internal static string GetActionLicenseRequestCommunityMsg() => "ActionLicenseRequestCommunityMsg".GetLocalizedResource();
 	internal static string GetAppDisplayName() => "AppDisplayName".GetLocalizedResource();
 	internal static string GetAppLoading() => "AppLoading".GetLocalizedResource();
 	internal static string GetAppVersion() => "AppVersion".GetLocalizedResource();
@@ -77,14 +79,15 @@ public static class TgResourceExtensions
 	internal static string GetFrom() => "From".GetLocalizedResource();
 	internal static string GetInDevelopment() => "InDevelopment".GetLocalizedResource();
 	internal static string GetInstallerLoading() => "InstallerLoading".GetLocalizedResource();
-	internal static string GetLicenseFreeDescription() => "LicenseFreeDescription".GetLocalizedResource();
+	internal static string GetLicenseCommunityDescription() => "LicenseCommunityDescription".GetLocalizedResource();
 	internal static string GetLicenseLoading() => "LicenseLoading".GetLocalizedResource();
+	internal static string GetLicenseNoDescription() => "LicenseNoDescription".GetLocalizedResource();
 	internal static string GetLicensePaidDescription() => "LicensePaidDescription".GetLocalizedResource();
 	internal static string GetLicensePremiumDescription() => "LicensePremiumDescription".GetLocalizedResource();
-	internal static string GetLicenseTestDescription() => "LicenseTestDescription".GetLocalizedResource();
 	internal static string GetLoggerLoading() => "LoggerLoading".GetLocalizedResource();
 	internal static string GetManualDeleteFile(string fileName) => $"{"GetManualDeleteFile".GetLocalizedResource()}: {fileName}";
 	internal static string GetMenuClientIsQuery() => "MenuClientIsQuery".GetLocalizedResource();
+	internal static string GetMenuLicense() => "MenuLicense".GetLocalizedResource();
 	internal static string GetMenuLicenseCheckServer() => "MenuLicenseCheckServer".GetLocalizedResource();
 	internal static string GetMenuLicenseIsNotConfirmed() => "MenuLicenseIsNotConfirmed".GetLocalizedResource();
 	internal static string GetMenuLicenseResponseStatusCode() => "MenuLicenseResponseStatusCode".GetLocalizedResource();

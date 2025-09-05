@@ -64,7 +64,7 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		LicenseKey = this.GetDefaultPropertyGuid(nameof(LicenseKey));
 		UserId = this.GetDefaultPropertyLong(nameof(UserId));
-		LicenseType = TgEnumLicenseType.Free;
+		LicenseType = TgEnumLicenseType.No;
 		ValidTo = this.GetDefaultPropertyDateTime(nameof(ValidTo));
 		IsConfirmed = this.GetDefaultPropertyBool(nameof(IsConfirmed));
     }

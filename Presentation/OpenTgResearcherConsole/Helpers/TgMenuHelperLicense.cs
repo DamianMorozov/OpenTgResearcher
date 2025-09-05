@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 // ReSharper disable InconsistentNaming
 
+using System;
+
 namespace OpenTgResearcherConsole.Helpers;
 
 internal sealed partial class TgMenuHelper
@@ -18,6 +20,7 @@ internal sealed partial class TgMenuHelper
         selectionPrompt.AddChoices(TgLocale.MenuReturn,
             TgLocale.MenuLicenseClear,
             TgLocale.MenuLicenseCheck,
+            TgLocale.MenuLicenseRequestCommunity,
             TgLocale.MenuLicenseBuy
         );
 
@@ -26,6 +29,8 @@ internal sealed partial class TgMenuHelper
 			return TgEnumMenuLicense.LicenseClear;
 		if (prompt.Equals(TgLocale.MenuLicenseCheck))
 			return TgEnumMenuLicense.LicenseCheck;
+		if (prompt.Equals(TgLocale.MenuLicenseRequestCommunity))
+			return TgEnumMenuLicense.LicenseRequestCommunity;
 		if (prompt.Equals(TgLocale.MenuLicenseBuy))
 			return TgEnumMenuLicense.LicenseBuy;
 		return TgEnumMenuLicense.Return;
@@ -47,6 +52,9 @@ internal sealed partial class TgMenuHelper
 				case TgEnumMenuLicense.LicenseCheck:
 					await LicenseCheckOnlineAsync(tgDownloadSettings, isSilent: false);
 					break;
+				case TgEnumMenuLicense.LicenseRequestCommunity:
+					await LicenseRequestCommunityAsync(tgDownloadSettings, isSilent: false);
+					break;
 				case TgEnumMenuLicense.LicenseBuy:
 					await LicenseBuyAsync();
 					break;
@@ -56,8 +64,8 @@ internal sealed partial class TgMenuHelper
 		} while (menu is not TgEnumMenuLicense.Return);
 	}
 
-	/// <summary> Clear license </summary>
-	internal async Task LicenseClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    /// <summary> Clear license </summary>
+    internal async Task LicenseClearAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuLicenseClear))
 			return;
@@ -66,18 +74,12 @@ internal sealed partial class TgMenuHelper
 		await LicenseShowInfoAsync(tgDownloadSettings, [], isWait: false);
     }
 
-	/// <summary> Checks license online and updates local data </summary>
-	internal async Task LicenseCheckOnlineAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    /// <summary> Check current license </summary>
+    internal async Task LicenseCheckOnlineAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
 	{
         if (!isSilent && AskQuestionYesNoReturnNegative(TgLocale.MenuLicenseCheckWithUserId)) return;
 
-        var userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
-        if (userId == 0 && !isSilent)
-        {
-            AnsiConsole.MarkupLine($"  {TgLocale.TgClientUserId} is {userId}, try to connect client first!");
-            await ClientConnectAsync(tgDownloadSettings, isSilent);
-            userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
-        }
+        long userId = await GetUserIdAsync(tgDownloadSettings, isSilent);
 
         try
         {
@@ -88,12 +90,9 @@ internal sealed partial class TgMenuHelper
             {
                 foreach (var apiUrl in apiURLs)
                 {
-                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, userId, tgDownloadSettings, isSilent))
+                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/Get?userId={userId}", userId, tgDownloadSettings, isSilent))
                         break;
                 }
-
-                if (!isSilent)
-                    await LicenseShowInfoAsync(tgDownloadSettings, []);
             }
         }
         catch (Exception ex)
@@ -107,18 +106,62 @@ internal sealed partial class TgMenuHelper
         }
     }
 
-    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, long userId, TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    /// <summary> Request community license </summary>
+    private async Task LicenseRequestCommunityAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    {
+        if (!isSilent && AskQuestionYesNoReturnNegative(TgLocale.MenuLicenseRequestCommunity)) return;
+        
+        long userId = await GetUserIdAsync(tgDownloadSettings, isSilent);
+
+        try
+        {
+            var apiURLs = new[] { BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl };
+            using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) };
+
+            if (userId > 0)
+            {
+                foreach (var apiUrl in apiURLs)
+                {
+                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/RequestCommunity?userId={userId}", userId, tgDownloadSettings, isSilent))
+                        break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            if (!isSilent)
+            {
+                AnsiConsole.WriteLine($"  {TgLocale.MenuLicenseRequestError}");
+                AnsiConsole.WriteLine($"  {ex.Message}");
+            }
+        }
+    }
+
+    private async Task<long> GetUserIdAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    {
+        var userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
+        if (userId == 0 && !isSilent)
+        {
+            await ClientConnectAsync(tgDownloadSettings, isSilent: true);
+            userId = await BusinessLogicManager.ConnectClient.GetUserIdAsync();
+        }
+
+        return userId;
+    }
+
+    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, string url, long userId, 
+        TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
         try
         {
-            var url = $"{apiUrl}License/Get?userId={userId}";
             var response = await httpClient.GetAsync(url);
             var checkUrl = $"  {TgLocale.MenuLicenseCheckServer}: {apiUrl}";
 
             if (!response.IsSuccessStatusCode)
             {
                 if (!isSilent)
-                    await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"  {TgLocale.MenuLicenseResponseStatusCode}: {response.StatusCode}"]);
+                    await LicenseShowInfoAsync(tgDownloadSettings, [checkUrl, $"  {TgLocale.MenuLicense}: {response.StatusCode}"]);
                 return false;
             }
 

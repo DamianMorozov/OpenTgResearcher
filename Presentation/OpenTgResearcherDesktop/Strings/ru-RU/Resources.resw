@@ -426,10 +426,16 @@
     <value>Очистить текущую лицензию</value>
   </data>
   <data name="ActionLicenseCheck.Text" xml:space="preserve">
-    <value>Провить текущую лицензию онлайн</value>
+    <value>Проверить текущую лицензию</value>
   </data>
   <data name="ActionLicenseCheckMsg" xml:space="preserve">
-    <value>Провить свою текущую лицензию онлайн</value>
+    <value>Проверить текущую лицензию</value>
+  </data>
+  <data name="ActionLicenseRequestCommunity.Text" xml:space="preserve">
+    <value>Запросить лицензии сообщества</value>
+  </data>
+  <data name="ActionLicenseRequestCommunityMsg" xml:space="preserve">
+    <value>Запросить лицензии сообщества</value>
   </data>
   <data name="ActionLicenseBuy.Text" xml:space="preserve">
     <value>Сменить свою лицензию</value>
@@ -809,11 +815,11 @@
   <data name="ClientDataRequestEmptyResponse" xml:space="preserve">
     <value>Пусто</value>
   </data>
-  <data name="LicenseFreeDescription" xml:space="preserve">
-    <value>Бесплатная лицензия</value>
+  <data name="LicenseNoDescription" xml:space="preserve">
+    <value>Без лицензии</value>
   </data>
-  <data name="LicenseTestDescription" xml:space="preserve">
-    <value>Тестовая license</value>
+  <data name="LicenseCommunityDescription" xml:space="preserve">
+    <value>Комьюнити лицензия</value>
   </data>
   <data name="LicensePaidDescription" xml:space="preserve">
     <value>Платная лицензия</value>
@@ -1462,6 +1468,9 @@
   <data name="MenuLicenseResponseStatusCode" xml:space="preserve">
     <value>Код состояния</value>
   </data>
+  <data name="MenuLicense" xml:space="preserve">
+    <value>Лицензия</value>
+  </data>
   <data name="MenuLicenseIsNotConfirmed" xml:space="preserve">
     <value>Не подтверждено</value>
   </data>
@@ -1478,6 +1487,9 @@
     <value>Удалить лицензию?</value>
   </data>
   <data name="AskLicenseCheck" xml:space="preserve">
-    <value>Для проверки лицензии передаётся ID пользователя, продолжить?</value>
+    <value>Для проверки лицензии передаётся ID пользователя. Продолжить?</value>
+  </data>
+  <data name="AskLicenseRequestCommunity" xml:space="preserve">
+    <value>Запросить лицензию сообщества. Продолжить?</value>
   </data>
 </root>

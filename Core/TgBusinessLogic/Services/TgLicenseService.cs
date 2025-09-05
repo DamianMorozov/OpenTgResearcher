@@ -43,48 +43,42 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 
     #region Methods
 
-    public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue);
+    public void ActivateDefaultLicense() => ActivateLicense(false, Guid.Empty, TgEnumLicenseType.No, 0, DateOnly.MinValue);
 
-	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription,
+	public void ActivateLicenseWithDescriptions(string licenseNoDescription, string licenseCommunityDescription,
 		string licensePaidDescription, string licenseGiftDescription, string licensePremiumDescription) =>
-		ActivateLicense(false, Guid.Empty, TgEnumLicenseType.Free, 0, DateOnly.MinValue,
-		licenseFreeDescription, licenseTestDescription, licensePaidDescription, licenseGiftDescription, licensePremiumDescription);
+		ActivateLicense(false, Guid.Empty, TgEnumLicenseType.No, 0, DateOnly.MinValue,
+		licenseNoDescription, licenseCommunityDescription, licensePaidDescription, licenseGiftDescription, licensePremiumDescription);
 
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo,
-		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
-		string licensePaidDescription = "Paid license", string licenseGiftDescription = "Gift license", 
+		string licenseNoDescription = "No license", 
+        string licenseCommunityDescription = "Community license",
+		string licensePaidDescription = "Paid license", 
+        string licenseGiftDescription = "Gift license", 
         string licensePremiumDescription = "Premium license") =>
-		ActivateLicense(isConfirmed, licenseKey, licenseType, userId, DateOnly.FromDateTime(validTo), licenseFreeDescription,
-		licenseTestDescription, licensePaidDescription, licenseGiftDescription, licensePremiumDescription);
+		ActivateLicense(isConfirmed, licenseKey, licenseType, userId, DateOnly.FromDateTime(validTo), licenseNoDescription,
+            licenseCommunityDescription, licensePaidDescription, licenseGiftDescription, licensePremiumDescription);
 
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateOnly validTo,
-		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license",
-		string licensePaidDescription = "Paid license", string licenseGiftDescription = "Gift license", 
+		string licenseNoDescription = "No license", 
+        string licenseCommunityDescription = "Community license",
+		string licensePaidDescription = "Paid license", 
+        string licenseGiftDescription = "Gift license", 
         string licensePremiumDescription = "Premium license")
 	{
-		CurrentLicense = new TgLicenseDto() 
-            { IsConfirmed = isConfirmed, LicenseKey = licenseKey, LicenseType = licenseType, ValidTo = validTo, UserId = userId };
-		switch (licenseType)
-		{
-			case TgEnumLicenseType.Free:
-				CurrentLicense.SetDescription(licenseFreeDescription);
-				break;
-			case TgEnumLicenseType.Test:
-				CurrentLicense.SetDescription(licenseTestDescription);
-				break;
-			case TgEnumLicenseType.Paid:
-				CurrentLicense.SetDescription(licensePaidDescription);
-				break;
-			case TgEnumLicenseType.Gift:
-				CurrentLicense.SetDescription(licenseGiftDescription);
-				break;
-			case TgEnumLicenseType.Premium:
-				CurrentLicense.SetDescription(licensePremiumDescription);
-				break;
-		}
-	}
+        var description = licenseType switch
+        {
+            TgEnumLicenseType.No => licenseNoDescription,
+            TgEnumLicenseType.Community => licenseCommunityDescription,
+            TgEnumLicenseType.Paid => licensePaidDescription,
+            TgEnumLicenseType.Gift => licenseGiftDescription,
+            TgEnumLicenseType.Premium => licensePremiumDescription,
+            _ => licenseNoDescription
+        };
+        CurrentLicense = new TgLicenseDto(description, licenseKey, licenseType, userId, validTo, isConfirmed);
+    }
 
-	public async Task LicenseActivateAsync()
+    public async Task LicenseActivateAsync()
 	{
         var licenseDtos = await StorageManager.LicenseRepository.GetListDtosAsync();
         var currentLicenseDto = licenseDtos.FirstOrDefault(x => x.IsConfirmed && DateTime.Parse($"{x.ValidTo:yyyy-MM-dd}") >= DateTime.UtcNow.Date);
@@ -137,7 +131,8 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         var licenseCreatedDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
         if (licenseCreatedDtos.Count != 0)
         {
-            licenseCountDto.CreatedTestCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
+            licenseCountDto.CreatedNoneCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.No).Count();
+            licenseCountDto.CreatedCommunityCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Community).Count();
             licenseCountDto.CreatedPaidCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
             licenseCountDto.CreatedGiftCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Gift).Count();
             licenseCountDto.CreatedPremiumCount = licenseCreatedDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
@@ -148,7 +143,8 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
         var licenseValidDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0, x => x.ValidTo >= DateTime.UtcNow.Date);
         if (licenseValidDtos.Count != 0)
         {
-            licenseCountDto.ValidTestCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Test).Count();
+            licenseCountDto.ValidNoneCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.No).Count();
+            licenseCountDto.ValidCommunityCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Community).Count();
             licenseCountDto.ValidPaidCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Paid).Count();
             licenseCountDto.ValidGiftCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Gift).Count();
             licenseCountDto.ValidPremiumCount = licenseValidDtos.Where(x => x.LicenseType == TgEnumLicenseType.Premium).Count();
@@ -169,14 +165,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
             result.Value = "User ID must be greater than zero!";
             return await Task.FromResult(result);
         }
-        var licenseDto = new TgLicenseDto
-        {
-            IsConfirmed = true,
-            LicenseKey = licenseKey ?? Guid.NewGuid(),
-            LicenseType = licenseType,
-            UserId = userId,
-            ValidTo = validTo
-        };
+        var licenseDto = new TgLicenseDto(licenseKey ?? Guid.NewGuid(), licenseType, userId, validTo, isConfirmed: true);
         await LicenseUpdateAsync(licenseDto, isUidCopy: uid is not null && licenseKey is not null);
         ActivateLicense(licenseDto.IsConfirmed, licenseDto.LicenseKey, licenseDto.LicenseType, licenseDto.UserId, licenseDto.ValidTo);
         result.IsOk = true;

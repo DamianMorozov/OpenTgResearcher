@@ -138,7 +138,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
         if (!createdNew)
         {
             // License verification: if it is free, we do not allow the launch of multiple copies
-            if (BusinessLogicManager.LicenseService.CurrentLicense.LicenseType == TgEnumLicenseType.Free)
+            if (BusinessLogicManager.LicenseService.CurrentLicense.LicenseType < TgEnumLicenseType.Paid)
             {
                 TgLog.WriteLine("");
                 TgLog.WriteLine($"  {TgLocale.LicenseLimitByMultipleInstances}");

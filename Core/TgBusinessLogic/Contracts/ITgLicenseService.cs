@@ -11,12 +11,18 @@ public interface ITgLicenseService : IDisposable
 
 	public void ActivateDefaultLicense();
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateTime validTo, 
-		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license", string licensePaidDescription = "Paid license", 
-        string licenseGiftDescription = "Gift license", string licensePremiumDescription = "Premium license");
+		string licenseNoDescription = "No license", 
+        string licenseCommunityDescription = "Community license", 
+        string licensePaidDescription = "Paid license", 
+        string licenseGiftDescription = "Gift license", 
+        string licensePremiumDescription = "Premium license");
 	public void ActivateLicense(bool isConfirmed, Guid licenseKey, TgEnumLicenseType licenseType, long userId, DateOnly validTo, 
-		string licenseFreeDescription = "Free license", string licenseTestDescription = "Test license", string licensePaidDescription = "Paid license", 
-        string licenseGiftDescription = "Gift license", string licensePremiumDescription = "Premium license");
-	public void ActivateLicenseWithDescriptions(string licenseFreeDescription, string licenseTestDescription, string licensePaidDescription, 
+		string licenseNoDescription = "No license", 
+        string licenseCommunityDescription = "Community license", 
+        string licensePaidDescription = "Paid license", 
+        string licenseGiftDescription = "Gift license", 
+        string licensePremiumDescription = "Premium license");
+	public void ActivateLicenseWithDescriptions(string licenseNoDescription, string licenseCommunityDescription, string licensePaidDescription, 
         string licenseGiftDescription, string licensePremiumDescription);
 	public Task LicenseActivateAsync();
 	public Task LicenseClearAsync();

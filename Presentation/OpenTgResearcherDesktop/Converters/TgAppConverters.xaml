@@ -10,7 +10,6 @@
     <converters:TgEnumToColumnSpanConverter x:Key="EnumToColumnSpanConverter" />
     <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:TgInverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-    <converters:TgLicenseTypeToVisibilityConverter x:Key="LicenseTypeToVisibilityConverter" />
     <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
 
 </ResourceDictionary>

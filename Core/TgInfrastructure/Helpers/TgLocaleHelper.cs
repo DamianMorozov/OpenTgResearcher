@@ -84,13 +84,13 @@ public sealed class TgLocaleHelper : ObservableObject
     public string FieldUserName => "Username";
     public string FieldValue => "Value";
     public string FieldVersion => "Version";
-    public string LicenseDescriptionFree => "Free license";
+    public string LicenseCommunityDescription => "Community license";
+    public string LicenseDescriptionNo => "No license";
     public string LicenseDescriptionPaid => "Paid license";
     public string LicenseDescriptionPremium => "Premium license";
     public string LicenseErrorCheckingMutex => "Error checking the mutex";
-    public string LicenseLimitByMultipleInstances => "Free license does not allow multiple instances";
+    public string LicenseLimitByMultipleInstances => "No license does not allow multiple instances";
     public string LicenseMutexAccessError => "Mutex access error";
-    public string LicenseTestDescription => "Test license";
     public string LicenseVersionShort => "License";
     public string MaxCodePwdAttempts => "Max code pwd attempts";
     public string MenuBotConnect => "Connect bot to TG server";
@@ -228,8 +228,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientStopMonitoringChats => "Stop monitoring chats";
 	public string MenuClientUseClient => "Use client";
 	public string MenuClientVerificationCode => "Verification code";
-	public string MenuDownloadSetCountThreadsByFreeLicense => "Count of threads (1-10)";
-	public string MenuDownloadSetCountThreadsByPaidLicense => "Count of threads (1-100)";
+	public string MenuDownloadSetCountThreads => "Count of threads (1-100)";
 	public string MenuDownloadSetFolder => "Setup download folder";
 	public string MenuDownloadSetIsAddMessageId => "Enable join message ID with file";
 	public string MenuDownloadSetIsAutoUpdate => "Enable auto update";
@@ -267,20 +266,22 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuIsFalse => "False";
 	public string MenuIsTrue => "True";
 	public string MenuKeywordsForMessageFiltering => "Keywords for message filtering";
+	public string MenuLicense => "License";
 	public string MenuLicenseBuy => "Buy license";
-	public string MenuLicenseCheck => "Check current or get test license";
+	public string MenuLicenseCheck => "Check current license";
 	public string MenuLicenseCheckServer => "Check license server";
 	public string MenuLicenseCheckUrl => "Check URL";
-	public string MenuLicenseCheckWithUserId => "To verify the license, the user ID is passed, continue";
+	public string MenuLicenseCheckWithUserId => "To verify the license, the user ID is transmitted. Continue";
 	public string MenuLicenseClear => "Clear license";
 	public string MenuLicenseCurrent => "Current license";
 	public string MenuLicenseDescription => "License description";
 	public string MenuLicenseEndpoint => "Endpoint";
 	public string MenuLicenseExpiration => "Expiration";
-	public string MenuLicenseFolowThisLink => "Follow this link";
+	public string MenuLicenseRequestCommunity => "Request community license";
+	public string MenuLicenseFollowThisLink => "Follow this link";
 	public string MenuLicenseInfo => "View license info";
 	public string MenuLicenseIsConfirmed => "Confirmed";
-	public string MenuLicenseIsNotConfirmed => "Is not cofirmed";
+	public string MenuLicenseIsNotConfirmed => "Not confirmed";
 	public string MenuLicenseKey => "License key";
 	public string MenuLicenseRequestError => "Request error";
 	public string MenuLicenseResponseStatusCode => "Status code";
@@ -422,7 +423,19 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string WaitDownloadComplete => "Wait download complete";
 	public string WaitDownloadCompleteWithQuit => "Wait download complete (q - quit)";
 	public string WarningMessage(string message) => $"[red]x {message}[/]";
-	public TgEnumLanguage Language { get; set; } = TgEnumLanguage.Default;
+
+    public override bool Equals(object? obj)
+    {
+        return obj is TgLocaleHelper helper &&
+               MenuLicenseFollowThisLink == helper.MenuLicenseFollowThisLink;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(MenuLicenseFollowThisLink);
+    }
+
+    public TgEnumLanguage Language { get; set; } = TgEnumLanguage.Default;
 
 	#endregion
 }

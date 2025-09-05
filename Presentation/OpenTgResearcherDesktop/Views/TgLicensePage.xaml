@@ -30,6 +30,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <!--  Clear license  -->
                         <Button
@@ -49,7 +50,7 @@
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
-                        <!--  Clear current license  -->
+                        <!--  Check current license  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="1"
@@ -67,14 +68,32 @@
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
-                        <!--  Buy license  -->
+                        <!--  Request community license  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="2"
                             Margin="0,5,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.LicenseChangeCommand}"
+                            Command="{x:Bind ViewModel.LicenseRequestCommunityCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                                <TextBlock
+                                    x:Uid="ActionLicenseRequestCommunity"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    HorizontalTextAlignment="Left" />
+                            </StackPanel>
+                        </Button>
+                        <!--  Buy license  -->
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="0,5,5,0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.LicenseBuyCommand}"
                             IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />

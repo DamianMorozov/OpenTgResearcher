@@ -47,7 +47,7 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
 
     #endregion
 
-    #region Public and internal methods
+    #region Methods
 
     public string ToDebugString() => TgConstants.UseOverrideMethod;
 

@@ -6,7 +6,28 @@ namespace OpenTgResearcherConsole.Helpers;
 
 internal sealed partial class TgMenuHelper
 {
-    public void CatchException(Exception ex, string message = "",
+    #region Methods
+
+    /// <summary> Open web-site </summary>
+    private static async Task WebSiteOpenAsync(string url)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            TgDebugUtils.WriteExceptionToDebug(ex);
+            AnsiConsole.WriteLine($"  Opening error URL: {ex.Message}");
+        }
+        finally
+        {
+            await Task.CompletedTask;
+        }
+    }
+
+    /// <summary> Catch exception, show message and write to debug </summary>
+    public static void CatchException(Exception ex, string message = "",
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
     {
         if (!string.IsNullOrEmpty(message))
@@ -18,4 +39,6 @@ internal sealed partial class TgMenuHelper
         TgDebugUtils.WriteExceptionToDebug(ex, message, filePath, lineNumber, memberName);
         TgLog.TypeAnyKeyForReturn();
     }
+
+    #endregion
 }

@@ -189,7 +189,7 @@ public static class Program
             }
             catch (Exception ex)
             {
-                tgMenu.CatchException(ex);
+                TgMenuHelper.CatchException(ex);
             }
         } while (tgMenu.Value is not TgEnumMenuMain.Exit);
     }

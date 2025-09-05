@@ -353,5 +353,5 @@ internal partial class TgMenuHelper
 			? TgLog.GetDtShortStamp()
 			: $"{TgLog.GetDtShortStamp()} | {TgDataUtils.CalcSourceProgress(count, current):#00.00} % | {TgDataUtils.GetLongString(current)} / {TgDataUtils.GetLongString(count)}";
 
-#endregion
+    #endregion
 }

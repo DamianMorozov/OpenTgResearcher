@@ -89,56 +89,68 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	private async Task LicenseCheckCoreAsync()
 	{
+        var userId = await App.BusinessLogicManager.ConnectClient.GetUserIdAsync();
+
         try
-		{
+        {
 			LicenseLog = TgResourceExtensions.GetActionCheckLicenseMsg() + Environment.NewLine;
 
-            var apiUrls = new[] { App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl, App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl };
-			using var httpClient = new HttpClient();
-			httpClient.Timeout = TimeSpan.FromSeconds(10);
-            var userId = await App.BusinessLogicManager.ConnectClient.GetUserIdAsync();
+            var apiURLs = new[] { App.BusinessLogicManager.LicenseService.MenuWebSiteGlobalUrl };
+            using var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) };
 
-            foreach (var apiUrl in apiUrls)
+            foreach (var apiUrl in apiURLs)
 			{
-				try
-				{
-					var url = $"{apiUrl}License/Get?userId={userId}";
-					var response = await httpClient.GetAsync(url);
-					LicenseLog += $"{TgResourceExtensions.GetMenuLicenseCheckServer()}: {apiUrl}" + Environment.NewLine;
-					if (!response.IsSuccessStatusCode)
-					{
-						LicenseLog += $"{TgResourceExtensions.GetMenuLicenseResponseStatusCode()}: {response.StatusCode}" + Environment.NewLine;
-						continue;
-					}
-
-					var jsonResponse = await response.Content.ReadAsStringAsync();
-					var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
-					if (licenseDto?.IsConfirmed != true)
-					{
-						LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotConfirmed()}: {response.StatusCode}" + Environment.NewLine;
-						continue;
-					}
-
-					// Updating an existing license or creating a new license
-					await App.BusinessLogicManager.LicenseService.LicenseUpdateAsync(licenseDto);
-
-					LicenseLog += TgResourceExtensions.GetMenuLicenseUpdatedSuccessfully() + Environment.NewLine;
-					return;
-				}
-				catch (Exception ex)
-				{
-					TgLogUtils.WriteException(ex);
-				}
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, userId))
+                    break;
 			}
 		}
-		finally
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        finally
 		{
 			await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
 			await LicenseShowInfoAsync();
 		}
 	}
 
-	private async Task LicenseChangeAsync()
+    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, long userId)
+    {
+        try
+        {
+            var url = $"{apiUrl}License/Get?userId={userId}";
+            var response = await httpClient.GetAsync(url);
+            LicenseLog += $"{TgResourceExtensions.GetMenuLicenseCheckServer()}: {apiUrl}" + Environment.NewLine;
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                LicenseLog += $"{TgResourceExtensions.GetMenuLicenseResponseStatusCode()}: {response.StatusCode}" + Environment.NewLine;
+                return false;
+            }
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var licenseDto = JsonSerializer.Deserialize<TgLicenseDto>(jsonResponse, TgJsonSerializerUtils.GetJsonOptions());
+            if (licenseDto?.IsConfirmed != true)
+            {
+                LicenseLog += $"{TgResourceExtensions.GetMenuLicenseIsNotConfirmed()}: {response.StatusCode}" + Environment.NewLine;
+                return false;
+            }
+
+            // Updating an existing license or creating a new license
+            await App.BusinessLogicManager.LicenseService.LicenseUpdateAsync(licenseDto);
+
+            LicenseLog += TgResourceExtensions.GetMenuLicenseUpdatedSuccessfully() + Environment.NewLine;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            return false;
+        }
+    }
+
+    private async Task LicenseChangeAsync()
 	{
 		try
 		{

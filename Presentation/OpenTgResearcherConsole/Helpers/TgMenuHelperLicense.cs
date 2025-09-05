@@ -90,7 +90,8 @@ internal sealed partial class TgMenuHelper
             {
                 foreach (var apiUrl in apiURLs)
                 {
-                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteGet}?userId={userId}", userId, tgDownloadSettings, isSilent))
+                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteGet}?userId={userId}", userId, 
+                        tgDownloadSettings, isPost: false, isSilent))
                         break;
                 }
             }
@@ -122,7 +123,8 @@ internal sealed partial class TgMenuHelper
             {
                 foreach (var apiUrl in apiURLs)
                 {
-                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteCreateCommunity}?userId={userId}", userId, tgDownloadSettings, isSilent))
+                    if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteCreateCommunity}?userId={userId}", 
+                        userId, tgDownloadSettings, isPost: true, isSilent))
                         break;
                 }
             }
@@ -151,11 +153,11 @@ internal sealed partial class TgMenuHelper
     }
 
     private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, string url, long userId, 
-        TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+        TgDownloadSettingsViewModel tgDownloadSettings, bool isPost, bool isSilent)
     {
         try
         {
-            var response = await httpClient.GetAsync(url);
+            var response = isPost ? await httpClient.PostAsync(url, null) : await httpClient.GetAsync(url);
             var checkUrl = $"  {TgLocale.MenuLicenseCheckServer}: {apiUrl}";
 
             if (!response.IsSuccessStatusCode)

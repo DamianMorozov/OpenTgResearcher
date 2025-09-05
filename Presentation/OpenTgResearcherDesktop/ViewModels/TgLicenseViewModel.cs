@@ -103,7 +103,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
             foreach (var apiUrl in apiURLs)
 			{
-                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteGet}?userId={userId}", userId))
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteGet}?userId={userId}", userId, isPost: false))
                     break;
 			}
 		}
@@ -118,11 +118,11 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 	}
 
-    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, string url, long userId)
+    private async Task<bool> TryCheckLicenseFromServerAsync(HttpClient httpClient, string apiUrl, string url, long userId, bool isPost)
     {
         try
         {
-            var response = await httpClient.GetAsync(url);
+            var response = isPost ? await httpClient.PostAsync(url, null) : await httpClient.GetAsync(url);
             LicenseLog += $"{TgResourceExtensions.GetMenuLicenseCheckServer()}: {apiUrl}" + Environment.NewLine;
             
             if (!response.IsSuccessStatusCode)
@@ -176,7 +176,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
             foreach (var apiUrl in apiURLs)
             {
-                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteCreateCommunity}?userId={userId}", userId))
+                if (await TryCheckLicenseFromServerAsync(httpClient, apiUrl, $"{apiUrl}License/{TgGlobalTools.RouteCreateCommunity}?userId={userId}", userId, isPost: true))
                     break;
             }
         }

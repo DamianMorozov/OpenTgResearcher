@@ -198,7 +198,7 @@ public sealed partial class TgBotConnectionViewModel : TgPageViewModelBase
 				return;
 			if (Exception.Message.Contains("or delete the file to start a new session"))
 			{
-				await TgDesktopUtils.DeleteFileStorageExistsAsync(SettingsService.AppSession);
+				await TgDesktopUtils.DeleteFileAsync(SettingsService.AppSession);
 				await ClientConnectCoreAsync(isRetry: true);
 			}
 		}

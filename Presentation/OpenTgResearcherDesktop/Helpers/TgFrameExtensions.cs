@@ -3,7 +3,7 @@
 
 namespace OpenTgResearcherDesktop.Helpers;
 
-/// <summary> Fram extensions </summary>
+/// <summary> Frame extensions </summary>
 public static class TgFrameExtensions
 {
     /// <summary> Get the ViewModel from the Frame's content </summary>

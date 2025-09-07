@@ -5,7 +5,6 @@ namespace OpenTgResearcherDesktop.Services;
 
 public sealed class AppNotificationService : IAppNotificationService
 {
-	//private readonly INavigationService _navigationService;
 	#region Fields, properties, constructor
 
 	private bool _isClientConnected;
@@ -23,9 +22,9 @@ public sealed class AppNotificationService : IAppNotificationService
 	}
 	public event EventHandler<bool> ClientConnectionChanged = (_, _) => { };
 
-	public AppNotificationService(INavigationService navigationService)
+	public AppNotificationService()
 	{
-		//_navigationService = navigationService;
+		//
 	}
 
 	~AppNotificationService()

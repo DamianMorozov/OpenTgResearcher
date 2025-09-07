@@ -192,6 +192,7 @@ public partial class App : Application
         TgLogUtils.CloseAndFlush();
 
         BusinessLogicManager.Dispose();
+        Scope.Dispose();
 
         GC.SuppressFinalize(this);
     }

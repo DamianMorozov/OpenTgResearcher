@@ -6,7 +6,6 @@ namespace OpenTgResearcherDesktop.Services;
 public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers,
 	ITgSettingsService settingsService) : IActivationService
 {
-	private UIElement? _shell;
     private UIElement? _content;
 
     public async Task ActivateAsync(object activationArgs)
@@ -19,8 +18,7 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
             if (App.MainWindow.Content == null)
             {
                 // ShellPage loading
-                _shell = App.GetService<ShellPage>();
-                App.MainWindow.Content = _shell ?? new Frame();
+                App.MainWindow.Content = App.GetService<ShellPage>();
             }
             // Handle activation via ActivationHandlers
             await HandleActivationAsync(activationArgs);

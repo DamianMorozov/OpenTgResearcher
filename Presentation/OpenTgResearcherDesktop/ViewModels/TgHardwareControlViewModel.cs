@@ -4,7 +4,7 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
+public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -17,21 +17,76 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial int MemoryTotalUsage { get; set; }
 
+    private ILifetimeScope Scope { get; } = default!;
+
     private ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; }
 
     public IRelayCommand StartMonitorCommand { get; }
     public IRelayCommand StopMonitorCommand { get; }
 
-    public TgHardwareControlViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgHardwareControlViewModel> logger,
-        ITgHardwareResourceMonitoringService tgHardwareControlService)
+    public TgHardwareControlViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgHardwareControlViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgHardwareControlViewModel))
     {
-        var scope = TgGlobalTools.Container.BeginLifetimeScope();
-        HardwareResourceMonitoringService = scope.Resolve<ITgHardwareResourceMonitoringService>();
+        Scope = TgGlobalTools.Container.BeginLifetimeScope();
+        HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();
         HardwareResourceMonitoringService.MetricsUpdated += OnMetricsUpdated;
         // Commands
         StartMonitorCommand = new AsyncRelayCommand(StartMonitorAsync);
         StopMonitorCommand = new AsyncRelayCommand(StopMonitorAsync);
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    /// <summary> To detect redundant calls </summary>
+    private bool _disposed;
+
+    /// <summary> Finalizer </summary>
+	~TgHardwareControlViewModel() => Dispose(false);
+
+    /// <summary> Throw exception if disposed </summary>
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
+
+    /// <summary> Release managed resources </summary>
+    public void ReleaseManagedResources()
+    {
+        CheckIfDisposed();
+
+        HardwareResourceMonitoringService.MetricsUpdated -= OnMetricsUpdated;
+        HardwareResourceMonitoringService.Dispose();
+
+        Scope.Dispose();
+    }
+
+    /// <summary> Release unmanaged resources </summary>
+    public void ReleaseUnmanagedResources()
+    {
+        CheckIfDisposed();
+
+        //
+    }
+
+    /// <summary> Dispose pattern </summary>
+    public void Dispose()
+    {
+        // Dispose of unmanaged resources
+        Dispose(true);
+        // Suppress finalization
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary> Dispose pattern </summary>
+    private void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        // Release managed resources
+        if (disposing)
+            ReleaseManagedResources();
+        // Release unmanaged resources
+        ReleaseUnmanagedResources();
+        // Flag
+        _disposed = true;
     }
 
     #endregion

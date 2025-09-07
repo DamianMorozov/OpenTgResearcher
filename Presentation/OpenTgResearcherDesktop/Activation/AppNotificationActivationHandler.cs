@@ -5,13 +5,9 @@ namespace OpenTgResearcherDesktop.Activation;
 
 public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
-	//private readonly INavigationService _navigationService;
-	//private readonly IAppNotificationService _notificationService;
-
-	public AppNotificationActivationHandler(INavigationService navigationService, IAppNotificationService notificationService)
+	public AppNotificationActivationHandler()
 	{
-		//_navigationService = navigationService;
-		//_notificationService = notificationService;
+        //
 	}
 
 	protected override bool CanHandleInternal(LaunchActivatedEventArgs args)

@@ -4,7 +4,7 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public partial class TgSplashScreenViewModel : TgPageViewModelBase
+public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -19,6 +19,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     [ObservableProperty] public partial string AppVersion { get; set; } = string.Empty;
 
     private ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; }
+    private ILifetimeScope Scope { get; } = default!;
 
     public Action BackToMainWindow { get; internal set; } = () => { };
     public IRelayCommand ContinueCommand { get; }
@@ -26,12 +27,65 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     public TgSplashScreenViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSplashScreenViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
     {
-        var scope = TgGlobalTools.Container.BeginLifetimeScope();
-        HardwareResourceMonitoringService = scope.Resolve<ITgHardwareResourceMonitoringService>();
+        Scope = TgGlobalTools.Container.BeginLifetimeScope();
+        HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();
         // App version + Storage version + License
         AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
         // Commands
         ContinueCommand = new AsyncRelayCommand(ContinueAsync);
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    /// <summary> To detect redundant calls </summary>
+    private bool _disposed;
+
+    /// <summary> Finalizer </summary>
+	~TgSplashScreenViewModel() => Dispose(false);
+
+    /// <summary> Throw exception if disposed </summary>
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
+
+    /// <summary> Release managed resources </summary>
+    public void ReleaseManagedResources()
+    {
+        CheckIfDisposed();
+
+        HardwareResourceMonitoringService.Dispose();
+
+        Scope.Dispose();
+    }
+
+    /// <summary> Release unmanaged resources </summary>
+    public void ReleaseUnmanagedResources()
+    {
+        CheckIfDisposed();
+
+        //
+    }
+
+    /// <summary> Dispose pattern </summary>
+    public void Dispose()
+    {
+        // Dispose of unmanaged resources
+        Dispose(true);
+        // Suppress finalization
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary> Dispose pattern </summary>
+    private void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        // Release managed resources
+        if (disposing)
+            ReleaseManagedResources();
+        // Release unmanaged resources
+        ReleaseUnmanagedResources();
+        // Flag
+        _disposed = true;
     }
 
     #endregion

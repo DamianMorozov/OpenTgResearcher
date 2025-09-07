@@ -8,44 +8,7 @@ public static class TgDesktopUtils
 {
 	#region Methods
 
-	//public static async Task<bool> CheckFileStorageExistsAsync(string fullPath)
-	//{
-	//	var result = await CheckFileStorageExistsCoreAsync(fullPath);
-	//	if (result)
-	//		return true;
-	//	return await CheckFileStorageExistsCoreAsync(fullPath);
-	//}
-
-	//private static async Task<bool> CheckFileStorageExistsCoreAsync(string fullPath)
-	//{
- //       try
- //       {
-	//	    var folder = Path.GetDirectoryName(fullPath) ?? string.Empty;
-	//	    if (string.IsNullOrEmpty(folder))
-	//		    return false;
-	//	    var fileName = Path.GetFileName(fullPath);
-	//		var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
- //           if (storageFolder is null)
- //               return false;
- //           var storageFile = await storageFolder.GetFileAsync(fileName);
- //           return storageFile.IsAvailable;
- //       }
- //       catch (Exception ex)
- //       {
-	//		LogFatal(ex);
- //       }
- //       return false;
-	//}
-
-	public static async Task<bool> DeleteFileStorageExistsAsync(string fullPath)
-	{
-		var result = await DeleteFileStorageExistsCoreAsync(fullPath);
-		if (result)
-			return true;
-		return await DeleteFileStorageExistsCoreAsync(fullPath);
-	}
-
-	public static async Task<bool> DeleteFileStorageExistsCoreAsync(string fullPath)
+	public static async Task DeleteFileAsync(string fullPath)
 	{
 		var folder = string.Empty;
 		var fileName = string.Empty;
@@ -53,11 +16,11 @@ public static class TgDesktopUtils
 		{
 			folder = Path.GetDirectoryName(fullPath) ?? string.Empty;
 			if (string.IsNullOrEmpty(folder))
-				return false;
+				return;
 			fileName  = Path.GetFileName(fullPath);
 			var storageFolder = await StorageFolder.GetFolderFromPathAsync(folder);
 			if (storageFolder is null)
-				return false;
+				return;
 			var storageFile = await storageFolder.GetFileAsync(fileName);
 			if (storageFile.IsAvailable)
 				await storageFile.DeleteAsync();
@@ -66,7 +29,6 @@ public static class TgDesktopUtils
 		{
 			TgLogUtils.WriteExceptionWithMessage(ex, $"{Path.Combine(folder, fileName)}");
 		}
-		return false;
 	}
 
 	public static async Task<long> CalculateDirSizeAsync(string folderPath)
@@ -130,23 +92,6 @@ public static class TgDesktopUtils
 		}
 		return null;
 	}
-
-	//public static async void OnClipboardWriteClick(this TgEfMessageDto dto, object sender, RoutedEventArgs e)
-	//{
-	//	if (sender is Button button)
-	//	{
-	//		var address = button.Tag?.ToString();
-	//		if (string.IsNullOrEmpty(address))
-	//			return;
-	//		if (!string.IsNullOrEmpty(address))
-	//		{
-	//			var dataPackage = new DataPackage();
-	//			dataPackage.SetText(address);
-	//			Clipboard.SetContent(dataPackage);
-	//			await ContentDialogAsync(TgResourceExtensions.GetClipboard(), address);
-	//		}
-	//	}
-	//}
 
 	#endregion
 }

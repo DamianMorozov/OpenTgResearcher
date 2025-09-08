@@ -55,8 +55,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
 
-    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService,
-        ILogger<TgPageViewModelBase> logger, string name) : base()
+    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
     {
         SettingsService = settingsService;
         NavigationService = navigationService;

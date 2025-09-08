@@ -18,17 +18,16 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
     public partial ObservableCollection<TgEfUserWithMessagesDto> UserWithMessagesDtos { get; set; } = [];
 
     public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearDataStorageCommand { get; }
+	public IRelayCommand ClearViewCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 
 	public TgUserDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUserDetailsViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgUserDetailsViewModel))
 	{
 		// Commands
-		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+		ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
 	#endregion
@@ -42,7 +41,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 			await ReloadUiAsync();
 		});
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         Dto.IsDisplaySensitiveData = IsDisplaySensitiveData;
 
@@ -54,6 +53,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
                 messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
             }
         }
+
         await Task.CompletedTask;
     }
 
@@ -82,7 +82,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
             foreach (var chatId in ListIds)
             {
                 var messageDtos = await App.BusinessLogicManager.StorageManager.MessageRepository
-                    .GetListDtosAsync(0, 0, x => x.SourceId == chatId);
+                    .GetListDtosAsync(0, 0, x => x.SourceId == chatId && x.UserId == Dto.Id);
                 messageDtos = [.. messageDtos.OrderBy(x => x.Id)];
                 var chatDto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Id == chatId);
                 UserWithMessagesDtos.Add(new TgEfUserWithMessagesDto(Dto, chatDto, messageDtos));

@@ -66,19 +66,19 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 			// Download new version
 			log.AppendLine("Download new version");
 			await mgr.DownloadUpdatesAsync(newVersion);
-			//// Install new version and restart app
-			//var prompt = AnsiConsole.Prompt(
-			//	new SelectionPrompt<string>()
-			//		.Title("  Install new version and restart app?")
-			//		.PageSize(Console.WindowHeight - 5)
-			//		.MoreChoicesText(TgLocale.MoveUpDown)
-			//		.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
-			//var isYes = prompt.Equals(TgLocale.MenuYes);
-			//if (isYes)
-			//	mgr.ApplyUpdatesAndRestart(newVersion);
-		}
-		// Cannot perform this operation in an application which is not installed
-		catch (Exception ex)
+            //// Install new version and restart app
+            //var prompt = AnsiConsole.Prompt(
+            //	new SelectionPrompt<string>()
+            //		.Title("  Install new version and restart app?")
+            //		.PageTake(Console.WindowHeight - 5)
+            //		.MoreChoicesText(TgLocale.MoveUpDown)
+            //		.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
+            //var isYes = prompt.Equals(TgLocale.MenuYes);
+            //if (isYes)
+            //	mgr.ApplyUpdatesAndRestart(newVersion);
+        }
+        // Cannot perform this operation in an application which is not installed
+        catch (Exception ex)
 		{
 			log.AppendLine(ex.Message);
 			TgLogUtils.WriteException(ex);

@@ -31,7 +31,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         AppNotificationService = appNotificationService;
         // Commands
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
     #endregion
@@ -44,7 +43,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
             await LoadDataStorageCoreAsync();
         });
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         foreach (var userDto in UserDtos)
         {

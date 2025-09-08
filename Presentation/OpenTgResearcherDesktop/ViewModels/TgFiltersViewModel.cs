@@ -11,14 +11,14 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfFilterDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearDataStorageCommand { get; }
+	public IRelayCommand ClearViewCommand { get; }
 	public IRelayCommand DefaultSortCommand { get; }
 
 	public TgFiltersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgFiltersViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgFiltersViewModel))
 	{
 		// Commands
-		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+		ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 	}

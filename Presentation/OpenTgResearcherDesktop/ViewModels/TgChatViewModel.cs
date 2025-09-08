@@ -31,7 +31,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public partial string ChatProgressMessage { get; set; } = string.Empty;
 
     public IRelayCommand UpdateOnlineCommand { get; }
-    public IRelayCommand ClearDataStorageCommand { get; }
+    public IRelayCommand ClearViewCommand { get; }
     public IRelayCommand SaveChatSettingsCommand { get; }
     public IRelayCommand StopDownloadingCommand { get; }
 
@@ -42,10 +42,9 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         AppNotificationService = appNotificationService;
         // Commands
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+        ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         // Callback updates UI
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
@@ -62,7 +61,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             await LoadDataStorageCoreAsync();
         });
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         foreach (var userDto in UserDtos)
         {
@@ -71,6 +70,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
         // Update ViewModels at current frame
         await UpdateCurrentFrameAsync();
+
+        await Task.CompletedTask;
     }
 
     /// <summary> Update ViewModels current frame </summary>

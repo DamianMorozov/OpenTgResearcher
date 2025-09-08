@@ -891,8 +891,8 @@
   <data name="TemplateColumnPort.Header" xml:space="preserve">
     <value>Port</value>
   </data>
-  <data name="TemplateColumnUserName.Header" xml:space="preserve">
-    <value>User name</value>
+  <data name="TemplateColumnDisplayName.Header" xml:space="preserve">
+    <value>Display name</value>
   </data>
   <data name="TemplateColumnPassword.Header" xml:space="preserve">
     <value>Password</value>

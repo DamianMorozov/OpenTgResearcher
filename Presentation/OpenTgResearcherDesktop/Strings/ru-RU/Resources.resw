@@ -953,8 +953,8 @@
   <data name="TemplateColumnPort.Header" xml:space="preserve">
     <value>Порт</value>
   </data>
-  <data name="TemplateColumnUserName.Header" xml:space="preserve">
-    <value>Имя пользователя</value>
+  <data name="TemplateColumnDisplayName.Header" xml:space="preserve">
+    <value>Отображаемое имя</value>
   </data>
   <data name="TemplateColumnPassword.Header" xml:space="preserve">
     <value>Пароль</value>

@@ -4,7 +4,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.240] - 2025-09-08
+## [0.7.250] - 2025-09-08
 ### Исправлено
 - Исправление ГитХаб workflow
 - Исправление багов парсинга медиа комментариев
@@ -21,6 +21,8 @@
 - Обновлена кнопка копирования в `OpenTgResearcherDesktop`
 - Обновлена страница `Логи` в `OpenTgResearcherDesktop`
 - Обновлена страница `Детали пользователя` в `OpenTgResearcherDesktop`
+- Обновлена страница `Чаты` в `OpenTgResearcherDesktop`
+- Обновлена страница `Пользователи` в `OpenTgResearcherDesktop`
 ### Добавлено
 - Добавлен сервис мониторинга аппаратных ресурсов
 - Добавлен проект тестов `TgBusinessLogicTests`

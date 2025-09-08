@@ -18,18 +18,22 @@ public partial class TgSensitiveModel : ObservableRecipient
 
     public TgSensitiveModel() : base()
     {
-        //
+        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
     #endregion
 
     #region Methods
 
+
+    /// <summary> Action for IsDisplaySensitiveData property change </summary>
     partial void OnIsDisplaySensitiveDataChanged(bool value)
     {
         if (SetDisplaySensitiveCommand?.CanExecute(value) ?? false)
             SetDisplaySensitiveCommand.Execute(value);
     }
+
+    protected virtual async Task SetDisplaySensitiveAsync() => await Task.CompletedTask;
 
     #endregion
 }

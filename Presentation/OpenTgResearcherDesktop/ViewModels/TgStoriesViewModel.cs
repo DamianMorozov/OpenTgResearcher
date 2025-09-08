@@ -11,7 +11,7 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfStoryDto> Dtos { get; set; } = [];
 	public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearDataStorageCommand { get; }
+	public IRelayCommand ClearViewCommand { get; }
 	public IRelayCommand DefaultSortCommand { get; }
 	public IRelayCommand UpdateOnlineCommand { get; }
 
@@ -19,7 +19,7 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 		: base(settingsService, navigationService, logger, nameof(TgStoriesViewModel))
 	{
 		// Commands
-		ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+		ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);

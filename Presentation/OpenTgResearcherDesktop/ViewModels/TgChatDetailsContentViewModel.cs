@@ -32,7 +32,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial int PageSize { get; set; } = 100;
     [ObservableProperty]
-    public partial int CurrentSkip { get; set; }
+    public partial int PageSkip { get; set; }
     [ObservableProperty]
     public partial bool HasMoreMessages { get; set; } = true;
     [ObservableProperty]
@@ -40,7 +40,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
 
     public IRelayCommand CalcContentStatisticsCommand { get; }
     public IRelayCommand LazyLoadMessagesCommand { get; }
-    public IRelayCommand ClearDataStorageCommand { get; }
+    public IRelayCommand ClearViewCommand { get; }
 
     public TgChatDetailsContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsContentViewModel> logger,
         IAppNotificationService appNotificationService)
@@ -48,10 +48,9 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     {
         AppNotificationService = appNotificationService;
         // Commands
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         LazyLoadMessagesCommand = new AsyncRelayCommand(LazyLoadMessagesAsync, () => HasMoreMessages && !IsLoading);
-        ClearDataStorageCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+        ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
     }
 
     #endregion
@@ -64,7 +63,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             await LoadDataStorageCoreAsync();
         });
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         foreach (var userDto in UserDtos)
         {
@@ -85,7 +84,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
 
         try
         {
-            CurrentSkip = 0;
+            PageSkip = 0;
             HasMoreMessages = true;
             MessageDtos.Clear();
             UserDtos.Clear();
@@ -120,14 +119,14 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
                 var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
 
                 // Load newest messages first by ordering descending
-                var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: CurrentSkip,
+                var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: PageSkip,
                     where: x => x.SourceId == Dto.Id, order: x => x.Id, isOrderDesc: true);
 
                 // Update skip counter for next portion
-                CurrentSkip += newItems.Count;
+                PageSkip += newItems.Count;
 
                 // Check if there are more messages to load
-                HasMoreMessages = CurrentSkip < totalCount;
+                HasMoreMessages = PageSkip < totalCount;
 
                 // Insert new items at the beginning to keep newest at top
                 foreach (var item in newItems)
@@ -153,7 +152,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     {
         try
         {
-            CurrentSkip = 0;
+            PageSkip = 0;
             HasMoreMessages = true;
             MessageDtos.Clear();
         }

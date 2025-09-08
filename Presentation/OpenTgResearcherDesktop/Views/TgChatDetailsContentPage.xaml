@@ -269,7 +269,7 @@
                 Margin="0,0,5,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Command="{x:Bind ViewModel.ClearDataStorageCommand}">
+                Command="{x:Bind ViewModel.ClearViewCommand}">
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                     <TextBlock

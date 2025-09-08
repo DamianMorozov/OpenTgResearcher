@@ -42,7 +42,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync);
         SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync);
         SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync);
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
 
         //
         PropertyChanged += (sender, args) =>
@@ -68,7 +67,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         _ = IsDisplaySensitiveData;
 

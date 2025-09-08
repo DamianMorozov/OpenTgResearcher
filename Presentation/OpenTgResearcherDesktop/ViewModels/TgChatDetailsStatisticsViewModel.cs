@@ -32,7 +32,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     {
         AppNotificationService = appNotificationService;
         // Commands
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
         CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
     }
 
@@ -46,7 +45,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
             await LoadDataStorageCoreAsync();
         });
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         foreach (var userDto in UserDtos)
         {

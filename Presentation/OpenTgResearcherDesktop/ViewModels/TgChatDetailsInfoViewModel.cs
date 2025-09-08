@@ -20,7 +20,6 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
     {
         // Commands
         UpdateChatSettingsCommand = new AsyncRelayCommand(UpdateChatSettingsAsync);
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
     }
 
     #endregion
@@ -33,9 +32,10 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
             await LoadDataStorageCoreAsync();
         });
 
-    private async Task SetDisplaySensitiveAsync()
+    protected override async Task SetDisplaySensitiveAsync()
     {
         ChatDetailsDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
+
         await Task.CompletedTask;
     }
 

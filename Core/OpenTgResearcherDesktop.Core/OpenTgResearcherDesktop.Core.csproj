@@ -5,7 +5,7 @@
     <Platforms>x86;x64;AnyCPU</Platforms>
     <Platforms>x86;x64;arm64;AnyCPU</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.7.220.0</Version>
+    <Version>0.7.250.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Models\" />

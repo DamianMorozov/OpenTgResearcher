@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated program loading animation
 - Updated copy button in `OpenTgResearcherDesktop`
 - Updated the `Logs` page in `OpenTgResearcherDesktop`
+- Updated the `User details` page in `OpenTgResearcherDesktop`
 ### Added
 - Added a hardware resource monitoring service
 - Added the `TgBusinessLogicTests` test project

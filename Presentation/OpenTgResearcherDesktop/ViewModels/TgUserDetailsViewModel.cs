@@ -13,7 +13,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial TgEfUserDto Dto { get; set; } = default!;
     [ObservableProperty]
-    public partial List<long> ChatIds { get; set; } = [];
+    public partial List<long> ListIds { get; set; } = [];
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserWithMessagesDto> UserWithMessagesDtos { get; set; } = [];
 
@@ -38,13 +38,6 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
 		{
 			Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-            if (e?.Parameter is Tuple<long, long> tuple)
-            {
-                Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Id == tuple.Item1);
-                Uid = Dto.Uid;
-                ChatIds.Clear();
-                ChatIds.Add(tuple.Item2);
-            }
 			await LoadDataStorageCoreAsync();
 			await ReloadUiAsync();
 		});
@@ -78,12 +71,15 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
 
-		Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Uid == Uid);
-
         UserWithMessagesDtos.Clear();
-        if (ChatIds is not null && ChatIds.Any())
+        ListIds.Clear();
+
+		Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Uid == Uid);
+        ListIds = [.. (await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(0, 0, x => x.UserId == Dto.Id)).Select(x => x.SourceId).Distinct()];
+
+        if (ListIds is not null && ListIds.Count != 0)
         {
-            foreach (var chatId in ChatIds)
+            foreach (var chatId in ListIds)
             {
                 var messageDtos = await App.BusinessLogicManager.StorageManager.MessageRepository
                     .GetListDtosAsync(0, 0, x => x.SourceId == chatId);
@@ -96,16 +92,21 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 
 	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
 
-	private async Task UpdateOnlineCoreAsync()
-	{
-		await LoadDataAsync(async () => {
-			if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+    private async Task UpdateOnlineCoreAsync() => await ProcessDataAsync(async () =>
+    {
+        try
+        {
+            if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-			await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact);
-			
+            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact, [Dto.Id]);
+
             await LoadDataStorageCoreAsync();
-		});
-	}
+        }
+        finally
+        {
+            await LoadDataStorageCoreAsync();
+        }
+    }, isDisabledContent: true, isPageLoad: false);
 
 	#endregion
 }

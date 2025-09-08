@@ -143,7 +143,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     {
         try
         {
-            IsDownloading = true;
             if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
             await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
@@ -152,7 +151,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
         finally
         {
-            IsDownloading = false;
             await LoadDataStorageCoreAsync();
         }
     }, isDisabledContent: true, isPageLoad: false);

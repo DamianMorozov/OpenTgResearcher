@@ -277,7 +277,7 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             Spacing="8"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <!--  Waiting indication  -->
                             <ProgressRing
                                 Width="16"

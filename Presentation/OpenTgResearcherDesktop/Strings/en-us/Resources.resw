@@ -1080,6 +1080,9 @@
   <data name="FieldIsActive.Text" xml:space="preserve">
     <value>Active</value>
   </data>
+  <data name="FieldIsContact.Text" xml:space="preserve">
+    <value>Contact</value>
+  </data>
   <data name="FieldIsDownloading.Text" xml:space="preserve">
     <value>Downloading in progress</value>
   </data>
@@ -1115,6 +1118,9 @@
   </data>
   <data name="FieldLastName.Text" xml:space="preserve">
     <value>Last name</value>
+  </data>
+  <data name="FieldDisplayName.Text" xml:space="preserve">
+    <value>Display name</value>
   </data>
   <data name="FieldUserName.Text" xml:space="preserve">
     <value>User name</value>

@@ -68,12 +68,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xE729;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingLogging" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadLogging, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadLogging, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
             <!--  Loading Velopack Installer  -->
             <StackPanel
@@ -83,12 +83,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xE7B8;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingVelopack" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadVelopack, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadVelopack, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
             <!--  Loading settings  -->
             <StackPanel
@@ -98,12 +98,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xE713;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingSettings" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadSettings, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadSettings, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
             <!--  Loading storage  -->
             <StackPanel
@@ -113,12 +113,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xF12B;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingStorage" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadStorage, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadStorage, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
             <!--  Loading license  -->
             <StackPanel
@@ -128,12 +128,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xE8C7;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingLicense" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadLicense, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadLicense, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
             <!--  Loading notifications  -->
             <StackPanel
@@ -143,12 +143,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xEC42;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingNotifications" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadNotifications, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadNotifications, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
             <!--  Loading hardware resource monitoring  -->
             <StackPanel
@@ -158,12 +158,12 @@
                 <FontIcon
                     Margin="0,0,20,0"
                     Glyph="&#xE950;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <TextBlock x:Uid="TextBlockLoadingHardwareResourceMonitoring" Style="{StaticResource SubtitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
-                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </StackPanel>
         <!--  Progress ring  -->
@@ -174,7 +174,7 @@
             Width="40"
             Height="40"
             Margin="50,50,50,50"
-            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
         <!--  Continue  -->
         <Button
             Grid.Row="5"
@@ -185,7 +185,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             Command="{x:Bind ViewModel.ContinueCommand}"
-            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock
                     x:Uid="ActionContinue"

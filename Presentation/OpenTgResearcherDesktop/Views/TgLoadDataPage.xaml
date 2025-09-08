@@ -21,7 +21,7 @@
             Grid.Row="0"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Left"
-            Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <TextBlock
                 x:Uid="AppStorageNeedToCreate"
                 Margin="2"

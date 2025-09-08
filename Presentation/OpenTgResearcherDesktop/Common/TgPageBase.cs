@@ -78,16 +78,28 @@ public abstract class TgPageBase : Page
         ViewModel.OnLoaded(XamlRoot);
     }
 
-    public void OnClipboardWriteClick(object sender, RoutedEventArgs e)
+    /// <summary> Clipboard silent write with animation </summary>
+    public async void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e)
     {
-        if (sender is not Button button) return;
-        ViewModel.OnClipboardWriteCommand.Execute(button.Tag);
-    }
+        if (sender is not TgAnimatedClipboardButton button) return;
+        
+        if (button.Tag.ToString() is string tag && !string.IsNullOrEmpty(tag))
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(tag);
+            Clipboard.SetContent(dataPackage);
 
-    public void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Button button) return;
-        ViewModel.OnClipboardSilentWriteCommand.Execute(button.Tag);
+            try
+            {
+                VisualStateManager.GoToState(button, "CheckedState", useTransitions: true);
+                await Task.Delay(TimeSpan.FromSeconds(button.ResetDelay));
+                VisualStateManager.GoToState(button, "NormalState", useTransitions: true);
+            }
+            catch (Exception ex)
+            {
+                TgLogUtils.WriteException(ex);
+            }
+        }
     }
 
     /// <summary> Open url </summary>

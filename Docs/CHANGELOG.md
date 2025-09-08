@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.230] - 2025-09-05
+## [0.7.240] - 2025-09-08
 ### Fixed
 - Fixed GitHub workflow
 - Fixed bugs in media comment parsing
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the `Chat Content` page in `OpenTgResearcherDesktop`
 - Updated the `Chat Statistics` page in `OpenTgResearcherDesktop`
 - Updated program loading animation
+- Updated copy button in `OpenTgResearcherDesktop`
 ### Added
 - Added a hardware resource monitoring service
 - Added the `TgBusinessLogicTests` test project

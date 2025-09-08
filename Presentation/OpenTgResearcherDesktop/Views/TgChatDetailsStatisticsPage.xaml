@@ -18,68 +18,58 @@
         <!--  Participants data template  -->
         <DataTemplate x:Key="ParticipantsStatisticsViewTemplate" x:DataType="users:TgEfUserWithCountDto">
             <Button
-                Margin="-5,5,5,-5"
-                HorizontalAlignment="Left"
+                Margin="-5,10,5,-5"
                 Click="OnUserClick"
                 CornerRadius="10"
                 Tag="{x:Bind UserDto.Id, Mode=OneWay}">
-                <StackPanel
-                    Padding="5"
-                    Orientation="Horizontal"
-                    Spacing="10">
+                <StackPanel Orientation="Horizontal" Spacing="10">
                     <!--  Id  -->
-                    <TextBlock x:Uid="FieldId" Margin="20,0,0,0" />
+                    <TextBlock x:Uid="FieldId" Margin="0,5,0,0" />
                     <TextBlock
-                        Margin="0,5,5,0"
+                        Margin="0,5,0,0"
                         Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
                         Width="Auto"
-                        Margin="0,0,0,0"
+                        Margin="0,5,0,0"
                         Text="{x:Bind UserDto.Id}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
-                        Margin="5,-2,0,0"
-                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind UserDto.Id, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind UserDto.Id, Mode=OneWay}" />
                     <TextBlock
                         Margin="5,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="·" />
                     <!--  DisplayName  -->
                     <TextBlock
-                        Margin="0,5,5,0"
+                        Margin="0,5,0,0"
                         Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
-                        Margin="0,0,0,0"
+                        Margin="0,5,0,0"
                         Text="{x:Bind UserDto.DisplayName}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <Button
-                        Margin="5,-2,0,0"
-                        Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind UserDto.DisplayName, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind UserDto.DisplayName, Mode=OneWay}" />
                     <TextBlock
                         Margin="5,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="·" />
                     <!--  Messages count  -->
-                    <TextBlock x:Uid="FieldMessagesCount" />
+                    <TextBlock x:Uid="FieldMessagesCount" Margin="0,5,0,0" />
                     <TextBlock
                         Margin="0,5,5,0"
                         Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
-                        Margin="0,0,0,0"
+                        Margin="0,5,0,0"
                         FontWeight="SemiBold"
                         Text="{x:Bind Count}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </StackPanel>
             </Button>
         </DataTemplate>
@@ -94,7 +84,7 @@
             </Grid.RowDefinitions>
             <!--  Load data  -->
             <views:TgLoadDataPage Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
-            <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -132,53 +122,46 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <!--  DtStart  -->
                     <TextBlock x:Uid="TextBlockDtStart" VerticalAlignment="Center" />
                     <DatePicker
                         Grid.Column="1"
-                        Margin="10,5,0,10"
+                        Margin="10,0,0,0"
                         HorizontalAlignment="Left"
                         SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtStart, Mode=TwoWay}" />
                     <!--  DtEnd  -->
                     <TextBlock
                         x:Uid="TextBlockDtEnd"
-                        Grid.Row="1"
-                        Grid.Column="0"
+                        Grid.Column="2"
+                        Margin="50,0,0,0"
                         VerticalAlignment="Center" />
                     <DatePicker
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,01,0,10"
+                        Grid.Column="3"
+                        Margin="10,0,0,0"
                         SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtEnd, Mode=TwoWay}" />
                     <!--  User and bot statistics  -->
                     <TextBlock
                         x:Uid="TextBlockUsers"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="2"
+                        Grid.Column="4"
                         Margin="50,0,0,0"
                         VerticalAlignment="Center"
                         Text="" />
                     <TextBlock
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="3"
+                        Grid.Column="5"
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         Text="{x:Bind ViewModel.ChatStatisticsDto.UsersCount, Mode=OneWay}" />
                     <TextBlock
                         x:Uid="TextBlockBots"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="4"
+                        Grid.Column="6"
                         Margin="20,0,0,0"
                         VerticalAlignment="Center" />
                     <TextBlock
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="5"
+                        Grid.Column="7"
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
                         Text="{x:Bind ViewModel.ChatStatisticsDto.BotsCount, Mode=OneWay}" />
@@ -187,7 +170,7 @@
                         x:Name="ListViewParticipantsStatistics"
                         Grid.Row="2"
                         Grid.ColumnSpan="7"
-                        Margin="-15,0,-15,0"
+                        Margin="-15,-5,-15,0"
                         ItemTemplate="{StaticResource ParticipantsStatisticsViewTemplate}"
                         ItemsSource="{x:Bind ViewModel.ChatStatisticsDto.UserWithCountDtos, Mode=OneWay}">
                         <!--  The ItemsStackPanel must be edited to update the following two properties  -->

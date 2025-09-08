@@ -40,7 +40,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.LicenseClearCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
@@ -58,7 +58,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.LicenseCheckCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
@@ -76,7 +76,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.LicenseRequestCommunityCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
@@ -94,7 +94,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.LicenseBuyCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
@@ -142,7 +142,7 @@
                             Margin="10,0,10,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <!--  LicenseKey  -->
                         <TextBlock
                             Grid.Row="1"
@@ -150,7 +150,7 @@
                             Margin="10,0,10,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
                             x:Uid="TextBlockLicenseDescription"
                             Grid.Row="2"
@@ -176,7 +176,7 @@
                             Margin="10,0,10,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <!--  UserId  -->
                         <TextBlock
                             Grid.Row="3"
@@ -184,7 +184,7 @@
                             Margin="10,0,10,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.UserId, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
                             x:Uid="TextBlockExpiration"
                             Grid.Row="4"

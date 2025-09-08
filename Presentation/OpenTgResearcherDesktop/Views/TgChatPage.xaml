@@ -24,7 +24,7 @@
             Grid.Row="0"
             Margin="0,0,0,10"
             Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
-        <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+        <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -47,14 +47,14 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <!--  Update from Telegram  -->
+                        <!--  Online update  -->
                         <Button
                             Margin="0,0,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.UpdateOnlineCommand}"
                             IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                                 <TextBlock
@@ -70,7 +70,7 @@
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.StopDownloadingCommand}"
                             IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE71A;" />
                                 <TextBlock
@@ -86,7 +86,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.ClearDataStorageCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                                 <TextBlock
@@ -102,7 +102,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.SaveChatSettingsCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
                                 <TextBlock
@@ -119,665 +119,21 @@
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
-                <Expander
-                    x:Uid="ExpanderDataInStorage"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
+                IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                <Border
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="False">
-                    <Grid Margin="0,0,10,5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <!--  Uid  -->
-                        <TextBlock
-                            x:Uid="FieldUid"
-                            Grid.Row="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
-                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                        <TextBox
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="False"
-                            Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  DtChanged  -->
-                        <TextBlock
-                            x:Uid="FieldDtChanged"
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="3"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
-                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                        <TextBox
-                            Grid.Row="0"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="False"
-                            IsReadOnly="True"
-                            Text="{x:Bind ViewModel.Dto.DtChangedString, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Id  -->
-                        <TextBlock
-                            x:Uid="FieldId"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="2,0,7,2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <Grid
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <!--  Sensitive data  -->
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <TextBox
-                                Grid.Column="0"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                IsEnabled="False"
-                                IsReadOnly="True"
-                                Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  IsRestrictSavingContent  -->
-                        <TextBlock
-                            x:Uid="FieldIsRestrictSavingContent"
-                            Grid.Row="1"
-                            Grid.Column="2"
-                            Margin="12,10,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="1"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsEnabled="False"
-                            IsOn="{x:Bind ViewModel.Dto.IsRestrictSavingContent, Mode=OneWay}" />
-                        <!--  IsActive  -->
-                        <TextBlock
-                            x:Uid="FieldIsActive"
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Margin="2,10,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsEnabled="False"
-                            IsOn="{x:Bind ViewModel.Dto.IsSourceActive, Mode=OneWay}" />
-                        <!--  IsAutoUpdate  -->
-                        <TextBlock
-                            x:Uid="FieldIsAutoUpdate"
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            Margin="12,10,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="2"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsEnabled="False"
-                            IsOn="{x:Bind ViewModel.Dto.IsAutoUpdate, Mode=OneWay}" />
-                        <!--  IsSubscribe  -->
-                        <TextBlock
-                            x:Uid="FieldIsSubscribe"
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Margin="2,10,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsEnabled="False"
-                            IsOn="{x:Bind ViewModel.Dto.IsSubscribe, Mode=OneWay}" />
-                        <!--  Link  -->
-                        <TextBlock
-                            x:Uid="FieldLink"
-                            Grid.Row="3"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="3"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <HyperlinkButton
-                                Margin="0,-1,0,0"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                Click="OnOpenHyperlink"
-                                Content="{x:Bind ViewModel.Dto.Link, Mode=OneWay}"
-                                Tag="{x:Bind ViewModel.Dto.Link, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.Link, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  UserName  -->
-                        <TextBlock
-                            x:Uid="FieldUserName"
-                            Grid.Row="4"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="4"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <TextBox
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                IsEnabled="False"
-                                IsReadOnly="True"
-                                Text="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  Title  -->
-                        <TextBlock
-                            x:Uid="FieldTitle"
-                            Grid.Row="5"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="5"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <TextBox
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                IsEnabled="False"
-                                IsReadOnly="True"
-                                Text="{x:Bind ViewModel.Dto.Title, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.Title, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  About  -->
-                        <TextBlock
-                            x:Uid="FieldAbout"
-                            Grid.Row="6"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="6"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <TextBox
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                IsEnabled="False"
-                                IsReadOnly="True"
-                                Text="{x:Bind ViewModel.Dto.About, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.About, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  Directory  -->
-                        <TextBlock
-                            x:Uid="FieldDirectory"
-                            Grid.Row="7"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="7"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <!--  Sensitive data  -->
-                            <TextBlock
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                            <TextBox
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                Text="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.Directory, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  FirstId  -->
-                        <TextBlock
-                            x:Uid="FieldFirstId"
-                            Grid.Row="8"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="8"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                Text="{x:Bind ViewModel.Dto.FirstId, Mode=TwoWay}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.FirstId, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                        <!--  Count  -->
-                        <TextBlock
-                            x:Uid="FieldCount"
-                            Grid.Row="8"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <Grid
-                            Grid.Row="8"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="2,5,2,2"
-                                HorizontalAlignment="Stretch"
-                                Text="{x:Bind ViewModel.Dto.Count, Mode=OneWay}" />
-                            <!--  Copy button  -->
-                            <Button
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalContentAlignment="Left"
-                                Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                CommandParameter="{x:Bind ViewModel.Dto.Count, Mode=OneWay}"
-                                CornerRadius="10">
-                                <SymbolIcon Symbol="Copy" />
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Expander>
-            </ContentControl>
-            <!--  Downloading  -->
-            <ContentControl
-                Grid.Row="2"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch">
-                <Expander
-                    x:Uid="ExpanderDownloading"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-                    IsExpanded="False">
-                    <Grid Margin="0,0,10,5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <!--  Threads count  -->
-                        <TextBlock
-                            x:Uid="FieldCountThreads"
-                            Grid.Row="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <NumberBox
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            LargeChange="10"
-                            Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=TwoWay}"
-                            Minimum="1"
-                            SmallChange="1"
-                            SpinButtonPlacementMode="Compact"
-                            Value="{x:Bind ViewModel.DownloadSettings.CountThreads, Mode=TwoWay}" />
-                        <!--  Percent  -->
-                        <TextBlock
-                            x:Uid="FieldPercent"
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <TextBox
-                            Grid.Row="0"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="False"
-                            Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
-                        <!--  Overwriting files  -->
-                        <TextBlock
-                            x:Uid="FieldIsRewriteFiles"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="True"
-                            IsOn="{x:Bind ViewModel.DownloadSettings.IsRewriteFiles, Mode=TwoWay}" />
-                        <!--  Overwriting messages  -->
-                        <TextBlock
-                            x:Uid="FieldIsRewriteMessages"
-                            Grid.Row="1"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="1"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.DownloadSettings.IsRewriteMessages, Mode=TwoWay}" />
-                        <!--  Joining message ID with file  -->
-                        <TextBlock
-                            x:Uid="FieldIsJoinFileNameWithMessageId"
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="True"
-                            IsOn="{x:Bind ViewModel.DownloadSettings.IsJoinFileNameWithMessageId, Mode=TwoWay}" />
-                        <!--  Creating subdirectories  -->
-                        <TextBlock
-                            x:Uid="FieldIsCreatingSubdirectories"
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="2"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.Dto.IsCreatingSubdirectories, Mode=TwoWay}" />
-                        <!--  File naming by message subdirectories  -->
-                        <TextBlock
-                            x:Uid="FieldIsParsingComments"
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.Dto.IsParsingComments, Mode=TwoWay}" />
-                        <!--  File naming by message subdirectories  -->
-                        <TextBlock
-                            x:Uid="FieldIsFileNamingByMessage"
-                            Grid.Row="3"
-                            Grid.Column="2"
-                            Margin="12,7,7,2"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="3"
-                            Grid.Column="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.Dto.IsFileNamingByMessage, Mode=TwoWay}" />
-                        <!--  Message  -->
-                        <TextBlock
-                            x:Uid="FieldMessage"
-                            Grid.Row="4"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <TextBox
-                            Grid.Row="4"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="False"
-                            IsReadOnly="True"
-                            Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
-                        <!--  Media  -->
-                        <TextBlock
-                            x:Uid="FieldMedia"
-                            Grid.Row="5"
-                            Grid.Column="0"
-                            Margin="2,7,7,2"
-                            TextAlignment="Left" />
-                        <TextBox
-                            Grid.Row="5"
-                            Grid.Column="1"
-                            Grid.ColumnSpan="3"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            IsEnabled="False"
-                            IsReadOnly="True"
-                            Text="{x:Bind ViewModel.StateSourceMedia, Mode=OneWay}" />
-                    </Grid>
-                </Expander>
-            </ContentControl>
-            <!--  Discussion  -->
-            <ContentControl
-                Grid.Row="3"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch">
-                <Expander
-                    x:Uid="ExpanderComments"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-                    IsExpanded="False">
-                    <Grid>
-                        <!--  Not found  -->
-                        <TextBlock
-                            x:Uid="FieldNotFound"
-                            Grid.Row="0"
-                            Margin="12,0,7,2"
-                            TextAlignment="Left"
-                            Visibility="{x:Bind ViewModel.IsDiscussionDtoExists, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                        <Grid Margin="0,0,10,5" Visibility="{x:Bind ViewModel.IsDiscussionDtoExists, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    VerticalAlignment="Stretch"
+                    Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+                    CornerRadius="5">
+                    <Expander
+                        x:Uid="ExpanderDataInStorage"
+                        Margin="{StaticResource ExpanderMargin}"
+                        Padding="{StaticResource ExpanderPadding}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        IsExpanded="False">
+                        <Grid Margin="0,0,10,5">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -806,7 +162,7 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalTextAlignment="Left"
                                 Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -814,8 +170,8 @@
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
                                 IsEnabled="False"
-                                Text="{x:Bind ViewModel.DiscussionDto.Uid, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <!--  DtChanged  -->
                             <TextBlock
                                 x:Uid="FieldDtChanged"
@@ -823,6 +179,14 @@
                                 Grid.Column="2"
                                 Margin="12,7,7,2"
                                 TextAlignment="Left" />
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Margin="2,10,2,2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalTextAlignment="Left"
+                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="3"
@@ -831,7 +195,8 @@
                                 HorizontalContentAlignment="Left"
                                 IsEnabled="False"
                                 IsReadOnly="True"
-                                Text="{x:Bind ViewModel.DiscussionDto.DtChangedString, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.Dto.DtChangedString, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <!--  Id  -->
                             <TextBlock
                                 x:Uid="FieldId"
@@ -857,95 +222,30 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalTextAlignment="Left"
                                     Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 <TextBox
                                     Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
                                     IsReadOnly="True"
-                                    Text="{x:Bind ViewModel.DiscussionDto.Id, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.Id, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.Id, Mode=OneWay}" />
                             </Grid>
-                            <!--  IsRestrictSavingContent  -->
-                            <TextBlock
-                                x:Uid="FieldIsRestrictSavingContent"
-                                Grid.Row="1"
-                                Grid.Column="2"
-                                Margin="12,10,7,2"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Row="1"
-                                Grid.Column="3"
-                                Margin="2"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.DiscussionDto.IsRestrictSavingContent, Mode=OneWay}" />
-                            <!--  IsActive  -->
-                            <TextBlock
-                                x:Uid="FieldIsActive"
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Margin="2,10,7,2"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="2"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.DiscussionDto.IsSourceActive, Mode=OneWay}" />
-                            <!--  IsAutoUpdate  -->
-                            <TextBlock
-                                x:Uid="FieldIsAutoUpdate"
-                                Grid.Row="2"
-                                Grid.Column="2"
-                                Margin="12,10,7,2"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Row="2"
-                                Grid.Column="3"
-                                Margin="2"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.DiscussionDto.IsAutoUpdate, Mode=OneWay}" />
-                            <!--  IsSubscribe  -->
-                            <TextBlock
-                                x:Uid="FieldIsSubscribe"
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Margin="2,10,7,2"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="2"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.DiscussionDto.IsSubscribe, Mode=OneWay}" />
                             <!--  Link  -->
                             <TextBlock
                                 x:Uid="FieldLink"
-                                Grid.Row="3"
+                                Grid.Row="1"
                                 Grid.Column="2"
                                 Margin="12,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="3"
+                                Grid.Row="1"
                                 Grid.Column="3"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
@@ -958,104 +258,171 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalTextAlignment="Left"
                                     Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 <HyperlinkButton
                                     Margin="0,-1,0,0"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     Click="OnOpenHyperlink"
-                                    Content="{x:Bind ViewModel.DiscussionDto.Link, Mode=OneWay}"
-                                    Tag="{x:Bind ViewModel.DiscussionDto.Link, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Content="{x:Bind ViewModel.Dto.Link, Mode=OneWay}"
+                                    Tag="{x:Bind ViewModel.Dto.Link, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.Link, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.Link, Mode=OneWay}" />
+                            </Grid>
+                            <Grid
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <!--  IsActive  -->
+                                <TextBlock
+                                    x:Uid="FieldIsActive"
+                                    Grid.Column="0"
+                                    Margin="2,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.Dto.IsSourceActive, Mode=OneWay}" />
+                                <!--  IsAutoUpdate  -->
+                                <TextBlock
+                                    x:Uid="FieldIsAutoUpdate"
+                                    Grid.Column="2"
+                                    Margin="12,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Column="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.Dto.IsAutoUpdate, Mode=OneWay}" />
+                                <!--  IsRestrictSavingContent  -->
+                                <TextBlock
+                                    x:Uid="FieldIsRestrictSavingContent"
+                                    Grid.Column="4"
+                                    Margin="12,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Column="5"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.Dto.IsRestrictSavingContent, Mode=OneWay}" />
+                                <!--  IsSubscribe  -->
+                                <TextBlock
+                                    x:Uid="FieldIsSubscribe"
+                                    Grid.Column="6"
+                                    Margin="2,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Column="7"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.Dto.IsSubscribe, Mode=OneWay}" />
                             </Grid>
                             <!--  UserName  -->
                             <TextBlock
                                 x:Uid="FieldUserName"
-                                Grid.Row="4"
+                                Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="4"
+                                Grid.Row="3"
                                 Grid.Column="1"
-                                Grid.ColumnSpan="3"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Margin="2,10,2,2"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalTextAlignment="Left"
+                                    Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 <TextBox
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
                                     IsReadOnly="True"
-                                    Text="{x:Bind ViewModel.DiscussionDto.UserName, Mode=OneWay}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.UserName, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}" />
                             </Grid>
                             <!--  Title  -->
                             <TextBlock
                                 x:Uid="FieldTitle"
-                                Grid.Row="5"
+                                Grid.Row="4"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="5"
+                                Grid.Row="4"
                                 Grid.Column="1"
-                                Grid.ColumnSpan="3"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Margin="2,10,2,2"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalTextAlignment="Left"
+                                    Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 <TextBox
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
                                     IsReadOnly="True"
-                                    Text="{x:Bind ViewModel.DiscussionDto.Title, Mode=OneWay}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.Title, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.Title, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.Title, Mode=OneWay}" />
                             </Grid>
                             <!--  About  -->
                             <TextBlock
                                 x:Uid="FieldAbout"
-                                Grid.Row="6"
-                                Grid.Column="0"
-                                Margin="2,7,7,2"
+                                Grid.Row="3"
+                                Grid.RowSpan="2"
+                                Grid.Column="2"
+                                Margin="12,7,7,2"
+                                VerticalAlignment="Center"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="6"
-                                Grid.Column="1"
+                                Grid.Row="3"
+                                Grid.RowSpan="2"
+                                Grid.Column="4"
                                 Grid.ColumnSpan="3"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
@@ -1063,32 +430,34 @@
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Margin="2,10,2,2"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalTextAlignment="Left"
+                                    Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 <TextBox
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
                                     IsEnabled="False"
                                     IsReadOnly="True"
-                                    Text="{x:Bind ViewModel.DiscussionDto.About, Mode=OneWay}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.About, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.About, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.About, Mode=OneWay}" />
                             </Grid>
                             <!--  Directory  -->
                             <TextBlock
                                 x:Uid="FieldDirectory"
-                                Grid.Row="7"
+                                Grid.Row="5"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="7"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3"
                                 Margin="2"
@@ -1103,32 +472,27 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalTextAlignment="Left"
                                     Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 <TextBox
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
-                                    Text="{x:Bind ViewModel.DiscussionDto.Directory, Mode=TwoWay}"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.Directory, Mode=TwoWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.Directory, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.Directory, Mode=OneWay}" />
                             </Grid>
                             <!--  FirstId  -->
                             <TextBlock
                                 x:Uid="FieldFirstId"
-                                Grid.Row="8"
+                                Grid.Row="6"
                                 Grid.Column="0"
                                 Margin="2,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="8"
+                                Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
@@ -1139,27 +503,22 @@
                                 <TextBox
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Left"
-                                    Text="{x:Bind ViewModel.DiscussionDto.FirstId, Mode=TwoWay}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.FirstId, Mode=TwoWay}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.FirstId, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.FirstId, Mode=OneWay}" />
                             </Grid>
                             <!--  Count  -->
                             <TextBlock
                                 x:Uid="FieldCount"
-                                Grid.Row="8"
+                                Grid.Row="6"
                                 Grid.Column="2"
                                 Margin="12,7,7,2"
                                 TextAlignment="Left" />
                             <Grid
-                                Grid.Row="8"
+                                Grid.Row="6"
                                 Grid.Column="3"
                                 Margin="2"
                                 HorizontalAlignment="Stretch">
@@ -1167,67 +526,658 @@
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBox
+                                <TextBlock
                                     Grid.Column="0"
+                                    Margin="2,5,2,2"
                                     HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Left"
-                                    Text="{x:Bind ViewModel.DiscussionDto.Count, Mode=OneWay}" />
-                                <!--  Copy button  -->
-                                <Button
+                                    Text="{x:Bind ViewModel.Dto.Count, Mode=OneWay}" />
+                                <converters:TgAnimatedClipboardButton
                                     Grid.Column="1"
-                                    Margin="10,0,0,0"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                                    CommandParameter="{x:Bind ViewModel.DiscussionDto.Count, Mode=OneWay}"
-                                    CornerRadius="10">
-                                    <SymbolIcon Symbol="Copy" />
-                                </Button>
+                                    Click="OnClipboardSilentWriteClick"
+                                    Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                    Tag="{x:Bind ViewModel.Dto.Count, Mode=OneWay}" />
                             </Grid>
                         </Grid>
-                    </Grid>
-                </Expander>
+                    </Expander>
+                </Border>
+            </ContentControl>
+            <!--  Downloading  -->
+            <ContentControl
+                Grid.Row="2"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                <Border
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+                    CornerRadius="5">
+                    <Expander
+                        x:Uid="ExpanderDownloading"
+                        Margin="{StaticResource ExpanderMargin}"
+                        Padding="{StaticResource ExpanderPadding}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                        IsExpanded="False">
+                        <Grid Margin="0,0,10,5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <!--  Threads count  -->
+                            <TextBlock
+                                x:Uid="FieldCountThreads"
+                                Grid.Row="0"
+                                Margin="2,7,7,2"
+                                TextAlignment="Left" />
+                            <NumberBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                LargeChange="10"
+                                Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=TwoWay}"
+                                Minimum="1"
+                                SmallChange="1"
+                                SpinButtonPlacementMode="Compact"
+                                Value="{x:Bind ViewModel.DownloadSettings.CountThreads, Mode=TwoWay}" />
+                            <!--  Percent  -->
+                            <TextBlock
+                                x:Uid="FieldPercent"
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="12,7,7,2"
+                                TextAlignment="Left" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsEnabled="False"
+                                Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
+                            <!--  Overwriting files  -->
+                            <TextBlock
+                                x:Uid="FieldIsRewriteFiles"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="2,7,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsEnabled="True"
+                                IsOn="{x:Bind ViewModel.DownloadSettings.IsRewriteFiles, Mode=TwoWay}" />
+                            <!--  Overwriting messages  -->
+                            <TextBlock
+                                x:Uid="FieldIsRewriteMessages"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="12,7,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="1"
+                                Grid.Column="3"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsOn="{x:Bind ViewModel.DownloadSettings.IsRewriteMessages, Mode=TwoWay}" />
+                            <!--  Joining message ID with file  -->
+                            <TextBlock
+                                x:Uid="FieldIsJoinFileNameWithMessageId"
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Margin="2,7,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsEnabled="True"
+                                IsOn="{x:Bind ViewModel.DownloadSettings.IsJoinFileNameWithMessageId, Mode=TwoWay}" />
+                            <!--  Creating subdirectories  -->
+                            <TextBlock
+                                x:Uid="FieldIsCreatingSubdirectories"
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="12,7,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="2"
+                                Grid.Column="3"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsOn="{x:Bind ViewModel.Dto.IsCreatingSubdirectories, Mode=TwoWay}" />
+                            <!--  File naming by message subdirectories  -->
+                            <TextBlock
+                                x:Uid="FieldIsParsingComments"
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Margin="2,7,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsOn="{x:Bind ViewModel.Dto.IsParsingComments, Mode=TwoWay}" />
+                            <!--  File naming by message subdirectories  -->
+                            <TextBlock
+                                x:Uid="FieldIsFileNamingByMessage"
+                                Grid.Row="3"
+                                Grid.Column="2"
+                                Margin="12,7,7,2"
+                                TextAlignment="Left" />
+                            <ToggleSwitch
+                                Grid.Row="3"
+                                Grid.Column="3"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsOn="{x:Bind ViewModel.Dto.IsFileNamingByMessage, Mode=TwoWay}" />
+                            <!--  Message  -->
+                            <TextBlock
+                                x:Uid="FieldMessage"
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Margin="2,7,7,2"
+                                TextAlignment="Left" />
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsEnabled="False"
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
+                            <!--  Media  -->
+                            <TextBlock
+                                x:Uid="FieldMedia"
+                                Grid.Row="5"
+                                Grid.Column="0"
+                                Margin="2,7,7,2"
+                                TextAlignment="Left" />
+                            <TextBox
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3"
+                                Margin="2"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                IsEnabled="False"
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.StateSourceMedia, Mode=OneWay}" />
+                        </Grid>
+                    </Expander>
+                </Border>
+            </ContentControl>
+            <!--  Discussion  -->
+            <ContentControl
+                Grid.Row="3"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch">
+                <Border
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+                    CornerRadius="5">
+                    <Expander
+                        x:Uid="ExpanderComments"
+                        Margin="{StaticResource ExpanderMargin}"
+                        Padding="{StaticResource ExpanderPadding}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                        IsExpanded="False">
+                        <Grid>
+                            <!--  Not found  -->
+                            <TextBlock
+                                x:Uid="FieldNotFound"
+                                Grid.Row="0"
+                                Margin="12,0,7,2"
+                                TextAlignment="Left"
+                                Visibility="{x:Bind ViewModel.IsDiscussionDtoExists, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            <Grid Margin="0,0,10,5" Visibility="{x:Bind ViewModel.IsDiscussionDtoExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <!--  Uid  -->
+                                <TextBlock
+                                    x:Uid="FieldUid"
+                                    Grid.Row="0"
+                                    Margin="2,7,7,2"
+                                    TextAlignment="Left" />
+                                <!--  Sensitive data  -->
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="2,10,2,2"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalTextAlignment="Left"
+                                    Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                <TextBox
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    IsEnabled="False"
+                                    Text="{x:Bind ViewModel.DiscussionDto.Uid, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <!--  DtChanged  -->
+                                <TextBlock
+                                    x:Uid="FieldDtChanged"
+                                    Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="12,7,7,2"
+                                    TextAlignment="Left" />
+                                <TextBox
+                                    Grid.Row="0"
+                                    Grid.Column="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left"
+                                    IsEnabled="False"
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.DiscussionDto.DtChangedString, Mode=OneWay}" />
+                                <!--  Id  -->
+                                <TextBlock
+                                    x:Uid="FieldId"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="2,0,7,2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource BodyTextBlockStyle}" />
+                                <Grid
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--  Sensitive data  -->
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        Margin="2,10,2,2"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalTextAlignment="Left"
+                                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                    <TextBox
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        IsEnabled="False"
+                                        IsReadOnly="True"
+                                        Text="{x:Bind ViewModel.DiscussionDto.Id, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.Id, Mode=OneWay}" />
+                                </Grid>
+                                <!--  IsRestrictSavingContent  -->
+                                <TextBlock
+                                    x:Uid="FieldIsRestrictSavingContent"
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    Margin="12,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Row="1"
+                                    Grid.Column="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.DiscussionDto.IsRestrictSavingContent, Mode=OneWay}" />
+                                <!--  IsActive  -->
+                                <TextBlock
+                                    x:Uid="FieldIsActive"
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Margin="2,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.DiscussionDto.IsSourceActive, Mode=OneWay}" />
+                                <!--  IsAutoUpdate  -->
+                                <TextBlock
+                                    x:Uid="FieldIsAutoUpdate"
+                                    Grid.Row="2"
+                                    Grid.Column="2"
+                                    Margin="12,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Row="2"
+                                    Grid.Column="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.DiscussionDto.IsAutoUpdate, Mode=OneWay}" />
+                                <!--  IsSubscribe  -->
+                                <TextBlock
+                                    x:Uid="FieldIsSubscribe"
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Margin="2,10,7,2"
+                                    TextAlignment="Left" />
+                                <ToggleSwitch
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    IsEnabled="False"
+                                    IsOn="{x:Bind ViewModel.DiscussionDto.IsSubscribe, Mode=OneWay}" />
+                                <!--  Link  -->
+                                <TextBlock
+                                    x:Uid="FieldLink"
+                                    Grid.Row="3"
+                                    Grid.Column="2"
+                                    Margin="12,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="3"
+                                    Grid.Column="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Margin="2,10,2,2"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalTextAlignment="Left"
+                                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                    <HyperlinkButton
+                                        Margin="0,-1,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Click="OnOpenHyperlink"
+                                        Content="{x:Bind ViewModel.DiscussionDto.Link, Mode=OneWay}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.Link, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.Link, Mode=OneWay}" />
+                                </Grid>
+                                <!--  UserName  -->
+                                <TextBlock
+                                    x:Uid="FieldUserName"
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    Margin="2,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        IsEnabled="False"
+                                        IsReadOnly="True"
+                                        Text="{x:Bind ViewModel.DiscussionDto.UserName, Mode=OneWay}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.UserName, Mode=OneWay}" />
+                                </Grid>
+                                <!--  Title  -->
+                                <TextBlock
+                                    x:Uid="FieldTitle"
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    Margin="2,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        IsEnabled="False"
+                                        IsReadOnly="True"
+                                        Text="{x:Bind ViewModel.DiscussionDto.Title, Mode=OneWay}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.Title, Mode=OneWay}" />
+                                </Grid>
+                                <!--  About  -->
+                                <TextBlock
+                                    x:Uid="FieldAbout"
+                                    Grid.Row="6"
+                                    Grid.Column="0"
+                                    Margin="2,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="6"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        IsEnabled="False"
+                                        IsReadOnly="True"
+                                        Text="{x:Bind ViewModel.DiscussionDto.About, Mode=OneWay}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.About, Mode=OneWay}" />
+                                </Grid>
+                                <!--  Directory  -->
+                                <TextBlock
+                                    x:Uid="FieldDirectory"
+                                    Grid.Row="7"
+                                    Grid.Column="0"
+                                    Margin="2,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="7"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--  Sensitive data  -->
+                                    <TextBlock
+                                        Margin="2,10,2,2"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalTextAlignment="Left"
+                                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                    <TextBox
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Text="{x:Bind ViewModel.DiscussionDto.Directory, Mode=TwoWay}"
+                                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.Directory, Mode=OneWay}" />
+                                </Grid>
+                                <!--  FirstId  -->
+                                <TextBlock
+                                    x:Uid="FieldFirstId"
+                                    Grid.Row="8"
+                                    Grid.Column="0"
+                                    Margin="2,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="8"
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Text="{x:Bind ViewModel.DiscussionDto.FirstId, Mode=TwoWay}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.FirstId, Mode=OneWay}" />
+                                </Grid>
+                                <!--  Count  -->
+                                <TextBlock
+                                    x:Uid="FieldCount"
+                                    Grid.Row="8"
+                                    Grid.Column="2"
+                                    Margin="12,7,7,2"
+                                    TextAlignment="Left" />
+                                <Grid
+                                    Grid.Row="8"
+                                    Grid.Column="3"
+                                    Margin="2"
+                                    HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Text="{x:Bind ViewModel.DiscussionDto.Count, Mode=OneWay}" />
+                                    <converters:TgAnimatedClipboardButton
+                                        Grid.Column="1"
+                                        Click="OnClipboardSilentWriteClick"
+                                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                        Tag="{x:Bind ViewModel.DiscussionDto.Count, Mode=OneWay}" />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Expander>
+                </Border>
             </ContentControl>
             <!--  Extra  -->
             <ContentControl
                 Grid.Row="4"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch">
-                <Expander
-                    x:Uid="ExpanderExtra"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
+                <Border
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsEnabled="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-                    IsExpanded="False">
-                    <Grid Margin="0,0,0,5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <SelectorBar Margin="0,-10,0,-10" SelectionChanged="SelectorBar_SelectionChanged">
-                            <SelectorBarItem x:Uid="SelectorBarItemPageChatDetails" Tag="TgChatDetailsInfoPage" />
-                            <SelectorBarItem
-                                x:Uid="SelectorBarItemPageChatParticipants"
-                                Tag="TgChatDetailsParticipantsPage"
-                                Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <SelectorBarItem
-                                x:Uid="SelectorBarItemPageChatStatistics"
-                                Tag="TgChatDetailsStatisticsPage"
-                                Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <SelectorBarItem
-                                x:Uid="SelectorBarItemPageContent"
-                                Tag="TgChatDetailsContentPage"
-                                Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        </SelectorBar>
-                        <!--  Frame  -->
-                        <Frame
-                            x:Name="ContentFrame"
-                            Grid.Row="1"
-                            Margin="-5,5,-5,-10"
-                            IsNavigationStackEnabled="False" />
-                    </Grid>
-                </Expander>
+                    VerticalAlignment="Stretch"
+                    Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+                    CornerRadius="5">
+                    <Expander
+                        x:Uid="ExpanderExtra"
+                        Margin="{StaticResource ExpanderMargin}"
+                        Padding="{StaticResource ExpanderPadding}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                        IsExpanded="False">
+                        <Grid Margin="0,0,0,5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <SelectorBar Margin="0,-10,0,-10" SelectionChanged="SelectorBar_SelectionChanged">
+                                <SelectorBarItem x:Uid="SelectorBarItemPageChatDetails" Tag="TgChatDetailsInfoPage" />
+                                <SelectorBarItem
+                                    x:Uid="SelectorBarItemPageChatParticipants"
+                                    Tag="TgChatDetailsParticipantsPage"
+                                    Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <SelectorBarItem
+                                    x:Uid="SelectorBarItemPageChatStatistics"
+                                    Tag="TgChatDetailsStatisticsPage"
+                                    Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <SelectorBarItem
+                                    x:Uid="SelectorBarItemPageContent"
+                                    Tag="TgChatDetailsContentPage"
+                                    Visibility="{x:Bind ViewModel.IsPaidLicense, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </SelectorBar>
+                            <!--  Frame  -->
+                            <Frame
+                                x:Name="ContentFrame"
+                                Grid.Row="1"
+                                Margin="-5,5,-5,-10"
+                                IsNavigationStackEnabled="False" />
+                        </Grid>
+                    </Expander>
+                </Border>
             </ContentControl>
         </Grid>
     </Grid>

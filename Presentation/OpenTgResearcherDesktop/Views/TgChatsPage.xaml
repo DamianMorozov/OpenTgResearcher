@@ -103,7 +103,7 @@
             Grid.Row="2"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Expander
                 x:Uid="ExpanderDataInStorage"
                 Margin="{StaticResource ExpanderMargin}"
@@ -222,9 +222,9 @@
                                         <DataTemplate>
                                             <Grid>
                                                 <!--  Sensitive data  -->
-                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                                 <!--  Id  -->
-                                                <TextBlock Text="{Binding Id, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding Id, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -303,9 +303,9 @@
                                         <DataTemplate>
                                             <Grid>
                                                 <!--  Sensitive data  -->
-                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                                 <!--  Id  -->
-                                                <TextBlock Text="{Binding UserName, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding UserName, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -316,9 +316,9 @@
                                         <DataTemplate>
                                             <Grid>
                                                 <!--  Sensitive data  -->
-                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                                 <!--  Id  -->
-                                                <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -338,14 +338,14 @@
                                                     VerticalAlignment="Center"
                                                     HorizontalTextAlignment="Center"
                                                     Text="{Binding SensitiveData, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                                 <!--  Id  -->
                                                 <TextBlock
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Center"
                                                     HorizontalTextAlignment="Center"
                                                     Text="{Binding FirstId, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
@@ -365,14 +365,14 @@
                                                     VerticalAlignment="Center"
                                                     HorizontalTextAlignment="Center"
                                                     Text="{Binding SensitiveData, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                                 <!--  Id  -->
                                                 <TextBlock
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Center"
                                                     HorizontalTextAlignment="Center"
                                                     Text="{Binding Count, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             </Grid>
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>

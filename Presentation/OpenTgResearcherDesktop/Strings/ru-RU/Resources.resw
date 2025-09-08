@@ -1142,6 +1142,9 @@
   <data name="FieldIsActive.Text" xml:space="preserve">
     <value>Активно</value>
   </data>
+  <data name="FieldIsContact.Text" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
   <data name="FieldIsDownloading.Text" xml:space="preserve">
     <value>Идёт загрузка</value>
   </data>
@@ -1177,6 +1180,9 @@
   </data>
   <data name="FieldLastName.Text" xml:space="preserve">
     <value>Фамилия</value>
+  </data>
+  <data name="FieldDisplayName.Text" xml:space="preserve">
+    <value>Отображаемое имя</value>
   </data>
   <data name="FieldUserName.Text" xml:space="preserve">
     <value>Имя пользователя</value>

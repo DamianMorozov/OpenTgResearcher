@@ -44,7 +44,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial bool IsEnabledContent { get; set; }
     [ObservableProperty]
-    public partial bool IsDownloading { get; set; }
+    public partial bool IsOnlineProcessing { get; set; }
     [ObservableProperty]
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
     [ObservableProperty]
@@ -55,11 +55,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
 
-    /// <inheritdoc />
-    public IRelayCommand OnClipboardWriteCommand { get; }
-    /// <inheritdoc />
-    public IRelayCommand OnClipboardSilentWriteCommand { get; }
-
     public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgPageViewModelBase> logger, string name) : base()
     {
@@ -68,10 +63,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         Logger = logger;
         Name = name;
         IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
-
-        // Commands
-        OnClipboardWriteCommand = new AsyncRelayCommand<object>(OnClipboardWriteAsync);
-        OnClipboardSilentWriteCommand = new AsyncRelayCommand<object>(OnClipboardSilentWriteAsync);
     }
 
     #endregion
@@ -378,6 +369,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     {
         try
         {
+            if (!IsOnlineProcessing)
+                IsOnlineProcessing = true;
+
             if (isDisabledContent)
                 IsEnabledContent = false;
             if (isPageLoad)
@@ -395,29 +389,11 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
                 IsEnabledContent = true;
             if (isPageLoad)
                 IsPageLoad = false;
+            if (IsOnlineProcessing)
+                IsOnlineProcessing = false;
             IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
         }
     }
-
-    /// <summary> Core write text to clipboard </summary>
-    private async Task OnClipboardWriteCoreAsync(object? param, bool isSilent)
-    {
-        if (param is null) return;
-        var tag = param.ToString();
-        if (string.IsNullOrEmpty(tag)) return;
-
-        var dataPackage = new DataPackage();
-        dataPackage.SetText(tag);
-        Clipboard.SetContent(dataPackage);
-        if (!isSilent)
-            await ContentDialogAsync(TgResourceExtensions.GetClipboard(), tag);
-    }
-
-    /// <summary> Write text to clipboard </summary>
-    private async Task OnClipboardWriteAsync(object? param) => await OnClipboardWriteCoreAsync(param, isSilent: false);
-
-    /// <summary> Silent write text to clipboard </summary>
-    private async Task OnClipboardSilentWriteAsync(object? param) => await OnClipboardWriteCoreAsync(param, isSilent: true);
 
     #endregion
 }

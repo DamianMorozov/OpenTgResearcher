@@ -40,21 +40,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="10,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind Id, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind Id, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind Id, Mode=OneWay}" />
                         <!--  MainUserName  -->
                         <TextBlock
                             x:Uid="FieldUserName"
@@ -64,21 +59,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind MainUserName, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind MainUserName, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind MainUserName, Mode=OneWay}" />
                         <!--  AccessHash  -->
                         <TextBlock
                             x:Uid="FieldAccessHash"
@@ -88,21 +78,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind AccessHash, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind AccessHash, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind AccessHash, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <!--  IsContactActive  -->
@@ -136,21 +121,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind LastSeenAgoAsString, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind LastSeenAgoAsString, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
                         <!--  RestrictionReason  -->
                         <TextBlock
                             x:Uid="FieldRestrictionReason"
@@ -160,24 +140,19 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind RestrictionReason, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind RestrictionReason, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Grid.Row="2" Orientation="Horizontal">
-                        <!--  FirstLastName  -->
+                        <!--  DisplayName  -->
                         <TextBlock
                             x:Uid="FieldFirstName"
                             Margin="5,0,7,2"
@@ -186,21 +161,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,0,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind FirstLastName, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind FirstLastName, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Text="{x:Bind DisplayName, Mode=OneWay}"
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind DisplayName, Mode=OneWay}" />
                         <!--  PhoneNumber  -->
                         <TextBlock
                             x:Uid="FieldPhoneNumber"
@@ -210,21 +180,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,0,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind PhoneNumber, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind PhoneNumber, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
                         <!--  Status  -->
                         <TextBlock
                             x:Uid="FieldStatus"
@@ -234,21 +199,16 @@
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,0,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind Status, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <!--  Copy button  -->
-                        <Button
-                            Margin="5,-2,0,0"
-                            HorizontalContentAlignment="Left"
-                            Command="{Binding ViewModel.OnClipboardSilentWriteCommand}"
-                            CommandParameter="{x:Bind Status, Mode=OneWay}"
-                            CornerRadius="10">
-                            <SymbolIcon Symbol="Copy" />
-                        </Button>
+                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+						<converters:TgAnimatedClipboardButton
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind Status, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Grid.Row="3" Orientation="Horizontal">
                         <!--  User deleted  -->
@@ -256,7 +216,7 @@
                             x:Uid="TextBlockMessageDeleted"
                             Margin="5,0,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
                 </Grid>
             </Button>
@@ -275,7 +235,7 @@
             <Grid
                 Grid.Row="1"
                 Margin="-15,0,-15,0"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="1*" />

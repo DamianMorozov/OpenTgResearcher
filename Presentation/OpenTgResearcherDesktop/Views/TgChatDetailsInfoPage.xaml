@@ -23,7 +23,7 @@
             </Grid.RowDefinitions>
             <!--  Load data  -->
             <views:TgLoadDataPage Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
-            <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -75,15 +75,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}" />
                 </StackPanel>
                 <!--  Type  -->
                 <TextBlock
@@ -100,15 +95,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}" />
                 </StackPanel>
                 <!--  Id  -->
                 <TextBlock
@@ -125,21 +115,16 @@
                     <TextBlock
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
                         TextAlignment="Left"
-                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}" />
                 </StackPanel>
                 <!--  UserName  -->
                 <TextBlock
@@ -156,15 +141,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}" />
                 </StackPanel>
                 <!--  InviteLink  -->
                 <TextBlock
@@ -181,15 +161,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}" />
                 </StackPanel>
                 <!--  Description  -->
                 <TextBlock
@@ -206,15 +181,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}" />
                 </StackPanel>
                 <!--  Permissions  -->
                 <TextBlock
@@ -232,15 +202,10 @@
                         Text="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
                         TextAlignment="Left"
                         TextWrapping="WrapWholeWords" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}" />
                 </StackPanel>
                 <!--  About  -->
                 <TextBlock
@@ -257,15 +222,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}" />
                 </StackPanel>
                 <!--  Participants count  -->
                 <TextBlock
@@ -283,15 +243,10 @@
                         Text="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
                         TextAlignment="Left"
                         TextWrapping="WrapWholeWords" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}" />
                 </StackPanel>
                 <!--  OnlineCount  -->
                 <TextBlock
@@ -308,15 +263,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}" />
                 </StackPanel>
                 <!--  SlowMode  -->
                 <TextBlock
@@ -334,15 +284,10 @@
                         Text="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
                         TextAlignment="Left"
                         TextWrapping="WrapWholeWords" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}" />
                 </StackPanel>
                 <!--  Available reactions  -->
                 <TextBlock
@@ -359,15 +304,10 @@
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
                         TextAlignment="Left" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}" />
                 </StackPanel>
                 <!--  TtlPeriod  -->
                 <TextBlock
@@ -385,15 +325,10 @@
                         Text="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
                         TextAlignment="Left"
                         TextWrapping="WrapWholeWords" />
-                    <!--  Copy button  -->
-                    <Button
-                        Margin="5,5,0,0"
-                        HorizontalContentAlignment="Left"
-                        Command="{x:Bind ViewModel.OnClipboardSilentWriteCommand}"
-                        CommandParameter="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
-                        CornerRadius="10">
-                        <SymbolIcon Symbol="Copy" />
-                    </Button>
+                    <converters:TgAnimatedClipboardButton
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}" />
                 </StackPanel>
                 <!--  IsActive  -->
                 <TextBlock

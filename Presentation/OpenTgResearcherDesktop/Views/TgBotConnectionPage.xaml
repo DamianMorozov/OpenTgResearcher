@@ -32,7 +32,7 @@
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     x:Uid="SettingAppActions"
                     Grid.Row="2"
@@ -190,7 +190,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     x:Uid="ExpanderSettingInStorage"
                     Grid.Row="0"
@@ -350,7 +350,7 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 IsEnabled="{x:Bind ViewModel.IsClientConnected, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     x:Uid="ExpanderSettingWithoutSaving"
                     Grid.Row="0"

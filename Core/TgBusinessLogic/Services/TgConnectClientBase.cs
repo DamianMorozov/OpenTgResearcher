@@ -622,9 +622,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Collect all contacts from Telegram </summary>
-    public async Task<List<long>> CollectAllContactsAsync(List<long>? chatIds, CancellationToken ct = default)
+    public async Task<List<long>> CollectAllContactsAsync(List<long>? listIds, CancellationToken ct = default)
     {
-        if (!IsReady || Client is null) return chatIds ?? [];
+        if (!IsReady || Client is null) return listIds ?? [];
 
         EnumerableUsers = [];
 
@@ -635,18 +635,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         FillEnumerableUsers(contacts.users);
 
         // Return peer IDs from chats
-        return chatIds ?? [];
+        return listIds ?? [];
     }
 
     /// <summary> Collect all users from Telegram by chat IDs </summary>
-    public async Task<List<long>> CollectAllUsersAsync(List<long>? chatIds, CancellationToken ct = default)
+    public async Task<List<long>> CollectAllUsersAsync(List<long>? listIds, CancellationToken ct = default)
     {
-        if (!IsReady || Client is null) return chatIds ?? [];
+        if (!IsReady || Client is null) return listIds ?? [];
 
         EnumerableUsers = [];
-        if (chatIds is not null && chatIds.Count != 0)
+        if (listIds is not null && listIds.Count != 0)
         {
-            foreach (var chatId in chatIds)
+            foreach (var chatId in listIds)
             {
                 var participants = await GetParticipantsAsync(chatId, ct);
                 Dictionary<long, TL.User> users = [];
@@ -655,7 +655,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 FillEnumerableUsers(users);
             }
         }
-        return chatIds ?? [];
+        return listIds ?? [];
     }
 
     /// <summary> Collect all stories from Telegram </summary>
@@ -1645,7 +1645,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Search sources from Telegram </summary>
-    public async Task SearchSourcesTgAsync(ITgDownloadViewModel iSettings, TgEnumSourceType sourceType, List<long>? chatIds = null)
+    public async Task SearchSourcesTgAsync(ITgDownloadViewModel iSettings, TgEnumSourceType sourceType, List<long>? listIds = null)
     {
         if (iSettings is not TgDownloadSettingsViewModel tgDownloadSettings) return;
         _downloadSettings = tgDownloadSettings;
@@ -1657,24 +1657,24 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             switch (sourceType)
             {
                 case TgEnumSourceType.Chat:
-                    await SetUserAccessForAllChatsAsync(chatIds, isUserAccess: false);
-                    await SetSubscribeForAllChatsAsync(chatIds, isSubscribe: false);
+                    await SetUserAccessForAllChatsAsync(listIds, isUserAccess: false);
+                    await SetSubscribeForAllChatsAsync(listIds, isSubscribe: false);
                     await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, tgDownloadSettings.SourceVm.Dto.Count, TgLocale.CollectChats);
-                    chatIds = [.. await CollectAllChatsAsync()];
-                    await SetSubscribeForAllChatsAsync(chatIds, isSubscribe: true);
+                    listIds = [.. await CollectAllChatsAsync()];
+                    await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChats.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchChatsAsync(tgDownloadSettings, chatIds);
+                    await SearchChatsAsync(tgDownloadSettings, listIds);
                     break;
                 case TgEnumSourceType.Dialog:
-                    await SetUserAccessForAllChatsAsync(chatIds, isUserAccess: false);
-                    await SetSubscribeForAllChatsAsync(chatIds, isSubscribe: false);
+                    await SetUserAccessForAllChatsAsync(listIds, isUserAccess: false);
+                    await SetSubscribeForAllChatsAsync(listIds, isSubscribe: false);
                     await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, tgDownloadSettings.SourceVm.Dto.Count, TgLocale.CollectDialogs);
-                    chatIds = [.. await CollectAllDialogsAsync()];
-                    await SetSubscribeForAllChatsAsync(chatIds, isSubscribe: true);
+                    listIds = [.. await CollectAllDialogsAsync()];
+                    await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChats.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchChatsAsync(tgDownloadSettings, chatIds);
+                    await SearchChatsAsync(tgDownloadSettings, listIds);
                     break;
                 case TgEnumSourceType.Story:
                     await CollectAllStoriesAsync();
@@ -1684,17 +1684,17 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     break;
                 case TgEnumSourceType.Contact:
                     await UpdateChatViewModelAsync(tgDownloadSettings.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
-                    chatIds = [.. await CollectAllContactsAsync(chatIds)];
+                    listIds = [.. await CollectAllContactsAsync(listIds)];
                     tgDownloadSettings.SourceScanCount = DicUsers.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchUsersAsync(tgDownloadSettings, isContact: true, chatIds);
+                    await SearchUsersAsync(tgDownloadSettings, isContact: true, listIds);
                     break;
                 case TgEnumSourceType.User:
                     await UpdateChatViewModelAsync(tgDownloadSettings.ContactVm.Dto.Id, 0, 0, TgLocale.CollectUsers);
-                    chatIds = [.. await CollectAllUsersAsync(chatIds)];
+                    listIds = [.. await CollectAllUsersAsync(listIds)];
                     tgDownloadSettings.SourceScanCount = DicUsers.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchUsersAsync(tgDownloadSettings, isContact: false, chatIds);
+                    await SearchUsersAsync(tgDownloadSettings, isContact: false, listIds);
                     break;
             }
         }, async () =>
@@ -1706,14 +1706,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Set user access for all chats </summary>
-    private async Task SetUserAccessForAllChatsAsync(List<long>? chatIds, bool isUserAccess)
+    private async Task SetUserAccessForAllChatsAsync(List<long>? listIds, bool isUserAccess)
     {
         try
         {
-            if (chatIds is null)
+            if (listIds is null)
                 await StorageManager.SourceRepository.SetIsUserAccessAsync(isUserAccess);
             else
-                await StorageManager.SourceRepository.SetIsUserAccessAsync(chatIds, isUserAccess);
+                await StorageManager.SourceRepository.SetIsUserAccessAsync(listIds, isUserAccess);
         }
         catch (Exception ex)
         {
@@ -1723,14 +1723,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Set subscribe for all chats </summary>
-    private async Task SetSubscribeForAllChatsAsync(List<long>? chatIds, bool isSubscribe)
+    private async Task SetSubscribeForAllChatsAsync(List<long>? listIds, bool isSubscribe)
     {
         try
         {
-            if (chatIds is null)
+            if (listIds is null)
                 await StorageManager.SourceRepository.SetIsSubscribeAsync(isSubscribe);
             else
-                await StorageManager.SourceRepository.SetIsSubscribeAsync(chatIds, isSubscribe);
+                await StorageManager.SourceRepository.SetIsSubscribeAsync(listIds, isSubscribe);
         }
         catch (Exception ex)
         {
@@ -1739,15 +1739,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task SearchChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<long>? chatIds, CancellationToken ct = default)
+    private async Task SearchChatsAsync(TgDownloadSettingsViewModel tgDownloadSettings, List<long>? listIds, CancellationToken ct = default)
     {
         try
         {
             var counter = 0;
-            var channels = chatIds is not null && chatIds.Count != 0 ? EnumerableChannels.Where(x => chatIds.Contains(x.ID)) : EnumerableChannels;
-            var groups = (chatIds is not null && chatIds.Count != 0) ? EnumerableGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableGroups;
-            var smallGroups = (chatIds is not null && chatIds.Count != 0) ? EnumerableSmallGroups.Where(x => chatIds.Contains(x.ID)) : EnumerableSmallGroups;
-            var dialogs = (chatIds is not null && chatIds.Count != 0) ? EnumerableDialogs.Where(x => chatIds.Contains(x.Peer.ID)) : EnumerableDialogs;
+            var channels = listIds is not null && listIds.Count != 0 ? EnumerableChannels.Where(x => listIds.Contains(x.ID)) : EnumerableChannels;
+            var groups = (listIds is not null && listIds.Count != 0) ? EnumerableGroups.Where(x => listIds.Contains(x.ID)) : EnumerableGroups;
+            var smallGroups = (listIds is not null && listIds.Count != 0) ? EnumerableSmallGroups.Where(x => listIds.Contains(x.ID)) : EnumerableSmallGroups;
+            var dialogs = (listIds is not null && listIds.Count != 0) ? EnumerableDialogs.Where(x => listIds.Contains(x.Peer.ID)) : EnumerableDialogs;
             var countAll = channels.Count() + groups.Count() + smallGroups.Count() + dialogs.Count();
 
             // First groups (small + groups)
@@ -1854,20 +1854,44 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private async Task SearchUsersAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isContact, List<long>? chatIds, CancellationToken ct = default)
+    private async Task SearchUsersAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isContact, List<long>? listIds, CancellationToken ct = default)
     {
         try
         {
-            var counter = 0;
-            foreach (var user in EnumerableUsers)
-            {
-                counter++;
-                tgDownloadSettings.SourceScanCurrent++;
-                await UpdateChatsViewModelAsync(counter, DicUsers.Count, TgEnumChatsMessageType.ProcessingUsers);
-                _ = await FillBufferUsersAsync(user, isContact, ct);
-                await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent):#00.00} %");
+            // Prepare filtered collection if listIds provided
+            var usersToProcess = (listIds != null && listIds.Count > 0)
+                ? EnumerableUsers.Where(u => listIds.Contains(u.id)).ToList()
+                : [.. EnumerableUsers];
 
-                await FlushUserBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
+            var counter = 0;
+
+            foreach (var user in usersToProcess)
+            {
+                // Start processing in parallel
+                try
+                {
+                    if (CheckShouldStop(ct)) return;
+
+                    Interlocked.Increment(ref counter);
+                    tgDownloadSettings.SourceScanCurrent++;
+
+                    // Update UI with current progress
+                    await UpdateChatsViewModelAsync(counter, DicUsers.Count, TgEnumChatsMessageType.ProcessingUsers);
+
+                    // Fill buffer with user data
+                    await FillBufferUsersAsync(user, isContact, ct);
+
+                    // Update window title with progress percentage
+                    await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent):#00.00} %");
+
+                    // Flush buffer without forcing
+                    await FlushUserBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
+                }
+                catch (Exception ex)
+                {
+                    TgLogUtils.WriteException(ex);
+                    throw;
+                }
             }
         }
         finally

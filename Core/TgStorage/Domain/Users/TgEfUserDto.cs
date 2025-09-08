@@ -26,7 +26,6 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
     public partial string FirstName { get; set; } = string.Empty;
     [ObservableProperty]
     public partial string LastName { get; set; } = string.Empty;
-    public string FirstLastName => $"{FirstName}{LastName}";
     [ObservableProperty]
     public partial string UserName { get; set; } = string.Empty;
     public string MainUserName => string.IsNullOrEmpty(UserName) ? string.Empty : $"@{UserName}";
@@ -54,7 +53,8 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
     public partial int BotActiveUsers { get; set; }
     [ObservableProperty]
     public partial bool IsDownload { get; set; }
-    public string DisplayName => !string.IsNullOrEmpty(FirstLastName) ? FirstLastName : UserName;
+
+    public string DisplayName => !string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName) ? $"{FirstName} {LastName}".Trim(): UserName;
 
     public TgEfUserDto() : base()
     {

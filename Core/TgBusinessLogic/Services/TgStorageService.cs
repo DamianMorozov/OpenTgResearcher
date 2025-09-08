@@ -130,7 +130,7 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
     }
 
     /// <inheritdoc />
-    public async Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, CancellationToken ct = default)
+    public async Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, bool isSave, CancellationToken ct = default)
     {
         // Try to get existing user from repository
         var storageResult = await UserRepository.GetByDtoAsync(new() { Id = user.id }, ct: ct);
@@ -159,6 +159,9 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
         userEntity.BotInlinePlaceholder = user.bot_inline_placeholder?.ToString() ?? string.Empty;
         userEntity.BotActiveUsers = user.bot_active_users;
         userEntity.IsContact = isContact;
+
+        if (isSave)
+            await UserRepository.SaveAsync(userEntity, ct: ct);
 
         return userEntity;
     }

@@ -36,7 +36,7 @@ public interface ITgStorageService : IDisposable
     /// <summary> Create or get a story entity based on peer ID and story item </summary>
     public Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story);
     /// <summary> Create or get a user entity based on the Telegram user and contact status </summary>
-    public Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, CancellationToken ct = default);
+    public Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, bool isSave, CancellationToken ct = default);
     /// <summary> Check if table exists in the database </summary>
     Task<bool> CheckTableExistsAsync(string tableName = "");
     /// <summary> Remove duplicate messages from the database </summary>

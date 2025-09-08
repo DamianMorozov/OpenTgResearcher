@@ -229,7 +229,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await TryGetCatchAsync(async () =>
         {
             // Create or get user entity from storage
-            var entity = await StorageManager.CreateOrGetUserAsync(user, isContact, ct);
+            var entity = await StorageManager.CreateOrGetUserAsync(user, isContact, isSave: true, ct);
 
             await Cache.SetAsync(TgCacheUtils.GetCacheKeyUser(user.id), entity, TgCacheUtils.CacheOptionsChannelMessages, ct);
 

@@ -45,7 +45,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public void SetupAfterClientConnect(Func<Task> afterClientConnectAsync);
 	public void SetupUpdateException(Func<Exception, Task> updateExceptionAsync);
 
-	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? chatIds = null);
+	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? listIds = null);
 	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent, CancellationToken ct = default);
     public Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings);
 

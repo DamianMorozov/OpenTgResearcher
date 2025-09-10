@@ -10,12 +10,12 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
 {
     #region Fields, properties, constructor
 
+    private readonly Func<TEntity, string> _cacheKeySelector = cacheKeySelector ?? throw new ArgumentNullException(nameof(cacheKeySelector));
     private readonly IFusionCache Cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly List<TEntity> _buffer = [];
-    private readonly Lock _bufferLock = new();
     private readonly string _cachePrefix = cachePrefix ?? throw new ArgumentNullException(nameof(cachePrefix));
     private readonly TimeSpan _cacheDuration = cacheDuration ?? TimeSpan.FromMinutes(5);
-    private readonly Func<TEntity, string> _cacheKeySelector = cacheKeySelector ?? throw new ArgumentNullException(nameof(cacheKeySelector));
+    private static readonly Lock _locker = new();
 
     #endregion
 
@@ -55,7 +55,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     private void Dispose(bool disposing)
     {
         if (_disposed) return;
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
         {
             // Release managed resources
             if (disposing)
@@ -77,7 +77,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
         {
             CheckIfDisposed();
 
-            using (_bufferLock.EnterScope())
+            using (_locker.EnterScope())
                 return _buffer.Count;
         }
     }
@@ -88,7 +88,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
         CheckIfDisposed();
         ArgumentNullException.ThrowIfNull(entity);
         
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
             _buffer.Add(entity);
 
         // Put it in the cache by entity key
@@ -102,7 +102,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
         CheckIfDisposed();
         ArgumentNullException.ThrowIfNull(entities);
 
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
         {
             _buffer.AddRange(entities);
             foreach (var entity in entities)
@@ -115,7 +115,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     {
         CheckIfDisposed();
 
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
         {
             RemoveFromCache(_buffer);
 
@@ -144,7 +144,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     {
         CheckIfDisposed();
 
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
         {
             var copy = new List<TEntity>(_buffer);
             _buffer.Clear();
@@ -193,7 +193,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     {
         CheckIfDisposed();
 
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
         {
             return _buffer.Count == 0 ? null : predicate is null ? _buffer.FirstOrDefault() : _buffer.FirstOrDefault(predicate);
         }
@@ -204,7 +204,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
     {
         CheckIfDisposed();
 
-        using (_bufferLock.EnterScope())
+        using (_locker.EnterScope())
         {
             return predicate is null ? [.. _buffer] : [.. _buffer.Where(predicate)];
         }

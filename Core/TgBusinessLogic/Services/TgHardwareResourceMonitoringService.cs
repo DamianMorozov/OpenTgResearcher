@@ -8,9 +8,9 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
 {
     #region Fields, properties, constructor
 
-    private readonly Lock _hardwareLocker = new();
     private readonly Computer _computer = new() { IsCpuEnabled = true, IsMemoryEnabled = true };
     private readonly IVisitor _visitor = new TgUpdateVisitor();
+    private static readonly Lock _locker = new();
 
     private CancellationTokenSource? _cts;
     private Task? _worker;
@@ -91,7 +91,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
     {
         CheckIfDisposed();
 
-        using (_hardwareLocker.EnterScope())
+        using (_locker.EnterScope())
         {
             if (_cts != null && _worker != null && !_worker.IsCompleted)
                 return;
@@ -115,7 +115,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
         CheckIfDisposed();
 
         Task? workerToAwait = null;
-        using (_hardwareLocker.EnterScope())
+        using (_locker.EnterScope())
         {
             if (_cts == null) return;
 

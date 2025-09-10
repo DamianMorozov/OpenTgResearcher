@@ -33,7 +33,7 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
     #region IDisposable
 
     /// <summary> Locker object </summary>
-    private Lock Locker { get; } = new();
+    private static readonly Lock _locker = new();
     /// <summary> To detect redundant calls </summary>
     private bool _disposed;
 
@@ -68,7 +68,7 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
     public void Dispose(bool disposing)
     {
         if (_disposed) return;
-        using (Locker.EnterScope())
+        using (_locker.EnterScope())
         {
             // Release managed resources
             if (disposing)

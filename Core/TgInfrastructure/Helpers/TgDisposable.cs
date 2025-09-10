@@ -18,7 +18,7 @@ public abstract class TgDisposable : ObservableRecipient, ITgDisposable
     #region IDisposable
 
     /// <summary> Locker object </summary>
-    protected Lock Locker { get; } = new();
+    private static readonly Lock _locker = new();
     /// <summary> To detect redundant calls </summary>
     private bool _disposed;
 
@@ -47,7 +47,7 @@ public abstract class TgDisposable : ObservableRecipient, ITgDisposable
     protected void Dispose(bool disposing)
     {
         if (_disposed) return;
-        using (Locker.EnterScope())
+        using (_locker.EnterScope())
         {
             // Release managed resources
             if (disposing)

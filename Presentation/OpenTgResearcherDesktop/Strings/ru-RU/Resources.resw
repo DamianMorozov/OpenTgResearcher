@@ -319,7 +319,7 @@
     <value>Помогите нам сделать OpenTgResearcher более безопасным и получите бесплатную лицензию!</value>
   </data>
   <data name="SettingsPage_OfficialSite_BugBounty.Tag" xml:space="preserve">
-    <value>"https://opentgresearcher.online/bugbounty"</value>
+    <value>"https://opentgresearcher.online/bug-bounty"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Релизы</value>

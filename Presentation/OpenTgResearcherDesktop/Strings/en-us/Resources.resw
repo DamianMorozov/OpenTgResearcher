@@ -260,7 +260,7 @@
     <value>Help us make OpenTgResearcher more secure and get a free license!</value>
   </data>
   <data name="SettingsPage_OfficialSite_BugBounty.Tag" xml:space="preserve">
-    <value>"https://opentgresearcher.online/bugbounty"</value>
+    <value>"https://opentgresearcher.online/bug-bounty"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Releases</value>

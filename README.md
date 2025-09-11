@@ -71,10 +71,10 @@ Telegram's open researcher and search engine:
 - Сохраните значения полей секции `App configuration`: `App api_id` / `App api_hash`
 
 ## Bug Bounty Program
-- [Bug Bounty Program](https://opentgresearcher.online/bugbounty)
+- [Bug Bounty Program](https://opentgresearcher.online/bug-bounty)
 
 ## Программа поощрения за обнаружение ошибок
-- [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bugbounty)
+- [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bug-bounty)
 
 ## OpenTgResearcherDesktop Splash screen
 ## Заставка OpenTgResearcherDesktop

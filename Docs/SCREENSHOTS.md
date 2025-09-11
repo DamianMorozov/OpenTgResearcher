@@ -1,5 +1,36 @@
 # Screenshots
 
+## [0.7.300] - 2025-09-11
+### OpenTgResearcherDesktop
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_01_SplashScreen.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_02_Main.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_03_Storage.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_04_Connection.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_05_Filters.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_06_Proxies.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_07_Stories.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_08_Chats.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_09_ChatDetails.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_10_ChatContent.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_11_Contacts.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_12_ContactDetails.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_13_Hardware.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_14_Logs.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_15_Update.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_16_License.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_17_Settings.png"></p>
+
+## [0.7.300] - 2025-09-11
+### OpenTgResearcherConsole
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_01_SplashScreen.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_02_Main.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_03_Application.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_04_Storage.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_05_ClientConnection.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_06_BotConnection.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_07_Update.png"></p>
+<p align="center"><img src="Assets/v0.7.300/OpenTgResearcherConsole_08_License.png"></p>
+
 ## [0.6.900] - 2025-08-07
 ### OpenTgResearcherDesktop
 <p align="center"><img src="Assets/v0.6.900/OpenTgResearcherDesktop_01_SplashScreen.png"></p>

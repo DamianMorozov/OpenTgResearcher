@@ -86,7 +86,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.ClearViewCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                                 <TextBlock
@@ -102,7 +102,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind ViewModel.SaveChatSettingsCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
                                 <TextBlock
@@ -119,7 +119,7 @@
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                 <Border
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -557,7 +557,7 @@
                         Padding="{StaticResource ExpanderPadding}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         IsExpanded="False">
                         <Grid Margin="0,0,10,5">
                             <Grid.RowDefinitions>
@@ -747,7 +747,7 @@
                         Padding="{StaticResource ExpanderPadding}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         IsExpanded="False">
                         <Grid>
                             <!--  Not found  -->
@@ -1147,7 +1147,7 @@
                         Padding="{StaticResource ExpanderPadding}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                         IsExpanded="False">
                         <Grid Margin="0,0,0,5">
                             <Grid.RowDefinitions>

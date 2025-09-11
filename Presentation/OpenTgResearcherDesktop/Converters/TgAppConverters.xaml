@@ -8,7 +8,6 @@
     <converters:TgDateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
     <converters:TgEnumToColumnConverter x:Key="EnumToColumnConverter" />
     <converters:TgEnumToColumnSpanConverter x:Key="EnumToColumnSpanConverter" />
-    <converters:TgInverseBooleanConverter x:Key="InverseBooleanConverter" />
     <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
 
     <convertersWinUI:BoolNegationConverter x:Key="BoolNegationConverter" />

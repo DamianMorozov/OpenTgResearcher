@@ -25,7 +25,7 @@
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+            IsEnabled="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

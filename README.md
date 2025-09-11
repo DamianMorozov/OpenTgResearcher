@@ -125,4 +125,4 @@ Telegram's open researcher and search engine:
 <p align="center"><img src="Docs/Assets/License/OpenTgResearcherDesktop_CheckCurrentLincense.gif"></p>
 
 ## Keywords
-ОпенТгРесечер, ОпенТгРесёчер, Опен-Тг-Ресечер, Опен-Тг-Ресёчер, Телеграм, скачать, тгскачать, тг-скачать, ресёчер, ресечер, тгресечер, тг-ресечер, тгресёчер, тг-ресёчер
+OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-downloader, researcher, tgresearcher, tg-researcher

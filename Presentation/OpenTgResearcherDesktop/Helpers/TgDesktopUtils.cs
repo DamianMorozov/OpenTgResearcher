@@ -161,5 +161,8 @@ public static class TgDesktopUtils
 		return null;
 	}
 
-	#endregion
+    /// <summary> Verify paid license </summary>
+    public static bool VerifyPaidLicense() => App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+
+    #endregion
 }

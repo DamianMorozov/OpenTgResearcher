@@ -322,7 +322,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsPageLoad)
                 IsPageLoad = false;
-            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+            VerifyPaidLicense();
         }
     }
 
@@ -347,7 +347,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsPageLoad)
                 IsPageLoad = false;
-            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+            VerifyPaidLicense();
         }
     }
 
@@ -368,7 +368,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsOnlineProcessing)
                 IsOnlineProcessing = false;
-            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+            VerifyPaidLicense();
         }
     }
 
@@ -389,9 +389,12 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsOnlineProcessing)
                 IsOnlineProcessing = false;
-            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+            VerifyPaidLicense();
         }
     }
+
+    /// <summary> Verify paid license </summary>
+    public void VerifyPaidLicense() => IsPaidLicense = TgDesktopUtils.VerifyPaidLicense();
 
     public void LogInformation(string message,
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")

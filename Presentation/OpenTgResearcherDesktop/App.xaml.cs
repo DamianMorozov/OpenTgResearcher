@@ -96,18 +96,8 @@ public partial class App : Application
                 services.AddSingleton<IActivationService, ActivationService>();
                 services.AddSingleton<ISampleDataService, SampleDataService>();
                 // Views and ViewModels
-                services.AddSingleton<ContentGridDetailPage>();
-                services.AddSingleton<ContentGridDetailViewModel>();
-                services.AddSingleton<ContentGridPage>();
-                services.AddSingleton<ContentGridViewModel>();
-                services.AddSingleton<DataGridPage>();
-                services.AddSingleton<DataGridViewModel>();
-                services.AddSingleton<ListDetailsPage>();
-                services.AddSingleton<ListDetailsViewModel>();
                 services.AddSingleton<ShellPage>();
                 services.AddSingleton<ShellViewModel>();
-                services.AddSingleton<TgBotConnectionPage>();
-                services.AddSingleton<TgBotConnectionViewModel>();
                 services.AddSingleton<TgChatDetailsContentPage>();
                 services.AddSingleton<TgChatDetailsContentViewModel>();
                 services.AddSingleton<TgChatDetailsInfoPage>();
@@ -140,7 +130,13 @@ public partial class App : Application
                 services.AddSingleton<TgSettingsViewModel>();
                 services.AddSingleton<TgSplashScreenPage>();
                 services.AddSingleton<TgSplashScreenViewModel>();
+                services.AddSingleton<TgStorageAdvancedPage>();
+                services.AddSingleton<TgStorageAdvancedViewModel>();
+                services.AddSingleton<TgStorageConfigurationPage>();
+                services.AddSingleton<TgStorageConfigurationViewModel>();
                 services.AddSingleton<TgStoragePage>();
+                services.AddSingleton<TgStorageTablesPage>();
+                services.AddSingleton<TgStorageTablesViewModel>();
                 services.AddSingleton<TgStorageViewModel>();
                 services.AddSingleton<TgStoriesPage>();
                 services.AddSingleton<TgStoriesViewModel>();
@@ -150,8 +146,6 @@ public partial class App : Application
                 services.AddSingleton<TgUserDetailsViewModel>();
                 services.AddSingleton<TgUsersPage>();
                 services.AddSingleton<TgUsersViewModel>();
-                services.AddSingleton<WebViewPage>();
-                services.AddSingleton<WebViewViewModel>();
                 // Configuration
                 services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
             })

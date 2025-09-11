@@ -15,8 +15,38 @@ public partial class TgStoragePage
 		
         InitializeComponent();
         DataContext = ViewModel;
-        Loaded += PageLoaded;
+        Loaded += OnPageLoaded;
 	}
 
-	#endregion
+    #endregion
+
+    #region Methods
+
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
+        PageLoaded(sender, e);
+
+        ViewModel.ContentFrame = ContentFrame;
+        ContentFrame.Navigate(typeof(TgStorageTablesPage));
+    }
+
+    /// <summary> Storage details page </summary>
+    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    {
+        var selectedItem = sender.SelectedItem;
+        switch (selectedItem.Tag)
+        {
+            case nameof(TgStorageTablesPage):
+                ContentFrame.Navigate(typeof(TgStorageTablesPage));
+                break;
+            case nameof(TgStorageConfigurationPage):
+                ContentFrame.Navigate(typeof(TgStorageConfigurationPage));
+                break;
+            case nameof(TgStorageAdvancedPage):
+                ContentFrame.Navigate(typeof(TgStorageAdvancedPage));
+                break;
+        }
+    }
+
+    #endregion
 }

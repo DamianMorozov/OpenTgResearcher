@@ -69,9 +69,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\TgBotConnectionPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Update="Views\TgChatDetailsInfoPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -91,6 +88,15 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgChatPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\TgStorageAdvancedPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\TgStorageTablesPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\TgStorageConfigurationPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgUserDetailsPage.xaml">

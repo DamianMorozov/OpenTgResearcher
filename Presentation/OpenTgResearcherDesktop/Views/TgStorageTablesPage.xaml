@@ -1,0 +1,113 @@
+﻿<common:TgPageBase
+    x:Class="OpenTgResearcherDesktop.Views.TgStorageTablesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
+    xmlns:views="using:OpenTgResearcherDesktop.Views"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgStorageTablesViewModel}"
+    mc:Ignorable="d">
+
+    <ScrollView VerticalScrollMode="Auto">
+        <Grid>
+            <!--  Load data  -->
+            <views:TgLoadDataPage Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <!--  Content  -->
+            <ContentControl
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                <Grid Margin="10,10,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  DB tables  -->
+                    <Grid Margin="0,0,10,0">
+                        <controls:DataGrid
+                            VerticalAlignment="Top"
+                            AutoGenerateColumns="False"
+                            Background="Transparent"
+                            CanUserSortColumns="True"
+                            HeadersVisibility="Column"
+                            ItemsSource="{x:Bind ViewModel.StorageTableDtos, Mode=OneWay}">
+                            <controls:DataGrid.Columns>
+                                <!--  Name column  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnTableName"
+                                    Width="1*"
+                                    CanUserReorder="True"
+                                    CanUserSort="True">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="2"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="{Binding Name, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Sensitive data  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnRecordsCount"
+                                    Width="1*"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="2"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Count of records column  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnRecordsCount"
+                                    Width="1*"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="2"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="{Binding RecordsCount, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+                    </Grid>
+                    <!--  Storage clearing  -->
+                    <!--
+                    <Expander
+                        x:Uid="ExpanderStorageClearing"
+                        Grid.Row="1"
+                        Margin="{StaticResource ExpanderMargin}"
+                        Padding="{StaticResource ExpanderPadding}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        IsExpanded="True"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid Margin="0,0,10,0" />
+                    </Expander>-->
+                </Grid>
+            </ContentControl>
+        </Grid>
+    </ScrollView>
+</common:TgPageBase>

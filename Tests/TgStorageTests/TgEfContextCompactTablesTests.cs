@@ -11,11 +11,7 @@ internal sealed class TgEfContextCompactTablesTests : TgStorageTestsBase
 	[Test]
 	public void Compact_db()
 	{
-		Assert.DoesNotThrowAsync(async () =>
-		{
-			// Shrink storage
-			await StorageManager.ShrinkDbAsync();
-		});
+		Assert.DoesNotThrowAsync(StorageManager.ShrinkDbAsync);
 	}
 
 	#endregion

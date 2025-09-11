@@ -71,9 +71,9 @@ internal partial class TgMenuHelper
 		if (AskQuestionYesNoReturnNegative(TgLocale.MenuStorageDbBackup)) return;
 
 		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupDirectory}: {Path.GetDirectoryName(TgAppSettings.AppXml.XmlEfStorage)}");
-		var backupResult = BusinessLogicManager.StorageManager.BackupDb();
-		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupFile}: {backupResult.FileName}");
-		TgLog.WriteLine(backupResult.IsSuccess ? $"  {TgLocale.MenuStorageBackupSuccess}" : $"  {TgLocale.MenuStorageBackupFailed}");
+		var (IsSuccess, FileName) = BusinessLogicManager.StorageManager.BackupDb();
+		TgLog.WriteLine($"  {TgLocale.MenuStorageBackupFile}: {FileName}");
+		TgLog.WriteLine(IsSuccess ? $"  {TgLocale.MenuStorageBackupSuccess}" : $"  {TgLocale.MenuStorageBackupFailed}");
         TgLog.TypeAnyKeyForReturn();
     }
 

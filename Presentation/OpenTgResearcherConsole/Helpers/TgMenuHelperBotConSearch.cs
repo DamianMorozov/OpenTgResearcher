@@ -304,7 +304,7 @@ internal partial class TgMenuHelper
         {
             // Filter messages by keywords
             var text = (message.Text ?? string.Empty).ToUpper();
-            if (BotMonitoringKeywords.Any(k => text.Contains(k)))
+            if (BotMonitoringKeywords.Any(text.Contains))
             {
                 // Send a message to the specified userName
                 TgLog.MarkupInfo($"[bold green]New message for {BotMonitoringUserName} in {chatName}:[/] {message.Text}");

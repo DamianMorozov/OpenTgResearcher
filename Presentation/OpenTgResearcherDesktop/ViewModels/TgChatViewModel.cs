@@ -42,7 +42,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         AppNotificationService = appNotificationService;
         // Commands
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+        ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
         // Callback updates UI
@@ -55,11 +55,21 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    {
+        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        await LoadDataStorageCoreAsync();
+    });
+
+    public override async Task ReloadUiAsync()
+    {
+        await base.ReloadUiAsync();
+
+        if (ContentFrame is not null && ContentFrame.GetPageViewModel() is TgPageViewModelBase pageViewModelBase)
         {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-            await LoadDataStorageCoreAsync();
-        });
+            await LoadStorageDataAsync(pageViewModelBase.ReloadUiAsync);
+        }
+    }
 
     protected override async Task SetDisplaySensitiveAsync()
     {
@@ -68,45 +78,16 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
         }
 
-        // Update ViewModels at current frame
-        await UpdateCurrentFrameAsync();
+        if (ContentFrame.GetPageViewModel() is TgPageViewModelBase pageViewModelBase)
+        {
+            pageViewModelBase.IsDisplaySensitiveData = IsDisplaySensitiveData;
+            await pageViewModelBase.ReloadUiAsync();
+        }
 
         await Task.CompletedTask;
     }
 
-    /// <summary> Update ViewModels current frame </summary>
-    private async Task UpdateCurrentFrameAsync()
-    {
-        // Chat details
-        if (ContentFrame.GetPageViewModel() is TgChatDetailsInfoViewModel chatDetailsInfoViewModel)
-        {
-            chatDetailsInfoViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            await chatDetailsInfoViewModel.ReloadUiAsync();
-        }
-
-        // Chat participants
-        if (ContentFrame.GetPageViewModel() is TgChatDetailsParticipantsViewModel chatDetailsParticipantsViewModel)
-        {
-            chatDetailsParticipantsViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            await chatDetailsParticipantsViewModel.ReloadUiAsync();
-        }
-
-        // Chat statistics
-        if (ContentFrame.GetPageViewModel() is TgChatDetailsStatisticsViewModel chatDetailsStatisticsViewModel)
-        {
-            chatDetailsStatisticsViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            await chatDetailsStatisticsViewModel.ReloadUiAsync();
-        }
-
-        // Content
-        if (ContentFrame.GetPageViewModel() is TgChatDetailsContentViewModel chatDetailsContentViewModel)
-        {
-            chatDetailsContentViewModel.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            await chatDetailsContentViewModel.ReloadUiAsync();
-        }
-    }
-
-    private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
+    private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private async Task ClearDataStorageCoreAsync()
     {
@@ -138,9 +119,9 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
+    private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
 
-    private async Task UpdateOnlineCoreAsync() => await ProcessDataAsync(async () =>
+    private async Task UpdateOnlineCoreAsync() => await LoadOnlineDataAsync(async () =>
     {
         try
         {
@@ -154,10 +135,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         {
             await LoadDataStorageCoreAsync();
         }
-    }, isDisabledContent: true, isPageLoad: false);
+    });
 
-    public async Task SaveChatSettingsAsync() => await ContentDialogAsync(
-        async () => await SaveChatSettingsCoreAsync(isLoadDataStorage: true), TgResourceExtensions.AskSettingsSave());
+    public async Task SaveChatSettingsAsync() => 
+        await ContentDialogAsync(() => SaveChatSettingsCoreAsync(isLoadDataStorage: true), TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
 
     private async Task SaveChatSettingsCoreAsync(bool isLoadDataStorage)
     {
@@ -184,7 +165,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading());
+    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading(), TgEnumLoadDesktopType.Online);
 
     private async Task StopDownloadingCoreAsync() => await App.BusinessLogicManager.ConnectClient.SetForceStopDownloadingAsync();
 

@@ -104,13 +104,13 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     {
         try
         {
-            TgLogUtils.WriteLog(TgResourceExtensions.GetLoggerLoading());
+            LogInformation(TgResourceExtensions.GetLoggerLoading());
             IsLoadLogging = true;
             await Task.Delay(250);
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
     }
 
@@ -122,7 +122,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
             VelopackApp.Build()
                 .OnFirstRun((v) =>
                 {
-                    TgLogUtils.WriteLog($"  Thanks for installing the {TgConstants.OpenTgResearcherDesktop}!");
+                    LogInformation($"  Thanks for installing the {TgConstants.OpenTgResearcherDesktop}!");
                 })
                 .Run();
             IsLoadVelopack = true;
@@ -130,7 +130,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
     }
 
@@ -148,7 +148,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
     }
 
@@ -164,12 +164,12 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
             var versionsResult = await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0);
             var version = versionsResult.Items.Single(x => x.Version == versionRepository.LastVersion);
             TgAppSettingsHelper.Instance.StorageVersion = $"v{version.Version}";
-            TgLogUtils.WriteLog(TgResourceExtensions.GetStorageLoading());
+            LogInformation(TgResourceExtensions.GetStorageLoading());
             IsLoadStorage = true;
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
     }
 
@@ -179,12 +179,12 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
         try
         {
             await App.BusinessLogicManager.LicenseService.LicenseActivateAsync();
-            TgLogUtils.WriteLog(TgResourceExtensions.GetLicenseLoading());
+            LogInformation(TgResourceExtensions.GetLicenseLoading());
             IsLoadLicense = true;
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
     }
 
@@ -196,13 +196,13 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
             var notificationService = App.GetService<IAppNotificationService>();
             notificationService.Initialize();
             notificationService.Show(string.Format("AppNotificationSamplePayload".GetLocalizedResource(), AppContext.BaseDirectory));
-            TgLogUtils.WriteLog(TgResourceExtensions.GetNotificationLoading());
+            LogInformation(TgResourceExtensions.GetNotificationLoading());
             IsLoadNotifications = true;
             await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
     }
 
@@ -216,7 +216,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
             throw;
         }
     }

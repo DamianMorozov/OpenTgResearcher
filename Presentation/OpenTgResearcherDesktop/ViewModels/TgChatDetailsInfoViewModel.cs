@@ -26,11 +26,11 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-        {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-            await LoadDataStorageCoreAsync();
-        });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    {
+        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        await LoadDataStorageCoreAsync();
+    });
 
     protected override async Task SetDisplaySensitiveAsync()
     {
@@ -51,9 +51,9 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatDetailsCoreAsync, TgResourceExtensions.AskUpdateChatDetails(), useLoadData: true);
+    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatSettingsCoreAsync, TgResourceExtensions.AskUpdateChatDetails(), TgEnumLoadDesktopType.Online);
 
-    private async Task UpdateChatDetailsCoreAsync() => await LoadDataAsync(async () =>
+    private async Task UpdateChatSettingsCoreAsync() => await LoadStorageDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 

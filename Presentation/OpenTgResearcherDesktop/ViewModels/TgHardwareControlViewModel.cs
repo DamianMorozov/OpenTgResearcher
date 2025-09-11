@@ -108,10 +108,10 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
         }
     }
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-        {
-            await LoadDataStorageCoreAsync();
-        });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    {
+        await LoadDataStorageCoreAsync();
+    });
 
     private async Task LoadDataStorageCoreAsync()
     {
@@ -123,7 +123,7 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex, "Error starting hardware monitoring");
+            LogError(ex, "Error starting hardware monitoring");
         }
         finally
         {
@@ -131,9 +131,9 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
         }
     }
 
-    private async Task StartMonitorAsync() => await ContentDialogAsync(StartMonitorCoreAsync, TgResourceExtensions.AskStartMonitoring());
+    private async Task StartMonitorAsync() => await ContentDialogAsync(StartMonitorCoreAsync, TgResourceExtensions.AskStartMonitoring(), TgEnumLoadDesktopType.Online);
 
-    private async Task StartMonitorCoreAsync() => await ProcessDataAsync(async () =>
+    private async Task StartMonitorCoreAsync() => await LoadOnlineDataAsync(async () =>
     {
         try
         {
@@ -141,17 +141,13 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex, "Error starting hardware monitoring");
+            LogError(ex, "Error starting hardware monitoring");
         }
-        finally
-        {
-            //
-        }
-    }, isDisabledContent: true, isPageLoad: false);
+    });
 
-    private async Task StopMonitorAsync() => await ContentDialogAsync(StopMonitorCoreAsync, TgResourceExtensions.AskStopMonitoring());
+    private async Task StopMonitorAsync() => await ContentDialogAsync(StopMonitorCoreAsync, TgResourceExtensions.AskStopMonitoring(), TgEnumLoadDesktopType.Online);
 
-    private async Task StopMonitorCoreAsync() => await ProcessDataAsync(async () =>
+    private async Task StopMonitorCoreAsync() => await LoadOnlineDataAsync(async () =>
     {
         try
         {
@@ -159,13 +155,9 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex, "Error starting hardware monitoring");
+            LogError(ex, "Error starting hardware monitoring");
         }
-        finally
-        {
-            //
-        }
-    }, isDisabledContent: true, isPageLoad: false);
+    });
 
     #endregion
 }

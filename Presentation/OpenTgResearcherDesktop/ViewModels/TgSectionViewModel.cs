@@ -60,7 +60,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         await LoadDataStorageAsync();
         await ReloadUiAsync();
@@ -86,7 +86,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         await LazyLoadAsync();
     }
 
-    protected async Task LazyLoadAsync() => await LoadDataAsync(async () =>
+    protected async Task LazyLoadAsync() => await LoadStorageDataAsync(async () =>
     {
         if (IsLoading || !HasMoreItems) return;
 
@@ -101,7 +101,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         }
     });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(ClearViewCoreAsync, TgResourceExtensions.AskDataClear());
+    private async Task ClearViewAsync() => await ContentDialogAsync(ClearViewCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private async Task ClearViewCoreAsync()
     {
@@ -128,12 +128,12 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task UpdateOnlineAsync() => await ContentDialogAsync(async() => await LoadDataAsync(async () =>
+    private async Task UpdateOnlineAsync() => await ContentDialogAsync(() => LoadStorageDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
         await UpdateOnlineCoreAsync();
-    }), TgResourceExtensions.AskUpdateOnline());
+    }), TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
 
     #endregion
 

@@ -18,7 +18,7 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 		: base(settingsService, navigationService, logger, nameof(TgFiltersViewModel))
 	{
 		// Commands
-		ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 	}
@@ -27,11 +27,11 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 
 	#region Methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-		{
-			await LoadDataStorageCoreAsync();
-			await ReloadUiAsync();
-		});
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+	{
+		await LoadDataStorageCoreAsync();
+		await ReloadUiAsync();
+	});
 
 	/// <summary> Sort data </summary>
 	private void SetOrderData(ObservableCollection<TgEfFilterDto> dtos)
@@ -40,7 +40,7 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 		Dtos = [.. dtos.OrderBy(x => x.Name)];
 	}
 
-	private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
+	private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
 	private async Task ClearDataStorageCoreAsync()
 	{
@@ -48,7 +48,7 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), useLoadData: true);
+	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{

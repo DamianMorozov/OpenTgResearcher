@@ -37,11 +37,11 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-        {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-            await LoadDataStorageCoreAsync();
-        });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    {
+        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        await LoadDataStorageCoreAsync();
+    });
 
     protected override async Task SetDisplaySensitiveAsync()
     {
@@ -71,7 +71,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         }
     }
 
-    private async Task GetParticipantsAsync() => await ContentDialogAsync(GetParticipantsCoreAsync, TgResourceExtensions.AskGetParticipants(), useLoadData: true);
+    private async Task GetParticipantsAsync() => await ContentDialogAsync(GetParticipantsCoreAsync, TgResourceExtensions.AskGetParticipants(), TgEnumLoadDesktopType.Online);
 
     private async Task GetParticipantsCoreAsync()
     {

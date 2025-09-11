@@ -50,18 +50,18 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         // Commands
         CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         LazyLoadMessagesCommand = new AsyncRelayCommand(LazyLoadMessagesAsync, () => HasMoreMessages && !IsLoading);
-        ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+        ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
     }
 
     #endregion
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-        {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-            await LoadDataStorageCoreAsync();
-        });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    {
+        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        await LoadDataStorageCoreAsync();
+    });
 
     protected override async Task SetDisplaySensitiveAsync()
     {
@@ -103,50 +103,49 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         }
     }
 
-    public async Task LazyLoadMessagesAsync() => 
-        await LoadDataAsync(async () =>
+    public async Task LazyLoadMessagesAsync() => await LoadStorageDataAsync(async () =>
+    {
+        if (IsLoading || !HasMoreMessages) return;
+
+        try
         {
-            if (IsLoading || !HasMoreMessages) return;
+            IsLoading = true;
 
-            try
+            if (UserDtos.Count == 0)
+                UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, where: x => x.Id > 0, order: x => x.Id)];
+
+            // Get total count of messages for current chat
+            var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
+
+            // Load newest messages first by ordering descending
+            var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: PageSkip,
+                where: x => x.SourceId == Dto.Id, order: x => x.Id, isOrderDesc: true);
+
+            // Update skip counter for next portion
+            PageSkip += newItems.Count;
+
+            // Check if there are more messages to load
+            HasMoreMessages = PageSkip < totalCount;
+
+            // Insert new items at the beginning to keep newest at top
+            foreach (var item in newItems)
             {
-                IsLoading = true;
+                item.IsDisplaySensitiveData = IsDisplaySensitiveData;
+                item.Directory = Dto.Directory;
+                item.UserContact = UserDtos.FirstOrDefault(u => u.Id == item.UserId)?.DisplayName ?? string.Empty;
 
-                if (UserDtos.Count == 0)
-                    UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, where: x => x.Id > 0, order: x => x.Id)];
-
-                // Get total count of messages for current chat
-                var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
-
-                // Load newest messages first by ordering descending
-                var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: PageSkip,
-                    where: x => x.SourceId == Dto.Id, order: x => x.Id, isOrderDesc: true);
-
-                // Update skip counter for next portion
-                PageSkip += newItems.Count;
-
-                // Check if there are more messages to load
-                HasMoreMessages = PageSkip < totalCount;
-
-                // Insert new items at the beginning to keep newest at top
-                foreach (var item in newItems)
-                {
-                    item.IsDisplaySensitiveData = IsDisplaySensitiveData;
-                    item.Directory = Dto.Directory;
-                    item.UserContact = UserDtos.FirstOrDefault(u => u.Id == item.UserId)?.DisplayName ?? string.Empty;
-
-                    MessageDtos.Insert(0, item);
-                }
-
-                (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
+                MessageDtos.Insert(0, item);
             }
-            finally
-            {
-                await AfterDataUpdateAsync();
-            }
-        });
 
-    private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
+            (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
+        }
+        finally
+        {
+            await AfterDataUpdateAsync();
+        }
+    });
+
+    private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private async Task ClearDataStorageCoreAsync()
     {
@@ -174,7 +173,8 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task CalcContentStatisticsAsync() => await ContentDialogAsync(CalcContentStatisticsCoreAsync, TgResourceExtensions.AskCalcContentStatistics());
+    private async Task CalcContentStatisticsAsync() => 
+        await ContentDialogAsync(CalcContentStatisticsCoreAsync, TgResourceExtensions.AskCalcContentStatistics(), TgEnumLoadDesktopType.Storage);
     
     private async Task CalcContentStatisticsCoreAsync()
     {

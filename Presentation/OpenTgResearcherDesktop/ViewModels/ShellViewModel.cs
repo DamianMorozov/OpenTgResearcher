@@ -45,12 +45,10 @@ public partial class ShellViewModel : ObservableRecipient
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
-
         // Commands
         ClientConnectCommand = new AsyncRelayCommand(ShellClientConnectAsync);
         ClientDisconnectCommand = new AsyncRelayCommand(ShellClientDisconnectAsync);
         UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
-
         // Callback updates UI
         App.BusinessLogicManager.ConnectClient.SetupUpdateShellViewModel(UpdateShellViewModelAsync);
     }
@@ -63,7 +61,7 @@ public partial class ShellViewModel : ObservableRecipient
     {
         _eventArgs = e;
         IsBackEnabled = NavigationService.CanGoBack;
-        
+
         if (e.SourcePageType == typeof(TgSettingsPage))
         {
             Selected = NavigationViewService.SettingsItem;
@@ -135,101 +133,34 @@ public partial class ShellViewModel : ObservableRecipient
         return string.Equals(normalizedFullName, normalizedPageName, StringComparison.Ordinal);
     }
 
-    private void OnClientConnectionChanged(object? sender, bool isClientConnected)
-    {
-        IsClientConnected = isClientConnected;
-    }
+    private void OnClientConnectionChanged(object? sender, bool isClientConnected) => IsClientConnected = isClientConnected;
 
-    private async Task ShellClientConnectAsync()
+    private async Task ShellClientConnectAsync() => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
-        if (_eventArgs is null) return;
-
-        if (App.MainWindow?.DispatcherQueue is not null)
+        var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
+        if (clientConnectionVm is not null)
         {
-            var tcs = new TaskCompletionSource();
-            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+            await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
+            if (!clientConnectionVm.IsClientConnected)
             {
-                try
-                {
-                    // Trying to find an open page with ViewModel
-                    var frame = NavigationService.Frame;
-                    if (frame?.Content is TgClientConnectionPage page)
-                    {
-                        await page.ViewModel.OnNavigatedToAsync(_eventArgs);
-                        if (!page.ViewModel.IsClientConnected)
-                        {
-                            await page.ViewModel.ClientConnectAsync();
-                            await ShellUpdatePageAsync();
-                        }
-                        return;
-                    }
-
-                    // If not found - get through DI
-                    var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
-                    if (clientConnectionVm is not null)
-                    {
-                        await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
-                        if (!clientConnectionVm.IsClientConnected)
-                        {
-                            await clientConnectionVm.ClientConnectAsync();
-                            await ShellUpdatePageAsync();
-                        }
-                    }
-                    tcs.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
+                clientConnectionVm.ClientConnectCommand.Execute(null);
+            }
         }
-    }
+        await Task.CompletedTask;
+    });
 
-    private async Task ShellClientDisconnectAsync()
+    private async Task ShellClientDisconnectAsync() => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
-        if (_eventArgs is null) return;
-
-        if (App.MainWindow?.DispatcherQueue is not null)
+        var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
+        if (clientConnectionVm is not null)
         {
-            var tcs = new TaskCompletionSource();
-            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
+            if (clientConnectionVm.IsClientConnected)
             {
-                try
-                {
-                    // Trying to find an open page with ViewModel
-                    var frame = NavigationService.Frame;
-                    if (frame?.Content is TgClientConnectionPage page)
-                    {
-                        await page.ViewModel.OnNavigatedToAsync(_eventArgs);
-                        if (page.ViewModel.IsClientConnected)
-                        {
-                            page.ViewModel.ClientDisconnectCommand.Execute(null);
-                        }
-                        return;
-                    }
-
-                    // If not found - get through DI
-                    var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
-                    if (clientConnectionVm is not null)
-                    {
-                        await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
-                        if (clientConnectionVm.IsClientConnected)
-                        {
-                            await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
-                            await ShellUpdatePageAsync();
-                        }
-                    }
-                    tcs.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
+                clientConnectionVm.ClientDisconnectCommand.Execute(null);
+            }
         }
-    }
+        await Task.CompletedTask;
+    });
 
     private async Task ShellUpdatePageAsync()
     {
@@ -238,45 +169,16 @@ public partial class ShellViewModel : ObservableRecipient
     }
 
     /// <summary> Update shell ViewModel </summary>
-    public async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message)
+    public async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
-                    // Start countdown if visible
-                    if (isFloodVisible && seconds > 0)
-                    {
-                        StartFloodCountdown(seconds);
-                    }
-                    else
-                    {
-                        _floodCts?.Cancel();
-                    }
-
-                    tcs.SetResult(true);
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
+        UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
+        // Start countdown if visible
+        if (isFloodVisible && seconds > 0)
+            StartFloodCountdown(seconds);
         else
-        {
-            UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
-            // Start countdown if visible
-            if (isFloodVisible && seconds > 0)
-                StartFloodCountdown(seconds);
-            else
-                _floodCts?.Cancel();
-        }
-    }
+            _floodCts?.Cancel();
+        await Task.CompletedTask;
+    });
 
     private void UpdateShellViewModelCore(ref bool isFloodVisible, ref int seconds, ref string message)
     {
@@ -304,17 +206,13 @@ public partial class ShellViewModel : ObservableRecipient
                     await Task.Delay(1000, _floodCts.Token);
                     seconds--;
 
-                    App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        FloodWaitSeconds = seconds;
-                    });
+                    TgDesktopUtils.InvokeOnUIThread(() => { FloodWaitSeconds = seconds; });
                 }
 
                 // Hide when time is up
                 if (!_floodCts.Token.IsCancellationRequested)
                 {
-                    App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
-                    {
+                    TgDesktopUtils.InvokeOnUIThread(() => {
                         IsFloodVisible = false;
                         FloodMessage = string.Empty;
                     });

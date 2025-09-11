@@ -39,11 +39,11 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-        {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-            await LoadDataStorageCoreAsync();
-        });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    {
+        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        await LoadDataStorageCoreAsync();
+    });
 
     protected override async Task SetDisplaySensitiveAsync()
     {
@@ -73,7 +73,8 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         }
     }
 
-    private async Task CalcChatStatisticsAsync() => await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics());
+    private async Task CalcChatStatisticsAsync() => 
+        await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics(), TgEnumLoadDesktopType.Online);
     
     private async Task CalcChatStatisticsCoreAsync()
     {

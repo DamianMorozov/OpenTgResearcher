@@ -54,6 +54,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool UseClient { get; set; }
 
+    private bool _isLoad;
+
     public IRelayCommand ClientConnectCommand { get; }
 	public IRelayCommand ClientDisconnectCommand { get; }
 	public IRelayCommand AppSaveCommand { get; }
@@ -65,18 +67,13 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
 		AppNotificationService = appNotificationService;
 		IsClientConnected = AppNotificationService.IsClientConnected;
-
-        var task = AppClearCoreAsync();
-		task.Wait();
-		
         // Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
-        
-        // Delegates
+        // Callback updates UI
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateExceptionAsync);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
     }
@@ -85,9 +82,16 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(AppLoadCoreAsync);
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
+    {
+        if (_isLoad) return;
 
-	private async Task AfterClientConnectAsync()
+        await AppClearCoreAsync();
+        await LoadStorageDataAsync(AppLoadCoreAsync);
+        _isLoad = true;
+    }
+
+    private async Task AfterClientConnectAsync()
 	{
 		ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 		IsClientConnected = false;
@@ -170,12 +174,12 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.WriteException(ex);
+			LogError(ex);
 		}
 		return response;
 	}
 
-    public async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
+    private async Task ClientConnectAsync() => await ClientConnectCoreAsync(isRetry: false);
 
 	private async Task ClientConnectCoreAsync(bool isRetry)
 	{
@@ -187,8 +191,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         }
         catch (Exception ex)
 		{
+            LogError(ex);
 			Exception.Set(ex);
-			TgLogUtils.WriteException(ex);
 			if (isRetry)
 				return;
 			if (Exception.Message.Contains("or delete the file to start a new session"))
@@ -199,7 +203,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task ClientDisconnectAsync() => await ContentDialogAsync(App.BusinessLogicManager.ConnectClient.DisconnectClientAsync, TgResourceExtensions.AskClientDisconnect());
+	private async Task ClientDisconnectAsync() => await ContentDialogAsync(() =>
+        App.BusinessLogicManager.ConnectClient.DisconnectClientAsync(), TgResourceExtensions.AskClientDisconnect(), TgEnumLoadDesktopType.Online);
 
 	private async Task AppLoadCoreAsync()
 	{
@@ -269,7 +274,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task AppSaveAsync() => await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave());
+	private async Task AppSaveAsync() => await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppSaveCoreAsync()
 	{
@@ -290,7 +295,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppEntity);
 	}
 
-	private async Task AppClearAsync() => await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear());
+	private async Task AppClearAsync() => await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppClearCoreAsync()
 	{
@@ -303,7 +308,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		VerificationCode = string.Empty;
 	}
 
-	private async Task AppDeleteAsync() => await ContentDialogAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete());
+	private async Task AppDeleteAsync() => await ContentDialogAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppDeleteCoreAsync()
 	{

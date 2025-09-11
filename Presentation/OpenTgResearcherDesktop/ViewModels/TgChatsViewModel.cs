@@ -132,7 +132,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
             $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     }
 
-    protected override async Task UpdateOnlineCoreAsync() => await LoadDataAsync(async () =>
+    protected override async Task UpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
     {
         var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
         await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);

@@ -29,7 +29,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         if (e?.Parameter is string paramString)
         {
@@ -151,7 +151,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
             $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     }
 
-    protected override async Task UpdateOnlineCoreAsync() => await LoadDataAsync(async () =>
+    protected override async Task UpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 

@@ -53,7 +53,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 
 	#region Methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
 	{
 		await ReloadUiAsync();
 
@@ -73,12 +73,12 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.WriteException(ex);
+			LogError(ex);
 		}
 		await Task.CompletedTask;
 	}
 
-	private async Task LicenseClearAsync() => await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskLicenseClear());
+	private async Task LicenseClearAsync() => await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskLicenseClear(), TgEnumLoadDesktopType.Online);
 
 	private async Task LicenseClearCoreAsync()
 	{
@@ -88,7 +88,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	}
 
     /// <summary> Check current license </summary>
-	private async Task LicenseCheckAsync() => await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck());
+	private async Task LicenseCheckAsync() => await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck(), TgEnumLoadDesktopType.Online);
 
 	private async Task LicenseCheckCoreAsync()
 	{
@@ -109,7 +109,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
         finally
 		{
@@ -155,13 +155,14 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
             return false;
         }
     }
 
     /// <summary> Request community license </summary>
-	private async Task LicenseRequestCommunityAsync() => await ContentDialogAsync(LicenseRequestCommunityCoreAsync, TgResourceExtensions.AskLicenseRequestCommunity());
+	private async Task LicenseRequestCommunityAsync() => 
+        await ContentDialogAsync(LicenseRequestCommunityCoreAsync, TgResourceExtensions.AskLicenseRequestCommunity(), TgEnumLoadDesktopType.Online);
 
     private async Task LicenseRequestCommunityCoreAsync()
     {
@@ -182,7 +183,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex);
+            LogError(ex);
         }
         finally
         {
@@ -200,7 +201,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.WriteException(ex);
+			LogError(ex);
 		}
 		finally
 		{

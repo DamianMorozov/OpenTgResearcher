@@ -74,7 +74,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCore, TgResourceExtensions.AskSettingsLoad());
+    private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCore, TgResourceExtensions.AskSettingsLoad(), TgEnumLoadDesktopType.Storage);
 
     private void SettingsLoadCore()
     {
@@ -82,7 +82,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         LoadSettingsFromService();
     }
 
-    private async Task SettingsDefaultAsync() => await ContentDialogAsync(SettingsDefaultCoreAsync, TgResourceExtensions.AskSettingsDefault());
+    private async Task SettingsDefaultAsync() => await ContentDialogAsync(SettingsDefaultCoreAsync, TgResourceExtensions.AskSettingsDefault(), TgEnumLoadDesktopType.Storage);
 
     private async Task SettingsDefaultCoreAsync()
     {
@@ -91,10 +91,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task SettingsSaveAsync()
-    {
-        await ContentDialogAsync(SettingsSaveCore, TgResourceExtensions.AskSettingsSave());
-    }
+    private async Task SettingsSaveAsync() => await ContentDialogAsync(SettingsSaveCore, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
 
     private void SettingsSaveCore()
     {

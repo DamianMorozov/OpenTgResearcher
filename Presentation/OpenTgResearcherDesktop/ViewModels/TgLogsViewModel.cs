@@ -23,7 +23,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 
 	#region Methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
 	{
 		await LoadLogsCoreAsync();
 		await ReloadUiAsync();
@@ -50,7 +50,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		}
 		catch (Exception ex)
 		{
-			TgLogUtils.WriteExceptionWithMessage(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
+            LogError(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
 		}
 	}
 
@@ -82,7 +82,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 			}
 			else
 			{
-				TgLogUtils.WriteExceptionWithMessage(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
+                LogError(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
 				LogFiles.Add(new(this, Path.GetFileName(logFile), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
 			}
 		}

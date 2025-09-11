@@ -25,7 +25,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 		: base(settingsService, navigationService, logger, nameof(TgUserDetailsViewModel))
 	{
 		// Commands
-		ClearViewCommand = new AsyncRelayCommand(ClearDataStorageAsync);
+		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
 		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
     }
@@ -34,7 +34,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 
 	#region Methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
 		{
 			Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
 			await LoadDataStorageCoreAsync();
@@ -57,15 +57,11 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task ClearDataStorageAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear());
+    private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCore, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
-	private async Task ClearDataStorageCoreAsync()
-	{
-		Dto = new();
-		await Task.CompletedTask;
-	}
+    private void ClearDataStorageCore() => Dto = new();
 
-	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), useLoadData: true);
+    private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{
@@ -90,9 +86,9 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         }
 	}
 
-	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline());
+	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
 
-    private async Task UpdateOnlineCoreAsync() => await ProcessDataAsync(async () =>
+    private async Task UpdateOnlineCoreAsync() => await LoadOnlineDataAsync(async () =>
     {
         try
         {
@@ -106,7 +102,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         {
             await LoadDataStorageCoreAsync();
         }
-    }, isDisabledContent: true, isPageLoad: false);
+    });
 
 	#endregion
 }

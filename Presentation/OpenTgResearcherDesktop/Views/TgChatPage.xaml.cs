@@ -27,6 +27,7 @@ public sealed partial class TgChatPage
         PageLoaded(sender, e);
 
         ViewModel.ContentFrame = ContentFrame;
+        ContentFrame.Navigate(typeof(TgChatDetailsInfoPage), ViewModel.Uid);
     }
 
     /// <summary> Change chat details page </summary>

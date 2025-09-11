@@ -1362,6 +1362,15 @@
   <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
     <value>Content statistics</value>
   </data>
+  <data name="SelectorBarItemPageStorageTables.Text" xml:space="preserve">
+    <value>Storage tables</value>
+  </data>
+  <data name="SelectorBarItemPageStorageConfiguration.Text" xml:space="preserve">
+    <value>Storage configuration</value>
+  </data>
+  <data name="SelectorBarItemPageStorageAdvancedSettings.Text" xml:space="preserve">
+    <value>Advanced storage settings</value>
+  </data>
   <data name="From" xml:space="preserve">
     <value>from</value>
   </data>

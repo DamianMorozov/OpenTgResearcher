@@ -40,7 +40,6 @@
                         Grid.Column="0"
                         Margin="15,5,10,5"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
                     <TextBlock
                         Grid.Column="1"
                         Margin="5"

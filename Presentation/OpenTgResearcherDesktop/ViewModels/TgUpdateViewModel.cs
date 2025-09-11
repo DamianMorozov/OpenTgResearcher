@@ -1,8 +1,6 @@
 ﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
-using TgBusinessLogic.Services;
-
 namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
@@ -27,14 +25,13 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 
 	#region Methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadDataAsync(async () =>
-	{
-		await ReloadUiAsync();
-	});
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(ReloadUiAsync);
 
-	private async Task UpdateReleaseAsync() => await ContentDialogAsync(async () => await VelopackUpdateAsync(isPreview: false), TgResourceExtensions.AskUpdateReleaseApp());
+	private async Task UpdateReleaseAsync() => 
+        await ContentDialogAsync(() => VelopackUpdateAsync(isPreview: false), TgResourceExtensions.AskUpdateReleaseApp(), TgEnumLoadDesktopType.Online);
 
-	private async Task UpdatePreviewAsync() => await ContentDialogAsync(async () => await VelopackUpdateAsync(isPreview: true), TgResourceExtensions.AskUpdatePreviewApp());
+	private async Task UpdatePreviewAsync() => 
+        await ContentDialogAsync(() => VelopackUpdateAsync(isPreview: true), TgResourceExtensions.AskUpdatePreviewApp(), TgEnumLoadDesktopType.Online);
 
 	/// <summary> Velopack installer update </summary>
 	private async Task VelopackUpdateAsync(bool isPreview)
@@ -81,7 +78,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
         catch (Exception ex)
 		{
 			log.AppendLine(ex.Message);
-			TgLogUtils.WriteException(ex);
+			LogError(ex);
 		}
 		finally
 		{

@@ -4,10 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
     d:DataContext="{d:DesignInstance Type=viewmodels:TgChatsViewModel}"
@@ -187,12 +187,18 @@
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <Button
+                    <!--  Search license button  -->
+                    <styles:TgLicenseButton
                         Grid.RowSpan="2"
                         Grid.Column="5"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.SearchCommand}">
+                        Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                        Command="{x:Bind Path=ViewModel.SearchCommand}"
+                        Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                        ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                        Style="{StaticResource LicenseButtonStyle}"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xE721;" />
                             <TextBlock
@@ -200,7 +206,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </Button>
+                    </styles:TgLicenseButton>
                     <!--  Chats table  -->
                     <ScrollView
                         Grid.Row="2"

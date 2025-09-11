@@ -164,5 +164,18 @@ public static class TgDesktopUtils
     /// <summary> Verify paid license </summary>
     public static bool VerifyPaidLicense() => App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
 
+    /// <summary> Get license type </summary>
+    public static TgEnumLicenseType GetLicenseType() => App.BusinessLogicManager.LicenseService.CurrentLicense?.LicenseType ?? TgEnumLicenseType.No;
+
+    /// <summary> Get resource brush </summary>
+    public static Brush GetResourceBrush(string resourceKey, Brush? fallback = null)
+    {
+        if (Application.Current.Resources.TryGetValue(resourceKey, out var brush) && brush is Brush result)
+        {
+            return result;
+        }
+        return fallback ?? new SolidColorBrush(Colors.Transparent);
+    }
+
     #endregion
 }

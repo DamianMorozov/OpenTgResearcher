@@ -119,8 +119,8 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                 var context = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForViewIndependentUse();
                 context.Languages = AppLanguage switch
                 {
-                    TgEnumLanguage.Russian => new List<string> { TgConstants.LocaleRuRu },
-                    _ => new List<string> { TgConstants.LocaleEnUs },
+                    TgEnumLanguage.Russian => [TgConstants.LocaleRuRu],
+                    _ => [TgConstants.LocaleEnUs],
                 };
             }
 

@@ -3,11 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:users="using:TgStorage.Domain.Users"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
@@ -34,7 +34,7 @@
                         Margin="0,5,0,0"
                         Text="{x:Bind UserDto.Id}"
                         Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind UserDto.Id, Mode=OneWay}" />
@@ -51,7 +51,7 @@
                         Margin="0,5,0,0"
                         Text="{x:Bind UserDto.DisplayName}"
                         Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind UserDto.DisplayName, Mode=OneWay}" />

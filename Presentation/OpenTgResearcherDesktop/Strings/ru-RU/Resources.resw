@@ -1507,4 +1507,16 @@
   <data name="AskLicenseRequestCommunity" xml:space="preserve">
     <value>Запросить лицензию сообщества. Продолжить?</value>
   </data>
+  <data name="FeatureRequiresLicense" xml:space="preserve">
+    <value>Для этой функции требуется лицензия '{0}'</value>
+  </data>
+  <data name="FeatureSucessLicense" xml:space="preserve">
+    <value>Лицензия '{0}' успешно проверена</value>
+  </data>
+  <data name="FeatureLicenseManager" xml:space="preserve">
+    <value>Менеджер лицензий</value>
+  </data>
+  <data name="FeatureLicensePurchase" xml:space="preserve">
+    <value>Чтобы воспользоваться функционалом необходимо приобрести указанную лицензию</value>
+  </data>
 </root>

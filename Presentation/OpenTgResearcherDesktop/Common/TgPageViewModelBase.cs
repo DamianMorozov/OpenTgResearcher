@@ -49,9 +49,13 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     public partial bool IsEmptyData { get; set; } = true;
     [ObservableProperty]
     public partial bool IsPaidLicense { get; set; }
+    [ObservableProperty]
+    public partial TgEnumLicenseType LicenseType { get; set; } = TgEnumLicenseType.No;
 
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
+
+    public IRelayCommand ShowPurchaseLicenseCommand { get; }
 
     public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
     {
@@ -60,6 +64,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         Logger = logger;
         Name = name;
         IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
+        // Commands
+        ShowPurchaseLicenseCommand = new AsyncRelayCommand(ShowPurchaseLicenseAsync);
     }
 
     #endregion
@@ -322,7 +328,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsPageLoad)
                 IsPageLoad = false;
-            VerifyPaidLicense();
+            RefreshLicenseInfo();
         }
     }
 
@@ -347,7 +353,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsPageLoad)
                 IsPageLoad = false;
-            VerifyPaidLicense();
+            RefreshLicenseInfo();
         }
     }
 
@@ -368,7 +374,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsOnlineProcessing)
                 IsOnlineProcessing = false;
-            VerifyPaidLicense();
+            RefreshLicenseInfo();
         }
     }
 
@@ -389,12 +395,20 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         {
             if (IsOnlineProcessing)
                 IsOnlineProcessing = false;
-            VerifyPaidLicense();
+            RefreshLicenseInfo();
         }
     }
 
-    /// <summary> Verify paid license </summary>
-    public void VerifyPaidLicense() => IsPaidLicense = TgDesktopUtils.VerifyPaidLicense();
+    /// <summary> Refresh license </summary>
+    public void RefreshLicenseInfo()
+    {
+        IsPaidLicense = TgDesktopUtils.VerifyPaidLicense();
+        LicenseType = TgDesktopUtils.GetLicenseType();
+    }
+
+    /// <summary> Show required license dialog </summary>
+    private async Task ShowPurchaseLicenseAsync() => 
+        await ContentDialogAsync(TgResourceExtensions.GetFeatureLicenseManager, TgResourceExtensions.GetFeatureLicensePurchase);
 
     public void LogInformation(string message,
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")

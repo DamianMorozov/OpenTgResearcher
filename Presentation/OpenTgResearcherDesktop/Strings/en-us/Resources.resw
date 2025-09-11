@@ -1445,4 +1445,16 @@
   <data name="AskLicenseRequestCommunity" xml:space="preserve">
     <value>Request community license. Continue?</value>
   </data>
+  <data name="FeatureRequiresLicense" xml:space="preserve">
+    <value>This feature requires a '{0}' license</value>
+  </data>
+  <data name="FeatureSucessLicense" xml:space="preserve">
+    <value>License '{0}' successfully verified</value>
+  </data>
+  <data name="FeatureLicenseManager" xml:space="preserve">
+    <value>License Manager</value>
+  </data>
+  <data name="FeatureLicensePurchase" xml:space="preserve">
+    <value>To use this feature, you must purchase the specified license</value>
+  </data>
 </root>

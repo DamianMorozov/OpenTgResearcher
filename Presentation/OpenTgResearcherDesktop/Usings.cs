@@ -39,6 +39,7 @@ global using OpenTgResearcherDesktop.Core.Services;
 global using OpenTgResearcherDesktop.Helpers;
 global using OpenTgResearcherDesktop.Models;
 global using OpenTgResearcherDesktop.Services;
+global using OpenTgResearcherDesktop.Styles;
 global using OpenTgResearcherDesktop.ViewModels;
 global using OpenTgResearcherDesktop.Views;
 global using System.Collections.Concurrent;

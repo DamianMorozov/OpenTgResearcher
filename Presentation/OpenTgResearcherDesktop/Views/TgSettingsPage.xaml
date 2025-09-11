@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:TgSettingsViewModel}"
     mc:Ignorable="d">
@@ -180,7 +180,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.UserDirectory, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Grid.Column="3"
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -205,7 +205,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.SettingFile, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Grid.Row="1"
                         Grid.Column="3"
                         Click="OnClipboardSilentWriteClick"
@@ -231,7 +231,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.ApplicationDirectory, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Grid.Row="2"
                         Grid.Column="3"
                         Click="OnClipboardSilentWriteClick"
@@ -268,7 +268,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.AppStorage, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Grid.Row="3"
                         Grid.Column="3"
                         Click="OnClipboardSilentWriteClick"
@@ -305,7 +305,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.AppSession, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Grid.Row="4"
                         Grid.Column="3"
                         Click="OnClipboardSilentWriteClick"

@@ -61,7 +61,7 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		await LicenseShowInfoAsync();
 	});
 
-	private async Task LicenseShowInfoAsync() 
+	private async Task LicenseShowInfoAsync()
 	{
 		try
 		{

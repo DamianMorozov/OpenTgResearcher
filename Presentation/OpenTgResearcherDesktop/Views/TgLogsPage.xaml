@@ -3,10 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:OpenTgResearcherDesktop.Models"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:system="using:System"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:TgLogsViewModel}"
@@ -51,7 +51,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.SettingsService.UserDirectory, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <converters:TgAnimatedClipboardButton
+                    <styles:TgAnimatedClipboardButton
                         Grid.Column="2"
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -81,14 +81,18 @@
                                             Text="{x:Bind Content}"
                                             TextWrapping="Wrap" />
                                     </Expander>
-                                    <converters:TgAnimatedClipboardButton
+                                    <styles:TgAnimatedClipboardButton
                                         Grid.Column="1"
+                                        Margin="0,5,5,5"
+                                        VerticalAlignment="Top"
                                         Click="OnClipboardSilentWriteClick"
                                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                         Tag="{x:Bind Content}" />
                                     <Button
                                         x:Uid="ActionDeleteFile"
                                         Grid.Column="2"
+                                        Margin="0,7,5,5"
+                                        VerticalAlignment="Top"
                                         Command="{x:Bind ViewModel.DeleteLogFileCommand}"
                                         CommandParameter="{x:Bind}" />
                                 </Grid>

@@ -11,17 +11,21 @@ public static class TgResourceExtensions
 
     internal static string GetLocalizedResource(this string resourceKey) => LocalResourceLoader.GetString(resourceKey);
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-    internal static object GetSpeed() => "Speed".GetLocalizedResource();
-    internal static object GetTransmitted() => "Transmitted".GetLocalizedResource();
+    internal static string GetFeatureLicenseManager => "FeatureLicenseManager".GetLocalizedResource();
+    internal static string GetFeatureLicensePurchase => "FeatureLicensePurchase".GetLocalizedResource();
+    internal static string GetFeatureRequiresLicense(TgEnumLicenseType required) => string.Format("FeatureRequiresLicense".GetLocalizedResource(), required.ToString());
+    internal static string GetFeatureSucessLicense(TgEnumLicenseType required) => string.Format("FeatureSucessLicense".GetLocalizedResource(), required.ToString());
     internal static string GetProcessingChats() => "ProcessingChats".GetLocalizedResource();
     internal static string GetProcessingDialogs() => "ProcessingDialogs".GetLocalizedResource();
     internal static string GetProcessingGroups() => "ProcessingGroups".GetLocalizedResource();
+    internal static string GetSpeed() => "Speed".GetLocalizedResource();
     internal static string GetStartScan() => "StartScan".GetLocalizedResource();
     internal static string GetStopScan() => "StopScan".GetLocalizedResource();
+    internal static string GetTransmitted() => "Transmitted".GetLocalizedResource();
 	internal static string ActionStorageCreateBackupFailed() => "ActionStorageCreateBackupFailed".GetLocalizedResource();
 	internal static string ActionStorageCreateBackupFile() => "ActionStorageCreateBackupFile".GetLocalizedResource();
 	internal static string ActionStorageCreateBackupSuccess() => "ActionStorageCreateBackupSuccess".GetLocalizedResource();
@@ -102,9 +106,9 @@ public static class TgResourceExtensions
 	internal static string GetRpcErrorPhonePasswordFlood() => "RpcErrorPhonePasswordFlood".GetLocalizedResource();
 	internal static string GetSettingAppLanguageTooltip => "SettingAppLanguageTooltip".GetLocalizedResource();
 	internal static string GetSettingAppThemeTooltip => "SettingAppThemeTooltip".GetLocalizedResource();
-	internal static string GetSettingsThemeDark() => "SettingsThemeDark".GetLocalizedResource();
-	internal static string GetSettingsThemeDefault() => "SettingsThemeDefault".GetLocalizedResource();
-	internal static string GetSettingsThemeLight() => "SettingsThemeLight".GetLocalizedResource();
+	internal static string GetSettingsThemeDark => "SettingsThemeDark".GetLocalizedResource();
+	internal static string GetSettingsThemeDefault => "SettingsThemeDefault".GetLocalizedResource();
+	internal static string GetSettingsThemeLight => "SettingsThemeLight".GetLocalizedResource();
 	internal static string GetStorage() => "Storage".GetLocalizedResource();
 	internal static string GetStorageLoading() => "StorageLoading".GetLocalizedResource();
 	internal static string GetTableNameApps() => "TableNameApps".GetLocalizedResource();

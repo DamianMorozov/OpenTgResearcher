@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:TgUpdateViewModel}"
     mc:Ignorable="d">
@@ -26,8 +27,10 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
+                        <!--  Update Release license button  -->
                         <Button
-                            Margin="0,5,5,0"
+                            MinHeight="50"
+                            Margin="5,10,5,10"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             Command="{x:Bind Path=ViewModel.UpdateReleaseCommand}">
@@ -39,12 +42,19 @@
                                     VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button
+                        <!--  Update Preview license button  -->
+                        <styles:TgLicenseButton
                             Grid.Row="1"
-                            Margin="0,5,5,0"
+                            MinHeight="50"
+                            Margin="5,10,5,10"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Command="{x:Bind Path=ViewModel.UpdatePreviewCommand}">
+                            Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                            Command="{x:Bind Path=ViewModel.UpdatePreviewCommand}"
+                            Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                            ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                            Style="{StaticResource LicenseButtonStyle}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
@@ -52,7 +62,7 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center" />
                             </StackPanel>
-                        </Button>
+                        </styles:TgLicenseButton>
                         <TextBlock
                             Grid.Row="2"
                             Margin="10,5,0,-10"

@@ -25,7 +25,6 @@ public partial class TgSensitiveModel : ObservableRecipient
 
     #region Methods
 
-
     /// <summary> Action for IsDisplaySensitiveData property change </summary>
     partial void OnIsDisplaySensitiveDataChanged(bool value)
     {

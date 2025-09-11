@@ -299,8 +299,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         if (IsReady) return;
 
-        await DisconnectClientAsync();
-        await DisconnectBotAsync();
+        await DisconnectClientAsync(isAfterClientConnect: false);
+        await DisconnectBotAsync(isAfterClientConnect: false);
 
         Client = new(config);
         await ConnectThroughProxyAsync(proxyDto, false);
@@ -321,12 +321,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 throw new ArgumentOutOfRangeException(nameof(appDto), appDto, TgLocale.TgBotSetupCannotSetUseBotProperty);
         }
 
-        await DisconnectClientAsync();
+        await DisconnectClientAsync(isAfterClientConnect: false);
 
         var isBotConnectionReady = await CheckBotConnectionReadyAsync();
         if (Bot is null || !isBotConnectionReady)
         {
-            await DisconnectBotAsync();
+            await DisconnectBotAsync(isAfterClientConnect: false);
 
             // https://github.com/wiz0u/WTelegramBot/blob/master/Examples/ConsoleApp/Program.cs
             try
@@ -370,11 +370,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         if (IsReady)
             return;
-        await DisconnectClientAsync();
+        await DisconnectClientAsync(isAfterClientConnect: false);
         Client = new(config);
         await ConnectThroughProxyAsync(proxyDto, true);
-        Client.OnUpdates += OnUpdatesClientAsync;
         Client.OnOther += OnClientOtherAsync;
+        Client.OnOwnUpdates += OnOwnUpdatesClientAsync;
+        Client.OnUpdates += OnUpdatesClientAsync;
         await LoginUserAsync(isProxyUpdate: true);
     }
 
@@ -3270,7 +3271,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public virtual async Task LoginUserAsync(bool isProxyUpdate) => await UseOverrideMethodAsync();
 
-    public async Task DisconnectClientAsync()
+    public async Task DisconnectClientAsync(bool isAfterClientConnect = true)
     {
         try
         {
@@ -3279,14 +3280,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             Me = null;
             if (Client is not null)
             {
-                Client.OnUpdates -= OnUpdatesClientAsync;
                 Client.OnOther -= OnClientOtherAsync;
+                Client.OnOwnUpdates -= OnOwnUpdatesClientAsync;
+                Client.OnUpdates -= OnUpdatesClientAsync;
                 await Client.DisposeAsync();
                 Client = null;
             }
             ClientException = new();
             await CheckClientConnectionReadyAsync();
-            await AfterClientConnectAsync();
+            if (isAfterClientConnect)
+                await AfterClientConnectAsync();
         }
         catch (Exception ex)
         {
@@ -3295,7 +3298,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    public async Task DisconnectBotAsync()
+    public async Task DisconnectBotAsync(bool isAfterClientConnect = true)
     {
         try
         {
@@ -3333,6 +3336,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await BotStreamWriterLogs.DisposeAsync();
                 BotStreamWriterLogs = null;
             }
+
+            if (isAfterClientConnect)
+                await AfterClientConnectAsync();
         }
         catch (Exception ex)
         {

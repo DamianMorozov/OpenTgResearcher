@@ -127,7 +127,10 @@ public static class TgLogUtils
     }
 
     public static void WriteLogWithCaller(string message,
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "") => 
+        WriteLogWithCallerCore(message, filePath, lineNumber, memberName);
+
+    public static void WriteLogWithCallerCore(string message, string filePath, int lineNumber, string memberName)
     {
         WriteLog(message);
         WriteCallerCore(filePath, lineNumber, memberName);
@@ -150,7 +153,10 @@ public static class TgLogUtils
         WriteExceptionCore(ex, filePath, lineNumber, memberName);
 
     public static void WriteExceptionWithMessage(Exception ex, string message = "",
-        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "") => 
+        WriteExceptionWithMessageCore(ex, message, filePath, lineNumber, memberName);
+
+    public static void WriteExceptionWithMessageCore(Exception ex, string message, string filePath, int lineNumber, string memberName)
     {
         WriteLog(message);
         WriteExceptionCore(ex, filePath, lineNumber, memberName);

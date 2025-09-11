@@ -27,9 +27,9 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 	public partial bool IsJoinFileNameWithMessageId { get; set; } = true;
 	[ObservableProperty]
 	public partial int CountThreads { get; set; } = 5;
-	[ObservableProperty]
-	public partial int LimitThreads { get; set; } = 10;
-	[ObservableProperty]
+    [ObservableProperty]
+    public partial int LimitThreads { get; set; } = TgGlobalTools.DownloadCountThreadsLimit;
+    [ObservableProperty]
 	public partial TgDownloadChat Chat { get; set; }
 	[ObservableProperty]
 	public partial int SourceScanCount { get; set; } = 1;

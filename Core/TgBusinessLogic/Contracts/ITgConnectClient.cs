@@ -23,8 +23,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Func<int, int, TgEnumChatsMessageType, Task> UpdateChatsViewModelAsync { get; }
 
     public Task LoginUserAsync(bool isProxyUpdate);
-	public Task DisconnectClientAsync();
-    public Task DisconnectBotAsync();
+	public Task DisconnectClientAsync(bool isAfterClientConnect = true);
+    public Task DisconnectBotAsync(bool isAfterClientConnect = true);
     public Task ConnectClientConsoleAsync(Func<string, string?>? config, TgEfProxyDto proxyDto);
     public Task ConnectBotConsoleAsync();
 	public Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config);

@@ -6,9 +6,77 @@ namespace OpenTgResearcherDesktop.Helpers;
 /// <summary> Desktop utils </summary>
 public static class TgDesktopUtils
 {
-	#region Methods
+    #region Methods
 
-	public static async Task DeleteFileAsync(string fullPath)
+    /// <summary> Invoke task on UI thread if dispatcher queue is available </summary>
+    public static async Task InvokeOnUIThreadAsync(Func<Task> task)
+    {
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var tcs = new TaskCompletionSource();
+            var enqueued = App.MainWindow?.DispatcherQueue.TryEnqueue(async () =>
+            {
+                try
+                {
+                    await task().ConfigureAwait(false);
+                    tcs.SetResult();
+                }
+                catch (Exception ex)
+                {
+                    TgLogUtils.WriteException(ex, $"Error executing {nameof(InvokeOnUIThreadAsync)} task");
+                    tcs.SetException(ex);
+                }
+            });
+            if (enqueued == true)
+            {
+                await tcs.Task;
+                return;
+            }
+        }
+
+        try
+        {
+            await task().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, $"Error executing {nameof(InvokeOnUIThreadAsync)} task");
+        }
+    }
+
+    /// <summary> Invoke task on UI thread if dispatcher queue is available </summary>
+    public static void InvokeOnUIThread(Action action)
+    {
+        if (App.MainWindow?.DispatcherQueue is not null)
+        {
+            var enqueued = App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    TgLogUtils.WriteException(ex, $"Error executing {nameof(InvokeOnUIThreadAsync)} task");
+                }
+            });
+            if (enqueued == true)
+            {
+                return;
+            }
+        }
+
+        try
+        {
+            action();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, $"Error executing {nameof(InvokeOnUIThreadAsync)} task");
+        }
+    }
+
+    public static async Task DeleteFileAsync(string fullPath)
 	{
 		var folder = string.Empty;
 		var fileName = string.Empty;

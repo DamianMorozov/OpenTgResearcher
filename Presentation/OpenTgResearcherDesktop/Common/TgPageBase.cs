@@ -18,23 +18,7 @@ public abstract class TgPageBase : Page
     {
         base.OnNavigatedTo(e);
 
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource();
-            await App.MainWindow.DispatcherQueue.EnqueueAsync(async () =>
-            {
-                try
-                {
-                    await ViewModel.OnNavigatedToAsync(e);
-                    tcs.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
+        await TgDesktopUtils.InvokeOnUIThreadAsync(() => ViewModel.OnNavigatedToAsync(e));
     }
 
     protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);
@@ -97,7 +81,7 @@ public abstract class TgPageBase : Page
             }
             catch (Exception ex)
             {
-                TgLogUtils.WriteException(ex);
+                ViewModel.LogError(ex);
             }
         }
     }

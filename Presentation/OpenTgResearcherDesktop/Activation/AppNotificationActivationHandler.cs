@@ -5,35 +5,17 @@ namespace OpenTgResearcherDesktop.Activation;
 
 public class AppNotificationActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
 {
-	public AppNotificationActivationHandler()
-	{
+    public AppNotificationActivationHandler()
+    {
         //
-	}
+    }
 
-	protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
-	{
-		return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
-	}
+    protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
+    {
+        return AppInstance.GetCurrent().GetActivatedEventArgs()?.Kind == ExtendedActivationKind.AppNotification;
+    }
 
     /// <summary> Handle the activation for app notifications </summary>
-	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
-	{
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation");
-                    tcs.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
-	}
+	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args) => 
+        await TgDesktopUtils.InvokeOnUIThreadAsync(() => App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation"));
 }

@@ -107,24 +107,12 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
             if (TgRuntimeHelper.IsMSIX)
             {
                 var languageCode = TgEnumUtils.GetLanguageAsString(AppLanguage);
+
                 // The PrimaryLanguageOverride setting should be done in the UI thread
-                if (App.MainWindow?.DispatcherQueue != null)
+                TgDesktopUtils.InvokeOnUIThread(() =>
                 {
-                    var tcs = new TaskCompletionSource<bool>();
-                    App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        try
-                        {
-                            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = languageCode;
-                            tcs.SetResult(true);
-                        }
-                        catch (Exception ex)
-                        {
-                            TgLogUtils.WriteException(ex);
-                            tcs.SetException(ex);
-                        }
-                    });
-                }
+                    Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = languageCode;
+                });
             }
             else
             {

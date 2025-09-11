@@ -42,8 +42,6 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial bool IsOnlineReady { get; set; }
     [ObservableProperty]
-    public partial bool IsEnabledContent { get; set; }
-    [ObservableProperty]
     public partial bool IsOnlineProcessing { get; set; }
     [ObservableProperty]
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
@@ -75,18 +73,14 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         if (parameter is XamlRoot xamlRoot)
         {
             XamlRootVm = xamlRoot;
-            Logger.LogInformation("Page loaded.");
+            LogInformation("Page loaded");
         }
         else
-            Logger.LogInformation("Page loaded without XamlRoot.");
+            LogWarning("Page loaded without XamlRoot");
     }
 
-    public virtual async Task OnNavigatedToAsync(NavigationEventArgs? e) =>
-        await LoadDataAsync(async () =>
-        {
-            IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
-            await Task.CompletedTask;
-        });
+    public virtual async Task OnNavigatedToAsync(NavigationEventArgs? e) => 
+        await LoadStorageDataAsync(() => { IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData; });
 
     public virtual async Task ReloadUiAsync()
     {
@@ -109,27 +103,12 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     }
 
     /// <summary> Update state client message </summary>
-    public virtual async Task UpdateStateProxyAsync(string message)
+    public virtual async Task UpdateStateProxyAsync(string message) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-                    StateProxyMsg = message;
-                    tcs.SetResult();
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
-    }
+        StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+        StateProxyMsg = message;
+        await Task.CompletedTask;
+    });
 
     /// <summary> Update exception message </summary>
     public virtual async Task UpdateExceptionAsync(Exception ex)
@@ -139,30 +118,12 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     }
 
     /// <summary> Update chats ViewModel </summary>
-    public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType)
-    {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
-                    tcs.SetResult(true);
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
-        else
+    public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType) =>
+        await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
         {
             UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
-        }
-    }
+            await Task.CompletedTask;
+        });
 
     private void UpdateChatsViewModelCore(ref int counter, ref int countAll, ref TgEnumChatsMessageType chatsMessageType)
     {
@@ -194,30 +155,11 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     }
 
     /// <summary> Update chat message ViewModel </summary>
-    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message)
+    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    UpdateChatViewModelCore(chatId, messageId, count, ref message);
-                    tcs.SetResult(true);
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
-        else
-        {
-            UpdateChatViewModelCore(chatId, messageId, count, ref message);
-        }
-    }
+        UpdateChatViewModelCore(chatId, messageId, count, ref message);
+        await Task.CompletedTask;
+    });
 
     private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
     {
@@ -236,30 +178,11 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
 
     /// <summary> Update chat media ViewModel </summary>
     public async Task UpdateStateFileAsync(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
-        bool isStartTask, int threadNumber)
-    {
-        if (App.MainWindow?.DispatcherQueue is not null)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
-            {
-                try
-                {
-                    UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
-                    tcs.SetResult(true);
-                }
-                catch (Exception ex)
-                {
-                    tcs.SetException(ex);
-                }
-            });
-            await tcs.Task;
-        }
-        else
+        bool isStartTask, int threadNumber) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
         {
             UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
-        }
-    }
+            await Task.CompletedTask;
+        });
 
     private void UpdateStateFileCore(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
         bool isStartTask, int threadNumber)
@@ -298,100 +221,204 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
     }
 
+    /// <summary> Creates a base ContentDialog with common settings </summary>
+    private ContentDialog CreateContentDialog(string title) => new() { XamlRoot = XamlRootVm, Title = title };
+
     protected async Task ContentDialogAsync(string title, string content)
     {
         if (XamlRootVm is null) return;
-        ContentDialog dialog = new()
+
+        try
         {
-            XamlRoot = XamlRootVm,
-            Title = title,
-            Content = content,
-            CloseButtonText = TgResourceExtensions.GetOkButton(),
-            DefaultButton = ContentDialogButton.Close,
-        };
-        _ = await dialog.ShowAsync();
+            var dialog = CreateContentDialog(title);
+            dialog.Content = content;
+            dialog.CloseButtonText = TgResourceExtensions.GetOkButton();
+            dialog.DefaultButton = ContentDialogButton.Close;
+
+            _ = await dialog.ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, "Error showing content dialog");
+        }
     }
 
-    protected async Task ContentDialogAsync(Func<Task> task, string title, ContentDialogButton defaultButton = ContentDialogButton.Close,
-        bool useLoadData = false)
+    /// <summary> Shows a simple content dialog with exception handling </summary>
+    protected async Task ContentDialogAsync(Func<Task> task, string title, TgEnumLoadDesktopType loadType, ContentDialogButton defaultButton = ContentDialogButton.Close)
     {
         if (XamlRootVm is null) return;
-        ContentDialog dialog = new()
+
+        try
         {
-            XamlRoot = XamlRootVm,
-            Title = title,
-            PrimaryButtonText = TgResourceExtensions.GetYesButton(),
-            CloseButtonText = TgResourceExtensions.GetCancelButton(),
-            DefaultButton = defaultButton,
-            PrimaryButtonCommand = new AsyncRelayCommand(useLoadData ? async () => await LoadDataAsync(task) : task)
-        };
-        _ = await dialog.ShowAsync();
+            var dialog = CreateContentDialog(title);
+            dialog.PrimaryButtonText = TgResourceExtensions.GetYesButton();
+            dialog.CloseButtonText = TgResourceExtensions.GetCancelButton();
+            dialog.DefaultButton = defaultButton;
+            switch (loadType)
+            {
+                case TgEnumLoadDesktopType.Storage:
+                    dialog.PrimaryButtonCommand = new AsyncRelayCommand(() => LoadStorageDataAsync(task));
+                    break;
+                case TgEnumLoadDesktopType.Online:
+                    dialog.PrimaryButtonCommand = new AsyncRelayCommand(() => LoadOnlineDataAsync(task));
+                    break;
+            }
+
+            _ = await dialog.ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, "Error showing content dialog");
+        }
     }
 
-    protected async Task ContentDialogAsync(Action action, string title, ContentDialogButton defaultButton = ContentDialogButton.Close)
+    /// <summary> Shows a simple content dialog with exception handling </summary>
+    protected async Task ContentDialogAsync(Action action, string title, TgEnumLoadDesktopType loadType, ContentDialogButton defaultButton = ContentDialogButton.Close)
     {
         if (XamlRootVm is null) return;
-        ContentDialog dialog = new()
+
+        try
         {
-            XamlRoot = XamlRootVm,
-            Title = title,
-            PrimaryButtonText = TgResourceExtensions.GetYesButton(),
-            CloseButtonText = TgResourceExtensions.GetCancelButton(),
-            DefaultButton = defaultButton,
-            PrimaryButtonCommand = new RelayCommand(action)
-        };
-        _ = await dialog.ShowAsync();
+            var dialog = CreateContentDialog(title);
+            dialog.PrimaryButtonText = TgResourceExtensions.GetYesButton();
+            dialog.CloseButtonText = TgResourceExtensions.GetCancelButton();
+            dialog.DefaultButton = defaultButton;
+            switch (loadType)
+            {
+                case TgEnumLoadDesktopType.Storage:
+                    dialog.PrimaryButtonCommand = new AsyncRelayCommand(() => LoadStorageDataAsync(action));
+                    break;
+                case TgEnumLoadDesktopType.Online:
+                    dialog.PrimaryButtonCommand = new AsyncRelayCommand(() => LoadOnlineDataAsync(action));
+                    break;
+            }
+
+            _ = await dialog.ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, "Error showing content dialog");
+        }
     }
 
-    protected async Task LoadDataAsync(Func<Task> task)
+    /// <summary> Load storage data with async task </summary>
+    protected async Task LoadStorageDataAsync(Func<Task> task)
     {
         try
         {
-            IsEnabledContent = false;
-            IsPageLoad = true;
-            if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
+            if (!IsPageLoad)
             {
-                DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimit;
+                IsPageLoad = true;
+                await Task.Delay(250);
             }
-            await Task.Delay(250);
-            await task();
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(task);
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, $"Unhandled exception in {nameof(LoadStorageDataAsync)}");
         }
         finally
         {
-            IsEnabledContent = true;
-            IsPageLoad = false;
+            if (IsPageLoad)
+                IsPageLoad = false;
             IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
         }
     }
 
-    protected async Task ProcessDataAsync(Func<Task> task, bool isDisabledContent, bool isPageLoad)
+    /// <summary> Load storage data with action </summary>
+    protected async Task LoadStorageDataAsync(Action action)
+    {
+        try
+        {
+            if (!IsPageLoad)
+            {
+                IsPageLoad = true;
+                await Task.Delay(250);
+            }
+
+            TgDesktopUtils.InvokeOnUIThread(action);
+        }
+        catch (Exception ex)
+        {
+            LogError(ex, $"Unhandled exception in {nameof(LoadStorageDataAsync)}");
+        }
+        finally
+        {
+            if (IsPageLoad)
+                IsPageLoad = false;
+            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+        }
+    }
+
+    /// <summary> Load online data with async task </summary>
+    protected async Task LoadOnlineDataAsync(Func<Task> task)
     {
         try
         {
             if (!IsOnlineProcessing)
-                IsOnlineProcessing = true;
-
-            if (isDisabledContent)
-                IsEnabledContent = false;
-            if (isPageLoad)
-                IsPageLoad = true;
-            if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
             {
-                DownloadSettings.LimitThreads = TgGlobalTools.DownloadCountThreadsLimit;
+                IsOnlineProcessing = true;
+                await Task.Delay(250);
             }
-            await Task.Delay(250);
-            await task();
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(task);
         }
         finally
         {
-            if (isDisabledContent)
-                IsEnabledContent = true;
-            if (isPageLoad)
-                IsPageLoad = false;
             if (IsOnlineProcessing)
                 IsOnlineProcessing = false;
             IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
         }
+    }
+
+    /// <summary> Load online data with action </summary>
+    protected async Task LoadOnlineDataAsync(Action action)
+    {
+        try
+        {
+            if (!IsOnlineProcessing)
+            {
+                IsOnlineProcessing = true;
+                await Task.Delay(250);
+            }
+
+            TgDesktopUtils.InvokeOnUIThread(action);
+        }
+        finally
+        {
+            if (IsOnlineProcessing)
+                IsOnlineProcessing = false;
+            IsPaidLicense = App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+        }
+    }
+
+    public void LogInformation(string message,
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        Logger?.LogInformation($"[{Name}] | {message}");
+        TgLogUtils.WriteLogWithCallerCore($"{Name} | {message}", filePath, lineNumber, memberName);
+    }
+
+    public void LogDebug(string message,
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        Logger?.LogDebug($"{Name} | {message}");
+        TgLogUtils.WriteLogWithCallerCore($"{Name} | {message}", filePath, lineNumber, memberName);
+    }
+
+    public void LogWarning(string message,
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        Logger?.LogWarning($"{Name} | {message}");
+        TgLogUtils.WriteLogWithCallerCore($"{Name} | {message}", filePath, lineNumber, memberName);
+    }
+
+    public void LogError(Exception ex, string message = "",
+        [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
+    {
+        Logger?.LogError(ex, $"{Name} | {message}");
+        TgLogUtils.WriteExceptionWithMessageCore(ex, $"{Name} | {message}", filePath, lineNumber, memberName);
     }
 
     #endregion

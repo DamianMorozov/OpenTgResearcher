@@ -94,7 +94,6 @@ public partial class App : Application
                 services.AddSingleton<IWebViewService, WebViewService>();
                 services.AddSingleton<INavigationViewService, NavigationViewService>();
                 services.AddSingleton<IActivationService, ActivationService>();
-                services.AddSingleton<ISampleDataService, SampleDataService>();
                 // Views and ViewModels
                 services.AddSingleton<ShellPage>();
                 services.AddSingleton<ShellViewModel>();

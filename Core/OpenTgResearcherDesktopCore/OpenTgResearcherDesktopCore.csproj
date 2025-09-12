@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>OpenTgResearcherDesktop.Core</RootNamespace>
+    <RootNamespace>OpenTgResearcherDesktopCore</RootNamespace>
     <Platforms>x86;x64;AnyCPU</Platforms>
     <Platforms>x86;x64;arm64;AnyCPU</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>

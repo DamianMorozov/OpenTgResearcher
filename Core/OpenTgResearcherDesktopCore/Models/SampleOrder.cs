@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.Core.Models;
+﻿namespace OpenTgResearcherDesktopCore.Models;
 
 // Model for the SampleDataService. Replace with your own model.
 public class SampleOrder

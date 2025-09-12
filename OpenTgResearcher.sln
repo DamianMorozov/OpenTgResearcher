@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33122.133
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11010.61 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83EEBD4F-D943-4FBC-9F37-40641C6D8D4F}"
 	ProjectSection(SolutionItems) = preProject
@@ -69,7 +69,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop", "Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj", "{FB756D71-7AA6-4BAB-93BD-28B30B0EF1FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Core", "Core\OpenTgResearcherDesktop.Core\OpenTgResearcherDesktop.Core.csproj", "{F6A1AA94-9746-4F2A-9B1D-7A70F3F12E1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktopCore", "Core\OpenTgResearcherDesktopCore\OpenTgResearcherDesktopCore.csproj", "{F6A1AA94-9746-4F2A-9B1D-7A70F3F12E1F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTgResearcherDesktop.Tests", "Tests\OpenTgResearcherDesktop.Tests.MSTests\OpenTgResearcherDesktop.Tests.csproj", "{C9E5D51A-D0BA-4171-A2CB-50140A3A8D86}"
 EndProject

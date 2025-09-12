@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgInfrastructure.Helpers;
+﻿namespace TgInfrastructure.Helpers;
 
 /// <summary> DateOnly JSON converter for serialization and deserialization </summary>
 public class TgDateOnlyJsonConverter : JsonConverter<DateOnly>

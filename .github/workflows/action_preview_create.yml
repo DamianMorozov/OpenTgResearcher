@@ -36,45 +36,45 @@ jobs:
             awk '/^## \[/ {i++} i==1 {print}' Docs/CHANGELOG.md
             echo 'EOF'
             } >> "$GITHUB_OUTPUT"
-      - name: Download OpenTgResearcherConsole-win-Portable artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: OpenTgResearcherConsole-win-Portable
-          path: ./artifacts
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.0.x'
-      - name: Configure Git
-        run: |
-            git config --global user.name "Damian Viktorovich Morozov"
-            git config --global user.email "damian@morozov33.ru"
-      - name: Check if tag exists
-        id: check_tag
-        run: |
-          if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-      - name: Exit if tag already exists
-        if: steps.check_tag.outputs.exists == 'true'
-        run: echo "Tag already exists. Exiting..."
-      - name: Create annotated Git tag
-        if: steps.check_tag.outputs.exists == 'false'
-        run: |
-            git tag -a "v${{ steps.get_version.outputs.version }}" -m "$(cat <<EOF
-            ${{ steps.get_body.outputs.body }}
-            EOF
-            )"
-            git push origin "v${{ steps.get_version.outputs.version }}"
-      - name: Create GitHub Release
-        if: steps.check_tag.outputs.exists == 'false'
-        run: |
-            gh auth setup-git
-            gh release create "v${{ steps.get_version.outputs.version }}" ./artifacts/* \
-              --title "v${{ steps.get_version.outputs.version }} Preview" \
-              --notes "${{ steps.get_body.outputs.body }}" \
-              --prerelease
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Download OpenTgResearcherConsole-win-Portable artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: OpenTgResearcherConsole-win-Portable
+      #     path: ./artifacts
+      # - name: Set up .NET
+      #   uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: '9.0.x'
+      # - name: Configure Git
+      #   run: |
+      #       git config --global user.name "Damian Viktorovich Morozov"
+      #       git config --global user.email "damian@morozov33.ru"
+      # - name: Check if tag exists
+      #   id: check_tag
+      #   run: |
+      #     if git rev-parse "${{ steps.get_version.outputs.version }}" >/dev/null 2>&1; then
+      #       echo "exists=true" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "exists=false" >> $GITHUB_OUTPUT
+      #     fi
+      # - name: Exit if tag already exists
+      #   if: steps.check_tag.outputs.exists == 'true'
+      #   run: echo "Tag already exists. Exiting..."
+      # - name: Create annotated Git tag
+      #   if: steps.check_tag.outputs.exists == 'false'
+      #   run: |
+      #       git tag -a "v${{ steps.get_version.outputs.version }}" -m "$(cat <<EOF
+      #       ${{ steps.get_body.outputs.body }}
+      #       EOF
+      #       )"
+      #       git push origin "v${{ steps.get_version.outputs.version }}"
+      # - name: Create GitHub Release
+      #   if: steps.check_tag.outputs.exists == 'false'
+      #   run: |
+      #       gh auth setup-git
+      #       gh release create "v${{ steps.get_version.outputs.version }}" ./artifacts/* \
+      #         --title "v${{ steps.get_version.outputs.version }} Preview" \
+      #         --notes "${{ steps.get_body.outputs.body }}" \
+      #         --prerelease
+      #   env:
+      #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

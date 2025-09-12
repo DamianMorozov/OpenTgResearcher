@@ -1,8 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-
-namespace OpenTgResearcherDesktop.Styles;
+﻿namespace OpenTgResearcherDesktop.Styles;
 
 /// <summary> Button to show license acquisition dialog </summary>
 public sealed partial class TgLicenseButton : Button

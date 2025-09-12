@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.Converters;
+﻿namespace OpenTgResearcherDesktop.Converters;
 
 /// <summary> License check background converter </summary>
 public sealed partial class TgLicenseCheckBackgroundConverter : IValueConverter

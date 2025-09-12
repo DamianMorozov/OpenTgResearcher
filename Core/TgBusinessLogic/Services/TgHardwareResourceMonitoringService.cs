@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgBusinessLogic.Services;
+﻿namespace TgBusinessLogic.Services;
 
 /// <summary> Hardware resource monitoring service </summary>
 public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMonitoringService

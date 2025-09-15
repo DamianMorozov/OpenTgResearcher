@@ -5,13 +5,13 @@ public sealed partial class TgLicenseButton : Button
 {
     #region Fields, properties, constructor
 
-    public IRelayCommand? ShowPurchaseLicenseCommand
+    public IAsyncRelayCommand? ShowPurchaseLicenseCommand
     {
-        get => (IRelayCommand?)GetValue(ShowRequiredLicenseCommandProperty);
+        get => (IAsyncRelayCommand?)GetValue(ShowRequiredLicenseCommandProperty);
         set => SetValue(ShowRequiredLicenseCommandProperty, value);
     }
     public static readonly DependencyProperty ShowRequiredLicenseCommandProperty =
-        DependencyProperty.Register(nameof(ShowPurchaseLicenseCommand), typeof(IRelayCommand), typeof(TgLicenseButton),
+        DependencyProperty.Register(nameof(ShowPurchaseLicenseCommand), typeof(IAsyncRelayCommand), typeof(TgLicenseButton),
             new PropertyMetadata(null));
 
     public TgLicenseButton()

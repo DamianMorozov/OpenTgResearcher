@@ -19,7 +19,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
 
-    public IRelayCommand GetParticipantsCommand { get; }
+    public IAsyncRelayCommand GetParticipantsCommand { get; }
 
     public TgChatDetailsParticipantsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsParticipantsViewModel> logger,
         IAppNotificationService appNotificationService)

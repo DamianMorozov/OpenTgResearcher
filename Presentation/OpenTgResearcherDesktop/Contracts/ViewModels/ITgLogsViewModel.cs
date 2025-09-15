@@ -2,5 +2,5 @@
 
 public interface ITgLogsViewModel : ITgPageViewModel
 {
-	public IRelayCommand DeleteLogFileCommand { get; }
+	public IAsyncRelayCommand DeleteLogFileCommand { get; }
 }

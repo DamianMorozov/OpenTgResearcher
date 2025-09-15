@@ -28,9 +28,9 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string SettingFile { get; set; } = string.Empty;
 
-    public IRelayCommand SettingsLoadCommand { get; }
-    public IRelayCommand SettingsDefaultCommand { get; }
-    public IRelayCommand SettingsSaveCommand { get; }
+    public IAsyncRelayCommand SettingsLoadCommand { get; }
+    public IAsyncRelayCommand SettingsDefaultCommand { get; }
+    public IAsyncRelayCommand SettingsSaveCommand { get; }
 
     public TgSettingsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSettingsViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgSettingsViewModel))

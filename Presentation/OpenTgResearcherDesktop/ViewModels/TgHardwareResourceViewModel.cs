@@ -22,8 +22,8 @@ public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, I
 
     private ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; }
 
-    public IRelayCommand StartMonitorCommand { get; }
-    public IRelayCommand StopMonitorCommand { get; }
+    public IAsyncRelayCommand StartMonitorCommand { get; }
+    public IAsyncRelayCommand StopMonitorCommand { get; }
 
     public TgHardwareResourceViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgHardwareResourceViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgHardwareResourceViewModel))

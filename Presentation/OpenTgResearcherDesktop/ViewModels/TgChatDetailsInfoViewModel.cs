@@ -10,7 +10,7 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
 
-    public IRelayCommand UpdateChatSettingsCommand { get; }
+    public IAsyncRelayCommand UpdateChatSettingsCommand { get; }
 
     public TgChatDetailsInfoViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsInfoViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgChatDetailsInfoViewModel))

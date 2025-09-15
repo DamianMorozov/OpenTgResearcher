@@ -21,7 +21,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     [ObservableProperty]
     public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
 
-    public IRelayCommand CalcChatStatisticsCommand { get; }
+    public IAsyncRelayCommand CalcChatStatisticsCommand { get; }
 
     public TgChatDetailsStatisticsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsStatisticsViewModel> logger,
         IAppNotificationService appNotificationService)

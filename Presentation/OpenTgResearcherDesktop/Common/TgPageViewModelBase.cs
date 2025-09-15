@@ -52,7 +52,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
 
-    public IRelayCommand ShowPurchaseLicenseCommand { get; }
+    public IAsyncRelayCommand ShowPurchaseLicenseCommand { get; }
 
     public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
     {

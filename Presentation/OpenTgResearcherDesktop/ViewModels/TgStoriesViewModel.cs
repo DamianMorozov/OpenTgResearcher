@@ -7,10 +7,10 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfStoryDto> Dtos { get; set; } = [];
-	public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearViewCommand { get; }
-	public IRelayCommand DefaultSortCommand { get; }
-	public IRelayCommand UpdateOnlineCommand { get; }
+	public IAsyncRelayCommand LoadDataStorageCommand { get; }
+	public IAsyncRelayCommand ClearViewCommand { get; }
+	public IAsyncRelayCommand DefaultSortCommand { get; }
+	public IAsyncRelayCommand UpdateOnlineCommand { get; }
 
 	public TgStoriesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStoriesViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgStoriesViewModel))

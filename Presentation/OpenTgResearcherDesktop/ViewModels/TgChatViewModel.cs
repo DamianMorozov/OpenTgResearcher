@@ -27,10 +27,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string ChatProgressMessage { get; set; } = string.Empty;
 
-    public IRelayCommand UpdateOnlineCommand { get; }
-    public IRelayCommand ClearViewCommand { get; }
-    public IRelayCommand SaveChatSettingsCommand { get; }
-    public IRelayCommand StopDownloadingCommand { get; }
+    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand ClearViewCommand { get; }
+    public IAsyncRelayCommand SaveChatSettingsCommand { get; }
+    public IAsyncRelayCommand StopDownloadingCommand { get; }
 
     public TgChatViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatViewModel> logger,
         IAppNotificationService appNotificationService)

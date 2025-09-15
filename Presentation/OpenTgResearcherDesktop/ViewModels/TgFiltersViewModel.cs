@@ -7,9 +7,9 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfFilterDto> Dtos { get; set; } = [];
-	public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearViewCommand { get; }
-	public IRelayCommand DefaultSortCommand { get; }
+	public IAsyncRelayCommand LoadDataStorageCommand { get; }
+	public IAsyncRelayCommand ClearViewCommand { get; }
+	public IAsyncRelayCommand DefaultSortCommand { get; }
 
 	public TgFiltersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgFiltersViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgFiltersViewModel))

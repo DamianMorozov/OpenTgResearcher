@@ -53,11 +53,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     private bool _isLoad;
 
-    public IRelayCommand ClientConnectCommand { get; }
-	public IRelayCommand ClientDisconnectCommand { get; }
-	public IRelayCommand AppSaveCommand { get; }
-	public IRelayCommand AppClearCommand { get; }
-	public IRelayCommand AppDeleteCommand { get; }
+    public IAsyncRelayCommand ClientConnectCommand { get; }
+	public IAsyncRelayCommand ClientDisconnectCommand { get; }
+	public IAsyncRelayCommand AppSaveCommand { get; }
+	public IAsyncRelayCommand AppClearCommand { get; }
+	public IAsyncRelayCommand AppDeleteCommand { get; }
 
 	public TgClientConnectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
 		ILogger<TgClientConnectionViewModel> logger) : base(settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))

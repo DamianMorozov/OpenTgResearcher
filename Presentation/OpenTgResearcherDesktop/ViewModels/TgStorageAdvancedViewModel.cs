@@ -8,8 +8,8 @@ public sealed partial class TgStorageAdvancedViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string StorageLog { get; set; }
 
-    public IRelayCommand StorageClear { get; }
-    public IRelayCommand StorageResetAutoUpdateCommand { get; }
+    public IAsyncRelayCommand StorageClear { get; }
+    public IAsyncRelayCommand StorageResetAutoUpdateCommand { get; }
 
     public TgStorageAdvancedViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStorageAdvancedViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgStorageAdvancedViewModel))

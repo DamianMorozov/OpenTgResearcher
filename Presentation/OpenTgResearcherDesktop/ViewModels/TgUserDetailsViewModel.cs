@@ -14,9 +14,9 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserWithMessagesDto> UserWithMessagesDtos { get; set; } = [];
 
-    public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearViewCommand { get; }
-	public IRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand LoadDataStorageCommand { get; }
+	public IAsyncRelayCommand ClearViewCommand { get; }
+	public IAsyncRelayCommand UpdateOnlineCommand { get; }
 
 	public TgUserDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUserDetailsViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgUserDetailsViewModel))

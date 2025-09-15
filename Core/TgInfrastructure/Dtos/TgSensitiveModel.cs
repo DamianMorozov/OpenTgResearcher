@@ -11,7 +11,7 @@ public partial class TgSensitiveModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsDisplaySensitiveData { get; set; } = true;
 
-    public IRelayCommand? SetDisplaySensitiveCommand { get; set; }
+    public IAsyncRelayCommand? SetDisplaySensitiveCommand { get; set; }
 
     public TgSensitiveModel() : base()
     {

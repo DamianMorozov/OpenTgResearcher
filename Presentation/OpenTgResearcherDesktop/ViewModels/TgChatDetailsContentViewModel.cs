@@ -35,9 +35,9 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool IsLoading { get; set; }
 
-    public IRelayCommand CalcContentStatisticsCommand { get; }
-    public IRelayCommand LazyLoadMessagesCommand { get; }
-    public IRelayCommand ClearViewCommand { get; }
+    public IAsyncRelayCommand CalcContentStatisticsCommand { get; }
+    public IAsyncRelayCommand LazyLoadMessagesCommand { get; }
+    public IAsyncRelayCommand ClearViewCommand { get; }
 
     public TgChatDetailsContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsContentViewModel> logger,
         IAppNotificationService appNotificationService)

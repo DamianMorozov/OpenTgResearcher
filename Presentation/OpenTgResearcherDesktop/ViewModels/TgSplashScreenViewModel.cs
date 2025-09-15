@@ -19,7 +19,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     private ILifetimeScope Scope { get; } = default!;
 
     public Action BackToMainWindow { get; internal set; } = () => { };
-    public IRelayCommand ContinueCommand { get; }
+    public IAsyncRelayCommand ContinueCommand { get; }
 
     public TgSplashScreenViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSplashScreenViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))

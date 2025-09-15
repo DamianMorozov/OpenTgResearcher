@@ -7,8 +7,8 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial string UpdateLog { get; set; } = string.Empty;
-	public IRelayCommand UpdateReleaseCommand { get; }
-	public IRelayCommand UpdatePreviewCommand { get; }
+	public IAsyncRelayCommand UpdateReleaseCommand { get; }
+	public IAsyncRelayCommand UpdatePreviewCommand { get; }
 
 	public TgUpdateViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUpdateViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgUpdateViewModel))

@@ -153,7 +153,7 @@ public partial class ShellViewModel : ObservableRecipient
         {
             if (clientConnectionVm.IsClientConnected)
             {
-                clientConnectionVm.ClientDisconnectCommand.Execute(null);
+                clientConnectionVm.ClientDisconnectCommand.Execute(false);
             }
         }
         await Task.CompletedTask;

@@ -90,7 +90,11 @@
                 x:Uid="ButtonDisconnect"
                 Grid.Column="7"
                 Margin="10,0,0,0"
-                Command="{x:Bind ViewModel.ClientDisconnectCommand}" />
+                Command="{x:Bind ViewModel.ClientDisconnectCommand}">
+                <Button.CommandParameter>
+                    <x:Boolean>False</x:Boolean>
+                </Button.CommandParameter>
+            </Button>
         </Grid>
         <!--  Navigation  -->
         <NavigationView

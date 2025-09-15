@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed file name generation
 - Fixed chat parsing stoppage
 - Fixed saving the first chat ID at the moment of parsing stoppage
+- Fixed connection to TG and disconnection for the top menu in `OpenTgResearcherDesktop`
 ### Changed
 - Updated NuGet packages
 - Updated the `TgStorageTests` test project

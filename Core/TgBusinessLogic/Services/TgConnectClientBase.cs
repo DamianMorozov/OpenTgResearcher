@@ -3131,7 +3131,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Early exit if saving is disabled or cancellation requested
         if (!tgDownloadSettings.IsSaveMessages || CheckShouldStop(ct)) return;
 
-        await TgCacheUtils.SaveLock.WaitAsync(ct);
+        await TgCacheUtils.Locker.WaitAsync(ct);
 
         try
         {
@@ -3200,7 +3200,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         finally
         {
-            TgCacheUtils.SaveLock.Release();
+            TgCacheUtils.Locker.Release();
 
             if (!CheckShouldStop(ct))
             {

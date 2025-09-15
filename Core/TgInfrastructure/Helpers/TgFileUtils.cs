@@ -148,16 +148,25 @@ public static class TgFileUtils
 
 	public static long CalculateFileSize(string file) => !File.Exists(file) ? 0L : new FileInfo(file).Length;
 
-	public static string GetFileSizeAsString(long value) =>
-		value > 0
-			? value switch
-			{
-				< 1024 => $"{value:###} B",
-				< 1024 * 1024 => $"{(double)value / 1024L:###} KB",
-				< 1024 * 1024 * 1024 => $"{(double)value / 1024L / 1024L:###} MB",
-				_ => $"{(double)value / 1024L / 1024L / 1024L:###} GB"
-			}
-			: "0 B";
+	public static string GetFileSizeAsString(long value) => value > 0
+		? value switch
+		{
+			< 1024 => $"{value:###} B",
+			< 1024 * 1024 => $"{(double)value / 1024L:###} KB",
+			< 1024 * 1024 * 1024 => $"{(double)value / 1024L / 1024L:###} MB",
+			_ => $"{(double)value / 1024L / 1024L / 1024L:###} GB"
+		}
+		: "0 B";
+
+	public static string GetFileSizeAsString(double value) => value > 0
+		? value switch
+		{
+			< 1024 => $"{value:###} B",
+			< 1024 * 1024 => $"{value / 1024L:###} KB",
+			< 1024 * 1024 * 1024 => $"{value / 1024L / 1024L:###} MB",
+			_ => $"{value / 1024L / 1024L / 1024L:###} GB"
+		}
+		: "0 B";
 
 	public static string GetDefaultDirectory()
 	{

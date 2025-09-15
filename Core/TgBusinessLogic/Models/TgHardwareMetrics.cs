@@ -5,5 +5,8 @@ public record struct TgHardwareMetrics(
     double CpuAppPercent,
     double CpuTotalPercent,
     double MemoryAppPercent,
-    double MemoryTotalPercent
+    double MemoryTotalPercent,
+    double MemoryAppGb,
+    double MemoryUsedGb,
+    double MemoryTotalGb
 );

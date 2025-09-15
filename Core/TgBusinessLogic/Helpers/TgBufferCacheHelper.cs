@@ -160,7 +160,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
 
         if (!isSaveMessages) return;
 
-        await TgCacheUtils.SaveLock.WaitAsync();
+        await TgCacheUtils.Locker.WaitAsync();
         try
         {
             if (Count <= TgGlobalTools.BatchMessagesLimit && !isForce) return;
@@ -181,7 +181,7 @@ public sealed class TgBufferCacheHelper<TEntity>(IFusionCache cache, string cach
         }
         finally
         {
-            TgCacheUtils.SaveLock.Release();
+            TgCacheUtils.Locker.Release();
         }
     }
 

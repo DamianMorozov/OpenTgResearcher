@@ -5,24 +5,28 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
 {
     #region Fields, properties, constructor
 
+    public static readonly SemaphoreSlim _locker = new(initialCount: 1, maxCount: 1);
     private readonly Computer _computer = new() { IsCpuEnabled = true, IsMemoryEnabled = true };
     private readonly IVisitor _visitor = new TgUpdateVisitor();
-    private static readonly Lock _locker = new();
-
     private CancellationTokenSource? _cts;
     private Task? _worker;
     private TimeSpan _interval;
-
     // To calculate the CPU of the current process without unnecessary delays
     private readonly Process _process = Process.GetCurrentProcess();
     private TimeSpan _lastProcCpu;
     private DateTime _lastWall;
-
     private TgHardwareMetrics _lastMetrics = new();
+    private ILifetimeScope _scope = default!;
+    private IFusionCache _cache = default!;
+    private ISensor? _cpuSensor;
+    private ISensor? _memUsedSensor;
+    private ISensor? _memAvailableSensor;
 
     public TgHardwareResourceMonitoringService()
     {
         _computer.Open();
+        _scope = TgGlobalTools.Container.BeginLifetimeScope();
+        _cache = _scope.Resolve<IFusionCache>();
     }
 
     #endregion
@@ -44,6 +48,9 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
         CheckIfDisposed();
 
         Task.WhenAll(StopMonitoringAsync(isClose: true));
+        _cache.Dispose();
+        _scope.Dispose();
+        _locker.Dispose();
     }
 
     /// <summary> Release unmanaged resources </summary>
@@ -84,93 +91,67 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
     public event EventHandler<TgHardwareMetrics>? MetricsUpdated;
 
     /// <inheritdoc />
-    public async Task StartMonitoringAsync(TimeSpan? interval = null, CancellationToken ct = default)
+    public void StartMonitoring(TimeSpan? interval = null, CancellationToken ct = default)
     {
         CheckIfDisposed();
+        if (_cts != null && _worker != null && !_worker.IsCompleted) return;
 
-        using (_locker.EnterScope())
+        try
         {
-            if (_cts != null && _worker != null && !_worker.IsCompleted)
-                return;
-
+            _locker.Wait();
             _interval = interval ?? TimeSpan.FromSeconds(1);
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-
             // Initialization of the base point for calculating the CPU process
             _lastProcCpu = _process.TotalProcessorTime;
             _lastWall = DateTime.UtcNow;
-
+            CacheSensors();
             _worker = Task.Run(() => RunAsync(_cts.Token), _cts.Token);
         }
-
-        await Task.CompletedTask;
+        finally
+        {
+            _locker.Release();
+        }
     }
 
     /// <inheritdoc />
     public async Task StopMonitoringAsync(bool isClose)
     {
         CheckIfDisposed();
+        if (_cts == null) return;
 
-        Task? workerToAwait = null;
-        using (_locker.EnterScope())
+        try
         {
-            if (_cts == null) return;
+            _locker.Wait();
 
             _cts.Cancel();
-            workerToAwait = _worker;
+            if (_worker != null)
+            {
+                try { await _worker; }
+                catch (OperationCanceledException) { /* ignore */ }
+            }
 
-            _cts.Dispose();
-            _cts = null;
-            _worker = null;
-        }
-
-        if (workerToAwait != null)
+            if (isClose)
+                _computer.Close();
+            }
+        finally
         {
-            try { await workerToAwait.ConfigureAwait(false); }
-            catch (OperationCanceledException) { /* ignore */ }
+            _cts?.Dispose();
+            _cts = null;
+            _worker?.Dispose();
+            _worker = null;
+            _locker.Release();
         }
-
-        if (isClose)
-            _computer.Close();
     }
 
     private async Task RunAsync(CancellationToken ct)
     {
-        double cpuTotal = 0;
-        double memUsedGb = 0;
-        double memTotalGb = 0;
-
         while (!ct.IsCancellationRequested)
         {
             try
             {
                 _computer.Accept(_visitor);
 
-                foreach (var hw in _computer.Hardware)
-                {
-                    switch (hw.HardwareType)
-                    {
-                        case HardwareType.Cpu:
-                            foreach (var sensor in hw.Sensors)
-                            {
-                                if (sensor.SensorType == SensorType.Load && sensor.Name == "CPU Total")
-                                    cpuTotal = sensor.Value ?? 0;
-                            }
-                            break;
-                        case HardwareType.Memory:
-                            foreach (var sensor in hw.Sensors)
-                            {
-                                if (sensor.SensorType == SensorType.Data)
-                                {
-                                    if (sensor.Name.Contains("Memory Used"))
-                                        memUsedGb = sensor.Value ?? 0;
-                                    if (sensor.Name.Contains("Memory Available"))
-                                        memTotalGb = memUsedGb + (sensor.Value ?? 0);
-                                }
-                            }
-                            break;
-                    }
-                }
+                var cpuTotal = GetCpuAndMemoryUsage();
 
                 // Calculation of CPU of the current process by increments
                 _lastMetrics.TimestampUtc = DateTime.UtcNow;
@@ -178,21 +159,22 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
 
                 var deltaCpuMs = (nowCpu - _lastProcCpu).TotalMilliseconds;
                 var deltaWallMs = (_lastMetrics.TimestampUtc - _lastWall).TotalMilliseconds;
-                _lastMetrics.CpuAppPercent = Math.Clamp(deltaWallMs > 0 ? (deltaCpuMs / (deltaWallMs * Environment.ProcessorCount)) * 100.0 : 0.0, 0, 100);
+                _lastMetrics.CpuAppPercent = Math.Clamp(deltaWallMs > 0 ? deltaCpuMs / (deltaWallMs * Environment.ProcessorCount) * 100.0 : 0.0, 0, 100);
 
                 _lastProcCpu = nowCpu;
                 _lastWall = _lastMetrics.TimestampUtc;
 
                 _lastMetrics.CpuTotalPercent = Math.Clamp(cpuTotal, 0, 100);
-                _lastMetrics.MemoryTotalPercent = (memTotalGb > 0) ? Math.Clamp(memUsedGb / memTotalGb * 100.0, 0, 100) : 0;
+                _lastMetrics.MemoryTotalPercent = (_lastMetrics.MemoryTotalGb > 0) ? Math.Clamp(_lastMetrics.MemoryUsedGb / _lastMetrics.MemoryTotalGb * 100.0, 0, 100) : 0;
 
                 var workingSetBytes = _process.WorkingSet64;
-                var memAppGb = workingSetBytes / (1024f * 1024f * 1024f);
-                _lastMetrics.MemoryAppPercent = memTotalGb > 0f
-                    ? Math.Clamp((memAppGb / memTotalGb) * 100f, 0f, 100f)
+                _lastMetrics.MemoryAppGb = workingSetBytes / (1024f * 1024f * 1024f);
+                _lastMetrics.MemoryAppPercent = _lastMetrics.MemoryTotalGb > 0f
+                    ? Math.Clamp(_lastMetrics.MemoryAppGb / _lastMetrics.MemoryTotalGb * 100f, 0f, 100f)
                     : 0f;
 
-                MetricsUpdated?.Invoke(this, _lastMetrics);
+                MetricsUpdated?.Invoke(this, new TgHardwareMetrics(_lastMetrics.TimestampUtc, _lastMetrics.CpuAppPercent, _lastMetrics.CpuTotalPercent,
+                    _lastMetrics.MemoryAppPercent, _lastMetrics.MemoryTotalPercent, _lastMetrics.MemoryAppGb, _lastMetrics.MemoryUsedGb, _lastMetrics.MemoryTotalGb));
             }
             catch (OperationCanceledException ocex)
             {
@@ -217,6 +199,67 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
                 await Task.Delay(_interval, ct);
             }
             catch (OperationCanceledException) { break; }
+        }
+    }
+
+    private double GetCpuAndMemoryUsage()
+    {
+        var key = TgCacheUtils.GetCacheKeyCpuTotal();
+
+        try
+        {
+            // Try to retrieve from cache in a strictly typed manner
+            var maybe = _cache.TryGet<double>(key, TgCacheUtils.CacheOptionsProcessMessage);
+            if (maybe.HasValue)
+                return maybe.Value;
+
+            // Cache miss: retrieve from server and save
+            return GetCpuAndMemoryUsageCore();
+        }
+        catch (OperationCanceledException)
+        {
+            // Quietly exit without logging in
+            return default;
+        }
+        catch (InvalidCastException)
+        {
+            // There is another type in the cache: clear and reload
+            _cache.Remove(key);
+            return GetCpuAndMemoryUsageCore();
+        }
+    }
+
+    private double GetCpuAndMemoryUsageCore()
+    {
+        double cpuTotal = 0;
+        foreach (var hw in _computer.Hardware)
+        {
+            switch (hw.HardwareType)
+            {
+                case HardwareType.Cpu:
+                    cpuTotal = _cpuSensor?.Value ?? 0;
+                    break;
+                case HardwareType.Memory:
+                    _lastMetrics.MemoryUsedGb = _memUsedSensor?.Value ?? 0;
+                    _lastMetrics.MemoryTotalGb = _lastMetrics.MemoryUsedGb + (_memAvailableSensor?.Value ?? 0);
+                    break;
+            }
+        }
+        return cpuTotal;
+    }
+
+    private void CacheSensors()
+    {
+        foreach (var hw in _computer.Hardware)
+        {
+            if (hw.HardwareType == HardwareType.Cpu)
+                _cpuSensor = hw.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Load && s.Name == "CPU Total");
+
+            if (hw.HardwareType == HardwareType.Memory)
+            {
+                _memUsedSensor = hw.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Memory Used"));
+                _memAvailableSensor = hw.Sensors.FirstOrDefault(s => s.SensorType == SensorType.Data && s.Name.Contains("Memory Available"));
+            }
         }
     }
 

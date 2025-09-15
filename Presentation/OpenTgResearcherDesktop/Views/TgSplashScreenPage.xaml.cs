@@ -49,7 +49,7 @@ public sealed partial class TgSplashScreenPage
         Bindings.Update();
 
         // Loading hardware control
-        await ViewModel.LoadingHardwareControlAsync();
+        ViewModel.LoadingHardwareControl();
         Bindings.Update();
 
         // Loading complete

@@ -183,7 +183,7 @@
   <data name="Shell_Logs.Content" xml:space="preserve">
     <value>Логи</value>
   </data>
-  <data name="Shell_Hardware.Content" xml:space="preserve">
+  <data name="Shell_Equipment.Content" xml:space="preserve">
     <value>Оборудование</value>
   </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
@@ -1108,6 +1108,24 @@
   </data>
   <data name="TextBlockName.Text" xml:space="preserve">
     <value>Имя</value>
+  </data>
+  <data name="TextBlockCpuUsage.Text" xml:space="preserve">
+    <value>Использование CPU</value>
+  </data>
+  <data name="TextBlockCpuAppUsage.Text" xml:space="preserve">
+    <value>Использование приложения ЦП</value>
+  </data>
+  <data name="TextBlockCpuTotalUsage.Text" xml:space="preserve">
+    <value>Общее использование ЦП</value>
+  </data>
+  <data name="TextBlockMemoryUsage.Text" xml:space="preserve">
+    <value>Использование памяти</value>
+  </data>
+  <data name="TextBlockMemoryAppUsage.Text" xml:space="preserve">
+    <value>Использование памяти приложением</value>
+  </data>
+  <data name="TextBlockMemoryTotalUsage.Text" xml:space="preserve">
+    <value>Общее использование памяти</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Буфер обмена</value>

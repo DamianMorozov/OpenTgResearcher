@@ -12,10 +12,7 @@ public partial class TgMainViewModel(ITgSettingsService settingsService, INaviga
 
 	#region Methods
 
-	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
-	{
-		await ReloadUiAsync();
-	});
+	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(ReloadUiAsync);
 
 	#endregion
 }

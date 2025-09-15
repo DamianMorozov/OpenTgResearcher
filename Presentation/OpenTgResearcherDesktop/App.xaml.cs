@@ -110,8 +110,8 @@ public partial class App : Application
                 services.AddSingleton<TgClientConnectionViewModel>();
                 services.AddSingleton<TgFiltersPage>();
                 services.AddSingleton<TgFiltersViewModel>();
-                services.AddSingleton<TgHardwareControlPage>();
-                services.AddSingleton<TgHardwareControlViewModel>();
+                services.AddSingleton<TgHardwareResourcePage>();
+                services.AddSingleton<TgHardwareResourceViewModel>();
                 services.AddSingleton<TgLicensePage>();
                 services.AddSingleton<TgLicenseViewModel>();
                 services.AddSingleton<TgLoadDataPage>();

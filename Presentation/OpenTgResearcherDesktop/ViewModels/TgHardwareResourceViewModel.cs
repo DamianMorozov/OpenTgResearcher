@@ -1,7 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, IDisposable
+public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -12,7 +12,11 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
     [ObservableProperty]
     public partial int MemoryAppUsage { get; set; }
     [ObservableProperty]
+    public partial string MemoryAppUsageString { get; set; } = "";
+    [ObservableProperty]
     public partial int MemoryTotalUsage { get; set; }
+    [ObservableProperty]
+    public partial string MemoryTotalUsageString { get; set; } = "";
 
     private ILifetimeScope Scope { get; } = default!;
 
@@ -21,8 +25,8 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
     public IRelayCommand StartMonitorCommand { get; }
     public IRelayCommand StopMonitorCommand { get; }
 
-    public TgHardwareControlViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgHardwareControlViewModel> logger)
-        : base(settingsService, navigationService, logger, nameof(TgHardwareControlViewModel))
+    public TgHardwareResourceViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgHardwareResourceViewModel> logger)
+        : base(settingsService, navigationService, logger, nameof(TgHardwareResourceViewModel))
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();
@@ -40,7 +44,7 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
     private bool _disposed;
 
     /// <summary> Finalizer </summary>
-	~TgHardwareControlViewModel() => Dispose(false);
+	~TgHardwareResourceViewModel() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
     public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
@@ -97,7 +101,9 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
             CpuApp = (int)e.CpuAppPercent;
             CpuTotal = (int)e.CpuTotalPercent;
             MemoryAppUsage = (int)e.MemoryAppPercent;
+            MemoryAppUsageString = TgFileUtils.GetFileSizeAsString(e.MemoryAppGb * 1024 * 1024 * 1024);
             MemoryTotalUsage = (int)e.MemoryTotalPercent;
+            MemoryTotalUsageString = TgFileUtils.GetFileSizeAsString(e.MemoryUsedGb * 1024 * 1024 * 1024);
         }
         catch (Exception ex)
         {
@@ -105,10 +111,7 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
         }
     }
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
-    {
-        await LoadDataStorageCoreAsync();
-    });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(LoadDataStorageCoreAsync);
 
     private async Task LoadDataStorageCoreAsync()
     {
@@ -130,11 +133,11 @@ public sealed partial class TgHardwareControlViewModel : TgPageViewModelBase, ID
 
     private async Task StartMonitorAsync() => await ContentDialogAsync(StartMonitorCoreAsync, TgResourceExtensions.AskStartMonitoring(), TgEnumLoadDesktopType.Online);
 
-    private async Task StartMonitorCoreAsync() => await LoadOnlineDataAsync(async () =>
+    private async Task StartMonitorCoreAsync() => await LoadOnlineDataAsync(() =>
     {
         try
         {
-            await HardwareResourceMonitoringService.StartMonitoringAsync();
+            HardwareResourceMonitoringService.StartMonitoring();
         }
         catch (Exception ex)
         {

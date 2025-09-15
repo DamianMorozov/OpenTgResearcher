@@ -82,7 +82,7 @@
     <Page Update="Views\TgChatDetailsParticipantsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\TgHardwareControlPage.xaml">
+    <Page Update="Views\TgHardwareResourcePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgClientConnectionPage.xaml">

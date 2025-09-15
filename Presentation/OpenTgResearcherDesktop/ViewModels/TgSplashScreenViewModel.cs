@@ -204,11 +204,11 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     }
 
     /// <summary> Loading hardware resource monitoring </summary>
-    internal async Task LoadingHardwareControlAsync()
+    internal void LoadingHardwareControl()
     {
         try
         {
-            await HardwareResourceMonitoringService.StartMonitoringAsync();
+            HardwareResourceMonitoringService.StartMonitoring();
             IsLoadHardwareResourceMonitoring = true;
         }
         catch (Exception ex)

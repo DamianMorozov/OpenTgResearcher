@@ -3770,7 +3770,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<List<TL.User>> GetParticipantsAsync(long chatId, CancellationToken ct = default)
     {
-        await GetChatDetailsByClientAsync(chatId, ct);
+        var chatDetailsDto = await GetChatDetailsByClientAsync(chatId, ct);
 
         _tlUserBuffer.Clear();
         await GetParticipantAsync(chatId, null, ct);
@@ -4032,7 +4032,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             Description = !string.IsNullOrEmpty(chatDetails.Description) ? chatDetails.Description : "-" ?? "-"
         };
 
-        FillShatDetailsPermissions(chatDetailsDto, chatDetails);
+        FillChatDetailsPermissions(chatDetailsDto, chatDetails);
 
         if (chatDetails.TLInfo is TL.Messages_ChatFull messagesChatFull)
         {
@@ -4061,7 +4061,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return chatDetailsDto;
     }
 
-    private static void FillShatDetailsPermissions(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
+    private static void FillChatDetailsPermissions(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
     {
         if (chatDetails.Permissions is null)
             chatDetailsDto.Permissions = "-";

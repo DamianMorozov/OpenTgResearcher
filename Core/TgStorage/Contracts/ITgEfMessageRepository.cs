@@ -14,4 +14,6 @@ public interface ITgEfMessageRepository : ITgEfRepository<TgEfMessageEntity, TgE
     public Task SaveRelationAsync(long parentChatId, int parentMessageId, long childChatId, int childMessageId);
     /// <summary> Get users from messages </summary>
     public Task<List<long>> GetUserIdsFromMessagesAsync(Expression<Func<TgEfMessageEntity, bool>> where);
+    /// <summary> Get distinct user IDs by source ID </summary>
+    public Task<List<long>> GetDistinctUserIdsBySourceIdAsync(long sourceId, CancellationToken ct = default);
 }

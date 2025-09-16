@@ -114,5 +114,50 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
     public override async Task<int> GetCountAsync(Expression<Func<TgEfUserEntity, bool>> where, CancellationToken ct = default) => 
         await EfContext.Users.AsNoTracking().Where(where).CountAsync(ct);
 
+    /// <inheritdoc />
+    public async Task<List<TgEfUserDto>> GetUsersBySourceIdAsync(long sourceId, CancellationToken ct = default) => await EfContext.Users
+        .AsNoTracking()
+        .Where(u => EfContext.Messages.Any(m => m.SourceId == sourceId && m.UserId == u.Id))
+        .Select(SelectDto())
+        .ToListAsync(ct);
+
+    /// <inheritdoc />
+    public async Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, CancellationToken ct = default) => await 
+        EfContext.Users
+            .AsNoTracking()
+            .Select(u => new
+            {
+                User = u,
+                MsgCount = EfContext.Messages.Count(m => m.SourceId == sourceId && m.UserId == u.Id)
+            })
+            //.Where(x => x.MsgCount > 0) // Prefer Count over Any
+            .Select(x => new TgEfUserDto
+            {
+                // Map user fields
+                DtChanged = x.User.DtChanged,
+                Id = x.User.Id,
+                AccessHash = x.User.AccessHash,
+                IsContactActive = x.User.IsActive,
+                IsBot = x.User.IsBot,
+                //LastSeenAgo = 
+                FirstName = x.User.FirstName ?? string.Empty,
+                LastName = x.User.LastName ?? string.Empty,
+                UserName = x.User.UserName ?? string.Empty,
+                UserNames = x.User.UserNames ?? string.Empty,
+                PhoneNumber = x.User.PhoneNumber ?? string.Empty,
+                Status = x.User.Status ?? string.Empty,
+                RestrictionReason = x.User.RestrictionReason ?? string.Empty,
+                LangCode = x.User.LangCode ?? string.Empty,
+                IsContact = x.User.IsContact,
+                IsDeleted = x.User.IsDeleted,
+                StoriesMaxId = x.User.StoriesMaxId,
+                BotInfoVersion = x.User.BotInfoVersion ?? string.Empty,
+                BotInlinePlaceholder = x.User.BotInlinePlaceholder,
+                BotActiveUsers = x.User.BotActiveUsers,
+                //IsDownload = 
+                // Message count computed once and reused
+                CountMessages = x.MsgCount
+            }).ToListAsync(ct);
+
     #endregion
 }

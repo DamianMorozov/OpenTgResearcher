@@ -202,5 +202,14 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
             .Distinct()
             .ToListAsync();
 
+    /// <inheritdoc />
+    public async Task<List<long>> GetDistinctUserIdsBySourceIdAsync(long sourceId, CancellationToken ct = default) => await EfContext.Messages
+        .AsNoTracking()
+        .Where(m => m.SourceId == sourceId)
+        .Select(m => m.UserId)
+        .Distinct()
+        .ToListAsync(ct);
+
+
     #endregion
 }

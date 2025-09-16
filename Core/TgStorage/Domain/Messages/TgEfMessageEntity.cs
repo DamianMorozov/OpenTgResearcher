@@ -9,6 +9,7 @@
 [Index(nameof(Type))]
 [Index(nameof(Size))]
 [Index(nameof(Message))]
+[Index(nameof(UserId))]
 public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
 {
 	#region Fields, properties, constructor

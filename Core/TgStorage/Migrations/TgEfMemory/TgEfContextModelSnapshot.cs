@@ -352,6 +352,8 @@ namespace TgStorage.Migrations.TgEfMemory
                     b.HasIndex("Uid")
                         .IsUnique();
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("MESSAGES", (string)null);
                 });
 

@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgBusinessLogicTests.Services;
+﻿namespace TgBusinessLogicTests.Services;
 
 internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTestsBase
 {
@@ -16,14 +13,14 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
     }
 
     [Test]
-    public async Task Dispose_ShouldPreventFurtherStart()
+    public void Dispose_ShouldPreventFurtherStart()
     {
         using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
         service.Dispose();
 
-        Func<Task> act = () => service.StartMonitoringAsync();
+        var act = () => service.StartMonitoring();
         
-        await Assert.ThrowsAsync<ObjectDisposedException>(act);
+        Assert.Throws<ObjectDisposedException>(act);
     }
 
     [Test]
@@ -54,7 +51,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
             }
         };
 
-        await service.StartMonitoringAsync(TimeSpan.FromMilliseconds(200));
+        service.StartMonitoring(TimeSpan.FromMilliseconds(200));
 
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         var completed = await Task.WhenAny(tcs.Task, Task.Delay(-1, cts.Token));
@@ -68,8 +65,8 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
     public async Task StartMonitoring_Twice_ShouldNotThrow_AndNotRestart()
     {
         using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
-        await service.StartMonitoringAsync(TimeSpan.FromMilliseconds(200));
-        await service.StartMonitoringAsync(TimeSpan.FromMilliseconds(200));
+        service.StartMonitoring(TimeSpan.FromMilliseconds(200));
+        service.StartMonitoring(TimeSpan.FromMilliseconds(200));
 
         var tcs = new TaskCompletionSource<bool>();
         service.MetricsUpdated += (_, __) => tcs.TrySetResult(true);
@@ -86,7 +83,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
     public async Task StopMonitoring_ShouldStopWithoutExceptions()
     {
         using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
-        await service.StartMonitoringAsync(TimeSpan.FromMilliseconds(200));
+        service.StartMonitoring(TimeSpan.FromMilliseconds(200));
         await service.StopMonitoringAsync(isClose: false);
 
         await service.StopMonitoringAsync(isClose: false);

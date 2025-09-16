@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-using TL;
+﻿using TL;
 
 namespace TgBusinessLogic.Services;
 
@@ -10,6 +7,8 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 {
     #region Fields, properties, constructor
 
+    /// <summary> Semaphore to control concurrent access to Telegram API calls </summary>
+    public static readonly SemaphoreSlim _locker = new(initialCount: 1, maxCount: 1);
     /// <inheritdoc />
     public int MaxRetryCount { get; } = 5;
     /// <inheritdoc />
@@ -18,8 +17,6 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     public int WaitFallbackFlood { get; } = 10;
     /// <inheritdoc />
     public int[] WaitSeconds { get; } = [15, 30, 45, 60];
-    /// <summary> Semaphore to control concurrent access to Telegram API calls </summary>
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
     [GeneratedRegex(@"FLOOD_WAIT_(\d+)")]
     public static partial Regex RegexFloodWait();
 
@@ -30,7 +27,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     /// <summary> Release managed resources </summary>
     public override void ReleaseManagedResources()
     {
-        _semaphore.Dispose();
+        _locker.Dispose();
     }
 
     /// <summary> Release unmanaged resources </summary>
@@ -49,7 +46,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
         var waitSeconds = TryExtractFloodWaitSeconds(message);
         if (waitSeconds <= 0) return;
 
-        await _semaphore.WaitAsync(ct);
+        await _locker.WaitAsync(ct);
         try
         {
 #if DEBUG
@@ -64,7 +61,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
         }
         finally
         {
-            _semaphore.Release();
+            _locker.Release();
         }
     }
 
@@ -77,7 +74,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
             if (ct.IsCancellationRequested)
                 return await Task.FromCanceled<T>(ct);
 
-            await _semaphore.WaitAsync(ct);
+            await _locker.WaitAsync(ct);
             try
             {
                 return await telegramCall(ct);
@@ -102,7 +99,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
             }
             finally
             {
-                _semaphore.Release();
+                _locker.Release();
             }
         }
 

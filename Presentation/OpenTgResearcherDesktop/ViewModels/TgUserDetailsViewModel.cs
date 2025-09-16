@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
@@ -17,9 +14,9 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserWithMessagesDto> UserWithMessagesDtos { get; set; } = [];
 
-    public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearViewCommand { get; }
-	public IRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand LoadDataStorageCommand { get; }
+	public IAsyncRelayCommand ClearViewCommand { get; }
+	public IAsyncRelayCommand UpdateOnlineCommand { get; }
 
 	public TgUserDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUserDetailsViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgUserDetailsViewModel))
@@ -61,7 +58,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 
     private void ClearDataStorageCore() => Dto = new();
 
-    private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), TgEnumLoadDesktopType.Storage);
+    private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{

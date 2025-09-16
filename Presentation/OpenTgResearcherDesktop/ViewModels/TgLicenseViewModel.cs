@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLicenseViewModel : TgPageViewModelBase
@@ -27,11 +24,11 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial string LicenseLog { get; set; } = string.Empty;
 
-	public IRelayCommand LicenseShowInfoCommand { get; }
-	public IRelayCommand LicenseClearCommand { get; }
-	public IRelayCommand LicenseCheckCommand { get; }
-	public IRelayCommand LicenseRequestCommunityCommand { get; }
-	public IRelayCommand LicenseBuyCommand { get; }
+	public IAsyncRelayCommand LicenseShowInfoCommand { get; }
+	public IAsyncRelayCommand LicenseClearCommand { get; }
+	public IAsyncRelayCommand LicenseCheckCommand { get; }
+	public IAsyncRelayCommand LicenseRequestCommunityCommand { get; }
+	public IAsyncRelayCommand LicenseBuyCommand { get; }
 
 	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLicenseViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgLicenseViewModel))

@@ -90,7 +90,11 @@
                 x:Uid="ButtonDisconnect"
                 Grid.Column="7"
                 Margin="10,0,0,0"
-                Command="{x:Bind ViewModel.ClientDisconnectCommand}" />
+                Command="{x:Bind ViewModel.ClientDisconnectCommand}">
+                <Button.CommandParameter>
+                    <x:Boolean>False</x:Boolean>
+                </Button.CommandParameter>
+            </Button>
         </Grid>
         <!--  Navigation  -->
         <NavigationView
@@ -167,8 +171,8 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Hardware resources  -->
-                <NavigationViewItem x:Uid="Shell_Hardware" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareControlViewModel">
+                <!--  Equipment  -->
+                <NavigationViewItem x:Uid="Shell_Equipment" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareResourceViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE950;" />
                     </NavigationViewItem.Icon>

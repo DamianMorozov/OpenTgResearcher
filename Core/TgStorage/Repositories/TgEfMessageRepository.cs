@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgStorage.Repositories;
+﻿namespace TgStorage.Repositories;
 
 /// <summary> Message repository </summary>
 public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity, TgEfMessageDto>, ITgEfMessageRepository
@@ -204,6 +201,15 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
             .Select(m => m.UserId)
             .Distinct()
             .ToListAsync();
+
+    /// <inheritdoc />
+    public async Task<List<long>> GetDistinctUserIdsBySourceIdAsync(long sourceId, CancellationToken ct = default) => await EfContext.Messages
+        .AsNoTracking()
+        .Where(m => m.SourceId == sourceId)
+        .Select(m => m.UserId)
+        .Distinct()
+        .ToListAsync(ct);
+
 
     #endregion
 }

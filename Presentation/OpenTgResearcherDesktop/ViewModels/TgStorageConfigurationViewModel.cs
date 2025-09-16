@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgStorageConfigurationViewModel : TgPageViewModelBase
@@ -13,9 +10,9 @@ public sealed partial class TgStorageConfigurationViewModel : TgPageViewModelBas
     [ObservableProperty]
     public partial string StorageLog { get; set; }
 
-    public IRelayCommand StorageCreateBackupCommand { get; }
-    public IRelayCommand StorageShrinkCommand { get; }
-    public IRelayCommand StorageClear { get; }
+    public IAsyncRelayCommand StorageCreateBackupCommand { get; }
+    public IAsyncRelayCommand StorageShrinkCommand { get; }
+    public IAsyncRelayCommand StorageClear { get; }
 
     public TgStorageConfigurationViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStorageConfigurationViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgStorageConfigurationViewModel))

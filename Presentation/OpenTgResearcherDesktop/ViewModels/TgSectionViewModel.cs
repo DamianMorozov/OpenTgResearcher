@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public abstract partial class TgSectionViewModel : TgPageViewModelBase
@@ -41,10 +38,10 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial int ChatsProgressCountAll { get; set; }
 
-    public IRelayCommand ClearViewCommand { get; }
-    public IRelayCommand UpdateOnlineCommand { get; }
-    public IRelayCommand SearchCommand { get; }
-    public IRelayCommand LazyLoadCommand { get; }
+    public IAsyncRelayCommand ClearViewCommand { get; }
+    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand SearchCommand { get; }
+    public IAsyncRelayCommand LazyLoadCommand { get; }
 
     public TgSectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSectionViewModel> logger, string name)
         : base(settingsService, navigationService, logger, name)

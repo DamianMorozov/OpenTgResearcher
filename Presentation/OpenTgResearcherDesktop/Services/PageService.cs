@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.Services;
+﻿namespace OpenTgResearcherDesktop.Services;
 
 public sealed class PageService : IPageService
 {
@@ -17,7 +14,7 @@ public sealed class PageService : IPageService
 		Configure<TgChatViewModel, TgChatPage>();
 		Configure<TgClientConnectionViewModel, TgClientConnectionPage>();
 		Configure<TgFiltersViewModel, TgFiltersPage>();
-		Configure<TgHardwareControlViewModel, TgHardwareControlPage>();
+		Configure<TgHardwareResourceViewModel, TgHardwareResourcePage>();
 		Configure<TgLicenseViewModel, TgLicensePage>();
 		Configure<TgLoadDataViewModel, TgLoadDataPage>();
 		Configure<TgLogsViewModel, TgLogsPage>();

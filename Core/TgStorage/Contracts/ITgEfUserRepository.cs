@@ -1,9 +1,10 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
+﻿
 namespace TgStorage.Contracts;
 
 public interface ITgEfUserRepository : ITgEfRepository<TgEfUserEntity, TgEfUserDto>, IDisposable
 {
-    //
+    /// <summary> Get all distinct users for a given source in a single query </summary>
+    public Task<List<TgEfUserDto>> GetUsersBySourceIdAsync(long sourceId, CancellationToken ct = default);
+    /// <summary> Get all distinct users for a given source using join </summary>
+    public Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, CancellationToken ct = default);
 }

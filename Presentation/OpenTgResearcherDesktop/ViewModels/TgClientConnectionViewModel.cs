@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
@@ -56,11 +53,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     private bool _isLoad;
 
-    public IRelayCommand ClientConnectCommand { get; }
-	public IRelayCommand ClientDisconnectCommand { get; }
-	public IRelayCommand AppSaveCommand { get; }
-	public IRelayCommand AppClearCommand { get; }
-	public IRelayCommand AppDeleteCommand { get; }
+    public IAsyncRelayCommand ClientConnectCommand { get; }
+	public IAsyncRelayCommand ClientDisconnectCommand { get; }
+	public IAsyncRelayCommand AppSaveCommand { get; }
+	public IAsyncRelayCommand AppClearCommand { get; }
+	public IAsyncRelayCommand AppDeleteCommand { get; }
 
 	public TgClientConnectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
 		ILogger<TgClientConnectionViewModel> logger) : base(settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
@@ -69,7 +66,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		IsClientConnected = AppNotificationService.IsClientConnected;
         // Commands
 		ClientConnectCommand = new AsyncRelayCommand(ClientConnectAsync);
-		ClientDisconnectCommand = new AsyncRelayCommand(ClientDisconnectAsync);
+		ClientDisconnectCommand = new AsyncRelayCommand<bool?>(async isQuestion => await ClientDisconnectAsync(isQuestion));
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
@@ -203,10 +200,35 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task ClientDisconnectAsync() => await ContentDialogAsync(() =>
-        App.BusinessLogicManager.ConnectClient.DisconnectClientAsync(), TgResourceExtensions.AskClientDisconnect(), TgEnumLoadDesktopType.Online);
+	private async Task ClientDisconnectAsync(bool? isQuestion = true) => await ClientDisconnectCoreAsync(isQuestion, isRetry: false);
 
-	private async Task AppLoadCoreAsync()
+    private async Task ClientDisconnectCoreAsync(bool? isQuestion, bool isRetry)
+    {
+        try
+        {
+            Exception.Default();
+            DataRequest = string.Empty;
+            if (isQuestion == true)
+                await ContentDialogAsync(() => App.BusinessLogicManager.ConnectClient.DisconnectClientAsync(), 
+                    TgResourceExtensions.AskClientDisconnect(), TgEnumLoadDesktopType.Online);
+            else
+                await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            Exception.Set(ex);
+            if (isRetry)
+                return;
+            if (Exception.Message.Contains("or delete the file to start a new session"))
+            {
+                await TgDesktopUtils.DeleteFileAsync(SettingsService.AppSession);
+                await ClientDisconnectCoreAsync(isQuestion, isRetry: true);
+            }
+        }
+    }
+    
+    private async Task AppLoadCoreAsync()
 	{
 		var appResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
 		AppEntity = appResult.IsExists && appResult.Item is not null ? appResult.Item : new();

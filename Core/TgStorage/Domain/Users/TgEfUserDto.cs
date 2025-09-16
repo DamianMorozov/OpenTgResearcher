@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgStorage.Domain.Users;
+﻿namespace TgStorage.Domain.Users;
 
 /// <summary> User DTO </summary>
 public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity, TgEfUserDto>
@@ -53,6 +50,8 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
     public partial int BotActiveUsers { get; set; }
     [ObservableProperty]
     public partial bool IsDownload { get; set; }
+    [ObservableProperty]
+    public partial int CountMessages { get; set; }
 
     public string DisplayName => !string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName) ? $"{FirstName} {LastName}".Trim(): UserName;
 
@@ -79,6 +78,7 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         BotInlinePlaceholder = string.Empty;
         BotActiveUsers = 0;
         IsDownload = false;
+        CountMessages = 0;
     }
 
     #endregion
@@ -129,6 +129,7 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         BotInlinePlaceholder = dto.BotInlinePlaceholder;
         BotActiveUsers = dto.BotActiveUsers;
         IsDownload = dto.IsDownload;
+        CountMessages = dto.CountMessages;
         return this;
     }
 
@@ -156,6 +157,7 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         BotInlinePlaceholder = item.BotInlinePlaceholder ?? string.Empty;
         BotActiveUsers = item.BotActiveUsers;
         IsDownload = false;
+        CountMessages = 0;
         return this;
     }
 

@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgSettingsViewModel : TgPageViewModelBase
@@ -31,9 +28,9 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string SettingFile { get; set; } = string.Empty;
 
-    public IRelayCommand SettingsLoadCommand { get; }
-    public IRelayCommand SettingsDefaultCommand { get; }
-    public IRelayCommand SettingsSaveCommand { get; }
+    public IAsyncRelayCommand SettingsLoadCommand { get; }
+    public IAsyncRelayCommand SettingsDefaultCommand { get; }
+    public IAsyncRelayCommand SettingsSaveCommand { get; }
 
     public TgSettingsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSettingsViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgSettingsViewModel))

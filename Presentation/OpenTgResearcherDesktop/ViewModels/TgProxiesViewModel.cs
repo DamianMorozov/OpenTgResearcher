@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgProxiesViewModel : TgPageViewModelBase
@@ -10,10 +7,10 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyDto> Dtos { get; set; } = [];
-	public IRelayCommand LoadDataStorageCommand { get; }
-	public IRelayCommand ClearViewCommand { get; }
-	public IRelayCommand DefaultSortCommand { get; }
-	public IRelayCommand UpdateOnlineCommand { get; }
+	public IAsyncRelayCommand LoadDataStorageCommand { get; }
+	public IAsyncRelayCommand ClearViewCommand { get; }
+	public IAsyncRelayCommand DefaultSortCommand { get; }
+	public IAsyncRelayCommand UpdateOnlineCommand { get; }
 
 	public TgProxiesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgProxiesViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgProxiesViewModel))
@@ -50,7 +47,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), TgEnumLoadDesktopType.Storage);
+	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{

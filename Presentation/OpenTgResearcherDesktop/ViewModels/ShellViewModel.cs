@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 public partial class ShellViewModel : ObservableRecipient
 {
@@ -34,9 +31,9 @@ public partial class ShellViewModel : ObservableRecipient
     public INavigationViewService NavigationViewService { get; }
     public IAppNotificationService AppNotificationService { get; }
 
-    public IRelayCommand ClientConnectCommand { get; }
-    public IRelayCommand ClientDisconnectCommand { get; }
-    public IRelayCommand UpdatePageCommand { get; }
+    public IAsyncRelayCommand ClientConnectCommand { get; }
+    public IAsyncRelayCommand ClientDisconnectCommand { get; }
+    public IAsyncRelayCommand UpdatePageCommand { get; }
 
     public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
     {
@@ -143,7 +140,14 @@ public partial class ShellViewModel : ObservableRecipient
             await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
             if (!clientConnectionVm.IsClientConnected)
             {
-                clientConnectionVm.ClientConnectCommand.Execute(null);
+                await clientConnectionVm.ClientConnectCommand.ExecuteAsync(null);
+                await Task.Delay(250);
+            }
+
+            // Refresh UI
+            if (NavigationService.Frame is not null && NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
+            {
+                await pageViewModel.ReloadUiAsync();
             }
         }
         await Task.CompletedTask;
@@ -156,7 +160,14 @@ public partial class ShellViewModel : ObservableRecipient
         {
             if (clientConnectionVm.IsClientConnected)
             {
-                clientConnectionVm.ClientDisconnectCommand.Execute(null);
+                await clientConnectionVm.ClientDisconnectCommand.ExecuteAsync(false);
+                await Task.Delay(250);
+            }
+
+            // Refresh UI
+            if (NavigationService.Frame is not null && NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
+            {
+                await pageViewModel.ReloadUiAsync();
             }
         }
         await Task.CompletedTask;

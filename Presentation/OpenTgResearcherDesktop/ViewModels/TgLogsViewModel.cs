@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
@@ -10,7 +7,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 
     [ObservableProperty]
     public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
-    public IRelayCommand DeleteLogFileCommand { get; }
+    public IAsyncRelayCommand DeleteLogFileCommand { get; }
 
 	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLogsViewModel> logger)
 		: base(settingsService, navigationService, logger, nameof(TgLogsViewModel))

@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgUpdateViewModel : TgPageViewModelBase
@@ -10,8 +7,8 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial string UpdateLog { get; set; } = string.Empty;
-	public IRelayCommand UpdateReleaseCommand { get; }
-	public IRelayCommand UpdatePreviewCommand { get; }
+	public IAsyncRelayCommand UpdateReleaseCommand { get; }
+	public IAsyncRelayCommand UpdatePreviewCommand { get; }
 
 	public TgUpdateViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUpdateViewModel> logger) 
 		: base(settingsService, navigationService, logger, nameof(TgUpdateViewModel))

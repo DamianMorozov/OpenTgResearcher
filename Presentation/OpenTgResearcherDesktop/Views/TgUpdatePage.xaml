@@ -27,7 +27,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
-                        <!--  Update Release license button  -->
+                        <!--  Update Release  -->
                         <Button
                             MinHeight="50"
                             Margin="5,10,5,10"
@@ -42,7 +42,7 @@
                                     VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!--  Update Preview license button  -->
+                        <!--  License button: Update Preview  -->
                         <styles:TgLicenseButton
                             Grid.Row="1"
                             MinHeight="50"

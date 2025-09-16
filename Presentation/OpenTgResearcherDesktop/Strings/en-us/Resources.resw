@@ -124,8 +124,8 @@
   <data name="Shell_Logs.Content" xml:space="preserve">
     <value>Logs</value>
   </data>
-  <data name="Shell_Hardware.Content" xml:space="preserve">
-    <value>Hardware</value>
+  <data name="Shell_Equipment.Content" xml:space="preserve">
+    <value>Equipment</value>
   </data>
   <data name="WebView_Loading.Text" xml:space="preserve">
     <value>Loading...</value>
@@ -603,7 +603,7 @@
   <data name="AskDataClear" xml:space="preserve">
     <value>Clear the data?</value>
   </data>
-  <data name="AskDataLoad" xml:space="preserve">
+  <data name="AskLoading" xml:space="preserve">
     <value>Load the data?</value>
   </data>
   <data name="AskAddRecord" xml:space="preserve">
@@ -621,8 +621,8 @@
   <data name="AskUpdateChatDetails" xml:space="preserve">
     <value>Update chat details?</value>
   </data>
-  <data name="AskStopDownloading" xml:space="preserve">
-    <value>Stop downloading?</value>
+  <data name="AskStopLoading" xml:space="preserve">
+    <value>Stop loading?</value>
   </data>
   <data name="AskRestartApp" xml:space="preserve">
     <value>Restart the application?</value>
@@ -948,6 +948,12 @@
   <data name="TextBlockSaveChatSettings.Text" xml:space="preserve">
     <value>Save chat settings</value>
   </data>
+  <data name="TextBlockLoadParticipants.Text" xml:space="preserve">
+    <value>Load participants from storage</value>
+  </data>
+  <data name="TextBlockStopParticipants.Text" xml:space="preserve">
+    <value>Stop downloading from storage</value>
+  </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Get participants</value>
   </data>
@@ -1046,6 +1052,24 @@
   </data>
   <data name="TextBlockName.Text" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="TextBlockCpuUsage.Text" xml:space="preserve">
+    <value>CPU usage</value>
+  </data>
+  <data name="TextBlockCpuAppUsage.Text" xml:space="preserve">
+    <value>CPU usage by the app</value>
+  </data>
+  <data name="TextBlockCpuTotalUsage.Text" xml:space="preserve">
+    <value>CPU total usage</value>
+  </data>
+  <data name="TextBlockMemoryUsage.Text" xml:space="preserve">
+    <value>Memory usage</value>
+  </data>
+  <data name="TextBlockMemoryAppUsage.Text" xml:space="preserve">
+    <value>Memory usage by the application</value>
+  </data>
+  <data name="TextBlockMemoryTotalUsage.Text" xml:space="preserve">
+    <value>Total memory usage</value>
   </data>
   <data name="Clipboard" xml:space="preserve">
     <value>Clipboard</value>

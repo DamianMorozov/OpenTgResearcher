@@ -50,8 +50,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\OpenTgResearcherDesktopCore\OpenTgResearcherDesktopCore.csproj" />
     <ProjectReference Include="..\..\Core\TgBusinessLogic\TgBusinessLogic.csproj" />
-    <ProjectReference Include="..\..\Core\OpenTgResearcherDesktop.Core\OpenTgResearcherDesktop.Core.csproj" />
+    <ProjectReference Include="..\..\Core\OpenTgResearcherDesktopCore\OpenTgResearcherDesktopCore.csproj" />
     <ProjectReference Include="..\..\Core\TgInfrastructure\TgInfrastructure.csproj" />
     <ProjectReference Include="..\..\Core\TgStorage\TgStorage.csproj" />
   </ItemGroup>
@@ -81,7 +82,7 @@
     <Page Update="Views\TgChatDetailsParticipantsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\TgHardwareControlPage.xaml">
+    <Page Update="Views\TgHardwareResourcePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\TgClientConnectionPage.xaml">

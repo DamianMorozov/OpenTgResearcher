@@ -1,17 +1,15 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgBusinessLogic.Helpers;
+﻿namespace TgBusinessLogic.Helpers;
 
 /// <summary> Fusion cache helper </summary>
 public static class TgCacheUtils
 {
     #region Fields, properties, constructor
 
-    public static SemaphoreSlim SaveLock { get; } = new(initialCount: 1, maxCount: 1);
+    public static readonly SemaphoreSlim Locker = new(initialCount: 1, maxCount: 1);
     public static string GetCacheKeyChatLastCount(long chatId) => $"{GetCacheKeyChatLastCountPrefix}:{chatId}";
     public static string GetCacheKeyChatLastCountPrefix() => $"chatLastCount";
     public static string GetCacheKeyChatPrefix() => $"chat";
+    public static string GetCacheKeyCpuTotal() => $"CpuTotal";
     public static string GetCacheKeyFullChannel(long peerId) => $"{GetCacheKeyFullChannelPrefix}:{peerId}";
     public static string GetCacheKeyFullChannelPrefix() => $"fullChannel";
     public static string GetCacheKeyFullChat(long peerId) => $"{GetCacheKeyFullChatPrefix}:{peerId}";

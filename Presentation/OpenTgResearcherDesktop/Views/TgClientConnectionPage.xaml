@@ -23,10 +23,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!--  Load data  -->
-            <views:TgLoadDataPage
-                Grid.Row="0"
-                Margin="0,0,0,10"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
             <!--  Actions  -->
             <ContentControl
                 Grid.Row="1"
@@ -153,6 +150,9 @@
                                 VerticalAlignment="Stretch"
                                 Command="{x:Bind ViewModel.ClientDisconnectCommand}"
                                 FontWeight="Bold">
+                                <Button.CommandParameter>
+                                    <x:Boolean>True</x:Boolean>
+                                </Button.CommandParameter>
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xE8BB;" />
                                     <TextBlock

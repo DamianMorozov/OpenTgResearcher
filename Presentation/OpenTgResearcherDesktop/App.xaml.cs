@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop;
+﻿namespace OpenTgResearcherDesktop;
 
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
@@ -94,7 +91,6 @@ public partial class App : Application
                 services.AddSingleton<IWebViewService, WebViewService>();
                 services.AddSingleton<INavigationViewService, NavigationViewService>();
                 services.AddSingleton<IActivationService, ActivationService>();
-                services.AddSingleton<ISampleDataService, SampleDataService>();
                 // Views and ViewModels
                 services.AddSingleton<ShellPage>();
                 services.AddSingleton<ShellViewModel>();
@@ -114,8 +110,8 @@ public partial class App : Application
                 services.AddSingleton<TgClientConnectionViewModel>();
                 services.AddSingleton<TgFiltersPage>();
                 services.AddSingleton<TgFiltersViewModel>();
-                services.AddSingleton<TgHardwareControlPage>();
-                services.AddSingleton<TgHardwareControlViewModel>();
+                services.AddSingleton<TgHardwareResourcePage>();
+                services.AddSingleton<TgHardwareResourceViewModel>();
                 services.AddSingleton<TgLicensePage>();
                 services.AddSingleton<TgLicenseViewModel>();
                 services.AddSingleton<TgLoadDataPage>();

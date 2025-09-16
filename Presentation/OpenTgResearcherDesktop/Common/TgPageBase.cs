@@ -1,10 +1,20 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+﻿using System.ComponentModel;
 
 namespace OpenTgResearcherDesktop.Common;
 
-public abstract class TgPageBase : Page
+public abstract class TgPageBase : Page, INotifyPropertyChanged
 {
+    #region INotifyPropertyChanged
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string memberName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(memberName));
+    }
+
+    #endregion
+    
     #region Fields, properties, constructor
 
     public virtual ITgPageViewModel ViewModel => null!;

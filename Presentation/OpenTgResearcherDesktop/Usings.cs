@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-global using Autofac.Extensions.DependencyInjection;
+﻿global using Autofac.Extensions.DependencyInjection;
 global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
@@ -33,15 +30,15 @@ global using OpenTgResearcherDesktop.Contracts.Services;
 global using OpenTgResearcherDesktop.Contracts.ViewModels;
 global using OpenTgResearcherDesktop.Contracts;
 global using OpenTgResearcherDesktop.Converters;
-global using OpenTgResearcherDesktop.Core.Contracts.Services;
-global using OpenTgResearcherDesktop.Core.Helpers;
-global using OpenTgResearcherDesktop.Core.Services;
 global using OpenTgResearcherDesktop.Helpers;
 global using OpenTgResearcherDesktop.Models;
 global using OpenTgResearcherDesktop.Services;
 global using OpenTgResearcherDesktop.Styles;
 global using OpenTgResearcherDesktop.ViewModels;
 global using OpenTgResearcherDesktop.Views;
+global using OpenTgResearcherDesktopCore.Contracts.Services;
+global using OpenTgResearcherDesktopCore.Helpers;
+global using OpenTgResearcherDesktopCore.Services;
 global using System.Collections.Concurrent;
 global using System.Collections.ObjectModel;
 global using System.Collections.Specialized;

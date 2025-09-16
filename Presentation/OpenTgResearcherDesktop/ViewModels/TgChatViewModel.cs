@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatViewModel : TgPageViewModelBase
@@ -30,10 +27,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string ChatProgressMessage { get; set; } = string.Empty;
 
-    public IRelayCommand UpdateOnlineCommand { get; }
-    public IRelayCommand ClearViewCommand { get; }
-    public IRelayCommand SaveChatSettingsCommand { get; }
-    public IRelayCommand StopDownloadingCommand { get; }
+    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand ClearViewCommand { get; }
+    public IAsyncRelayCommand SaveChatSettingsCommand { get; }
+    public IAsyncRelayCommand StopDownloadingCommand { get; }
 
     public TgChatViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatViewModel> logger,
         IAppNotificationService appNotificationService)
@@ -165,7 +162,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading(), TgEnumLoadDesktopType.Online);
+    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Online);
 
     private async Task StopDownloadingCoreAsync() => await App.BusinessLogicManager.ConnectClient.SetForceStopDownloadingAsync();
 

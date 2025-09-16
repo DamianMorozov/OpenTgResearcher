@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
@@ -22,7 +19,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     private ILifetimeScope Scope { get; } = default!;
 
     public Action BackToMainWindow { get; internal set; } = () => { };
-    public IRelayCommand ContinueCommand { get; }
+    public IAsyncRelayCommand ContinueCommand { get; }
 
     public TgSplashScreenViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgSplashScreenViewModel> logger)
         : base(settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
@@ -207,11 +204,11 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     }
 
     /// <summary> Loading hardware resource monitoring </summary>
-    internal async Task LoadingHardwareControlAsync()
+    internal void LoadingHardwareControl()
     {
         try
         {
-            await HardwareResourceMonitoringService.StartMonitoringAsync();
+            HardwareResourceMonitoringService.StartMonitoring();
             IsLoadHardwareResourceMonitoring = true;
         }
         catch (Exception ex)

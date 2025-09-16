@@ -1,6 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
 global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using LibreHardwareMonitor.Hardware;
@@ -21,7 +18,6 @@ global using Telegram.Bot.Types.Enums;
 global using TgBusinessLogic.Contracts;
 global using TgBusinessLogic.Helpers;
 global using TgBusinessLogic.Models;
-global using TgBusinessLogic.Services;
 global using TgBusinessLogic.ViewModels;
 global using TgInfrastructure.Api;
 global using TgInfrastructure.Contracts;
@@ -42,6 +38,5 @@ global using TgStorage.Domain.Users;
 global using TgStorage.Domain.Versions;
 global using TgStorage.Helpers;
 global using TgStorage.Models;
-global using TgStorage.Repositories;
 global using TgStorage.Utils;
 global using ZiggyCreatures.Caching.Fusion;

@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.Views;
+﻿namespace OpenTgResearcherDesktop.Views;
 
 [SupportedOSPlatform("windows10.0.17763.0")]
 public sealed partial class TgSplashScreenPage
@@ -52,7 +49,7 @@ public sealed partial class TgSplashScreenPage
         Bindings.Update();
 
         // Loading hardware control
-        await ViewModel.LoadingHardwareControlAsync();
+        ViewModel.LoadingHardwareControl();
         Bindings.Update();
 
         // Loading complete

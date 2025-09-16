@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-using TL;
+﻿using TL;
 using WTelegram;
 
 namespace TgBusinessLogic.Services;
@@ -3134,7 +3131,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Early exit if saving is disabled or cancellation requested
         if (!tgDownloadSettings.IsSaveMessages || CheckShouldStop(ct)) return;
 
-        await TgCacheUtils.SaveLock.WaitAsync(ct);
+        await TgCacheUtils.Locker.WaitAsync(ct);
 
         try
         {
@@ -3203,7 +3200,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         finally
         {
-            TgCacheUtils.SaveLock.Release();
+            TgCacheUtils.Locker.Release();
 
             if (!CheckShouldStop(ct))
             {
@@ -3773,7 +3770,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<List<TL.User>> GetParticipantsAsync(long chatId, CancellationToken ct = default)
     {
-        await GetChatDetailsByClientAsync(chatId, ct);
+        var chatDetailsDto = await GetChatDetailsByClientAsync(chatId, ct);
 
         _tlUserBuffer.Clear();
         await GetParticipantAsync(chatId, null, ct);
@@ -3912,30 +3909,59 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return new();
     }
 
+    /// <summary> Get details about a public chat (even if client is not a member of that chat) </summary>
     private async Task<TgChatDetailsDto> GetChatDetailsByClientCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default)
     {
         await CreateChatBaseCoreAsync(tgDownloadSettings);
-
         if (Client is null) return new();
+        if (tgDownloadSettings.Chat.Base is null) return new();
 
-        // Get details about a public chat (even if client is not a member of that chat)
-        if (tgDownloadSettings.Chat.Base is not null)
+        var key = TgCacheUtils.GetCacheKeyFullChat(tgDownloadSettings.Chat.Base.ID);
+        Messages_ChatFull? chatFull = null;
+        WTelegram.Types.ChatFullInfo? chatDetails = null;
+
+        // Call Telegram API with cancellation support
+        try
         {
-            // Call Telegram API with cancellation support
-            var chatFull = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyFullChat(tgDownloadSettings.Chat.Base.ID),
-                factory: SafeFactory<TL.Messages_ChatFull?>(async (ctx, innerCt) => await TelegramCallAsync(
-                    apiCt => Client?.GetFullChat(tgDownloadSettings.Chat.Base) ?? default!, isThrow: false, innerCt)),
-                TgCacheUtils.CacheOptionsFullChat, ct);
-            WTelegram.Types.ChatFullInfo? chatDetails;
-            if (chatFull is null)
-                TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
+            // Try to retrieve from cache in a strictly typed manner
+            var maybe = await Cache.TryGetAsync<TL.Messages_ChatFull?>(key, TgCacheUtils.CacheOptionsFullChat, ct);
+            if (maybe.HasValue)
+                chatFull = maybe.Value;
             else
-            {
-                chatDetails = ConvertToChatFullInfo(chatFull);
-                return FillChatDetailsDto(chatDetails);
-            }
+                // Cache miss: retrieve from server and save
+                chatFull = await GetChatDetailsByClientSafeCoreAsync(tgDownloadSettings, key, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            // Quietly exit without logging in
+        }
+        catch (InvalidCastException)
+        {
+            // There is another type in the cache: clear and reload
+            await Cache.RemoveAsync(key, token: ct);
+            chatFull = await GetChatDetailsByClientSafeCoreAsync(tgDownloadSettings, key, ct);
+        }
+
+        if (chatFull is null)
+            TgLog.WriteLine(TgLocale.TgGetChatDetailsError);
+        else
+        {
+            chatDetails = ConvertToChatFullInfo(chatFull);
+            return FillChatDetailsDto(chatDetails);
         }
         return new();
+    }
+
+    /// <summary> Retrieves full channel info from Telegram API and caches it </summary>
+    private async Task<TL.Messages_ChatFull?> GetChatDetailsByClientSafeCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, string key, CancellationToken ct)
+    {
+        // Call Telegram API with cancellation support
+        var fresh = await TelegramCallAsync<TL.Messages_ChatFull?>(apiCt => Client?.GetFullChat(tgDownloadSettings.Chat.Base) ?? default!,
+            isThrow: false, ct);
+
+        // Save to cache
+        await Cache.SetAsync(key, fresh, TgCacheUtils.CacheOptionsFullChat, ct);
+        return fresh;
     }
 
     /// <inheritdoc />
@@ -4006,7 +4032,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             Description = !string.IsNullOrEmpty(chatDetails.Description) ? chatDetails.Description : "-" ?? "-"
         };
 
-        FillShatDetailsPermissions(chatDetailsDto, chatDetails);
+        FillChatDetailsPermissions(chatDetailsDto, chatDetails);
 
         if (chatDetails.TLInfo is TL.Messages_ChatFull messagesChatFull)
         {
@@ -4035,7 +4061,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return chatDetailsDto;
     }
 
-    private static void FillShatDetailsPermissions(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
+    private static void FillChatDetailsPermissions(TgChatDetailsDto chatDetailsDto, WTelegram.Types.ChatFullInfo chatDetails)
     {
         if (chatDetails.Permissions is null)
             chatDetailsDto.Permissions = "-";

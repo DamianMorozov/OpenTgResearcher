@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.Common;
+﻿namespace OpenTgResearcherDesktop.Common;
 
 /// <summary> Base class for TgViewModel </summary>
 [DebuggerDisplay("{ToDebugString()}")]
@@ -55,7 +52,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
 
-    public IRelayCommand ShowPurchaseLicenseCommand { get; }
+    public IAsyncRelayCommand ShowPurchaseLicenseCommand { get; }
 
     public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
     {
@@ -373,7 +370,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         finally
         {
             if (IsOnlineProcessing)
+            {
                 IsOnlineProcessing = false;
+            }
             RefreshLicenseInfo();
         }
     }
@@ -394,7 +393,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         finally
         {
             if (IsOnlineProcessing)
+            {
                 IsOnlineProcessing = false;
+            }
             RefreshLicenseInfo();
         }
     }

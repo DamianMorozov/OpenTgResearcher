@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace TgInfrastructure.Dtos;
+﻿namespace TgInfrastructure.Dtos;
 
 /// <summary> Sensitive model </summary>
 [DebuggerDisplay("{ToDebugString()}")]
@@ -14,7 +11,7 @@ public partial class TgSensitiveModel : ObservableRecipient
     [ObservableProperty]
     public partial bool IsDisplaySensitiveData { get; set; } = true;
 
-    public IRelayCommand? SetDisplaySensitiveCommand { get; set; }
+    public IAsyncRelayCommand? SetDisplaySensitiveCommand { get; set; }
 
     public TgSensitiveModel() : base()
     {

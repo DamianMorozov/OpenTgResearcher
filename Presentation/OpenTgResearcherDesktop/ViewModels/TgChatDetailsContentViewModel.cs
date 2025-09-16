@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.ViewModels;
+﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
@@ -38,9 +35,9 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool IsLoading { get; set; }
 
-    public IRelayCommand CalcContentStatisticsCommand { get; }
-    public IRelayCommand LazyLoadMessagesCommand { get; }
-    public IRelayCommand ClearViewCommand { get; }
+    public IAsyncRelayCommand CalcContentStatisticsCommand { get; }
+    public IAsyncRelayCommand LazyLoadMessagesCommand { get; }
+    public IAsyncRelayCommand ClearViewCommand { get; }
 
     public TgChatDetailsContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsContentViewModel> logger,
         IAppNotificationService appNotificationService)

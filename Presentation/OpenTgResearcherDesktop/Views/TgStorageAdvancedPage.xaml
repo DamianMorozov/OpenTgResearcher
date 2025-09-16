@@ -16,7 +16,7 @@
     <ScrollView VerticalScrollMode="Auto">
         <Grid>
             <!--  Load data  -->
-            <views:TgLoadDataPage Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
             <!--  Storage advanced settings  -->
             <ContentControl
                 HorizontalAlignment="Stretch"

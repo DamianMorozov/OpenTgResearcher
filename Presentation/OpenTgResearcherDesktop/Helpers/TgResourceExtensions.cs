@@ -1,7 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-namespace OpenTgResearcherDesktop.Helpers;
+﻿namespace OpenTgResearcherDesktop.Helpers;
 
 public static class TgResourceExtensions
 {
@@ -41,7 +38,7 @@ public static class TgResourceExtensions
 	internal static string AskClientConnect() => "AskClientConnect".GetLocalizedResource();
 	internal static string AskClientDisconnect() => "AskClientDisconnect".GetLocalizedResource();
 	internal static string AskDataClear() => "AskDataClear".GetLocalizedResource();
-	internal static string AskDataLoad() => "AskDataLoad".GetLocalizedResource();
+	internal static string AskLoading() => "AskLoading".GetLocalizedResource();
 	internal static string AskDeleteFile() => "AskDeleteFile".GetLocalizedResource();
 	internal static string AskGetParticipants() => "AskGetParticipants".GetLocalizedResource();
 	internal static string AskLicenseCheck() => "AskLicenseCheck".GetLocalizedResource();
@@ -54,7 +51,7 @@ public static class TgResourceExtensions
 	internal static string AskSettingsLoad() => "AskSettingsLoad".GetLocalizedResource();
 	internal static string AskSettingsSave() => "AskSettingsSave".GetLocalizedResource();
 	internal static string AskStartMonitoring() => "AskStartMonitoring".GetLocalizedResource();
-	internal static string AskStopDownloading() => "AskStopDownloading".GetLocalizedResource();
+	internal static string AskStopLoading() => "AskStopLoading".GetLocalizedResource();
 	internal static string AskStopMonitoring() => "AskStopMonitoring".GetLocalizedResource();
 	internal static string AskUpdateChatDetails() => "AskUpdateChatDetails".GetLocalizedResource();
 	internal static string AskUpdateOnline() => "AskUpdateOnline".GetLocalizedResource();

@@ -29,4 +29,7 @@
     <ProjectReference Include="..\..\Core\TgStorage\TgStorage.csproj" />
     <ProjectReference Include="..\TgAssertCoreTests\TgAssertCoreTests.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
 </Project>

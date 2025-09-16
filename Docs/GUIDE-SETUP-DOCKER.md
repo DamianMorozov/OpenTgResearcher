@@ -10,6 +10,22 @@ docker compose up --build -d
 docker compose logs
 ```
 
+If you are going to mount `TgStorage.db` and other files inside the container (volumes in docker-compose.yml), make sure that these files are created in advance. Otherwise, Docker will automatically create directories with these names when starting the container.
+
+For example, you can create empty files like this:
+
+**sh:**
+```sh
+touch TgStorage.db OpenTgResearcher.xml OpenTgResearcher.session
+```
+
+**PowerShell:**
+```powershell
+New-Item -ItemType File TgStorage.db, OpenTgResearcher.xml, OpenTgResearcher.session
+```
+
+
+
 ## File docker-compose.yml
 ```
 services:

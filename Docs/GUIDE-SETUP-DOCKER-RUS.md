@@ -10,6 +10,22 @@ docker compose up --build -d
 docker compose logs
 ```
 
+Если вы собираетесь монтировать `TgStorage.db` и другие файлы внутрь контейнера (volumes в docker-compose.yml), убедитесь, что эти файлы созданы заранее. В противном случае Docker автоматически создаст директории с такими именами при запуске контейнера.
+
+Например, вы можете создать пустые файлы так:
+
+**sh:**
+```sh
+touch TgStorage.db OpenTgResearcher.xml OpenTgResearcher.session
+```
+
+**PowerShell:**
+```powershell
+New-Item -ItemType File TgStorage.db, OpenTgResearcher.xml, OpenTgResearcher.session
+```
+
+
+
 ## Файл docker-compose.yml
 ```
 services:

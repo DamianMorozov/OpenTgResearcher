@@ -20,7 +20,7 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <!--  Load data  -->
-        <views:TgLoadDataPage Margin="0,0,0,10" Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+        <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
         <!--  Actions  -->
         <ContentControl
             Grid.Row="1"
@@ -187,7 +187,7 @@
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <!--  Search license button  -->
+                    <!--  License button: Search  -->
                     <styles:TgLicenseButton
                         Grid.RowSpan="2"
                         Grid.Column="5"
@@ -203,6 +203,7 @@
                             <FontIcon Glyph="&#xE721;" />
                             <TextBlock
                                 x:Uid="ActionSearch"
+                                Margin="10,0,10,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>

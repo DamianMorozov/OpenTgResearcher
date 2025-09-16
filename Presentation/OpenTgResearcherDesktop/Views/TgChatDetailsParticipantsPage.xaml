@@ -27,16 +27,13 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <!--  ID  -->
                         <TextBlock
                             x:Uid="TextBlockId"
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}" />
-                        <!--  Sensitive data  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
@@ -47,6 +44,7 @@
                             Text="{x:Bind Id, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Id, Mode=OneWay}" />
@@ -55,7 +53,6 @@
                             x:Uid="FieldUserName"
                             Margin="20,5,7,2"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
@@ -66,6 +63,7 @@
                             Text="{x:Bind MainUserName, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind MainUserName, Mode=OneWay}" />
@@ -74,7 +72,6 @@
                             x:Uid="FieldAccessHash"
                             Margin="20,5,7,2"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
@@ -85,11 +82,10 @@
                             Text="{x:Bind AccessHash, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind AccessHash, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <!--  IsContactActive  -->
                         <TextBlock
                             x:Uid="FieldIsActive"
@@ -112,12 +108,13 @@
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             IsOn="{x:Bind IsBot, Mode=OneWay}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <!--  LastSeenAgo  -->
                         <TextBlock
                             x:Uid="FieldLastSeenAgo"
                             Margin="-50,5,7,2"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
@@ -128,6 +125,7 @@
                             Text="{x:Bind LastSeenAgoAsString, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
@@ -136,7 +134,6 @@
                             x:Uid="FieldRestrictionReason"
                             Margin="20,5,7,2"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{x:Bind SensitiveData, Mode=OneWay}"
@@ -147,11 +144,10 @@
                             Text="{x:Bind RestrictionReason, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Grid.Row="2" Orientation="Horizontal">
                         <!--  DisplayName  -->
                         <TextBlock
                             x:Uid="FieldFirstName"
@@ -168,6 +164,7 @@
                             Text="{x:Bind DisplayName, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind DisplayName, Mode=OneWay}" />
@@ -187,6 +184,7 @@
                             Text="{x:Bind PhoneNumber, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
@@ -206,6 +204,7 @@
                             Text="{x:Bind Status, Mode=OneWay}"
                             Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
+                            Margin="0,-5,0,0"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Status, Mode=OneWay}" />
@@ -225,57 +224,106 @@
 
     <!--  Chat participants  -->
     <ScrollView VerticalScrollMode="Auto">
-        <Grid>
+        <Grid Margin="-15,0,-15,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <!--  License button: Load participants  -->
+            <styles:TgLicenseButton
+                Grid.Column="0"
+                Margin="0,0,5,5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                Command="{x:Bind ViewModel.LoadParticipantsCommand}"
+                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                Style="{StaticResource LicenseButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                    <TextBlock
+                        x:Uid="TextBlockLoadParticipants"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </styles:TgLicenseButton>
+            <!--  License button: Stop participants  -->
+            <styles:TgLicenseButton
+                Grid.Column="1"
+                Margin="0,0,5,5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                Command="{x:Bind ViewModel.StopParticipantsCommand}"
+                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                Style="{StaticResource LicenseButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                    <TextBlock
+                        x:Uid="TextBlockStopParticipants"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </styles:TgLicenseButton>
+            <!--  License button: Get participants  -->
+            <styles:TgLicenseButton
+                Grid.Column="2"
+                Margin="0,0,5,5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                Command="{x:Bind ViewModel.GetParticipantsCommand}"
+                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
+                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                Style="{StaticResource LicenseButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                    <TextBlock
+                        x:Uid="TextBlockGetParticipants"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </styles:TgLicenseButton>
             <!--  Load data  -->
-            <views:TgLoadDataPage Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
-            <Grid
+            <views:TgLoadDataPage
                 Grid.Row="1"
-                Margin="-15,0,-15,0"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
-                <!--  Get participants  -->
-                <Button
-                    Margin="0,0,5,5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.GetParticipantsCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
-                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                        <TextBlock
-                            x:Uid="TextBlockGetParticipants"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <!--  List view with participants  -->
-                <ListView
-                    x:Name="ListViewParticipants"
-                    Grid.Row="1"
-                    ItemTemplate="{StaticResource ParticipantsViewTemplate}"
-                    ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}">
-                    <!--  The ItemsStackPanel must be edited to update the following two properties  -->
-                    <!--  These properties allow the list to grow from the bottom  -->
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
-            </Grid>
+                Grid.ColumnSpan="3"
+                Margin="20,0,0,0"
+                IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}"
+                IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <!--  List view with participants  -->
+            <ListView
+                x:Name="ListViewParticipants"
+                Grid.Row="2"
+                Grid.ColumnSpan="3"
+                ItemTemplate="{StaticResource ParticipantsViewTemplate}"
+                ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}">
+                <!--  The ItemsStackPanel must be edited to update the following two properties  -->
+                <!--  These properties allow the list to grow from the bottom  -->
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
         </Grid>
     </ScrollView>
 </common:TgPageBase>

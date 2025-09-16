@@ -370,7 +370,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         finally
         {
             if (IsOnlineProcessing)
+            {
                 IsOnlineProcessing = false;
+            }
             RefreshLicenseInfo();
         }
     }
@@ -391,7 +393,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         finally
         {
             if (IsOnlineProcessing)
+            {
                 IsOnlineProcessing = false;
+            }
             RefreshLicenseInfo();
         }
     }

@@ -58,7 +58,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 
     private void ClearDataStorageCore() => Dto = new();
 
-    private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskDataLoad(), TgEnumLoadDesktopType.Storage);
+    private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{

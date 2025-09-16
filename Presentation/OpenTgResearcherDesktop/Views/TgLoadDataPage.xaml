@@ -11,17 +11,17 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgLoadDataViewModel}"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid Margin="0,0,0,10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  Check access to storage  -->
         <ContentControl
-            Grid.Row="0"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Left"
-            Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            Visibility="{x:Bind IsPageLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock
                 x:Uid="AppStorageNeedToCreate"
                 Margin="2"
@@ -29,23 +29,51 @@
                 FontWeight="Bold"
                 HorizontalTextAlignment="Left"
                 TextAlignment="Center"
-                TextWrapping="WrapWholeWords" />
+                TextWrapping="WrapWholeWords"
+                Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
         </ContentControl>
-        <!--  Load indicator  -->
+        <!--  Storage load  -->
         <ContentControl
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay}">
+            Visibility="{x:Bind IsPageLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ProgressRing
+                    Width="100"
+                    Height="100"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    x:Uid="DataLoadWait"
+                    Grid.Column="1"
+                    Margin="50,0,50,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource TitleTextBlockStyle}"
+                    TextAlignment="Center" />
+            </Grid>
+        </ContentControl>
+        <!--  Online load  -->
+        <ContentControl
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Visibility="{x:Bind IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ProgressRing
-                    Grid.Column="0"
                     Width="100"
                     Height="100"
+                    Margin="5"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" />
                 <TextBlock

@@ -162,7 +162,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopDownloading(), TgEnumLoadDesktopType.Online);
+    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Online);
 
     private async Task StopDownloadingCoreAsync() => await App.BusinessLogicManager.ConnectClient.SetForceStopDownloadingAsync();
 

@@ -662,7 +662,7 @@
   <data name="AskDataClear" xml:space="preserve">
     <value>Очистить данные?</value>
   </data>
-  <data name="AskDataLoad" xml:space="preserve">
+  <data name="AskLoading" xml:space="preserve">
     <value>Загрузить данные?</value>
   </data>
   <data name="AskAddRecord" xml:space="preserve">
@@ -680,7 +680,7 @@
   <data name="AskUpdateChatDetails" xml:space="preserve">
     <value>Обновить детали чата?</value>
   </data>
-  <data name="AskStopDownloading" xml:space="preserve">
+  <data name="AskStopLoading" xml:space="preserve">
     <value>Остановить загрузку?</value>
   </data>
   <data name="AskRestartApp" xml:space="preserve">
@@ -1009,6 +1009,12 @@
   </data>
   <data name="TextBlockSaveChatSettings.Text" xml:space="preserve">
     <value>Сохранить настройки чата</value>
+  </data>
+  <data name="TextBlockLoadParticipants.Text" xml:space="preserve">
+    <value>Загрузить участников из хранилища</value>
+  </data>
+  <data name="TextBlockStopParticipants.Text" xml:space="preserve">
+    <value>Остановить загрузку из хранилища</value>
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Получить участников</value>

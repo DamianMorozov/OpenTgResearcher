@@ -1,7 +1,20 @@
-﻿namespace OpenTgResearcherDesktop.Common;
+﻿using System.ComponentModel;
 
-public abstract class TgPageBase : Page
+namespace OpenTgResearcherDesktop.Common;
+
+public abstract class TgPageBase : Page, INotifyPropertyChanged
 {
+    #region INotifyPropertyChanged
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string memberName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(memberName));
+    }
+
+    #endregion
+    
     #region Fields, properties, constructor
 
     public virtual ITgPageViewModel ViewModel => null!;

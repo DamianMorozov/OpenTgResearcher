@@ -7,7 +7,7 @@ public sealed partial class TgLoadDataViewModel(ITgSettingsService settingsServi
 {
     #region Fields, properties, constructor
 
-	//
+    //
 
     #endregion
 }

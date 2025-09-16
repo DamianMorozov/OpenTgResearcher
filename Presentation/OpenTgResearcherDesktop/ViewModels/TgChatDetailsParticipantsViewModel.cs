@@ -115,18 +115,19 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     {
         try
         {
+            if (!SettingsService.IsExistsAppStorage) return;
+
             _loadCts?.Cancel();
             _loadCts?.Dispose();
             _loadCts = new CancellationTokenSource();
             _loadToken = _loadCts.Token;
 
-            if (!SettingsService.IsExistsAppStorage) return;
-
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
             await Task.Delay(250);
 
             // Single query to get all distinct users for this source
-            UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersBySourceIdAsync(Dto.Id, _loadToken)];
+            UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersBySourceIdJoinAsync(
+                Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, _loadToken)];
 
             IsEmptyData = false;
             ScrollRequested?.Invoke();
@@ -161,7 +162,17 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = new CancellationTokenSource();
+        _loadToken = _loadCts.Token;
+
+        Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
+        await Task.Delay(250);
+
+        // Online query
         var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
+        
         UserDtos = [.. participants.Select(x => new TgEfUserDto()
         {
             IsDisplaySensitiveData = IsDisplaySensitiveData,

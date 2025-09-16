@@ -337,7 +337,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
             if (!IsPageLoad)
             {
                 IsPageLoad = true;
-                await Task.Delay(250);
+                await Task.Delay(250).ConfigureAwait(false);
             }
 
             TgDesktopUtils.InvokeOnUIThread(action);
@@ -362,7 +362,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
             if (!IsOnlineProcessing)
             {
                 IsOnlineProcessing = true;
-                await Task.Delay(250);
+                await Task.Delay(250).ConfigureAwait(false);
             }
 
             await TgDesktopUtils.InvokeOnUIThreadAsync(task);
@@ -370,9 +370,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         finally
         {
             if (IsOnlineProcessing)
-            {
                 IsOnlineProcessing = false;
-            }
             RefreshLicenseInfo();
         }
     }
@@ -385,7 +383,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
             if (!IsOnlineProcessing)
             {
                 IsOnlineProcessing = true;
-                await Task.Delay(250);
+                await Task.Delay(250).ConfigureAwait(false);
             }
 
             TgDesktopUtils.InvokeOnUIThread(action);
@@ -393,9 +391,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         finally
         {
             if (IsOnlineProcessing)
-            {
                 IsOnlineProcessing = false;
-            }
             RefreshLicenseInfo();
         }
     }

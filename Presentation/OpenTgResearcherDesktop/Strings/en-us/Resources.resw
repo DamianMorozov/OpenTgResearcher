@@ -955,7 +955,7 @@
     <value>Stop downloading from storage</value>
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
-    <value>Get participants</value>
+    <value>Get participants from TG</value>
   </data>
   <data name="TextBlockCalcChatStatistics.Text" xml:space="preserve">
     <value>Calculate chat statistics</value>

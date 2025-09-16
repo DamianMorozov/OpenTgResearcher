@@ -122,7 +122,7 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
         .ToListAsync(ct);
 
     /// <inheritdoc />
-    public async Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, CancellationToken ct = default) => await 
+    public async Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, long userId, CancellationToken ct = default) => await 
         EfContext.Users
             .AsNoTracking()
             .Select(u => new
@@ -130,7 +130,7 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
                 User = u,
                 MsgCount = EfContext.Messages.Count(m => m.SourceId == sourceId && m.UserId == u.Id)
             })
-            //.Where(x => x.MsgCount > 0) // Prefer Count over Any
+            .Where(x => x.MsgCount > 0) // Prefer Count over Any
             .Select(x => new TgEfUserDto
             {
                 // Map user fields
@@ -157,7 +157,10 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
                 //IsDownload = 
                 // Message count computed once and reused
                 CountMessages = x.MsgCount
-            }).ToListAsync(ct);
+            })
+        .OrderByDescending(x => x.Id == userId)
+        //.ThenBy(x => x.LastSeenAgo)
+        .ToListAsync(ct);
 
     #endregion
 }

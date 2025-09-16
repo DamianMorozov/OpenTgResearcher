@@ -1017,7 +1017,7 @@
     <value>Остановить загрузку из хранилища</value>
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
-    <value>Получить участников</value>
+    <value>Получить участников из ТГ</value>
   </data>
   <data name="TextBlockCalcChatStatistics.Text" xml:space="preserve">
     <value>Рассчитать статистику чата</value>

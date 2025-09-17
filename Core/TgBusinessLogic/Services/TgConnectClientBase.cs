@@ -60,7 +60,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public Func<bool, int, string, Task> UpdateShellViewModelAsync { get; private set; } = default!;
     public Func<long, string, string, string, Task> UpdateStateContactAsync { get; private set; } = default!;
     public Func<string, int, string, string, Task> UpdateStateExceptionAsync { get; private set; } = default!;
-    public Func<Exception, Task> UpdateExceptionAsync { get; private set; } = default!;
+    public Action<Exception> UpdateException { get; private set; } = default!;
     public Func<string, Task> UpdateStateExceptionShortAsync { get; private set; } = default!;
     public Func<Task> AfterClientConnectAsync { get; private set; } = default!;
     public Func<long, int, string, long, long, long, bool, int, Task> UpdateStateFileAsync { get; private set; } = default!;
@@ -200,7 +200,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         UpdateTitleAsync = _ => Task.CompletedTask;
         UpdateStateProxyAsync = _ => Task.CompletedTask;
         UpdateStateExceptionAsync = (_, _, _, _) => Task.CompletedTask;
-        UpdateExceptionAsync = _ => Task.CompletedTask;
+        UpdateException = _ => { };
         UpdateStateExceptionShortAsync = _ => Task.CompletedTask;
         UpdateShellViewModelAsync = (_, _, _) => Task.CompletedTask;
         UpdateChatViewModelAsync = (_, _, _, _) => Task.CompletedTask;
@@ -252,8 +252,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public void SetupUpdateStateException(Func<string, int, string, string, Task> updateStateExceptionAsync) =>
         UpdateStateExceptionAsync = updateStateExceptionAsync;
 
-    public void SetupUpdateException(Func<Exception, Task> updateExceptionAsync) =>
-        UpdateExceptionAsync = updateExceptionAsync;
+    public void SetupUpdateException(Action<Exception> updateException) => UpdateException = updateException;
 
     public void SetupUpdateStateExceptionShort(Func<string, Task> updateStateExceptionShortAsync) =>
         UpdateStateExceptionShortAsync = updateStateExceptionShortAsync;
@@ -3351,7 +3350,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (CheckShouldStop(ct)) return;
 
         ClientException.Set(ex);
-        await UpdateExceptionAsync(ex);
+        UpdateException(ex);
         await UpdateStateExceptionAsync(TgFileUtils.GetShortFilePath(filePath), lineNumber, memberName, ClientException.Message);
     }
 
@@ -3365,7 +3364,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string memberName = "")
     {
         ProxyException.Set(ex);
-        await UpdateExceptionAsync(ex);
+        UpdateException(ex);
         await UpdateStateExceptionAsync(TgFileUtils.GetShortFilePath(filePath), lineNumber, memberName, ProxyException.Message);
     }
 

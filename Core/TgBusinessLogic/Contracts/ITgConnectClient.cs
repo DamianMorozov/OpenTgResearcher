@@ -40,7 +40,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetupUpdateStateException(Func<string, int, string, string, Task> updateStateExceptionAsync);
 	public void SetupUpdateStateExceptionShort(Func<string, Task> updateStateExceptionShortAsync);
     public void SetupAfterClientConnect(Func<Task> afterClientConnectAsync);
-	public void SetupUpdateException(Func<Exception, Task> updateExceptionAsync);
+	public void SetupUpdateException(Action<Exception> updateException);
 
 	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? listIds = null);
 	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent, CancellationToken ct = default);

@@ -1,7 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModelBase, IDisposable
+public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -23,19 +23,17 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     private CancellationTokenSource? _loadCts;
     private CancellationToken _loadToken;
 
-    public IAsyncRelayCommand LoadParticipantsCommand { get; }
-    public IAsyncRelayCommand StopParticipantsCommand { get; }
-    public IAsyncRelayCommand GetParticipantsCommand { get; }
+    public IAsyncRelayCommand LoadMyMessagesCommand { get; }
+    public IAsyncRelayCommand StopMyMessagesCommand { get; }
 
-    public TgChatDetailsParticipantsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgChatDetailsParticipantsViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsParticipantsViewModel))
+    public TgChatDetailsMyMessagesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgChatDetailsMyMessagesViewModel> logger, IAppNotificationService appNotificationService)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsMyMessagesViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands
-        LoadParticipantsCommand = new AsyncRelayCommand(LoadParticipantsAsync);
-        StopParticipantsCommand = new AsyncRelayCommand(StopParticipantsAsync);
-        GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
+        LoadMyMessagesCommand = new AsyncRelayCommand(LoadMyMessagesAsync);
+        StopMyMessagesCommand = new AsyncRelayCommand(StopMyMessagesAsync);
     }
 
     #endregion
@@ -46,7 +44,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     private bool _disposed;
 
     /// <summary> Finalizer </summary>
-	~TgChatDetailsParticipantsViewModel() => Dispose(false);
+	~TgChatDetailsMyMessagesViewModel() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
     public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
@@ -94,7 +92,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-        //await LoadParticipantsCoreAsync();
+        await LoadMyMessagesCoreAsync();
         await Task.CompletedTask;
     });
 
@@ -108,9 +106,9 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         await Task.CompletedTask;
     }
 
-    private async Task LoadParticipantsAsync() => await ContentDialogAsync(LoadParticipantsCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
+    private async Task LoadMyMessagesAsync() => await ContentDialogAsync(LoadMyMessagesCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
-    private async Task LoadParticipantsCoreAsync()
+    private async Task LoadMyMessagesCoreAsync()
     {
         try
         {
@@ -124,9 +122,20 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
             await Task.Delay(250);
 
+            // Get user Id
+            var userId = App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0;
+            if (userId == 0)
+            {
+                var licenseDto = await App.BusinessLogicManager.StorageManager.LicenseRepository.GetDtoAsync(x => x.UserId > 0);
+                if (licenseDto is not null)
+                    userId = licenseDto.UserId;
+            }
+
             // Single query to get all distinct users for this source
-            UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersBySourceIdJoinAsync(
-                Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, where: null, _loadToken)];
+            UserDtos.Clear();
+
+            var userDto = await App.BusinessLogicManager.StorageManager.UserRepository.GetMyselfUserAsync(Dto.Id, userId, _loadToken);
+            UserDtos.Add(userDto);
 
             IsEmptyData = false;
             ScrollRequested?.Invoke();
@@ -138,9 +147,9 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         }
     }
 
-    private async Task StopParticipantsAsync() => await ContentDialogAsync(StopParticipantsCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Storage);
+    private async Task StopMyMessagesAsync() => await ContentDialogAsync(StopMyMessagesCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Storage);
 
-    private async Task StopParticipantsCoreAsync()
+    private async Task StopMyMessagesCoreAsync()
     {
         try
         {
@@ -153,45 +162,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
             await ReloadUiAsync();
             await SetDisplaySensitiveAsync();
         }
-    }
-
-    private async Task GetParticipantsAsync() => await ContentDialogAsync(GetParticipantsCoreAsync, TgResourceExtensions.AskGetParticipants(), TgEnumLoadDesktopType.Online);
-
-    private async Task GetParticipantsCoreAsync()
-    {
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-
-        _loadCts?.Cancel();
-        _loadCts?.Dispose();
-        _loadCts = new CancellationTokenSource();
-        _loadToken = _loadCts.Token;
-
-        Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
-        await Task.Delay(250);
-
-        // Online query
-        var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
-        
-        UserDtos = [.. participants.Select(x => new TgEfUserDto()
-        {
-            IsDisplaySensitiveData = IsDisplaySensitiveData,
-            Id = x.id,
-            IsContactActive = x.IsActive,
-            IsBot = x.IsBot,
-            LastSeenAgo = x.LastSeenAgo,
-            UserName = x.MainUsername,
-            AccessHash = x.access_hash,
-            FirstName = x.first_name,
-            LastName = x.last_name,
-            UserNames = x.usernames is null ? string.Empty : string.Join("|", x.usernames.ToList()),
-            PhoneNumber = x.phone,
-            Status = x.status?.ToString() ?? string.Empty,
-            RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
-            LangCode = x.lang_code,
-            IsContact = false,
-        })];
-
-        await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
     }
 
     /// <summary> Click on user </summary>

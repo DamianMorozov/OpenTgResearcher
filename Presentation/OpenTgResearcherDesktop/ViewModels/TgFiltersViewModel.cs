@@ -11,8 +11,8 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand ClearViewCommand { get; }
 	public IAsyncRelayCommand DefaultSortCommand { get; }
 
-	public TgFiltersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgFiltersViewModel> logger) 
-		: base(settingsService, navigationService, logger, nameof(TgFiltersViewModel))
+	public TgFiltersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgFiltersViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgFiltersViewModel))
 	{
 		// Commands
 		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);

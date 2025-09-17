@@ -21,7 +21,7 @@
         <ContentControl
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Left"
-            Visibility="{x:Bind IsPageLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock
                 x:Uid="AppStorageNeedToCreate"
                 Margin="2"
@@ -37,8 +37,8 @@
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            Visibility="{x:Bind IsPageLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Grid Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay}">
+            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid Visibility="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -64,7 +64,7 @@
             Grid.Row="2"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            Visibility="{x:Bind IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

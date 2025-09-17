@@ -23,9 +23,9 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
 
     public IAsyncRelayCommand CalcChatStatisticsCommand { get; }
 
-    public TgChatDetailsStatisticsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatDetailsStatisticsViewModel> logger,
-        IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, logger, nameof(TgChatDetailsStatisticsViewModel))
+    public TgChatDetailsStatisticsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgChatDetailsStatisticsViewModel> logger, IAppNotificationService appNotificationService)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsStatisticsViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands

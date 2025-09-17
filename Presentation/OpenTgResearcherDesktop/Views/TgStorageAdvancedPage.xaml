@@ -16,12 +16,12 @@
     <ScrollView VerticalScrollMode="Auto">
         <Grid>
             <!--  Load data  -->
-            <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <views:TgLoadDataPage />
             <!--  Storage advanced settings  -->
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid Margin="10,10,10,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

@@ -16,8 +16,8 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
     [ObservableProperty]
     public partial bool IsFilterByLastName { get; set; } = true;
 
-    public TgUsersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUsersViewModel> logger)
-        : base(settingsService, navigationService, logger, nameof(TgUsersViewModel))
+    public TgUsersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, ILogger<TgUsersViewModel> logger)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgUsersViewModel))
     {
         //
     }
@@ -47,7 +47,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
         await Task.CompletedTask;
     }
 
-    private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => new TgEfUserDto().GetNewDto(item);
+    private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => new TgEfUserDto().Copy(item, isUidCopy: true);
 
     public async Task<List<TgEfUserDto>> GetListDtosAsync()
     {

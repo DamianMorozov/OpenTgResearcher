@@ -1,8 +1,8 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public partial class TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgMainViewModel> logger)
-	: TgPageViewModelBase(settingsService, navigationService, logger, nameof(TgMainViewModel))
+public partial class TgMainViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+    ILogger<TgMainViewModel> logger) : TgPageViewModelBase(settingsService, navigationService, loadStateService, logger, nameof(TgMainViewModel))
 {
 	#region Fields, properties, constructor
 

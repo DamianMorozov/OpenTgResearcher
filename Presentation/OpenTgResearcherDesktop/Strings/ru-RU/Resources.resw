@@ -711,7 +711,10 @@
     <value>Ок</value>
   </data>
   <data name="ClientConnect.Text" xml:space="preserve">
-    <value>Подключиться к серверу TG</value>
+    <value>Подключиться к серверу ТГ</value>
+  </data>
+  <data name="ClientConnectShort.Text" xml:space="preserve">
+    <value>Подключиться к ТГ</value>
   </data>
   <data name="ButtonConnect.Content" xml:space="preserve">
     <value>Подключиться</value>
@@ -720,7 +723,10 @@
     <value>Отключиться</value>
   </data>
   <data name="ClientDisconnect.Text" xml:space="preserve">
-    <value>Отключиться от сервера TG</value>
+    <value>Отключиться от сервера ТГ</value>
+  </data>
+  <data name="ClientDisconnectShort.Text" xml:space="preserve">
+    <value>Отключиться от ТГ</value>
   </data>
   <data name="MenuClientIsQuery" xml:space="preserve">
     <value>Клиент запрашивает данные</value>
@@ -1013,8 +1019,14 @@
   <data name="TextBlockLoadParticipants.Text" xml:space="preserve">
     <value>Загрузить участников из хранилища</value>
   </data>
+  <data name="TextBlockLoadMyMessages.Text" xml:space="preserve">
+    <value>Загрузить статистику сообщений из хранилища</value>
+  </data>
   <data name="TextBlockStopParticipants.Text" xml:space="preserve">
     <value>Остановить загрузку из хранилища</value>
+  </data>
+  <data name="TextBlockStopMyMessages.Text" xml:space="preserve">
+    <value>Остановить загрузку статистики из хранилища</value>
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Получить участников из ТГ</value>
@@ -1349,6 +1361,9 @@
   <data name="FieldNotFound.Text" xml:space="preserve">
     <value>Не найдено</value>
   </data>
+  <data name="FieldCountMessages.Text" xml:space="preserve">
+    <value>Количество сообщений</value>
+  </data>
   <data name="ButtonFilter.Content" xml:space="preserve">
     <value>Фильтровать</value>
   </data>
@@ -1435,6 +1450,9 @@
   </data>
   <data name="SelectorBarItemPageChatDetails.Text" xml:space="preserve">
     <value>Детали чата</value>
+  </data>
+  <data name="SelectorBarItemPageChatMyMessages.Text" xml:space="preserve">
+    <value>Мои сообщения</value>
   </data>
   <data name="SelectorBarItemPageChatParticipants.Text" xml:space="preserve">
     <value>Участники чата</value>

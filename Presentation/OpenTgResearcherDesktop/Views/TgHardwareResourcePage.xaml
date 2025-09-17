@@ -19,13 +19,13 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <!--  Load data  -->
-        <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+        <views:TgLoadDataPage />
         <!--  Actions  -->
         <ContentControl
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+            IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
             <Grid Margin="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

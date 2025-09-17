@@ -25,5 +25,5 @@ public sealed partial class TgClientConnectionPage
 
 	private void OnPhoneTextChanged(object sender, TextChangedEventArgs e) => ViewModel.OnPhoneTextChanged(sender, e);
 
-	#endregion
+    #endregion
 }

@@ -92,7 +92,7 @@ internal partial class TgMenuHelper
             .OrderByDescending(x => x.IsSubscribe)
             .ThenBy(x => x.UserName)
             .ThenBy(x => x.Title)
-            .Select(x => new TgEfSourceDto().GetNewDto(x))
+            .Select(x => new TgEfSourceDto().Copy(x, isUidCopy: true))
             .ToListAsync();
             
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewChats, dtos, BusinessLogicManager.StorageManager.SourceRepository);

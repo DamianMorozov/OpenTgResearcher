@@ -11,6 +11,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial INavigationService NavigationService { get; private set; }
     [ObservableProperty]
+    public partial ILoadStateService LoadStateService { get; private set; }
+    [ObservableProperty]
     public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
     [ObservableProperty]
     public partial string Name { get; private set; }
@@ -35,11 +37,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial XamlRoot? XamlRootVm { get; set; }
     [ObservableProperty]
-    public partial bool IsPageLoad { get; set; }
-    [ObservableProperty]
     public partial bool IsOnlineReady { get; set; }
-    [ObservableProperty]
-    public partial bool IsOnlineProcessing { get; set; }
     [ObservableProperty]
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
     [ObservableProperty]
@@ -49,15 +47,20 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     [ObservableProperty]
     public partial TgEnumLicenseType LicenseType { get; set; } = TgEnumLicenseType.No;
 
+    public bool IsStorageProcessing => LoadStateService.IsStorageProcessing;
+    public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
+
     private TgChatViewModel? _chatVm;
     private TgChatsViewModel? _chatsVm;
 
     public IAsyncRelayCommand ShowPurchaseLicenseCommand { get; }
 
-    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgPageViewModelBase> logger, string name) : base()
+    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService,
+        ILogger<TgPageViewModelBase> logger, string name) : base()
     {
         SettingsService = settingsService;
         NavigationService = navigationService;
+        LoadStateService = loadStateService;
         Logger = logger;
         Name = name;
         IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
@@ -82,8 +85,21 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
             LogWarning("Page loaded without XamlRoot");
     }
 
-    public virtual async Task OnNavigatedToAsync(NavigationEventArgs? e) => 
-        await LoadStorageDataAsync(() => { IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData; });
+    public virtual async Task OnNavigatedToAsync(NavigationEventArgs? e)
+    {
+        // Callback updates UI
+        LoadStateService.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(LoadStateService.IsStorageProcessing))
+                OnPropertyChanged(nameof(IsStorageProcessing));
+            else if (e.PropertyName == nameof(LoadStateService.IsOnlineProcessing))
+                OnPropertyChanged(nameof(IsOnlineProcessing));
+        };
+        await LoadStorageDataAsync(() =>
+        {
+            IsDisplaySensitiveData = NavigationService.IsDisplaySensitiveData;
+        });
+    }
 
     public virtual async Task ReloadUiAsync()
     {
@@ -114,11 +130,7 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     });
 
     /// <summary> Update exception message </summary>
-    public virtual async Task UpdateExceptionAsync(Exception ex)
-    {
-        Exception = new(ex);
-        await Task.CompletedTask;
-    }
+    public virtual void UpdateException(Exception ex) => Exception = new(ex);
 
     /// <summary> Update chats ViewModel </summary>
     public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType) =>
@@ -309,10 +321,10 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     {
         try
         {
-            if (!IsPageLoad)
+            if (!LoadStateService.IsStorageProcessing)
             {
-                IsPageLoad = true;
-                await Task.Delay(250);
+                LoadStateService.IsStorageProcessing = true;
+                await Task.Delay(250).ConfigureAwait(false);
             }
 
             await TgDesktopUtils.InvokeOnUIThreadAsync(task);
@@ -323,8 +335,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
         finally
         {
-            if (IsPageLoad)
-                IsPageLoad = false;
+            if (LoadStateService.IsStorageProcessing)
+                LoadStateService.IsStorageProcessing = false;
             RefreshLicenseInfo();
         }
     }
@@ -334,9 +346,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     {
         try
         {
-            if (!IsPageLoad)
+            if (!LoadStateService.IsStorageProcessing)
             {
-                IsPageLoad = true;
+                LoadStateService.IsStorageProcessing = true;
                 await Task.Delay(250).ConfigureAwait(false);
             }
 
@@ -348,8 +360,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
         finally
         {
-            if (IsPageLoad)
-                IsPageLoad = false;
+            if (LoadStateService.IsStorageProcessing)
+                LoadStateService.IsStorageProcessing = false;
             RefreshLicenseInfo();
         }
     }
@@ -359,9 +371,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     {
         try
         {
-            if (!IsOnlineProcessing)
+            if (!LoadStateService.IsOnlineProcessing)
             {
-                IsOnlineProcessing = true;
+                LoadStateService.IsOnlineProcessing = true;
                 await Task.Delay(250).ConfigureAwait(false);
             }
 
@@ -369,8 +381,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
         finally
         {
-            if (IsOnlineProcessing)
-                IsOnlineProcessing = false;
+            if (LoadStateService.IsOnlineProcessing)
+                LoadStateService.IsOnlineProcessing = false;
             RefreshLicenseInfo();
         }
     }
@@ -380,9 +392,9 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
     {
         try
         {
-            if (!IsOnlineProcessing)
+            if (!LoadStateService.IsOnlineProcessing)
             {
-                IsOnlineProcessing = true;
+                LoadStateService.IsOnlineProcessing = true;
                 await Task.Delay(250).ConfigureAwait(false);
             }
 
@@ -390,8 +402,8 @@ public partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
         }
         finally
         {
-            if (IsOnlineProcessing)
-                IsOnlineProcessing = false;
+            if (LoadStateService.IsOnlineProcessing)
+                LoadStateService.IsOnlineProcessing = false;
             RefreshLicenseInfo();
         }
     }

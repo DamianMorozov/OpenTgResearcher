@@ -23,13 +23,13 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!--  Load data  -->
-            <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <views:TgLoadDataPage />
             <!--  Actions  -->
             <ContentControl
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     x:Uid="SettingAppActions"
                     Grid.Row="2"
@@ -115,7 +115,7 @@
                                 Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
-                                Click="{x:Bind ViewModel.OpenHyperlink}" />
+                                Click="OnOpenHyperlink" />
                         </Border>
                         <!--  Grid  -->
                         <Grid
@@ -134,6 +134,9 @@
                                 VerticalAlignment="Stretch"
                                 Command="{x:Bind ViewModel.ClientConnectCommand}"
                                 FontWeight="Bold">
+                                <Button.CommandParameter>
+                                    <x:Boolean>True</x:Boolean>
+                                </Button.CommandParameter>
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xE703;" />
                                     <TextBlock
@@ -170,7 +173,7 @@
                 Grid.Row="2"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     x:Uid="ExpanderSettingInStorage"
                     Grid.Row="0"
@@ -373,7 +376,7 @@
                 Grid.Row="3"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     x:Uid="ExpanderSettingWithoutSaving"
                     Grid.Row="0"

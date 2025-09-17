@@ -98,6 +98,8 @@ public partial class App : Application
                 services.AddSingleton<TgChatDetailsContentViewModel>();
                 services.AddSingleton<TgChatDetailsInfoPage>();
                 services.AddSingleton<TgChatDetailsInfoViewModel>();
+                services.AddSingleton<TgChatDetailsMyMessagesPage>();
+                services.AddSingleton<TgChatDetailsMyMessagesViewModel>();
                 services.AddSingleton<TgChatDetailsParticipantsPage>();
                 services.AddSingleton<TgChatDetailsParticipantsViewModel>();
                 services.AddSingleton<TgChatDetailsStatisticsPage>();

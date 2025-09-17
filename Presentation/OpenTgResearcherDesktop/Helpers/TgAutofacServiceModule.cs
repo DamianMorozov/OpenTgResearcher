@@ -11,5 +11,6 @@ internal sealed class TgAutofacServiceModule : Autofac.Module
         cb.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
         cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
         cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
+        cb.RegisterType<LoadStateService>().As<ILoadStateService>().SingleInstance();
     }
 }

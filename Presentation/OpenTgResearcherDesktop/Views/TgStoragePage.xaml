@@ -21,13 +21,13 @@
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <!--  Load data  -->
-            <views:TgLoadDataPage IsOnlineProcessing="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}" IsPageLoad="{x:Bind ViewModel.IsPageLoad, Mode=OneWay}" />
+            <views:TgLoadDataPage />
             <!--  SelectorBar  -->
             <ContentControl
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsPageLoad, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid Grid.Row="1" Margin="0,0,0,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

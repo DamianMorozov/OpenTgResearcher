@@ -9,8 +9,8 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
     public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
     public IAsyncRelayCommand DeleteLogFileCommand { get; }
 
-	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgLogsViewModel> logger)
-		: base(settingsService, navigationService, logger, nameof(TgLogsViewModel))
+	public TgLogsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgLogsViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgLogsViewModel))
 	{
 		// Commands
 		DeleteLogFileCommand = new AsyncRelayCommand<TgLogFile>(DeleteLogFileAsync);

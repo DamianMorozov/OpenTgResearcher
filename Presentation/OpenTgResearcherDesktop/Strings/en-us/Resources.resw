@@ -654,6 +654,9 @@
   <data name="ClientConnect.Text" xml:space="preserve">
     <value>Connect to TG server</value>
   </data>
+  <data name="ClientConnectShort.Text" xml:space="preserve">
+    <value>Connect to TG</value>
+  </data>
   <data name="ButtonConnect.Content" xml:space="preserve">
     <value>Connect</value>
   </data>
@@ -662,6 +665,9 @@
   </data>
   <data name="ClientDisconnect.Text" xml:space="preserve">
     <value>Disconnect from TG server</value>
+  </data>
+  <data name="ClientDisconnectShort.Text" xml:space="preserve">
+    <value>Disconnect from TG</value>
   </data>
   <data name="MenuClientIsQuery" xml:space="preserve">
     <value>Client requests data</value>
@@ -951,8 +957,14 @@
   <data name="TextBlockLoadParticipants.Text" xml:space="preserve">
     <value>Load participants from storage</value>
   </data>
+  <data name="TextBlockLoadMyMessages.Text" xml:space="preserve">
+    <value>Load message statistics from the repository</value>
+  </data>
   <data name="TextBlockStopParticipants.Text" xml:space="preserve">
     <value>Stop downloading from storage</value>
+  </data>
+  <data name="TextBlockStopMyMessages.Text" xml:space="preserve">
+    <value>Stop loading statistics from storage</value>
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Get participants from TG</value>
@@ -1287,6 +1299,9 @@
   <data name="FieldNotFound.Text" xml:space="preserve">
     <value>Not found</value>
   </data>
+  <data name="FieldCountMessages.Text" xml:space="preserve">
+    <value>Number of messages</value>
+  </data>
   <data name="ButtonFilter.Content" xml:space="preserve">
     <value>Filter</value>
   </data>
@@ -1376,6 +1391,9 @@
   </data>
   <data name="SelectorBarItemPageChatParticipants.Text" xml:space="preserve">
     <value>Chat participants</value>
+  </data>
+  <data name="SelectorBarItemPageChatMyMessages.Text" xml:space="preserve">
+    <value>My messages</value>
   </data>
   <data name="SelectorBarItemPageChatStatistics.Text" xml:space="preserve">
     <value>Chat statistics</value>

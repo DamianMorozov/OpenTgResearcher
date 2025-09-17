@@ -12,8 +12,8 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     [ObservableProperty]
     public partial bool IsFilterByTitle { get; set; } = true;
 
-    public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger)
-        : base(settingsService, navigationService, logger, nameof(TgChatsViewModel))
+    public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, ILogger<TgChatsViewModel> logger)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatsViewModel))
     {
         //
     }
@@ -32,7 +32,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         await Task.CompletedTask;
     }
 
-    private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectDto() => item => new TgEfSourceLiteDto().GetNewDto(item);
+    private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectDto() => item => new TgEfSourceLiteDto().Copy(item, isUidCopy: true);
 
     public async Task<List<TgEfSourceLiteDto>> GetListDtosAsync()
     {

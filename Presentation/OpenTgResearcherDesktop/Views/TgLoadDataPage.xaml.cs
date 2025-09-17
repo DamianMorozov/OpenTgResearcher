@@ -1,12 +1,10 @@
 ﻿namespace OpenTgResearcherDesktop.Views;
 
-public sealed partial class TgLoadDataPage
+public sealed partial class TgLoadDataPage : TgPageBase
 {
     #region Fields, properties, constructor
 
     public override TgLoadDataViewModel ViewModel { get; }
-    public bool IsPageLoad { get => field; set { field = value; ViewModel.IsPageLoad = field;  OnPropertyChanged(); } }
-    public bool IsOnlineProcessing { get => field; set { field = value; ViewModel.IsOnlineProcessing = field; OnPropertyChanged(); } }
 
     public TgLoadDataPage()
     {

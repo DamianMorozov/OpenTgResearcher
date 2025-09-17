@@ -81,19 +81,37 @@
                 IsOn="{x:Bind ViewModel.IsClientConnected, Mode=OneWay}" />
             <!--  Connect button  -->
             <Button
-                x:Uid="ButtonConnect"
                 Grid.Column="6"
                 Margin="-60,0,5,0"
-                Command="{x:Bind ViewModel.ClientConnectCommand}" />
+                Command="{x:Bind ViewModel.ClientConnectCommand}">
+                <Button.CommandParameter>
+                    <x:Boolean>False</x:Boolean>
+                </Button.CommandParameter>
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xE703;" />
+                    <TextBlock
+                        x:Uid="ClientConnectShort"
+                        Margin="0,-3,0,-3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
             <!--  Disconnect button  -->
             <Button
-                x:Uid="ButtonDisconnect"
                 Grid.Column="7"
                 Margin="10,0,0,0"
                 Command="{x:Bind ViewModel.ClientDisconnectCommand}">
                 <Button.CommandParameter>
                     <x:Boolean>False</x:Boolean>
                 </Button.CommandParameter>
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xE8BB;" />
+                    <TextBlock
+                        x:Uid="ClientDisconnectShort"
+                        Margin="0,-3,0,-3"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
             </Button>
         </Grid>
         <!--  Navigation  -->

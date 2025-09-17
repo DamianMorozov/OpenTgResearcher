@@ -12,8 +12,8 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand DefaultSortCommand { get; }
 	public IAsyncRelayCommand UpdateOnlineCommand { get; }
 
-	public TgProxiesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgProxiesViewModel> logger) 
-		: base(settingsService, navigationService, logger, nameof(TgProxiesViewModel))
+	public TgProxiesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgProxiesViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgProxiesViewModel))
 	{
 		// Commands
 		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);

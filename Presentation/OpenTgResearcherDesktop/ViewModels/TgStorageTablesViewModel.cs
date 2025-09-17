@@ -8,8 +8,8 @@ public sealed partial class TgStorageTablesViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<TgStorageTableDto> StorageTableDtos { get; set; } = [];
 
-    public TgStorageTablesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgStorageTablesViewModel> logger)
-        : base(settingsService, navigationService, logger, nameof(TgStorageTablesViewModel))
+    public TgStorageTablesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgStorageTablesViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgStorageTablesViewModel))
     {
         //
     }

@@ -43,8 +43,8 @@ public partial class ShellViewModel : ObservableRecipient
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
         // Commands
-        ClientConnectCommand = new AsyncRelayCommand(ShellClientConnectAsync);
-        ClientDisconnectCommand = new AsyncRelayCommand(ShellClientDisconnectAsync);
+        ClientConnectCommand = new AsyncRelayCommand<bool>(ShellClientConnectAsync);
+        ClientDisconnectCommand = new AsyncRelayCommand<bool>(ShellClientDisconnectAsync);
         UpdatePageCommand = new AsyncRelayCommand(ShellUpdatePageAsync);
         // Callback updates UI
         App.BusinessLogicManager.ConnectClient.SetupUpdateShellViewModel(UpdateShellViewModelAsync);
@@ -132,7 +132,7 @@ public partial class ShellViewModel : ObservableRecipient
 
     private void OnClientConnectionChanged(object? sender, bool isClientConnected) => IsClientConnected = isClientConnected;
 
-    private async Task ShellClientConnectAsync() => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    private async Task ShellClientConnectAsync(bool isQuestion) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
         var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
         if (clientConnectionVm is not null)
@@ -140,35 +140,35 @@ public partial class ShellViewModel : ObservableRecipient
             await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
             if (!clientConnectionVm.IsClientConnected)
             {
-                await clientConnectionVm.ClientConnectCommand.ExecuteAsync(null);
+                await clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
                 await Task.Delay(250);
             }
 
-            // Refresh UI
-            if (NavigationService.Frame is not null && NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
-            {
-                await pageViewModel.ReloadUiAsync();
-            }
+            //// Refresh UI
+            //if (NavigationService.Frame is not null && NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
+            //{
+            //    await pageViewModel.ReloadUiAsync();
+            //}
         }
         await Task.CompletedTask;
     });
 
-    private async Task ShellClientDisconnectAsync() => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    private async Task ShellClientDisconnectAsync(bool isQuestion) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
         var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
         if (clientConnectionVm is not null)
         {
             if (clientConnectionVm.IsClientConnected)
             {
-                await clientConnectionVm.ClientDisconnectCommand.ExecuteAsync(false);
+                await clientConnectionVm.ClientDisconnectCommand.ExecuteAsync(isQuestion);
                 await Task.Delay(250);
             }
 
-            // Refresh UI
-            if (NavigationService.Frame is not null && NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
-            {
-                await pageViewModel.ReloadUiAsync();
-            }
+            //// Refresh UI
+            //if (NavigationService.Frame is not null && NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
+            //{
+            //    await pageViewModel.ReloadUiAsync();
+            //}
         }
         await Task.CompletedTask;
     });

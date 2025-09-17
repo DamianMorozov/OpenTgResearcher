@@ -176,8 +176,6 @@ public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageE
         return this;
 	}
 
-	public TgEfMessageDto GetNewDto(TgEfMessageEntity item) => new TgEfMessageDto().Copy(item, isUidCopy: true);
-
 	public TgEfMessageEntity GetEntity() => new()
 	{
 		Uid = Uid,

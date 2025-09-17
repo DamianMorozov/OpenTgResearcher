@@ -45,8 +45,6 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity
 		return this;
 	}
 
-	public TgEfVersionDto GetNewDto(TgEfVersionEntity item) => new TgEfVersionDto().Copy(item, isUidCopy: true);
-
 	public TgEfVersionEntity GetEntity() => new()
 	{
 		Uid = Uid,

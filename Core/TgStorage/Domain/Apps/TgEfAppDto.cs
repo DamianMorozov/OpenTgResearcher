@@ -86,8 +86,6 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
 		return this;
 	}
 
-	public TgEfAppDto GetNewDto(TgEfAppEntity item) => new TgEfAppDto().Copy(item, isUidCopy: true);
-
     public TgEfAppEntity GetEntity()
     {
         var item = new TgEfAppEntity()

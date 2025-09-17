@@ -108,8 +108,6 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
 		return this;
 	}
 
-	public TgEfSourceLiteDto GetNewDto(TgEfSourceEntity item) => new TgEfSourceLiteDto().Copy(item, isUidCopy: true);
-
 	public TgEfSourceEntity GetEntity() => new()
 	{
 		Uid = Uid,

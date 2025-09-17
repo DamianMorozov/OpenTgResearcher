@@ -93,8 +93,6 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, 
 		return this;
 	}
 
-	public TgEfFilterDto GetNewDto(TgEfFilterEntity item) => new TgEfFilterDto().Copy(item, isUidCopy: true);
-
 	public TgEfFilterEntity GetEntity() => new()
 	{
 		Uid = Uid,

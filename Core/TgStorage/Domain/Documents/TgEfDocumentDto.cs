@@ -59,8 +59,6 @@ public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEnti
 		return this;
 	}
 
-	public TgEfDocumentDto GetNewDto(TgEfDocumentEntity item) => new TgEfDocumentDto().Copy(item, isUidCopy: true);
-
 	public TgEfDocumentEntity GetEntity() => new()
 	{
 		Uid = Uid,

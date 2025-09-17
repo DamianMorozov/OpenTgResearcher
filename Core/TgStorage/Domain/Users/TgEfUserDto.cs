@@ -133,6 +133,14 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         return this;
     }
 
+    public TgEfUserDto Copy(TgEfUserEntity item, int countMessages, bool isUidCopy) => Copy(item, isUidCopy).SetCountMessages(countMessages);
+
+    private TgEfUserDto SetCountMessages(int countMessages)
+    {
+        CountMessages = countMessages;
+        return this;
+    }
+
     public TgEfUserDto Copy(TgEfUserEntity item, bool isUidCopy)
     {
         if (isUidCopy)
@@ -160,8 +168,6 @@ public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity,
         CountMessages = 0;
         return this;
     }
-
-    public TgEfUserDto GetNewDto(TgEfUserEntity item) => new TgEfUserDto().Copy(item, isUidCopy: true);
 
     public TgEfUserEntity GetEntity() => new()
     {

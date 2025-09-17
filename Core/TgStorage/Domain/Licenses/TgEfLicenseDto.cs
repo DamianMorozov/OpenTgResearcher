@@ -72,8 +72,6 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
         return this;
     }
 
-    public TgEfLicenseDto GetNewDto(TgEfLicenseEntity item) => new TgEfLicenseDto().Copy(item, isUidCopy: true);
-
     public TgEfLicenseEntity GetEntity() => new()
     {
         Uid = Uid,

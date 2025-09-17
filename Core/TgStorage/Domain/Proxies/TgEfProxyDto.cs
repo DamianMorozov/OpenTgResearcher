@@ -60,8 +60,6 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, Tg
 		return this;
 	}
 
-	public TgEfProxyDto GetNewDto(TgEfProxyEntity item) => new TgEfProxyDto().Copy(item, isUidCopy: true);
-
 	public TgEfProxyEntity GetEntity() => new()
 	{
 		Uid = Uid,

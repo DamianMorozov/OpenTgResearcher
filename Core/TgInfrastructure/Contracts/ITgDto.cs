@@ -20,7 +20,6 @@ public interface ITgDto<TEfEntity, TDto> : ITgDebug
     public string ToConsoleHeaderString();
     public TDto Copy(TDto dto, bool isUidCopy);
 	public TDto Copy(TEfEntity item, bool isUidCopy);
-	public TDto GetNewDto(TEfEntity item);
     public TEfEntity GetEntity();
 
     #endregion

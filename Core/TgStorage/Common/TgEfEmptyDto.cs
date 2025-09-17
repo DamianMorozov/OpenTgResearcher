@@ -29,8 +29,6 @@ public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEmptyEntity, TgEf
 		return this;
 	}
 
-	public TgEfEmptyDto GetNewDto(TgEmptyEntity item) => new TgEfEmptyDto().Copy(item, isUidCopy: true);
-
 	public TgEmptyEntity GetEntity() => new()
 	{
 		Uid = Uid,

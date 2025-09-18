@@ -280,37 +280,6 @@
 ### OpenTgResearcherConsole
 <p align="center"><img src="Assets/v0.5.160/TgDownloaderConsole.png"></p>
 
-## [0.4.150] - 2024-03-27
-### TgDownloaderBlazor
-<p align="center"><img src="Assets/v0.4.150/TgDownloaderBlazor_Home.png"></p>
-<p align="center"><img src="Assets/v0.4.150/TgDownloaderBlazor_Client.png.png"></p>
-<p align="center"><img src="Assets/v0.4.150/TgDownloaderBlazor_Filters.png"></p>
-<p align="center"><img src="Assets/v0.4.150/TgDownloaderBlazor_Proxies.png"></p>
-<p align="center"><img src="Assets/v0.4.150/TgDownloaderBlazor_Sources.png"></p>
-<p align="center"><img src="Assets/v0.4.150/TgDownloaderBlazor_Versions.png"></p>
-
-## [0.4.100] - 2024-03-03
-### TgDownloaderBlazor
-<p align="center"><img src="Assets/v0.4.100/TgDownloaderBlazor_Home.png"></p>
-<p align="center"><img src="Assets/v0.4.100/TgDownloaderBlazor_Apps.png"></p>
-<p align="center"><img src="Assets/v0.4.100/TgDownloaderBlazor_Filters.png"></p>
-<p align="center"><img src="Assets/v0.4.100/TgDownloaderBlazor_Proxies.png"></p>
-<p align="center"><img src="Assets/v0.4.100/TgDownloaderBlazor_Sources.png"></p>
-<p align="center"><img src="Assets/v0.4.100/TgDownloaderBlazor_Versions.png"></p>
-
-## [0.4.030] - 2024-02-27
-### TgDownloaderBlazor
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Home.png"></p>
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Apps.png"></p>
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Filters.png"></p>
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Proxies.png"></p>
-
-## [0.4.010] - 2024-02-25
-### TgDownloaderBlazor
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Home.png"></p>
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Apps.png"></p>
-<p align="center"><img src="Assets/v0.4.010/TgDownloaderBlazor_Proxies.png"></p>
-
 ## [0.3.110] - 2024-02-17
 ### TgDownloaderWinDesktop
 <p align="center"><img src="Assets/v0.3.110/TgDownloaderWinDesktop.png"></p>

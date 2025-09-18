@@ -326,7 +326,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.150] - 2024-03-27
 ## Added projects
-- Added TgDownloaderBlazor app (web app)
 - Added TgEfCore library (EF Core storage access library)
 - Added TgEfCoreTests (EF Core storage access tests)
 - Added Docker-container TgDownloaderConsole
@@ -340,16 +339,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Version table support
 ### Added into TgDownloaderConsole
 - Docker support
-### Added into TgDownloaderBlazor
-- Docker support
-- Home page
-- Header component
-- Client page
-- Filter page
-- Proxy page
-- Source page
-- Version page
-- RadzenDataGrid for tables
 
 ## [0.3.110] - 2024-02-17
 ### Added into TgDownloaderConsole

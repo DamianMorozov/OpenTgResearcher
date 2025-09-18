@@ -2,6 +2,7 @@
 
 public interface ITgPageViewModel
 {
+    public ILoadStateService LoadStateService { get; }
     public string Name { get; }
     public Task OnNavigatedToAsync(NavigationEventArgs? e);
     public void OnLoaded(object parameter);

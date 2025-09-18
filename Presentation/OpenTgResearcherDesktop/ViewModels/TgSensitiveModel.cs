@@ -6,30 +6,31 @@ public partial class TgSensitiveModel : ObservableRecipient
 {
     #region Fields, properties, constructor
 
-    [ObservableProperty]
-    public partial string SensitiveData { get; set; } = "**********";
-    [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; set; } = true;
+    /// <summary> Load state service </summary>
+    public ILoadStateService LoadStateService { get; private set; }
 
-    public IAsyncRelayCommand? SetDisplaySensitiveCommand { get; set; }
+    public bool IsStorageProcessing => LoadStateService.IsStorageProcessing;
+    public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
+    public bool IsDisplaySensitiveData => LoadStateService.IsDisplaySensitiveData;
+    public string SensitiveData => LoadStateService.SensitiveData;
 
-    public TgSensitiveModel() : base()
+    public TgSensitiveModel(ILoadStateService loadStateService) : base()
     {
-        SetDisplaySensitiveCommand = new AsyncRelayCommand(SetDisplaySensitiveAsync);
+        LoadStateService = loadStateService ?? throw new ArgumentNullException(nameof(loadStateService));
+
+        // Callback updates UI: PropertyChanged for LoadStateService
+        LoadStateService.PropertyChanged += (_, e) =>
+        {
+            TgDesktopUtils.InvokeOnUIThread(() => { 
+                if (e.PropertyName == nameof(LoadStateService.IsStorageProcessing))
+                    OnPropertyChanged(nameof(IsStorageProcessing));
+                else if (e.PropertyName == nameof(LoadStateService.IsOnlineProcessing))
+                    OnPropertyChanged(nameof(IsOnlineProcessing));
+                else if (e.PropertyName == nameof(LoadStateService.IsDisplaySensitiveData))
+                    OnPropertyChanged(nameof(IsDisplaySensitiveData));
+            });
+        };
     }
-
-    #endregion
-
-    #region Methods
-
-    /// <summary> Action for IsDisplaySensitiveData property change </summary>
-    partial void OnIsDisplaySensitiveDataChanged(bool value)
-    {
-        if (SetDisplaySensitiveCommand?.CanExecute(value) ?? false)
-            SetDisplaySensitiveCommand.Execute(value);
-    }
-
-    protected virtual async Task SetDisplaySensitiveAsync() => await Task.CompletedTask;
 
     #endregion
 }

@@ -20,17 +20,6 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(ReloadUiAsync);
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        if (ContentFrame.GetPageViewModel() is TgPageViewModelBase pageViewModelBase)
-        {
-            pageViewModelBase.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            await pageViewModelBase.ReloadUiAsync();
-        }
-
-        await Task.CompletedTask;
-    }
-
     public override async Task ReloadUiAsync()
     {
         await base.ReloadUiAsync();

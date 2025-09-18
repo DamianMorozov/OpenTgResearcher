@@ -45,7 +45,7 @@
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <!--  Storage log  -->
+                    <!--  StorageLog  -->
                     <TextBlock
                         Grid.Row="2"
                         Grid.ColumnSpan="3"

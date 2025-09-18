@@ -64,13 +64,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        _ = IsDisplaySensitiveData;
-
-        await Task.CompletedTask;
-    }
-
     private async Task SettingsLoadAsync() => await ContentDialogAsync(SettingsLoadCore, TgResourceExtensions.AskSettingsLoad(), TgEnumLoadDesktopType.Storage);
 
     private void SettingsLoadCore()

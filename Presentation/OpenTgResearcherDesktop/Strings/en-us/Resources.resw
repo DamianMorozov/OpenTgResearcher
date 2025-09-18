@@ -906,8 +906,11 @@
   <data name="TemplateColumnBotToken.Header" xml:space="preserve">
     <value>Bot token</value>
   </data>
-  <data name="DataLoadWait.Text" xml:space="preserve">
-    <value>Wait until the data download is complete</value>
+  <data name="DataWaitStorageProcessing.Text" xml:space="preserve">
+    <value>Wait until the data has finished loading from the storage</value>
+  </data>
+  <data name="DataWaitOnlineProcessing.Text" xml:space="preserve">
+    <value>Wait until the data has finished loading from Telegram</value>
   </data>
   <data name="TextBlockCount.Text" xml:space="preserve">
     <value>Count</value>

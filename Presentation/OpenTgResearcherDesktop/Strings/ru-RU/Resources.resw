@@ -968,8 +968,11 @@
   <data name="TemplateColumnBotToken.Header" xml:space="preserve">
     <value>Токен бота</value>
   </data>
-  <data name="DataLoadWait.Text" xml:space="preserve">
-    <value>Дождитесь окончания загрузки данных</value>
+  <data name="DataWaitStorageProcessing.Text" xml:space="preserve">
+    <value>Дождитесь окончания загрузки данных из хранилища</value>
+  </data>
+  <data name="DataWaitOnlineProcessing.Text" xml:space="preserve">
+    <value>Дождитесь окончания загрузки данных из Телеграм</value>
   </data>
   <data name="TextBlockCount.Text" xml:space="preserve">
     <value>Кол-во</value>

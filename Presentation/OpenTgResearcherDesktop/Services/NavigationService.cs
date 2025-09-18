@@ -34,8 +34,6 @@ public sealed class NavigationService : INavigationService
 	[MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
 	public bool CanGoBack => Frame != null && Frame.CanGoBack;
 
-    public bool IsDisplaySensitiveData { get; set; } = true;
-
     public NavigationService(IPageService pageService)
 	{
 		_pageService = pageService;

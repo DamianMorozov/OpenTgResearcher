@@ -27,21 +27,24 @@ public partial class ShellViewModel : ObservableRecipient
     private ShellViewModel? _shellVm;
     private CancellationTokenSource? _floodCts;
 
+    public IAppNotificationService AppNotificationService { get; }
+    public ILoadStateService LoadStateService { get; private set; }
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
-    public IAppNotificationService AppNotificationService { get; }
 
     public IAsyncRelayCommand ClientConnectCommand { get; }
     public IAsyncRelayCommand ClientDisconnectCommand { get; }
     public IAsyncRelayCommand UpdatePageCommand { get; }
 
-    public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService)
+    public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService, IAppNotificationService appNotificationService, 
+        ILoadStateService loadStateService)
     {
         AppNotificationService = appNotificationService;
         AppNotificationService.ClientConnectionChanged += OnClientConnectionChanged;
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
+        LoadStateService = loadStateService ?? throw new ArgumentNullException(nameof(loadStateService));
         // Commands
         ClientConnectCommand = new AsyncRelayCommand<bool>(ShellClientConnectAsync);
         ClientDisconnectCommand = new AsyncRelayCommand<bool>(ShellClientDisconnectAsync);

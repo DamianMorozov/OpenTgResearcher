@@ -7,4 +7,7 @@ public sealed partial class LoadStateService : ObservableObject, ILoadStateServi
     public partial bool IsStorageProcessing { get; set; }
     [ObservableProperty]
     public partial bool IsOnlineProcessing { get; set; }
+    [ObservableProperty]
+    public partial bool IsDisplaySensitiveData { get; set; }
+    public string SensitiveData => "**********";
 }

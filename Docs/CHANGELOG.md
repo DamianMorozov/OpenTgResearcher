@@ -4,36 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.340] - 2025-09-16
+## [0.7.350] - 2025-09-18
 ### Fixed
 - Fixed GitHub workflow
-- Fixed bugs in media comment parsing
-- Fixed loading messages on the `Chat` page in `OpenTgResearcherDesktop`
-- Fixed file name generation
+- Fixed media comment parsing bugs
+- Fixed message loading on the `Chat` page in `OpenTgResearcherDesktop`
+- Fixed file name creation
 - Fixed chat parsing stoppage
 - Fixed saving the first chat ID at the moment of parsing stoppage
 - Fixed connection to TG and disconnection for the top menu in `OpenTgResearcherDesktop`
+- Fixed option to hide sensitive data
 ### Changed
-- Updated NuGet packages
-- Updated the `TgStorageTests` test project
-- Updated the `Chat Content` page in `OpenTgResearcherDesktop`
-- Updated the `Chat Statistics` page in `OpenTgResearcherDesktop`
+- NuGet package update
+- Update of the `TgStorageTests` test project
+- Update of the `Chat Content` page in `OpenTgResearcherDesktop`
+- Update of the `Chat Statistics` page in `OpenTgResearcherDesktop`
 - Updated program loading animation
 - Updated copy button in `OpenTgResearcherDesktop`
-- Updated the `Logs` page in `OpenTgResearcherDesktop`
-- Updated the `User details` page in `OpenTgResearcherDesktop`
+- Updated `Logs` page in `OpenTgResearcherDesktop`
+- Updated `User Details` page in `OpenTgResearcherDesktop`
 - Updated the `Chats` page in `OpenTgResearcherDesktop`
 - Updated the `Users` page in `OpenTgResearcherDesktop`
-- Splitted tge `Storage` page in `OpenTgResearcherDesktop`
+- Updated the `Storage` page in `OpenTgResearcherDesktop`
 - Updated the `Equipment` page in `OpenTgResearcherDesktop`
 - Updated the `Participants` tab on the `Chat` page in `OpenTgResearcherDesktop`
 - Updated the `Messages` table in `TgStorage`
 ### Added
-- Added a hardware resource monitoring service
-- Added the `TgBusinessLogicTests` test project
-- Added description of adding a license to `OpenTgResearcherDesktop`
+- Added hardware resource monitoring service
+- Added `TgBusinessLogicTests` test project
+- Added description of license addition in `OpenTgResearcherDesktop`
 - Added media file download progress to the `Chat Content` page in `OpenTgResearcherDesktop`
-- Added downloading of covers for media files
+- Added cover art downloads for media files
 - Added community license request
 
 ## [0.7.140] - 2025-08-25

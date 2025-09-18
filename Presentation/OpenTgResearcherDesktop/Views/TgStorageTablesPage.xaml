@@ -37,7 +37,7 @@
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.StorageTableDtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
-                                <!--  Name column  -->
+                                <!--  Name  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnTableName"
                                     Width="1*"
@@ -46,7 +46,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                Margin="2"
+                                                Margin="5,0,5,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 HorizontalTextAlignment="Left"
@@ -54,7 +54,7 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
-                                <!--  Sensitive data  -->
+                                <!--  RecordsCount  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnRecordsCount"
                                     Width="1*"
@@ -64,7 +64,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                Margin="2"
+                                                Margin="5,0,5,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 HorizontalTextAlignment="Left"
@@ -72,7 +72,7 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
-                                <!--  Count of records column  -->
+                                <!--  RecordsCount  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnRecordsCount"
                                     Width="1*"
@@ -82,7 +82,7 @@
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                Margin="2"
+                                                Margin="5,0,5,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 HorizontalTextAlignment="Left"
@@ -93,19 +93,6 @@
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </Grid>
-                    <!--  Storage clearing  -->
-                    <!--
-                    <Expander
-                        x:Uid="ExpanderStorageClearing"
-                        Grid.Row="1"
-                        Margin="{StaticResource ExpanderMargin}"
-                        Padding="{StaticResource ExpanderPadding}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        IsExpanded="True"
-                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <Grid Margin="0,0,10,0" />
-                    </Expander>-->
                 </Grid>
             </ContentControl>
         </Grid>

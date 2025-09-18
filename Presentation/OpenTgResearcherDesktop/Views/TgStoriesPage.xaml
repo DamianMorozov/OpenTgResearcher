@@ -90,21 +90,6 @@
                                     VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <!--  Default sort  -->
-                        <!--<Button
-							Grid.Column="5"
-							Margin="0,0,5,0"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							Command="{x:Bind ViewModel.DefaultSortCommand}">
-							<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-								<FontIcon Margin="0,0,10,0" Glyph="&#xe8cb;" />
-								<TextBlock
-									x:Uid="TextBlockDefaultSort"
-									HorizontalAlignment="Center"
-									VerticalAlignment="Center" />
-							</StackPanel>
-						</Button>-->
                         <!--  Count  -->
                         <TextBlock
                             x:Uid="TextBlockCount"
@@ -146,16 +131,35 @@
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
-                                <!--  ID  -->
+                                <!--  Id  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnId"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                Margin="2"
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Id  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnId"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 HorizontalTextAlignment="Center"
@@ -163,29 +167,31 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
-                                <!--  Updated  -->
-                                <!--<controls:DataGridTemplateColumn
-									x:Uid="TemplateColumnUpdated"
-									Width="Auto"
-									CanUserReorder="True"
-									CanUserSort="True">
-									<controls:DataGridTemplateColumn.CellTemplate>
-										<DataTemplate>
-											<TextBlock
-												Margin="5,0,5,0"
-												HorizontalAlignment="Stretch"
-												VerticalAlignment="Center"
-												HorizontalTextAlignment="Left"
-												Text="{Binding DtChanged, Mode=OneWay}" />
-										</DataTemplate>
-									</controls:DataGridTemplateColumn.CellTemplate>
-								</controls:DataGridTemplateColumn>-->
                                 <!--  Date  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnDate"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Date  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnDate"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
@@ -202,11 +208,30 @@
                                     x:Uid="TemplateColumnExpireDate"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                Margin="2"
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Expire date  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnExpireDate"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 HorizontalTextAlignment="Left"
@@ -219,11 +244,30 @@
                                     x:Uid="TemplateColumnCaption"
                                     Width="3*"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                Margin="2"
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Caption  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnCaption"
+                                    Width="3*"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
                                                 HorizontalTextAlignment="Left"

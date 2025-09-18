@@ -38,22 +38,6 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 			await ReloadUiAsync();
 		});
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        Dto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-
-        foreach (var userWithMessagesDto in UserWithMessagesDtos)
-        {
-            userWithMessagesDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            foreach (var messageDto in userWithMessagesDto.MessageDtos)
-            {
-                messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            }
-        }
-
-        await Task.CompletedTask;
-    }
-
     private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCore, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private void ClearDataStorageCore() => Dto = new();

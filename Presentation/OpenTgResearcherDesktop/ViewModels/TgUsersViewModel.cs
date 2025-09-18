@@ -37,16 +37,6 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
         await base.OnNavigatedToAsync(e);
     });
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var dto in Dtos)
-        {
-            dto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        await Task.CompletedTask;
-    }
-
     private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => new TgEfUserDto().Copy(item, isUidCopy: true);
 
     public async Task<List<TgEfUserDto>> GetListDtosAsync()
@@ -130,7 +120,6 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
         foreach (var item in newItems)
         {
-            item.IsDisplaySensitiveData = IsDisplaySensitiveData;
             Dtos.Add(item);
         }
 

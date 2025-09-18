@@ -1,14 +1,13 @@
-﻿# OpenTgResearcher - инструмент для анализа Telegram-чатов и скачивания их содержимого
-
+﻿# OpenTgResearcher - инструмент анализа Telegram-чатов и скачивания их содержимого
 
 ## Назначение продукта
-Открытый исследователь и поисковик Телеграм:
-- Скачивай медиа файлы чатов на свой диск
-- Скачивай сообщения чатов в локальное хранилище
+- Открытый исследователь и поисковик Телеграм
+- Скачивай медиа файлы из чатов на свой диск
+- Сохраняй сообщения чатов в локальное хранилище
 - Просматривай расширенную информацию об участниках чатов
 - Просматривай статистику чатов
-- OSINT инструмент
-- Парсер инструмент
+- Используй как OSINT инструмент
+- Используй как парсер инструмент
 
 ## Официальный сайт
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
@@ -38,18 +37,6 @@
 ## Программа поощрения за обнаружение ошибок
 - [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bug-bounty)
 
-## Заставка OpenTgResearcherDesktop
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
-
-## Заставка OpenTgResearcherConsole
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
-
-## OpenTgResearcherConsole - Мониторинг чатов
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
-
-## OpenTgResearcherConsole - Поиск ключевых слов в чатах
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>
-
 ## Проверка текущей лицензии в OpenTgResearcherDesktop
 1. Очистить текущую лицензию
 2. Подключиться к TG
@@ -68,13 +55,13 @@
 # OpenTgResearcher - tool for analyzing Telegram chats and downloading their content
 
 ## Product assignment
-Telegram's open researcher and search engine:
-- Download the chat media files to your disk
-- Download chat messages to local storage
-- View expanded information about chat participants
+- Open Telegram explorer and search engine
+- Download media files from chats to your disk
+- Save chat messages to local storage
+- View extended information about chat participants
 - View chat statistics
-- OSINT tool
-- Parser tool
+- Use as an OSINT tool
+- Use as a parser tool
 
 ## Official site
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
@@ -104,18 +91,6 @@ Telegram's open researcher and search engine:
 ## Bug Bounty Program
 - [Bug Bounty Program](https://opentgresearcher.online/bug-bounty)
 
-## OpenTgResearcherDesktop Splash screen
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
-
-## OpenTgResearcherConsole Splash screen
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
-
-## OpenTgResearcherConsole - Monitoring chats
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
-
-## OpenTgResearcherConsole - Search for keywords in chats
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>
-
 ## Checking your current license in OpenTgResearcherDesktop
 1. Clear your current license
 2. Connect to TG
@@ -126,3 +101,21 @@ Telegram's open researcher and search engine:
 
 ## Keywords
 OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-downloader, researcher, tgresearcher, tg-researcher
+
+
+---
+
+
+## Анимации и скриншоты / Animations and screenshots
+
+### Заставка OpenTgResearcherDesktop / OpenTgResearcherDesktop Splash screen
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
+
+### Заставка OpenTgResearcherConsole / OpenTgResearcherConsole Splash screen
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
+
+### OpenTgResearcherConsole - Мониторинг чатов / OpenTgResearcherConsole - Monitoring chats
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
+
+### OpenTgResearcherConsole - Поиск ключевых слов в чатах / OpenTgResearcherConsole - Search for keywords in chats
+<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>

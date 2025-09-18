@@ -2,7 +2,7 @@
 
 /// <summary> Message DTO </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfMessageDto : TgSensitiveDto, ITgDto<TgEfMessageEntity, TgEfMessageDto>
+public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity, TgEfMessageDto>
 {
 	#region Fields, properties, constructor
 

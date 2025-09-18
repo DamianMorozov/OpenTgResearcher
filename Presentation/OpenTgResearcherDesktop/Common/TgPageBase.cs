@@ -4,7 +4,7 @@ public abstract class TgPageBase : Page
 {
     #region Fields, properties, constructor
 
-    public virtual ITgPageViewModel ViewModel => null!;
+    public virtual ITgPageViewModel ViewModel => default!;
     public Grid? GridContent { get; set; }
 
     #endregion

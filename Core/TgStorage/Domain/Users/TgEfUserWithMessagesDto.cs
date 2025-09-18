@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Users;
 
 /// <summary> User messages DTO </summary>
-public sealed partial class TgEfUserWithMessagesDto : TgSensitiveDto
+public sealed partial class TgEfUserWithMessagesDto : TgDtoBase
 {
     #region Fields, properties, constructor
 

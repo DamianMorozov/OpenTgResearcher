@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Users;
 
 /// <summary> User DTO </summary>
-public sealed partial class TgEfUserDto : TgSensitiveDto, ITgDto<TgEfUserEntity, TgEfUserDto>
+public sealed partial class TgEfUserDto : TgDtoBase, ITgDto<TgEfUserEntity, TgEfUserDto>
 {
     #region Fields, properties, constructor
 

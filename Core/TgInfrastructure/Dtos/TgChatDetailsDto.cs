@@ -1,7 +1,7 @@
 ﻿namespace TgInfrastructure.Dtos;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsDto : TgSensitiveDto
+public sealed partial class TgChatDetailsDto : TgDtoBase
 {
     #region Fields, properties, constructor
 

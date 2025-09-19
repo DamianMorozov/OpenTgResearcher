@@ -72,6 +72,8 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
     public bool IsReady => Id > 0;
     public bool IsReadySourceFirstId => FirstId > 0;
 
+    public string DisplayName => $"{(string.IsNullOrWhiteSpace(UserName) ? "-" : UserName)} | {(string.IsNullOrWhiteSpace(Title) ? "-" : Title)}".Trim();
+
     public TgEfSourceDto() : base()
     {
         DtChanged = DateTime.MinValue;

@@ -435,6 +435,9 @@
   <data name="ActionStorageClearing.Text" xml:space="preserve">
     <value>Storage clearing</value>
   </data>
+  <data name="ActionLoadMessages.Content" xml:space="preserve">
+    <value>Load messages</value>
+  </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>GitHub community</value>
   </data>
@@ -536,6 +539,9 @@
   </data>
   <data name="ExpanderComments.Header" xml:space="preserve">
     <value>Comments</value>
+  </data>
+  <data name="ExpanderChats.Header" xml:space="preserve">
+    <value>Chats</value>
   </data>
   <data name="ExpanderMessages.Header" xml:space="preserve">
     <value>Messages</value>

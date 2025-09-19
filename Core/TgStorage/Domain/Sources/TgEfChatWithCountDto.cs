@@ -1,7 +1,7 @@
-﻿namespace TgStorage.Domain.Users;
+﻿namespace TgStorage.Domain.Sources;
 
-/// <summary> User with messages DTO </summary>
-public sealed partial class TgEfUserWithMessagesDto : TgDtoBase
+/// <summary> Chat with count DTO </summary>
+public sealed partial class TgEfChatWithCountDto : TgDtoBase
 {
     #region Fields, properties, constructor
 
@@ -10,18 +10,18 @@ public sealed partial class TgEfUserWithMessagesDto : TgDtoBase
     [ObservableProperty]
     public partial TgEfSourceDto ChatDto { get; set; } = default!;
     [ObservableProperty]
-    public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = default!;
+    public partial int CountMessages { get; set; } = default!;
 
-    public TgEfUserWithMessagesDto() : base()
+    public TgEfChatWithCountDto() : base()
 	{
         DefaultValues();
     }
 
-    public TgEfUserWithMessagesDto(TgEfUserDto userDto, TgEfSourceDto chatDto, List<TgEfMessageDto> messageDtos) : base()
+    public TgEfChatWithCountDto(TgEfUserDto userDto, TgEfSourceDto chatDto, int countMessages) : base()
 	{
         UserDto = userDto;
         ChatDto = chatDto;
-        MessageDtos = [.. messageDtos];
+        CountMessages = countMessages;
     }
 
     #endregion
@@ -32,7 +32,7 @@ public sealed partial class TgEfUserWithMessagesDto : TgDtoBase
     {
         UserDto = new();
         ChatDto = new();
-        MessageDtos = [];
+        CountMessages = 0;
     }
 
     #endregion

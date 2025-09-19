@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added media file download progress to the `Chat Content` page in `OpenTgResearcherDesktop`
 - Added cover art downloads for media files
 - Added community license request
+- Adding display of user chat list in `OpenTgResearcherDesktop`
 
 ## [0.7.140] - 2025-08-25
 ### Fixed

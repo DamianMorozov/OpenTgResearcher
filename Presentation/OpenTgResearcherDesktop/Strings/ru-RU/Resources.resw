@@ -494,6 +494,9 @@
   <data name="ActionStorageClearing.Text" xml:space="preserve">
     <value>Очистка хранилища</value>
   </data>
+  <data name="ActionLoadMessages.Content" xml:space="preserve">
+    <value>Загрузить сообщения</value>
+  </data>
   <data name="ExpanderGitHub.Header" xml:space="preserve">
     <value>ГитХаб сообщество</value>
   </data>
@@ -595,6 +598,9 @@
   </data>
   <data name="ExpanderComments.Header" xml:space="preserve">
     <value>Комментарии</value>
+  </data>
+  <data name="ExpanderChats.Header" xml:space="preserve">
+    <value>Чаты</value>
   </data>
   <data name="ExpanderMessages.Header" xml:space="preserve">
     <value>Сообщения</value>

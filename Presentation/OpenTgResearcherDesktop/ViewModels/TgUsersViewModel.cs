@@ -6,15 +6,13 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
     #region Fields, properties, constructor
 
     [ObservableProperty]
-    public partial TgEnumSourceType SourceType { get; set; } = TgEnumSourceType.Default;
-    [ObservableProperty]
     public partial ObservableCollection<long> ListIds { get; set; } = [];
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> Dtos { get; set; } = [];
     [ObservableProperty]
-    public partial bool IsFilterByFirstName { get; set; } = true;
+    public partial bool IsFilterByContacts { get; set; } = true;
     [ObservableProperty]
-    public partial bool IsFilterByLastName { get; set; } = true;
+    public partial bool IsFilterByPhone { get; set; } = true;
 
     public TgUsersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, ILogger<TgUsersViewModel> logger)
         : base(settingsService, navigationService, loadStateService, logger, nameof(TgUsersViewModel))
@@ -26,28 +24,15 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
-    {
-        if (e?.Parameter is string paramString)
-        {
-            if (Enum.TryParse<TgEnumSourceType>(paramString, out var sourceType))
-                SourceType = sourceType;
-        }
-
-        await base.OnNavigatedToAsync(e);
-    });
-
     private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => new TgEfUserDto().Copy(item, isUidCopy: true);
 
-    public async Task<List<TgEfUserDto>> GetListDtosAsync()
+    private async Task<List<TgEfUserDto>> GetListDtosAsync()
     {
         var query = App.BusinessLogicManager.StorageManager.UserRepository.GetQuery(isReadOnly: true);
 
-        // Apply subscription filter
-        if (SourceType == TgEnumSourceType.Contact)
+        // Apply filter
+        if (IsFilterByContacts)
             query = query.Where(x => x.IsContact);
-        else if (SourceType == TgEnumSourceType.User)
-            query = query.Where(x => !x.IsContact);
 
         // Apply text search
         if (!string.IsNullOrWhiteSpace(FilterText))
@@ -62,12 +47,16 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
             if (IsFilterById)
                 predicates.Add(x => EF.Functions.Like(EF.Property<string>(x, nameof(TgEfUserEntity.Id)), $"%{searchText}%")
                     || EF.Functions.Like(EF.Property<string>(x, nameof(TgEfUserEntity.Id)), $"%{searchTextWithoutAt}%"));
-            if (IsFilterByUserName)
+            if (IsFilterByName)
+            {
                 predicates.Add(x => EF.Functions.Like(x.UserName, $"%{searchText}%") || EF.Functions.Like(x.UserName, $"%{searchTextWithoutAt}%"));
-            if (IsFilterByFirstName)
                 predicates.Add(x => EF.Functions.Like(x.FirstName, $"%{searchText}%") || EF.Functions.Like(x.FirstName, $"%{searchTextWithoutAt}%"));
-            if (IsFilterByLastName)
                 predicates.Add(x => EF.Functions.Like(x.LastName, $"%{searchText}%") || EF.Functions.Like(x.LastName, $"%{searchTextWithoutAt}%"));
+            }
+            if (IsFilterByPhone)
+            {
+                predicates.Add(x => EF.Functions.Like(x.LastName, $"%{searchText}%") || EF.Functions.Like(x.PhoneNumber, $"%{searchTextWithoutAt}%"));
+            }
 
             if (predicates.Count > 0)
             {
@@ -110,7 +99,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
     protected override void ItemsClearCore() => Dtos.Clear();
 
-    protected override async Task LazyLoadCoreAsync()
+    protected override async Task LazyLoadCoreAsync(bool isSearch)
     {
         if (!HasMoreItems) return;
 
@@ -118,10 +107,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
         if (newItems.Count < PageTake)
             HasMoreItems = false;
 
-        foreach (var item in newItems)
-        {
-            Dtos.Add(item);
-        }
+        Dtos = isSearch ? [.. newItems] : [.. Dtos, .. newItems];
 
         PageSkip += newItems.Count;
     }
@@ -129,11 +115,13 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
     protected override async Task AfterDataUpdateCoreAsync()
     {
         // Update loaded data statistics
-        var countAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
-        var countSubscribed = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe);
+        var countAll = await App.BusinessLogicManager.StorageManager.UserRepository.GetCountAsync();
+        var countFiltered = IsFilterByContacts
+            ? await App.BusinessLogicManager.StorageManager.UserRepository.GetCountAsync(x => x.IsContact)
+            : await App.BusinessLogicManager.StorageManager.UserRepository.GetCountAsync();
         LoadedDataStatistics =
-            $"{TgResourceExtensions.GetTextBlockFiltered()} {Dtos.Count} | " +
-            $"{TgResourceExtensions.GetTextBlockSubscribed()} {countSubscribed} | " +
+            $"{TgResourceExtensions.GetTextBlockLoaded()} {Dtos.Count} | " +
+            $"{TgResourceExtensions.GetTextBlockFiltered()} {countFiltered} | " +
             $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     }
 
@@ -142,11 +130,17 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
         var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
-        if (SourceType == TgEnumSourceType.Contact)
-            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact, listIds);
-        else if (SourceType == TgEnumSourceType.User)
-            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.User, listIds);
-        await LazyLoadAsync();
+        if (IsFilterByContacts)
+        {
+            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.UserContact, listIds);
+        }
+        else
+        {
+            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.UserContact, listIds);
+            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.UserOnly, listIds);
+        }
+        
+        await LazyLoadAsync(isNewQuery: true, isSearch: false);
     });
 
     #endregion

@@ -96,16 +96,6 @@ public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBa
         await Task.CompletedTask;
     });
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in UserDtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        await Task.CompletedTask;
-    }
-
     private async Task LoadMyMessagesAsync() => await ContentDialogAsync(LoadMyMessagesCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
     private async Task LoadMyMessagesCoreAsync()
@@ -143,7 +133,6 @@ public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBa
         finally
         {
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 
@@ -160,7 +149,6 @@ public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBa
         finally
         {
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 

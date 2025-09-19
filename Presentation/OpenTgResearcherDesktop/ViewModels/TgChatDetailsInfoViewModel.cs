@@ -29,13 +29,6 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
         await LoadDataStorageCoreAsync();
     });
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        ChatDetailsDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-
-        await Task.CompletedTask;
-    }
-
     private async Task LoadDataStorageCoreAsync()
     {
         try

@@ -22,23 +22,13 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 
     #region Methods
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in Dtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        await Task.CompletedTask;
-    }
-
     private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectDto() => item => new TgEfSourceLiteDto().Copy(item, isUidCopy: true);
 
     public async Task<List<TgEfSourceLiteDto>> GetListDtosAsync()
     {
         var query = App.BusinessLogicManager.StorageManager.SourceRepository.GetQuery(isReadOnly: true);
 
-        // Apply subscription filter
+        // Apply filter
         if (IsFilterBySubscribe)
             query = query.Where(x => x.IsSubscribe);
 
@@ -55,7 +45,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
             if (IsFilterById)
                 predicates.Add(x => EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{searchText}%")
                     || EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{searchTextWithoutAt}%"));
-            if (IsFilterByUserName)
+            if (IsFilterByName)
                 predicates.Add(x => EF.Functions.Like(x.UserName, $"%{searchText}%") || EF.Functions.Like(x.UserName, $"%{searchTextWithoutAt}%"));
             if (IsFilterByTitle)
                 predicates.Add(x => EF.Functions.Like(x.Title, $"%{searchText}%") || EF.Functions.Like(x.Title, $"%{searchTextWithoutAt}%"));
@@ -101,7 +91,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 
     protected override void ItemsClearCore() => Dtos.Clear();
 
-    protected override async Task LazyLoadCoreAsync()
+    protected override async Task LazyLoadCoreAsync(bool isSearch)
     {
         if (!HasMoreItems) return;
 
@@ -109,11 +99,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         if (newItems.Count < PageTake)
             HasMoreItems = false;
 
-        foreach (var item in newItems)
-        {
-            item.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            Dtos.Add(item);
-        }
+        Dtos = isSearch ? [.. newItems] : [.. Dtos, .. newItems];
 
         PageSkip += newItems.Count;
     }
@@ -122,10 +108,12 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     {
         // Update loaded data statistics
         var countAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
-        var countSubscribed = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe);
+        var countFiltered = IsFilterBySubscribe 
+            ? await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe)
+            : await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
         LoadedDataStatistics =
-            $"{TgResourceExtensions.GetTextBlockFiltered()} {Dtos.Count} | " +
-            $"{TgResourceExtensions.GetTextBlockSubscribed()} {countSubscribed} | " +
+            $"{TgResourceExtensions.GetTextBlockLoaded()} {Dtos.Count} | " +
+            $"{TgResourceExtensions.GetTextBlockFiltered()} {countFiltered} | " +
             $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     }
 
@@ -134,7 +122,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
         await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);
         
-        await LazyLoadAsync();
+        await LazyLoadAsync(isNewQuery: true, isSearch: false);
     });
 
     #endregion

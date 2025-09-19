@@ -7,7 +7,8 @@ public enum TgEnumSourceType
 	Dialog = 2,
 	ChatBase = 3,
 	Channel = 4,
-	Contact = 5,
-	Story = 6,
-	User = 7,
+	Story = 5,
+	UserOnly = 6,
+    UserContact = 7,
+    UserAll = 8,
 }

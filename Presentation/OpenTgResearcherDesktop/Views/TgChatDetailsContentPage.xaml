@@ -50,13 +50,13 @@
                         <TextBlock
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind DtChangedString, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
@@ -68,13 +68,13 @@
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
-                            Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind Id, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -90,8 +90,8 @@
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
-                            Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <HyperlinkButton
                             Margin="0,-1,0,0"
                             HorizontalAlignment="Stretch"
@@ -99,7 +99,7 @@
                             Click="OnOpenHyperlink"
                             Content="{x:Bind Link, Mode=OneWay}"
                             Tag="{x:Bind Link, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -115,13 +115,13 @@
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
-                            Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind UserId, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -130,7 +130,7 @@
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind UserContact, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  Message deleted  -->
                         <TextBlock
                             x:Uid="TextBlockMessageDeleted"
@@ -165,7 +165,7 @@
                             BorderBrush="{ThemeResource SystemAccentColor}"
                             BorderThickness="1"
                             CornerRadius="10"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Image
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -184,7 +184,7 @@
                             BorderBrush="{ThemeResource SystemAccentColor}"
                             BorderThickness="1"
                             CornerRadius="10"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Image
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -197,8 +197,8 @@
                         <TextBlock
                             Grid.Column="2"
                             Margin="5,5,0,0"
-                            Text="{x:Bind SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
                             Grid.Column="2"
                             Margin="5,5,0,0"
@@ -208,7 +208,7 @@
                             Text="{x:Bind MessageText, Mode=OneWay}"
                             TextAlignment="Left"
                             TextWrapping="WrapWholeWords"
-                            Visibility="{x:Bind IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </Grid>
                 </Grid>
             </Border>

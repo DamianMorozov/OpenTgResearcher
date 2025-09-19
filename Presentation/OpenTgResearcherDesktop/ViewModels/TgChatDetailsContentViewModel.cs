@@ -60,21 +60,6 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         await LoadDataStorageCoreAsync();
     });
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in UserDtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        foreach (var messageDto in MessageDtos)
-        {
-            messageDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        await Task.CompletedTask;
-    }
-
     private async Task LoadDataStorageCoreAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;
@@ -96,7 +81,6 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             ScrollRequested?.Invoke();
 
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 
@@ -127,7 +111,6 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
             // Insert new items at the beginning to keep newest at top
             foreach (var item in newItems)
             {
-                item.IsDisplaySensitiveData = IsDisplaySensitiveData;
                 item.Directory = Dto.Directory;
                 item.UserContact = UserDtos.FirstOrDefault(u => u.Id == item.UserId)?.DisplayName ?? string.Empty;
 

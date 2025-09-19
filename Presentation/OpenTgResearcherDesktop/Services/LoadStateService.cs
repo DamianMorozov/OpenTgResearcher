@@ -9,5 +9,7 @@ public sealed partial class LoadStateService : ObservableObject, ILoadStateServi
     public partial bool IsOnlineProcessing { get; set; }
     [ObservableProperty]
     public partial bool IsDisplaySensitiveData { get; set; }
+    [ObservableProperty]
+    public partial bool IsOnlineReady { get; set; }
     public string SensitiveData => "**********";
 }

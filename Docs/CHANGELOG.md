@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.350] - 2025-09-18
+## [0.7.360] - 2025-09-19
 ### Fixed
 - Fixed GitHub workflow
 - Fixed media comment parsing bugs
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed saving the first chat ID at the moment of parsing stoppage
 - Fixed connection to TG and disconnection for the top menu in `OpenTgResearcherDesktop`
 - Fixed option to hide sensitive data
+- Page optimization in `OpenTgResearcherDesktop`
 ### Changed
 - NuGet package update
 - Update of the `TgStorageTests` test project

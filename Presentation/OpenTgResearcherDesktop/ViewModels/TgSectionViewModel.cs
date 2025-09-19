@@ -19,8 +19,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public partial string FilterText { get; set; } = string.Empty;
     [ObservableProperty]
     public partial int PageSkip { get; set; } = 0;
-    [ObservableProperty]
-    public partial int PageTake { get; set; } = 100;
+    public int PageTake => 100;
     [ObservableProperty]
     public partial bool HasMoreItems { get; set; } = true;
     [ObservableProperty]
@@ -28,7 +27,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool IsFilterById { get; set; } = true;
     [ObservableProperty]
-    public partial bool IsFilterByUserName { get; set; } = true;
+    public partial bool IsFilterByName { get; set; } = true;
     [ObservableProperty]
     public partial string ChatsProgressMessage { get; set; } = string.Empty;
     [ObservableProperty]
@@ -48,8 +47,8 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     {
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
-        LazyLoadCommand = new AsyncRelayCommand(LazyLoadAsync, () => HasMoreItems && !IsLoading);
-        SearchCommand = new AsyncRelayCommand(LazyLoadWrapperAsync);
+        LazyLoadCommand = new AsyncRelayCommand<bool>(async (isNewQuery) => await LazyLoadAsync(isNewQuery, isSearch: false), canExecute: _ => HasMoreItems && !IsLoading);
+        SearchCommand = new AsyncRelayCommand(async () => await LazyLoadAsync(isNewQuery: false, isSearch: true));
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
     }
 
@@ -59,38 +58,22 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
-        await LoadDataStorageAsync();
+        await ClearViewCoreAsync(isFinally: false);
+        await LazyLoadAsync(isNewQuery: false, isSearch: false);
         await ReloadUiAsync();
     });
 
-    protected async Task LoadDataStorageAsync()
+    protected async Task LazyLoadAsync(bool isNewQuery, bool isSearch) => await LoadStorageDataAsync(async () =>
     {
         if (!SettingsService.IsExistsAppStorage) return;
-
-        PageSkip = 0;
-        HasMoreItems = true;
-        ItemsClearCore();
-
-        await LazyLoadAsync();
-    }
-
-    private async Task LazyLoadWrapperAsync()
-    {
-        PageSkip = 0;
-        HasMoreItems = true;
-        ItemsClearCore();
-
-        await LazyLoadAsync();
-    }
-
-    protected async Task LazyLoadAsync() => await LoadStorageDataAsync(async () =>
-    {
+        if (isNewQuery || isSearch)
+            await ClearViewCoreAsync(isFinally: false);
         if (IsLoading || !HasMoreItems) return;
 
         try
         {
             IsLoading = true;
-            await LazyLoadCoreAsync();
+            await LazyLoadCoreAsync(isSearch);
         }
         finally
         {
@@ -98,20 +81,20 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         }
     });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(ClearViewCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    private async Task ClearViewAsync() => await ContentDialogAsync(async () => await ClearViewCoreAsync(isFinally: true), TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
-    private async Task ClearViewCoreAsync()
+    protected async Task ClearViewCoreAsync(bool isFinally)
     {
         try
         {
             PageSkip = 0;
             HasMoreItems = true;
-            FilterText = string.Empty;
             ItemsClearCore();
         }
         finally
         {
-            await AfterDataUpdateAsync();
+            if (isFinally)
+                await AfterDataUpdateAsync();
         }
     }
 
@@ -138,7 +121,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
 
     protected virtual void ItemsClearCore() => throw new NotImplementedException();
 
-    protected virtual Task LazyLoadCoreAsync() => throw new NotImplementedException();
+    protected virtual Task LazyLoadCoreAsync(bool isSearch) => throw new NotImplementedException();
 
     protected virtual Task AfterDataUpdateCoreAsync() => throw new NotImplementedException();
 

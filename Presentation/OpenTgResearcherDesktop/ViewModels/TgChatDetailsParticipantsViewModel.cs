@@ -98,16 +98,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         await Task.CompletedTask;
     });
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in UserDtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        await Task.CompletedTask;
-    }
-
     private async Task LoadParticipantsAsync() => await ContentDialogAsync(LoadParticipantsCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
     private async Task LoadParticipantsCoreAsync()
@@ -134,7 +124,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         finally
         {
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 
@@ -151,7 +140,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         finally
         {
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 
@@ -174,7 +162,6 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         
         UserDtos = [.. participants.Select(x => new TgEfUserDto()
         {
-            IsDisplaySensitiveData = IsDisplaySensitiveData,
             Id = x.id,
             IsContactActive = x.IsActive,
             IsBot = x.IsBot,

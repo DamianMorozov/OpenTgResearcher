@@ -19,8 +19,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     [ObservableProperty]
     public partial string ConnectionDt { get; set; } = string.Empty;
     [ObservableProperty]
-    public partial bool IsClientConnected { get; set; }
-    [ObservableProperty]
     public partial string ConnectionMsg { get; set; } = string.Empty;
     [ObservableProperty]
     public partial string StateProxyDt { get; set; } = string.Empty;
@@ -34,8 +32,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     public partial string StateSourceMedia { get; set; } = string.Empty;
     [ObservableProperty]
     public partial XamlRoot? XamlRootVm { get; set; }
-    [ObservableProperty]
-    public partial bool IsOnlineReady { get; set; }
     [ObservableProperty]
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();
     [ObservableProperty]
@@ -89,7 +85,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
         ConnectionMsg = string.Empty;
         Exception.Default();
         await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
-        IsClientConnected = IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
     }
 
     /// <summary> Open url </summary>

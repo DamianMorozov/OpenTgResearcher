@@ -6,10 +6,6 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgDto<TgEfSourceEnti
     #region Fields, properties, constructor
 
     [ObservableProperty]
-    public partial string SensitiveData { get; set; } = "**********";
-    [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; set; } = true;
-    [ObservableProperty]
 	public partial long Id { get; set; }
 	[ObservableProperty]
 	public partial string DtChangedString { get; set; }

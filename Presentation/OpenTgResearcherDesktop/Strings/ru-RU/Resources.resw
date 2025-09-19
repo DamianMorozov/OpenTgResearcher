@@ -138,14 +138,11 @@
   <data name="Shell_ClientConnection.Content" xml:space="preserve">
     <value>Подключение клиента</value>
   </data>
-  <data name="Shell_Contacts.Content" xml:space="preserve">
-    <value>Контакты</value>
-  </data>
   <data name="Shell_ContactDetails.Content" xml:space="preserve">
     <value>Редактирование контакта</value>
   </data>
-  <data name="Shell_Users.Content" xml:space="preserve">
-    <value>Пользователи</value>
+  <data name="Shell_UsersAndContacts.Content" xml:space="preserve">
+    <value>Пользователи и контакты</value>
   </data>
   <data name="Shell_UserDetails.Content" xml:space="preserve">
     <value>Редактирование пользователя</value>
@@ -1322,11 +1319,32 @@
   <data name="FieldFilterById.Text" xml:space="preserve">
     <value>Фильтр по ИД</value>
   </data>
-  <data name="FieldFilterByUserName.Text" xml:space="preserve">
+  <data name="FieldFilterByName.Text" xml:space="preserve">
     <value>Фильтр по имени</value>
+  </data>
+  <data name="FieldFilterByUserName.Text" xml:space="preserve">
+    <value>Фильтр по нику</value>
+  </data>
+  <data name="FieldFilterByFirstName.Text" xml:space="preserve">
+    <value>Фильтр по имени</value>
+  </data>
+  <data name="FieldFilterByLastName.Text" xml:space="preserve">
+    <value>Фильтр по фамилии</value>
+  </data>
+  <data name="FieldFilterByDisplayName.Text" xml:space="preserve">
+    <value>Фильтр по отображаемому имени</value>
+  </data>
+  <data name="FieldFilterByPhone.Text" xml:space="preserve">
+    <value>Фильтр по телефону</value>
   </data>
   <data name="FieldFilterByTitle.Text" xml:space="preserve">
     <value>Фильтр по заголовку</value>
+  </data>
+  <data name="FieldFilterByContacts.Text" xml:space="preserve">
+    <value>Фильтр по контактам</value>
+  </data>
+  <data name="FieldFilterByUsers.Text" xml:space="preserve">
+    <value>Фильтр по пользователям</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Ссылка для приглашения</value>
@@ -1489,6 +1507,15 @@
   </data>
   <data name="RunSeconds.Text" xml:space="preserve">
     <value> секунд(а)</value>
+  </data>
+  <data name="RadioButtonAll.Content" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="RadioButtonContacts.Content" xml:space="preserve">
+    <value>Контакты</value>
+  </data>
+  <data name="RadioButtonUsers.Content" xml:space="preserve">
+    <value>Пользователи</value>
   </data>
   <!--  Chats scan   -->
   <data name="StartScan" xml:space="preserve">

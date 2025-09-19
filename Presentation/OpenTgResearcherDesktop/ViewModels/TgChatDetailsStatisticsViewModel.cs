@@ -42,16 +42,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         await LoadDataStorageCoreAsync();
     });
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in UserDtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        await Task.CompletedTask;
-    }
-
     private async Task LoadDataStorageCoreAsync()
     {
         try
@@ -66,7 +56,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         finally
         {
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 
@@ -127,7 +116,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         var placeholderUsers = missingIds.Select(id => new TgEfUserDto
         {
             Id = id,
-            IsDisplaySensitiveData = IsDisplaySensitiveData,
             IsBot = false,
             IsContact = false
         }).ToList();
@@ -136,7 +124,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
             // Participants from Telegram
             participants.Select(x => new TgEfUserDto()
             {
-                IsDisplaySensitiveData = IsDisplaySensitiveData,
                 Id = x.id,
                 IsContactActive = x.IsActive,
                 IsBot = x.IsBot,

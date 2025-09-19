@@ -114,13 +114,13 @@
                     <!--  Sensitive data  -->
                     <TextBlock
                         Margin="10,10,10,2"
-                        Text="{x:Bind ViewModel.ChatDetailsDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
                         TextAlignment="Left"
-                        Visibility="{x:Bind ViewModel.ChatDetailsDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <styles:TgAnimatedClipboardButton
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"

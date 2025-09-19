@@ -27,13 +27,13 @@
                     <TextBlock x:Uid="FieldId" Margin="0,5,0,0" />
                     <TextBlock
                         Margin="0,5,0,0"
-                        Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
                         Width="Auto"
                         Margin="0,5,0,0"
                         Text="{x:Bind UserDto.Id}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <styles:TgAnimatedClipboardButton
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -45,12 +45,12 @@
                     <!--  DisplayName  -->
                     <TextBlock
                         Margin="0,5,0,0"
-                        Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
                         Margin="0,5,0,0"
                         Text="{x:Bind UserDto.DisplayName}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <styles:TgAnimatedClipboardButton
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
@@ -63,13 +63,13 @@
                     <TextBlock x:Uid="FieldMessagesCount" Margin="0,5,0,0" />
                     <TextBlock
                         Margin="0,5,5,0"
-                        Text="{x:Bind UserDto.SensitiveData, Mode=OneWay}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
+                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBlock
                         Margin="0,5,0,0"
                         FontWeight="SemiBold"
                         Text="{x:Bind Count}"
-                        Visibility="{x:Bind UserDto.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                 </StackPanel>
             </Button>
         </DataTemplate>

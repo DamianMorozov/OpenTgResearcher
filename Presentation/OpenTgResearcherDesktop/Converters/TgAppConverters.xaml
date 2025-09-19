@@ -27,4 +27,6 @@
     <converters:TgLicenseCheckForegroundConverter x:Key="LicenseCheckForegroundConverter" />
     <converters:TgLicenseCheckTooltipConverter x:Key="LicenseCheckTooltipConverter" />
 
+    <converters:TgEnumSourceTypeToBooleanConverter x:Key="EnumSourceTypeToBooleanConverter" />
+
 </ResourceDictionary>

@@ -15,8 +15,6 @@ public partial class ShellViewModel : ObservableRecipient
     [ObservableProperty]
     public partial string License { get; set; } = string.Empty;
     [ObservableProperty]
-    public partial bool IsClientConnected { get; set; }
-    [ObservableProperty]
     public partial int FloodWaitSeconds { get; set; }
     [ObservableProperty]
     public partial string FloodMessage { get; set; } = string.Empty;
@@ -40,7 +38,6 @@ public partial class ShellViewModel : ObservableRecipient
         ILoadStateService loadStateService)
     {
         AppNotificationService = appNotificationService;
-        AppNotificationService.ClientConnectionChanged += OnClientConnectionChanged;
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
@@ -133,15 +130,13 @@ public partial class ShellViewModel : ObservableRecipient
         return string.Equals(normalizedFullName, normalizedPageName, StringComparison.Ordinal);
     }
 
-    private void OnClientConnectionChanged(object? sender, bool isClientConnected) => IsClientConnected = isClientConnected;
-
     private async Task ShellClientConnectAsync(bool isQuestion) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
     {
         var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
         if (clientConnectionVm is not null)
         {
             await clientConnectionVm.OnNavigatedToAsync(_eventArgs);
-            if (!clientConnectionVm.IsClientConnected)
+            if (!clientConnectionVm.IsOnlineReady)
             {
                 await clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
                 await Task.Delay(250);
@@ -161,7 +156,7 @@ public partial class ShellViewModel : ObservableRecipient
         var clientConnectionVm = App.Locator?.Get<TgClientConnectionViewModel>();
         if (clientConnectionVm is not null)
         {
-            if (clientConnectionVm.IsClientConnected)
+            if (clientConnectionVm.IsOnlineReady)
             {
                 await clientConnectionVm.ClientDisconnectCommand.ExecuteAsync(isQuestion);
                 await Task.Delay(250);

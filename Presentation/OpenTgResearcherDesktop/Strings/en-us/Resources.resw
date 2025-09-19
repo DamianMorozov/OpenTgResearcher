@@ -79,14 +79,11 @@
   <data name="Shell_ClientConnection.Content" xml:space="preserve">
     <value>Client connection</value>
   </data>
-  <data name="Shell_Contacts.Content" xml:space="preserve">
-    <value>Contacts</value>
-  </data>
   <data name="Shell_ContactDetails.Content" xml:space="preserve">
     <value>Edit contact</value>
   </data>
-  <data name="Shell_Users.Content" xml:space="preserve">
-    <value>Users</value>
+  <data name="Shell_UsersAndContacts.Content" xml:space="preserve">
+    <value>Users and contacts</value>
   </data>
   <data name="Shell_UserDetails.Content" xml:space="preserve">
     <value>Edit user</value>
@@ -1260,11 +1257,32 @@
   <data name="FieldFilterById.Text" xml:space="preserve">
     <value>Filter by ID</value>
   </data>
+  <data name="FieldFilterByName.Text" xml:space="preserve">
+    <value>Filter by name</value>
+  </data>
   <data name="FieldFilterByUserName.Text" xml:space="preserve">
     <value>Filter by user name</value>
   </data>
+  <data name="FieldFilterByFirstName.Text" xml:space="preserve">
+    <value>Filter by first name</value>
+  </data>
+  <data name="FieldFilterByLastName.Text" xml:space="preserve">
+    <value>Filter by last name</value>
+  </data>
+  <data name="FieldFilterByDisplayName.Text" xml:space="preserve">
+    <value>Filter by display name</value>
+  </data>
+  <data name="FieldFilterByPhone.Text" xml:space="preserve">
+    <value>Filter by phone</value>
+  </data>
   <data name="FieldFilterByTitle.Text" xml:space="preserve">
     <value>Filter by title</value>
+  </data>
+  <data name="FieldFilterByContacts.Text" xml:space="preserve">
+    <value>Filter by contacts</value>
+  </data>
+  <data name="FieldFilterByUsers.Text" xml:space="preserve">
+    <value>Filter by users</value>
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Invite link</value>
@@ -1427,6 +1445,15 @@
   </data>
   <data name="RunSeconds.Text" xml:space="preserve">
     <value> seconds</value>
+  </data>
+  <data name="RadioButtonAll.Content" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="RadioButtonContacts.Content" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="RadioButtonUsers.Content" xml:space="preserve">
+    <value>Users</value>
   </data>
   <!--  Chats scan   -->
   <data name="StartScan" xml:space="preserve">

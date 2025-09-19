@@ -19,11 +19,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <!--  Load data  -->
-        <views:TgLoadDataPage />
         <!--  Actions  -->
         <ContentControl
-            Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
@@ -43,11 +40,15 @@
                     </Grid.ColumnDefinitions>
                     <!--  Lazy load  -->
                     <Button
-                        Margin="0,0,5,0"
+                        Grid.Column="0"
+                        Margin="5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Command="{x:Bind ViewModel.LazyLoadCommand}"
                         IsEnabled="{x:Bind ViewModel.HasMoreItems, Mode=OneWay}">
+                        <Button.CommandParameter>
+                            <x:Boolean>False</x:Boolean>
+                        </Button.CommandParameter>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xE712;" />
                             <TextBlock
@@ -59,7 +60,7 @@
                     <!--  Update from Telegram  -->
                     <Button
                         Grid.Column="1"
-                        Margin="0,0,5,0"
+                        Margin="5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Command="{x:Bind ViewModel.UpdateOnlineCommand}"
@@ -75,7 +76,7 @@
                     <!--  Clear viewing  -->
                     <Button
                         Grid.Column="2"
-                        Margin="0,0,5,0"
+                        Margin="5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Command="{x:Bind ViewModel.ClearViewCommand}">
@@ -90,7 +91,7 @@
                     <!--  Loaded data statistics  -->
                     <TextBlock
                         Grid.Column="3"
-                        Margin="5,0,10,0"
+                        Margin="5,5,15,5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}"
@@ -98,6 +99,8 @@
                 </Grid>
             </Expander>
         </ContentControl>
+        <!--  Load data  -->
+        <views:TgLoadDataPage Grid.Row="1" />
         <!--  Data in storage  -->
         <ContentControl
             Grid.Row="2"
@@ -149,9 +152,9 @@
                         VerticalAlignment="Center"
                         IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
                     <Grid />
-                    <!--  Filter by UserName  -->
+                    <!--  Filter by Name  -->
                     <TextBlock
-                        x:Uid="FieldFilterByUserName"
+                        x:Uid="FieldFilterByName"
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="5,0,5,5"
@@ -162,7 +165,7 @@
                         Margin="5,-10,-65,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        IsOn="{x:Bind ViewModel.IsFilterByUserName, Mode=TwoWay}" />
+                        IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
                     <!--  Filter by Title  -->
                     <TextBlock
                         x:Uid="FieldFilterByTitle"
@@ -208,7 +211,7 @@
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </styles:TgLicenseButton>
-                    <!--  Chats table  -->
+                    <!--  Table  -->
                     <ScrollView
                         Grid.Row="2"
                         Grid.ColumnSpan="7"
@@ -218,6 +221,7 @@
                         <controls:DataGrid
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
+                            Background="Transparent"
                             CanUserSortColumns="False"
                             DoubleTapped="{x:Bind ViewModel.DataGrid_DoubleTapped, Mode=OneWay}"
                             HeadersVisibility="Column"

@@ -75,7 +75,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         {
             if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Contact, [Dto.Id]);
+            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.UserContact, [Dto.Id]);
 
             await LoadDataStorageCoreAsync();
         }

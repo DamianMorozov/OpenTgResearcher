@@ -13,105 +13,218 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgUsersViewModel}"
     mc:Ignorable="d">
 
-    <ScrollView VerticalScrollMode="Auto">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
-            <!--  Load data  -->
-            <views:TgLoadDataPage />
-            <!--  Actions  -->
-            <ContentControl
-                Grid.Row="1"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <Expander
-                    x:Uid="SettingAppActions"
-                    Grid.Row="2"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="True">
-                    <Grid Margin="0,-10,0,-10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <!--  Update from Telegram  -->
-                        <Button
-                            Grid.Column="0"
-                            Margin="0,0,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.UpdateOnlineCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
-                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                                <TextBlock
-                                    x:Uid="TextBlockUpdateOnline"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <!--  Clear viewing  -->
-                        <Button
-                            Grid.Column="1"
-                            Margin="0,0,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Command="{x:Bind ViewModel.ClearViewCommand}">
-                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
-                                <TextBlock
-                                    x:Uid="ActionClearView"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <!--  Count  -->
-                        <TextBlock
-                            x:Uid="TextBlockCount"
-                            Grid.Column="2"
-                            Margin="0,0,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            TextAlignment="Right" />
-                        <TextBlock
-                            Grid.Column="3"
-                            Margin="0,0,5,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            Text="{x:Bind ViewModel.Dtos.Count, Mode=OneWay}"
-                            TextAlignment="Center" />
-                    </Grid>
-                </Expander>
-            </ContentControl>
-            <!--  Data in storage  -->
-            <ContentControl
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <!--  Actions  -->
+        <ContentControl
+            Grid.Row="0"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch">
+            <Expander
+                x:Uid="SettingAppActions"
                 Grid.Row="2"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <Expander
-                    x:Uid="ExpanderDataInStorage"
-                    Grid.Row="0"
-                    Margin="{StaticResource ExpanderMargin}"
-                    Padding="{StaticResource ExpanderPadding}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    IsExpanded="True">
-                    <Grid Margin="0,0,10,0">
+                IsExpanded="True">
+                <Grid Margin="0,-10,0,-10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Lazy load  -->
+                    <Button
+                        Grid.Column="0"
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.LazyLoadCommand}"
+                        IsEnabled="{x:Bind ViewModel.HasMoreItems, Mode=OneWay}">
+                        <Button.CommandParameter>
+                            <x:Boolean>False</x:Boolean>
+                        </Button.CommandParameter>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xE712;" />
+                            <TextBlock
+                                x:Uid="TextBlockLoadMore"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Update from Telegram  -->
+                    <Button
+                        Grid.Column="1"
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.UpdateOnlineCommand}"
+                        IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                            <TextBlock
+                                x:Uid="TextBlockUpdateOnline"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Clear viewing  -->
+                    <Button
+                        Grid.Column="2"
+                        Margin="5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.ClearViewCommand}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
+                            <TextBlock
+                                x:Uid="ActionClearView"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <!--  Loaded data statistics  -->
+                    <TextBlock
+                        Grid.Column="3"
+                        Margin="5,5,15,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Grid>
+            </Expander>
+        </ContentControl>
+        <!--  Load data  -->
+        <views:TgLoadDataPage Grid.Row="1" />
+        <!--  Data in storage  -->
+        <ContentControl
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <Expander
+                x:Uid="ExpanderDataInStorage"
+                Grid.Row="0"
+                Margin="{StaticResource ExpanderMargin}"
+                Padding="{StaticResource ExpanderPadding}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                IsExpanded="True">
+                <Grid Margin="0,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Filter by contacts  -->
+                    <TextBlock
+                        x:Uid="FieldFilterByContacts"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Column="1"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterByContacts, Mode=TwoWay}" />
+                    <!--  Filter by Id  -->
+                    <TextBlock
+                        x:Uid="FieldFilterById"
+                        Grid.Column="2"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Column="3"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
+                    <Grid />
+                    <!--  Filter by Name  -->
+                    <TextBlock
+                        x:Uid="FieldFilterByName"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
+                    <!--  Filter by Phone  -->
+                    <TextBlock
+                        x:Uid="FieldFilterByPhone"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="5,0,5,5"
+                        TextAlignment="Left" />
+                    <ToggleSwitch
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Margin="5,-10,-65,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsOn="{x:Bind ViewModel.IsFilterByPhone, Mode=TwoWay}" />
+                    <!--  Text for filter  -->
+                    <TextBox
+                        x:Uid="FieldFilter"
+                        Grid.RowSpan="2"
+                        Grid.Column="4"
+                        Margin="5,0,5,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
+                    <!--  License button: Search  -->
+                    <styles:TgLicenseButton
+                        Grid.RowSpan="2"
+                        Grid.Column="5"
+                        Margin="5,0,5,5"
+                        HorizontalAlignment="Stretch"
+                        Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                        Command="{x:Bind Path=ViewModel.SearchCommand}"
+                        Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                        ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                        Style="{StaticResource LicenseButtonStyle}"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE721;" />
+                            <TextBlock
+                                x:Uid="ActionSearch"
+                                Margin="10,0,10,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </styles:TgLicenseButton>
+                    <!--  Table  -->
+                    <ScrollView
+                        Grid.Row="2"
+                        Grid.ColumnSpan="7"
+                        Margin="0,0,5,0"
+                        VerticalScrollMode="Auto">
+                        <!--  Data  -->
                         <controls:DataGrid
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"
-                            CanUserSortColumns="True"
+                            CanUserSortColumns="False"
                             DoubleTapped="{x:Bind ViewModel.DataGrid_DoubleTapped, Mode=OneWay}"
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}"
@@ -252,6 +365,42 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
+                                <!--  UserName  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnUserName"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  UserName  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnUserName"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="{Binding UserName, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
                                 <!--  Phone  -->
                                 <controls:DataGridTemplateColumn
                                     x:Uid="TemplateColumnPhone"
@@ -329,9 +478,9 @@
                                 <!--  End  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
-                    </Grid>
-                </Expander>
-            </ContentControl>
-        </Grid>
-    </ScrollView>
+                    </ScrollView>
+                </Grid>
+            </Expander>
+        </ContentControl>
+    </Grid>
 </common:TgPageBase>

@@ -8,5 +8,6 @@ public interface ILoadStateService : INotifyPropertyChanged
     bool IsStorageProcessing { get; set; }
     bool IsOnlineProcessing { get; set; }
     bool IsDisplaySensitiveData { get; set; }
+    bool IsOnlineReady { get; set; }
     string SensitiveData { get; }
 }

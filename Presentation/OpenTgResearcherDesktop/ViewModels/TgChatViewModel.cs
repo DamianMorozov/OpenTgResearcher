@@ -68,22 +68,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    protected override async Task SetDisplaySensitiveAsync()
-    {
-        foreach (var userDto in UserDtos)
-        {
-            userDto.IsDisplaySensitiveData = IsDisplaySensitiveData;
-        }
-
-        if (ContentFrame.GetPageViewModel() is TgPageViewModelBase pageViewModelBase)
-        {
-            pageViewModelBase.IsDisplaySensitiveData = IsDisplaySensitiveData;
-            await pageViewModelBase.ReloadUiAsync();
-        }
-
-        await Task.CompletedTask;
-    }
-
     private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private async Task ClearDataStorageCoreAsync()
@@ -112,7 +96,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         finally
         {
             await ReloadUiAsync();
-            await SetDisplaySensitiveAsync();
         }
     }
 

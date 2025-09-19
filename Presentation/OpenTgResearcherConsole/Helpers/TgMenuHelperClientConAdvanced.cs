@@ -68,7 +68,7 @@ internal partial class TgMenuHelper
                     await ClientAdvancedSearchAsync(tgDownloadSettings, TgEnumSourceType.Dialog);
                     break;
                 case TgEnumMenuClientConAdvanced.AdvancedSearchContacts:
-                    await ClientAdvancedSearchAsync(tgDownloadSettings, TgEnumSourceType.Contact);
+                    await ClientAdvancedSearchAsync(tgDownloadSettings, TgEnumSourceType.UserContact);
                     break;
                 case TgEnumMenuClientConAdvanced.AdvancedSearchStories:
                     await ClientAdvancedSearchAsync(tgDownloadSettings, TgEnumSourceType.Story);

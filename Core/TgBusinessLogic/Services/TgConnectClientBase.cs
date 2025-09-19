@@ -1679,14 +1679,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     tgDownloadSettings.SourceScanCurrent = 0;
                     await SearchStoriesAsync(tgDownloadSettings);
                     break;
-                case TgEnumSourceType.Contact:
+                case TgEnumSourceType.UserContact:
                     await UpdateChatViewModelAsync(tgDownloadSettings.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
                     listIds = [.. await CollectAllContactsAsync(listIds)];
                     tgDownloadSettings.SourceScanCount = DicUsers.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
                     await SearchUsersAsync(tgDownloadSettings, isContact: true, listIds);
                     break;
-                case TgEnumSourceType.User:
+                case TgEnumSourceType.UserOnly:
                     await UpdateChatViewModelAsync(tgDownloadSettings.ContactVm.Dto.Id, 0, 0, TgLocale.CollectUsers);
                     listIds = [.. await CollectAllUsersAsync(listIds)];
                     tgDownloadSettings.SourceScanCount = DicUsers.Count;

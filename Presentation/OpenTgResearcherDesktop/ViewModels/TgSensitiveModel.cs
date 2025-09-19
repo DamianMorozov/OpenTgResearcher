@@ -12,6 +12,7 @@ public partial class TgSensitiveModel : ObservableRecipient
     public bool IsStorageProcessing => LoadStateService.IsStorageProcessing;
     public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
     public bool IsDisplaySensitiveData => LoadStateService.IsDisplaySensitiveData;
+    public bool IsOnlineReady => LoadStateService.IsOnlineReady;
     public string SensitiveData => LoadStateService.SensitiveData;
 
     public TgSensitiveModel(ILoadStateService loadStateService) : base()
@@ -28,6 +29,8 @@ public partial class TgSensitiveModel : ObservableRecipient
                     OnPropertyChanged(nameof(IsOnlineProcessing));
                 else if (e.PropertyName == nameof(LoadStateService.IsDisplaySensitiveData))
                     OnPropertyChanged(nameof(IsDisplaySensitiveData));
+                else if (e.PropertyName == nameof(LoadStateService.IsOnlineReady))
+                    OnPropertyChanged(nameof(IsOnlineReady));
             });
         };
     }

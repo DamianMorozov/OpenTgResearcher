@@ -78,7 +78,7 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 IsEnabled="False"
-                IsOn="{x:Bind ViewModel.IsClientConnected, Mode=OneWay}" />
+                IsOn="{x:Bind ViewModel.LoadStateService.IsOnlineReady, Mode=OneWay}" />
             <!--  Connect button  -->
             <Button
                 Grid.Column="6"
@@ -171,20 +171,8 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Contacts  -->
-                <NavigationViewItem
-                    x:Uid="Shell_Contacts"
-                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel"
-                    helpers:TgNavigationHelper.NavigationParameter="Contact">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
                 <!--  Users  -->
-                <NavigationViewItem
-                    x:Uid="Shell_Users"
-                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel"
-                    helpers:TgNavigationHelper.NavigationParameter="User">
+                <NavigationViewItem x:Uid="Shell_UsersAndContacts" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
                     </NavigationViewItem.Icon>

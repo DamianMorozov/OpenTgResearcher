@@ -15,5 +15,5 @@ public sealed partial class TgChatsPage
         Loaded += PageLoaded;
 	}
 
-	#endregion
+    #endregion
 }

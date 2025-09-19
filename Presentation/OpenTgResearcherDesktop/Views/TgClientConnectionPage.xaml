@@ -503,7 +503,7 @@
                                 VerticalAlignment="Center"
                                 HorizontalContentAlignment="Center"
                                 IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.IsClientConnected, Mode=OneWay}" />
+                                IsOn="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}" />
                             <!--  Sensitive data  -->
                             <TextBlock
                                 Grid.Column="2"

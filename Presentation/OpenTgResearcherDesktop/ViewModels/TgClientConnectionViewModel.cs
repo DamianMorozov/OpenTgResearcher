@@ -64,7 +64,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         : base(settingsService, navigationService, loadStateService, logger, nameof(TgClientConnectionViewModel))
 	{
 		AppNotificationService = appNotificationService;
-		IsClientConnected = AppNotificationService.IsClientConnected;
         // Commands
 		ClientConnectCommand = new AsyncRelayCommand<bool>(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand<bool>(ClientDisconnectAsync);
@@ -93,7 +92,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
         await TgDesktopUtils.InvokeOnUIThreadAsync(async () => { 
             ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-		    IsClientConnected = false;
 
             if (UseClient)
             {
@@ -127,7 +125,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                     }
                     else
                     {
-                        IsClientConnected = true;
                         ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
                     }
                 }
@@ -148,10 +145,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
             // Update connection buttons
             await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
-            IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
-
-            // Set app client state
-            AppNotificationService.IsClientConnected = IsClientConnected;
+            LoadStateService.IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
         });
     }
 

@@ -4,21 +4,6 @@ public sealed class AppNotificationService : IAppNotificationService
 {
 	#region Fields, properties, constructor
 
-	private bool _isClientConnected;
-	public bool IsClientConnected
-	{
-		get => _isClientConnected;
-		set
-		{
-			if (_isClientConnected != value)
-			{
-				_isClientConnected = value;
-				ClientConnectionChanged.Invoke(this, value);
-			}
-		}
-	}
-	public event EventHandler<bool> ClientConnectionChanged = (_, _) => { };
-
 	public AppNotificationService()
 	{
 		//

@@ -153,8 +153,8 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
         var tag = button.Tag.ToString();
         if (string.IsNullOrEmpty(tag)) return;
 
-        Tuple<long, long> tuple = new(long.Parse(tag), Dto.Id);
-        NavigationService.NavigateTo(typeof(TgUserDetailsViewModel).FullName!, tuple);
+        var uid = Guid.Parse(tag);
+        NavigationService.NavigateTo(typeof(TgUserDetailsViewModel).FullName!, uid);
     }
 
     #endregion

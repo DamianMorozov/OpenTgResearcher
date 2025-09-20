@@ -116,7 +116,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
 
             // Single query to get all distinct users for this source
             UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersBySourceIdJoinAsync(
-                Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, where: null, _loadToken)];
+                Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, _loadToken)];
 
             IsEmptyData = false;
             ScrollRequested?.Invoke();
@@ -188,8 +188,8 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         var tag = button.Tag.ToString();
         if (string.IsNullOrEmpty(tag)) return;
 
-        Tuple<long, long> tuple = new(long.Parse(tag), Dto.Id);
-        NavigationService.NavigateTo(typeof(TgUserDetailsViewModel).FullName!, tuple);
+        var uid = Guid.Parse(tag);
+        NavigationService.NavigateTo(typeof(TgUserDetailsViewModel).FullName!, uid);
     }
 
     #endregion

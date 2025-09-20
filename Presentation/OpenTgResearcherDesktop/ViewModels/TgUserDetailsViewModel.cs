@@ -14,14 +14,12 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<TgEfChatWithCountDto> ChatsDtos { get; set; } = [];
     [ObservableProperty]
-    public partial bool IsMessagesLoaded { get; set; }
-    [ObservableProperty]
-    public partial TgEfChatWithCountDto? SelectedChat { get; set; }
+    public partial bool IsImageViewerVisible { get; set; }
 
     public IAsyncRelayCommand LoadDataStorageCommand { get; }
     public IAsyncRelayCommand ClearViewCommand { get; }
     public IAsyncRelayCommand UpdateOnlineCommand { get; }
-    public IAsyncRelayCommand<TgEfChatWithCountDto> LoadMessagesCommand { get; }
+    public IAsyncRelayCommand<TgEfSourceDto> LoadUserMessagesCommand { get; }
 
     public TgUserDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService,
         ILogger<TgUserDetailsViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgUserDetailsViewModel))
@@ -30,7 +28,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
-        LoadMessagesCommand = new AsyncRelayCommand<TgEfChatWithCountDto>(LoadMessagesAsync);
+        LoadUserMessagesCommand = new AsyncRelayCommand<TgEfSourceDto>(LoadUserMessagesAsync);
     }
 
     #endregion
@@ -39,7 +37,11 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
         {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+            Uid = Guid.Empty;
+            if (e?.Parameter is Guid uid)
+            {
+                Uid = uid;
+            }
             await LoadDataStorageCoreAsync();
             await ReloadUiAsync();
         });
@@ -61,7 +63,6 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         Dto = await App.BusinessLogicManager.StorageManager.UserRepository.GetDtoAsync(x => x.Uid == Uid);
         if (Dto is null) return;
 
-        //ListIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(0, 0, x => x.UserId == Dto.Id)).Select(x => x.SourceId).Distinct();
         ListIds = await App.BusinessLogicManager.StorageManager.MessageRepository
             .GetListDtosAsync(0, 0, x => x.UserId == Dto.Id)
             .ContinueWith(t => t.Result.Select(m => m.SourceId).Distinct().ToList());
@@ -97,24 +98,43 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         }
     });
 
-    private async Task LoadMessagesAsync(TgEfChatWithCountDto? chat)
+    private async Task LoadUserMessagesAsync(TgEfSourceDto? chat) =>
+        await ContentDialogAsync(async () => await LoadUserMessagesCoreAsync(chat), TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
+
+    /// <summary> Load user messages in chat </summary>
+    private async Task LoadUserMessagesCoreAsync(TgEfSourceDto? chat)
     {
         if (chat is null) return;
 
-        //var parent = ChatsDtos.FirstOrDefault(u => ChatsDtos.Contains(chat));
-        //if (parent == null || parent.IsMessagesLoaded) return;
+        try
+        {
+            var chatDto = ChatsDtos.FirstOrDefault(x => x.ChatDto.Id == chat.Id);
+            if (chatDto is null) return;
 
-        //parent.SelectedChat = chat;
+            chatDto.Messages.Clear();
+            chatDto.Messages = [.. await App.BusinessLogicManager.StorageManager.MessageRepository
+                .GetListDtosAsync(0, 0, where: x => x.SourceId == chat.Id && x.UserId == Dto.Id,
+                order: x => x.Id)];
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+    }
 
-        //var msgs = await App.BusinessLogicManager.StorageManager.MessageRepository
-        //    .GetListDtosAsync(0, 0, x => x.SourceId == chat.Id && x.UserId == parent.UserDto.Id);
+    internal async Task OnLoadMessagesClickAsync(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is TgEfSourceDto chatDto)
+        {
+            await LoadUserMessagesCommand.ExecuteAsync(chatDto);
+            return;
+        }
 
-        //parent.MessageDtos.Clear();
-        //foreach (var m in msgs.OrderBy(m => m.Id))
-        //    parent.MessageDtos.Add(m);
-
-        //parent.IsMessagesLoaded = true;
-        await Task.CompletedTask;
+        if (sender is TgLicenseButton licenseButton && licenseButton.Tag is TgEfSourceDto chatDto2)
+        {
+            await LoadUserMessagesCommand.ExecuteAsync(chatDto2);
+            return;
+        }
     }
 
     #endregion

@@ -28,11 +28,8 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <!--  Title and meta  -->
                         <RowDefinition Height="Auto" />
-                        <!--  Message text  -->
                         <RowDefinition Height="Auto" />
-                        <!--  Image  -->
                     </Grid.RowDefinitions>
                     <Grid.Resources>
                         <ResourceDictionary>
@@ -93,7 +90,7 @@
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
                             Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <HyperlinkButton
-                            Margin="0,-1,0,0"
+                            Margin="0,-6,0,0"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Click="OnOpenHyperlink"

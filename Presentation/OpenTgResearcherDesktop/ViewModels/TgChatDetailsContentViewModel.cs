@@ -181,16 +181,5 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    /// <summary> Click on user </summary>
-    internal void OnUserClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is not Button button) return;
-        var tag = button.Tag.ToString();
-        if (string.IsNullOrEmpty(tag)) return;
-
-        Tuple<long, long> tuple = new(long.Parse(tag), Dto.Id);
-        NavigationService.NavigateTo(typeof(TgUserDetailsViewModel).FullName!, tuple);
-    }
-
     #endregion
 }

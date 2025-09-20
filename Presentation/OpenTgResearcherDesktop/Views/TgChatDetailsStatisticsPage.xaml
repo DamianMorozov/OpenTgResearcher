@@ -21,7 +21,7 @@
                 Margin="-5,10,5,-5"
                 Click="OnUserClick"
                 CornerRadius="10"
-                Tag="{x:Bind UserDto.Id, Mode=OneWay}">
+                Tag="{x:Bind UserDto.Uid, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <!--  Id  -->
                     <TextBlock x:Uid="FieldId" Margin="0,5,0,0" />

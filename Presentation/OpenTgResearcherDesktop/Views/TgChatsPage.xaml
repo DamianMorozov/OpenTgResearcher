@@ -227,16 +227,30 @@
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
-                                <!--  ID  -->
-                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnId" Width="Auto">
+                                <!--  Id  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnId"
+                                    Width="Auto"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Grid>
-                                                <!--  Sensitive data  -->
-                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                                <!--  Id  -->
-                                                <TextBlock Text="{Binding Id, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </Grid>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Id  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnId"
+                                    Width="Auto"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Id, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
@@ -245,7 +259,26 @@
                                     x:Uid="TemplateColumnIsSubscribe"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="5,0,5,0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                HorizontalTextAlignment="Left"
+                                                Text="**********" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <!--  Is subscribe  -->
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnIsSubscribe"
+                                    Width="Auto"
+                                    CanUserReorder="True"
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <ToggleButton
@@ -262,7 +295,8 @@
                                     x:Uid="TemplateColumnIsAccess"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <ToggleButton
@@ -279,7 +313,8 @@
                                     x:Uid="TemplateColumnIsActive"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <ToggleButton
@@ -296,7 +331,8 @@
                                     x:Uid="TemplateColumnAutoUpd"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <ToggleButton
@@ -309,7 +345,10 @@
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
                                 <!--  User name  -->
-                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnUserName" Width="2*">
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnUserName"
+                                    Width="2*"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -322,7 +361,10 @@
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
                                 <!--  Title  -->
-                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnTitle" Width="3*">
+                                <controls:DataGridTemplateColumn
+                                    x:Uid="TemplateColumnTitle"
+                                    Width="3*"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -339,7 +381,8 @@
                                     x:Uid="TemplateColumnFirstId"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -366,7 +409,8 @@
                                     x:Uid="TemplateColumnCount"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -393,7 +437,8 @@
                                     x:Uid="TemplateColumnProgress"
                                     Width="Auto"
                                     CanUserReorder="True"
-                                    CanUserSort="True">
+                                    CanUserSort="True"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <ProgressBar

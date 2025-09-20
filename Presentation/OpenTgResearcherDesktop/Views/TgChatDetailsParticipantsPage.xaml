@@ -22,7 +22,7 @@
                 HorizontalAlignment="Stretch"
                 Click="OnUserClick"
                 CornerRadius="10"
-                Tag="{x:Bind Id, Mode=OneWay}">
+                Tag="{x:Bind Uid, Mode=OneWay}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />

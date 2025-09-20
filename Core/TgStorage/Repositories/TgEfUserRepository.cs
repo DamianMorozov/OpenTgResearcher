@@ -122,10 +122,9 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
         .ToListAsync(ct);
 
     /// <inheritdoc />
-    public async Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, long userId, Expression<Func<TgEfUserDto, bool>>? where,
-        CancellationToken ct = default)
+    public async Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, long userId, CancellationToken ct = default)
     {
-        var query = EfContext.Users
+        var tmp = await EfContext.Users
             .AsNoTracking()
             .Select(u => new
             {
@@ -133,14 +132,10 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
                 MsgCount = EfContext.Messages.Count(m => m.SourceId == sourceId && m.UserId == u.Id)
             })
             .Where(x => x.MsgCount > 0)
-            .Select(x => new TgEfUserDto().Copy(x.User, x.MsgCount, isUidCopy: true)
-        );
-        if (where is not null)
-            query = query.Where(where);
-        return await query
-            .OrderByDescending(x => x.Id == userId)
-            //.ThenBy(x => x.LastSeenAgo)
+            .OrderByDescending(x => x.User.Id == userId)
             .ToListAsync(ct);
+
+        return [.. tmp.Select(x => new TgEfUserDto().Copy(x.User, x.MsgCount, isUidCopy: true))];
     }
 
     /// <inheritdoc />

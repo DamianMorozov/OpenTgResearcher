@@ -5,12 +5,13 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/TgUiThickness.xaml" />
+                <ResourceDictionary Source="/Styles/TgUiColumns.xaml" />
+                <ResourceDictionary Source="/Styles/TgUiControls.xaml" />
+                <ResourceDictionary Source="/Styles/TgUiConverters.xaml" />
+                <ResourceDictionary Source="/Styles/TgUiFontSizes.xaml" />
+                <ResourceDictionary Source="/Styles/TgUiTextBlock.xaml" />
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <ResourceDictionary Source="/Styles/FontSizes.xaml" />
-                <ResourceDictionary Source="/Styles/Thickness.xaml" />
-                <ResourceDictionary Source="/Styles/TextBlock.xaml" />
-                <ResourceDictionary Source="/Converters/TgAppConverters.xaml" />
-                <ResourceDictionary Source="/Styles/TgAppControls.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

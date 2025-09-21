@@ -294,7 +294,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     }
 
     /// <summary> Load storage data with async task </summary>
-    protected async Task LoadStorageDataAsync(Func<Task> task)
+    public async Task LoadStorageDataAsync(Func<Task> task)
     {
         try
         {
@@ -322,7 +322,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     }
 
     /// <summary> Load storage data with action </summary>
-    protected async Task LoadStorageDataAsync(Action action)
+    public async Task LoadStorageDataAsync(Action action)
     {
         try
         {

@@ -84,6 +84,7 @@
                         Grid.ColumnSpan="3"
                         Margin="0,10,10,0">
                         <controls:DataGrid
+                            x:Name="DataGridStorage"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"
@@ -92,66 +93,21 @@
                             ItemsSource="{x:Bind ViewModel.StorageBackupDtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
                                 <!--  FileName  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnFileName"
-                                    Width="3*"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="**********" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <!--  FileName  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnFileName"
-                                    Width="3*"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="{Binding FileName, Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnFileNameTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnFileNameTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="3*"
+                                    OwnerGrid="{x:Bind DataGridStorage}" />
                                 <!--  FileSizeAsString  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnFileSize"
-                                    Width="1*"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="**********" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <!--  FileSizeAsString  -->
-                                <controls:DataGridTemplateColumn x:Uid="TemplateColumnFileSize" Width="1*">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="{Binding FileSizeAsString, Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnFileSizeTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnFileSizeAsStringTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="3*"
+                                    OwnerGrid="{x:Bind DataGridStorage}" />
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </Grid>

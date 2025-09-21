@@ -1,110 +1,96 @@
-﻿//using Microsoft.UI.Xaml.Markup;
+﻿namespace OpenTgResearcherDesktop.Styles;
 
-namespace OpenTgResearcherDesktop.Styles;
-
-//[ContentProperty(Name = nameof(ColumnOriginValue))]
-public sealed partial class TgTgBindableDataGridTemplateColumn : DataGridTemplateColumn
+/// <summary> Template column that swaps cell DataTemplate by boolean flag without hiding the column </summary>
+public sealed partial class TgBindableDataGridTemplateColumn : DataGridTemplateColumn
 {
-    //// 1. ColumnHeader (локализуемый через x:Uid="ResourceKey")
-    //public static readonly DependencyProperty ColumnHeaderProperty =
-    //    DependencyProperty.Register(
-    //        nameof(ColumnHeader),
-    //        typeof(string),
-    //        typeof(TgBindableDataGridTemplateColumn),
-    //        new PropertyMetadata(string.Empty, OnColumnHeaderChanged),
-    //        // отмечаем локализуемым
-    //        (d, v) => true);
+    /// <summary> OwnerGrid reference for forcing refresh </summary>
+    public DataGrid? OwnerGrid
+    {
+        get => (DataGrid?)GetValue(OwnerGridProperty);
+        set => SetValue(OwnerGridProperty, value);
+    }
+    /// <summary> OwnerGrid reference for forcing refresh </summary>
+    public static readonly DependencyProperty OwnerGridProperty = DependencyProperty.Register(nameof(OwnerGrid), typeof(DataGrid),
+            typeof(TgBindableDataGridTemplateColumn), new PropertyMetadata(null));
 
-    //public string ColumnHeader
-    //{
-    //    get => (string)GetValue(ColumnHeaderProperty);
-    //    set => SetValue(ColumnHeaderProperty, value);
-    //}
+    /// <summary> ColumnWidth </summary>
+    public DataGridLength ColumnWidth
+    {
+        get => (DataGridLength)GetValue(ColumnWidthProperty);
+        set => SetValue(ColumnWidthProperty, value);
+    }
+    private static void OnColumnWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var col = (TgBindableDataGridTemplateColumn)d;
+        col.Width = (DataGridLength)e.NewValue;
+    }
+    /// <summary> ColumnWidth </summary>
+    public static readonly DependencyProperty ColumnWidthProperty = DependencyProperty.Register(nameof(ColumnWidth), typeof(DataGridLength),
+            typeof(TgBindableDataGridTemplateColumn), new PropertyMetadata(new DataGridLength(1, DataGridLengthUnitType.Auto), OnColumnWidthChanged));
 
-    //private static void OnColumnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    //{
-    //    var col = (TgBindableDataGridTemplateColumn)d;
-    //    col.Header = e.NewValue;
-    //}
+    /// <summary> ColumnValue (original template) </summary>
+    public DataTemplate ColumnValue
+    {
+        get => (DataTemplate)GetValue(ColumnValueProperty);
+        set => SetValue(ColumnValueProperty, value);
+    }
+    /// <summary> ColumnValue (original template) </summary>
+    public static readonly DependencyProperty ColumnValueProperty = DependencyProperty.Register(nameof(ColumnValue), typeof(DataTemplate),
+            typeof(TgBindableDataGridTemplateColumn), new PropertyMetadata(null, OnAnyTemplateChanged));
 
-    //// 2. ColumnWidth
-    //public static readonly DependencyProperty ColumnWidthProperty =
-    //    DependencyProperty.Register(
-    //        nameof(ColumnWidth),
-    //        typeof(DataGridLength),
-    //        typeof(TgBindableDataGridTemplateColumn),
-    //        new PropertyMetadata(new DataGridLength(1, DataGridLengthUnitType.Auto), OnColumnWidthChanged));
+    /// <summary> ColumnSensitive (masked template) </summary>
+    public DataTemplate ColumnSensitive
+    {
+        get => (DataTemplate)GetValue(ColumnSensitiveProperty);
+        set => SetValue(ColumnSensitiveProperty, value);
+    }
+    /// <summary> ColumnSensitive (masked template) </summary>
+    public static readonly DependencyProperty ColumnSensitiveProperty = DependencyProperty.Register(nameof(ColumnSensitive), typeof(DataTemplate),
+            typeof(TgBindableDataGridTemplateColumn), new PropertyMetadata(null, OnAnyTemplateChanged));
 
-    //public DataGridLength ColumnWidth
-    //{
-    //    get => (DataGridLength)GetValue(ColumnWidthProperty);
-    //    set => SetValue(ColumnWidthProperty, value);
-    //}
+    /// <summary> ColumnVisible (true → show original, false → show masked) </summary>
+    public bool ColumnVisible
+    {
+        get => (bool)GetValue(ColumnVisibleProperty);
+        set => SetValue(ColumnVisibleProperty, value);
+    }
+    private static void OnColumnVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        UpdateCellTemplate((TgBindableDataGridTemplateColumn)d);
+    }
+    /// <summary> ColumnVisible (true → show original, false → show masked) </summary>
+    public static readonly DependencyProperty ColumnVisibleProperty = DependencyProperty.Register(nameof(ColumnVisible), typeof(bool),
+            typeof(TgBindableDataGridTemplateColumn), new PropertyMetadata(true, OnColumnVisibleChanged));
 
-    //private static void OnColumnWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    //{
-    //    var col = (TgBindableDataGridTemplateColumn)d;
-    //    col.Width = (DataGridLength)e.NewValue;
-    //}
+    private static void OnAnyTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        UpdateCellTemplate((TgBindableDataGridTemplateColumn)d);
+    }
 
-    //// 3. ColumnSensitiveValue
-    //public static readonly DependencyProperty ColumnSensitiveValueProperty =
-    //    DependencyProperty.Register(
-    //        nameof(ColumnSensitiveValue),
-    //        typeof(DataTemplate),
-    //        typeof(TgBindableDataGridTemplateColumn),
-    //        new PropertyMetadata(null, OnAnyTemplateChanged));
+    /// <summary> Updates the cell template based on ColumnVisible and forces DataGrid to recreate the column </summary>
+    private static void UpdateCellTemplate(TgBindableDataGridTemplateColumn col)
+    {
+        TgDesktopUtils.InvokeOnUIThread(() => { 
+            // Select template based on ColumnVisible flag
+            var newTemplate = col.ColumnVisible ? col.ColumnValue : col.ColumnSensitive;
+            if (newTemplate is null)
+                return;
 
-    //public DataTemplate ColumnSensitiveValue
-    //{
-    //    get => (DataTemplate)GetValue(ColumnSensitiveValueProperty);
-    //    set => SetValue(ColumnSensitiveValueProperty, value);
-    //}
+            // Assign new template
+            col.CellTemplate = newTemplate;
 
-    //// 4. ColumnOriginValue
-    //public static readonly DependencyProperty ColumnOriginValueProperty =
-    //    DependencyProperty.Register(
-    //        nameof(ColumnOriginValue),
-    //        typeof(DataTemplate),
-    //        typeof(TgBindableDataGridTemplateColumn),
-    //        new PropertyMetadata(null, OnAnyTemplateChanged));
+            // Force DataGrid to recreate the column
+            if (col.OwnerGrid is DataGrid grid)
+            {
+                int index = grid.Columns.IndexOf(col);
+                if (index >= 0)
+                {
+                    grid.Columns.RemoveAt(index);
+                    grid.Columns.Insert(index, col);
+                }
 
-    //public DataTemplate ColumnOriginValue
-    //{
-    //    get => (DataTemplate)GetValue(ColumnOriginValueProperty);
-    //    set => SetValue(ColumnOriginValueProperty, value);
-    //}
-
-    //// 5. ColumnVisible
-    //public static readonly DependencyProperty ColumnVisibleProperty =
-    //    DependencyProperty.Register(
-    //        nameof(ColumnVisible),
-    //        typeof(bool),
-    //        typeof(TgBindableDataGridTemplateColumn),
-    //        new PropertyMetadata(true, OnColumnVisibleChanged));
-
-    //public bool ColumnVisible
-    //{
-    //    get => (bool)GetValue(ColumnVisibleProperty);
-    //    set => SetValue(ColumnVisibleProperty, value);
-    //}
-
-    //private static void OnColumnVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    //{
-    //    UpdateCellTemplate((TgBindableDataGridTemplateColumn)d);
-    //}
-
-    //private static void OnAnyTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    //{
-    //    UpdateCellTemplate((TgBindableDataGridTemplateColumn)d);
-    //}
-
-    //private static void UpdateCellTemplate(TgBindableDataGridTemplateColumn col)
-    //{
-    //    // выбираем шаблон в зависимости от ColumnVisible
-    //    if (col.ColumnVisible)
-    //        col.CellTemplate = col.ColumnOriginValue;
-    //    else
-    //        col.CellTemplate = col.ColumnSensitiveValue;
-    //}
+                grid.UpdateLayout();
+            }
+        });
+    }
 }

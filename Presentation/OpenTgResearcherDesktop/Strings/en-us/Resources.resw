@@ -792,121 +792,121 @@
 - OSINT tool
 - Parser tool</value>
   </data>
-  <data name="TemplateColumnEdit.Header" xml:space="preserve">
+  <data name="ColumnEditTemplate.Header" xml:space="preserve">
     <value>Edit</value>
   </data>
-  <data name="TemplateColumnUpdate.Header" xml:space="preserve">
+  <data name="ColumnUpdateTemplate.Header" xml:space="preserve">
     <value>Update from TG</value>
   </data>
-  <data name="TemplateColumnUpd.Header" xml:space="preserve">
+  <data name="ColumnUpdTemplate.Header" xml:space="preserve">
     <value>Update</value>
   </data>
-  <data name="TemplateColumnAutoUpd.Header" xml:space="preserve">
+  <data name="ColumnAutoUpdTemplate.Header" xml:space="preserve">
     <value>Auto-update</value>
   </data>
-  <data name="TemplateColumnDownload.Header" xml:space="preserve">
+  <data name="ColumnDownloadTemplate.Header" xml:space="preserve">
     <value>Download</value>
   </data>
-  <data name="TemplateColumnComplete.Header" xml:space="preserve">
+  <data name="ColumnCompleteTemplate.Header" xml:space="preserve">
     <value>Complete</value>
   </data>
-  <data name="TemplateColumnId.Header" xml:space="preserve">
+  <data name="ColumnIdTemplate.Header" xml:space="preserve">
     <value>ID</value>
   </data>
-  <data name="TemplateColumnChanged.Header" xml:space="preserve">
+  <data name="ColumnChangedTemplate.Header" xml:space="preserve">
     <value>Changed</value>
   </data>
-  <data name="TemplateColumnUpdated.Header" xml:space="preserve">
+  <data name="ColumnUpdatedTemplate.Header" xml:space="preserve">
     <value>Updated</value>
   </data>
-  <data name="TemplateColumnDate.Header" xml:space="preserve">
+  <data name="ColumnDateTemplate.Header" xml:space="preserve">
     <value>Date</value>
   </data>
-  <data name="TemplateColumnExpireDate.Header" xml:space="preserve">
+  <data name="ColumnExpireDateTemplate.Header" xml:space="preserve">
     <value>Expires</value>
   </data>
-  <data name="TemplateColumnUserName.Header" xml:space="preserve">
+  <data name="ColumnUserNameTemplate.Header" xml:space="preserve">
     <value>User name</value>
   </data>
-  <data name="TemplateColumnTitle.Header" xml:space="preserve">
+  <data name="ColumnTitleTemplate.Header" xml:space="preserve">
     <value>Title</value>
   </data>
-  <data name="TemplateColumnFirstId.Header" xml:space="preserve">
+  <data name="ColumnFirstIdTemplate.Header" xml:space="preserve">
     <value>First ID</value>
   </data>
-  <data name="TemplateColumnCount.Header" xml:space="preserve">
+  <data name="ColumnCountTemplate.Header" xml:space="preserve">
     <value>Count</value>
   </data>
-  <data name="TemplateColumnRecordsCount.Header" xml:space="preserve">
+  <data name="ColumnRecordsCountTemplate.Header" xml:space="preserve">
     <value>Count of records</value>
   </data>
-  <data name="TemplateColumnProgress.Header" xml:space="preserve">
+  <data name="ColumnProgressTemplate.Header" xml:space="preserve">
     <value>Progress</value>
   </data>
-  <data name="TemplateColumnIsActive.Header" xml:space="preserve">
+  <data name="ColumnIsActiveTemplate.Header" xml:space="preserve">
     <value>Active</value>
   </data>
-  <data name="TemplateColumnIsAccess.Header" xml:space="preserve">
+  <data name="ColumnIsAccessTemplate.Header" xml:space="preserve">
     <value>Access</value>
   </data>
-  <data name="TemplateColumnIsSubscribe.Header" xml:space="preserve">
+  <data name="ColumnIsSubscribeTemplate.Header" xml:space="preserve">
     <value>Subscribe</value>
   </data>
-  <data name="TemplateColumnIsBot.Header" xml:space="preserve">
+  <data name="ColumnIsBotTemplate.Header" xml:space="preserve">
     <value>Bot</value>
   </data>
-  <data name="TemplateColumnFirstName.Header" xml:space="preserve">
+  <data name="ColumnFirstNameTemplate.Header" xml:space="preserve">
     <value>First name</value>
   </data>
-  <data name="TemplateColumnLastName.Header" xml:space="preserve">
+  <data name="ColumnLastNameTemplate.Header" xml:space="preserve">
     <value>Last name</value>
   </data>
-  <data name="TemplateColumnPhone.Header" xml:space="preserve">
+  <data name="ColumnPhoneTemplate.Header" xml:space="preserve">
     <value>Phone</value>
   </data>
-  <data name="TemplateColumnStatus.Header" xml:space="preserve">
+  <data name="ColumnStatusTemplate.Header" xml:space="preserve">
     <value>Status</value>
   </data>
-  <data name="TemplateColumnIsEnabled.Header" xml:space="preserve">
+  <data name="ColumnIsEnabledTemplate.Header" xml:space="preserve">
     <value>Enabled</value>
   </data>
-  <data name="TemplateColumnType.Header" xml:space="preserve">
+  <data name="ColumnTypeTemplate.Header" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="TemplateColumnName.Header" xml:space="preserve">
+  <data name="ColumnNameTemplate.Header" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="TemplateColumnMask.Header" xml:space="preserve">
+  <data name="ColumnMaskTemplate.Header" xml:space="preserve">
     <value>Mask</value>
   </data>
-  <data name="TemplateColumnSize.Header" xml:space="preserve">
+  <data name="ColumnSizeTemplate.Header" xml:space="preserve">
     <value>Size</value>
   </data>
-  <data name="TemplateColumnTableName.Header" xml:space="preserve">
+  <data name="ColumnTableNameTemplate.Header" xml:space="preserve">
     <value>Table name</value>
   </data>
-  <data name="TemplateColumnFileName.Header" xml:space="preserve">
+  <data name="ColumnFileNameTemplate.Header" xml:space="preserve">
     <value>File name</value>
   </data>
-  <data name="TemplateColumnFileSize.Header" xml:space="preserve">
+  <data name="ColumnFileSizeTemplate.Header" xml:space="preserve">
     <value>File size</value>
   </data>
-  <data name="TemplateColumnCaption.Header" xml:space="preserve">
+  <data name="ColumnCaptionTemplate.Header" xml:space="preserve">
     <value>Caption</value>
   </data>
-  <data name="TemplateColumnHostName.Header" xml:space="preserve">
+  <data name="ColumnHostNameTemplate.Header" xml:space="preserve">
     <value>Host name</value>
   </data>
-  <data name="TemplateColumnPort.Header" xml:space="preserve">
+  <data name="ColumnPortTemplate.Header" xml:space="preserve">
     <value>Port</value>
   </data>
-  <data name="TemplateColumnDisplayName.Header" xml:space="preserve">
+  <data name="ColumnDisplayNameTemplate.Header" xml:space="preserve">
     <value>Display name</value>
   </data>
-  <data name="TemplateColumnPassword.Header" xml:space="preserve">
+  <data name="ColumnPasswordTemplate.Header" xml:space="preserve">
     <value>Password</value>
   </data>
-  <data name="TemplateColumnBotToken.Header" xml:space="preserve">
+  <data name="ColumnBotTokenTemplate.Header" xml:space="preserve">
     <value>Bot token</value>
   </data>
   <data name="DataWaitStorageProcessing.Text" xml:space="preserve">

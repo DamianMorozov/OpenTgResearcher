@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:OpenTgResearcherDesktop.Converters"
+    xmlns:convertersWinUI="using:CommunityToolkit.WinUI.Converters"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles">
+
+    <DataTemplate x:Key="ColumnSensitiveTemplate">
+        <TextBlock Margin="5,5,5,0" Text="**********" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIdTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Id, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnDisplayNameTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding DisplayName, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnUserNameTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding UserName, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnPhoneTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding PhoneNumber, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnStatusTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Status, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnFileNameTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding FileName, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnFileSizeAsStringTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding FileSizeAsString, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnRecordsCountTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding RecordsCount, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnFilterTypeTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding FilterType, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnNameTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Name, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnMaskTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Mask, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnSizeTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Size, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnTypeTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Type, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnHostNameTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding HostName, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnPortTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Port, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnPasswordTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Password, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnDateTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Date, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnExpireDateTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding ExpireDate, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnCaptionTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Caption, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnTitleTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Title, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnFirstIdTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding FirstId, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnCountTemplate">
+        <TextBlock Margin="5,0,5,0" Text="{Binding Count, Mode=OneWay}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColumnIsUserAccessTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsUserAccess, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIsContactActiveTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsContactActive, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnUseBotTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding UseBot, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIsEnabledTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsEnabled, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIsSubscribeTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsSubscribe, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIsSourceActiveTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsSourceActive, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIsAutoUpdateTemplate">
+        <ToggleButton
+            Margin="5,0,5,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsAutoUpdate, Mode=OneWay}"
+            IsEnabled="False" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="ColumnProgressTemplate">
+        <ProgressBar
+            Margin="5,5,5,5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            IsIndeterminate="{Binding IsLoad, Mode=OneWay}"
+            Maximum="100"
+            Minimum="0"
+            ToolTipService.ToolTip="{Binding ProgressPercentString, Mode=OneWay}"
+            Value="{Binding ProgressPercent, Mode=OneWay}" />
+    </DataTemplate>
+
+</ResourceDictionary>

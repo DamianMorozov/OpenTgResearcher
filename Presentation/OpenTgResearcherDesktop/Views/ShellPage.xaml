@@ -125,10 +125,10 @@
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
             IsSettingsVisible="True"
             ItemInvoked="NavigationViewControl_ItemInvoked"
-            OpenPaneLength="250"
+            OpenPaneLength="240"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
+            <!--  Navigation MenuItems  -->
             <NavigationView.MenuItems>
-                <!--  https://docs.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#icon-list  -->
                 <!--  Home  -->
                 <NavigationViewItem x:Uid="Shell_Home" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgMainViewModel">
                     <NavigationViewItem.Icon>
@@ -202,6 +202,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
+            <!--  Navigation HeaderTemplate  -->
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
                     <Grid>
@@ -209,11 +210,12 @@
                     </Grid>
                 </DataTemplate>
             </NavigationView.HeaderTemplate>
+            <!--  Navigation Behaviors  -->
             <i:Interaction.Behaviors>
                 <behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
                     <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                         <DataTemplate>
-                            <Grid Margin="{StaticResource NavigationViewHeaderMargin}">
+                            <Grid Margin="-60,-10,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
@@ -224,28 +226,26 @@
                                     Grid.Column="0"
                                     Width="45"
                                     Height="45"
-                                    Margin="5,5,5,8"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
+                                    Margin="10,0,10,0"
+                                    HorizontalAlignment="Left"
+                                    HorizontalContentAlignment="Left"
                                     Command="{Binding DataContext.UpdatePageCommand, ElementName=ShellPageRoot}">
-                                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                        <FontIcon Margin="0,0,0,0" Glyph="&#xE72C;" />
-                                    </StackPanel>
+                                    <FontIcon Glyph="&#xE72C;" />
                                 </Button>
                                 <!--  Page title  -->
                                 <TextBlock
                                     Grid.Column="1"
-                                    Margin="10,0,5,0"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource TitleTextBlockStyle}"
                                     Text="{Binding}" />
-                                <!--  Sensitive data  -->
+                                <!--  ToggleSwitch: sensitive data  -->
                                 <ToggleSwitch
                                     x:Name="ToggleSwitchShowSensitiveData"
                                     x:Uid="ToggleSwitchShowSensitiveData"
                                     Grid.Column="2"
                                     Margin="10,5,15,-5"
                                     HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
                                     IsOn="True"
                                     Toggled="ToggleSwitchShowSecretFields_Toggled" />
                             </Grid>
@@ -253,6 +253,7 @@
                     </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                 </behaviors:NavigationViewHeaderBehavior>
             </i:Interaction.Behaviors>
+            <!--  Page content  -->
             <Grid Margin="{StaticResource NavigationViewPageContentMargin}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />

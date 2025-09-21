@@ -219,6 +219,7 @@
                         VerticalScrollMode="Auto">
                         <!--  Data  -->
                         <controls:DataGrid
+                            x:Name="DataGridChats"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"
@@ -228,232 +229,85 @@
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
                                 <!--  Id  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnId"
-                                    Width="Auto"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="**********" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <!--  Id  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnId"
-                                    Width="Auto"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Id, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnIdTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnIdTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Is subscribe  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnIsSubscribe"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="**********" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <!--  Is subscribe  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnIsSubscribe"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ToggleButton
-                                                Margin="2"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                IsChecked="{Binding IsSubscribe, Mode=OneWay}"
-                                                IsEnabled="False" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnIsSubscribeTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnIsSubscribeTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Is access  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnIsAccess"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ToggleButton
-                                                Margin="2"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                IsChecked="{Binding IsUserAccess, Mode=OneWay}"
-                                                IsEnabled="False" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnIsAccessTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnIsUserAccessTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Is active  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnIsActive"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ToggleButton
-                                                Margin="2"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                IsChecked="{Binding IsSourceActive, Mode=OneWay}"
-                                                IsEnabled="False" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnIsActiveTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnIsSourceActiveTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Auto-update  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnAutoUpd"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ToggleButton
-                                                Margin="2"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                IsChecked="{Binding IsAutoUpdate, Mode=OneWay}"
-                                                IsEnabled="False" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnAutoUpdTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnIsAutoUpdateTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  User name  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnUserName"
-                                    Width="2*"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <!--  Sensitive data  -->
-                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                                <!--  Id  -->
-                                                <TextBlock Text="{Binding UserName, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnUserNameTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnUserNameTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="2*"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Title  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnTitle"
-                                    Width="3*"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <!--  Sensitive data  -->
-                                                <TextBlock Text="{Binding SensitiveData, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                                <!--  Id  -->
-                                                <TextBlock Text="{Binding Title, Mode=OneWay}" Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnTitleTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnTitleTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="3*"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  First ID  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnFirstId"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <!--  Sensitive data  -->
-                                                <TextBlock
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalTextAlignment="Center"
-                                                    Text="{Binding SensitiveData, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                                <!--  Id  -->
-                                                <TextBlock
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalTextAlignment="Center"
-                                                    Text="{Binding FirstId, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnFirstIdTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnFirstIdTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Count  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnCount"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <!--  Sensitive data  -->
-                                                <TextBlock
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalTextAlignment="Center"
-                                                    Text="{Binding SensitiveData, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                                <!--  Id  -->
-                                                <TextBlock
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalTextAlignment="Center"
-                                                    Text="{Binding Count, Mode=OneWay}"
-                                                    Visibility="{Binding IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnCountTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnCountTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Progress  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnProgress"
-                                    Width="Auto"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <ProgressBar
-                                                Margin="5,5,5,5"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                IsIndeterminate="{Binding IsLoad, Mode=OneWay}"
-                                                Maximum="100"
-                                                Minimum="0"
-                                                ToolTipService.ToolTip="{Binding ProgressPercentString, Mode=OneWay}"
-                                                Visibility="Visible"
-                                                Value="{Binding ProgressPercent, Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnProgressTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnProgressTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  End  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>

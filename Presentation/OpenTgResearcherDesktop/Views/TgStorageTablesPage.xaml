@@ -30,6 +30,7 @@
                     <!--  DB tables  -->
                     <Grid Margin="0,0,10,0">
                         <controls:DataGrid
+                            x:Name="DataGridStorage"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"
@@ -39,7 +40,7 @@
                             <controls:DataGrid.Columns>
                                 <!--  Name  -->
                                 <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnTableName"
+                                    x:Uid="ColumnTableNameTemplate"
                                     Width="1*"
                                     CanUserReorder="True"
                                     CanUserSort="True">
@@ -55,41 +56,13 @@
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
                                 <!--  RecordsCount  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnRecordsCount"
-                                    Width="1*"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="**********" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <!--  RecordsCount  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="TemplateColumnRecordsCount"
-                                    Width="1*"
-                                    CanUserReorder="True"
-                                    CanUserSort="True"
-                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="{Binding RecordsCount, Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnRecordsCountTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnRecordsCountTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="1*"
+                                    OwnerGrid="{x:Bind DataGridStorage}" />
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </Grid>

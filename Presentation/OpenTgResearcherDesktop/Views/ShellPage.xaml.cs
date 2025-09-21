@@ -1,4 +1,6 @@
-﻿namespace OpenTgResearcherDesktop.Views;
+﻿using System.Threading.Tasks;
+
+namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ShellPage
 {
@@ -63,7 +65,7 @@ public sealed partial class ShellPage
         args.Handled = result;
     }
 
-    private void ToggleSwitchShowSecretFields_Toggled(object sender, RoutedEventArgs e)
+    private async void ToggleSwitchShowSecretFields_Toggled(object sender, RoutedEventArgs e)
     {
         if (_isHandlingToggle)
             return;
@@ -81,7 +83,12 @@ public sealed partial class ShellPage
             return;
         }
 
-        ViewModel.LoadStateService.IsDisplaySensitiveData = ViewModel.LoadStateService.IsDisplaySensitiveData = toggleSwitch.IsOn;
+        if (ViewModel.NavigationService.Frame is not null && ViewModel.NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
+        {
+            await pageViewModel.LoadStorageDataAsync(() => {
+                ViewModel.LoadStateService.IsDisplaySensitiveData = ViewModel.LoadStateService.IsDisplaySensitiveData = toggleSwitch.IsOn;
+            });
+        }
     }
 
     private void DefaultToggleSwitch(ToggleSwitch toggleSwitch)

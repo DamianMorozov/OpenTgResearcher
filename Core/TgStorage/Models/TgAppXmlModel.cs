@@ -20,14 +20,11 @@ public sealed class TgAppXmlModel : ObservableObject, ITgDebug
 	[XmlIgnore]
 	public bool IsExistsEfStorage => File.Exists(XmlEfStorage) && new FileInfo(XmlEfStorage).Length > 0;
 
-	public TgAppXmlModel()
-	{
-		Default();
-	}
+    public TgAppXmlModel() => Default();
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
     public string ToDebugString() => 
 	    $"{nameof(XmlFileSession)}: {XmlFileSession} | {nameof(XmlEfStorage)}: {XmlEfStorage}";

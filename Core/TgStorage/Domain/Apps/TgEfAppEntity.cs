@@ -71,17 +71,14 @@ public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnUseClient, TypeName = "BIT")]
     public bool UseClient { get; set; }
-    
-    public TgEfAppEntity()
-    {
-	    Default();
-    }
 
-	#endregion
+    public TgEfAppEntity() => Default();
 
-	#region Methods
+    #endregion
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    #region Methods
+
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
 	public void Default()
     {

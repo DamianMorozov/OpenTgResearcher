@@ -52,10 +52,7 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 	[Column(TgEfConstants.ColumnSizeType, TypeName = "INT")]
 	public TgEnumFileSizeType SizeType { get; set; }
 
-	public TgEfFilterEntity()
-	{
-		Default();
-	}
+    public TgEfFilterEntity() => Default();
 
     #endregion
 

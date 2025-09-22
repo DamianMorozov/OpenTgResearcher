@@ -11,10 +11,7 @@ public sealed partial class TgEfUserWithCountDto : TgDtoBase
     public partial int Count { get; set; }
 
 
-    public TgEfUserWithCountDto() : base()
-	{
-        DefaultValues();
-    }
+    public TgEfUserWithCountDto() : base() => DefaultValues();
 
     #endregion
 

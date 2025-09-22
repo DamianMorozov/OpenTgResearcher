@@ -117,10 +117,7 @@ public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
 
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
 
-    public TgEfSourceEntity()
-    {
-        Default();
-    }
+    public TgEfSourceEntity() => Default();
 
     #endregion
 

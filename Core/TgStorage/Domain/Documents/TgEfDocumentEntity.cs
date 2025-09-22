@@ -54,16 +54,13 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
     [Column(TgEfConstants.ColumnAccessHash, TypeName = "LONG(20)")]
     public long AccessHash { get; set; }
 
-    public TgEfDocumentEntity()
-    {
-	    Default();
-	}
+    public TgEfDocumentEntity() => Default();
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
 	public void Default()
     {

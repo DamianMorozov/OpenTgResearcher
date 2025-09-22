@@ -45,10 +45,7 @@ public sealed class TgEfMessageRelationEntity : ITgEfEntity<TgEfMessageRelationE
     public TgEfSourceEntity? ChildSource { get; set; }
     public TgEfMessageEntity? ChildMessage { get; set; }
 
-    public TgEfMessageRelationEntity()
-    {
-        Default();
-    }
+    public TgEfMessageRelationEntity() => Default();
 
     #endregion
 

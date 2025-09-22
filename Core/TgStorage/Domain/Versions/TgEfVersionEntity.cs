@@ -28,16 +28,13 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
     [Column(TgEfConstants.ColumnDescription, TypeName = "NVARCHAR(128)")]
     public string Description { get; set; } = null!;
 
-    public TgEfVersionEntity()
-    {
-        Default();
-    }
+    public TgEfVersionEntity() => Default();
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
 	public void Default()
     {

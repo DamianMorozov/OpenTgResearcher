@@ -19,10 +19,7 @@ public sealed partial class TgEfChatStatisticsDto : TgDtoBase
     public partial ObservableCollection<TgEfUserWithCountDto> UserWithCountDtos { get; set; } = new ObservableCollection<TgEfUserWithCountDto>();
 
 
-    public TgEfChatStatisticsDto() : base()
-	{
-        DefaultValues();
-    }
+    public TgEfChatStatisticsDto() : base() => DefaultValues();
 
     #endregion
 

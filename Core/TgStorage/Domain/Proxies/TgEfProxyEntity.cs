@@ -56,10 +56,7 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 
     public ICollection<TgEfAppEntity> Apps { get; set; } = null!;
 
-	public TgEfProxyEntity()
-    {
-        Default();
-    }
+    public TgEfProxyEntity() => Default();
 
     #endregion
 

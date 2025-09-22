@@ -45,16 +45,13 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 	[Column(TgEfConstants.ColumnIsConfirmed, TypeName = "BIT")]
 	public bool IsConfirmed { get; set; }
 
-	public TgEfLicenseEntity()
-    {
-	    Default();
-    }
+    public TgEfLicenseEntity() => Default();
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
 	public void Default()
     {

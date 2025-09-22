@@ -80,17 +80,14 @@ public sealed class TgEfStoryEntity : ITgEfIdEntity<TgEfStoryEntity>
 	[MaxLength(256)]
 	[Column(TgEfConstants.ColumnMessage, TypeName = "NVARCHAR(256)")]
 	public string? Message { get; set; } = null!;
-	
-    public TgEfStoryEntity()
-    {
-        Default();
-    }
 
-	#endregion
+    public TgEfStoryEntity() => Default();
 
-	#region Methods
+    #endregion
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    #region Methods
+
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
     public void Default()
     {

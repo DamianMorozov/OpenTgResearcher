@@ -13,10 +13,7 @@ public sealed partial class TgEfChatWithCountDto : TgDtoBase
     public partial int CountMessages { get; set; } = default!;
     [ObservableProperty]
     public partial ObservableCollection<TgEfMessageDto> Messages { get; set; } = [];
-    public TgEfChatWithCountDto() : base()
-	{
-        DefaultValues();
-    }
+    public TgEfChatWithCountDto() : base() => DefaultValues();
 
     public TgEfChatWithCountDto(TgEfUserDto userDto, TgEfSourceDto chatDto, int countMessages) : base()
 	{

@@ -13,10 +13,7 @@ public sealed partial class TgEfContentStatisticsDto : TgDtoBase
     public partial int VideosCount { get; set; }
 
 
-    public TgEfContentStatisticsDto() : base()
-	{
-        DefaultValues();
-    }
+    public TgEfContentStatisticsDto() : base() => DefaultValues();
 
     #endregion
 

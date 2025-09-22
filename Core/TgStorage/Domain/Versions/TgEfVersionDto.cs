@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Versions;
 
-/// <summary> Proxy DTO </summary>
-public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity, TgEfVersionDto>
+/// <summary> EF proxy DTO </summary>
+public sealed partial class TgEfVersionDto : TgDtoBase, ITgEfVersionDto
 {
 	#region Fields, properties, constructor
 
@@ -20,37 +20,15 @@ public sealed partial class TgEfVersionDto : TgDtoBase, ITgDto<TgEfVersionEntity
 
     #region Methods
 
+    /// <inheritdoc />
     public override string ToConsoleString() => 
         $"{Version,3} | " +
         $"{TgDataFormatUtils.GetFormatString(Description, 50).TrimEnd(),-50}";
 
+    /// <inheritdoc />
     public override string ToConsoleHeaderString() =>
         $"{TgDataFormatUtils.GetFormatString(nameof(Version), 3).TrimEnd(),-3} | " +
         $"Description";
-
-    public TgEfVersionDto Copy(TgEfVersionDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		Version = dto.Version;
-		Description = dto.Description;
-		return this;
-	}
-
-	public TgEfVersionDto Copy(TgEfVersionEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		Version = item.Version;
-		Description = item.Description;
-		return this;
-	}
-
-	public TgEfVersionEntity GetEntity() => new()
-	{
-		Uid = Uid,
-		Version = Version,
-		Description = Description,
-	};
 
 	#endregion
 }

@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Proxies;
 
-/// <summary> Proxy DTO </summary>
-public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, TgEfProxyDto>
+/// <summary> EF proxy DTO </summary>
+public sealed partial class TgEfProxyDto : TgDtoBase, ITgEfProxyDto
 {
 	#region Fields, properties, constructor
 
@@ -29,47 +29,12 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgDto<TgEfProxyEntity, Tg
 		Secret = string.Empty;
 	}
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => $"{Type} | {HostName} | {Port} | {UserName} | {Password} | {Secret}";
-
-	public TgEfProxyDto Copy(TgEfProxyDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		Type = dto.Type;
-		HostName = dto.HostName;
-		Port = dto.Port;
-		UserName = dto.UserName;
-		Password = dto.Password;
-		Secret = dto.Secret;
-		return this;
-	}
-
-	public TgEfProxyDto Copy(TgEfProxyEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		Type = item.Type;
-		HostName = item.HostName;
-		Port = item.Port;
-		UserName = item.UserName;
-		Password = item.Password;
-		Secret = item.Secret;
-		return this;
-	}
-
-	public TgEfProxyEntity GetEntity() => new()
-	{
-		Uid = Uid,
-		Type = Type,
-		HostName = HostName,
-		Port = Port,
-		UserName = UserName,
-		Password = Password,
-		Secret = Secret,
-	};
+    /// <inheritdoc />
+    public override string ToString() => $"{Type} | {HostName} | {Port} | {UserName} | {Password} | {Secret}";
 
 	#endregion
 }

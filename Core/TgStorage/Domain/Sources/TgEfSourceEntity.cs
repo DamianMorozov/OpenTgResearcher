@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Sources;
 
-/// <summary> Source entity </summary>
+/// <summary> EF source entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(DtChanged))]
@@ -18,7 +18,7 @@
 [Index(nameof(IsFileNamingByMessage))]
 [Index(nameof(IsRestrictSavingContent))]
 [Index(nameof(IsSubscribe))]
-public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
+public sealed class TgEfSourceEntity : ITgEfSourceEntity
 {
 	#region Fields, properties, constructor
 
@@ -113,8 +113,8 @@ public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
     [Column(TgEfConstants.ColumnIsSubscribe, TypeName = "BIT")]
     public bool IsSubscribe { get; set; }
 
+    public ICollection<TgEfChatUserEntity> ChatUsers { get; set; } = null!;
     public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
-
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
 
     public TgEfSourceEntity() => Default();
@@ -123,12 +123,14 @@ public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() =>
         $"{TgEfConstants.TableSources} | {Uid} | {Id} | {(IsAutoUpdate ? "a" : " ")} | {(FirstId == Count ? "v" : "x")} | {UserName} | " +
         $"{(string.IsNullOrEmpty(Title) 
 	        ? string.Empty 
 	        : TgDataFormatUtils.TrimStringEnd(Title))} | {FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";
 
+    /// <inheritdoc />
     public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -148,35 +150,11 @@ public sealed class TgEfSourceEntity : ITgEfIdEntity<TgEfSourceEntity>
 		IsFileNamingByMessage = this.GetDefaultPropertyBool(nameof(IsFileNamingByMessage));
         IsRestrictSavingContent = this.GetDefaultPropertyBool(nameof(IsRestrictSavingContent));
         IsSubscribe = this.GetDefaultPropertyBool(nameof(IsSubscribe));
-	    Documents = [];
+
+        ChatUsers = [];
+        Documents = [];
         Messages = [];
     }
-
-    public TgEfSourceEntity Copy(TgEfSourceEntity item, bool isUidCopy)
-    {
-		if (isUidCopy)
-        {
-			Uid = item.Uid;
-            // Unique key
-            Id = item.Id;
-        }
-		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
-		AccessHash = item.AccessHash;
-		IsActive = item.IsActive;
-		FirstId = item.FirstId;
-		UserName = item.UserName;
-		Title = item.Title;
-		About = item.About;
-		Count = item.Count;
-		Directory = item.Directory;
-		IsAutoUpdate = item.IsAutoUpdate;
-		IsCreatingSubdirectories = item.IsCreatingSubdirectories;
-		IsUserAccess = item.IsUserAccess;
-		IsFileNamingByMessage = item.IsFileNamingByMessage;
-        IsRestrictSavingContent = item.IsRestrictSavingContent;
-        IsSubscribe = item.IsSubscribe;
-        return this;
-	}
 
 	public string GetPercentCountString()
     {

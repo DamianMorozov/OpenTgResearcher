@@ -30,6 +30,7 @@ global using TgInfrastructure.ViewModels;
 global using TgStorage.Common;
 global using TgStorage.Contracts;
 global using TgStorage.Domain.Apps;
+global using TgStorage.Domain.ChatUsers;
 global using TgStorage.Domain.Documents;
 global using TgStorage.Domain.Filters;
 global using TgStorage.Domain.Licenses;

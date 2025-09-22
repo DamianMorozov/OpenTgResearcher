@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Common;
 
 /// <summary> Empty DTO </summary>
-public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto<TgEmptyEntity, TgEfEmptyDto>
+public sealed partial class TgEfEmptyDto : TgDtoBase, ITgDto
 {
 	#region Fields, properties, constructor
 

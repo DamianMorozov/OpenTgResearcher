@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Users;
 
-/// <summary> User DTO </summary>
-public sealed partial class TgEfUserDto : TgDtoBase, ITgDto<TgEfUserEntity, TgEfUserDto>
+/// <summary> EF user DTO </summary>
+public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
 {
     #region Fields, properties, constructor
 
@@ -85,8 +85,10 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgDto<TgEfUserEntity, TgEf
 
     #region Private methods
 
+    /// <inheritdoc />
     public override string ToString() => $"{Id} | {AccessHash}";
 
+    /// <inheritdoc />
     public override string ToConsoleString()
     {
         var name = TgDataFormatUtils.GetFormatString(FirstName, 30).TrimEnd();
@@ -99,6 +101,7 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgDto<TgEfUserEntity, TgEf
             $"{name,-40}";
     }
 
+    /// <inheritdoc />
     public override string ToConsoleHeaderString() =>
         $"{nameof(Id),11} | " +
         $"{TgDataFormatUtils.GetFormatString(nameof(UserName), 25).TrimEnd(),-25} | " +
@@ -106,94 +109,13 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgDto<TgEfUserEntity, TgEf
         $"{TgDataFormatUtils.GetFormatString(nameof(PhoneNumber), 11).TrimEnd(),-11} | " +
         $"Name";
 
-    public TgEfUserDto Copy(TgEfUserDto dto, bool isUidCopy)
-    {
-        base.Copy(dto, isUidCopy);
-        DtChanged = dto.DtChanged;
-        Id = dto.Id;
-        AccessHash = dto.AccessHash;
-        IsContactActive = dto.IsContactActive;
-        IsBot = dto.IsBot;
-        FirstName = dto.FirstName;
-        LastName = dto.LastName;
-        UserName = dto.UserName;
-        UserNames = dto.UserNames;
-        PhoneNumber = dto.PhoneNumber;
-        Status = dto.Status;
-        RestrictionReason = dto.RestrictionReason;
-        LangCode = dto.LangCode;
-        IsContact = dto.IsContact;
-        IsDeleted = dto.IsDeleted;
-        StoriesMaxId = dto.StoriesMaxId;
-        BotInfoVersion = dto.BotInfoVersion;
-        BotInlinePlaceholder = dto.BotInlinePlaceholder;
-        BotActiveUsers = dto.BotActiveUsers;
-        IsDownload = dto.IsDownload;
-        CountMessages = dto.CountMessages;
-        return this;
-    }
-
-    public TgEfUserDto Copy(TgEfUserEntity item, int countMessages, bool isUidCopy) => Copy(item, isUidCopy).SetCountMessages(countMessages);
-
-    private TgEfUserDto SetCountMessages(int countMessages)
+    public TgEfUserDto SetCountMessages(int countMessages)
     {
         CountMessages = countMessages;
         return this;
     }
 
-    public TgEfUserDto Copy(TgEfUserEntity item, bool isUidCopy)
-    {
-        if (isUidCopy)
-            Uid = item.Uid;
-        DtChanged = item.DtChanged;
-        Id = item.Id;
-        AccessHash = item.AccessHash;
-        IsContactActive = item.IsActive;
-        IsBot = item.IsBot;
-        FirstName = item.FirstName ?? string.Empty;
-        LastName = item.LastName ?? string.Empty;
-        UserName = item.UserName ?? string.Empty;
-        UserNames = item.UserNames ?? string.Empty;
-        PhoneNumber = item.PhoneNumber ?? string.Empty;
-        Status = GetShortStatus(item.Status ?? string.Empty);
-        RestrictionReason = item.RestrictionReason ?? string.Empty;
-        LangCode = item.LangCode ?? string.Empty;
-        IsContact = item.IsContact;
-        IsDeleted = item.IsDeleted;
-        StoriesMaxId = item.StoriesMaxId;
-        BotInfoVersion = item.BotInfoVersion ?? string.Empty;
-        BotInlinePlaceholder = item.BotInlinePlaceholder ?? string.Empty;
-        BotActiveUsers = item.BotActiveUsers;
-        IsDownload = false;
-        CountMessages = 0;
-        return this;
-    }
-
-    public TgEfUserEntity GetEntity() => new()
-    {
-        Uid = Uid,
-        DtChanged = DtChanged,
-        Id = Id,
-        AccessHash = AccessHash,
-        IsActive = IsContactActive,
-        IsBot = IsBot,
-        FirstName = FirstName,
-        LastName = LastName,
-        UserName = UserName,
-        UserNames = UserNames,
-        PhoneNumber = PhoneNumber,
-        Status = GetShortStatus(Status),
-        RestrictionReason = RestrictionReason,
-        LangCode = LangCode,
-        IsContact = IsContact,
-        IsDeleted = IsDeleted,
-        StoriesMaxId = StoriesMaxId,
-        BotInfoVersion = BotInfoVersion,
-        BotInlinePlaceholder = BotInlinePlaceholder,
-        BotActiveUsers = BotActiveUsers,
-    };
-
-    private string GetShortStatus(string status) => status switch
+    public string GetShortStatus(string status) => status switch
     {
         nameof(TL.UserStatusLastMonth) => "LastMonth",
         "TL." + nameof(TL.UserStatusLastMonth) => "LastMonth",

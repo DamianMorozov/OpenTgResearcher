@@ -24,21 +24,19 @@ public sealed partial class TgEfLicenseViewModel : TgEntityViewModelBase<TgEfLic
 		Fill(item);
 	}
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => Dto.ToString();
+    /// <inheritdoc />
+    public override string ToString() => Dto.ToString();
 
-	public override string ToDebugString() => Dto.ToDebugString();
+    /// <inheritdoc />
+    public override string ToDebugString() => Dto.ToDebugString();
 
-	public void Fill(TgEfLicenseEntity item)
-	{
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    public void Fill(TgEfLicenseEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-	public async Task<TgEfStorageResult<TgEfLicenseEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
+    public async Task<TgEfStorageResult<TgEfLicenseEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
 
-	#endregion
+    #endregion
 }

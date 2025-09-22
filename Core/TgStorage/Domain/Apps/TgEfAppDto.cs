@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Apps;
 
-/// <summary> App DTO </summary>
-public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAppDto>
+/// <summary> EF app DTO </summary>
+public sealed partial class TgEfAppDto : TgDtoBase, ITgEfAppDto
 {
 	#region Fields, properties, constructor
 
@@ -49,62 +49,12 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgDto<TgEfAppEntity, TgEfAp
         UseClient = false;
     }
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => $"{ApiHash} | {ApiId}";
+    /// <inheritdoc />
+    public override string ToString() => $"{ApiHash} | {ApiId}";
 	
-	public TgEfAppDto Copy(TgEfAppDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		ApiHash = dto.ApiHash;
-		ApiId = dto.ApiId;
-		FirstName = dto.FirstName;
-		LastName = dto.LastName;
-		PhoneNumber = dto.PhoneNumber;
-		ProxyUid = dto.ProxyUid;
-		UseBot = dto.UseBot;
-		BotTokenKey = dto.BotTokenKey;
-        UseClient = dto.UseClient;
-        return this;
-	}
-
-	public TgEfAppDto Copy(TgEfAppEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		ApiHash = item.ApiHash;
-		ApiId = item.ApiId;
-		FirstName = item.FirstName;
-		LastName = item.LastName;
-		PhoneNumber = item.PhoneNumber;
-		ProxyUid = item.ProxyUid ?? Guid.Empty;
-		UseBot = item.UseBot;
-		BotTokenKey = item.BotTokenKey;
-        UseClient = item.UseClient;
-		return this;
-	}
-
-    public TgEfAppEntity GetEntity()
-    {
-        var item = new TgEfAppEntity()
-        {
-            Uid = Uid,
-            ApiHash = ApiHash,
-            ApiId = ApiId,
-            FirstName = FirstName,
-            LastName = LastName,
-            PhoneNumber = PhoneNumber,
-            ProxyUid = ProxyUid,
-            BotTokenKey = BotTokenKey,
-        };
-        if (UseBot)
-            item.SetUseBot(UseBot);
-        else if (UseClient)
-            item.SetUseClient(UseClient);
-        return item;
-    }
-
     #endregion
 }

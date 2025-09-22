@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Documents;
 
-/// <summary> Document entity </summary>
+/// <summary> EF document entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(SourceId))]
@@ -9,7 +9,7 @@
 [Index(nameof(FileName))]
 [Index(nameof(FileSize))]
 [Index(nameof(AccessHash))]
-public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
+public sealed class TgEfDocumentEntity : ITgEfDocumentEntity
 {
 	#region Fields, properties, constructor
 
@@ -66,24 +66,12 @@ public sealed class TgEfDocumentEntity : ITgEfEntity<TgEfDocumentEntity>
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
+        Source = null;
 	    Id = this.GetDefaultPropertyLong(nameof(Id));
 	    MessageId = this.GetDefaultPropertyInt(nameof(MessageId));
 	    FileName = this.GetDefaultPropertyString(nameof(FileName));
 	    FileSize = this.GetDefaultPropertyLong(nameof(FileSize));
 	    AccessHash = this.GetDefaultPropertyLong(nameof(AccessHash));
-	}
-
-    public TgEfDocumentEntity Copy(TgEfDocumentEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		SourceId = item.SourceId;
-		Id = item.Id;
-		MessageId = item.MessageId;
-		FileName = item.FileName;
-		FileSize = item.FileSize;
-		AccessHash = item.AccessHash;
-		return this;
 	}
 
 	#endregion

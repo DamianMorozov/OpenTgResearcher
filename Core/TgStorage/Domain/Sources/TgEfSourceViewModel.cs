@@ -25,21 +25,19 @@ public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSour
 		Fill(item);
 	}
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => Dto.ToString();
+    /// <inheritdoc />
+    public override string ToString() => Dto.ToString();
 
-	public override string ToDebugString() => Dto.ToDebugString();
+    /// <inheritdoc />
+    public override string ToDebugString() => Dto.ToDebugString();
 
-	public void Fill(TgEfSourceEntity item)
-    {
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    public void Fill(TgEfSourceEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-	public async Task<TgEfStorageResult<TgEfSourceEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
+    public async Task<TgEfStorageResult<TgEfSourceEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
 
 	#endregion
 }

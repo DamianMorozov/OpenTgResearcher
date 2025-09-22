@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Documents;
 
-/// <summary> Contact DTO </summary>
-public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEntity, TgEfDocumentDto>
+/// <summary> EF contact DTO </summary>
+public sealed partial class TgEfDocumentDto : TgDtoBase, ITgEfDocumentDto
 {
 	#region Fields, properties, constructor
 
@@ -28,47 +28,12 @@ public sealed partial class TgEfDocumentDto : TgDtoBase, ITgDto<TgEfDocumentEnti
 		AccessHash = 0;
 	}
 
-	#endregion
+    #endregion
 
-	#region Private methods
+    #region Private methods
 
-	public override string ToString() => $"{SourceId} | {Id} | {AccessHash}";
-
-	public TgEfDocumentDto Copy(TgEfDocumentDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		SourceId = dto.SourceId;
-		Id = dto.Id;
-		MessageId = dto.MessageId;
-		FileName = dto.FileName;
-		FileSize = dto.FileSize;
-		AccessHash = dto.AccessHash;
-		return this;
-	}
-
-	public TgEfDocumentDto Copy(TgEfDocumentEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		SourceId = item.SourceId;
-		Id = item.Id;
-		MessageId = item.MessageId;
-		FileName = item.FileName;
-		FileSize = item.FileSize;
-		AccessHash = item.AccessHash;
-		return this;
-	}
-
-	public TgEfDocumentEntity GetEntity() => new()
-	{
-		Uid = Uid,
-		SourceId = SourceId,
-		Id = Id,
-		MessageId = MessageId,
-		FileName = FileName,
-		FileSize = FileSize,
-		AccessHash = AccessHash,
-	};
+    /// <inheritdoc />
+    public override string ToString() => $"{SourceId} | {Id} | {AccessHash}";
 
 	#endregion
 }

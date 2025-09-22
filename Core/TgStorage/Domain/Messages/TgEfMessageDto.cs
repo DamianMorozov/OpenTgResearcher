@@ -1,8 +1,8 @@
 ﻿namespace TgStorage.Domain.Messages;
 
-/// <summary> Message DTO </summary>
+/// <summary> EF message DTO </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity, TgEfMessageDto>
+public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
 {
 	#region Fields, properties, constructor
 
@@ -131,63 +131,12 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgDto<TgEfMessageEntity
 		Type = TgEnumMessageType.Message;
 		Size = 0;
 		Message = string.Empty;
+        UserId = 0;
+        IsDeleted = false;
         Direction = TgEnumDirection.Default;
         Directory = string.Empty;
-        UserId = 0;
         UserContact = string.Empty;
-        IsDeleted = false;
     }
 
 	#endregion
-
-	#region Methods
-
-	public TgEfMessageDto Copy(TgEfMessageDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		DtCreated = dto.DtCreated;
-		SourceId = dto.SourceId;
-		Id = dto.Id;
-        Type = dto.Type;
-		Size = dto.Size;
-		Message = dto.Message;
-		Direction = dto.Direction;
-        Directory = dto.Directory;
-        UserId = dto.UserId;
-        UserContact = dto.UserContact;
-        IsDeleted = dto.IsDeleted;
-        return this;
-	}
-
-	public TgEfMessageDto Copy(TgEfMessageEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		DtCreated = item.DtCreated;
-		SourceId = item.SourceId;
-		Id = item.Id;
-        Type = item.Type;
-		Size = item.Size;
-		Message = item.Message;
-		Direction = TgEnumDirection.Default;
-        Directory = string.Empty;
-        UserId = item.UserId;
-        IsDeleted = item.IsDeleted;
-        return this;
-	}
-
-	public TgEfMessageEntity GetEntity() => new()
-	{
-		Uid = Uid,
-		DtCreated = DtCreated,
-		SourceId = SourceId,
-		Id = Id,
-		Type = Type,
-		Size = Size,
-		Message = Message,
-        UserId = UserId,
-        IsDeleted = IsDeleted,
-    };
-
-    #endregion
 }

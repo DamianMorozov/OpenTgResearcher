@@ -1,26 +1,23 @@
 namespace TgStorage.Common;
 
 /// <summary> Empty entity </summary>
-public sealed class TgEmptyEntity : ITgEfEntity<TgEmptyEntity>
+public sealed class TgEmptyEntity : ITgEfEntity
 {
 	#region Fields, properties, constructor
 
 	[DefaultValue("00000000-0000-0000-0000-000000000000")]
 	public Guid Uid { get; set; }
 
-	/// <summary> Default constructor </summary>
-	public TgEmptyEntity()
-	{
-		Default();
-	}
+    /// <summary> Default constructor </summary>
+    public TgEmptyEntity() => Default();
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public string ToDebugString() => $"{Uid}";
+    public string ToDebugString() => $"{Uid}";
 
-	private void Default()
+	public void Default()
 	{
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 	}

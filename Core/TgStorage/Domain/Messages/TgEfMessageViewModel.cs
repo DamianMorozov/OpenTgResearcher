@@ -35,11 +35,7 @@ public sealed partial class TgEfMessageViewModel : TgEntityViewModelBase<TgEfMes
 
 	public override string ToDebugString() => Dto.ToDebugString();
 
-	public void Fill(TgEfMessageEntity item)
-	{
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    public void Fill(TgEfMessageEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-	#endregion
+    #endregion
 }

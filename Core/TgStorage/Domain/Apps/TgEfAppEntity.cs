@@ -1,13 +1,13 @@
 ﻿namespace TgStorage.Domain.Apps;
 
-/// <summary> App entity </summary>
+/// <summary> EF app entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(ApiHash), IsUnique = true)]
 [Index(nameof(ApiId))]
 [Index(nameof(PhoneNumber))]
 [Index(nameof(ProxyUid))]
-public sealed class TgEfAppEntity : ITgEfEntity<TgEfAppEntity>
+public sealed class TgEfAppEntity : ITgEfAppEntity
 {
 	#region Fields, properties, constructor
 

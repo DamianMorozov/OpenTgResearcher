@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Messages;
 
-/// <summary> Message entity </summary>
+/// <summary> EF message entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(SourceId))]
@@ -10,7 +10,8 @@
 [Index(nameof(Size))]
 [Index(nameof(Message))]
 [Index(nameof(UserId))]
-public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
+[Index(nameof(IsDeleted))]
+public sealed class TgEfMessageEntity : ITgEfMessageEntity
 {
 	#region Fields, properties, constructor
 
@@ -63,21 +64,21 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
     [Column(TgEfConstants.ColumnIsDeleted, TypeName = "BIT")]
     public bool IsDeleted { get; set; }
 
-    public TgEfMessageEntity()
-    {
-        Default();
-	}
+    public TgEfMessageEntity() => Default();
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    /// <inheritdoc />
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    /// <inheritdoc />
 	public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		SourceId = this.GetDefaultPropertyLong(nameof(SourceId));
+        Source = null;
 		Id = this.GetDefaultPropertyInt(nameof(Id));
 	    DtCreated = this.GetDefaultPropertyDateTime(nameof(DtCreated));
 		Type = this.GetDefaultPropertyGeneric<TgEnumMessageType>(nameof(Type));
@@ -86,21 +87,6 @@ public sealed class TgEfMessageEntity : ITgEfEntity<TgEfMessageEntity>
         UserId = this.GetDefaultPropertyLong(nameof(UserId));
         IsDeleted = this.GetDefaultPropertyBool(nameof(IsDeleted));
     }
-
-    public TgEfMessageEntity Copy(TgEfMessageEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		SourceId = item.SourceId;
-		Id = item.Id;
-		DtCreated = item.DtCreated > DateTime.MinValue ? item.DtCreated : DateTime.Now;
-		Type = item.Type;
-		Size = item.Size;
-		Message = item.Message;
-        UserId = item.UserId;
-        IsDeleted = item.IsDeleted;
-        return this;
-	}
 
 	#endregion
 }

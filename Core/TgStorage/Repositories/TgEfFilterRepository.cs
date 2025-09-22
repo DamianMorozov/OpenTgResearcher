@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> Filter repository </summary>
+/// <summary> EF filter repository </summary>
 public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, TgEfFilterDto>, ITgEfFilterRepository
 {
 	#region Fields, properties, constructor

@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> User repository </summary>
+/// <summary> EF user repository </summary>
 public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEfUserDto>, ITgEfUserRepository
 {
 	#region Fields, properties, constructor
@@ -135,7 +135,7 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
             .OrderByDescending(x => x.User.Id == userId)
             .ToListAsync(ct);
 
-        return [.. tmp.Select(x => new TgEfUserDto().Copy(x.User, x.MsgCount, isUidCopy: true))];
+        return [.. tmp.Select(x => TgEfDomainUtils.CreateNewDto(x.User, x.MsgCount, isUidCopy: true))];
     }
 
     /// <inheritdoc />

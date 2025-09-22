@@ -144,7 +144,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     {
                         _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
                         // Save updated FirstId to database
-                        await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto.GetEntity(), ct: ct);
+                        var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
+                        await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
                     }
                 }
             },
@@ -162,7 +163,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, _downloadSettings.SourceVm.Dto.Count);
                     _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
                     // Save updated FirstId to database
-                    await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto.GetEntity(), ct: ct);
+                    var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
+                    await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
                 }
             });
 

@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> Proxy repository </summary>
+/// <summary> EF proxy repository </summary>
 public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
 {
 	#region Fields, properties, constructor

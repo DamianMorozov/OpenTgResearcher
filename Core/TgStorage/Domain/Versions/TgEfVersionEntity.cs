@@ -1,11 +1,11 @@
 ﻿namespace TgStorage.Domain.Versions;
 
-/// <summary> Version entity </summary>
+/// <summary> EF version entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(Version), IsUnique = true)]
 [Index(nameof(Description))]
-public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
+public sealed class TgEfVersionEntity : ITgEfVersionEntity
 {
 	#region Fields, properties, constructor
 
@@ -34,26 +34,16 @@ public sealed class TgEfVersionEntity : ITgEfEntity<TgEfVersionEntity>
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    /// <inheritdoc />
 	public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
 		Version = this.GetDefaultPropertyShort(nameof(Version));
 	    Description = this.GetDefaultPropertyString(nameof(Description));
     }
-
-    public TgEfVersionEntity Copy(TgEfVersionEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-        {
-			Uid = item.Uid;
-            // Unique key
-            Version = item.Version;
-        }
-		Description = item.Description;
-        return this;
-	}
 
 	#endregion
 }

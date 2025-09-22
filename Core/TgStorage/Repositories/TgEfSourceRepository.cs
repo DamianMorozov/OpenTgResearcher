@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> Source repository </summary>
+/// <summary> EF source repository </summary>
 public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, TgEfSourceDto>, ITgEfSourceRepository
 {
 	#region Fields, properties, constructor
@@ -120,7 +120,8 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
 			if (itemFind is not null)
 				return new(TgEnumEntityState.IsExists, itemFind);
 		}
-		// Find by UserName
+		
+        // Find by UserName
 		if (!string.IsNullOrEmpty(dto.UserName))
 		{
 			itemFind = GetQuery(isReadOnly).FirstOrDefault(x => x.UserName == dto.UserName);
@@ -235,7 +236,8 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
             return new TgEfSourceDto();
 
         // Convert to DTO
-        return new TgEfSourceDto().Copy(sourceEntity, isUidCopy: true);
+        var sourceDto = TgEfDomainUtils.CreateNewDto(sourceEntity, isUidCopy: true);
+        return sourceDto;
     }
 
     #endregion

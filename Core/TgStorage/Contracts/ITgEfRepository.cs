@@ -1,8 +1,8 @@
 ﻿namespace TgStorage.Contracts;
 
 public interface ITgEfRepository<TEfEntity, TDto> 
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-    where TDto : class, ITgDto<TEfEntity, TDto>, new()
+	where TEfEntity : class, ITgEfEntity, new()
+    where TDto : class, ITgDto, new()
 {
     #region Methods
 

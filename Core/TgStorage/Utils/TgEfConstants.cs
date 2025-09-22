@@ -7,6 +7,7 @@ public static class TgEfConstants
 
 	public const string TableApps = "APPS";
 	public const string TableBots = "BOTS";
+	public const string TableChatUsers = "CHAT_USERS";
 	public const string TableDocuments = "DOCUMENTS";
 	public const string TableFilters = "FILTERS";
 	public const string TableLicenses = "LICENSES";
@@ -32,6 +33,7 @@ public static class TgEfConstants
 	public const string ColumnBotToken = "BOT_TOKEN";
 	public const string ColumnBotTokenKey = "BOT_TOKEN_KEY";
 	public const string ColumnCaption = "CAPTION";
+	public const string ColumnChatId = "CHAT_ID";
 	public const string ColumnChildMessageId = "CHILD_MESSAGE_ID";
 	public const string ColumnChildSourceId = "CHILD_SOURCE_ID";
 	public const string ColumnCount = "COUNT";
@@ -60,9 +62,11 @@ public static class TgEfConstants
 	public const string ColumnIsDeleted = "IS_DELETED";
 	public const string ColumnIsEnabled = "IS_ENABLED";
 	public const string ColumnIsFileNamingByMessage = "IS_FILE_NAMING_BY_MESSAGE";
+	public const string ColumnIsMuted = "IS_MUTED";
 	public const string ColumnIsRestrictSavingContent = "IS_RESTRICT_SAVING_CONTENT";
 	public const string ColumnIsSubscribe = "IS_SUBSCRIBE";
 	public const string ColumnIsUserAccess = "IS_USER_ACCESS";
+	public const string ColumnJoinedAt = "JOINED_AT";
 	public const string ColumnLangCode = "LANG_CODE";
 	public const string ColumnLastName = "LAST_NAME";
 	public const string ColumnLength = "LENGTH";
@@ -71,6 +75,7 @@ public static class TgEfConstants
 	public const string ColumnMask = "MASK";
 	public const string ColumnMessage = "MESSAGE";
 	public const string ColumnMessageId = "MESSAGE_ID";
+	public const string ColumnMutedUntil = "MUTED_UNTIL";
 	public const string ColumnName = "NAME";
 	public const string ColumnOffset = "OFFSET";
 	public const string ColumnParentId = "PARENT_ID";
@@ -81,6 +86,7 @@ public static class TgEfConstants
 	public const string ColumnPort = "PORT";
 	public const string ColumnProxyUid = "PROXY_UID";
 	public const string ColumnRestrictionReason = "RESTRICTION_REASON";
+	public const string ColumnRole = "ROLE";
 	public const string ColumnRowVersion = "RowVersion";
 	public const string ColumnSecret = "SECRET";
 	public const string ColumnSize = "SIZE";

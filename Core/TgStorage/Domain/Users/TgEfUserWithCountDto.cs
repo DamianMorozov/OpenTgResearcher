@@ -11,13 +11,14 @@ public sealed partial class TgEfUserWithCountDto : TgDtoBase
     public partial int Count { get; set; }
 
 
-    public TgEfUserWithCountDto() : base() => DefaultValues();
+    public TgEfUserWithCountDto() : base() => Default();
 
     #endregion
 
     #region Methods
 
-    public void DefaultValues()
+    /// <inheritdoc />
+    public void Default()
     {
         UserDto = new();
         Count = 0;

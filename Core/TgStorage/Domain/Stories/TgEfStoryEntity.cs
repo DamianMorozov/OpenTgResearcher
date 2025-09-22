@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Stories;
 
-/// <summary> Story entity </summary>
+/// <summary> EF story entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(DtChanged))]
@@ -11,7 +11,7 @@
 [Index(nameof(ExpireDate))]
 [Index(nameof(Caption))]
 [Index(nameof(Type))]
-public sealed class TgEfStoryEntity : ITgEfIdEntity<TgEfStoryEntity>
+public sealed class TgEfStoryEntity : ITgEfStoryEntity
 {
 	#region Fields, properties, constructor
 
@@ -87,8 +87,10 @@ public sealed class TgEfStoryEntity : ITgEfIdEntity<TgEfStoryEntity>
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    /// <inheritdoc />
     public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -104,27 +106,6 @@ public sealed class TgEfStoryEntity : ITgEfIdEntity<TgEfStoryEntity>
 		Length = this.GetDefaultPropertyInt(nameof(Length));
 		Message = this.GetDefaultPropertyString(nameof(Message));
     }
-
-    public TgEfStoryEntity Copy(TgEfStoryEntity item, bool isUidCopy)
-    {
-		if (isUidCopy)
-        {
-			Uid = item.Uid;
-            // Unique key
-			Id = item.Id;
-            FromId = item.FromId;
-        }
-		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
-		FromName = item.FromName;
-		Date = item.Date;
-		ExpireDate = item.ExpireDate;
-		Caption = item.Caption;
-		Type = item.Type;
-		Offset = item.Offset;
-		Length = item.Length;
-		Message = item.Message;
-        return this;
-	}
 
 	#endregion
 }

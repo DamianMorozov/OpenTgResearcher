@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Proxies;
 
-/// <summary> Proxy entity </summary>
+/// <summary> EF proxy entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(Type))]
@@ -9,7 +9,7 @@
 [Index(nameof(UserName))]
 [Index(nameof(Password))]
 [Index(nameof(Secret))]
-public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<TgEfProxyEntity>
+public sealed class TgEfProxyEntity : ITgDbProxy, ITgEfProxyEntity
 {
 	#region Fields, properties, constructor
 
@@ -62,10 +62,12 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() =>
         $"{TgEfConstants.TableProxies} | {Uid} | {Type} | {HostName} | {Port} | {UserName} | {Password} | " +
         $"{TgDataUtils.GetIsFlag(!string.IsNullOrEmpty(Secret), Secret, "<No secret>")}";
 
+    /// <inheritdoc />
     public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -76,19 +78,6 @@ public sealed class TgEfProxyEntity : ITgDbProxy<TgEfProxyEntity>, ITgEfEntity<T
 	    Password = this.GetDefaultPropertyString(nameof(Password));
 	    Secret = this.GetDefaultPropertyString(nameof(Secret));
 	    Apps = [];
-    }
-
-    public TgEfProxyEntity Copy(TgEfProxyEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		Type = item.Type;
-	    HostName = item.HostName;
-	    Port = item.Port;
-	    UserName = item.UserName;
-	    Password = item.Password;
-	    Secret = item.Secret;
-        return this;
     }
 
 	#endregion

@@ -54,7 +54,7 @@ public static class TgGlobalTools
     /// <typeparam name="TEfEntity"> Type of entity </typeparam>
     /// <param name="item"> Entity </param>
     public static FluentValidation.Results.ValidationResult GetEfValid<TEfEntity>(TEfEntity item)
-        where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
+        where TEfEntity : class, ITgEfEntity, new() =>
         item switch
         {
             TgEfAppEntity app => new TgEfAppValidator().Validate(app),
@@ -75,8 +75,8 @@ public static class TgGlobalTools
     /// <typeparam name="TDto"> Type of DTO </typeparam>
     /// <param name="item"> DTO </param>
     public static FluentValidation.Results.ValidationResult GetValidDto<TEfEntity, TDto>(TDto item)
-        where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-        where TDto : class, ITgDto<TEfEntity, TDto>, new() =>
+        where TEfEntity : class, ITgEfEntity, new()
+        where TDto : class, ITgDto, new() =>
         item switch
         {
             TgEfProxyDto proxy => new TgProxyDtoValidator().Validate(proxy),
@@ -86,7 +86,7 @@ public static class TgGlobalTools
     /// <summary> Normalize entity </summary>
     /// <typeparam name="TEfEntity"> Type of entity </typeparam>
     /// <param name="item"> Entity </param>
-    public static void Normalize<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+    public static void Normalize<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity, new()
     {
         switch (item)
         {
@@ -119,11 +119,11 @@ public static class TgGlobalTools
             item.Uid = Guid.NewGuid();
     }
 
-    public static Expression<Func<TEfEntity, bool>> WhereUidNotEmpty<TEfEntity>() where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
+    public static Expression<Func<TEfEntity, bool>> WhereUidNotEmpty<TEfEntity>() where TEfEntity : class, ITgEfEntity, new() =>
         x => x.Uid != Guid.Empty;
 
-    public static Expression<Func<TEfEntity, List<TEfEntity>, bool>> WhereUidNotEquals<TEfEntity>() where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
-        (itemFrom, itemsTo) => itemsTo.All(itemTo => itemTo.Uid.ToString().ToUpper() != itemFrom.Uid.ToString().ToUpper());
+    public static Expression<Func<TEfEntity, List<TEfEntity>, bool>> WhereUidNotEquals<TEfEntity>() where TEfEntity : class, ITgEfEntity, new() =>
+        (itemFrom, itemsTo) => itemsTo.All(itemTo => !itemTo.Uid.ToString().Equals(itemFrom.Uid.ToString(), StringComparison.OrdinalIgnoreCase));
 
     #endregion
 }

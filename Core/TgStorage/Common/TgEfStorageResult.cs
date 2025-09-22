@@ -2,7 +2,7 @@
 
 /// <summary> EF storage result </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfEntity<TEfEntity>, new ()
+public sealed class TgEfStorageResult<TEfEntity> where TEfEntity : class, ITgEfEntity, new ()
 {
 	#region Fields, properties, constructor
 

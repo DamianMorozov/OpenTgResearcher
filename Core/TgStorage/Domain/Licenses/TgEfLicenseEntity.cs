@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Licenses;
 
-/// <summary> License entity </summary>
+/// <summary> EF license entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(LicenseKey), IsUnique = true)]
@@ -8,7 +8,7 @@
 [Index(nameof(LicenseType))]
 [Index(nameof(ValidTo))]
 [Index(nameof(IsConfirmed))]
-public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
+public sealed class TgEfLicenseEntity : ITgEfLicenseEntity
 {
 	#region Fields, properties, constructor
 
@@ -51,8 +51,10 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    /// <inheritdoc />
 	public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -61,18 +63,6 @@ public sealed class TgEfLicenseEntity : ITgEfEntity<TgEfLicenseEntity>
 		LicenseType = TgEnumLicenseType.No;
 		ValidTo = this.GetDefaultPropertyDateTime(nameof(ValidTo));
 		IsConfirmed = this.GetDefaultPropertyBool(nameof(IsConfirmed));
-    }
-
-	public TgEfLicenseEntity Copy(TgEfLicenseEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		LicenseKey = item.LicenseKey;
-		UserId = item.UserId;
-		LicenseType = item.LicenseType;
-		ValidTo = item.ValidTo;
-		IsConfirmed = item.IsConfirmed;
-		return this;
     }
 
 	#endregion

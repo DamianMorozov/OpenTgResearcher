@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Sources;
 
-/// <summary> Source DTO </summary>
-public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, TgEfSourceDto>
+/// <summary> EF source DTO </summary>
+public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
 {
     #region Fields, properties, constructor
 
@@ -109,8 +109,10 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
         return percent > 9 ? $" {percent:00.00} %" : $"  {percent:0.00} %";
     }
 
+    /// <inheritdoc />
     public override string ToString() => ProgressPercentString;
 
+    /// <inheritdoc />
     public override string ToConsoleString() =>
         $"{Id,11} | " +
         $"{(IsSubscribe ? "subscribe" : ""),-9} | " +
@@ -122,6 +124,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
         $"{TgDataFormatUtils.GetFormatString(Title, 30).TrimEnd(),-30} | " +
         $"{FirstId} {TgLocaleHelper.Instance.From} {Count} {TgLocaleHelper.Instance.Messages}";
 
+    /// <inheritdoc />
     public override string ToConsoleHeaderString() =>
         $"{nameof(Id),11} | " +
         $"Subscribe | " +
@@ -132,77 +135,6 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgDto<TgEfSourceEntity, 
         $"%        | " +
         $"{nameof(Title),-30} | " +
         $"Progress";
-
-    public TgEfSourceDto Copy(TgEfSourceDto dto, bool isUidCopy)
-    {
-        base.Copy(dto, isUidCopy);
-        DtChanged = dto.DtChanged;
-        Id = dto.Id;
-        AccessHash = dto.AccessHash;
-        IsSourceActive = dto.IsActive;
-        UserName = dto.UserName;
-        Title = dto.Title;
-        About = dto.About;
-        FirstId = dto.FirstId;
-        Count = dto.Count;
-        Directory = dto.Directory;
-        IsAutoUpdate = dto.IsAutoUpdate;
-        IsCreatingSubdirectories = dto.IsCreatingSubdirectories;
-        IsUserAccess = dto.IsUserAccess;
-        IsDownload = dto.IsDownload;
-        CurrentFileName = dto.CurrentFileName;
-        IsFileNamingByMessage = dto.IsFileNamingByMessage;
-        IsParsingComments = dto.IsParsingComments;
-        IsRestrictSavingContent = dto.IsRestrictSavingContent;
-        IsSubscribe = dto.IsSubscribe;
-        return this;
-    }
-
-    public TgEfSourceDto Copy(TgEfSourceEntity item, bool isUidCopy)
-    {
-        if (isUidCopy)
-            Uid = item.Uid;
-        DtChanged = item.DtChanged;
-        Id = item.Id;
-        AccessHash = item.AccessHash;
-        IsSourceActive = item.IsActive;
-        UserName = item.UserName ?? string.Empty;
-        Title = item.Title ?? string.Empty;
-        About = item.About ?? string.Empty;
-        FirstId = item.FirstId;
-        Count = item.Count;
-        Directory = item.Directory ?? string.Empty;
-        IsAutoUpdate = item.IsAutoUpdate;
-        IsCreatingSubdirectories = item.IsCreatingSubdirectories;
-        IsUserAccess = item.IsUserAccess;
-        IsFileNamingByMessage = item.IsFileNamingByMessage;
-        //IsParsingComments = item.IsParsingComments;
-        IsRestrictSavingContent = item.IsRestrictSavingContent;
-        IsSubscribe = item.IsSubscribe;
-        return this;
-    }
-
-    public TgEfSourceEntity GetEntity() => new()
-    {
-        Uid = Uid,
-        DtChanged = DtChanged,
-        Id = Id,
-        AccessHash = AccessHash,
-        IsActive = IsSourceActive,
-        UserName = UserName,
-        Title = Title,
-        About = About,
-        FirstId = FirstId,
-        Count = Count,
-        Directory = Directory,
-        IsAutoUpdate = IsAutoUpdate,
-        IsCreatingSubdirectories = IsCreatingSubdirectories,
-        IsUserAccess = IsUserAccess,
-        IsFileNamingByMessage = IsFileNamingByMessage,
-        //IsParsingComments = IsParsingComments,
-        IsRestrictSavingContent = IsRestrictSavingContent,
-        IsSubscribe = IsSubscribe,
-    };
 
     #endregion
 }

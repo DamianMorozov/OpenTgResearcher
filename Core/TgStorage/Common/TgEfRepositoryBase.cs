@@ -1,8 +1,8 @@
 ﻿namespace TgStorage.Common;
 
 public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfRepository<TEfEntity, TDto>, IDisposable
-    where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-    where TDto : class, ITgDto<TEfEntity, TDto>, new()
+    where TEfEntity : class, ITgEfEntity, new()
+    where TDto : class, ITgDto, new()
 {
     #region Fields, properties, constructor
 
@@ -47,6 +47,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     {
         var cls when cls == typeof(TgEfAppEntity) => $"{nameof(TgEfAppRepository)}",
         var cls when cls == typeof(TgEfUserEntity) => $"{nameof(TgEfUserRepository)}",
+        var cls when cls == typeof(TgEfChatUserEntity) => $"{nameof(TgEfChatUserRepository)}",
         var cls when cls == typeof(TgEfDocumentEntity) => $"{nameof(TgEfDocumentRepository)}",
         var cls when cls == typeof(TgEfFilterEntity) => $"{nameof(TgEfFilterRepository)}",
         var cls when cls == typeof(TgEfLicenseEntity) => $"{nameof(TgEfLicenseRepository)}",
@@ -88,6 +89,9 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             var cls when cls == typeof(TgEfUserEntity) => isReadOnly
                 ? (IQueryable<TEfEntity>)EfContext.Users.AsNoTracking()
                 : (IQueryable<TEfEntity>)EfContext.Users,
+            var cls when cls == typeof(TgEfChatUserEntity) => isReadOnly
+                ? (IQueryable<TEfEntity>)EfContext.ChatUsers.AsNoTracking()
+                : (IQueryable<TEfEntity>)EfContext.ChatUsers,
             var cls when cls == typeof(TgEfDocumentEntity) => isReadOnly
                 ? (IQueryable<TEfEntity>)EfContext.Documents.AsNoTracking()
                 : (IQueryable<TEfEntity>)EfContext.Documents,
@@ -345,7 +349,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     #region Methods - Read DTO
 
     /// <inheritdoc />
-    public Expression<Func<TEfEntity, TDto>> SelectDto() => item => new TDto().Copy(item, isUidCopy: true);
+    public Expression<Func<TEfEntity, TDto>> SelectDto() => item => (TDto)TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
     /// <inheritdoc />
     public async Task<TDto> GetDtoAsync(Expression<Func<TEfEntity, bool>> where, CancellationToken ct = default)
@@ -493,7 +497,13 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         // Entity is existing - Update
         else if (isRewrite)
         {
-            storageResult.Item.Copy(item, isUidCopy: false);
+            //var prepareEntity = TgEfDomainUtils.CreateNewEntity(item, isUidCopy: true);
+            //if (prepareEntity is TEfEntity entity)
+            //{
+            //    storageResult.Item = entity;
+            //}
+            // Fallback: simple property assignment
+            ((DbContext)EfContext).Entry(storageResult.Item!).CurrentValues.SetValues(item);
             EfContext.UpdateItem(storageResult.Item);
         }
         else
@@ -660,6 +670,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         {
             var cls when cls == typeof(TgEfAppEntity) => TgEfConstants.TableApps,
             var cls when cls == typeof(TgEfUserEntity) => TgEfConstants.TableUsers,
+            var cls when cls == typeof(TgEfChatUserEntity) => TgEfConstants.TableChatUsers,
             var cls when cls == typeof(TgEfDocumentEntity) => TgEfConstants.TableDocuments,
             var cls when cls == typeof(TgEfFilterEntity) => TgEfConstants.TableFilters,
             var cls when cls == typeof(TgEfLicenseEntity) => TgEfConstants.TableLicenses,

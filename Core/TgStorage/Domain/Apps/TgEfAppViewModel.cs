@@ -41,10 +41,7 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
     public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
     /// <summary> Release managed resources </summary>
-    public void ReleaseManagedResources()
-    {
-        Repository.Dispose();
-    }
+    public void ReleaseManagedResources() => Repository.Dispose();
 
     /// <summary> Release unmanaged resources </summary>
     public void ReleaseUnmanagedResources()
@@ -85,13 +82,9 @@ public sealed partial class TgEfAppViewModel : TgEntityViewModelBase<TgEfAppEnti
 
     public override string ToDebugString() => Dto.ToDebugString();
 
-    public void Fill(TgEfAppEntity item)
-    {
-        Dto ??= new();
-        Dto.Copy(item, isUidCopy: true);
-    }
+    public void Fill(TgEfAppEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-    public async Task<TgEfStorageResult<TgEfAppEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
+    public async Task<TgEfStorageResult<TgEfAppEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
 
     #endregion
 }

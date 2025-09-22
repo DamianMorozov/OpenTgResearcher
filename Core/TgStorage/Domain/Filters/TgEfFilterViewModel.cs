@@ -26,21 +26,21 @@ public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilt
 		Fill(item);
 	}
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => Dto.ToString() ?? string.Empty;
+    /// <inheritdoc />
+    public override string ToString() => Dto.ToString() ?? string.Empty;
 
-	public override string ToDebugString() => Dto.ToDebugString();
+    /// <inheritdoc />
+    public override string ToDebugString() => Dto.ToDebugString();
 
-	public void Fill(TgEfFilterEntity item)
-	{
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    /// <inheritdoc />
+    public void Fill(TgEfFilterEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-	public async Task<TgEfStorageResult<TgEfFilterEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
+    /// <inheritdoc />
+    public async Task<TgEfStorageResult<TgEfFilterEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
 
 	#endregion
 }

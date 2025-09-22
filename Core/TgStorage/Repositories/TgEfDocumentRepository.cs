@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> Document repository </summary>
+/// <summary> EF document repository </summary>
 public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEntity, TgEfDocumentDto>, ITgEfDocumentRepository
 {
 	#region Fields, properties, constructor

@@ -1,10 +1,10 @@
 ﻿namespace TgStorage.Domain.Users;
 
-/// <summary> Contact entity </summary>
+/// <summary> EF contact entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
-[Index(nameof(DtChanged))]
 [Index(nameof(Id), IsUnique = true)]
+[Index(nameof(DtChanged))]
 [Index(nameof(AccessHash))]
 [Index(nameof(IsActive))]
 [Index(nameof(IsBot))]
@@ -14,7 +14,8 @@
 [Index(nameof(PhoneNumber))]
 [Index(nameof(Status))]
 [Index(nameof(LangCode))]
-public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
+[Index(nameof(IsDeleted))]
+public sealed class TgEfUserEntity : ITgEfUserEntity
 {
 	#region Fields, properties, constructor
 
@@ -25,15 +26,15 @@ public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
 	[SQLite.Collation("NOCASE")]
 	public Guid Uid { get; set; }
 
-	[DefaultValue("0001-01-01 00:00:00")]
-	[ConcurrencyCheck]
-	[Column(TgEfConstants.ColumnDtChanged, TypeName = "DATETIME")]
-	public DateTime DtChanged { get; set; }
-
 	[DefaultValue(-1)]
 	[ConcurrencyCheck]
 	[Column(TgEfConstants.ColumnId, TypeName = "LONG(20)")]
 	public long Id { get; set; }
+
+	[DefaultValue("0001-01-01 00:00:00")]
+	[ConcurrencyCheck]
+	[Column(TgEfConstants.ColumnDtChanged, TypeName = "DATETIME")]
+	public DateTime DtChanged { get; set; }
 
 	[DefaultValue(-1)]
 	[ConcurrencyCheck]
@@ -130,17 +131,18 @@ public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
     [Column(TgEfConstants.ColumnIsDeleted, TypeName = "BIT")]
     public bool IsDeleted { get; set; }
 
-    public TgEfUserEntity()
-	{
-		Default();
-	}
+    public ICollection<TgEfChatUserEntity> ChatUsers { get; set; } = null!;
 
-	#endregion
+    public TgEfUserEntity() => Default();
 
-	#region Methods
+    #endregion
 
-	public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    #region Methods
 
+    /// <inheritdoc />
+    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
+
+    /// <inheritdoc />
 	public void Default()
 	{
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -164,37 +166,8 @@ public sealed class TgEfUserEntity : ITgEfIdEntity<TgEfUserEntity>
         IsContact = this.GetDefaultPropertyBool(nameof(IsContact));
         IsDeleted = this.GetDefaultPropertyBool(nameof(IsDeleted));
 
+        ChatUsers = [];
     }
-
-	public TgEfUserEntity Copy(TgEfUserEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-        {
-			Uid = item.Uid;
-            // Unique key
-            Id = item.Id;
-        }
-		DtChanged = item.DtChanged > DateTime.MinValue ? item.DtChanged : DateTime.Now;
-		AccessHash = item.AccessHash;
-		IsActive = item.IsActive;
-		IsBot = item.IsBot;
-		FirstName = item.FirstName;
-		LastName = item.LastName;
-		UserName = item.UserName;
-		UserNames = item.UserNames;
-		PhoneNumber = item.PhoneNumber;
-		Status = item.Status;
-		RestrictionReason = item.RestrictionReason;
-		LangCode = item.LangCode;
-		StoriesMaxId = item.StoriesMaxId;
-		BotInfoVersion = item.BotInfoVersion;
-		BotInlinePlaceholder = item.BotInlinePlaceholder;
-		BotActiveUsers = item.BotActiveUsers;
-        IsContact = item.IsContact;
-        IsDeleted = item.IsDeleted;
-
-        return this;
-	}
 
 	#endregion
 }

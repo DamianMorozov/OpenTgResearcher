@@ -10,13 +10,15 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     /// <inheritdoc />
     public DbSet<TgEfDocumentEntity> Documents { get; set; } = null!;
     /// <inheritdoc />
+    public DbSet<TgEfChatUserEntity> ChatUsers { get; set; } = null!;
+    /// <inheritdoc />
     public DbSet<TgEfFilterEntity> Filters { get; set; } = null!;
     /// <inheritdoc />
     public DbSet<TgEfLicenseEntity> Licenses { get; set; } = null!;
     /// <inheritdoc />
     public DbSet<TgEfMessageEntity> Messages { get; set; } = null!;
     /// <inheritdoc />
-    public DbSet<TgEfMessageRelationEntity> MessagesRelations { get; set; }
+    public DbSet<TgEfMessageRelationEntity> MessagesRelations { get; set; } = null!;
     /// <inheritdoc />
     public DbSet<TgEfProxyEntity> Proxies { get; set; } = null!;
     /// <inheritdoc />
@@ -31,30 +33,27 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     public static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 
     // Public constructor need for resolve: The exception 'A suitable constructor for type 'TgStorage.Domain.TgEfContextBase' could not be located
-    protected TgEfContextBase()
-    {
+    protected TgEfContextBase() =>
 #if DEBUG
         Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif
-    }
+
 
     /// <summary> Inject options </summary>
     // For using: services.AddDbContextFactory<TgEfContextBase>
-    protected TgEfContextBase(DbContextOptions options) : base(options)
-    {
+    protected TgEfContextBase(DbContextOptions options) : base(options) =>
 #if DEBUG
         Debug.WriteLine($"{nameof(TgEfContextBase)} is created with {nameof(options)}", TgConstants.LogTypeStorage);
 #endif
-    }
+
 
     /// <summary> Inject options </summary>
     // For using: services.AddDbContextFactory<TgEfContextBase>
-    protected TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options)
-    {
+    protected TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options) =>
 #if DEBUG
         Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif
-    }
+
 
     #endregion
 
@@ -86,15 +85,16 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     /// <summary> Dispose pattern </summary>
     public override void Dispose()
     {
-        base.Dispose();
         // Dispose of unmanaged resources
         Dispose(true);
         // Suppress finalization
         GC.SuppressFinalize(this);
+        // Base dispose
+        base.Dispose();
     }
 
     /// <summary> Dispose pattern </summary>
-    protected void Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
         if (_disposed) return;
         using (_locker.EnterScope())
@@ -114,16 +114,16 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     #region Methods - EF Core
 
     public async ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken ct = default)
-        where TEfEntity : class, ITgEfEntity<TEfEntity>, new() =>
+        where TEfEntity : class, ITgEfEntity, new() =>
         await AddAsync(entity, ct);
 
     public EntityEntry<TEfEntity> AddItem<TEfEntity>(TEfEntity entity)
-        where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Add(entity);
+        where TEfEntity : class, ITgEfEntity, new() => Add(entity);
 
     /// <inheritdoc />
-    public void UpdateItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Update(entity);
+    public void UpdateItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity, new() => Update(entity);
 
-    public EntityEntry<TEfEntity> RemoveItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new() => Remove(entity);
+    public EntityEntry<TEfEntity> RemoveItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity, new() => Remove(entity);
 
     /// <inheritdoc />
     public void DetachItem(object item) => Entry(item).State = EntityState.Detached;
@@ -179,11 +179,31 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
             entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
             // Unique key
             entity.HasAlternateKey(x => new { x.ApiHash });
-            // Link to proxy by single key
+            // Relationship to proxy by single key
             entity.HasOne(app => app.Proxy)
                 .WithMany(proxy => proxy.Apps)
                 .HasForeignKey(app => app.ProxyUid)
                 .HasPrincipalKey(proxy => proxy.Uid);
+        });
+
+        // ChatUsers
+        modelBuilder.Entity<TgEfChatUserEntity>(entity =>
+        {
+            entity.ToTable(TgEfConstants.TableChatUsers);
+            // Shadow property for concurrency
+            entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
+            // Relationship to chat (TgEfSourceEntity)
+            entity.HasOne(x => x.Chat)
+                .WithMany(c => c.ChatUsers)
+                .HasForeignKey(x => x.ChatId)
+                .HasPrincipalKey(c => c.Id)
+                .OnDelete(DeleteBehavior.Cascade);
+            // Relationship to user (TgEfUserEntity)
+            entity.HasOne(x => x.User)
+                .WithMany(u => u.ChatUsers)
+                .HasForeignKey(x => x.UserId)
+                .HasPrincipalKey(u => u.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Documents
@@ -192,7 +212,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
             entity.ToTable(TgEfConstants.TableDocuments);
             // Shadow property for concurrency
             entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
-            // Link to source by single key
+            // Relationship to source by single key
             entity.HasOne(document => document.Source)
                 .WithMany(source => source.Documents)
                 .HasForeignKey(document => document.SourceId)
@@ -225,7 +245,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
             entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
             // Unique key
             entity.HasAlternateKey(x => new { x.SourceId, x.Id });
-            // Link to source by single key
+            // Relationship to source by single key
             entity.HasOne(x => x.Source)
                 .WithMany(x => x.Messages)
                 .HasForeignKey(x => x.SourceId)
@@ -238,25 +258,25 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
             entity.ToTable(TgEfConstants.TableMessagesRelations);
             // Shadow property for concurrency
             entity.Property<byte[]>(TgEfConstants.ColumnRowVersion).IsRowVersion();
-            // Link to parent message by composite key (SourceId + Id)
+            // Relationship to parent message by composite key (SourceId + Id)
             entity.HasOne(x => x.ParentMessage)
                 .WithMany()
                 .HasForeignKey(x => new { x.ParentSourceId, x.ParentMessageId })
                 .HasPrincipalKey(x => new { x.SourceId, x.Id })
                 .OnDelete(DeleteBehavior.Restrict);
-            // Link to child message by composite key (SourceId + Id)
+            // Relationship to child message by composite key (SourceId + Id)
             entity.HasOne(x => x.ChildMessage)
                 .WithMany()
                 .HasForeignKey(x => new { x.ChildSourceId, x.ChildMessageId })
                 .HasPrincipalKey(x => new { x.SourceId, x.Id })
                 .OnDelete(DeleteBehavior.Restrict);
-            // Link to parent source by single key
+            // Relationship to parent source by single key
             entity.HasOne(x => x.ParentSource)
                 .WithMany()
                 .HasForeignKey(x => x.ParentSourceId)
                 .HasPrincipalKey(x => x.Id)
                 .OnDelete(DeleteBehavior.Restrict);
-            // Link to child source by single key
+            // Relationship to child source by single key
             entity.HasOne(x => x.ChildSource)
                 .WithMany()
                 .HasForeignKey(x => x.ChildSourceId)
@@ -331,7 +351,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
         if (File.Exists(storagePath))
         {
-            var dt = DateTime.Now;
+            var dt = DateTime.UtcNow;
             var fileBackup =
                 $"{Path.GetDirectoryName(storagePath)}\\" +
                 $"{Path.GetFileNameWithoutExtension(storagePath)}_{dt:yyyyMMdd}_{dt:HHmmss}.bak";

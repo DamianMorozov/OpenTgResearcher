@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.420] - 2025-09-22
+## [0.7.430] - 2025-09-23
 ### Fixed
 - Optimization of table columns in `OpenTgResearcherDesktop`
 ### Changed
 - NuGet package update
+- Optimization of `TgStorage`
+### Added
+- Adding the `Chat Users` table to `TgStorage`
 
 ## [0.7.400] - 2025-09-20
 ### Fixed

@@ -1,4 +1,5 @@
-﻿namespace TgStorage.Contracts;
+﻿
+namespace TgStorage.Contracts;
 
 /// <summary> Storage context </summary>
 public interface ITgEfContext : IDisposable
@@ -9,11 +10,11 @@ public interface ITgEfContext : IDisposable
     public DatabaseFacade Database { get; }
 	public Task<int> SaveChangesAsync(CancellationToken ct = default);
 	public ValueTask<EntityEntry<TEfEntity>> AddItemAsync<TEfEntity>(TEfEntity entity, CancellationToken ct = default)
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
-	public EntityEntry<TEfEntity> AddItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
+		where TEfEntity : class, ITgEfEntity, new();
+	public EntityEntry<TEfEntity> AddItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity, new();
 	/// <summary> Update entity </summary>
-	public void UpdateItem<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
-	public EntityEntry<TEfEntity> RemoveItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity<TEfEntity>, new();
+	public void UpdateItem<TEfEntity>(TEfEntity item) where TEfEntity : class, ITgEfEntity, new();
+	public EntityEntry<TEfEntity> RemoveItem<TEfEntity>(TEfEntity entity) where TEfEntity : class, ITgEfEntity, new();
 	/// <summary> Detach entity </summary>
 	public void DetachItem(object item);
 
@@ -25,6 +26,8 @@ public interface ITgEfContext : IDisposable
 	public DbSet<TgEfUserEntity> Users { get; set; }
 	/// <summary> Document queries </summary>
 	public DbSet<TgEfDocumentEntity> Documents { get; set; }
+    /// <summary> Chat users queries </summary>
+    public DbSet<TgEfChatUserEntity> ChatUsers { get; set; }
 	/// <summary> Filter queries </summary>
 	public DbSet<TgEfFilterEntity> Filters { get; set; }
 	/// <summary> License queries </summary>
@@ -42,8 +45,8 @@ public interface ITgEfContext : IDisposable
 	/// <summary> Version queries </summary>
 	public DbSet<TgEfVersionEntity> Versions { get; set; }
 
-	/// <summary> Get data source storage path </summary>
-	protected string GetDataSource(string contentRootPath = "");
+    /// <summary> Get data source storage path </summary>
+    protected string GetDataSource(string contentRootPath = "");
 	/// <summary> Shrink storage </summary>
 	public Task ShrinkDbAsync();
 	/// <summary> Migrate storage </summary>

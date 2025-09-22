@@ -13,13 +13,14 @@ public sealed partial class TgEfContentStatisticsDto : TgDtoBase
     public partial int VideosCount { get; set; }
 
 
-    public TgEfContentStatisticsDto() : base() => DefaultValues();
+    public TgEfContentStatisticsDto() : base() => Default();
 
     #endregion
 
     #region Methods
 
-    public void DefaultValues()
+    /// <inheritdoc />
+    public void Default()
     {
         ImagesCount = 0;
         AudiosCount = 0;

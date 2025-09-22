@@ -76,7 +76,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         StorageManager = storageManager;
         FloodControlService = floodControlService;
         // FusionCache
-        Cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        ArgumentNullException.ThrowIfNull(cache);
+        Cache = cache;
         _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), entity => $"{entity.Id}");
         _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), entity => $"{entity.SourceId}:{entity.Id}");
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
@@ -128,7 +129,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #region Methods - Flood control
 
-    /// <summary> Creates an action for logging Telegram messages with flood control </summary>
+    /// <summary> Create an action for logging Telegram messages with flood control </summary>
     private Action<int, string> BuildTelegramLogAction() => async (level, message) => { await ProcessLogAndCheckFloodAsync(level, message, LogToken); };
 
     /// <summary> Processes a log message, checking for flood control and handling it if necessary </summary>
@@ -1448,7 +1449,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (sourceVm is not TgEfSourceViewModel sourceVm2) return;
         if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
         await CreateChatAsync(tgDownloadSettings, isSilent: true, ct);
-        sourceVm2.Dto.Copy(tgDownloadSettings2.SourceVm.Dto, isUidCopy: false);
+        sourceVm2.Dto = TgEfDomainUtils.CreateNewDto(tgDownloadSettings2.SourceVm.Dto, isUidCopy: false);
     }
 
     /// <summary> Build chat entity from Telegram chat </summary>

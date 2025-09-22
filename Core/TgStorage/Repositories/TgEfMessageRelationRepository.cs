@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> Message repository </summary>
+/// <summary> EF message relation repository </summary>
 public sealed class TgEfMessageRelationRepository : TgEfRepositoryBase<TgEfMessageRelationEntity, TgEfMessageRelationDto>, ITgEfMessageRelationRepository
 {	
 	#region Fields, properties, constructor
@@ -84,6 +84,7 @@ public sealed class TgEfMessageRelationRepository : TgEfRepositoryBase<TgEfMessa
             .FirstOrDefault(x => x.Uid == dto.Uid);
         if (itemFind is not null)
             return new(TgEnumEntityState.IsExists, itemFind);
+        
         // Find by Id
         itemFind = GetQuery(isReadOnly)
             .FirstOrDefault(x =>

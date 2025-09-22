@@ -2,15 +2,11 @@
 
 /// <summary> Validator base </summary>
 public class TgEfValidatorBase<TEfEntity> : AbstractValidator<TEfEntity>, ITgDebug
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+	where TEfEntity : class, ITgEfEntity, new()
 {
     #region Fields, properties, constructor
 
-    public TgEfValidatorBase()
-	{
-		RuleFor(item => item.Uid)
-			.NotNull();
-	}
+    public TgEfValidatorBase() => RuleFor(item => item.Uid).NotNull();
 
     #endregion
 

@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Apps;
 
-/// <summary> App DTO </summary>
-public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity, TgEfLicenseDto>
+/// <summary> EF license DTO </summary>
+public sealed partial class TgEfLicenseDto : TgDtoBase, ITgEfLicenseDto
 {
     #region Fields, properties, constructor
 
@@ -47,40 +47,8 @@ public sealed partial class TgEfLicenseDto : TgDtoBase, ITgDto<TgEfLicenseEntity
 
     #region Methods
 
+    /// <inheritdoc />
     public override string ToString() => $"{LicenseKey} | {UserId}";
-
-    public TgEfLicenseDto Copy(TgEfLicenseDto dto, bool isUidCopy)
-    {
-        base.Copy(dto, isUidCopy);
-        LicenseKey = dto.LicenseKey;
-        UserId = dto.UserId;
-        LicenseType = dto.LicenseType;
-        ValidTo = dto.ValidTo;
-        IsConfirmed = dto.IsConfirmed;
-        return this;
-    }
-
-    public TgEfLicenseDto Copy(TgEfLicenseEntity item, bool isUidCopy)
-    {
-        if (isUidCopy)
-            Uid = item.Uid;
-        LicenseKey = item.LicenseKey;
-        UserId = item.UserId;
-        LicenseType = item.LicenseType;
-        ValidTo = DateOnly.FromDateTime(item.ValidTo);
-        IsConfirmed = item.IsConfirmed;
-        return this;
-    }
-
-    public TgEfLicenseEntity GetEntity() => new()
-    {
-        Uid = Uid,
-        LicenseKey = LicenseKey,
-        UserId = UserId,
-        LicenseType = LicenseType,
-        ValidTo = DateTime.Parse($"{ValidTo:yyyy-MM-d}"),
-        IsConfirmed = IsConfirmed,
-    };
 
     #endregion
 }

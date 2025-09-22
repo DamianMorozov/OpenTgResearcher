@@ -9,7 +9,7 @@ namespace TgStorage.Migrations.TgEfTest
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
 
             modelBuilder.Entity("TgStorage.Domain.Apps.TgEfAppEntity", b =>
                 {
@@ -93,6 +93,82 @@ namespace TgStorage.Migrations.TgEfTest
                         .IsUnique();
 
                     b.ToTable("APPS", (string)null);
+                });
+
+            modelBuilder.Entity("TgStorage.Domain.ChatUsers.TgEfChatUserEntity", b =>
+                {
+                    b.Property<Guid>("Uid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("CHAR(36)")
+                        .HasColumnName("UID");
+
+                    b.Property<long>("ChatId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("CHAT_ID");
+
+                    b.Property<DateTime>("DtChanged")
+                        .IsConcurrencyToken()
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("DT_CHANGED");
+
+                    b.Property<bool>("IsDeleted")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_DELETED");
+
+                    b.Property<bool>("IsMuted")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_MUTED");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .IsConcurrencyToken()
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("JOINED_AT");
+
+                    b.Property<DateTime?>("MutedUntil")
+                        .IsConcurrencyToken()
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("MUTED_UNTIL");
+
+                    b.Property<int>("Role")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT")
+                        .HasColumnName("ROLE");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("LONG(20)")
+                        .HasColumnName("USER_ID");
+
+                    b.HasKey("Uid");
+
+                    b.HasIndex("ChatId");
+
+                    b.HasIndex("DtChanged");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("IsMuted");
+
+                    b.HasIndex("JoinedAt");
+
+                    b.HasIndex("Role");
+
+                    b.HasIndex("Uid")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ChatId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("CHAT_USERS", (string)null);
                 });
 
             modelBuilder.Entity("TgStorage.Domain.Documents.TgEfDocumentEntity", b =>
@@ -340,6 +416,8 @@ namespace TgStorage.Migrations.TgEfTest
                     b.HasIndex("DtCreated");
 
                     b.HasIndex("Id");
+
+                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("Message");
 
@@ -833,8 +911,6 @@ namespace TgStorage.Migrations.TgEfTest
 
                     b.HasKey("Uid");
 
-                    b.HasAlternateKey("Id");
-
                     b.HasIndex("AccessHash");
 
                     b.HasIndex("DtChanged");
@@ -847,6 +923,8 @@ namespace TgStorage.Migrations.TgEfTest
                     b.HasIndex("IsActive");
 
                     b.HasIndex("IsBot");
+
+                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("LangCode");
 
@@ -911,6 +989,27 @@ namespace TgStorage.Migrations.TgEfTest
                         .HasForeignKey("ProxyUid");
 
                     b.Navigation("Proxy");
+                });
+
+            modelBuilder.Entity("TgStorage.Domain.ChatUsers.TgEfChatUserEntity", b =>
+                {
+                    b.HasOne("TgStorage.Domain.Sources.TgEfSourceEntity", "Chat")
+                        .WithMany("ChatUsers")
+                        .HasForeignKey("ChatId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TgStorage.Domain.Users.TgEfUserEntity", "User")
+                        .WithMany("ChatUsers")
+                        .HasForeignKey("UserId")
+                        .HasPrincipalKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TgStorage.Domain.Documents.TgEfDocumentEntity", b =>
@@ -983,9 +1082,16 @@ namespace TgStorage.Migrations.TgEfTest
 
             modelBuilder.Entity("TgStorage.Domain.Sources.TgEfSourceEntity", b =>
                 {
+                    b.Navigation("ChatUsers");
+
                     b.Navigation("Documents");
 
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("TgStorage.Domain.Users.TgEfUserEntity", b =>
+                {
+                    b.Navigation("ChatUsers");
                 });
 #pragma warning restore 612, 618
         }

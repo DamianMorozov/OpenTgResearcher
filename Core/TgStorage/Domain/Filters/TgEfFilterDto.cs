@@ -1,7 +1,7 @@
 ﻿namespace TgStorage.Domain.Filters;
 
-/// <summary> Filter DTO </summary>
-public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, TgEfFilterDto>
+/// <summary> EF filter DTO </summary>
+public sealed partial class TgEfFilterDto : TgDtoBase, ITgEfFilterDto
 {
 	#region Fields, properties, constructor
 
@@ -67,42 +67,6 @@ public sealed partial class TgEfFilterDto : TgDtoBase, ITgDto<TgEfFilterEntity, 
         $"{TgDataFormatUtils.GetFormatString(nameof(FilterType), 20).TrimEnd(),-20} | " +
         $"{TgDataFormatUtils.GetFormatString(nameof(Size), 12).TrimEnd(),-12} | " +
         $"SizeType";
-
-    public TgEfFilterDto Copy(TgEfFilterDto dto, bool isUidCopy)
-	{
-		base.Copy(dto, isUidCopy);
-		IsEnabled = dto.IsEnabled;
-		FilterType = dto.FilterType;
-		Name = dto.Name;
-		Mask = dto.Mask;
-		Size = dto.Size;
-		SizeType = dto.SizeType;
-		return this;
-	}
-
-	public TgEfFilterDto Copy(TgEfFilterEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		IsEnabled = item.IsEnabled;
-		FilterType = item.FilterType;
-		Name = item.Name;
-		Mask = item.Mask;
-		Size = item.Size;
-		SizeType = item.SizeType;
-		return this;
-	}
-
-	public TgEfFilterEntity GetEntity() => new()
-	{
-		Uid = Uid,
-		IsEnabled = IsEnabled,
-		FilterType = FilterType,
-		Name = Name,
-		Mask = Mask,
-		Size = Size,
-		SizeType = SizeType,
-	};
 
 	#endregion
 }

@@ -27,21 +27,21 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
 		Fill(item);
 	}
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => Dto.ToString();
+    /// <inheritdoc />
+    public override string ToString() => Dto.ToString();
 
-	public override string ToDebugString() => Dto.ToDebugString();
+    /// <inheritdoc />
+    public override string ToDebugString() => Dto.ToDebugString();
 
-	public void Fill(TgEfProxyEntity item)
-	{
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    /// <inheritdoc />
+    public void Fill(TgEfProxyEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-	public async Task<TgEfStorageResult<TgEfProxyEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
+    /// <inheritdoc />
+    public async Task<TgEfStorageResult<TgEfProxyEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
 
     /// <summary> Check if the proxy is empty </summary>
     public bool IsEmptyProxy => Dto.Type == TgEnumProxyType.None && (Dto.UserName == "No user" || Dto.Password == "No password");

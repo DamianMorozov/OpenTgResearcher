@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Domain.Filters;
 
-/// <summary> Filter entity </summary>
+/// <summary> EF filter entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(IsEnabled))]
@@ -9,7 +9,7 @@
 [Index(nameof(Mask))]
 [Index(nameof(Size))]
 [Index(nameof(SizeType))]
-public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
+public sealed class TgEfFilterEntity : ITgEfFilterEntity
 {
 	#region Fields, properties, constructor
 
@@ -58,8 +58,10 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    /// <inheritdoc />
 	public void Default()
 	{
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -69,21 +71,6 @@ public sealed class TgEfFilterEntity : ITgEfEntity<TgEfFilterEntity>
 		Mask = this.GetDefaultPropertyString(nameof(Mask));
 		Size = this.GetDefaultPropertyUint(nameof(Size));
 		SizeType = this.GetDefaultPropertyGeneric<TgEnumFileSizeType>(nameof(SizeType));
-	}
-
-	public TgEfFilterEntity Copy(TgEfFilterEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-		IsEnabled = item.IsEnabled;
-		FilterType = item.FilterType;
-		Name = item.Name;
-		Mask = string.IsNullOrEmpty(item.Mask) &&
-			(Equals(item.FilterType, TgEnumFilterType.MinSize) ||
-			Equals(item.FilterType, TgEnumFilterType.MaxSize)) ? "*" : item.Mask;
-		Size = item.Size;
-		SizeType = item.SizeType;
-		return this;
 	}
 
 	#endregion

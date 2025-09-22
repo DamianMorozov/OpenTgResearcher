@@ -1,13 +1,13 @@
 ﻿namespace TgStorage.Domain.Messages;
 
-/// <summary> Message relation entity </summary>
+/// <summary> EF message relation entity </summary>
 [DebuggerDisplay("{ToDebugString()}")]
 [Index(nameof(Uid), IsUnique = true)]
 [Index(nameof(ParentSourceId))]
 [Index(nameof(ParentMessageId))]
 [Index(nameof(ChildSourceId))]
 [Index(nameof(ChildMessageId))]
-public sealed class TgEfMessageRelationEntity : ITgEfEntity<TgEfMessageRelationEntity>
+public sealed class TgEfMessageRelationEntity : ITgEfMessageRelationEntity
 {
     #region Fields, properties, constructor
 
@@ -51,10 +51,13 @@ public sealed class TgEfMessageRelationEntity : ITgEfEntity<TgEfMessageRelationE
 
     #region Methods
 
+    /// <inheritdoc />
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
+    /// <inheritdoc />
     public override string ToString() => ToDebugString();
 
+    /// <inheritdoc />
     public void Default()
     {
 		Uid = this.GetDefaultPropertyGuid(nameof(Uid));
@@ -63,23 +66,6 @@ public sealed class TgEfMessageRelationEntity : ITgEfEntity<TgEfMessageRelationE
         ChildSourceId = this.GetDefaultPropertyLong(nameof(ChildSourceId));
         ChildMessageId = this.GetDefaultPropertyInt(nameof(ChildMessageId));
     }
-
-    public TgEfMessageRelationEntity Copy(TgEfMessageRelationEntity item, bool isUidCopy)
-	{
-		if (isUidCopy)
-			Uid = item.Uid;
-        ParentSourceId = item.ParentSourceId;
-        ParentMessageId = item.ParentMessageId;
-        ChildSourceId = item.ChildSourceId;
-        ChildMessageId = item.ChildMessageId;
-        
-        ParentSource = item.ParentSource?.Copy(item.ParentSource, isUidCopy);
-        ParentMessage = item.ParentMessage?.Copy(item.ParentMessage, isUidCopy);
-        ChildSource = item.ChildSource?.Copy(item.ChildSource, isUidCopy);
-        ChildMessage = item.ChildMessage?.Copy(item.ChildMessage, isUidCopy);
-        
-        return this;
-	}
 
 	#endregion
 }

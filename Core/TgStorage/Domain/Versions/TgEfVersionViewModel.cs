@@ -25,21 +25,21 @@ public sealed partial class TgEfVersionViewModel : TgEntityViewModelBase<TgEfVer
 		Fill(item);
 	}
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public override string ToString() => Dto.ToString() ?? string.Empty;
+    /// <inheritdoc />
+    public override string ToString() => Dto.ToString() ?? string.Empty;
 
-	public override string ToDebugString() => Dto.ToDebugString();
+    /// <inheritdoc />
+    public override string ToDebugString() => Dto.ToDebugString();
 
-	public void Fill(TgEfVersionEntity item)
-	{
-		Dto ??= new();
-		Dto.Copy(item, isUidCopy: true);
-	}
+    /// <inheritdoc />
+    public void Fill(TgEfVersionEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-	public async Task<TgEfStorageResult<TgEfVersionEntity>> SaveAsync() => await Repository.SaveAsync(Dto.GetEntity());
+    /// <inheritdoc />
+    public async Task<TgEfStorageResult<TgEfVersionEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
 
-	#endregion
+    #endregion
 }

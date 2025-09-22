@@ -12,7 +12,7 @@ public sealed partial class TgEfUserWithMessagesDto : TgDtoBase
     [ObservableProperty]
     public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = default!;
 
-    public TgEfUserWithMessagesDto() : base() => DefaultValues();
+    public TgEfUserWithMessagesDto() : base() => Default();
 
     public TgEfUserWithMessagesDto(TgEfUserDto userDto, TgEfSourceDto chatDto, List<TgEfMessageDto> messageDtos) : base()
 	{
@@ -25,7 +25,8 @@ public sealed partial class TgEfUserWithMessagesDto : TgDtoBase
 
     #region Methods
 
-    public void DefaultValues()
+    /// <inheritdoc />
+    public void Default()
     {
         UserDto = new();
         ChatDto = new();

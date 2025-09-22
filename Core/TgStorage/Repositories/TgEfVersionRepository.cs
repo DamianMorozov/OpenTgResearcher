@@ -1,6 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
-/// <summary> Version repository </summary>
+/// <summary> EF version repository </summary>
 public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity, TgEfVersionDto>, ITgEfVersionRepository
 {
     #region Fields, properties, constructor
@@ -119,7 +119,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
     #region Methods - ITgEfVersionRepository
 
     /// <inheritdoc />
-    public short LastVersion => 47;
+    public short LastVersion => 48;
 
     /// <inheritdoc />
     public async Task<TgEfVersionEntity> GetLastVersionAsync()
@@ -285,6 +285,9 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
                     break;
                 case 46:
                     await SaveAsync(new() { Version = 47, Description = "Updated messages table" });
+                    break;
+                case 47:
+                    await SaveAsync(new() { Version = 48, Description = "Added chat users table" });
                     break;
             }
             if (versionLast.Version >= LastVersion)

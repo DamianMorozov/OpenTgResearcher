@@ -1,5 +1,6 @@
 ﻿namespace TgStorage.Repositories;
 
+/// <summary> EF license repository </summary>
 public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity, TgEfLicenseDto>, ITgEfLicenseRepository
 {
 	#region Fields, properties, constructor
@@ -87,7 +88,8 @@ public sealed class TgEfLicenseRepository : TgEfRepositoryBase<TgEfLicenseEntity
 			.FirstOrDefault();
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
-		// Find by LicenseKey
+		
+        // Find by LicenseKey
 		itemFind = GetQuery(isReadOnly).Where(x => x.LicenseKey == dto.LicenseKey).SingleOrDefault();
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);

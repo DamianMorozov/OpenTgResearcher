@@ -115,7 +115,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
             else
             {
                 var licenseExists = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-                licenseExists.Copy(licenseEntity, isUidCopy: false);
+                licenseEntity = TgEfDomainUtils.CreateNewEntity(licenseExists, isUidCopy: false);
                 await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
             }
         }

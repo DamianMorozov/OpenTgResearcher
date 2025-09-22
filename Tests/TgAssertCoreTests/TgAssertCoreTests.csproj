@@ -8,10 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.6.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.9" />
     <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="NUnit" Version="4.4.0" />
-    <PackageReference Include="WTelegramClient" Version="4.3.9" />
+    <PackageReference Include="WTelegramClient" Version="4.3.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\TgStorage\TgStorage.csproj" />

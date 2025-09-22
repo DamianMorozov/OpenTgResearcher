@@ -106,7 +106,7 @@ OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-dow
 ---
 
 
-# OpenTgResearcher: herramienta para analizar chats de Telegram y descargar su contenido
+# OpenTgResearcher - herramienta para analizar chats de Telegram y descargar su contenido
 
 ## Finalidad del producto
 - Investigador abierto y buscador de Telegram

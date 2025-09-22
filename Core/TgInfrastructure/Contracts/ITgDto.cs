@@ -1,9 +1,7 @@
 ﻿namespace TgInfrastructure.Contracts;
 
 /// <summary> DTO </summary>
-public interface ITgDto<TEfEntity, TDto> : ITgDebug
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-    where TDto : class, ITgDto<TEfEntity, TDto>, new()
+public interface ITgDto : ITgDebug
 {
 	#region Fields, properties, constructor
 
@@ -18,9 +16,6 @@ public interface ITgDto<TEfEntity, TDto> : ITgDebug
 	public string ToString();
     public string ToConsoleString();
     public string ToConsoleHeaderString();
-    public TDto Copy(TDto dto, bool isUidCopy);
-	public TDto Copy(TEfEntity item, bool isUidCopy);
-    public TEfEntity GetEntity();
 
     #endregion
 }

@@ -1,8 +1,7 @@
 ﻿namespace TgInfrastructure.Contracts;
 
 /// <summary> SQL entity </summary>
-public interface ITgEfIdEntity<TEfEntity> : ITgEfEntity<TEfEntity>
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+public interface ITgEfIdEntity : ITgEfEntity
 {
     #region Fields, properties, constructor
 

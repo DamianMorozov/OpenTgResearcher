@@ -1,8 +1,7 @@
 ﻿namespace TgInfrastructure.Contracts;
 
 /// <summary> Proxy entity </summary>
-public interface ITgDbProxy<TEfEntity> : ITgEfEntity<TEfEntity>
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+public interface ITgDbProxy : ITgEfEntity
 {
 	public TgEnumProxyType Type { get; set; }
 	public string HostName { get; set; }

@@ -1,18 +1,18 @@
 ﻿namespace TgInfrastructure.Contracts;
 
-/// <summary> SQL entity </summary>
-public interface ITgEfEntity<TEfEntity> : ITgDebug 
-	where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
+/// <summary> EF entity </summary>
+public interface ITgEfEntity : ITgDebug
 {
 	#region Fields, properties, constructor
 
 	public Guid Uid { get; set; }
 
-	#endregion
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	public TEfEntity Copy(TEfEntity item, bool isUidCopy);
+    /// <summary> Set default values </summary>
+    public void Default();
 
-	#endregion
+    #endregion
 }

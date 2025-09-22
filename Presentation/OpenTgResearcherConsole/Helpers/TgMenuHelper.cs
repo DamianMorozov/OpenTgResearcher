@@ -83,8 +83,8 @@ internal sealed partial class TgMenuHelper : TgDisposable, ITgHelper
     /// <summary> Get DTO from IEnumerable </summary>
     public async Task<TDto> GetDtoFromEnumerableAsync<TEfEntity, TDto>(string title, IEnumerable<TDto> dtos, 
         ITgEfRepository<TEfEntity, TDto> repository)
-        where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+        where TEfEntity : class, ITgEfEntity, new()
+        where TDto : class, ITgDto, new()
     {
         List<TgListWithUidDto> listWithUidDtos = [new TgListWithUidDto(TgLocale.MenuReturn), new TgListWithUidDto(new TDto().ToConsoleHeaderString())];
         listWithUidDtos.AddRange(dtos.Select(dto => new TgListWithUidDto(dto.Uid, TgLog.GetMarkupString(dto.ToConsoleString()))));

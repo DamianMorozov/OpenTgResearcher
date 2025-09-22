@@ -261,7 +261,7 @@ internal partial class TgMenuHelper
         {
             if (string.IsNullOrEmpty(directory))
                 directory = storageResult.Item.Directory;
-            tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Copy(storageResult.Item, isUidCopy: true);
+            tgDownloadSettings.SourceVm.Dto = TgEfDomainUtils.CreateNewDto(storageResult.Item, isUidCopy: true);
         }
         // Restore manual settings
         if (!string.IsNullOrEmpty(directory))
@@ -279,7 +279,7 @@ internal partial class TgMenuHelper
         {
             if (string.IsNullOrEmpty(directory))
                 directory = storageResult.Item.Directory;
-            tgDownloadSettings.SourceVm.Dto = new TgEfSourceDto().Copy(storageResult.Item, isUidCopy: true);
+            tgDownloadSettings.SourceVm.Dto = TgEfDomainUtils.CreateNewDto(storageResult.Item, isUidCopy: true);
         }
         // Restore directory
         if (!string.IsNullOrEmpty(directory) && string.IsNullOrEmpty(tgDownloadSettings.SourceVm.Dto.Directory))

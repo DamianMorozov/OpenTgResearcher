@@ -244,8 +244,8 @@ internal partial class TgMenuHelper
     /// <summary> Storage table </summary>
     private async Task FillTableRowsStorageTableAsync<TEfEntity, TDto>(Table table,
         ITgEfRepository<TEfEntity, TDto> repository, string messageCount)
-        where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+        where TEfEntity : class, ITgEfEntity, new()
+        where TDto : class, ITgDto, new()
     {
         var count = await repository.GetListCountAsync();
         table.AddRow(GetMarkup(TgLocale.InfoMessage(messageCount)), GetMarkup($"{count}"));

@@ -213,7 +213,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
         }
     }
 
-    /// <summary> Creates a base ContentDialog with common settings </summary>
+    /// <summary> Create a base ContentDialog with common settings </summary>
     private ContentDialog CreateContentDialog(string title) => new() { XamlRoot = XamlRootVm, Title = title };
 
     protected async Task ContentDialogAsync(string title, string content)

@@ -22,7 +22,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 
     #region Methods
 
-    private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectDto() => item => new TgEfSourceLiteDto().Copy(item, isUidCopy: true);
+    private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectDto() => item => TgEfDomainUtils.CreateNewLiteDto(item, isUidCopy: true);
 
     public async Task<List<TgEfSourceLiteDto>> GetListDtosAsync()
     {

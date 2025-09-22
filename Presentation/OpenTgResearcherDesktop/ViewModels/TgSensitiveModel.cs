@@ -17,7 +17,8 @@ public partial class TgSensitiveModel : ObservableRecipient
 
     public TgSensitiveModel(ILoadStateService loadStateService) : base()
     {
-        LoadStateService = loadStateService ?? throw new ArgumentNullException(nameof(loadStateService));
+        ArgumentNullException.ThrowIfNull(loadStateService);
+        LoadStateService = loadStateService;
 
         // Callback updates UI: PropertyChanged for LoadStateService
         LoadStateService.PropertyChanged += (_, e) =>

@@ -41,7 +41,8 @@ public partial class ShellViewModel : ObservableRecipient
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
-        LoadStateService = loadStateService ?? throw new ArgumentNullException(nameof(loadStateService));
+        ArgumentNullException.ThrowIfNull(loadStateService);
+        LoadStateService = loadStateService;
         // Commands
         ClientConnectCommand = new AsyncRelayCommand<bool>(ShellClientConnectAsync);
         ClientDisconnectCommand = new AsyncRelayCommand<bool>(ShellClientDisconnectAsync);

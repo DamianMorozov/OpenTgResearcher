@@ -64,7 +64,7 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     
     private async Task CalcChatStatisticsCoreAsync()
     {
-        ChatStatisticsDto.DefaultValues();
+        ChatStatisticsDto.Default();
         ChatStatisticsDto.UserWithCountDtos.Clear();
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         

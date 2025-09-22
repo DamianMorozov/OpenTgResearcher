@@ -24,7 +24,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
     #region Methods
 
-    private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => new TgEfUserDto().Copy(item, isUidCopy: true);
+    private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
     private async Task<List<TgEfUserDto>> GetListDtosAsync()
     {

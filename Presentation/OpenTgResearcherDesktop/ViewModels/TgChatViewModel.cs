@@ -127,15 +127,15 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             // Update and save current chat
             Dto.DtChanged = DateTime.UtcNow;
             DownloadSettings.SourceVm.Dto = Dto;
-            var entity = Dto.GetEntity();
-            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(entity);
+            var sourceEntity = TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: false);
+            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(sourceEntity);
 
             // Update and save discussion chat if exists
             if (IsDiscussionDtoExists)
             {
                 DiscussionDto.DtChanged = DateTime.UtcNow;
-                var comment = DiscussionDto.GetEntity();
-                await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(comment);
+                var commentEntity = TgEfDomainUtils.CreateNewEntity(DiscussionDto, isUidCopy: false);
+                await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(commentEntity);
             }
         }
         finally

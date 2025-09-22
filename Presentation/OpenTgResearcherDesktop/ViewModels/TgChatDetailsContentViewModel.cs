@@ -158,7 +158,7 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     
     private async Task CalcContentStatisticsCoreAsync()
     {
-        ContentStatisticsDto.DefaultValues();
+        ContentStatisticsDto.Default();
 
         if (Directory.Exists(Dto.Directory))
         {

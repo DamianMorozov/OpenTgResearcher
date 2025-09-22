@@ -8,8 +8,8 @@ internal sealed class TgEfRepositoryGetListTests : TgStorageTestsBase
 	#region Methods
 
 	private void GetListAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+		where TEfEntity : class, ITgEfEntity, new()
+        where TDto : class, ITgDto, new()
     {
 		Assert.DoesNotThrowAsync(async () =>
 		{

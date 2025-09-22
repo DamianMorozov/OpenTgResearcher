@@ -8,8 +8,8 @@ internal sealed class TgEfRepositorySaveTests : TgStorageTestsBase
 	#region Methods
 
 	private void SaveItemAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
-		where TEfEntity : class, ITgEfEntity<TEfEntity>, new()
-        where TDto : class, ITgDto<TEfEntity, TDto>, new()
+		where TEfEntity : class, ITgEfEntity, new()
+        where TDto : class, ITgDto, new()
     {
 		Assert.DoesNotThrowAsync(async () =>
 		{

@@ -1448,6 +1448,9 @@
   <data name="TableNameUsers" xml:space="preserve">
     <value>Пользователи</value>
   </data>
+  <data name="TableNameChatUsers" xml:space="preserve">
+    <value>Пользователи чата</value>
+  </data>
   <data name="TableNameDocuments" xml:space="preserve">
     <value>Документы</value>
   </data>

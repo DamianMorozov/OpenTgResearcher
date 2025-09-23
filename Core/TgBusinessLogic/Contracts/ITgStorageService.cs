@@ -10,6 +10,8 @@ public interface ITgStorageService : IDisposable
     public string StoragePath { get; }
     /// <summary> Application repository for managing application settings and configurations </summary>
     public ITgEfAppRepository AppRepository { get; }
+    /// <summary> Chat user repository in the Telegram storage </summary>
+    public ITgEfChatUserRepository ChatUserRepository { get; }
     /// <summary> Document repository for managing documents in the Telegram storage </summary>
     public ITgEfDocumentRepository DocumentRepository { get; }
     /// <summary> Filter repository for managing filters in the Telegram storage </summary>
@@ -47,7 +49,7 @@ public interface ITgStorageService : IDisposable
     /// <summary> Shrink storage </summary>
     public Task ShrinkDbAsync();
     /// <summary> Load storage table dtos </summary>
-    public Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName,
+    public Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName, string chatUsersName,
         string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName);
     /// <summary> Load storage backup dtos </summary>
     public ObservableCollection<TgStorageBackupDto> LoadStorageBackupDtos(string storagePath = "");

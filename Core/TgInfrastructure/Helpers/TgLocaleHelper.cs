@@ -346,6 +346,7 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuTableAppsRecordsCount => "Apps records count";
 	public string MenuTableChatsRecordsCount => "Chats records count";
 	public string MenuTableContactsRecordsCount => "Contacts records count";
+	public string MenuTableChatUsersRecordsCount => "Chat users records count";
 	public string MenuTableDocumentsRecordsCount => "Documents records count";
 	public string MenuTableFiltersRecordsCount => "Filters records count";
 	public string MenuTableMessagesRecordsCount => "Messages records count";

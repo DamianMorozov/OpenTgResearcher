@@ -114,9 +114,9 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
             }
             else
             {
-                var licenseExists = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-                licenseEntity = TgEfDomainUtils.CreateNewEntity(licenseExists, isUidCopy: false);
-                await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
+                var licenseExistsEntity = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
+                TgEfDomainUtils.UpdateEntity(licenseExistsEntity, licenseEntity, isUidCopy: false);
+                await StorageManager.LicenseRepository.SaveAsync(licenseExistsEntity);
             }
         }
         catch (Exception ex)

@@ -502,7 +502,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             //{
             //    storageResult.Item = entity;
             //}
-            // Fallback: simple property assignment
+            // Simple property assignment
             ((DbContext)EfContext).Entry(storageResult.Item!).CurrentValues.SetValues(item);
             EfContext.UpdateItem(storageResult.Item);
         }

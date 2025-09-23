@@ -213,6 +213,7 @@ internal partial class TgMenuHelper
         await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.AppRepository, TgLocale.MenuTableAppsRecordsCount);
         await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.SourceRepository, TgLocale.MenuTableChatsRecordsCount);
         await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.UserRepository, TgLocale.MenuTableContactsRecordsCount);
+        await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.ChatUserRepository, TgLocale.MenuTableChatUsersRecordsCount);
         await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.DocumentRepository, TgLocale.MenuTableDocumentsRecordsCount);
         await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.FilterRepository, TgLocale.MenuTableFiltersRecordsCount);
         await FillTableRowsStorageTableAsync(table, BusinessLogicManager.StorageManager.MessageRepository, TgLocale.MenuTableMessagesRecordsCount);

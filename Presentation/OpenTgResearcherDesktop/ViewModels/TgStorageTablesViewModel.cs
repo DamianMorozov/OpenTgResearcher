@@ -33,6 +33,7 @@ public sealed partial class TgStorageTablesViewModel : TgPageViewModelBase
             TgResourceExtensions.GetTableNameApps(),
             TgResourceExtensions.GetTableNameChats(),
             TgResourceExtensions.GetTableNameUsers(),
+            TgResourceExtensions.GetTableNameChatUsers(),
             TgResourceExtensions.GetTableNameDocuments(),
             TgResourceExtensions.GetTableNameFilters(),
             TgResourceExtensions.GetTableNameMessages(),

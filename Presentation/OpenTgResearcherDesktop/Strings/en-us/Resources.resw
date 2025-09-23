@@ -1386,6 +1386,9 @@
   <data name="TableNameUsers" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="TableNameChatUsers" xml:space="preserve">
+    <value>Chat users</value>
+  </data>
   <data name="TableNameDocuments" xml:space="preserve">
     <value>Documents</value>
   </data>

@@ -5,6 +5,7 @@ public interface ITgEfEntity : ITgDebug
 {
 	#region Fields, properties, constructor
 
+    /// <summary> UID field </summary>
 	public Guid Uid { get; set; }
 
     #endregion

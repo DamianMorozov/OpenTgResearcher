@@ -62,6 +62,7 @@ public class TgStorageTestsBase : TgDisposable
         // Registering repositories
         cb.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         cb.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
+        cb.RegisterType<TgEfChatUserRepository>().As<ITgEfChatUserRepository>();
         cb.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
         cb.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
         cb.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();

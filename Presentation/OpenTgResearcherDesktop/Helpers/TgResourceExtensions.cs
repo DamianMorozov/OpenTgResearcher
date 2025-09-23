@@ -43,8 +43,8 @@ public static class TgResourceExtensions
 	internal static string AskGetParticipants() => "AskGetParticipants".GetLocalizedResource();
 	internal static string AskLicenseCheck() => "AskLicenseCheck".GetLocalizedResource();
 	internal static string AskLicenseClear() => "AskLicenseClear".GetLocalizedResource();
-	internal static string AskLoading() => "AskLoading".GetLocalizedResource();
 	internal static string AskLicenseRequestCommunity() => "AskLicenseRequestCommunity".GetLocalizedResource();
+	internal static string AskLoading() => "AskLoading".GetLocalizedResource();
 	internal static string AskRestartApp() => "AskRestartApp".GetLocalizedResource();
 	internal static string AskSettingsClear() => "AskSettingsClear".GetLocalizedResource();
 	internal static string AskSettingsDefault() => "AskSettingsDefault".GetLocalizedResource();
@@ -111,6 +111,7 @@ public static class TgResourceExtensions
 	internal static string GetStorageLoading() => "StorageLoading".GetLocalizedResource();
 	internal static string GetTableNameApps() => "TableNameApps".GetLocalizedResource();
 	internal static string GetTableNameChats() => "TableNameChats".GetLocalizedResource();
+	internal static string GetTableNameChatUsers() => "TableNameChatUsers".GetLocalizedResource();
 	internal static string GetTableNameDocuments() => "TableNameDocuments".GetLocalizedResource();
 	internal static string GetTableNameFilters() => "TableNameFilters".GetLocalizedResource();
 	internal static string GetTableNameMessages() => "TableNameMessages".GetLocalizedResource();

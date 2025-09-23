@@ -17,6 +17,8 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
     /// <inheritdoc />
     public ITgEfUserRepository UserRepository { get; }
     /// <inheritdoc />
+    public ITgEfChatUserRepository ChatUserRepository { get; }
+    /// <inheritdoc />
     public ITgEfDocumentRepository DocumentRepository { get; }
     /// <inheritdoc />
     public ITgEfFilterRepository FilterRepository { get; }
@@ -46,6 +48,7 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
 
         AppRepository = Scope.Resolve<ITgEfAppRepository>();
         UserRepository = Scope.Resolve<ITgEfUserRepository>();
+        ChatUserRepository = Scope.Resolve<ITgEfChatUserRepository>();
         DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>();
         FilterRepository = Scope.Resolve<ITgEfFilterRepository>();
         LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>();
@@ -68,6 +71,7 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
 
         AppRepository = Scope.Resolve<ITgEfAppRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         UserRepository = Scope.Resolve<ITgEfUserRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
+        ChatUserRepository = Scope.Resolve<ITgEfChatUserRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         DocumentRepository = Scope.Resolve<ITgEfDocumentRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         FilterRepository = Scope.Resolve<ITgEfFilterRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
         LicenseRepository = Scope.Resolve<ITgEfLicenseRepository>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment));
@@ -88,6 +92,7 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
     {
         AppRepository.Dispose();
         UserRepository.Dispose();
+        ChatUserRepository.Dispose();
         DocumentRepository.Dispose();
         FilterRepository.Dispose();
         LicenseRepository.Dispose();
@@ -269,12 +274,13 @@ WHERE UID IN (
     public (bool IsSuccess, string FileName) BackupDb(string storagePath = "") => EfContext.BackupDb(storagePath);
 
     /// <inheritdoc />
-    public async Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName,
+    public async Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(string appsName, string chatsName, string contactsName, string chatUsersName,
         string documentsName, string filtersName, string messagesName, string proxiesName, string storiesName, string versionsName)
     {
         var appDtos = new TgStorageTableDto(appsName, await AppRepository.GetListCountAsync());
         var chatsDtos = new TgStorageTableDto(chatsName, await SourceRepository.GetListCountAsync());
         var usersDtos = new TgStorageTableDto(contactsName, await UserRepository.GetListCountAsync());
+        var chatUsersDtos = new TgStorageTableDto(chatUsersName, await ChatUserRepository.GetListCountAsync());
         var documentsDtos = new TgStorageTableDto(documentsName, await DocumentRepository.GetListCountAsync());
         var filtersDtos = new TgStorageTableDto(filtersName, await FilterRepository.GetListCountAsync());
         var messagesDtos = new TgStorageTableDto(messagesName, await MessageRepository.GetListCountAsync());

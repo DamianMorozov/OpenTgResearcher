@@ -28,26 +28,52 @@ public static class TgEfDomainUtils
         };
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static ITgEfEntity CreateNewEntity(ITgEfEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(ITgEfEntity target, ITgEfEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        return entity switch
+        switch (target)
         {
-            ITgEfAppEntity => CreateNewEntity((TgEfAppEntity)entity, isUidCopy),
-            ITgEfChatUserEntity => CreateNewEntity((TgEfChatUserEntity)entity, isUidCopy),
-            ITgEfDocumentEntity => CreateNewEntity((TgEfDocumentEntity)entity, isUidCopy),
-            ITgEfFilterEntity => CreateNewEntity((TgEfFilterEntity)entity, isUidCopy),
-            ITgEfLicenseEntity => CreateNewEntity((TgEfLicenseEntity)entity, isUidCopy),
-            ITgEfMessageEntity => CreateNewEntity((TgEfMessageEntity)entity, isUidCopy),
-            ITgEfMessageRelationEntity => CreateNewEntity((TgEfMessageRelationEntity)entity, isUidCopy),
-            ITgEfProxyEntity => CreateNewEntity((TgEfProxyEntity)entity, isUidCopy),
-            ITgEfSourceEntity => CreateNewEntity((TgEfSourceEntity)entity, isUidCopy),
-            ITgEfStoryEntity => CreateNewEntity((TgEfStoryEntity)entity, isUidCopy),
-            ITgEfUserEntity => CreateNewEntity((TgEfUserEntity)entity, isUidCopy),
-            ITgEfVersionEntity => CreateNewEntity((TgEfVersionEntity)entity, isUidCopy),
-            _ => throw new ArgumentException("Wrong type!", nameof(entity)),
+            case ITgEfAppEntity:
+                UpdateEntity((TgEfAppEntity)target, (TgEfAppEntity)source, isUidCopy);
+                break;
+            case ITgEfChatUserEntity:
+                UpdateEntity((TgEfChatUserEntity)target, (TgEfChatUserEntity)source, isUidCopy);
+                break;
+            case ITgEfDocumentEntity:
+                UpdateEntity((TgEfDocumentEntity)target, (TgEfDocumentEntity)source, isUidCopy);
+                break;
+            case ITgEfFilterEntity:
+                UpdateEntity((TgEfFilterEntity)target, (TgEfFilterEntity)source, isUidCopy);
+                break;
+            case ITgEfLicenseEntity:
+                UpdateEntity((TgEfLicenseEntity)target, (TgEfLicenseEntity)source, isUidCopy);
+                break;
+            case ITgEfMessageEntity:
+                UpdateEntity((TgEfMessageEntity)target, (TgEfMessageEntity)source, isUidCopy);
+                break;
+            case ITgEfMessageRelationEntity:
+                UpdateEntity((TgEfMessageRelationEntity)target, (TgEfMessageRelationEntity)source, isUidCopy);
+                break;
+            case ITgEfProxyEntity:
+                UpdateEntity((TgEfProxyEntity)target, (TgEfProxyEntity)source, isUidCopy);
+                break;
+            case ITgEfSourceEntity:
+                UpdateEntity((TgEfSourceEntity)target, (TgEfSourceEntity)source, isUidCopy);
+                break;
+            case ITgEfStoryEntity:
+                UpdateEntity((TgEfStoryEntity)target, (TgEfStoryEntity)source, isUidCopy);
+                break;
+            case ITgEfUserEntity:
+                UpdateEntity((TgEfUserEntity)target, (TgEfUserEntity)source, isUidCopy);
+                break;
+            case ITgEfVersionEntity:
+                UpdateEntity((TgEfVersionEntity)target, (TgEfVersionEntity)source, isUidCopy);
+                break;
+            default:
+                throw new ArgumentException("Wrong type!", nameof(target));
         };
     }
 
@@ -128,31 +154,27 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfAppEntity CreateNewEntity(TgEfAppEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfAppEntity target, TgEfAppEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfAppEntity
-        {
-            ApiHash = entity.ApiHash,
-            ApiId = entity.ApiId,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            PhoneNumber = entity.PhoneNumber,
-            ProxyUid = entity.ProxyUid,
-            BotTokenKey = entity.BotTokenKey,
-        };
+        target.ApiHash = source.ApiHash;
+        target.ApiId = source.ApiId;
+        target.FirstName = source.FirstName;
+        target.LastName = source.LastName;
+        target.PhoneNumber = source.PhoneNumber;
+        target.ProxyUid = source.ProxyUid;
+        target.BotTokenKey = source.BotTokenKey;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
+            target.Uid = source.Uid;
 
-        if (entity.UseBot)
+        if (source.UseBot)
             target.SetUseBot(target.UseBot);
         else if (target.UseClient)
             target.SetUseClient(target.UseClient);
-
-        return target;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -230,32 +252,32 @@ public static class TgEfDomainUtils
         return entity;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfChatUserEntity CreateNewEntity(TgEfChatUserEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfChatUserEntity target, TgEfChatUserEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfChatUserEntity
-        {
-            DtChanged = entity.DtChanged > DateTime.MinValue ? entity.DtChanged : DateTime.UtcNow,
-            ChatId = entity.ChatId,
-            UserId = entity.UserId,
-            Role = entity.Role,
-            JoinedAt = entity.JoinedAt,
-            IsMuted = entity.IsMuted,
-            MutedUntil = entity.MutedUntil,
-            IsDeleted = entity.IsDeleted
-        };
+        target.DtChanged = source.DtChanged > DateTime.MinValue ? source.DtChanged : DateTime.UtcNow;
+        target.ChatId = source.ChatId;
+        target.UserId = source.UserId;
+        target.Role = source.Role;
+        target.JoinedAt = source.JoinedAt;
+        target.IsMuted = source.IsMuted;
+        target.MutedUntil = source.MutedUntil;
+        target.IsDeleted = source.IsDeleted;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
+            target.Uid = source.Uid;
 
-        if (entity.Chat is not null)
-            target.Chat = CreateNewEntity(entity.Chat, isUidCopy: isUidCopy);
-        if (entity.User is not null)
-            target.User = CreateNewEntity(entity.User, isUidCopy: isUidCopy);
-
-        return target;
+        if (source.Chat is not null && target.Chat is not null)
+            UpdateEntity(target.Chat, source.Chat, isUidCopy: isUidCopy);
+        else if (source.Chat is not null && target.Chat is null)
+            target.Chat = source.Chat;
+        if (source.User is not null && target.User is not null)
+            UpdateEntity(target.User, source.User, isUidCopy: isUidCopy);
+        else if (source.User is not null && target.User is null)
+            target.User = source.User;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -329,27 +351,22 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfFilterEntity CreateNewEntity(TgEfFilterEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfFilterEntity target, TgEfFilterEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfFilterEntity
-        {
-            IsEnabled = entity.IsEnabled,
-            FilterType = entity.FilterType,
-            Name = entity.Name,
-            Mask = string.IsNullOrEmpty(entity.Mask) &&
-                (Equals(entity.FilterType, TgEnumFilterType.MinSize) ||
-                Equals(entity.FilterType, TgEnumFilterType.MaxSize)) ? "*" : entity.Mask,
-            Size = entity.Size,
-            SizeType = entity.SizeType,
-        };
+        target.IsEnabled = source.IsEnabled;
+        target.FilterType = source.FilterType;
+        target.Name = source.Name;
+        target.Mask = string.IsNullOrEmpty(source.Mask) && (Equals(source.FilterType, TgEnumFilterType.MinSize) ||
+            Equals(source.FilterType, TgEnumFilterType.MaxSize)) ? "*" : source.Mask;
+        target.Size = source.Size;
+        target.SizeType = source.SizeType;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -419,28 +436,26 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfDocumentEntity CreateNewEntity(TgEfDocumentEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfDocumentEntity target, TgEfDocumentEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfDocumentEntity
-        {
-            SourceId = entity.SourceId,
-            Id = entity.Id,
-            MessageId = entity.MessageId,
-            FileName = entity.FileName,
-            FileSize = entity.FileSize,
-            AccessHash = entity.AccessHash,
-        };
+        target.SourceId = source.SourceId;
+        target.Id = source.Id;
+        target.MessageId = source.MessageId;
+        target.FileName = source.FileName;
+        target.FileSize = source.FileSize;
+        target.AccessHash = source.AccessHash;
 
-        if (entity.Source is not null)
-            target.Source = CreateNewEntity(entity.Source, isUidCopy: isUidCopy);
+        if (source.Source is not null && target.Source is not null)
+            UpdateEntity(target.Source, source.Source, isUidCopy: isUidCopy);
+        else if (source.Source is not null && target.Source is null)
+            target.Source = source.Source;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -509,24 +524,20 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfLicenseEntity CreateNewEntity(TgEfLicenseEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfLicenseEntity target, TgEfLicenseEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfLicenseEntity
-        {
-            LicenseKey = entity.LicenseKey,
-            UserId = entity.UserId,
-            LicenseType = entity.LicenseType,
-            ValidTo = entity.ValidTo,
-            IsConfirmed = entity.IsConfirmed,
-        };
+        target.LicenseKey = source.LicenseKey;
+        target.UserId = source.UserId;
+        target.LicenseType = source.LicenseType;
+        target.ValidTo = source.ValidTo;
+        target.IsConfirmed = source.IsConfirmed;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -596,30 +607,28 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfMessageEntity CreateNewEntity(TgEfMessageEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfMessageEntity target, TgEfMessageEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfMessageEntity
-        {
-            DtCreated = entity.DtCreated > DateTime.MinValue ? entity.DtCreated : DateTime.UtcNow,
-            SourceId = entity.SourceId,
-            Id = entity.Id,
-            Type = entity.Type,
-            Size = entity.Size,
-            Message = entity.Message,
-            UserId = entity.UserId,
-            IsDeleted = entity.IsDeleted,
-        };
+        target.DtCreated = source.DtCreated > DateTime.MinValue ? source.DtCreated : DateTime.UtcNow;
+        target.SourceId = source.SourceId;
+        target.Id = source.Id;
+        target.Type = source.Type;
+        target.Size = source.Size;
+        target.Message = source.Message;
+        target.UserId = source.UserId;
+        target.IsDeleted = source.IsDeleted;
 
-        if (entity.Source is not null)
-            target.Source = CreateNewEntity(entity.Source, isUidCopy: isUidCopy);
+        if (source.Source is not null && target.Source is not null)
+            UpdateEntity(target.Source, source.Source, isUidCopy: isUidCopy);
+        else if (source.Source is not null && target.Source is null)
+            target.Source = source.Source;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -694,32 +703,36 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfMessageRelationEntity CreateNewEntity(TgEfMessageRelationEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfMessageRelationEntity target, TgEfMessageRelationEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfMessageRelationEntity
-        {
-            ParentSourceId = entity.ParentSourceId,
-            ParentMessageId = entity.ParentMessageId,
-            ChildSourceId = entity.ChildSourceId,
-            ChildMessageId = entity.ChildMessageId,
-        };
+        target.ParentSourceId = source.ParentSourceId;
+        target.ParentMessageId = source.ParentMessageId;
+        target.ChildSourceId = source.ChildSourceId;
+        target.ChildMessageId = source.ChildMessageId;
 
-        if (entity.ParentSource is not null)
-            target.ParentSource = CreateNewEntity(entity.ParentSource, isUidCopy: isUidCopy);
-        if (entity.ParentMessage is not null)
-            target.ParentMessage = CreateNewEntity(entity.ParentMessage, isUidCopy: isUidCopy);
-        if (entity.ChildSource is not null)
-            target.ChildSource = CreateNewEntity(entity.ChildSource, isUidCopy: isUidCopy);
-        if (entity.ChildMessage is not null)
-            target.ChildMessage = CreateNewEntity(entity.ChildMessage, isUidCopy: isUidCopy);
+        if (source.ParentSource is not null && target.ParentSource is not null)
+            UpdateEntity(target.ParentSource, source.ParentSource, isUidCopy: isUidCopy);
+        else if (source.ParentSource is not null && target.ParentSource is null)
+            target.ParentSource = source.ParentSource;
+        if (source.ParentMessage is not null && target.ParentMessage is not null)
+            UpdateEntity(target.ParentMessage, source.ParentMessage, isUidCopy: isUidCopy);
+        else if (source.ParentMessage is not null && target.ParentMessage is null)
+            target.ParentMessage = source.ParentMessage;
+        if (source.ChildSource is not null && target.ChildSource is not null)
+            UpdateEntity(target.ChildSource, source.ChildSource, isUidCopy: isUidCopy);
+        else if (source.ChildSource is not null && target.ChildSource is null)
+            target.ChildSource = source.ChildSource;
+        if (source.ChildMessage is not null && target.ChildMessage is not null)
+            UpdateEntity(target.ChildMessage, source.ChildMessage, isUidCopy: isUidCopy);
+        else if (source.ChildMessage is not null && target.ChildMessage is null)
+            target.ChildMessage = source.ChildMessage;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -785,25 +798,21 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfProxyEntity CreateNewEntity(TgEfProxyEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfProxyEntity target, TgEfProxyEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfProxyEntity
-        {
-            Type = entity.Type,
-            HostName = entity.HostName,
-            Port = entity.Port,
-            UserName = entity.UserName,
-            Password = entity.Password,
-            Secret = entity.Secret,
-        };
+        target.Type = source.Type;
+        target.HostName = source.HostName;
+        target.Port = source.Port;
+        target.UserName = source.UserName;
+        target.Password = source.Password;
+        target.Secret = source.Secret;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -884,35 +893,31 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfSourceEntity CreateNewEntity(TgEfSourceEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfSourceEntity target, TgEfSourceEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfSourceEntity
-        {
-            Id = entity.Id,
-            DtChanged = entity.DtChanged > DateTime.MinValue ? entity.DtChanged : DateTime.UtcNow,
-            AccessHash = entity.AccessHash,
-            IsActive = entity.IsActive,
-            FirstId = entity.FirstId,
-            UserName = entity.UserName,
-            Title = entity.Title,
-            About = entity.About,
-            Count = entity.Count,
-            Directory = entity.Directory,
-            IsAutoUpdate = entity.IsAutoUpdate,
-            IsCreatingSubdirectories = entity.IsCreatingSubdirectories,
-            IsUserAccess = entity.IsUserAccess,
-            IsFileNamingByMessage = entity.IsFileNamingByMessage,
-            IsRestrictSavingContent = entity.IsRestrictSavingContent,
-            IsSubscribe = entity.IsSubscribe,
-        };
+        target.Id = source.Id;
+        target.DtChanged = source.DtChanged > DateTime.MinValue ? source.DtChanged : DateTime.UtcNow;
+        target.AccessHash = source.AccessHash;
+        target.IsActive = source.IsActive;
+        target.FirstId = source.FirstId;
+        target.UserName = source.UserName;
+        target.Title = source.Title;
+        target.About = source.About;
+        target.Count = source.Count;
+        target.Directory = source.Directory;
+        target.IsAutoUpdate = source.IsAutoUpdate;
+        target.IsCreatingSubdirectories = source.IsCreatingSubdirectories;
+        target.IsUserAccess = source.IsUserAccess;
+        target.IsFileNamingByMessage = source.IsFileNamingByMessage;
+        target.IsRestrictSavingContent = source.IsRestrictSavingContent;
+        target.IsSubscribe = source.IsSubscribe;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create an entity from DTO </summary>
@@ -1076,30 +1081,26 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfStoryEntity CreateNewEntity(TgEfStoryEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfStoryEntity target, TgEfStoryEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfStoryEntity
-        {
-            Id = entity.Id,
-            FromId = entity.FromId,
-            DtChanged = entity.DtChanged > DateTime.MinValue ? entity.DtChanged : DateTime.UtcNow,
-            FromName = entity.FromName,
-            Date = entity.Date,
-            ExpireDate = entity.ExpireDate,
-            Caption = entity.Caption,
-            Type = entity.Type,
-            Offset = entity.Offset,
-            Length = entity.Length,
-            Message = entity.Message,
-        };
+        target.Id = source.Id;
+        target.FromId = source.FromId;
+        target.DtChanged = source.DtChanged > DateTime.MinValue ? source.DtChanged : DateTime.UtcNow;
+        target.FromName = source.FromName;
+        target.Date = source.Date;
+        target.ExpireDate = source.ExpireDate;
+        target.Caption = source.Caption;
+        target.Type = source.Type;
+        target.Offset = source.Offset;
+        target.Length = source.Length;
+        target.Message = source.Message;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -1194,38 +1195,34 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfUserEntity CreateNewEntity(TgEfUserEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfUserEntity target, TgEfUserEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfUserEntity
-        {
-            Id = entity.Id,
-            DtChanged = entity.DtChanged > DateTime.MinValue ? entity.DtChanged : DateTime.UtcNow,
-            AccessHash = entity.AccessHash,
-            IsActive = entity.IsActive,
-            IsBot = entity.IsBot,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            UserName = entity.UserName,
-            UserNames = entity.UserNames,
-            PhoneNumber = entity.PhoneNumber,
-            Status = entity.Status,
-            RestrictionReason = entity.RestrictionReason,
-            LangCode = entity.LangCode,
-            StoriesMaxId = entity.StoriesMaxId,
-            BotInfoVersion = entity.BotInfoVersion,
-            BotInlinePlaceholder = entity.BotInlinePlaceholder,
-            BotActiveUsers = entity.BotActiveUsers,
-            IsContact = entity.IsContact,
-            IsDeleted = entity.IsDeleted,
-        };
+        target.Id = source.Id;
+        target.DtChanged = source.DtChanged > DateTime.MinValue ? source.DtChanged : DateTime.UtcNow;
+        target.AccessHash = source.AccessHash;
+        target.IsActive = source.IsActive;
+        target.IsBot = source.IsBot;
+        target.FirstName = source.FirstName;
+        target.LastName = source.LastName;
+        target.UserName = source.UserName;
+        target.UserNames = source.UserNames;
+        target.PhoneNumber = source.PhoneNumber;
+        target.Status = source.Status;
+        target.RestrictionReason = source.RestrictionReason;
+        target.LangCode = source.LangCode;
+        target.StoriesMaxId = source.StoriesMaxId;
+        target.BotInfoVersion = source.BotInfoVersion;
+        target.BotInlinePlaceholder = source.BotInlinePlaceholder;
+        target.BotActiveUsers = source.BotActiveUsers;
+        target.IsContact = source.IsContact;
+        target.IsDeleted = source.IsDeleted;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -1329,21 +1326,17 @@ public static class TgEfDomainUtils
         return target;
     }
 
-    /// <summary> Create an entity from entity </summary>
-    public static TgEfVersionEntity CreateNewEntity(TgEfVersionEntity entity, bool isUidCopy)
+    /// <summary> Update an entity from entity </summary>
+    public static void UpdateEntity(TgEfVersionEntity target, TgEfVersionEntity source, bool isUidCopy)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(source);
 
-        var target = new TgEfVersionEntity
-        {
-            Version = entity.Version,
-            Description = entity.Description,
-        };
+        target.Version = source.Version;
+        target.Description = source.Description;
 
         if (isUidCopy)
-            target.Uid = entity.Uid;
-
-        return target;
+            target.Uid = source.Uid;
     }
 
     /// <summary> Create a DTO from DTO </summary>
@@ -1378,21 +1371,6 @@ public static class TgEfDomainUtils
             target.Uid = entity.Uid;
 
         return target;
-    }
-
-    #endregion
-
-    #region Methods
-
-    /// <summary> Copies values from source entity to target entity using entity's own Copy method </summary>
-    public static void CopyEntityValues(ITgEfEntity source, ITgEfEntity target, bool isUidCopy)
-    {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(target);
-
-        dynamic dynTarget = target;
-        dynamic dynSource = source;
-        dynTarget.Copy(dynSource, isUidCopy: isUidCopy);
     }
 
     #endregion

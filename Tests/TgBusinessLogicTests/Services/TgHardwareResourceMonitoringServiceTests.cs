@@ -27,7 +27,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
     public async Task StartMonitoring_ShouldRaiseMetricsUpdated()
     {
         using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
-        var tcs = new TaskCompletionSource<TgHardwareMetrics>();
+        var tcs = new TaskCompletionSource<TgHardwareMetrics>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         service.MetricsUpdated += async (s, metrics) =>
         {

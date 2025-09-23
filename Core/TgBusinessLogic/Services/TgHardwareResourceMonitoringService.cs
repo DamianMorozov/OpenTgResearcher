@@ -5,7 +5,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
 {
     #region Fields, properties, constructor
 
-    public static readonly SemaphoreSlim _locker = new(initialCount: 1, maxCount: 1);
+    public readonly SemaphoreSlim _locker = new(initialCount: 1, maxCount: 1);
     private readonly Computer _computer = new() { IsCpuEnabled = true, IsMemoryEnabled = true };
     private readonly IVisitor _visitor = new TgUpdateVisitor();
     private CancellationTokenSource? _cts;
@@ -16,8 +16,8 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
     private TimeSpan _lastProcCpu;
     private DateTime _lastWall;
     private TgHardwareMetrics _lastMetrics = new();
-    private ILifetimeScope _scope = default!;
-    private IFusionCache _cache = default!;
+    private readonly ILifetimeScope _scope = default!;
+    private readonly IFusionCache _cache = default!;
     private ISensor? _cpuSensor;
     private ISensor? _memUsedSensor;
     private ISensor? _memAvailableSensor;

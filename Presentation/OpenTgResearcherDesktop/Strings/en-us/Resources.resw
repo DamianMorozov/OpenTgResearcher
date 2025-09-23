@@ -639,6 +639,9 @@
   <data name="AskGetParticipants" xml:space="preserve">
     <value>Get participants?</value>
   </data>
+  <data name="AskClearParticipants" xml:space="preserve">
+    <value>Clear participants view?</value>
+  </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Restart the application.</value>
   </data>
@@ -974,6 +977,9 @@
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Get participants from TG</value>
+  </data>
+  <data name="TextBlockClearParticipants.Text" xml:space="preserve">
+    <value>Clear participants view</value>
   </data>
   <data name="TextBlockCalcChatStatistics.Text" xml:space="preserve">
     <value>Calculate chat statistics</value>

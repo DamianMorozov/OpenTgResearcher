@@ -232,6 +232,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <!--  License button: Load participants  -->
             <styles:TgLicenseButton
@@ -294,16 +295,36 @@
                         VerticalAlignment="Center" />
                 </StackPanel>
             </styles:TgLicenseButton>
+            <!--  License button: Clear participants  -->
+            <styles:TgLicenseButton
+                Grid.Column="3"
+                Margin="0,0,5,5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
+                Command="{x:Bind ViewModel.ClearParticipantsCommand}"
+                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
+                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
+                Style="{StaticResource LicenseButtonStyle}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                    <TextBlock
+                        x:Uid="TextBlockClearParticipants"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </styles:TgLicenseButton>
             <!--  Load data  -->
             <views:TgLoadDataPage
                 Grid.Row="1"
-                Grid.ColumnSpan="3"
+                Grid.ColumnSpan="4"
                 Margin="20,0,0,0" />
             <!--  List view with participants  -->
             <ListView
                 x:Name="ListViewParticipants"
                 Grid.Row="2"
-                Grid.ColumnSpan="3"
+                Grid.ColumnSpan="4"
                 ItemTemplate="{StaticResource ParticipantsViewTemplate}"
                 ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">

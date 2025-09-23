@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - NuGet package update
 - Optimization of `TgStorage`
+- Updating the `Chat Participants` page in `OpenTgResearcherDesktop`
 ### Added
 - Adding the `Chat Users` table to `TgStorage`
 

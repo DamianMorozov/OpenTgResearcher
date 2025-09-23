@@ -26,6 +26,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
     public IAsyncRelayCommand LoadParticipantsCommand { get; }
     public IAsyncRelayCommand StopParticipantsCommand { get; }
     public IAsyncRelayCommand GetParticipantsCommand { get; }
+    public IAsyncRelayCommand ClearParticipantsCommand { get; }
 
     public TgChatDetailsParticipantsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
         ILogger<TgChatDetailsParticipantsViewModel> logger, IAppNotificationService appNotificationService)
@@ -36,6 +37,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         LoadParticipantsCommand = new AsyncRelayCommand(LoadParticipantsAsync);
         StopParticipantsCommand = new AsyncRelayCommand(StopParticipantsAsync);
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
+        ClearParticipantsCommand = new AsyncRelayCommand(ClearParticipantsAsync);
     }
 
     #endregion
@@ -159,7 +161,7 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
 
         // Online query
         var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
-        
+
         UserDtos = [.. participants.Select(x => new TgEfUserDto()
         {
             Id = x.id,
@@ -179,6 +181,24 @@ public sealed partial class TgChatDetailsParticipantsViewModel : TgPageViewModel
         })];
 
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
+    }
+
+    private async Task ClearParticipantsAsync() => await ContentDialogAsync(ClearParticipantsCoreAsync, TgResourceExtensions.AskClearParticipants(), TgEnumLoadDesktopType.Online);
+
+    private async Task ClearParticipantsCoreAsync()
+    {
+        try
+        {
+            if (!SettingsService.IsExistsAppStorage) return;
+
+            UserDtos.Clear();
+
+            IsEmptyData = false;
+        }
+        finally
+        {
+            await ReloadUiAsync();
+        }
     }
 
     /// <summary> Click on user </summary>

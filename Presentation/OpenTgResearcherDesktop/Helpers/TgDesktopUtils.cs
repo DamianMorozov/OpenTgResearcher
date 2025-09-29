@@ -158,8 +158,8 @@ public static class TgDesktopUtils
 		return null;
 	}
 
-    /// <summary> Verify paid license </summary>
-    public static bool VerifyPaidLicense() => App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckPaidLicense() ?? false;
+    /// <summary> Verify license </summary>
+    public static bool VerifyLicense() => App.BusinessLogicManager.LicenseService.CurrentLicense?.CheckLicense() ?? false;
 
     /// <summary> Get license type </summary>
     public static TgEnumLicenseType GetLicenseType() => App.BusinessLogicManager.LicenseService.CurrentLicense?.LicenseType ?? TgEnumLicenseType.No;

@@ -25,7 +25,7 @@ internal partial class TgMenuHelper
             TgLocale.MenuClientSearchUser
         );
         // Check paid license
-        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckPaidLicense())
+        if (BusinessLogicManager.LicenseService.CurrentLicense.CheckLicense())
             selectionPrompt.AddChoices(
                 TgLocale.MenuClientStartMonitoringChats,
                 TgLocale.MenuClientStopMonitoringChats,
@@ -387,13 +387,13 @@ internal partial class TgMenuHelper
             var inputChannel = new TL.InputChannel(channel.id, channel.access_hash);
 
             // Check if client is already a member of the chat
-            var isMember = await CheckUserMemberAsync(client, inputChannel, ClientMonitoringVm.UserId);
+            var isMember = await BusinessLogicManager.ConnectClient.CheckUserMemberAsync(client, inputChannel, ClientMonitoringVm.UserId, accessHash: 0);
             if (!isMember)
             {
                 TgLog.WriteLine($"  The client is not a member of the chat {inputChannel.channel_id}");
                 // Try to join the chat
                 await client.Channels_JoinChannel(inputChannel);
-                isMember = await CheckUserMemberAsync(client, inputChannel, ClientMonitoringVm.UserId);
+                isMember = await BusinessLogicManager.ConnectClient.CheckUserMemberAsync(client, inputChannel, ClientMonitoringVm.UserId, accessHash: 0);
                 if (!isMember)
                     TgLog.WriteLine($"  Can not join to the chat {chatNameOrId}");
             }
@@ -406,23 +406,6 @@ internal partial class TgMenuHelper
         {
             TgLogUtils.WriteException(ex);
             TgLog.WriteLine($"  Error when joining the client to the chat {chatNameOrId}: {ex.Message}");
-            return false;
-        }
-    }
-
-    /// <summary> Check if user is a member of the chat </summary>
-    private async Task<bool> CheckUserMemberAsync(Client client, TL.InputChannel inputChannel, long userId)
-    {
-        try
-        {
-            var inputUser = new TL.InputUser(userId, 0);
-            var participant = await client.Channels_GetParticipant(inputChannel, inputUser);
-            return participant is not null;
-        }
-        catch (Exception ex)
-        {
-            TgLogUtils.WriteException(ex);
-            TgLog.WriteLine($"{TgLocale.TgErrorCheckUserMember}: user ID {userId}, chat ID {inputChannel.channel_id}: {ex.Message}");
             return false;
         }
     }

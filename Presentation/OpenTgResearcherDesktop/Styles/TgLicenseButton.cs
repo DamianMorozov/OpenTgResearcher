@@ -26,7 +26,7 @@ public sealed partial class TgLicenseButton : Button
 
     private void OnClick(object sender, RoutedEventArgs e)
     {
-        bool isLicensed = TgDesktopUtils.VerifyPaidLicense();
+        bool isLicensed = TgDesktopUtils.VerifyLicense();
 
         if (!isLicensed)
         {

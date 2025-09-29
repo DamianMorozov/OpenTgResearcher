@@ -51,10 +51,11 @@ public sealed partial class TgLicenseDto : ObservableRecipient
 
     #region Methods
 
-    /// <summary> Check paid license </summary>
-    public bool CheckPaidLicense() => LicenseType switch
+    /// <summary> Check license </summary>
+    public bool CheckLicense() => LicenseType switch
 	{
-		TgEnumLicenseType.Paid or TgEnumLicenseType.Gift or TgEnumLicenseType.Premium => IsConfirmed && DateOnly.FromDateTime(DateTime.UtcNow) <= ValidTo,
+		TgEnumLicenseType.Community or TgEnumLicenseType.Paid or TgEnumLicenseType.Gift or TgEnumLicenseType.Premium => 
+            IsConfirmed && DateOnly.FromDateTime(DateTime.UtcNow) <= ValidTo,
 		_ => false,
 	};
 

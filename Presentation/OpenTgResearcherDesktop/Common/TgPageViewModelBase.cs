@@ -37,7 +37,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     [ObservableProperty]
     public partial bool IsEmptyData { get; set; } = true;
     [ObservableProperty]
-    public partial bool IsPaidLicense { get; set; }
+    public partial bool IsLicense { get; set; }
     [ObservableProperty]
     public partial TgEnumLicenseType LicenseType { get; set; } = TgEnumLicenseType.No;
 
@@ -400,7 +400,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     /// <summary> Refresh license </summary>
     public void RefreshLicenseInfo()
     {
-        IsPaidLicense = TgDesktopUtils.VerifyPaidLicense();
+        IsLicense = TgDesktopUtils.VerifyLicense();
         LicenseType = TgDesktopUtils.GetLicenseType();
     }
 

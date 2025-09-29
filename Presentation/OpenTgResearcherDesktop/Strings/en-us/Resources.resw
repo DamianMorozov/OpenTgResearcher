@@ -354,6 +354,9 @@
   <data name="ActionSearch.Text" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="ActionOpen.Text" xml:space="preserve">
+    <value>Open</value>
+  </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
     <value>Checking for release updates</value>
   </data>
@@ -615,6 +618,9 @@
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Update online?</value>
   </data>
+  <data name="AskOpen" xml:space="preserve">
+    <value>Open?</value>
+  </data>
   <data name="AskStartMonitoring" xml:space="preserve">
     <value>Start monitoring?</value>
   </data>
@@ -846,6 +852,9 @@
   <data name="ColumnProgressTemplate.Header" xml:space="preserve">
     <value>Progress</value>
   </data>
+  <data name="ColumnParticipantsTemplate.Header" xml:space="preserve">
+    <value>Participants</value>
+  </data>
   <data name="ColumnIsActiveTemplate.Header" xml:space="preserve">
     <value>Active</value>
   </data>
@@ -911,6 +920,9 @@
   </data>
   <data name="ColumnBotTokenTemplate.Header" xml:space="preserve">
     <value>Bot token</value>
+  </data>
+  <data name="ColumnMessagesTemplate.Header" xml:space="preserve">
+    <value>Messages</value>
   </data>
   <data name="DataWaitStorageProcessing.Text" xml:space="preserve">
     <value>Wait until the data has finished loading from the storage</value>
@@ -1256,6 +1268,9 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Naming media files by message</value>
+  </data>
+  <data name="FieldIsDownloadThumbnail.Text" xml:space="preserve">
+    <value>Download thumbnails (covers)</value>
   </data>
   <data name="FieldIsParsingComments.Text" xml:space="preserve">
     <value>Parsing comments</value>

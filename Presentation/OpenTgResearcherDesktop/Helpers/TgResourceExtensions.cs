@@ -45,6 +45,7 @@ public static class TgResourceExtensions
 	internal static string AskLicenseClear() => "AskLicenseClear".GetLocalizedResource();
 	internal static string AskLicenseRequestCommunity() => "AskLicenseRequestCommunity".GetLocalizedResource();
 	internal static string AskLoading() => "AskLoading".GetLocalizedResource();
+	internal static string AskOpen() => "AskOpen".GetLocalizedResource();
 	internal static string AskRestartApp() => "AskRestartApp".GetLocalizedResource();
 	internal static string AskSettingsClear() => "AskSettingsClear".GetLocalizedResource();
 	internal static string AskSettingsDefault() => "AskSettingsDefault".GetLocalizedResource();

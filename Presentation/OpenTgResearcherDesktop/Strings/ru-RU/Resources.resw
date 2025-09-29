@@ -413,6 +413,9 @@
   <data name="ActionSearch.Text" xml:space="preserve">
     <value>Поиск</value>
   </data>
+  <data name="ActionOpen.Text" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
     <value>Проверка наличия обновлений релиза</value>
   </data>
@@ -674,6 +677,9 @@
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Обновить онлайн?</value>
   </data>
+  <data name="AskOpen" xml:space="preserve">
+    <value>Открыть?</value>
+  </data>
   <data name="AskStartMonitoring" xml:space="preserve">
     <value>Запустить мониторинг?</value>
   </data>
@@ -908,6 +914,9 @@
   <data name="ColumnProgressTemplate.Header" xml:space="preserve">
     <value>Прогресс</value>
   </data>
+  <data name="ColumnParticipantsTemplate.Header" xml:space="preserve">
+    <value>Участники</value>
+  </data>
   <data name="ColumnIsActiveTemplate.Header" xml:space="preserve">
     <value>Активно</value>
   </data>
@@ -973,6 +982,9 @@
   </data>
   <data name="ColumnBotTokenTemplate.Header" xml:space="preserve">
     <value>Токен бота</value>
+  </data>
+  <data name="ColumnMessagesTemplate.Header" xml:space="preserve">
+    <value>Сообщений</value>
   </data>
   <data name="DataWaitStorageProcessing.Text" xml:space="preserve">
     <value>Дождитесь окончания загрузки данных из хранилища</value>
@@ -1318,6 +1330,9 @@
   </data>
   <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
     <value>Именование медиа-файлов по сообщению</value>
+  </data>
+  <data name="FieldIsDownloadThumbnail.Text" xml:space="preserve">
+    <value>Скачивать миниатюры (обложки)</value>
   </data>
   <data name="FieldIsParsingComments.Text" xml:space="preserve">
     <value>Парсинг комментариев</value>

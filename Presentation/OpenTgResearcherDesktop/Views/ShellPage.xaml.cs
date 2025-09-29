@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace OpenTgResearcherDesktop.Views;
+﻿namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ShellPage
 {

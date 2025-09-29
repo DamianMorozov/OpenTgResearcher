@@ -10,16 +10,16 @@ public sealed partial class TgEfChatWithCountDto : TgDtoBase
     [ObservableProperty]
     public partial TgEfSourceDto ChatDto { get; set; } = default!;
     [ObservableProperty]
-    public partial int CountMessages { get; set; } = default!;
+    public partial int MessagesCount { get; set; } = default!;
     [ObservableProperty]
     public partial ObservableCollection<TgEfMessageDto> Messages { get; set; } = [];
     public TgEfChatWithCountDto() : base() => Default();
 
-    public TgEfChatWithCountDto(TgEfUserDto userDto, TgEfSourceDto chatDto, int countMessages) : base()
+    public TgEfChatWithCountDto(TgEfUserDto userDto, TgEfSourceDto chatDto, int messagesCount) : base()
 	{
         UserDto = userDto;
         ChatDto = chatDto;
-        CountMessages = countMessages;
+        MessagesCount = messagesCount;
     }
 
     #endregion
@@ -31,7 +31,7 @@ public sealed partial class TgEfChatWithCountDto : TgDtoBase
     {
         UserDto = new();
         ChatDto = new();
-        CountMessages = 0;
+        MessagesCount = 0;
         Messages = [];
     }
 

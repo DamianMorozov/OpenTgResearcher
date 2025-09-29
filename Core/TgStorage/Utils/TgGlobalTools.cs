@@ -59,6 +59,7 @@ public static class TgGlobalTools
         {
             TgEfAppEntity app => new TgEfAppValidator().Validate(app),
             TgEfUserEntity contact => new TgEfUserValidator().Validate(contact),
+            TgEfChatUserEntity chatUser => new TgEfChatUserValidator().Validate(chatUser),
             TgEfDocumentEntity document => new TgEfDocumentValidator().Validate(document),
             TgEfFilterEntity filter => new TgEfFilterValidator().Validate(filter),
             TgEfLicenseEntity license => new TgEfLicenseValidator().Validate(license),

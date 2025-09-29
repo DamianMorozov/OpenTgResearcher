@@ -497,13 +497,9 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         // Entity is existing - Update
         else if (isRewrite)
         {
-            //var prepareEntity = TgEfDomainUtils.CreateNewEntity(item, isUidCopy: true);
-            //if (prepareEntity is TEfEntity entity)
-            //{
-            //    storageResult.Item = entity;
-            //}
+            TgEfDomainUtils.UpdateEntity(storageResult.Item, item, isUidCopy: true);
             // Simple property assignment
-            ((DbContext)EfContext).Entry(storageResult.Item!).CurrentValues.SetValues(item);
+            //((DbContext)EfContext).Entry(storageResult.Item!).CurrentValues.SetValues(item);
             EfContext.UpdateItem(storageResult.Item);
         }
         else

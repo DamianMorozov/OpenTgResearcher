@@ -37,6 +37,8 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgEfSourceLiteDto
 	public partial int ProgressPercent { get; set; }
 	[ObservableProperty]
 	public partial string ProgressPercentString { get; set; }
+	[ObservableProperty]
+	public partial int ParticipantsCount { get; set; }
 
 	public TgEfSourceLiteDto() : base()
 	{

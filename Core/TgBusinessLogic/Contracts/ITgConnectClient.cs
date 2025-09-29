@@ -66,14 +66,14 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public (string, string) GetChatUserLink(long chatId);
     /// <summary> Get user link </summary>
     public Task<(string, string)> GetUserLink(long chatId, int messageId, TL.Peer? peer, CancellationToken ct = default);
-    /// <summary> Get chat participant information </summary>
-    Task<TL.User?> GetParticipantAsync(long chatId, long? userId, CancellationToken ct);
     /// <summary> Get chat participants information </summary>
-    Task<List<TL.User>> GetParticipantsAsync(long chatId, CancellationToken ct = default);
+    public Task<List<TgParticipantDto>> GetParticipantsAsync(long chatId, CancellationToken ct = default);
+    /// <summary> Get chat participant information </summary>
+    public Task<TgParticipantDto?> GetParticipantsAsync(long chatId, long? userId, long accessHash = 0, CancellationToken ct = default);
     /// <summary> Make an action with messages in a chat </summary>
-    Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, TL.ChatBase, TL.MessageBase, Task> func, CancellationToken ct = default);
+    public Task MakeFuncWithMessagesAsync(TgDownloadSettingsViewModel tgDownloadSettings, long chatId, Func<TgDownloadSettingsViewModel, TL.ChatBase, TL.MessageBase, Task> func, CancellationToken ct = default);
     /// <summary> Get the last message ID in a chat </summary>
-    Task<int> GetChatLastMessageIdAsync(long chatId, CancellationToken ct);
+    public Task<int> GetChatLastMessageIdAsync(long chatId, CancellationToken ct);
     /// <summary> Clear caches </summary>
     public void ClearCaches();
     /// <summary> Get chat details </summary>
@@ -90,4 +90,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task UpdateUsersAsync(List<TgEfUserDto> users);
     /// <summary> Checks if a file is locked by another process </summary>
     public bool CheckFileLocked(string filePath);
+    /// <summary> Check if user is a member of the chat </summary>
+    public Task<bool> CheckUserMemberAsync(TL.InputChannel inputChannel, long userId, long accessHash);
+    /// <summary> Check if user is a member of the chat </summary>
+    public Task<bool> CheckUserMemberAsync(WTelegram.Client? client, TL.InputChannel inputChannel, long userId, long accessHash);
 }

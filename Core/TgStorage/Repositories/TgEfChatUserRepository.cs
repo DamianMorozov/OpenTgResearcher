@@ -127,5 +127,54 @@ public sealed class TgEfChatUserRepository : TgEfRepositoryBase<TgEfChatUserEnti
     public override async Task<int> GetCountAsync(Expression<Func<TgEfChatUserEntity, bool>> where, CancellationToken ct = default) => 
         await EfContext.ChatUsers.AsNoTracking().Where(where).CountAsync(ct);
 
+    /// <inheritdoc />
+    public async Task CreateMissingChatUsersByMessagesAsync(long sourceId, CancellationToken ct = default)
+    {
+        // Get distinct user ids that have messages in this source
+        var messageUserIds = await EfContext.Messages
+            .AsNoTracking()
+            .Where(m => m.SourceId == sourceId && m.UserId > 0)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(ct);
+
+        if (messageUserIds == null || messageUserIds.Count == 0) return;
+
+        // Get existing chat-user links for this chat
+        var existingChatUserIds = await EfContext.ChatUsers
+            .AsNoTracking()
+            .Where(cu => cu.ChatId == sourceId && cu.ChatId > 0)
+            .Select(cu => cu.UserId)
+            .ToListAsync(ct);
+
+        // Determine which user ids need ChatUser records
+        var missingChatUserIds = messageUserIds.Except(existingChatUserIds).ToList();
+
+        if (missingChatUserIds.Count == 0)
+            return;
+
+        // Build new ChatUser entities (avoid duplicates)
+        var now = DateTime.UtcNow;
+        var chatUserEntities = missingChatUserIds
+            .Distinct()
+            .Select(uid => new TgEfChatUserEntity
+            {
+                ChatId = sourceId,
+                UserId = uid,
+                JoinedAt = now,
+                Role = TgEnumChatUserRole.Member,
+                IsMuted = false,
+                MutedUntil = null,
+                IsDeleted = false,
+                DtChanged = now
+            })
+            .ToList();
+
+        if (chatUserEntities.Count > 0)
+        {
+            await SaveListAsync(chatUserEntities, isRewriteEntities: false, isFirstTry: true, ct: ct);
+        }
+    }
+
     #endregion
 }

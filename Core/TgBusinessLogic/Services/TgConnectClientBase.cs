@@ -83,7 +83,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
         _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
-        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.id}");
+        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
     }
 
     protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) :
@@ -100,7 +100,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
         _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
-        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.id}");
+        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
     }
 
     #endregion
@@ -646,10 +646,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             foreach (var chatId in listIds)
             {
-                var participants = await GetParticipantsAsync(chatId, ct);
+                var participantDtos = await GetParticipantsAsync(chatId, ct);
                 Dictionary<long, TL.User> users = [];
-                foreach (var user in participants)
-                    users.Add(user.id, user);
+                foreach (var participantDto in participantDtos)
+                    users.Add(participantDto.Id, participantDto.User);
                 FillEnumerableUsers(users);
             }
         }
@@ -1512,7 +1512,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         entity.DtChanged = DateTime.UtcNow;
         entity.AccessHash = dto.AccessHash;
-        entity.IsActive = dto.IsContactActive;
+        entity.IsActive = dto.IsUserActive;
         entity.IsBot = dto.IsBot;
         entity.FirstName = dto.FirstName ?? string.Empty;
         entity.LastName = dto.LastName ?? string.Empty;
@@ -1533,7 +1533,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         DtChanged = DateTime.UtcNow,
         Id = dto.Id,
         AccessHash = dto.AccessHash,
-        IsActive = dto.IsContactActive,
+        IsActive = dto.IsUserActive,
         IsBot = dto.IsBot,
         FirstName = dto.FirstName ?? string.Empty,
         LastName = dto.LastName ?? string.Empty,
@@ -2574,6 +2574,53 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Early exit if cancellation requested
         if (CheckShouldStop(ct)) return;
 
+        // Enrich user data from the message author (persist/update TgEfUserEntity)
+        try
+        {
+            // From is TL.Peer (PeerUser/PeerChat/PeerChannel). We only enrich for PeerUser.
+            if (message.From is TL.PeerUser peerUser)
+            {
+                //var inputChannel = new TL.InputChannel(channel.id, channel.access_hash);
+                var chatBase = GetChatBaseFromUserChats(message.peer_id);
+                var inputChannel = GetInputChannelFromChatBase(chatBase);
+                if (inputChannel is not null && inputChannel.access_hash != 0)
+                {
+                    var isMember = await CheckUserMemberAsync(inputChannel, peerUser.user_id, accessHash: 0);
+                }
+                //// Try to get full TL.User via client (uses cache/fallback to API)
+                //var tlUser = await GetParticipantAsync(messageSettings.CurrentChatId, peerUser.user_id, accessHash: 0, ct);
+                //if (tlUser is not null)
+                //{
+                //    var userDto = new TgEfUserDto
+                //    {
+                //        Id = tlUser.id,
+                //        IsUserActive = tlUser.IsActive,
+                //        IsBot = tlUser.IsBot,
+                //        LastSeenAgo = tlUser.LastSeenAgo,
+                //        UserName = tlUser.MainUsername ?? tlUser.username ?? string.Empty,
+                //        AccessHash = tlUser.access_hash,
+                //        FirstName = tlUser.first_name ?? string.Empty,
+                //        LastName = tlUser.last_name ?? string.Empty,
+                //        UserNames = tlUser.usernames is null ? string.Empty : string.Join("|", tlUser.usernames.ToList()),
+                //        PhoneNumber = tlUser.phone ?? string.Empty,
+                //        Status = tlUser.status?.ToString() ?? string.Empty,
+                //        RestrictionReason = tlUser.restriction_reason is null ? string.Empty : string.Join("|", tlUser.restriction_reason.ToList()),
+                //        LangCode = tlUser.lang_code ?? string.Empty,
+                //        IsContact = false,
+                //    };
+
+                //    // persist/merge into storage
+                //    await UpdateUsersAsync([userDto]);
+                //}
+            }
+        }
+        catch (OperationCanceledException) { return; }
+        catch (Exception ex)
+        {
+            // don't fail message processing because of user enrichment
+            TgLogUtils.WriteException(ex);
+        }
+
         // Parse documents and photos
         if ((message.flags & Message.Flags.has_media) != 0)
         {
@@ -3595,17 +3642,17 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Optimization: check cache
-            if (_tlUserBuffer.FirstOrDefault(x => x.id == peerUser.user_id) is TL.User user)
+            if (_tlUserBuffer.FirstOrDefault(x => x.Id == peerUser.user_id)?.User is TL.User user)
                 return TgStringUtils.FormatUserLink(user.username, user.id, string.Join(" ", user.first_name, user.last_name));
 
             // Retrieving data through a chat participant
-            var userData = await GetParticipantAsync(chatId, peerUser.user_id, ct);
-            if (userData is null)
+            var participantDto = await GetParticipantsAsync(chatId, peerUser.user_id, accessHash: 0, ct);
+            if (participantDto is null || participantDto.User is null)
                 return GetChatUserLink(chatId);
 
             // Optimization: update cache
-            _tlUserBuffer.Add(userData);
-            return TgStringUtils.FormatUserLink(userData.username, userData.id, string.Join(" ", userData.first_name, userData.last_name));
+            _tlUserBuffer.Add(participantDto);
+            return TgStringUtils.FormatUserLink(participantDto.User.username, participantDto.Id, string.Join(" ", participantDto.User.first_name, participantDto.User.last_name));
         }
         catch (Exception ex)
         {
@@ -3690,7 +3737,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <inheritdoc />
-    public async Task<TL.User?> GetParticipantAsync(long chatId, long? userId, CancellationToken ct)
+    public async Task<TgParticipantDto?> GetParticipantsAsync(long chatId, long? userId, long accessHash = 0, CancellationToken ct = default)
     {
         var chatBase = GetChatBaseFromUserChats(chatId);
         var inputChannel = GetInputChannelFromChatBase(chatBase);
@@ -3699,13 +3746,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Optimization: check cache
         if (userId is not null)
         {
-            if (_tlUserBuffer.FirstOrDefault(x => x.id == userId) is TL.User user)
-                return user;
+            var participantDto = _tlUserBuffer.FirstOrDefault(x => x.Id == userId);
+            if (participantDto is not null)
+                return participantDto;
             // Get one participant: need access hash
             try
             {
                 // Call Telegram API with cancellation support
-                var response = await TelegramCallAsync(apiCt => Client.Channels_GetParticipant(inputChannel, new TL.InputUser((long)userId, access_hash: 0)),
+                var response = await TelegramCallAsync(apiCt => Client.Channels_GetParticipant(inputChannel, new TL.InputUser((long)userId, accessHash)),
                     isThrow: false, ct);
                 if (response is not null)
                 {
@@ -3713,8 +3761,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     var userData = response.users.FirstOrDefault(x => x.Value.id == userId).Value;
                     if (userData is not null)
                     {
-                        _tlUserBuffer.Add(userData);
-                        return userData;
+                        participantDto = new(userData);
+                        _tlUserBuffer.Add(participantDto);
+                        return participantDto;
                     }
                 }
             }
@@ -3731,7 +3780,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             int offset = 0;
             while (true)
             {
-                ChannelParticipantsFilter filter = new ChannelParticipantsRecent();
+                //ChannelParticipantsFilter filter = new ChannelParticipantsRecent();
+                ChannelParticipantsFilter filter = new ChannelParticipantsSearch();
                 // Call Telegram API with cancellation support
                 var participants = await TelegramCallAsync(apiCt => Client.Channels_GetParticipants(inputChannel, filter, offset, limit, 0), isThrow: false, ct);
                 if (participants is null || participants.participants.Length == 0)
@@ -3744,14 +3794,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         if (userItem.Value.id == userId)
                         {
                             // Optimization: update cache
-                            _tlUserBuffer.Add(userItem.Value);
-                            return userItem.Value;
+                            var participantDto = new TgParticipantDto(userItem.Value, participants.participants.FirstOrDefault(x => x.UserId == userId)?.IsAdmin ?? false);
+                            _tlUserBuffer.Add(participantDto);
+                            return participantDto;
                         }
                     }
                     else
                     {
                         // Optimization: update cache
-                        _tlUserBuffer.Add(userItem.Value);
+                        var participantDto = new TgParticipantDto(userItem.Value, participants.participants.FirstOrDefault(x => x.UserId == userItem.Key)?.IsAdmin ?? false);
+                        _tlUserBuffer.Add(participantDto);
                     }
                 }
 
@@ -3759,26 +3811,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     break;
                 offset += participants.participants.Length;
             }
-            return null;
         }
         catch (RpcException ex) when (ex.Code == 400) // USER_NOT_PARTICIPANT
         {
-            return null;
+            //
         }
+        return null;
     }
 
     /// <inheritdoc />
-    public async Task<List<TL.User>> GetParticipantsAsync(long chatId, CancellationToken ct = default)
+    public async Task<List<TgParticipantDto>> GetParticipantsAsync(long chatId, CancellationToken ct = default)
     {
         var chatDetailsDto = await GetChatDetailsByClientAsync(chatId, ct);
 
         _tlUserBuffer.Clear();
-        await GetParticipantAsync(chatId, null, ct);
+        await GetParticipantsAsync(chatId, null, accessHash: 0, ct);
 
         // Sort participants
         var userList = _tlUserBuffer.GetList()
-            .OrderByDescending(x => x.id == Client?.UserId)
-            .ThenBy(x => x.LastSeenAgo)
+            .OrderByDescending(x => x.Id == Client?.UserId)
+            .ThenBy(x => x.User.LastSeenAgo)
             .Select(x => x)
             .ToList();
 
@@ -4098,6 +4150,39 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 permissions.Add(nameof(chatDetails.Permissions.CanManageTopics));
             chatDetailsDto.Permissions = string.Join(", ", permissions);
         }
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> CheckUserMemberAsync(TL.InputChannel inputChannel, long userId, long accessHash) => 
+        await CheckUserMemberAsync(Client, inputChannel, userId, accessHash);
+
+    /// <inheritdoc />
+    public async Task<bool> CheckUserMemberAsync(Client? client, TL.InputChannel inputChannel, long userId, long accessHash)
+    {
+        if (client is null) return false;
+        var inputUser = new TL.InputUser(userId, accessHash);
+
+        try
+        {
+            var participant = await Client.Channels_GetParticipant(inputChannel, inputUser);
+            return participant is not null;
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, $"{TgLocale.TgErrorCheckUserMember}: chat ID {inputChannel.channel_id} | user ID {userId} | {ex.Message}");
+        }
+
+        try
+        {
+            var fullUser = await Client.Users_GetFullUser(inputUser);
+
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, $"{TgLocale.TgErrorCheckUserMember}: chat ID {inputChannel.channel_id} | user ID {userId} | {ex.Message}");
+        }
+        
+        return false;
     }
 
     #endregion

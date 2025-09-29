@@ -13,7 +13,7 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
     [ObservableProperty]
     public partial long AccessHash { get; set; }
     [ObservableProperty]
-    public partial bool IsContactActive { get; set; }
+    public partial bool IsUserActive { get; set; }
     [ObservableProperty]
     public partial bool IsBot { get; set; }
     [ObservableProperty]
@@ -51,7 +51,7 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
     [ObservableProperty]
     public partial bool IsDownload { get; set; }
     [ObservableProperty]
-    public partial int CountMessages { get; set; }
+    public partial int MessagesCount { get; set; }
 
     public string DisplayName => !string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName) ? $"{FirstName} {LastName}".Trim(): UserName;
 
@@ -60,7 +60,7 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
         DtChanged = DateTime.MinValue;
         Id = 0;
         AccessHash = 0;
-        IsContactActive = false;
+        IsUserActive = false;
         IsBot = false;
         LastSeenAgo = TimeSpan.Zero;
         FirstName = string.Empty;
@@ -78,7 +78,7 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
         BotInlinePlaceholder = string.Empty;
         BotActiveUsers = 0;
         IsDownload = false;
-        CountMessages = 0;
+        MessagesCount = 0;
     }
 
     #endregion
@@ -109,9 +109,9 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
         $"{TgDataFormatUtils.GetFormatString(nameof(PhoneNumber), 11).TrimEnd(),-11} | " +
         $"Name";
 
-    public TgEfUserDto SetCountMessages(int countMessages)
+    public TgEfUserDto SetCountMessages(int messagesCount)
     {
-        CountMessages = countMessages;
+        MessagesCount = messagesCount;
         return this;
     }
 

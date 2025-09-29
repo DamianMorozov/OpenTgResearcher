@@ -115,40 +115,106 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
         await EfContext.Users.AsNoTracking().Where(where).CountAsync(ct);
 
     /// <inheritdoc />
-    public async Task<List<TgEfUserDto>> GetUsersBySourceIdAsync(long sourceId, CancellationToken ct = default) => await EfContext.Users
+    public async Task<List<TgEfUserDto>> GetUsersByChatIdAsync(long chatId, CancellationToken ct = default) => await EfContext.Users
         .AsNoTracking()
-        .Where(u => EfContext.Messages.Any(m => m.SourceId == sourceId && m.UserId == u.Id))
+        .Where(u => EfContext.Messages.Any(m => m.SourceId == chatId && m.UserId == u.Id))
         .Select(SelectDto())
         .ToListAsync(ct);
 
     /// <inheritdoc />
-    public async Task<List<TgEfUserDto>> GetUsersBySourceIdJoinAsync(long sourceId, long userId, CancellationToken ct = default)
+    public async Task<List<TgEfUserDto>> GetUsersByChatIdJoinAsync(long chatId, long userId, int pageSkip, int pageTake, Expression<Func<ITgEfEntity, bool>>? where, 
+        CancellationToken ct = default)
     {
-        var tmp = await EfContext.Users
-            .AsNoTracking()
-            .Select(u => new
+        // Query ChatUsers for given chat, join to Users and Messages, group messages per user and count
+        var baseQuery =
+                from cu in EfContext.ChatUsers.AsNoTracking()
+                where cu.ChatId == chatId && !cu.IsDeleted
+                join u in EfContext.Users.AsNoTracking() on cu.UserId equals u.Id
+                // left join messages for this source by user
+                join m in EfContext.Messages.AsNoTracking().Where(m => m.SourceId == chatId)
+                on u.Id equals m.UserId into msgs
+            select new
             {
                 User = u,
-                MsgCount = EfContext.Messages.Count(m => m.SourceId == sourceId && m.UserId == u.Id)
-            })
-            .Where(x => x.MsgCount > 0)
-            .OrderByDescending(x => x.User.Id == userId)
-            .ToListAsync(ct);
+                MsgCount = msgs.Count()
+            };
 
-        return [.. tmp.Select(x => TgEfDomainUtils.CreateNewDto(x.User, x.MsgCount, isUidCopy: true))];
+        // Filter: keep only users with at least one message (if you want all participants remove this filter)
+        baseQuery = baseQuery.Where(x => x.MsgCount > 0);
+
+        // Sort: current user first, then by username for stable ordering
+        var ordered = baseQuery
+            .OrderByDescending(x => x.MsgCount)
+            .ThenByDescending(x => x.User.Id == userId)
+            .ThenBy(x => x.User.UserName);
+
+        // Pagination: apply on a separate variable to avoid IOrderedQueryable vs IQueryable mismatch
+        var safeSkip = Math.Max(0, pageSkip);
+        IQueryable<dynamic> paged = ordered.Skip(safeSkip); // inferred as IQueryable<anon>, but stored as IQueryable<dynamic> for reuse
+        if (pageTake > 0)
+            paged = paged.Take(pageTake);
+
+        // Materialize
+        var list = await paged.ToListAsync(ct);
+
+        // Map to DTOs using domain util (preserves isUidCopy behavior)
+        return [.. list.Select(x => TgEfDomainUtils.CreateNewDto(x.User, x.MsgCount, isUidCopy: true))];
     }
 
     /// <inheritdoc />
-    public async Task<TgEfUserDto> GetMyselfUserAsync(long sourceId, long userId, CancellationToken ct = default)
+    public async Task<TgEfUserDto> GetMyselfUserAsync(long chatId, long userId, CancellationToken ct = default)
     {
-        var countMessages = await EfContext.Messages.AsNoTracking().CountAsync(m => m.SourceId == sourceId && m.UserId == userId, ct);
+        var messagesCount = await EfContext.Messages.AsNoTracking().CountAsync(m => m.SourceId == chatId && m.UserId == userId, ct);
         var userDto = await EfContext.Users
             .AsNoTracking()
             .Where(x => x.Id == userId)
             .Select(SelectDto()).FirstOrDefaultAsync(ct);
         if (userDto is not null)
-            userDto.CountMessages = countMessages;
+            userDto.MessagesCount = messagesCount;
         return userDto ?? new();
+    }
+
+    /// <inheritdoc />
+    public async Task CreateMissingUsersByMessagesAsync(long chatId, CancellationToken ct = default)
+    {
+        // Get distinct user ids that have messages in this source
+        var messageUserIds = await EfContext.Messages
+            .AsNoTracking()
+            .Where(m => m.SourceId == chatId && m.UserId > 0)
+            .Select(m => m.UserId)
+            .Distinct()
+            .ToListAsync(ct);
+
+        if (messageUserIds == null || messageUserIds.Count == 0) return;
+
+        // Existing users in Users table
+        var existingUsers = await EfContext.Users
+            .AsNoTracking()
+            .Where(u => messageUserIds.Contains(u.Id))
+            .Select(u => u.Id)
+            .ToListAsync(ct);
+
+        var missingUserIds = messageUserIds.Except(existingUsers).ToList();
+
+        // Create minimal user entities for missing users to satisfy FK when creating chat links
+        if (missingUserIds.Count > 0)
+        {
+            var newUsers = missingUserIds.Select(id => new TgEfUserEntity
+            {
+                Id = id,
+                // fill minimal safe defaults, adjust property names if needed
+                UserName = string.Empty,
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                PhoneNumber = string.Empty,
+                IsBot = false,
+                DtChanged = DateTime.UtcNow,
+                IsDeleted = false
+            }).ToList();
+
+            // Persist missing users (use repository to respect validation/normalization)
+            await SaveListAsync(newUsers, isRewriteEntities: false, isFirstTry: true, ct: ct);
+        }
     }
 
     #endregion

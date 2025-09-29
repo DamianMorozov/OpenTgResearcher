@@ -12,7 +12,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private readonly TgBufferCacheHelper<TgEfSourceEntity> _chatBuffer = default!;
     private readonly TgBufferCacheHelper<TgEfStoryEntity> _storyBuffer = default!;
     private readonly TgBufferCacheHelper<TgEfUserEntity> _userBuffer = default!;
-    private readonly TgBufferCacheHelper<TL.User> _tlUserBuffer = default!;
+    private readonly TgBufferCacheHelper<TgParticipantDto> _tlUserBuffer = default!;
 
     /// <summary> Release all buffers and cache </summary>
     public async Task ReleaseBuffersAsync()

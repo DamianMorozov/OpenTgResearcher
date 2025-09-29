@@ -1171,7 +1171,7 @@ public static class TgEfDomainUtils
             DtChanged = dto.DtChanged > DateTime.MinValue ? dto.DtChanged : DateTime.UtcNow,
             Id = dto.Id,
             AccessHash = dto.AccessHash,
-            IsActive = dto.IsContactActive,
+            IsActive = dto.IsUserActive,
             IsBot = dto.IsBot,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
@@ -1235,7 +1235,7 @@ public static class TgEfDomainUtils
             Id = dto.Id,
             DtChanged = dto.DtChanged > DateTime.MinValue ? dto.DtChanged : DateTime.UtcNow,
             AccessHash = dto.AccessHash,
-            IsContactActive = dto.IsContactActive,
+            IsUserActive = dto.IsUserActive,
             IsBot = dto.IsBot,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
@@ -1252,7 +1252,7 @@ public static class TgEfDomainUtils
             BotInlinePlaceholder = dto.BotInlinePlaceholder,
             BotActiveUsers = dto.BotActiveUsers,
             IsDownload = dto.IsDownload,
-            CountMessages = dto.CountMessages,
+            MessagesCount = dto.MessagesCount,
         };
 
         if (isUidCopy)
@@ -1271,7 +1271,7 @@ public static class TgEfDomainUtils
             Id = entity.Id,
             DtChanged = entity.DtChanged > DateTime.MinValue ? entity.DtChanged : DateTime.UtcNow,
             AccessHash = entity.AccessHash,
-            IsContactActive = entity.IsActive,
+            IsUserActive = entity.IsActive,
             IsBot = entity.IsBot,
             FirstName = entity.FirstName ?? string.Empty,
             LastName = entity.LastName ?? string.Empty,
@@ -1287,7 +1287,7 @@ public static class TgEfDomainUtils
             BotInlinePlaceholder = entity.BotInlinePlaceholder ?? string.Empty,
             BotActiveUsers = entity.BotActiveUsers,
             IsDownload = false,
-            CountMessages = 0,
+            MessagesCount = 0,
         };
         target.Status = target.GetShortStatus(entity.Status ?? string.Empty);
 
@@ -1298,11 +1298,11 @@ public static class TgEfDomainUtils
     }
 
     /// <summary> Create a DTO from entity </summary>
-    public static TgEfUserDto CreateNewDto(TgEfUserEntity entity, int countMessages, bool isUidCopy)
+    public static TgEfUserDto CreateNewDto(TgEfUserEntity entity, int messagesCount, bool isUidCopy)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        return CreateNewDto(entity, isUidCopy).SetCountMessages(countMessages);
+        return CreateNewDto(entity, isUidCopy).SetCountMessages(messagesCount);
     }
 
     #endregion

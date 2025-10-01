@@ -582,6 +582,11 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("INT")
                         .HasColumnName("COUNT");
 
+                    b.Property<int>("CountThreads")
+                        .IsConcurrencyToken()
+                        .HasColumnType("INT")
+                        .HasColumnName("COUNT_THREADS");
+
                     b.Property<string>("Directory")
                         .IsConcurrencyToken()
                         .HasMaxLength(256)
@@ -618,15 +623,50 @@ namespace TgStorage.Migrations.TgEfConsole
                         .HasColumnType("BIT")
                         .HasColumnName("IS_CREATING_SUBDIRS");
 
+                    b.Property<bool>("IsDownloadThumbnail")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_THUMB");
+
                     b.Property<bool>("IsFileNamingByMessage")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
                         .HasColumnName("IS_FILE_NAMING_BY_MESSAGE");
 
+                    b.Property<bool>("IsJoinFileNameWithMessageId")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_FILE_WITH_ID");
+
+                    b.Property<bool>("IsParsingComments")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_PARSING_COMMENTS");
+
                     b.Property<bool>("IsRestrictSavingContent")
                         .IsConcurrencyToken()
                         .HasColumnType("BIT")
                         .HasColumnName("IS_RESTRICT_SAVING_CONTENT");
+
+                    b.Property<bool>("IsRewriteFiles")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_REWRITE_FILES");
+
+                    b.Property<bool>("IsRewriteMessages")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_REWRITE_MSG");
+
+                    b.Property<bool>("IsSaveFiles")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_SAVE_FILES");
+
+                    b.Property<bool>("IsSaveMessages")
+                        .IsConcurrencyToken()
+                        .HasColumnType("BIT")
+                        .HasColumnName("IS_SAVE_MSG");
 
                     b.Property<bool>("IsSubscribe")
                         .IsConcurrencyToken()
@@ -661,6 +701,8 @@ namespace TgStorage.Migrations.TgEfConsole
 
                     b.HasIndex("Count");
 
+                    b.HasIndex("CountThreads");
+
                     b.HasIndex("Directory");
 
                     b.HasIndex("DtChanged");
@@ -676,9 +718,23 @@ namespace TgStorage.Migrations.TgEfConsole
 
                     b.HasIndex("IsCreatingSubdirectories");
 
+                    b.HasIndex("IsDownloadThumbnail");
+
                     b.HasIndex("IsFileNamingByMessage");
 
+                    b.HasIndex("IsJoinFileNameWithMessageId");
+
+                    b.HasIndex("IsParsingComments");
+
                     b.HasIndex("IsRestrictSavingContent");
+
+                    b.HasIndex("IsRewriteFiles");
+
+                    b.HasIndex("IsRewriteMessages");
+
+                    b.HasIndex("IsSaveFiles");
+
+                    b.HasIndex("IsSaveMessages");
 
                     b.HasIndex("IsSubscribe");
 

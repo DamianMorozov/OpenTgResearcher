@@ -60,10 +60,17 @@ public static class TgEfConstants
 	public const string ColumnIsContact = "IS_CONTACT";
 	public const string ColumnIsCreatingSubdirectories = "IS_CREATING_SUBDIRS";
 	public const string ColumnIsDeleted = "IS_DELETED";
+	public const string ColumnIsDownloadThumbnail = "IS_THUMB";
 	public const string ColumnIsEnabled = "IS_ENABLED";
 	public const string ColumnIsFileNamingByMessage = "IS_FILE_NAMING_BY_MESSAGE";
+	public const string ColumnIsJoinFileNameWithMessageId = "IS_FILE_WITH_ID";
 	public const string ColumnIsMuted = "IS_MUTED";
+	public const string ColumnIsParsingComments = "IS_PARSING_COMMENTS";
 	public const string ColumnIsRestrictSavingContent = "IS_RESTRICT_SAVING_CONTENT";
+	public const string ColumnIsRewriteFiles = "IS_REWRITE_FILES";
+	public const string ColumnIsRewriteMessages = "IS_REWRITE_MSG";
+	public const string ColumnIsSaveFiles = "IS_SAVE_FILES";
+	public const string ColumnIsSaveMessages = "IS_SAVE_MSG";
 	public const string ColumnIsSubscribe = "IS_SUBSCRIBE";
 	public const string ColumnIsUserAccess = "IS_USER_ACCESS";
 	public const string ColumnJoinedAt = "JOINED_AT";

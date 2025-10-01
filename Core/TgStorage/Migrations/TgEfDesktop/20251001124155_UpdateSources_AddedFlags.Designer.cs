@@ -4,9 +4,11 @@
 namespace TgStorage.Migrations.TgEfDesktop
 {
     [DbContext(typeof(TgEfDesktopContext))]
-    partial class TgEfContextModelSnapshot : ModelSnapshot
+    [Migration("20251001124155_UpdateSources_AddedFlags")]
+    partial class UpdateSources_AddedFlags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");

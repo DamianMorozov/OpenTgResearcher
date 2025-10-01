@@ -877,14 +877,21 @@ public static class TgEfDomainUtils
             About = dto.About,
             FirstId = dto.FirstId,
             Count = dto.Count,
+            CountThreads = dto.CountThreads,
             Directory = dto.Directory,
             IsAutoUpdate = dto.IsAutoUpdate,
             IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
             IsUserAccess = dto.IsUserAccess,
             IsFileNamingByMessage = dto.IsFileNamingByMessage,
-            //IsParsingComments = dto.IsParsingComments,
             IsRestrictSavingContent = dto.IsRestrictSavingContent,
             IsSubscribe = dto.IsSubscribe,
+            IsDownloadThumbnail = dto.IsDownloadThumbnail,
+            IsJoinFileNameWithMessageId = dto.IsJoinFileNameWithMessageId,
+            IsRewriteFiles = dto.IsRewriteFiles,
+            IsRewriteMessages = dto.IsRewriteMessages,
+            IsSaveFiles = dto.IsSaveFiles,
+            IsSaveMessages = dto.IsSaveMessages,
+            IsParsingComments = dto.IsParsingComments,
         };
 
         if (isUidCopy)
@@ -908,6 +915,7 @@ public static class TgEfDomainUtils
         target.Title = source.Title;
         target.About = source.About;
         target.Count = source.Count;
+        target.CountThreads = source.CountThreads;
         target.Directory = source.Directory;
         target.IsAutoUpdate = source.IsAutoUpdate;
         target.IsCreatingSubdirectories = source.IsCreatingSubdirectories;
@@ -915,6 +923,13 @@ public static class TgEfDomainUtils
         target.IsFileNamingByMessage = source.IsFileNamingByMessage;
         target.IsRestrictSavingContent = source.IsRestrictSavingContent;
         target.IsSubscribe = source.IsSubscribe;
+        target.IsDownloadThumbnail = source.IsDownloadThumbnail;
+        target.IsJoinFileNameWithMessageId = source.IsJoinFileNameWithMessageId;
+        target.IsRewriteFiles = source.IsRewriteFiles;
+        target.IsRewriteMessages = source.IsRewriteMessages;
+        target.IsSaveFiles = source.IsSaveFiles;
+        target.IsSaveMessages = source.IsSaveMessages;
+        target.IsParsingComments = source.IsParsingComments;
 
         if (isUidCopy)
             target.Uid = source.Uid;
@@ -936,15 +951,22 @@ public static class TgEfDomainUtils
             Title = dto.Title,
             About = dto.About,
             Count = dto.Count,
+            CountThreads = dto.CountThreads,
             Directory = dto.Directory,
             IsAutoUpdate = dto.IsAutoUpdate,
             IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
             IsUserAccess = dto.IsUserAccess,
             IsFileNamingByMessage = dto.IsFileNamingByMessage,
             IsRestrictSavingContent = dto.IsRestrictSavingContent,
-            IsSubscribe = dto.IsSubscribe,
             IsDownload = dto.IsDownload,
             CurrentFileName = dto.CurrentFileName,
+            IsSubscribe = dto.IsSubscribe,
+            IsDownloadThumbnail = dto.IsDownloadThumbnail,
+            IsJoinFileNameWithMessageId = dto.IsJoinFileNameWithMessageId,
+            IsRewriteFiles = dto.IsRewriteFiles,
+            IsRewriteMessages = dto.IsRewriteMessages,
+            IsSaveFiles = dto.IsSaveFiles,
+            IsSaveMessages = dto.IsSaveMessages,
             IsParsingComments = dto.IsParsingComments,
         };
 
@@ -970,6 +992,7 @@ public static class TgEfDomainUtils
             Title = entity.Title ?? string.Empty,
             About = entity.About ?? string.Empty,
             Count = entity.Count,
+            CountThreads = entity.CountThreads,
             Directory = entity.Directory ?? string.Empty,
             IsAutoUpdate = entity.IsAutoUpdate,
             IsCreatingSubdirectories = entity.IsCreatingSubdirectories,
@@ -977,9 +1000,13 @@ public static class TgEfDomainUtils
             IsFileNamingByMessage = entity.IsFileNamingByMessage,
             IsRestrictSavingContent = entity.IsRestrictSavingContent,
             IsSubscribe = entity.IsSubscribe,
-            //IsDownload = entity.IsDownload,
-            //CurrentFileName = entity.CurrentFileName,
-            //IsParsingComments = entity.IsParsingComments,
+            IsDownloadThumbnail = entity.IsDownloadThumbnail,
+            IsJoinFileNameWithMessageId = entity.IsJoinFileNameWithMessageId,
+            IsRewriteFiles = entity.IsRewriteFiles,
+            IsRewriteMessages = entity.IsRewriteMessages,
+            IsSaveFiles = entity.IsSaveFiles,
+            IsSaveMessages = entity.IsSaveMessages,
+            IsParsingComments = entity.IsParsingComments,
         };
 
         if (isUidCopy)

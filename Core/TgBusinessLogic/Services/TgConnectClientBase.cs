@@ -142,7 +142,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             await UpdateShellViewModelAsync(true, FloodControlService.TryExtractFloodWaitSeconds(message), message);
             if (_downloadSettings is not null)
-                await FlushChatBufferAsync(_downloadSettings.IsSaveMessages, _downloadSettings.IsRewriteMessages, isForce: true, ct);
+                await FlushChatBufferAsync(_downloadSettings.SourceVm.Dto.IsSaveMessages, _downloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
             await FloodControlService.WaitIfFloodAsync(message, ct);
             await UpdateShellViewModelAsync(false, 0, string.Empty);
         }
@@ -1659,6 +1659,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: false);
                     await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, tgDownloadSettings.SourceVm.Dto.Count, TgLocale.CollectChats);
                     listIds = [.. await CollectAllChatsAsync()];
+                    await SetUserAccessForAllChatsAsync(listIds, isUserAccess: true);
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChats.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
@@ -1669,6 +1670,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: false);
                     await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, tgDownloadSettings.SourceVm.Dto.Count, TgLocale.CollectDialogs);
                     listIds = [.. await CollectAllDialogsAsync()];
+                    await SetUserAccessForAllChatsAsync(listIds, isUserAccess: true);
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChats.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
@@ -1792,12 +1794,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         tgDownloadSettings.SourceScanCurrent):#00.00} %");
                 }, ct: ct);
 
-                await FlushChatBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
+                await FlushChatBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }
         }
         finally
         {
-            await FlushChatBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: true, ct);
+            await FlushChatBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
         }
     }
 
@@ -1843,12 +1845,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 _ = await FillBufferStoriesAsync(story.Key, story.Value, ct);
                 await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent):#00.00} %");
 
-                await FlushStoryBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
+                await FlushStoryBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }
         }
         finally
         {
-            await FlushStoryBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: true, ct);
+            await FlushStoryBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
         }
     }
 
@@ -1883,7 +1885,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent):#00.00} %");
 
                     // Flush buffer without forcing
-                    await FlushUserBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
+                    await FlushUserBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
                 }
                 catch (Exception ex)
                 {
@@ -1894,7 +1896,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         finally
         {
-            await FlushUserBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: true, ct);
+            await FlushUserBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
         }
     }
 
@@ -1939,7 +1941,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
                         // Count threads
                         parseHelper.SourceFirstId++;
-                        if (parseHelper.DownloadTasks.Count == _downloadSettings.CountThreads || parseHelper.SourceFirstId >= parseHelper.SourceLastId)
+                        if (parseHelper.DownloadTasks.Count == _downloadSettings.SourceVm.Dto.CountThreads || parseHelper.SourceFirstId >= parseHelper.SourceLastId)
                         {
                             // Await only already started tasks
                             await Task.WhenAll(parseHelper.DownloadTasks);
@@ -2093,8 +2095,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             if (!CheckShouldStop(ct))
             {
-                await FlushMessageBufferAsync(settings.IsSaveMessages, settings.IsRewriteMessages, isForce: true, ct);
-                await FlushMessageRelationBufferAsync(settings.IsSaveMessages, settings.IsRewriteMessages, isForce: true, ct);
+                await FlushMessageBufferAsync(settings.SourceVm.Dto.IsSaveMessages, settings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
+                await FlushMessageRelationBufferAsync(settings.SourceVm.Dto.IsSaveMessages, settings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
                 await UpdateTitleAsync(string.Empty);
             }
         }
@@ -2912,7 +2914,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 }
             }
         }
-        mediaInfo.Normalize(tgDownloadSettings.IsJoinFileNameWithMessageId);
+        mediaInfo.Normalize(tgDownloadSettings.SourceVm.Dto.IsJoinFileNameWithMessageId);
         return mediaInfo;
     }
 
@@ -3027,6 +3029,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Download media thumbnail if exists </summary>
     private async Task DownloadMediaThumbnailFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageMedia messageMedia, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
+        if (!tgDownloadSettings.SourceVm.Dto.IsDownloadThumbnail) return;
+
         if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.ThumbnailPathWithNumber))
         {
             if (Client is not null)
@@ -3102,7 +3106,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 var fileSize = TgFileUtils.CalculateFileSize(mediaInfo.LocalPathWithNumber);
                 // If file size is less then original size
-                if (fileSize == 0 || (fileSize < mediaInfo.RemoteSize && tgDownloadSettings.IsRewriteFiles))
+                if (fileSize == 0 || (fileSize < mediaInfo.RemoteSize && tgDownloadSettings.SourceVm.Dto.IsRewriteFiles))
                     File.Delete(mediaInfo.LocalPathWithNumber);
             }
             await Task.CompletedTask;
@@ -3128,7 +3132,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Move existing files at the current directory </summary>
     private async Task MoveExistsFilesAtCurrentDirAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
-        if (!tgDownloadSettings.IsJoinFileNameWithMessageId) return;
+        if (!tgDownloadSettings.SourceVm.Dto.IsJoinFileNameWithMessageId) return;
 
         await TryCatchAsync(async () =>
         {
@@ -3176,7 +3180,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         DateTime dtCreated, long size, string message, TgEnumMessageType messageType, bool isRetry, long authorId, CancellationToken ct)
     {
         // Early exit if saving is disabled or cancellation requested
-        if (!tgDownloadSettings.IsSaveMessages || CheckShouldStop(ct)) return;
+        if (!tgDownloadSettings.SourceVm.Dto.IsSaveMessages || CheckShouldStop(ct)) return;
 
         await TgCacheUtils.Locker.WaitAsync(ct);
 
@@ -3254,8 +3258,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await UpdateStateMessageThreadAsync(
                     messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, false, messageSettings.ThreadNumber);
 
-                await FlushMessageBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
-                await FlushMessageRelationBufferAsync(tgDownloadSettings.IsSaveMessages, tgDownloadSettings.IsRewriteMessages, isForce: false, ct);
+                await FlushMessageBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
+                await FlushMessageRelationBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }
         }
     }

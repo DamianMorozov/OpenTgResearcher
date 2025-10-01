@@ -10,6 +10,7 @@
 [Index(nameof(UserName))]
 [Index(nameof(Title))]
 [Index(nameof(Count))]
+[Index(nameof(CountThreads))]
 [Index(nameof(Directory))]
 [Index(nameof(FirstId))]
 [Index(nameof(IsAutoUpdate))]
@@ -18,6 +19,13 @@
 [Index(nameof(IsFileNamingByMessage))]
 [Index(nameof(IsRestrictSavingContent))]
 [Index(nameof(IsSubscribe))]
+[Index(nameof(IsDownloadThumbnail))]
+[Index(nameof(IsJoinFileNameWithMessageId))]
+[Index(nameof(IsRewriteFiles))]
+[Index(nameof(IsRewriteMessages))]
+[Index(nameof(IsSaveFiles))]
+[Index(nameof(IsSaveMessages))]
+[Index(nameof(IsParsingComments))]
 public sealed class TgEfSourceEntity : ITgEfSourceEntity
 {
 	#region Fields, properties, constructor
@@ -77,6 +85,11 @@ public sealed class TgEfSourceEntity : ITgEfSourceEntity
     [Column(TgEfConstants.ColumnCount, TypeName = "INT")]
     public int Count { get; set; }
 
+    [DefaultValue(10)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnCountThreads, TypeName = "INT")]
+    public int CountThreads { get; set; }
+
     [DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(256)]
@@ -113,6 +126,41 @@ public sealed class TgEfSourceEntity : ITgEfSourceEntity
     [Column(TgEfConstants.ColumnIsSubscribe, TypeName = "BIT")]
     public bool IsSubscribe { get; set; }
 
+    [DefaultValue(true)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsDownloadThumbnail, TypeName = "BIT")]
+    public bool IsDownloadThumbnail { get; set; }
+
+    [DefaultValue(true)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsJoinFileNameWithMessageId, TypeName = "BIT")]
+    public bool IsJoinFileNameWithMessageId { get; set; }
+
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsRewriteFiles, TypeName = "BIT")]
+    public bool IsRewriteFiles { get; set; }
+
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsRewriteMessages, TypeName = "BIT")]
+    public bool IsRewriteMessages { get; set; }
+
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsSaveMessages, TypeName = "BIT")]
+    public bool IsSaveMessages { get; set; }
+
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsSaveFiles, TypeName = "BIT")]
+    public bool IsSaveFiles { get; set; }
+
+    [DefaultValue(false)]
+    [ConcurrencyCheck]
+    [Column(TgEfConstants.ColumnIsParsingComments, TypeName = "BIT")]
+    public bool IsParsingComments { get; set; }
+
     public ICollection<TgEfChatUserEntity> ChatUsers { get; set; } = null!;
     public ICollection<TgEfDocumentEntity> Documents { get; set; } = null!;
 	public ICollection<TgEfMessageEntity> Messages { get; set; } = null!;
@@ -142,6 +190,7 @@ public sealed class TgEfSourceEntity : ITgEfSourceEntity
 	    Title = this.GetDefaultPropertyString(nameof(Title));
 	    About = this.GetDefaultPropertyString(nameof(About));
 	    Count = this.GetDefaultPropertyInt(nameof(Count));
+        CountThreads = this.GetDefaultPropertyInt(nameof(CountThreads));
 	    Directory = this.GetDefaultPropertyString(nameof(Directory));
 	    FirstId = this.GetDefaultPropertyInt(nameof(FirstId));
 	    IsAutoUpdate = this.GetDefaultPropertyBool(nameof(IsAutoUpdate));
@@ -150,6 +199,13 @@ public sealed class TgEfSourceEntity : ITgEfSourceEntity
 		IsFileNamingByMessage = this.GetDefaultPropertyBool(nameof(IsFileNamingByMessage));
         IsRestrictSavingContent = this.GetDefaultPropertyBool(nameof(IsRestrictSavingContent));
         IsSubscribe = this.GetDefaultPropertyBool(nameof(IsSubscribe));
+        IsDownloadThumbnail = this.GetDefaultPropertyBool(nameof(IsDownloadThumbnail));
+        IsJoinFileNameWithMessageId = this.GetDefaultPropertyBool(nameof(IsJoinFileNameWithMessageId));
+        IsRewriteFiles = this.GetDefaultPropertyBool(nameof(IsRewriteFiles));
+        IsRewriteMessages = this.GetDefaultPropertyBool(nameof(IsRewriteMessages));
+        IsSaveFiles = this.GetDefaultPropertyBool(nameof(IsSaveFiles));
+        IsSaveMessages = this.GetDefaultPropertyBool(nameof(IsSaveMessages));
+        IsParsingComments = this.GetDefaultPropertyBool(nameof(IsParsingComments));
 
         ChatUsers = [];
         Documents = [];

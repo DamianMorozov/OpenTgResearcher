@@ -25,6 +25,8 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
     [ObservableProperty]
     public partial int Count { get; set; }
     [ObservableProperty]
+    public partial int CountThreads { get; set; }
+    [ObservableProperty]
     public partial string Directory { get; set; } = string.Empty;
     [ObservableProperty]
     public partial bool IsAutoUpdate { get; set; }
@@ -45,11 +47,23 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
     [ObservableProperty]
     public partial bool IsFileNamingByMessage { get; set; }
     [ObservableProperty]
-    public partial bool IsParsingComments { get; set; }
-    [ObservableProperty]
     public partial bool IsRestrictSavingContent { get; set; }
     [ObservableProperty]
     public partial bool IsSubscribe { get; set; }
+    [ObservableProperty]
+    public partial bool IsDownloadThumbnail { get; set; }
+    [ObservableProperty]
+    public partial bool IsJoinFileNameWithMessageId { get; set; }
+    [ObservableProperty]
+    public partial bool IsRewriteFiles { get; set; }
+    [ObservableProperty]
+    public partial bool IsRewriteMessages { get; set; }
+    [ObservableProperty]
+    public partial bool IsSaveMessages { get; set; }
+    [ObservableProperty]
+    public partial bool IsSaveFiles { get; set; }
+    [ObservableProperty]
+    public partial bool IsParsingComments { get; set; }
 
     public string DtChangedString => $"{DtChanged:yyyy-MM-dd HH:mm:ss}";
 
@@ -85,6 +99,7 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
         About = string.Empty;
         FirstId = 0;
         Count = 0;
+        CountThreads = 10;
         Directory = string.Empty;
         IsAutoUpdate = false;
         IsCreatingSubdirectories = false;
@@ -93,6 +108,12 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
         IsParsingComments = false;
         IsRestrictSavingContent = false;
         IsSubscribe = false;
+        IsDownloadThumbnail = true;
+        IsJoinFileNameWithMessageId = true;
+        IsRewriteFiles = false;
+        IsRewriteMessages = false;
+        IsSaveFiles = false;
+        IsSaveMessages = false;
         IsDownload = false;
         CurrentFileName = string.Empty;
     }

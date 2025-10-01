@@ -14,24 +14,14 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 	public partial TgEfStoryViewModel StoryVm { get; set; }
 	[ObservableProperty]
 	public partial TgEfVersionViewModel VersionVm { get; set; }
-	[ObservableProperty] 
-	public partial bool IsSaveMessages { get; set; } = true;
-	[ObservableProperty]
-	public partial bool IsRewriteFiles { get; set; }
-	[ObservableProperty]
-	public partial bool IsRewriteMessages { get; set; }
-	[ObservableProperty]
-	public partial bool IsJoinFileNameWithMessageId { get; set; } = true;
-	[ObservableProperty]
-	public partial int CountThreads { get; set; } = 5;
-    [ObservableProperty]
-    public partial int LimitThreads { get; set; } = TgGlobalTools.DownloadCountThreadsLimit;
     [ObservableProperty]
 	public partial TgDownloadChat Chat { get; set; }
 	[ObservableProperty]
 	public partial int SourceScanCount { get; set; } = 1;
 	[ObservableProperty]
 	public partial int SourceScanCurrent { get; set; } = 1;
+    
+    public int LimitThreads => TgGlobalTools.DownloadCountThreadsLimit;
 
 	public TgDownloadSettingsViewModel()
 	{

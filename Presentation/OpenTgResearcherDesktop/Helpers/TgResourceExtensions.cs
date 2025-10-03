@@ -62,6 +62,7 @@ public static class TgResourceExtensions
 	internal static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalizedResource();
 	internal static string AssertionRestartApp() => "AssertionRestartApp".GetLocalizedResource();
 	internal static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalizedResource();
+	internal static string DiscussionChatNotFound() => "DiscussionChatNotFound".GetLocalizedResource();
 	internal static string GetActionCheckLicenseMsg() => "ActionLicenseCheckMsg".GetLocalizedResource();
 	internal static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalizedResource();
 	internal static string GetActionLicenseRequestCommunityMsg() => "ActionLicenseRequestCommunityMsg".GetLocalizedResource();
@@ -126,6 +127,7 @@ public static class TgResourceExtensions
 	internal static string GetTextBlockTotalAmount() => "TextBlockTotalAmount".GetLocalizedResource();
 	internal static string GetTgClientLoading() => "TgClientLoading".GetLocalizedResource();
 	internal static string GetYesButton() => "YesButton".GetLocalizedResource();
+	internal static string Navigation() => "Navigation".GetLocalizedResource();
 	internal static string ViewImage() => "ViewImage".GetLocalizedResource();
 
     #endregion

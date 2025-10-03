@@ -7,130 +7,268 @@
     xmlns:styles="using:OpenTgResearcherDesktop.Styles">
 
     <DataTemplate x:Key="ColumnSensitiveTemplate">
-        <TextBlock Margin="5,5,5,0" Text="**********" />
+        <TextBlock
+            Margin="5,5,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="**********" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnIdTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Id, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Id, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnDisplayNameTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding DisplayName, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding DisplayName, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnUserNameTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding UserName, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding UserName, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnFirstNameTemplate">
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding FirstName, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnLastNameTemplate">
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding LastName, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnPhoneTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding PhoneNumber, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding PhoneNumber, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnStatusTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Status, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Status, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnFileNameTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding FileName, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding FileName, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnFileSizeAsStringTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding FileSizeAsString, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding FileSizeAsString, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnRecordsCountTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding RecordsCount, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding RecordsCount, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnFilterTypeTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding FilterType, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding FilterType, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnNameTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Name, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Name, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnMaskTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Mask, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Mask, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnSizeTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Size, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Size, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnTypeTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Type, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Type, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnHostNameTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding HostName, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding HostName, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnPortTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Port, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Port, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnPasswordTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Password, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Password, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnDateTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Date, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Date, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnExpireDateTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding ExpireDate, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding ExpireDate, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnCaptionTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Caption, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Caption, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnTitleTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Title, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Title, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnFirstIdTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding FirstId, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding FirstId, Mode=OneWay}" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnCountTemplate">
-        <TextBlock Margin="5,0,5,0" Text="{Binding Count, Mode=OneWay}" />
+        <TextBlock
+            Margin="5,0,5,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding Count, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnParticipantsTemplate">
+        <TextBlock
+            Margin="5,0,5,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding ParticipantsCount, Mode=OneWay}" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnMessagesCountTemplate">
+        <TextBlock
+            Margin="5,0,5,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{Binding MessagesCount, Mode=OneWay}" />
     </DataTemplate>
 
     <DataTemplate x:Key="ColumnIsUserAccessTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
+        <ToggleSwitch
+            Margin="0,0,-120,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsUserAccess, Mode=OneWay}"
-            IsEnabled="False" />
+            IsEnabled="False"
+            IsOn="{Binding IsUserAccess, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
     </DataTemplate>
-    <DataTemplate x:Key="ColumnIsContactActiveTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
+    <DataTemplate x:Key="ColumnIsBotTemplate">
+        <ToggleSwitch
+            Margin="0,0,-120,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsContactActive, Mode=OneWay}"
-            IsEnabled="False" />
-    </DataTemplate>
-    <DataTemplate x:Key="ColumnUseBotTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            IsChecked="{Binding UseBot, Mode=OneWay}"
-            IsEnabled="False" />
+            IsEnabled="False"
+            IsOn="{Binding IsBot, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnIsEnabledTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
+        <ToggleSwitch
+            Margin="0,0,-120,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsEnabled, Mode=OneWay}"
-            IsEnabled="False" />
+            IsEnabled="False"
+            IsOn="{Binding IsEnabled, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnIsSubscribeTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
+        <ToggleSwitch
+            Margin="0,0,-120,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsSubscribe, Mode=OneWay}"
-            IsEnabled="False" />
+            IsEnabled="False"
+            IsOn="{Binding IsSubscribe, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnIsSourceActiveTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
+        <ToggleSwitch
+            Margin="0,0,-120,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsSourceActive, Mode=OneWay}"
-            IsEnabled="False" />
+            IsEnabled="False"
+            IsOn="{Binding IsSourceActive, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
+    </DataTemplate>
+    <DataTemplate x:Key="ColumnIsUserActiveTemplate">
+        <ToggleSwitch
+            Margin="0,0,-120,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsEnabled="False"
+            IsOn="{Binding IsUserActive, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
     </DataTemplate>
     <DataTemplate x:Key="ColumnIsAutoUpdateTemplate">
-        <ToggleButton
-            Margin="5,0,5,0"
+        <ToggleSwitch
+            Margin="0,0,-120,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsAutoUpdate, Mode=OneWay}"
-            IsEnabled="False" />
+            IsEnabled="False"
+            IsOn="{Binding IsAutoUpdate, Mode=OneWay}"
+            OffContent=""
+            OnContent="" />
     </DataTemplate>
 
     <DataTemplate x:Key="ColumnProgressTemplate">

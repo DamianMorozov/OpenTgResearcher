@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="FieldNumberBoxStyle" TargetType="NumberBox">
+        <Setter Property="Margin" Value="10,5,5,5" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="LargeChange" Value="10" />
+        <Setter Property="SmallChange" Value="1" />
+    </Style>
+
+</ResourceDictionary>

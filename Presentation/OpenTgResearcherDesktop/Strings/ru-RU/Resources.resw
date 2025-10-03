@@ -590,9 +590,6 @@
   <data name="ExpanderDownloading.Header" xml:space="preserve">
     <value>Скачивание</value>
   </data>
-  <data name="ExpanderChatDetails.Header" xml:space="preserve">
-    <value>Детали чата</value>
-  </data>
   <data name="ExpanderChatParticipants.Header" xml:space="preserve">
     <value>Участники чата</value>
   </data>
@@ -614,8 +611,11 @@
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Файлы</value>
   </data>
-  <data name="SettingAppActions.Header" xml:space="preserve">
+  <data name="ExpanderActions.Header" xml:space="preserve">
     <value>Действия</value>
+  </data>
+  <data name="ExpanderChatDetails.Header" xml:space="preserve">
+    <value>Детализация чата</value>
   </data>
   <data name="SettingAppTheme.Text" xml:space="preserve">
     <value>Тема</value>
@@ -1031,6 +1031,9 @@
   <data name="TextBlockUpdateOnline.Text" xml:space="preserve">
     <value>Обновить онлайн</value>
   </data>
+  <data name="TextBlockOpenDiscussion.Text" xml:space="preserve">
+    <value>Открыть чат с комментариями</value>
+  </data>
   <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
     <value>Обновить детали чата</value>
   </data>
@@ -1199,6 +1202,9 @@
   <data name="FieldAccessHash.Text" xml:space="preserve">
     <value>Хэш доступа</value>
   </data>
+  <data name="FieldIsAccess.Text" xml:space="preserve">
+    <value>Доступ</value>
+  </data>
   <data name="FieldIsActive.Text" xml:space="preserve">
     <value>Активно</value>
   </data>
@@ -1249,6 +1255,9 @@
   </data>
   <data name="FieldUserNames.Text" xml:space="preserve">
     <value>Имена пользователя</value>
+  </data>
+  <data name="FieldDiscussion.Text" xml:space="preserve">
+    <value>Комментарии</value>
   </data>
   <data name="FieldLink.Text" xml:space="preserve">
     <value>Ссылка</value>
@@ -1316,8 +1325,14 @@
   <data name="FieldCountThreads.Text" xml:space="preserve">
     <value>Количество потоков</value>
   </data>
+  <data name="FieldIsSaveFiles.Text" xml:space="preserve">
+    <value>Сохранять файлы</value>
+  </data>
   <data name="FieldIsRewriteFiles.Text" xml:space="preserve">
     <value>Перезапись файлов</value>
+  </data>
+  <data name="FieldIsSaveMessages.Text" xml:space="preserve">
+    <value>Сохранять сообщения</value>
   </data>
   <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
     <value>Перезапись сообщений</value>
@@ -1499,19 +1514,19 @@
   <data name="CloseButton" xml:space="preserve">
     <value>Закрыть</value>
   </data>
-  <data name="SelectorBarItemPageChatDetails.Text" xml:space="preserve">
-    <value>Детали чата</value>
+  <data name="SelectorBarItemChatInfoPage.Text" xml:space="preserve">
+    <value>Инфо</value>
   </data>
-  <data name="SelectorBarItemPageChatMyMessages.Text" xml:space="preserve">
+  <data name="SelectorBarItemChatMyMessagesPage.Text" xml:space="preserve">
     <value>Мои сообщения</value>
   </data>
-  <data name="SelectorBarItemPageChatParticipants.Text" xml:space="preserve">
-    <value>Участники чата</value>
+  <data name="SelectorBarItemChatParticipantsPage.Text" xml:space="preserve">
+    <value>Участники</value>
   </data>
-  <data name="SelectorBarItemPageChatStatistics.Text" xml:space="preserve">
-    <value>Статистика чата</value>
+  <data name="SelectorBarItemChatStatisticsPage.Text" xml:space="preserve">
+    <value>Статистика</value>
   </data>
-  <data name="SelectorBarItemPageContent.Text" xml:space="preserve">
+  <data name="SelectorBarItemContentPage.Text" xml:space="preserve">
     <value>Содержимое</value>
   </data>
   <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
@@ -1525,6 +1540,15 @@
   </data>
   <data name="SelectorBarItemPageStorageAdvancedSettings.Text" xml:space="preserve">
     <value>Расширенные настройки хранения</value>
+  </data>
+  <data name="SelectorBarItemChatSettingsPage.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SelectorBarItemChatCommentsPage.Text" xml:space="preserve">
+    <value>Комментарии</value>
+  </data>
+  <data name="SelectorBarItemChatDownloadPage.Text" xml:space="preserve">
+    <value>Скачивание</value>
   </data>
   <data name="From" xml:space="preserve">
     <value>из</value>
@@ -1546,6 +1570,12 @@
   </data>
   <data name="RadioButtonUsers.Content" xml:space="preserve">
     <value>Пользователи</value>
+  </data>
+  <data name="Navigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="DiscussionChatNotFound" xml:space="preserve">
+    <value>No chat with comments found</value>
   </data>
   <!--  Chats scan   -->
   <data name="StartScan" xml:space="preserve">

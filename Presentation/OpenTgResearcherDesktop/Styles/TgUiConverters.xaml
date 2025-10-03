@@ -11,10 +11,16 @@
     <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
 
     <convertersWinUI:BoolNegationConverter x:Key="BoolNegationConverter" />
+
+    <SolidColorBrush
+        x:Key="NeutralBackgroundTransparentBrush"
+        Opacity="0.5"
+        Color="{ThemeResource SystemFillColorNeutralBackground}" />
     <convertersWinUI:BoolToObjectConverter
         x:Key="BoolToObjectConverter"
-        FalseValue="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
+        FalseValue="{ThemeResource NeutralBackgroundTransparentBrush}"
         TrueValue="{ThemeResource AccentTextFillColorDisabledBrush}" />
+
     <convertersWinUI:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     <convertersWinUI:BoolToVisibilityConverter
         x:Key="InverseBoolToVisibilityConverter"

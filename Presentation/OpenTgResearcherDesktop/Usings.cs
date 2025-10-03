@@ -29,7 +29,6 @@ global using OpenTgResearcherDesktop.Common;
 global using OpenTgResearcherDesktop.Contracts.Services;
 global using OpenTgResearcherDesktop.Contracts.ViewModels;
 global using OpenTgResearcherDesktop.Contracts;
-global using OpenTgResearcherDesktop.Converters;
 global using OpenTgResearcherDesktop.Helpers;
 global using OpenTgResearcherDesktop.Models;
 global using OpenTgResearcherDesktop.Services;

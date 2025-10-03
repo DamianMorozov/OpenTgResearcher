@@ -531,9 +531,6 @@
   <data name="ExpanderDownloading.Header" xml:space="preserve">
     <value>Downloading</value>
   </data>
-  <data name="ExpanderChatDetails.Header" xml:space="preserve">
-    <value>Chat details</value>
-  </data>
   <data name="ExpanderChatParticipants.Header" xml:space="preserve">
     <value>Chat participants</value>
   </data>
@@ -555,8 +552,11 @@
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Files</value>
   </data>
-  <data name="SettingAppActions.Header" xml:space="preserve">
+  <data name="ExpanderActions.Header" xml:space="preserve">
     <value>Actions</value>
+  </data>
+  <data name="ExpanderChatDetails.Header" xml:space="preserve">
+    <value>Chat details</value>
   </data>
   <data name="SettingAppTheme.Text" xml:space="preserve">
     <value>Theme</value>
@@ -969,6 +969,9 @@
   <data name="TextBlockUpdateOnline.Text" xml:space="preserve">
     <value>Online update</value>
   </data>
+  <data name="TextBlockOpenDiscussion.Text" xml:space="preserve">
+    <value>Open chat with comments</value>
+  </data>
   <data name="TextBlockUpdateChatDetails.Text" xml:space="preserve">
     <value>Update chat details</value>
   </data>
@@ -1134,6 +1137,9 @@
   <data name="FieldDtChanged.Text" xml:space="preserve">
     <value>Changed</value>
   </data>
+  <data name="FieldIsAccess.Text" xml:space="preserve">
+    <value>Access</value>
+  </data>
   <data name="FieldAccessHash.Text" xml:space="preserve">
     <value>Access hash</value>
   </data>
@@ -1187,6 +1193,9 @@
   </data>
   <data name="FieldUserNames.Text" xml:space="preserve">
     <value>User names</value>
+  </data>
+  <data name="FieldDiscussion.Text" xml:space="preserve">
+    <value>Comments</value>
   </data>
   <data name="FieldLink.Text" xml:space="preserve">
     <value>Link</value>
@@ -1256,6 +1265,12 @@
   </data>
   <data name="FieldIsRewriteFiles.Text" xml:space="preserve">
     <value>Overwriting files</value>
+  </data>
+  <data name="FieldIsSaveFiles.Text" xml:space="preserve">
+    <value>Save files</value>
+  </data>
+  <data name="FieldIsSaveMessages.Text" xml:space="preserve">
+    <value>Save messages</value>
   </data>
   <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
     <value>Overwriting messages</value>
@@ -1437,19 +1452,19 @@
   <data name="CloseButton" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="SelectorBarItemPageChatDetails.Text" xml:space="preserve">
-    <value>Chat details</value>
+  <data name="SelectorBarItemChatInfoPage.Text" xml:space="preserve">
+    <value>Info</value>
   </data>
-  <data name="SelectorBarItemPageChatParticipants.Text" xml:space="preserve">
-    <value>Chat participants</value>
+  <data name="SelectorBarItemChatParticipantsPage.Text" xml:space="preserve">
+    <value>Participants</value>
   </data>
-  <data name="SelectorBarItemPageChatMyMessages.Text" xml:space="preserve">
+  <data name="SelectorBarItemChatMyMessagesPage.Text" xml:space="preserve">
     <value>My messages</value>
   </data>
-  <data name="SelectorBarItemPageChatStatistics.Text" xml:space="preserve">
-    <value>Chat statistics</value>
+  <data name="SelectorBarItemChatStatisticsPage.Text" xml:space="preserve">
+    <value>Statistics</value>
   </data>
-  <data name="SelectorBarItemPageContent.Text" xml:space="preserve">
+  <data name="SelectorBarItemContentPage.Text" xml:space="preserve">
     <value>Content</value>
   </data>
   <data name="SelectorBarItemPageContentStatistics.Text" xml:space="preserve">
@@ -1463,6 +1478,15 @@
   </data>
   <data name="SelectorBarItemPageStorageAdvancedSettings.Text" xml:space="preserve">
     <value>Advanced storage settings</value>
+  </data>
+  <data name="SelectorBarItemChatSettingsPage.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SelectorBarItemChatCommentsPage.Text" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="SelectorBarItemChatDownloadPage.Text" xml:space="preserve">
+    <value>Downloading</value>
   </data>
   <data name="From" xml:space="preserve">
     <value>from</value>
@@ -1484,6 +1508,12 @@
   </data>
   <data name="RadioButtonUsers.Content" xml:space="preserve">
     <value>Users</value>
+  </data>
+  <data name="Navigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="DiscussionChatNotFound" xml:space="preserve">
+    <value>No chat with comments found</value>
   </data>
   <!--  Chats scan   -->
   <data name="StartScan" xml:space="preserve">

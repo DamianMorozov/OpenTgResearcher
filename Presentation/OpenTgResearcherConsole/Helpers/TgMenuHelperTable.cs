@@ -568,19 +568,19 @@ internal partial class TgMenuHelper
 
         // Rewrite files
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsRewriteFiles)),
-            GetMarkup(tgDownloadSettings.IsRewriteFiles.ToString()));
+            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsRewriteFiles.ToString()));
 
         // Save messages
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsSaveMessages)),
-            GetMarkup(tgDownloadSettings.IsSaveMessages.ToString()));
+            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsSaveMessages.ToString()));
 
         // Rewrite messages
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsRewriteMessages)),
-            GetMarkup(tgDownloadSettings.IsRewriteMessages.ToString()));
+            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsRewriteMessages.ToString()));
 
         // Join message ID
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAddMessageId)),
-            GetMarkup(tgDownloadSettings.IsJoinFileNameWithMessageId.ToString()));
+            GetMarkup(tgDownloadSettings.SourceVm.Dto.IsJoinFileNameWithMessageId.ToString()));
 
         // Enable auto update
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetIsAutoUpdate)),
@@ -612,7 +612,7 @@ internal partial class TgMenuHelper
         table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuFiltersEnabledCount)), GetMarkup($"{filters.Count()}"));
 
         // Count of threads
-        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreads)), GetMarkup($"{tgDownloadSettings.CountThreads}"));
+        table.AddRow(GetMarkup(TgLocale.InfoMessage(TgLocale.MenuDownloadSetCountThreads)), GetMarkup($"{tgDownloadSettings.SourceVm.Dto.CountThreads}"));
 
         // User access
         if (tgDownloadSettings.SourceVm.Dto.IsUserAccess)

@@ -209,16 +209,16 @@ internal partial class TgMenuHelper
     }
 
     private void DownloadSetIsSaveMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        tgDownloadSettings.IsSaveMessages = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsSaveMessages, true);
+        tgDownloadSettings.SourceVm.Dto.IsSaveMessages = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsSaveMessages, true);
 
     private void DownloadSetIsRewriteFiles(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        tgDownloadSettings.IsRewriteFiles = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsRewriteFiles, true);
+        tgDownloadSettings.SourceVm.Dto.IsRewriteFiles = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsRewriteFiles, true);
 
     private void DownloadSetIsRewriteMessages(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        tgDownloadSettings.IsRewriteMessages = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsRewriteMessages, true);
+        tgDownloadSettings.SourceVm.Dto.IsRewriteMessages = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsRewriteMessages, true);
 
     private void DownloadSetIsAddMessageId(TgDownloadSettingsViewModel tgDownloadSettings) =>
-        tgDownloadSettings.IsJoinFileNameWithMessageId = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsAddMessageId, true);
+        tgDownloadSettings.SourceVm.Dto.IsJoinFileNameWithMessageId = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsAddMessageId, true);
 
     private void DownloadSetDestDirectory(TgDownloadSettingsViewModel tgDownloadSettings) =>
         tgDownloadSettings.SourceVm.Dto.IsAutoUpdate = AskQuestionTrueFalseReturnPositive(TgLocale.MenuDownloadSetIsAutoUpdate, true);
@@ -235,13 +235,13 @@ internal partial class TgMenuHelper
     private async Task DownloadSetCountThreadsAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
         await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
-        tgDownloadSettings.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreads}:"));
-        if (tgDownloadSettings.CountThreads < 1)
-            tgDownloadSettings.CountThreads = 1;
+        tgDownloadSettings.SourceVm.Dto.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreads}:"));
+        if (tgDownloadSettings.SourceVm.Dto.CountThreads < 1)
+            tgDownloadSettings.SourceVm.Dto.CountThreads = 1;
         else
         {
-            if (tgDownloadSettings.CountThreads > TgGlobalTools.DownloadCountThreadsLimit)
-                tgDownloadSettings.CountThreads = TgGlobalTools.DownloadCountThreadsLimit;
+            if (tgDownloadSettings.SourceVm.Dto.CountThreads > TgGlobalTools.DownloadCountThreadsLimit)
+                tgDownloadSettings.SourceVm.Dto.CountThreads = TgGlobalTools.DownloadCountThreadsLimit;
         }
     }
 

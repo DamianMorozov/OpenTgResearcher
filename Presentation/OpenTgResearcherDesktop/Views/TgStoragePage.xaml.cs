@@ -28,7 +28,7 @@ public partial class TgStoragePage
     }
 
     /// <summary> Storage details page </summary>
-    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    private void StorageSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
     {
         var selectedItem = sender.SelectedItem;
         switch (selectedItem.Tag)

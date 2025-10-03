@@ -20,7 +20,7 @@
             </Grid.RowDefinitions>
             <!--  Actions  -->
             <Expander
-                x:Uid="SettingAppActions"
+                x:Uid="ExpanderActions"
                 Grid.Row="0"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"

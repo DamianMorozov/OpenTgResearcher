@@ -25,7 +25,7 @@
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch">
             <Expander
-                x:Uid="SettingAppActions"
+                x:Uid="ExpanderActions"
                 Grid.Row="2"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
@@ -192,18 +192,13 @@
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <!--  License button: Search  -->
-                    <styles:TgLicenseButton
+                    <!--  Search  -->
+                    <Button
                         Grid.RowSpan="2"
                         Grid.Column="5"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
-                        Command="{x:Bind Path=ViewModel.SearchCommand}"
-                        Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                        ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
-                        Style="{StaticResource LicenseButtonStyle}"
-                        ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                        Command="{x:Bind Path=ViewModel.SearchCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xE721;" />
                             <TextBlock
@@ -212,7 +207,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </styles:TgLicenseButton>
+                    </Button>
                     <!--  Table  -->
                     <ScrollView
                         Grid.Row="2"
@@ -222,6 +217,7 @@
                         <!--  Data  -->
                         <controls:DataGrid
                             x:Name="DataGridUsers"
+                            Margin="0,0,10,0"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"
@@ -243,7 +239,7 @@
                                 <styles:TgBindableDataGridTemplateColumn
                                     x:Uid="ColumnIsActiveTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                    ColumnValue="{StaticResource ColumnIsContactActiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnIsUserActiveTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
@@ -251,7 +247,7 @@
                                 <styles:TgBindableDataGridTemplateColumn
                                     x:Uid="ColumnIsBotTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                    ColumnValue="{StaticResource ColumnUseBotTemplate}"
+                                    ColumnValue="{StaticResource ColumnIsBotTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />

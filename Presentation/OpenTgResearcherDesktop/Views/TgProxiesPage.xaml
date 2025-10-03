@@ -29,7 +29,7 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="SettingAppActions"
+                    x:Uid="ExpanderActions"
                     Grid.Row="2"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
@@ -110,6 +110,7 @@
                     <Grid Margin="0,0,10,0">
                         <controls:DataGrid
                             x:Name="DataGridProxies"
+                            Margin="0,0,10,0"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"

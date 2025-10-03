@@ -90,7 +90,16 @@ public abstract class TgPageBase : Page
         if (hyperlinkButton.Tag is not string tag) return;
 
         var url = TgDesktopUtils.ExtractUrl(tag);
-        Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        if (string.IsNullOrWhiteSpace(url)) return;
+
+        try
+        {
+            Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, $"Failed to open URL: {url}");
+        }
     }
 
     #endregion

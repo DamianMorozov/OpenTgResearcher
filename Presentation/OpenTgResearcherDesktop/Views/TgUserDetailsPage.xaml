@@ -258,7 +258,7 @@
                                 Click="OnClipboardSilentWriteClick"
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{x:Bind ChatDto.Title, Mode=OneWay}" />
-                            <!--  CountMessages  -->
+                            <!--  MessagesCount  -->
                             <TextBlock
                                 x:Uid="FieldCountMessages"
                                 Margin="10,0,10,0"
@@ -266,30 +266,25 @@
                             <TextBlock Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}" Visibility="{Binding LoadStateService.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBlock
                                 Style="{ThemeResource BodyTextBlockStyle}"
-                                Text="{x:Bind CountMessages, Mode=OneWay}"
+                                Text="{x:Bind MessagesCount, Mode=OneWay}"
                                 Visibility="{Binding LoadStateService.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                             <styles:TgAnimatedClipboardButton
                                 Margin="0,-5,0,0"
                                 Click="OnClipboardSilentWriteClick"
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                                Tag="{x:Bind CountMessages, Mode=OneWay}" />
+                                Tag="{x:Bind MessagesCount, Mode=OneWay}" />
                             <!--  Load user messages in chat  -->
                             <Button
                                 x:Uid="ActionLoadMessages"
                                 Margin="10,-10,0,0"
                                 Click="Button_LoadMessagesClick"
                                 Tag="{x:Bind ChatDto}" />
-                            <!--  License button: Update Preview  -->
-                            <styles:TgLicenseButton
+                            <!--  Update Preview  -->
+                            <Button
                                 x:Uid="ActionLoadMessages"
                                 Margin="10,-10,0,0"
-                                Background="{Binding ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
                                 Command="{Binding Path=ViewModel.LoadUserMessagesCommand}"
-                                CommandParameter="{x:Bind ChatDto, Mode=OneWay}"
-                                Foreground="{Binding ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                                ShowPurchaseLicenseCommand="{Binding ViewModel.ShowPurchaseLicenseCommand}"
-                                Style="{StaticResource LicenseButtonStyle}"
-                                ToolTipService.ToolTip="{Binding ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}" />
+                                CommandParameter="{x:Bind ChatDto, Mode=OneWay}" />
                         </StackPanel>
                         <!--  Messages  -->
                         <ListView
@@ -326,7 +321,7 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Expander
-                x:Uid="SettingAppActions"
+                x:Uid="ExpanderActions"
                 Grid.Row="2"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
@@ -525,7 +520,7 @@
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             IsOn="{x:Bind ViewModel.Dto.IsContact, Mode=OneWay}" />
-                        <!--  IsActive  -->
+                        <!--  IsUserActive  -->
                         <TextBlock
                             x:Uid="FieldIsActive"
                             Grid.Column="2"
@@ -539,7 +534,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             IsEnabled="False"
-                            IsOn="{x:Bind ViewModel.Dto.IsContactActive, Mode=OneWay}" />
+                            IsOn="{x:Bind ViewModel.Dto.IsUserActive, Mode=OneWay}" />
                         <!--  IsBot  -->
                         <TextBlock
                             x:Uid="FieldIsBot"

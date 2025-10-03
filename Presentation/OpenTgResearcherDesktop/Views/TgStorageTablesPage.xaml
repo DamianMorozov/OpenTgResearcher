@@ -31,6 +31,7 @@
                     <Grid Margin="0,0,10,0">
                         <controls:DataGrid
                             x:Name="DataGridStorage"
+                            Margin="0,0,10,0"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"

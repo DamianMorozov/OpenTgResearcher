@@ -106,7 +106,7 @@ public sealed class TgEfSourceEntity : ITgEfSourceEntity
     [Column(TgEfConstants.ColumnIsUserAccess, TypeName = "BIT")]
     public bool IsUserAccess { get; set; }
 
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnIsCreatingSubdirectories, TypeName = "BIT")]
     public bool IsCreatingSubdirectories { get; set; }
@@ -146,17 +146,17 @@ public sealed class TgEfSourceEntity : ITgEfSourceEntity
     [Column(TgEfConstants.ColumnIsRewriteMessages, TypeName = "BIT")]
     public bool IsRewriteMessages { get; set; }
 
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnIsSaveMessages, TypeName = "BIT")]
     public bool IsSaveMessages { get; set; }
 
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnIsSaveFiles, TypeName = "BIT")]
     public bool IsSaveFiles { get; set; }
 
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnIsParsingComments, TypeName = "BIT")]
     public bool IsParsingComments { get; set; }

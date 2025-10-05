@@ -42,6 +42,16 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
     {
         var chatEntity = new TgEfSourceEntity();
         DownloadDto.CountThreads = chatEntity.CountThreads;
+        DownloadDto.IsAutoUpdate = chatEntity.IsAutoUpdate;
+        DownloadDto.IsSaveMessages = chatEntity.IsSaveMessages;
+        DownloadDto.IsRewriteMessages = chatEntity.IsRewriteMessages;
+        DownloadDto.IsSaveFiles = chatEntity.IsSaveFiles;
+        DownloadDto.IsRewriteFiles = chatEntity.IsRewriteFiles;
+        DownloadDto.IsJoinFileNameWithMessageId = chatEntity.IsJoinFileNameWithMessageId;
+        DownloadDto.IsDownloadThumbnail = chatEntity.IsDownloadThumbnail;
+        DownloadDto.IsParsingComments = chatEntity.IsParsingComments;
+        DownloadDto.IsCreatingSubdirectories = chatEntity.IsCreatingSubdirectories;
+        DownloadDto.IsFileNamingByMessage = chatEntity.IsFileNamingByMessage;
         
         await Task.CompletedTask;
     }

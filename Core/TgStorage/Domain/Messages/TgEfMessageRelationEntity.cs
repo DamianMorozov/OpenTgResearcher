@@ -7,7 +7,7 @@
 [Index(nameof(ParentMessageId))]
 [Index(nameof(ChildSourceId))]
 [Index(nameof(ChildMessageId))]
-public sealed class TgEfMessageRelationEntity : ITgEfMessageRelationEntity
+public sealed class TgEfMessageRelationEntity : ITgEfMessageRelationEntity, IEquatable<TgEfMessageRelationEntity>
 {
     #region Fields, properties, constructor
 
@@ -66,6 +66,19 @@ public sealed class TgEfMessageRelationEntity : ITgEfMessageRelationEntity
         ChildSourceId = this.GetDefaultPropertyLong(nameof(ChildSourceId));
         ChildMessageId = this.GetDefaultPropertyInt(nameof(ChildMessageId));
     }
+
+    public bool Equals(TgEfMessageRelationEntity? other)
+    {
+        if (other is null) return false;
+        return ParentSourceId == other.ParentSourceId && ParentMessageId == other.ParentMessageId && 
+            ChildSourceId == other.ChildSourceId && ChildMessageId == other.ChildMessageId;
+    }
+
+    public override bool Equals(object? obj) =>
+        Equals(obj as TgEfMessageRelationEntity);
+
+    public override int GetHashCode() =>
+        HashCode.Combine(ParentSourceId, ParentMessageId, ChildSourceId, ChildMessageId);
 
 	#endregion
 }

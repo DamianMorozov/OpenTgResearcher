@@ -497,7 +497,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         // Entity is existing - Update
         else if (isRewrite)
         {
-            TgEfDomainUtils.UpdateEntity(storageResult.Item, item, isUidCopy: true);
+            TgEfDomainUtils.UpdateEntity(storageResult.Item, item, isUidCopy: false);
             // Simple property assignment
             //((DbContext)EfContext).Entry(storageResult.Item!).CurrentValues.SetValues(item);
             EfContext.UpdateItem(storageResult.Item);
@@ -537,10 +537,10 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         {
             foreach (var item in uniqueItems)
             {
-                var result = await PrepareEntityForSaveAsync(item, isRewrite: isRewriteEntities, ct);
-                if (result.Item is not null)
+                var storageResult = await PrepareEntityForSaveAsync(item, isRewrite: isRewriteEntities, ct);
+                if (storageResult.Item is not null)
                 {
-                    storageItems.Add(result.Item);
+                    storageItems.Add(storageResult.Item);
                 }
             }
 

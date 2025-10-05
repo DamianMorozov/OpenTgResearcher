@@ -2079,7 +2079,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Finalize current download session </summary>
-    private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
+    private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct)
     {
         try
         {
@@ -2095,8 +2095,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             if (!CheckShouldStop(ct))
             {
-                await FlushMessageBufferAsync(settings.SourceVm.Dto.IsSaveMessages, settings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
-                await FlushMessageRelationBufferAsync(settings.SourceVm.Dto.IsSaveMessages, settings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
+                await FlushMessageBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
                 await UpdateTitleAsync(string.Empty);
             }
         }
@@ -2378,11 +2377,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             var headMessage = discussionMessage.messages.OfType<Message>().FirstOrDefault(m => m.Peer is TL.PeerChannel pc && pc.ID == discussionChat.ID);
                             if (headMessage is null) return;
 
+                            // Correct target context: save head in the discussion group, not in the source channel
+                            rootSettings.CurrentChatId = discussionChat.ID;
+                            rootSettings.CurrentMessageId = headMessage.ID;
+                            // Correct parent linkage: parent is the source channel post
+                            rootSettings.ParentChatId = messageSettings.CurrentChatId;
+                            rootSettings.ParentMessageId = messageSettings.CurrentMessageId;
+
                             // Save the `thread header` itself as plain text (optional)
-                            var authorId = headMessage.From?.ID ?? messageSettings.CurrentChatId;
+                            var authorId = headMessage.From?.ID ?? 0;
                             if (!CheckShouldStop(ct))
-                                await SaveMessagesAsync(tgDownloadSettings, rootSettings, headMessage.Date, size: 0,
-                                    headMessage.message, TgEnumMessageType.Message, isRetry: false, authorId, ct);
+                            {
+                                //await SaveMessagesAsync(tgDownloadSettings, rootSettings, headMessage.Date, size: 0,
+                                //    headMessage.message, TgEnumMessageType.Message, isRetry: false, authorId, ct);
+                                await ParseChatMessageCoreAsync(tgDownloadSettings, headMessage, chatCache, forumTopicSettings, headMessage, rootSettings, ct);
+                            }
 
                             // Paginate replies to the thread strictly by (discussionPeer, headMessage.ID)
                             int offsetId = 0;
@@ -2405,8 +2414,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                     if (replyMessage is Message rpl)
                                     {
                                         var replySettings = messageSettings.Clone();
-                                        replySettings.ParentChatId = replySettings.CurrentChatId;
-                                        replySettings.ParentMessageId = replySettings.CurrentMessageId;
+                                        //// Parent = the channel's original post (before switching chats)
+                                        //replySettings.ParentChatId = replySettings.CurrentChatId;
+                                        //replySettings.ParentMessageId = replySettings.CurrentMessageId;
+                                        // Parent - channel's original post
+                                        replySettings.ParentChatId = messageSettings.CurrentChatId;
+                                        replySettings.ParentMessageId = messageSettings.CurrentMessageId;
+                                        // Child = specific comment in a supergroup
                                         replySettings.CurrentChatId = replyMessage.Peer.ID; // will be the ID of the supergroup
                                         replySettings.CurrentMessageId = replyMessage.ID;
                                         await ParseChatMessageCoreAsync(tgDownloadSettings, rpl, chatCache, forumTopicSettings, rpl, replySettings, ct);
@@ -2637,7 +2651,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             // Check cancellation before saving
             if (CheckShouldStop(ct)) return;
 
-            var authorId = message.From?.ID ?? messageSettings.CurrentChatId;
+            var authorId = message.From?.ID ?? 0;
             await SaveMessagesAsync(tgDownloadSettings, messageSettings, message.Date, size: 0, message.message, TgEnumMessageType.Message, isRetry: false, authorId, ct);
 
             // Check cancellation after saving
@@ -2992,7 +3006,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await DownloadMediaFileFromMessageAsync(tgDownloadSettings, messageBase, messageMedia, messageSettings, mediaInfo, ct);
 
         // Save message
-        var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
+        var authorId = messageBase.From?.ID ?? 0;
         switch (messageMedia)
         {
             case MessageMediaDocument { document: Document document }:
@@ -3071,7 +3085,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             // Call Telegram API with cancellation support
                             await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, null,
                                 ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
-                            var authorId = messageBase.From?.ID ?? messageSettings.CurrentChatId;
+                            var authorId = messageBase.From?.ID ?? 0;
                             await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
                                 TgEnumMessageType.Document, isRetry: false, authorId, ct);
                             localFileStream.Close();
@@ -3259,7 +3273,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, false, messageSettings.ThreadNumber);
 
                 await FlushMessageBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
-                await FlushMessageRelationBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }
         }
     }

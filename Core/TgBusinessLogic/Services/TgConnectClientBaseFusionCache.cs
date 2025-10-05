@@ -125,27 +125,35 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             });
 
     /// <summary> Flush message buffer to database </summary>
-    private async Task FlushMessageBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
+    private async Task FlushMessageBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default)
+    {
+        var isMessageFinally = false;
+
+        // Flush message buffer to database
         await _messageBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 if (CheckShouldStop(ct)) return;
                 await WaitTransactionCompleteAsync();
-                
+
                 if (CheckShouldStop(ct)) return;
                 await StorageManager.MessageRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
 
                 if (CheckShouldStop(ct)) return;
                 if (_downloadSettings is not null && list.Count > 0)
                 {
-                    var maxId = list.Where(x => x.SourceId == _downloadSettings.SourceVm.Dto.Id).Max(x => x.Id);
-                    var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, maxId);
-                    if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
+                    var ownMessages = list.Where(x => x.SourceId == _downloadSettings.SourceVm.Dto.Id);
+                    var maxId = ownMessages.Select(x => x.Id).DefaultIfEmpty(0).Max();
+                    if (maxId > 0)
                     {
-                        _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
-                        // Save updated FirstId to database
-                        var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
-                        await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
+                        var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, maxId);
+                        if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
+                        {
+                            _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
+                            // Save updated FirstId to database
+                            var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
+                            await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
+                        }
                     }
                 }
             },
@@ -161,15 +169,25 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 if (_downloadSettings is not null && isForce)
                 {
                     var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, _downloadSettings.SourceVm.Dto.Count);
-                    _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
-                    // Save updated FirstId to database
-                    var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
-                    await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
+                    if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
+                    {
+                        _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
+                        // Save updated FirstId to database
+                        var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
+                        await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
+                    }
                 }
+
+                isMessageFinally = true;
             });
 
-    /// <summary> Flush message buffer to database </summary>
-    private async Task FlushMessageRelationBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
+        while (!isMessageFinally)
+        {
+            if (CheckShouldStop(ct)) return;
+            await Task.Delay(100, ct);
+        }
+
+        // Flush message relation buffer to database
         await _messageRelationBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
@@ -180,10 +198,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 foreach (var item in list)
                 {
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessageRelation(item.ParentSourceId, item.ParentMessageId, item.ChildSourceId, item.ChildMessageId), 
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyMessageRelation(item.ParentSourceId, item.ParentMessageId, item.ChildSourceId, item.ChildMessageId),
                         token: ct);
                 }
             });
+    }
 
     /// <summary> Fills the buffer with stories for a specific peer </summary>
     public async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, TL.StoryItem story, CancellationToken ct = default) =>

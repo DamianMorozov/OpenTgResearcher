@@ -33,7 +33,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     public static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 
     // Public constructor need for resolve: The exception 'A suitable constructor for type 'TgStorage.Domain.TgEfContextBase' could not be located
-    protected TgEfContextBase() =>
+    public TgEfContextBase() =>
 #if DEBUG
         Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif
@@ -41,7 +41,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     /// <summary> Inject options </summary>
     // For using: services.AddDbContextFactory<TgEfContextBase>
-    protected TgEfContextBase(DbContextOptions options) : base(options) =>
+    public TgEfContextBase(DbContextOptions options) : base(options) =>
 #if DEBUG
         Debug.WriteLine($"{nameof(TgEfContextBase)} is created with {nameof(options)}", TgConstants.LogTypeStorage);
 #endif
@@ -49,7 +49,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 
     /// <summary> Inject options </summary>
     // For using: services.AddDbContextFactory<TgEfContextBase>
-    protected TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options) =>
+    public TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options) =>
 #if DEBUG
         Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
 #endif

@@ -648,6 +648,9 @@
   <data name="AskGetParticipants" xml:space="preserve">
     <value>Get participants?</value>
   </data>
+  <data name="AskGetParticipantsFromMessages" xml:space="preserve">
+    <value>Get chat participants from messages?</value>
+  </data>
   <data name="AskClearParticipants" xml:space="preserve">
     <value>Clear participants view?</value>
   </data>
@@ -995,6 +998,9 @@
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Get participants from TG</value>
+  </data>
+  <data name="TextBlockGetParticipantsFromMessages.Text" xml:space="preserve">
+    <value>Get participants from messages</value>
   </data>
   <data name="TextBlockClearParticipants.Text" xml:space="preserve">
     <value>Clear participants view</value>

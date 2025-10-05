@@ -242,6 +242,7 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <!--  Load participants  -->
                 <Button
@@ -273,9 +274,24 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <!--  Get participants  -->
+                <!--  Get participants from messages  -->
                 <Button
                     Grid.Column="2"
+                    Margin="0,0,5,5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.GetParticipantsFromMessagesCommand}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                        <TextBlock
+                            x:Uid="TextBlockGetParticipantsFromMessages"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Get participants  -->
+                <Button
+                    Grid.Column="3"
                     Margin="0,0,5,5"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -291,7 +307,7 @@
                 </Button>
                 <!--  Clear participants  -->
                 <Button
-                    Grid.Column="3"
+                    Grid.Column="4"
                     Margin="0,0,5,5"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -312,7 +328,7 @@
                 <!--  Data in storage  -->
                 <ContentControl
                     Grid.Row="2"
-                    Grid.ColumnSpan="4"
+                    Grid.ColumnSpan="5"
                     Margin="20,0,0,0"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"

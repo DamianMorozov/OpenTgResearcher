@@ -707,6 +707,9 @@
   <data name="AskGetParticipants" xml:space="preserve">
     <value>Получить участников?</value>
   </data>
+  <data name="AskGetParticipantsFromMessages" xml:space="preserve">
+    <value>Получить участников чата из сообщений?</value>
+  </data>
   <data name="AskClearParticipants" xml:space="preserve">
     <value>Очистить просмотр участников?</value>
   </data>
@@ -1057,6 +1060,9 @@
   </data>
   <data name="TextBlockGetParticipants.Text" xml:space="preserve">
     <value>Получить участников из ТГ</value>
+  </data>
+  <data name="TextBlockGetParticipantsFromMessages.Text" xml:space="preserve">
+    <value>Получить участников из сообщений</value>
   </data>
   <data name="TextBlockClearParticipants.Text" xml:space="preserve">
     <value>Очистить просмотр участников</value>

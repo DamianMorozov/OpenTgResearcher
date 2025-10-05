@@ -22,6 +22,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
     public IAsyncRelayCommand LoadParticipantsCommand { get; }
     public IAsyncRelayCommand StopParticipantsCommand { get; }
     public IAsyncRelayCommand GetParticipantsCommand { get; }
+    public IAsyncRelayCommand GetParticipantsFromMessagesCommand { get; }
     public IAsyncRelayCommand ClearParticipantsCommand { get; }
 
     public TgChatParticipantsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService,
@@ -33,6 +34,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
         LoadParticipantsCommand = new AsyncRelayCommand(LoadParticipantsAsync);
         StopParticipantsCommand = new AsyncRelayCommand(StopParticipantsAsync);
         GetParticipantsCommand = new AsyncRelayCommand(GetParticipantsAsync);
+        GetParticipantsFromMessagesCommand = new AsyncRelayCommand(GetParticipantsFromMessagesAsync);
         ClearParticipantsCommand = new AsyncRelayCommand(ClearParticipantsAsync);
     }
 
@@ -124,14 +126,6 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
             // Load source DTO
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
-            await Task.Delay(250);
-
-            // Create missing users
-            await App.BusinessLogicManager.StorageManager.UserRepository.CreateMissingUsersByMessagesAsync(Dto.Id, _loadToken);
-            await Task.Delay(250);
-
-            // Create missing chat users
-            await App.BusinessLogicManager.StorageManager.ChatUserRepository.CreateMissingChatUsersByMessagesAsync(Dto.Id, _loadToken);
             await Task.Delay(250);
 
             // Single query to get all distinct users for this source
@@ -317,6 +311,33 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
         //// After persisting, load participants from storage (existing method loads from DB into UserDtos)
         //await LazyLoadCoreAsync(isSearch: false);
+
+        UserDtos = [.. incomingUserDtos];
+    }
+
+    private async Task GetParticipantsFromMessagesAsync() => 
+        await ContentDialogAsync(GetParticipantsFromMessagesCoreAsync, TgResourceExtensions.AskGetParticipantsFromMessages(), TgEnumLoadDesktopType.Online);
+
+    private async Task GetParticipantsFromMessagesCoreAsync()
+    {
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = new CancellationTokenSource();
+        _loadToken = _loadCts.Token;
+
+        // Load source DTO
+        Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
+        await Task.Delay(250);
+        
+        // Create missing users
+        await App.BusinessLogicManager.StorageManager.UserRepository.CreateMissingUsersByMessagesAsync(Dto.Id, _loadToken);
+        await Task.Delay(250);
+
+        // Create missing chat users
+        await App.BusinessLogicManager.StorageManager.ChatUserRepository.CreateMissingChatUsersByMessagesAsync(Dto.Id, _loadToken);
+        await Task.Delay(250);
+
+        await LazyLoadCoreAsync(isSearch: false);
     }
 
     private async Task ClearParticipantsAsync() => await ContentDialogAsync(ClearParticipantsCoreAsync, TgResourceExtensions.AskClearParticipants(), TgEnumLoadDesktopType.Online);

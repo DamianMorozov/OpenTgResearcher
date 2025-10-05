@@ -39,6 +39,7 @@ public static class TgResourceExtensions
 	internal static string AskClientConnect() => "AskClientConnect".GetLocalizedResource();
 	internal static string AskClientDisconnect() => "AskClientDisconnect".GetLocalizedResource();
 	internal static string AskDataClear() => "AskDataClear".GetLocalizedResource();
+	internal static string AskDefaultSettings() => "AskDefaultSettings".GetLocalizedResource();
 	internal static string AskDeleteFile() => "AskDeleteFile".GetLocalizedResource();
 	internal static string AskGetParticipants() => "AskGetParticipants".GetLocalizedResource();
 	internal static string AskLicenseCheck() => "AskLicenseCheck".GetLocalizedResource();

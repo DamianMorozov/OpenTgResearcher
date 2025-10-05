@@ -44,6 +44,7 @@ global using System.Collections.Specialized;
 global using System.Data;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Diagnostics;
+global using System.Globalization;
 global using System.Linq.Expressions;
 global using System.Reflection;
 global using System.Runtime.CompilerServices;

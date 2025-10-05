@@ -609,6 +609,9 @@
   <data name="AskDataClear" xml:space="preserve">
     <value>Clear the data?</value>
   </data>
+  <data name="AskDefaultSettings" xml:space="preserve">
+    <value>Reset to default settings?</value>
+  </data>
   <data name="AskLoading" xml:space="preserve">
     <value>Load the data?</value>
   </data>
@@ -1011,6 +1014,12 @@
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Stop downloading</value>
   </data>
+  <data name="TextBlockRunParseAndDownloading.Text" xml:space="preserve">
+    <value>Run parse and download</value>
+  </data>
+  <data name="TextBlockStopParseAndDownloading.Text" xml:space="preserve">
+    <value>Stop parse and download</value>
+  </data>
   <data name="TextBlockGet.Text" xml:space="preserve">
     <value>Get</value>
   </data>
@@ -1264,31 +1273,37 @@
     <value>Threads count</value>
   </data>
   <data name="FieldIsRewriteFiles.Text" xml:space="preserve">
-    <value>Overwriting files</value>
+    <value>Overwrite files</value>
   </data>
   <data name="FieldIsSaveFiles.Text" xml:space="preserve">
     <value>Save files</value>
   </data>
+  <data name="FieldIsDownloadFiles.Text" xml:space="preserve">
+    <value>Download files</value>
+  </data>
   <data name="FieldIsSaveMessages.Text" xml:space="preserve">
     <value>Save messages</value>
   </data>
+  <data name="FieldIsParseMessages.Text" xml:space="preserve">
+    <value>Parse messages</value>
+  </data>
   <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
-    <value>Overwriting messages</value>
+    <value>Overwrite messages</value>
   </data>
   <data name="FieldIsJoinFileNameWithMessageId.Text" xml:space="preserve">
-    <value>Joining message ID with file</value>
+    <value>Attach message ID to file</value>
   </data>
-  <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
-    <value>Creating subdirectories</value>
+  <data name="FieldIsCreateSubdirectories.Text" xml:space="preserve">
+    <value>Create subdirectories (for chat topics)</value>
   </data>
-  <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
-    <value>Naming media files by message</value>
+  <data name="FieldIsFileNameByMessage.Text" xml:space="preserve">
+    <value>Name media files by message</value>
   </data>
   <data name="FieldIsDownloadThumbnail.Text" xml:space="preserve">
     <value>Download thumbnails (covers)</value>
   </data>
-  <data name="FieldIsParsingComments.Text" xml:space="preserve">
-    <value>Parsing comments</value>
+  <data name="FieldIsParseComments.Text" xml:space="preserve">
+    <value>Parse comments</value>
   </data>
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
     <value>Subscribe</value>
@@ -1328,6 +1343,9 @@
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Invite link</value>
+  </data>
+  <data name="FieldDefaultSettings.Text" xml:space="preserve">
+    <value>Default settings</value>
   </data>
   <data name="FieldDescription.Text" xml:space="preserve">
     <value>Description</value>
@@ -1486,7 +1504,7 @@
     <value>Comments</value>
   </data>
   <data name="SelectorBarItemChatDownloadPage.Text" xml:space="preserve">
-    <value>Downloading</value>
+    <value>Download</value>
   </data>
   <data name="From" xml:space="preserve">
     <value>from</value>

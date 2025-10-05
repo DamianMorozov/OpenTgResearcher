@@ -19,7 +19,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public partial string FilterText { get; set; } = string.Empty;
     [ObservableProperty]
     public partial int PageSkip { get; set; } = 0;
-    public int PageTake => 100;
+    public static int PageTake => 100;
     [ObservableProperty]
     public partial bool HasMoreItems { get; set; } = true;
     [ObservableProperty]
@@ -38,9 +38,10 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public partial int ChatsProgressCountAll { get; set; }
 
     public IAsyncRelayCommand ClearViewCommand { get; }
-    public IAsyncRelayCommand UpdateOnlineCommand { get; }
-    public IAsyncRelayCommand SearchCommand { get; }
     public IAsyncRelayCommand LazyLoadCommand { get; }
+    public IAsyncRelayCommand SearchCommand { get; }
+    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand<TgEfSourceLiteDto> OpenCommand { get; }
 
     public TgSectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
         ILogger<TgSectionViewModel> logger, string name) : base(settingsService, navigationService, loadStateService, logger, name)
@@ -48,6 +49,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         LazyLoadCommand = new AsyncRelayCommand<bool>(async (isNewQuery) => await LazyLoadAsync(isNewQuery, isSearch: false), canExecute: _ => HasMoreItems && !IsLoading);
+        OpenCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(OpenAsync);
         SearchCommand = new AsyncRelayCommand(async () => await LazyLoadAsync(isNewQuery: false, isSearch: true));
         UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
     }
@@ -81,7 +83,8 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         }
     });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(async () => await ClearViewCoreAsync(isFinally: true), TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    private async Task ClearViewAsync() => await ContentDialogAsync(async () => 
+        await ClearViewCoreAsync(isFinally: true), TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     protected async Task ClearViewCoreAsync(bool isFinally)
     {
@@ -114,6 +117,18 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
 
         await UpdateOnlineCoreAsync();
     }), TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
+
+    private async Task OpenAsync(TgEfSourceLiteDto? sourceLiteDto) => await ContentDialogAsync(
+        async () => await OpenCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpen(), TgEnumLoadDesktopType.Storage);
+
+    protected async Task OpenCoreAsync(TgEfSourceLiteDto? sourceLiteDto)
+    {
+        if (!SettingsService.IsExistsAppStorage) return;
+        if (sourceLiteDto is null) return;
+
+        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, sourceLiteDto.Uid);
+        await Task.CompletedTask;
+    }
 
     #endregion
 

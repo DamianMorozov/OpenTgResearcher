@@ -5,6 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/TgUiButton.xaml" />
                 <ResourceDictionary Source="/Styles/TgUiColumns.xaml" />
                 <ResourceDictionary Source="/Styles/TgUiControls.xaml" />
                 <ResourceDictionary Source="/Styles/TgUiConverters.xaml" />

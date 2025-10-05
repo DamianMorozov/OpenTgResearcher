@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sources="using:TgStorage.Domain.Sources"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
@@ -25,7 +26,7 @@
             HorizontalContentAlignment="Stretch"
             IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
             <Expander
-                x:Uid="SettingAppActions"
+                x:Uid="ExpanderActions"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
@@ -127,6 +128,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <!--  Filter by subscribe  -->
                     <TextBlock
@@ -190,18 +192,13 @@
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <!--  License button: Search  -->
-                    <styles:TgLicenseButton
+                    <!--  Search  -->
+                    <Button
                         Grid.RowSpan="2"
                         Grid.Column="5"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
-                        Command="{x:Bind Path=ViewModel.SearchCommand}"
-                        Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                        ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
-                        Style="{StaticResource LicenseButtonStyle}"
-                        ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
+                        Command="{x:Bind Path=ViewModel.SearchCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xE721;" />
                             <TextBlock
@@ -210,7 +207,25 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </styles:TgLicenseButton>
+                    </Button>
+                    <!--  Open  -->
+                    <Button
+                        Grid.RowSpan="2"
+                        Grid.Column="6"
+                        Margin="5,0,5,5"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind Path=ViewModel.OpenCommand}"
+                        CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}"
+                        Style="{StaticResource LicenseButtonStyle}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Glyph="&#xEA5B;" />
+                            <TextBlock
+                                x:Uid="ActionOpen"
+                                Margin="10,0,10,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <!--  Table  -->
                     <ScrollView
                         Grid.Row="2"
@@ -220,6 +235,7 @@
                         <!--  Data  -->
                         <controls:DataGrid
                             x:Name="DataGridChats"
+                            Margin="0,0,10,0"
                             VerticalAlignment="Top"
                             AutoGenerateColumns="False"
                             Background="Transparent"
@@ -260,14 +276,6 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Auto-update  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnAutoUpdTemplate"
-                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                    ColumnValue="{StaticResource ColumnIsAutoUpdateTemplate}"
-                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                    ColumnWidth="Auto"
-                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  User name  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     x:Uid="ColumnUserNameTemplate"
@@ -283,14 +291,6 @@
                                     ColumnValue="{StaticResource ColumnTitleTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="3*"
-                                    OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  First ID  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnFirstIdTemplate"
-                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                    ColumnValue="{StaticResource ColumnFirstIdTemplate}"
-                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                    ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Count  -->
                                 <styles:TgBindableDataGridTemplateColumn
@@ -308,6 +308,14 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
+                                <!--  Participants  -->
+                                <styles:TgBindableDataGridTemplateColumn
+                                    x:Uid="ColumnParticipantsTemplate"
+                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                    ColumnValue="{StaticResource ColumnParticipantsTemplate}"
+                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                    ColumnWidth="Auto"
+                                    OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  End  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
@@ -322,7 +330,7 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay}">
             <Expander
-                x:Uid="SettingAppActions"
+                x:Uid="ExpanderActions"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
@@ -330,21 +338,21 @@
                 IsExpanded="True">
                 <Grid Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <!--  ChatsProgressMessage  -->
                     <TextBlock
                         x:Uid="FieldPercentOfChatParsing"
-                        Margin="12,7,7,2"
-                        VerticalAlignment="Center"
-                        TextAlignment="Left" />
+                        Margin="10,0,10,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
                     <!--  Load data from Online  -->
                     <Slider
                         Grid.Column="1"
-                        Margin="5,0,10,0"
+                        Margin="10,5,10,0"
                         HorizontalAlignment="Stretch"
                         IsEnabled="False"
                         Maximum="{x:Bind ViewModel.ChatsProgressCountAll, Mode=OneWay}"
@@ -353,17 +361,17 @@
                     <!--  Progress string  -->
                     <TextBlock
                         Grid.Column="2"
-                        Margin="5,0,0,0"
+                        Margin="10,0,10,0"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Text="{x:Bind ViewModel.ChatsProgressString, Mode=OneWay}"
-                        TextAlignment="Center" />
+                        Text="{x:Bind ViewModel.ChatsProgressString, Mode=OneWay}" />
                     <!--  Message  -->
                     <TextBlock
                         Grid.Column="3"
-                        Margin="12,0,12,0"
-                        HorizontalAlignment="Stretch"
-                        Text="{x:Bind ViewModel.ChatsProgressMessage, Mode=OneWay}"
-                        TextAlignment="Center" />
+                        Margin="10,0,10,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind ViewModel.ChatsProgressMessage, Mode=OneWay}" />
                 </Grid>
             </Expander>
         </ContentControl>

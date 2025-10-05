@@ -15,7 +15,8 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, ILogger<TgChatsViewModel> logger)
         : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatsViewModel))
     {
-        //
+        // Callback updates UI
+        App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
     }
 
     #endregion
@@ -26,63 +27,81 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 
     public async Task<List<TgEfSourceLiteDto>> GetListDtosAsync()
     {
+        // Build base query
         var query = App.BusinessLogicManager.StorageManager.SourceRepository.GetQuery(isReadOnly: true);
 
-        // Apply filter
+        // Prepare search strings
+        var raw = FilterText.Trim();
+        if (raw.StartsWith('@')) raw = raw[1..];
+
+        // Apply subscribe filter first (to reduce data set)
         if (IsFilterBySubscribe)
             query = query.Where(x => x.IsSubscribe);
 
-        // Apply text search
-        if (!string.IsNullOrWhiteSpace(FilterText))
+        // Apply database-side filtering by Id only (to reduce data set)
+        var idParsed = long.TryParse(raw, out var id) ? id : (long?)null;
+        if (IsFilterById)
         {
-            var trimmed = FilterText.Trim();
-            var searchText = trimmed;
-            var searchTextWithoutAt = trimmed.StartsWith('@') ? trimmed[1..] : trimmed;
-
-            // Build predicate
-            var predicates = new List<Expression<Func<TgEfSourceEntity, bool>>>();
-
-            if (IsFilterById)
-                predicates.Add(x => EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{searchText}%")
-                    || EF.Functions.Like(EF.Property<string>(x, nameof(TgEfSourceEntity.Id)), $"%{searchTextWithoutAt}%"));
-            if (IsFilterByName)
-                predicates.Add(x => EF.Functions.Like(x.UserName, $"%{searchText}%") || EF.Functions.Like(x.UserName, $"%{searchTextWithoutAt}%"));
-            if (IsFilterByTitle)
-                predicates.Add(x => EF.Functions.Like(x.Title, $"%{searchText}%") || EF.Functions.Like(x.Title, $"%{searchTextWithoutAt}%"));
-            
-            if (predicates.Count > 0)
-            {
-                var param = Expression.Parameter(typeof(TgEfSourceEntity), "x");
-                Expression? body = null;
-                foreach (var p in predicates)
-                {
-                    var invoked = Expression.Invoke(p, param);
-                    body = body == null ? invoked : Expression.OrElse(body, invoked);
-                }
-                if (body is not null)
-                {
-                    var combined = Expression.Lambda<Func<TgEfSourceEntity, bool>>(body, param);
-                    query = query.Where(combined);
-                }
-            }
+            if (idParsed.HasValue)
+                query = query.Where(x => x.Id == idParsed.Value);
         }
 
-        // Order & pagination
-        query = query.OrderByDescending(x => x.IsSubscribe).ThenBy(x => x.UserName).ThenBy(x => x.Title);
+        // Projection to DTOs first
+        var projected = query.Select(SelectDto());
+        var list = await projected.ToListAsync();
 
-        if (PageSkip > 0) query = query.Skip(PageSkip);
-        if (PageTake > 0) query = query.Take(PageTake);
+        // Apply case-insensitive text search in memory (for Cyrillic and Latin)
+        if (!idParsed.HasValue && !string.IsNullOrWhiteSpace(FilterText) && (IsFilterByName || IsFilterByTitle))
+        {
+            // Prepare search strings
+            var lower = raw.ToLower(CultureInfo.InvariantCulture);
+            list = [.. list
+                .Where(x =>
+                    (IsFilterByName && !string.IsNullOrEmpty(x.UserName) && x.UserName.Contains(lower, StringComparison.InvariantCultureIgnoreCase)) ||
+                    (IsFilterByTitle && !string.IsNullOrEmpty(x.Title) && x.Title.Contains(lower, StringComparison.InvariantCultureIgnoreCase))
+                )];
+        }
 
-        // Projection
-        return await query.Select(SelectDto()).ToListAsync();
+        // Order & pagination in memory
+        list = [.. list
+            .OrderByDescending(x => x.IsSubscribe)
+            .ThenBy(x => x.UserName)
+            .ThenBy(x => x.Title)
+            .Skip(PageSkip > 0 ? PageSkip : 0)
+            .Take(PageTake > 0 ? PageTake : int.MaxValue)];
+
+        // If no items, return early
+        if (list.Count == 0) return list;
+
+        // Collect ids for counting participants
+        var ids = list.Select(d => d.Id).ToList();
+
+        // Query chat users grouped by ChatId to get counts; exclude soft-deleted rows if applicable
+        var counts = await App.BusinessLogicManager
+            .StorageManager
+            .ChatUserRepository
+            .GetQuery(isReadOnly: true)
+            .Where(cu => ids.Contains(cu.ChatId) && !cu.IsDeleted)
+            .GroupBy(cu => cu.ChatId)
+            .Select(g => new { ChatId = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        // Merge counts into DTOs; default zero when no group found
+        var countsDict = counts.ToDictionary(x => x.ChatId, x => x.Count);
+        foreach (var dto in list)
+        {
+            dto.ParticipantsCount = countsDict.TryGetValue(dto.Id, out var c) ? c : 0;
+        }
+
+        return list;
     }
 
     public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (sender is not DataGrid dataGrid) return;
-        if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
+        if (dataGrid.SelectedItem is not TgEfSourceLiteDto sourceLiteDto) return;
 
-        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, dto.Uid);
+        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, sourceLiteDto.Uid);
     }
 
     #endregion

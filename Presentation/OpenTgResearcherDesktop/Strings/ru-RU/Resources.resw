@@ -668,6 +668,9 @@
   <data name="AskDataClear" xml:space="preserve">
     <value>Очистить данные?</value>
   </data>
+  <data name="AskDefaultSettings" xml:space="preserve">
+    <value>Сбросить настройки по-умолчанию?</value>
+  </data>
   <data name="AskLoading" xml:space="preserve">
     <value>Загрузить данные?</value>
   </data>
@@ -1073,6 +1076,12 @@
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Остановить загрузку</value>
   </data>
+  <data name="TextBlockRunParseAndDownloading.Text" xml:space="preserve">
+    <value>Запустить парсинг и скачивание</value>
+  </data>
+  <data name="TextBlockStopParseAndDownloading.Text" xml:space="preserve">
+    <value>Остановить парсинг и скачивание</value>
+  </data>
   <data name="TextBlockGet.Text" xml:space="preserve">
     <value>Получить</value>
   </data>
@@ -1328,28 +1337,34 @@
   <data name="FieldIsSaveFiles.Text" xml:space="preserve">
     <value>Сохранять файлы</value>
   </data>
+  <data name="FieldIsDownloadFiles.Text" xml:space="preserve">
+    <value>Скачивать файлы</value>
+  </data>
   <data name="FieldIsRewriteFiles.Text" xml:space="preserve">
     <value>Перезапись файлов</value>
   </data>
   <data name="FieldIsSaveMessages.Text" xml:space="preserve">
     <value>Сохранять сообщения</value>
   </data>
+  <data name="FieldIsParseMessages.Text" xml:space="preserve">
+    <value>Парсинг сообщений</value>
+  </data>
   <data name="FieldIsRewriteMessages.Text" xml:space="preserve">
     <value>Перезапись сообщений</value>
   </data>
   <data name="FieldIsJoinFileNameWithMessageId.Text" xml:space="preserve">
-    <value>Присоединение идентификатора сообщения к файлу</value>
+    <value>Присоединять идентификатор сообщения к файлу</value>
   </data>
-  <data name="FieldIsCreatingSubdirectories.Text" xml:space="preserve">
-    <value>Создание подкаталогов</value>
+  <data name="FieldIsCreateSubdirectories.Text" xml:space="preserve">
+    <value>Создавать подкаталоги (для топиков чата)</value>
   </data>
-  <data name="FieldIsFileNamingByMessage.Text" xml:space="preserve">
-    <value>Именование медиа-файлов по сообщению</value>
+  <data name="FieldIsFileNameByMessage.Text" xml:space="preserve">
+    <value>Именовать медиа-файлов по сообщению</value>
   </data>
   <data name="FieldIsDownloadThumbnail.Text" xml:space="preserve">
     <value>Скачивать миниатюры (обложки)</value>
   </data>
-  <data name="FieldIsParsingComments.Text" xml:space="preserve">
+  <data name="FieldIsParseComments.Text" xml:space="preserve">
     <value>Парсинг комментариев</value>
   </data>
   <data name="FieldIsSubscribe.Text" xml:space="preserve">
@@ -1390,6 +1405,9 @@
   </data>
   <data name="FieldInviteLink.Text" xml:space="preserve">
     <value>Ссылка для приглашения</value>
+  </data>
+  <data name="FieldDefaultSettings.Text" xml:space="preserve">
+    <value>Настройки по-умолчанию</value>
   </data>
   <data name="FieldDescription.Text" xml:space="preserve">
     <value>Описание</value>
@@ -1548,7 +1566,7 @@
     <value>Комментарии</value>
   </data>
   <data name="SelectorBarItemChatDownloadPage.Text" xml:space="preserve">
-    <value>Скачивание</value>
+    <value>Скачать</value>
   </data>
   <data name="From" xml:space="preserve">
     <value>из</value>

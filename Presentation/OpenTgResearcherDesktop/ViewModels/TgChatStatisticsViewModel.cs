@@ -1,7 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBase
+public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
@@ -13,8 +13,6 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
     [ObservableProperty]
     public partial TgEfSourceDto Dto { get; set; } = null!;
     [ObservableProperty]
-    public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
-    [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
@@ -23,9 +21,9 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
 
     public IAsyncRelayCommand CalcChatStatisticsCommand { get; }
 
-    public TgChatDetailsStatisticsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgChatDetailsStatisticsViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsStatisticsViewModel))
+    public TgChatStatisticsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgChatStatisticsViewModel> logger, IAppNotificationService appNotificationService)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatStatisticsViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands
@@ -104,12 +102,12 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
 
     private async Task MergeUsersWithPlaceholdersAsync()
     {
-        var participants = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
+        var participantDtos = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
         var userIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
         var usersDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
 
         // Collect all existing IDs
-        var existingIds = new HashSet<long>(participants.Select(p => p.id).Concat(usersDtos.Select(u => u.Id)));
+        var existingIds = new HashSet<long>(participantDtos.Select(p => p.Id).Concat(usersDtos.Select(u => u.Id)));
         // Find missing IDs
         var missingIds = userIds.Where(id => !existingIds.Contains(id));
         // Create placeholder users for missing IDs
@@ -122,21 +120,21 @@ public sealed partial class TgChatDetailsStatisticsViewModel : TgPageViewModelBa
 
         UserDtos = [.. 
             // Participants from Telegram
-            participants.Select(x => new TgEfUserDto()
+            participantDtos.Select(x => new TgEfUserDto()
             {
-                Id = x.id,
-                IsContactActive = x.IsActive,
-                IsBot = x.IsBot,
-                LastSeenAgo = x.LastSeenAgo,
-                UserName = x.MainUsername,
-                AccessHash = x.access_hash,
-                FirstName = x.first_name,
-                LastName = x.last_name,
-                UserNames = x.usernames is null ? string.Empty : string.Join("|", x.usernames.ToList()),
-                PhoneNumber = x.phone,
-                Status = x.status?.ToString() ?? string.Empty,
-                RestrictionReason = x.restriction_reason is null ? string.Empty : string.Join("|", x.restriction_reason.ToList()),
-                LangCode = x.lang_code,
+                Id = x.User.id,
+                IsUserActive = x.User.IsActive,
+                IsBot = x.User.IsBot,
+                LastSeenAgo = x.User.LastSeenAgo,
+                UserName = x.User.MainUsername,
+                AccessHash = x.User.access_hash,
+                FirstName = x.User.first_name,
+                LastName = x.User.last_name,
+                UserNames = x.User.usernames is null ? string.Empty : string.Join("|", x.User.usernames.ToList()),
+                PhoneNumber = x.User.phone,
+                Status = x.User.status?.ToString() ?? string.Empty,
+                RestrictionReason = x.User.restriction_reason is null ? string.Empty : string.Join("|", x.User.restriction_reason.ToList()),
+                LangCode = x.User.lang_code,
                 IsContact = false,
             }), 
             // Users from Users table

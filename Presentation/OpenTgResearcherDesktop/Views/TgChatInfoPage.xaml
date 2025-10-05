@@ -1,5 +1,5 @@
 ﻿<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgChatDetailsInfoPage"
+    x:Class="OpenTgResearcherDesktop.Views.TgChatInfoPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
@@ -11,19 +11,20 @@
     xmlns:users="using:TgStorage.Domain.Users"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatDetailsInfoViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatInfoViewModel}"
     mc:Ignorable="d">
 
-    <!--  Chat details  -->
-    <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
-            <!--  Load data  -->
-            <views:TgLoadDataPage />
-            <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+    <ContentControl
+        HorizontalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
+        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+        Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+        <Border
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+            CornerRadius="5">
+            <Grid Margin="0,0,10,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -421,6 +422,6 @@
                         IsOn="{x:Bind ViewModel.ChatDetailsDto.IsForum, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
-        </Grid>
+        </Border>
     </ContentControl>
 </common:TgPageBase>

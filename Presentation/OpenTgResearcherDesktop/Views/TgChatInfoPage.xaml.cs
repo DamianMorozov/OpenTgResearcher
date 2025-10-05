@@ -1,14 +1,14 @@
 ﻿namespace OpenTgResearcherDesktop.Views;
 
-public sealed partial class TgChatDetailsInfoPage
+public sealed partial class TgChatInfoPage
 {
     #region Fields, properties, constructor
 
-    public override TgChatDetailsInfoViewModel ViewModel { get; }
+    public override TgChatInfoViewModel ViewModel { get; }
 
-    public TgChatDetailsInfoPage()
+    public TgChatInfoPage()
     {
-        ViewModel = App.GetService<TgChatDetailsInfoViewModel>();
+        ViewModel = App.GetService<TgChatInfoViewModel>();
         
         InitializeComponent();
         DataContext = ViewModel;

@@ -1,5 +1,5 @@
 ﻿<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgChatDetailsParticipantsPage"
+    x:Class="OpenTgResearcherDesktop.Views.TgChatMyMessagesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
@@ -11,11 +11,11 @@
     xmlns:users="using:TgStorage.Domain.Users"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatDetailsParticipantsViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatMyMessagesViewModel}"
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <!--  Participants data template  -->
+        <!--  Messages data template  -->
         <DataTemplate x:Key="ParticipantsViewTemplate" x:DataType="users:TgEfUserDto">
             <Button
                 Margin="-5,5,5,-5"
@@ -86,7 +86,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind AccessHash, Mode=OneWay}" />
-                        <!--  IsContactActive  -->
+                        <!--  IsUserActive  -->
                         <TextBlock
                             x:Uid="FieldIsActive"
                             Margin="5,5,7,2"
@@ -96,7 +96,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             IsEnabled="False"
-                            IsOn="{x:Bind IsContactActive, Mode=OneWay}" />
+                            IsOn="{x:Bind IsUserActive, Mode=OneWay}" />
                         <!--  IsBot  -->
                         <TextBlock
                             x:Uid="FieldIsBot"
@@ -208,140 +208,99 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Status, Mode=OneWay}" />
-                        <!--  User deleted  -->
+                        <!--  Number of messages  -->
                         <TextBlock
-                            x:Uid="TextBlockMessageDeleted"
+                            x:Uid="FieldCountMessages"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <TextBlock
                             Margin="5,0,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            Text="{x:Bind MessagesCount, Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </Button>
         </DataTemplate>
     </common:TgPageBase.Resources>
 
-    <!--  Chat participants  -->
-    <ScrollView VerticalScrollMode="Auto">
-        <Grid Margin="-15,0,-15,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-            <!--  License button: Load participants  -->
-            <styles:TgLicenseButton
-                Grid.Column="0"
-                Margin="0,0,5,5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
-                Command="{x:Bind ViewModel.LoadParticipantsCommand}"
-                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
-                Style="{StaticResource LicenseButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                    <TextBlock
-                        x:Uid="TextBlockLoadParticipants"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-            </styles:TgLicenseButton>
-            <!--  License button: Stop participants  -->
-            <styles:TgLicenseButton
-                Grid.Column="1"
-                Margin="0,0,5,5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
-                Command="{x:Bind ViewModel.StopParticipantsCommand}"
-                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
-                Style="{StaticResource LicenseButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                    <TextBlock
-                        x:Uid="TextBlockStopParticipants"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-            </styles:TgLicenseButton>
-            <!--  License button: Get participants  -->
-            <styles:TgLicenseButton
-                Grid.Column="2"
-                Margin="0,0,5,5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
-                Command="{x:Bind ViewModel.GetParticipantsCommand}"
-                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
-                Style="{StaticResource LicenseButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                    <TextBlock
-                        x:Uid="TextBlockGetParticipants"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-            </styles:TgLicenseButton>
-            <!--  License button: Clear participants  -->
-            <styles:TgLicenseButton
-                Grid.Column="3"
-                Margin="0,0,5,5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckBackgroundConverter}, ConverterParameter=Community}"
-                Command="{x:Bind ViewModel.ClearParticipantsCommand}"
-                Foreground="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckForegroundConverter}, ConverterParameter=Community}"
-                ShowPurchaseLicenseCommand="{x:Bind ViewModel.ShowPurchaseLicenseCommand}"
-                Style="{StaticResource LicenseButtonStyle}"
-                ToolTipService.ToolTip="{x:Bind ViewModel.LicenseType, Mode=OneWay, Converter={StaticResource LicenseCheckTooltipConverter}, ConverterParameter=Community}">
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                    <TextBlock
-                        x:Uid="TextBlockClearParticipants"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
-                </StackPanel>
-            </styles:TgLicenseButton>
-            <!--  Load data  -->
-            <views:TgLoadDataPage
-                Grid.Row="1"
-                Grid.ColumnSpan="4"
-                Margin="20,0,0,0" />
-            <!--  List view with participants  -->
-            <ListView
-                x:Name="ListViewParticipants"
-                Grid.Row="2"
-                Grid.ColumnSpan="4"
-                ItemTemplate="{StaticResource ParticipantsViewTemplate}"
-                ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <!--  The ItemsStackPanel must be edited to update the following two properties  -->
-                <!--  These properties allow the list to grow from the bottom  -->
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
-        </Grid>
-    </ScrollView>
+    <ContentControl
+        HorizontalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
+        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+        Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+        <Border
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+            CornerRadius="5">
+            <Grid Margin="0,0,10,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <!--  Load my messages  -->
+                <Button
+                    Grid.Column="0"
+                    Margin="0,0,5,5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.LoadMyMessagesCommand}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                        <TextBlock
+                            x:Uid="TextBlockLoadMyMessages"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Stop my messages  -->
+                <Button
+                    Grid.Column="1"
+                    Margin="0,0,5,5"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.StopMyMessagesCommand}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                        <TextBlock
+                            x:Uid="TextBlockStopMyMessages"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Load data  -->
+                <views:TgLoadDataPage
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="20,0,0,0" />
+                <!--  List view with participants  -->
+                <ListView
+                    x:Name="ListViewMessages"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    ItemTemplate="{StaticResource ParticipantsViewTemplate}"
+                    ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <!--  The ItemsStackPanel must be edited to update the following two properties  -->
+                    <!--  These properties allow the list to grow from the bottom  -->
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+        </Border>
+    </ContentControl>
 </common:TgPageBase>

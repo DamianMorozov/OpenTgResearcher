@@ -41,7 +41,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     [ObservableProperty]
     public partial TgEnumLicenseType LicenseType { get; set; } = TgEnumLicenseType.No;
 
-    private TgChatViewModel? _chatVm;
+    private TgChatDownloadViewModel? _chatDownloadingVm;
     private TgChatsViewModel? _chatsVm;
 
     public IAsyncRelayCommand ShowPurchaseLicenseCommand { get; }
@@ -155,16 +155,26 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
 
     private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
     {
-        _chatVm ??= App.Locator?.Get<TgChatViewModel>();
-        if (_chatVm is not null)
+        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
+        if (_chatDownloadingVm is not null)
         {
-            if (_chatVm.Dto?.Id == chatId && _chatVm.Dto?.FirstId < messageId)
+            if (_chatDownloadingVm.DownloadDto?.Id == chatId && _chatDownloadingVm.DownloadDto?.FirstId <= messageId)
             {
-                _chatVm.Dto.FirstId = messageId;
-                _chatVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
-                _chatVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-                _chatVm.StateSourceMsg = $"{messageId} | {message}";
+                _chatDownloadingVm.DownloadDto.FirstId = messageId;
+                _chatDownloadingVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
+                _chatDownloadingVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                _chatDownloadingVm.StateSourceMsg = $"{messageId} | {message}";
             }
+        }
+    }
+
+    protected void ClearChatViewModel()
+    {
+        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
+        if (_chatDownloadingVm is not null)
+        {
+            _chatDownloadingVm.ChatProgressMessage = string.Empty;
+            _chatDownloadingVm.StateSourceMsg = string.Empty;
         }
     }
 
@@ -179,10 +189,10 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     private void UpdateStateFileCore(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
         bool isStartTask, int threadNumber)
     {
-        _chatVm ??= App.Locator?.Get<TgChatViewModel>();
-        if (_chatVm is not null)
+        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
+        if (_chatDownloadingVm is not null)
         {
-            if (_chatVm.Dto?.Id == chatId)
+            if (_chatDownloadingVm.DownloadDto?.Id == chatId)
             {
                 // Download job
                 if (!string.IsNullOrEmpty(fileName))
@@ -205,11 +215,20 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
                     DownloadSettings.SourceVm.Dto.CurrentFileSpeed = 0;
                 }
                 // State
-                _chatVm.StateSourceMedia = string.IsNullOrEmpty(fileName) ? string.Empty
+                _chatDownloadingVm.StateSourceMedia = string.IsNullOrEmpty(fileName) ? string.Empty
                     : $"{fileName} | " +
                     $"{TgResourceExtensions.GetTransmitted()} {DownloadSettings.SourceVm.Dto.CurrentFileProgressPercentString} | " +
                     $"{TgResourceExtensions.GetSpeed()} {DownloadSettings.SourceVm.Dto.CurrentFileSpeedKBString}";
             }
+        }
+    }
+
+    protected void ClearStateFile()
+    {
+        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
+        if (_chatDownloadingVm is not null)
+        {
+            _chatDownloadingVm.StateSourceMedia = string.Empty;
         }
     }
 

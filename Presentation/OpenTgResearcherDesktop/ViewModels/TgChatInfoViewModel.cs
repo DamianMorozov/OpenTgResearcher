@@ -1,7 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
+public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
@@ -12,8 +12,8 @@ public sealed partial class TgChatDetailsInfoViewModel : TgPageViewModelBase
 
     public IAsyncRelayCommand UpdateChatSettingsCommand { get; }
 
-    public TgChatDetailsInfoViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgChatDetailsInfoViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsInfoViewModel))
+    public TgChatInfoViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgChatInfoViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatInfoViewModel))
     {
         // Commands
         UpdateChatSettingsCommand = new AsyncRelayCommand(UpdateChatSettingsAsync);

@@ -1,14 +1,14 @@
 ﻿namespace OpenTgResearcherDesktop.Views;
 
-public sealed partial class TgChatDetailsParticipantsPage
+public sealed partial class TgChatMyMessagesPage
 {
     #region Fields, properties, constructor
 
-    public override TgChatDetailsParticipantsViewModel ViewModel { get; }
+    public override TgChatMyMessagesViewModel ViewModel { get; }
 
-    public TgChatDetailsParticipantsPage()
+    public TgChatMyMessagesPage()
     {
-        ViewModel = App.GetService<TgChatDetailsParticipantsViewModel>();
+        ViewModel = App.GetService<TgChatMyMessagesViewModel>();
         ViewModel.ScrollRequested = ScrollRequested;
 
         InitializeComponent();
@@ -28,9 +28,9 @@ public sealed partial class TgChatDetailsParticipantsPage
     private void ScrollRequested()
     {
         // Scroll to the last item in the Participants ListView
-        if (ListViewParticipants is null) return;
-        if (ListViewParticipants.Items.Any())
-            ListViewParticipants.ScrollIntoView(ListViewParticipants.Items.Last());
+        if (ListViewMessages is null) return;
+        if (ListViewMessages.Items.Any())
+            ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
     }
 
     /// <summary> Click on user </summary>

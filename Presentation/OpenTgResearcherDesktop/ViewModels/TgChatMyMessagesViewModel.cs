@@ -1,7 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBase, IDisposable
+public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -12,8 +12,6 @@ public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBa
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
     public partial TgEfSourceDto Dto { get; set; } = null!;
-    [ObservableProperty]
-    public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
@@ -26,9 +24,9 @@ public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBa
     public IAsyncRelayCommand LoadMyMessagesCommand { get; }
     public IAsyncRelayCommand StopMyMessagesCommand { get; }
 
-    public TgChatDetailsMyMessagesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgChatDetailsMyMessagesViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsMyMessagesViewModel))
+    public TgChatMyMessagesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgChatMyMessagesViewModel> logger, IAppNotificationService appNotificationService)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatMyMessagesViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands
@@ -44,7 +42,7 @@ public sealed partial class TgChatDetailsMyMessagesViewModel : TgPageViewModelBa
     private bool _disposed;
 
     /// <summary> Finalizer </summary>
-	~TgChatDetailsMyMessagesViewModel() => Dispose(false);
+	~TgChatMyMessagesViewModel() => Dispose(false);
 
     /// <summary> Throw exception if disposed </summary>
     public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);

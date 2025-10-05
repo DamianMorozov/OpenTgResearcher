@@ -1,7 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
+public sealed partial class TgChatContentViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
@@ -12,8 +12,6 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
     public partial TgEfSourceDto Dto { get; set; } = null!;
-    [ObservableProperty]
-    public partial TgChatDetailsDto ChatDetailsDto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = new();
     [ObservableProperty]
@@ -39,9 +37,9 @@ public sealed partial class TgChatDetailsContentViewModel : TgPageViewModelBase
     public IAsyncRelayCommand LazyLoadMessagesCommand { get; }
     public IAsyncRelayCommand ClearViewCommand { get; }
 
-    public TgChatDetailsContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgChatDetailsContentViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDetailsContentViewModel))
+    public TgChatContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+        ILogger<TgChatContentViewModel> logger, IAppNotificationService appNotificationService)
+        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatContentViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands

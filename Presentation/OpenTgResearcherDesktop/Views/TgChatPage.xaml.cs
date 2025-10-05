@@ -23,32 +23,40 @@ public sealed partial class TgChatPage
     {
         PageLoaded(sender, e);
 
-        ViewModel.ContentFrame = ContentFrame;
-        ContentFrame.Navigate(typeof(TgChatDetailsInfoPage), ViewModel.Uid);
+        ViewModel.ChatDetailsFrame = ChatDetailsFrame;
+        ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), ViewModel.Uid);
     }
 
-    /// <summary> Change chat details page </summary>
-    private void SelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    /// <summary> Chat details page </summary>
+    private void ChatDetailsSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
     {
         var selectedItem = sender.SelectedItem;
         switch (selectedItem.Tag)
         {
-            case nameof(TgChatDetailsInfoPage):
-                ContentFrame.Navigate(typeof(TgChatDetailsInfoPage), ViewModel.Uid);
+            case nameof(TgChatSettingsPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), ViewModel.Uid);
                 break;
-            case nameof(TgChatDetailsMyMessagesPage):
-                ContentFrame.Navigate(typeof(TgChatDetailsMyMessagesPage), ViewModel.Uid);
+            case nameof(TgChatDownloadPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatDownloadPage), ViewModel.Uid);
                 break;
-            case nameof(TgChatDetailsParticipantsPage):
-                ContentFrame.Navigate(typeof(TgChatDetailsParticipantsPage), ViewModel.Uid);
+            case nameof(TgChatInfoPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatInfoPage), ViewModel.Uid);
                 break;
-            case nameof(TgChatDetailsStatisticsPage):
-                ContentFrame.Navigate(typeof(TgChatDetailsStatisticsPage), ViewModel.Uid);
+            case nameof(TgChatMyMessagesPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatMyMessagesPage), ViewModel.Uid);
                 break;
-            case nameof(TgChatDetailsContentPage):
-                ContentFrame.Navigate(typeof(TgChatDetailsContentPage), ViewModel.Uid);
+            case nameof(TgChatParticipantsPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatParticipantsPage), ViewModel.Uid);
+                break;
+            case nameof(TgChatStatisticsPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatStatisticsPage), ViewModel.Uid);
+                break;
+            case nameof(TgChatContentPage):
+                ChatDetailsFrame.Navigate(typeof(TgChatContentPage), ViewModel.Uid);
                 break;
         }
+
+        ViewModel.LoadDataStorageCommand.Execute(null);
     }
 
     #endregion

@@ -1,0 +1,286 @@
+﻿<common:TgPageBase
+    x:Class="OpenTgResearcherDesktop.Views.TgChatDownloadPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:messages="using:TgStorage.Domain.Messages"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
+    xmlns:users="using:TgStorage.Domain.Users"
+    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
+    xmlns:views="using:OpenTgResearcherDesktop.Views"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatDownloadViewModel}"
+    mc:Ignorable="d">
+
+    <ContentControl
+        HorizontalAlignment="Stretch"
+        HorizontalContentAlignment="Stretch"
+        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+        Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+        <Border
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
+            CornerRadius="5">
+            <Grid Margin="0,0,10,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <!--  FirstId  -->
+                <TextBlock
+                    x:Uid="FieldFirstId"
+                    Grid.Row="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <NumberBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Minimum="1"
+                    SpinButtonPlacementMode="Compact"
+                    Style="{StaticResource FieldNumberBoxStyle}"
+                    Value="{x:Bind ViewModel.DownloadDto.FirstId, Mode=TwoWay}" />
+                <!--  CountThreads  -->
+                <TextBlock
+                    x:Uid="FieldCountThreads"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <NumberBox
+                    Grid.Row="0"
+                    Grid.Column="3"
+                    Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=OneWay}"
+                    Minimum="1"
+                    SpinButtonPlacementMode="Compact"
+                    Style="{StaticResource FieldNumberBoxStyle}"
+                    Value="{x:Bind ViewModel.DownloadDto.CountThreads, Mode=TwoWay}" />
+                <!--  IsAutoUpdate  -->
+                <TextBlock
+                    x:Uid="FieldIsAutoUpdate"
+                    Grid.Row="0"
+                    Grid.Column="4"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="0"
+                    Grid.Column="5"
+                    IsEnabled="True"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsAutoUpdate, Mode=OneWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsSaveMessages  -->
+                <TextBlock
+                    x:Uid="FieldIsParseMessages"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    IsEnabled="True"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsSaveMessages, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsJoinFileNameWithMessageId  -->
+                <TextBlock
+                    x:Uid="FieldIsJoinFileNameWithMessageId"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    IsEnabled="True"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsJoinFileNameWithMessageId, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsRewriteMessages  -->
+                <TextBlock
+                    x:Uid="FieldIsRewriteMessages"
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="1"
+                    Grid.Column="5"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteMessages, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsSaveFiles  -->
+                <TextBlock
+                    x:Uid="FieldIsDownloadFiles"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    IsEnabled="True"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsSaveFiles, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  Download thumbnails (covers)  -->
+                <TextBlock
+                    x:Uid="FieldIsDownloadThumbnail"
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="2"
+                    Grid.Column="3"
+                    Margin="12,0,0,0"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsDownloadThumbnail, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsRewriteFiles  -->
+                <TextBlock
+                    x:Uid="FieldIsRewriteFiles"
+                    Grid.Row="2"
+                    Grid.Column="4"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="2"
+                    Grid.Column="5"
+                    IsEnabled="True"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteFiles, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsParsingComments  -->
+                <TextBlock
+                    x:Uid="FieldIsParseComments"
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsParsingComments, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsCreatingSubdirectories  -->
+                <TextBlock
+                    x:Uid="FieldIsCreateSubdirectories"
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="3"
+                    Grid.Column="3"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsCreatingSubdirectories, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  IsFileNamingByMessage  -->
+                <TextBlock
+                    x:Uid="FieldIsFileNameByMessage"
+                    Grid.Row="3"
+                    Grid.Column="4"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ToggleSwitch
+                    Grid.Row="3"
+                    Grid.Column="5"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsFileNamingByMessage, Mode=TwoWay}"
+                    Style="{StaticResource FieldToggleSwitchStyle}" />
+                <!--  Default  -->
+                <TextBlock
+                    x:Uid="FieldDefaultSettings"
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <Button
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="5"
+                    VerticalAlignment="Center"
+                    Command="{x:Bind ViewModel.DefaultSettingsCommand}"
+                    Style="{StaticResource FieldButtonStyle}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
+                        <TextBlock
+                            x:Uid="TextBlockOpenDiscussion"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Directory  -->
+                <TextBlock
+                    x:Uid="FieldDirectory"
+                    Grid.Row="5"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <Grid
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="5"
+                    Margin="2"
+                    HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Sensitive data  -->
+                    <TextBlock
+                        Margin="2,10,2,2"
+                        HorizontalAlignment="Stretch"
+                        HorizontalTextAlignment="Left"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.DownloadDto.Directory, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Column="1"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.DownloadDto.Directory, Mode=OneWay}" />
+                </Grid>
+                <!--  ChatProgressMessage  -->
+                <TextBlock
+                    x:Uid="FieldPercent"
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <TextBox
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="5"
+                    IsEnabled="False"
+                    Style="{StaticResource FieldTextBoxStyle}"
+                    Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
+                <!--  Message  -->
+                <TextBlock
+                    x:Uid="FieldMessage"
+                    Grid.Row="7"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <TextBox
+                    Grid.Row="7"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="5"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    Style="{StaticResource FieldTextBoxStyle}"
+                    Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
+                <!--  Media  -->
+                <TextBlock
+                    x:Uid="FieldMedia"
+                    Grid.Row="8"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <TextBox
+                    Grid.Row="8"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="5"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    Style="{StaticResource FieldTextBoxStyle}"
+                    Text="{x:Bind ViewModel.StateSourceMedia, Mode=OneWay}" />
+            </Grid>
+        </Border>
+    </ContentControl>
+</common:TgPageBase>

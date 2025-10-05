@@ -4,15 +4,15 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.500] - 2025-10-01
+## [0.7.500] - 2025-10-05
 ### Исправлено
 - Оптимизация колонок таблиц в `OpenTgResearcherDesktop`
 ### Изменено
 - Обновление NuGet пакетов
 - Оптимизация `TgStorage`
-- Обновление страницы `Участники чата` в `OpenTgResearcherDesktop`
 - Удаление требований лицензирования
 - Обновление таблицы `Чаты` в `TgStorage`
+- Обновление страницы `Чат` в `OpenTgResearcherDesktop`
 ### Добавлено
 - Добавление таблицы `Пользователи чатов` в `TgStorage`
 - Поиск без учета регистра на странице `Чаты` в `OpenTgResearcherDesktop`

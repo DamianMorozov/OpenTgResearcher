@@ -72,8 +72,8 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         {
             var chatDto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Id == chatId);
             if (chatDto is null) continue;
-            var countMessages = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.UserId == Dto.Id && x.SourceId == chatDto.Id);
-            ChatsDtos.Add(new TgEfChatWithCountDto(Dto, chatDto, countMessages));
+            var messagesCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.UserId == Dto.Id && x.SourceId == chatDto.Id);
+            ChatsDtos.Add(new TgEfChatWithCountDto(Dto, chatDto, messagesCount));
         }
 
         // Order

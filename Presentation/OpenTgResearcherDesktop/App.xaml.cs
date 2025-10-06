@@ -36,7 +36,7 @@ public partial class App : Application
     internal static UIElement? AppTitleBar { get; private set; }
     internal static ITgBusinessLogicManager BusinessLogicManager { get; private set; } = default!;
     internal static ILifetimeScope Scope { get; private set; } = default!;
-    internal static TgViewModelLocator? Locator { get; set; } = default!;
+    internal static TgViewModelLocator VmLocator { get; private set; } = default!;
 
     public App()
     {
@@ -120,8 +120,6 @@ public partial class App : Application
                 services.AddSingleton<TgHardwareResourceViewModel>();
                 services.AddSingleton<TgLicensePage>();
                 services.AddSingleton<TgLicenseViewModel>();
-                services.AddSingleton<TgLoadDataPage>();
-                services.AddSingleton<TgLoadDataViewModel>();
                 services.AddSingleton<TgLogsPage>();
                 services.AddSingleton<TgLogsViewModel>();
                 services.AddSingleton<TgMainPage>();
@@ -221,7 +219,7 @@ public partial class App : Application
             // Clear FusionCache on startup
             await BusinessLogicManager.Cache.ClearAllAsync();
             // ViewModel locator
-            Locator = new();
+            VmLocator = new();
 
             // MainWindow
             MainWindow ??= new MainWindow();

@@ -30,8 +30,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand LicenseRequestCommunityCommand { get; }
 	public IAsyncRelayCommand LicenseBuyCommand { get; }
 
-	public TgLicenseViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgLicenseViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgLicenseViewModel))
+	public TgLicenseViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgLicenseViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgLicenseViewModel))
 	{
 		AppVersionShort = $"v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
 		AppVersionFull = $"{TgResourceExtensions.GetAppVersion()}: {AppVersionShort}";

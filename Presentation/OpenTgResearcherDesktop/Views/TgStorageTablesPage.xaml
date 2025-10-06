@@ -14,61 +14,57 @@
     mc:Ignorable="d">
 
     <ScrollView VerticalScrollMode="Auto">
-        <Grid>
-            <!--  Load data  -->
-            <views:TgLoadDataPage />
-            <!--  Content  -->
-            <ContentControl
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <Grid Margin="10,10,10,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <!--  DB tables  -->
-                    <Grid Margin="0,0,10,0">
-                        <controls:DataGrid
-                            x:Name="DataGridStorage"
-                            Margin="0,0,10,0"
-                            VerticalAlignment="Top"
-                            AutoGenerateColumns="False"
-                            Background="Transparent"
-                            CanUserSortColumns="True"
-                            HeadersVisibility="Column"
-                            ItemsSource="{x:Bind ViewModel.StorageTableDtos, Mode=OneWay}">
-                            <controls:DataGrid.Columns>
-                                <!--  Name  -->
-                                <controls:DataGridTemplateColumn
-                                    x:Uid="ColumnTableNameTemplate"
-                                    Width="1*"
-                                    CanUserReorder="True"
-                                    CanUserSort="True">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Margin="5,0,5,0"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Center"
-                                                HorizontalTextAlignment="Left"
-                                                Text="{Binding Name, Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <!--  RecordsCount  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnRecordsCountTemplate"
-                                    ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                    ColumnValue="{StaticResource ColumnRecordsCountTemplate}"
-                                    ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                    ColumnWidth="1*"
-                                    OwnerGrid="{x:Bind DataGridStorage}" />
-                            </controls:DataGrid.Columns>
-                        </controls:DataGrid>
-                    </Grid>
+        <!--  Content  -->
+        <ContentControl
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <Grid Margin="10,10,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--  DB tables  -->
+                <Grid Margin="0,0,10,0">
+                    <controls:DataGrid
+                        x:Name="DataGridStorage"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="False"
+                        Background="Transparent"
+                        CanUserSortColumns="True"
+                        HeadersVisibility="Column"
+                        ItemsSource="{x:Bind ViewModel.StorageTableDtos, Mode=OneWay}">
+                        <controls:DataGrid.Columns>
+                            <!--  Name  -->
+                            <controls:DataGridTemplateColumn
+                                x:Uid="ColumnTableNameTemplate"
+                                Width="1*"
+                                CanUserReorder="True"
+                                CanUserSort="True">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Margin="5,0,5,0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Center"
+                                            HorizontalTextAlignment="Left"
+                                            Text="{Binding Name, Mode=OneWay}" />
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <!--  RecordsCount  -->
+                            <styles:TgBindableDataGridTemplateColumn
+                                x:Uid="ColumnRecordsCountTemplate"
+                                ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
+                                ColumnValue="{StaticResource ColumnRecordsCountTemplate}"
+                                ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                                ColumnWidth="1*"
+                                OwnerGrid="{x:Bind DataGridStorage}" />
+                        </controls:DataGrid.Columns>
+                    </controls:DataGrid>
                 </Grid>
-            </ContentControl>
-        </Grid>
+            </Grid>
+        </ContentControl>
     </ScrollView>
 </common:TgPageBase>

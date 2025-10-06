@@ -312,7 +312,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <!--  Actions  -->
@@ -368,11 +367,9 @@
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Load data  -->
-        <views:TgLoadDataPage Grid.Row="1" />
         <!--  Dto  -->
         <ContentControl
-            Grid.Row="2"
+            Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -701,7 +698,7 @@
         </ContentControl>
         <!--  Chats  -->
         <ContentControl
-            Grid.Row="3"
+            Grid.Row="2"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">

@@ -7,20 +7,29 @@ public partial class TgSensitiveModel : ObservableRecipient
     #region Fields, properties, constructor
 
     /// <summary> Load state service </summary>
-    public ILoadStateService LoadStateService { get; private set; }
+    [ObservableProperty]
+    public partial ILoadStateService LoadStateService { get; private set; }
+    /// <summary> Settings service </summary>
+    [ObservableProperty]
+    public partial ITgSettingsService SettingsService { get; private set; }
 
-    public bool IsStorageProcessing => LoadStateService.IsStorageProcessing;
-    public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
     public bool IsDisplaySensitiveData => LoadStateService.IsDisplaySensitiveData;
+    public bool IsExistsAppSession => SettingsService.IsExistsAppSession;
+    public bool IsExistsAppStorage => SettingsService.IsExistsAppStorage;
+    public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
     public bool IsOnlineReady => LoadStateService.IsOnlineReady;
+    public bool IsStorageProcessing => LoadStateService.IsStorageProcessing;
     public string SensitiveData => LoadStateService.SensitiveData;
+    public string UserDirectory => SettingsService.UserDirectory;
 
-    public TgSensitiveModel(ILoadStateService loadStateService) : base()
+    public TgSensitiveModel(ILoadStateService loadStateService, ITgSettingsService settingsService) : base()
     {
         ArgumentNullException.ThrowIfNull(loadStateService);
         LoadStateService = loadStateService;
+        ArgumentNullException.ThrowIfNull(settingsService);
+        SettingsService = settingsService;
 
-        // Callback updates UI: PropertyChanged for LoadStateService
+        // Callback updates UI: PropertyChanged
         LoadStateService.PropertyChanged += (_, e) =>
         {
             TgDesktopUtils.InvokeOnUIThread(() => { 
@@ -32,6 +41,13 @@ public partial class TgSensitiveModel : ObservableRecipient
                     OnPropertyChanged(nameof(IsDisplaySensitiveData));
                 else if (e.PropertyName == nameof(LoadStateService.IsOnlineReady))
                     OnPropertyChanged(nameof(IsOnlineReady));
+                
+                else if (e.PropertyName == nameof(SettingsService.IsExistsAppStorage))
+                    OnPropertyChanged(nameof(IsExistsAppStorage));
+                else if (e.PropertyName == nameof(SettingsService.IsExistsAppSession))
+                    OnPropertyChanged(nameof(IsExistsAppSession));
+                else if (e.PropertyName == nameof(SettingsService.UserDirectory))
+                    OnPropertyChanged(nameof(UserDirectory));
             });
         };
     }

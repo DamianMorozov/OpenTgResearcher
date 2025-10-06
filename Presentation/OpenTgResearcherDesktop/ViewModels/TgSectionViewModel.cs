@@ -43,8 +43,8 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public IAsyncRelayCommand UpdateOnlineCommand { get; }
     public IAsyncRelayCommand<TgEfSourceLiteDto> OpenCommand { get; }
 
-    public TgSectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgSectionViewModel> logger, string name) : base(settingsService, navigationService, loadStateService, logger, name)
+    public TgSectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgSectionViewModel> logger, string name) : base(loadStateService, settingsService, navigationService, logger, name)
     {
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);

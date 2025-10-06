@@ -236,7 +236,6 @@
             <Grid Margin="0,0,10,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -273,15 +272,10 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <!--  Load data  -->
-                <views:TgLoadDataPage
-                    Grid.Row="1"
-                    Grid.ColumnSpan="2"
-                    Margin="20,0,0,0" />
                 <!--  List view with participants  -->
                 <ListView
                     x:Name="ListViewMessages"
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.ColumnSpan="2"
                     ItemTemplate="{StaticResource ParticipantsViewTemplate}"
                     ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}"

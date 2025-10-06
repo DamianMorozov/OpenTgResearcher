@@ -17,17 +17,10 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <!--  Load data  -->
-            <views:TgLoadDataPage
-                Grid.Row="0"
-                Margin="0,0,0,10"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay}" />
             <!--  Actions  -->
             <ContentControl
-                Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -97,7 +90,7 @@
             </ContentControl>
             <!--  Data in storage  -->
             <ContentControl
-                Grid.Row="2"
+                Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">

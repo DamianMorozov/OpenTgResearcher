@@ -20,13 +20,9 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--  Load data  -->
-            <views:TgLoadDataPage />
             <!--  Actions  -->
             <ContentControl
-                Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -57,7 +53,7 @@
                             <CheckBox
                                 x:Uid="ClientTgSession"
                                 HorizontalContentAlignment="Left"
-                                IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppSession, Mode=OneWay}"
+                                IsChecked="{x:Bind ViewModel.IsExistsAppSession, Mode=OneWay}"
                                 IsEnabled="False" />
                         </StackPanel>
                         <!--  Save  -->
@@ -170,7 +166,7 @@
             </ContentControl>
             <!--  Settings in storage  -->
             <ContentControl
-                Grid.Row="2"
+                Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -373,7 +369,7 @@
             </ContentControl>
             <!--  Settings without saving  -->
             <ContentControl
-                Grid.Row="3"
+                Grid.Row="2"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">

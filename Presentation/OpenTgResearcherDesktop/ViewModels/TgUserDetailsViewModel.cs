@@ -21,8 +21,8 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
     public IAsyncRelayCommand UpdateOnlineCommand { get; }
     public IAsyncRelayCommand<TgEfSourceDto> LoadUserMessagesCommand { get; }
 
-    public TgUserDetailsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService,
-        ILogger<TgUserDetailsViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgUserDetailsViewModel))
+    public TgUserDetailsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgUserDetailsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgUserDetailsViewModel))
     {
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);

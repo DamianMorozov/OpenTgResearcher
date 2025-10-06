@@ -37,9 +37,9 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
     public IAsyncRelayCommand LazyLoadMessagesCommand { get; }
     public IAsyncRelayCommand ClearViewCommand { get; }
 
-    public TgChatContentViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+    public TgChatContentViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatContentViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatContentViewModel))
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatContentViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands

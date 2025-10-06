@@ -14,13 +14,10 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
 
     public IAsyncRelayCommand DefaultSettingsCommand { get; }
 
-    public TgChatDownloadViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+    public TgChatDownloadViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatDownloadViewModel> logger)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatDownloadViewModel))
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatDownloadViewModel))
     {
-        // Callback updates UI
-        App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
-        App.BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
         // Commands
         DefaultSettingsCommand = new AsyncRelayCommand(DefaultSettingsAsync);
     }
@@ -32,8 +29,8 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(() =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-        ClearChatViewModel();
-        ClearStateFile();
+        App.VmLocator.ClearChatViewModel();
+        App.VmLocator.ClearStateFile();
     });
 
     private async Task DefaultSettingsAsync() => await ContentDialogAsync(DefaultSettingsCoreAsync, TgResourceExtensions.AskDefaultSettings(), TgEnumLoadDesktopType.Storage);

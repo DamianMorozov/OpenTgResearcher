@@ -21,8 +21,8 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     public Action BackToMainWindow { get; internal set; } = () => { };
     public IAsyncRelayCommand ContinueCommand { get; }
 
-    public TgSplashScreenViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgSplashScreenViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgSplashScreenViewModel))
+    public TgSplashScreenViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgSplashScreenViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();

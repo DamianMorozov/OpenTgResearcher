@@ -12,11 +12,10 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     [ObservableProperty]
     public partial bool IsFilterByTitle { get; set; } = true;
 
-    public TgChatsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, ILogger<TgChatsViewModel> logger)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatsViewModel))
+    public TgChatsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger)
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatsViewModel))
     {
-        // Callback updates UI
-        App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
+        //
     }
 
     #endregion

@@ -24,9 +24,9 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDi
     public IAsyncRelayCommand LoadMyMessagesCommand { get; }
     public IAsyncRelayCommand StopMyMessagesCommand { get; }
 
-    public TgChatMyMessagesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+    public TgChatMyMessagesViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatMyMessagesViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatMyMessagesViewModel))
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatMyMessagesViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands

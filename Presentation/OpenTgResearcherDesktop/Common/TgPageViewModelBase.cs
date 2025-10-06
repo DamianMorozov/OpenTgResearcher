@@ -7,8 +7,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     #region Fields, properties, constructor
 
     [ObservableProperty]
-    public partial ITgSettingsService SettingsService { get; private set; }
-    [ObservableProperty]
     public partial INavigationService NavigationService { get; private set; }
     [ObservableProperty]
     public partial ILogger<TgPageViewModelBase> Logger { get; private set; }
@@ -41,15 +39,11 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     [ObservableProperty]
     public partial TgEnumLicenseType LicenseType { get; set; } = TgEnumLicenseType.No;
 
-    private TgChatDownloadViewModel? _chatDownloadingVm;
-    private TgChatsViewModel? _chatsVm;
-
     public IAsyncRelayCommand ShowPurchaseLicenseCommand { get; }
 
-    public TgPageViewModelBase(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService,
-        ILogger<TgPageViewModelBase> logger, string name) : base(loadStateService)
+    public TgPageViewModelBase(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgPageViewModelBase> logger, string name) : base(loadStateService, settingsService)
     {
-        SettingsService = settingsService;
         NavigationService = navigationService;
         Logger = logger;
         Name = name;
@@ -108,129 +102,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
 
     /// <summary> Update exception message </summary>
     public virtual void UpdateException(Exception ex) => Exception = new(ex);
-
-    /// <summary> Update chats ViewModel </summary>
-    public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType) =>
-        await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
-        {
-            UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
-            await Task.CompletedTask;
-        });
-
-    private void UpdateChatsViewModelCore(ref int counter, ref int countAll, ref TgEnumChatsMessageType chatsMessageType)
-    {
-        _chatsVm ??= App.Locator?.Get<TgChatsViewModel>();
-        if (_chatsVm is not null)
-        {
-            _chatsVm.ChatsProgressCounter = counter;
-            _chatsVm.ChatsProgressCountAll = countAll;
-            _chatsVm.ChatsProgressString = $"{counter} {TgResourceExtensions.GetFrom()} {countAll}";
-            switch (chatsMessageType)
-            {
-                case TgEnumChatsMessageType.StartScan:
-                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetStartScan();
-                    break;
-                case TgEnumChatsMessageType.ProcessingChats:
-                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetProcessingChats();
-                    break;
-                case TgEnumChatsMessageType.ProcessingGroups:
-                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetProcessingGroups();
-                    break;
-                case TgEnumChatsMessageType.ProcessingDialogs:
-                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetProcessingDialogs();
-                    break;
-                case TgEnumChatsMessageType.StopScan:
-                    _chatsVm.ChatsProgressMessage = TgResourceExtensions.GetStopScan();
-                    break;
-            }
-        }
-    }
-
-    /// <summary> Update chat message ViewModel </summary>
-    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
-    {
-        UpdateChatViewModelCore(chatId, messageId, count, ref message);
-        await Task.CompletedTask;
-    });
-
-    private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
-    {
-        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
-        if (_chatDownloadingVm is not null)
-        {
-            if (_chatDownloadingVm.DownloadDto?.Id == chatId && _chatDownloadingVm.DownloadDto?.FirstId <= messageId)
-            {
-                _chatDownloadingVm.DownloadDto.FirstId = messageId;
-                _chatDownloadingVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
-                _chatDownloadingVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-                _chatDownloadingVm.StateSourceMsg = $"{messageId} | {message}";
-            }
-        }
-    }
-
-    protected void ClearChatViewModel()
-    {
-        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
-        if (_chatDownloadingVm is not null)
-        {
-            _chatDownloadingVm.ChatProgressMessage = string.Empty;
-            _chatDownloadingVm.StateSourceMsg = string.Empty;
-        }
-    }
-
-    /// <summary> Update chat media ViewModel </summary>
-    public async Task UpdateStateFileAsync(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
-        bool isStartTask, int threadNumber) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
-        {
-            UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
-            await Task.CompletedTask;
-        });
-
-    private void UpdateStateFileCore(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
-        bool isStartTask, int threadNumber)
-    {
-        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
-        if (_chatDownloadingVm is not null)
-        {
-            if (_chatDownloadingVm.DownloadDto?.Id == chatId)
-            {
-                // Download job
-                if (!string.IsNullOrEmpty(fileName))
-                {
-                    // Download status job
-                    DownloadSettings.SourceVm.Dto.FirstId = messageId;
-                    DownloadSettings.SourceVm.Dto.CurrentFileName = fileName;
-                    DownloadSettings.SourceVm.Dto.CurrentFileSize = fileSize;
-                    DownloadSettings.SourceVm.Dto.CurrentFileTransmitted = transmitted;
-                    DownloadSettings.SourceVm.Dto.CurrentFileSpeed = fileSpeed;
-                }
-                // Download reset
-                else
-                {
-                    // Download status reset
-                    DownloadSettings.SourceVm.Dto.FirstId = messageId;
-                    DownloadSettings.SourceVm.Dto.CurrentFileName = string.Empty;
-                    DownloadSettings.SourceVm.Dto.CurrentFileSize = 0;
-                    DownloadSettings.SourceVm.Dto.CurrentFileTransmitted = 0;
-                    DownloadSettings.SourceVm.Dto.CurrentFileSpeed = 0;
-                }
-                // State
-                _chatDownloadingVm.StateSourceMedia = string.IsNullOrEmpty(fileName) ? string.Empty
-                    : $"{fileName} | " +
-                    $"{TgResourceExtensions.GetTransmitted()} {DownloadSettings.SourceVm.Dto.CurrentFileProgressPercentString} | " +
-                    $"{TgResourceExtensions.GetSpeed()} {DownloadSettings.SourceVm.Dto.CurrentFileSpeedKBString}";
-            }
-        }
-    }
-
-    protected void ClearStateFile()
-    {
-        _chatDownloadingVm ??= App.Locator?.Get<TgChatDownloadViewModel>();
-        if (_chatDownloadingVm is not null)
-        {
-            _chatDownloadingVm.StateSourceMedia = string.Empty;
-        }
-    }
 
     /// <summary> Create a base ContentDialog with common settings </summary>
     private ContentDialog CreateContentDialog(string title) => new() { XamlRoot = XamlRootVm, Title = title };

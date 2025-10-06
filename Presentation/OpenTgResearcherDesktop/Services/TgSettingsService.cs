@@ -320,6 +320,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     {
         var appTheme = LoadAppTheme();
         AppTheme = AppThemes.First(x => x == appTheme);
+
         var appLanguage = LoadAppLanguage();
         AppLanguage = AppLanguages.First(x => x == appLanguage);
 

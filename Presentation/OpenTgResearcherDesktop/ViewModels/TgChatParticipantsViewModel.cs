@@ -25,9 +25,9 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
     public IAsyncRelayCommand GetParticipantsFromMessagesCommand { get; }
     public IAsyncRelayCommand ClearParticipantsCommand { get; }
 
-    public TgChatParticipantsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService,
+    public TgChatParticipantsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatParticipantsViewModel> logger, IAppNotificationService appNotificationService)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatParticipantsViewModel))
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatParticipantsViewModel))
     {
         AppNotificationService = appNotificationService;
         // Commands

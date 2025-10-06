@@ -16,9 +16,9 @@ public sealed partial class TgChatSettingsViewModel : TgPageViewModelBase
 
     public IAsyncRelayCommand OpenDiscussionChatCommand { get; }
 
-    public TgChatSettingsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
+    public TgChatSettingsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatSettingsViewModel> logger)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgChatSettingsViewModel))
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatSettingsViewModel))
     {
         // Commands
         OpenDiscussionChatCommand = new AsyncRelayCommand(OpenDiscussionChatAsync);

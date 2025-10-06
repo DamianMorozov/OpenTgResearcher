@@ -14,8 +14,8 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
     [ObservableProperty]
     public partial bool IsFilterByPhone { get; set; } = true;
 
-    public TgUsersViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, ILogger<TgUsersViewModel> logger)
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgUsersViewModel))
+    public TgUsersViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgUsersViewModel> logger)
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgUsersViewModel))
     {
         //
     }

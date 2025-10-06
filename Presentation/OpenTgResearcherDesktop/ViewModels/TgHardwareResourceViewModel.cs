@@ -25,8 +25,8 @@ public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, I
     public IAsyncRelayCommand StartMonitorCommand { get; }
     public IAsyncRelayCommand StopMonitorCommand { get; }
 
-    public TgHardwareResourceViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgHardwareResourceViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgHardwareResourceViewModel))
+    public TgHardwareResourceViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgHardwareResourceViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgHardwareResourceViewModel))
     {
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();

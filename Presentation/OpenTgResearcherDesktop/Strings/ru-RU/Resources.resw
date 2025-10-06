@@ -857,6 +857,9 @@
   <data name="AppStorageNeedToCreate.Text" xml:space="preserve">
     <value>Необходимо создать хранилище (проверьте настройки)!</value>
   </data>
+  <data name="AppOnlineNeedToConnet.Text" xml:space="preserve">
+    <value>Необходимо подключиться онлайн к Телеграм!</value>
+  </data>
   <data name="ProductAssignment.Text" xml:space="preserve">
     <value>Назначение продукта</value>
   </data>
@@ -992,8 +995,14 @@
   <data name="ColumnMessagesTemplate.Header" xml:space="preserve">
     <value>Сообщений</value>
   </data>
+  <data name="FieldOnline.Text" xml:space="preserve">
+    <value>Онлайн</value>
+  </data>
+  <data name="DataStorage.Text" xml:space="preserve">
+    <value>Хранилище</value>
+  </data>
   <data name="DataWaitStorageProcessing.Text" xml:space="preserve">
-    <value>Дождитесь окончания загрузки данных из хранилища</value>
+    <value>Дождитесь окончания загрузки данных из Хранилища</value>
   </data>
   <data name="DataWaitOnlineProcessing.Text" xml:space="preserve">
     <value>Дождитесь окончания загрузки данных из Телеграм</value>

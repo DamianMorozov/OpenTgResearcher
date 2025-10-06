@@ -17,7 +17,6 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <!--  Actions  -->
@@ -100,11 +99,9 @@
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Load data  -->
-        <views:TgLoadDataPage Grid.Row="1" />
         <!--  Data in storage  -->
         <ContentControl
-            Grid.Row="2"
+            Grid.Row="1"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
@@ -215,8 +212,7 @@
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind Path=ViewModel.OpenCommand}"
-                        CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}"
-                        Style="{StaticResource LicenseButtonStyle}">
+                        CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xEA5B;" />
                             <TextBlock

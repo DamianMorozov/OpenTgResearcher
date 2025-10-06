@@ -14,38 +14,28 @@
     mc:Ignorable="d">
 
     <ScrollView VerticalScrollMode="Auto">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
-            <!--  Load data  -->
-            <views:TgLoadDataPage />
-            <!--  SelectorBar  -->
-            <ContentControl
-                Grid.Row="1"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <Grid Grid.Row="1" Margin="0,0,0,5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <SelectorBar Margin="0,-10,0,-10" SelectionChanged="StorageSelectorBar_SelectionChanged">
-                        <SelectorBarItem x:Uid="SelectorBarItemPageStorageTables" Tag="TgStorageTablesPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemPageStorageConfiguration" Tag="TgStorageConfigurationPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemPageStorageAdvancedSettings" Tag="TgStorageAdvancedPage" />
-                    </SelectorBar>
-                    <!--  Frame  -->
-                    <Frame
-                        x:Name="ContentFrame"
-                        Grid.Row="1"
-                        Margin="-5,5,-5,-10"
-                        IsNavigationStackEnabled="False" />
-                </Grid>
-            </ContentControl>
-        </Grid>
+        <!--  SelectorBar  -->
+        <ContentControl
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <Grid Grid.Row="1" Margin="0,0,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <SelectorBar Margin="0,-10,0,-10" SelectionChanged="StorageSelectorBar_SelectionChanged">
+                    <SelectorBarItem x:Uid="SelectorBarItemPageStorageTables" Tag="TgStorageTablesPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemPageStorageConfiguration" Tag="TgStorageConfigurationPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemPageStorageAdvancedSettings" Tag="TgStorageAdvancedPage" />
+                </SelectorBar>
+                <!--  Frame  -->
+                <Frame
+                    x:Name="ContentFrame"
+                    Grid.Row="1"
+                    Margin="-5,5,-5,-10"
+                    IsNavigationStackEnabled="False" />
+            </Grid>
+        </ContentControl>
     </ScrollView>
 </common:TgPageBase>

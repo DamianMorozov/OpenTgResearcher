@@ -10,8 +10,8 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand UpdateReleaseCommand { get; }
 	public IAsyncRelayCommand UpdatePreviewCommand { get; }
 
-	public TgUpdateViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgUpdateViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgUpdateViewModel))
+	public TgUpdateViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgUpdateViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgUpdateViewModel))
 	{
 		// Commands
 		UpdateReleaseCommand = new AsyncRelayCommand(UpdateReleaseAsync);

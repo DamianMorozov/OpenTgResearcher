@@ -16,11 +16,9 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!--  Load data  -->
-        <views:TgLoadDataPage />
         <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

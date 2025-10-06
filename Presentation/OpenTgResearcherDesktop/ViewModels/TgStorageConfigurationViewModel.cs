@@ -14,8 +14,8 @@ public sealed partial class TgStorageConfigurationViewModel : TgPageViewModelBas
     public IAsyncRelayCommand StorageShrinkCommand { get; }
     public IAsyncRelayCommand StorageClear { get; }
 
-    public TgStorageConfigurationViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgStorageConfigurationViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgStorageConfigurationViewModel))
+    public TgStorageConfigurationViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgStorageConfigurationViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgStorageConfigurationViewModel))
     {
         StorageLog = string.Empty;
         // Commands

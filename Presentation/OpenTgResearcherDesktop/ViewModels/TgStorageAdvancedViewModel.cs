@@ -11,8 +11,8 @@ public sealed partial class TgStorageAdvancedViewModel : TgPageViewModelBase
     public IAsyncRelayCommand StorageClear { get; }
     public IAsyncRelayCommand StorageResetAutoUpdateCommand { get; }
 
-    public TgStorageAdvancedViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgStorageAdvancedViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgStorageAdvancedViewModel))
+    public TgStorageAdvancedViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgStorageAdvancedViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgStorageAdvancedViewModel))
     {
         StorageLog = string.Empty;
         // Commands

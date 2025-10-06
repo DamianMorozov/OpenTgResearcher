@@ -15,8 +15,6 @@
 
     <ScrollView VerticalScrollMode="Auto">
         <Grid>
-            <!--  Load data  -->
-            <views:TgLoadDataPage />
             <!--  Storage advanced settings  -->
             <ContentControl
                 HorizontalAlignment="Stretch"

@@ -234,7 +234,6 @@
             <Grid Margin="0,0,10,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -320,14 +319,9 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <!--  Load data  -->
-                <views:TgLoadDataPage
-                    Grid.Row="1"
-                    Grid.ColumnSpan="4"
-                    Margin="20,0,0,0" />
                 <!--  Data in storage  -->
                 <ContentControl
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Grid.ColumnSpan="5"
                     Margin="20,0,0,0"
                     HorizontalAlignment="Stretch"

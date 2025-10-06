@@ -18,12 +18,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string AppSession { get; set; } = string.Empty;
     [ObservableProperty]
-    public partial bool IsExistsAppStorage { get; set; }
-    [ObservableProperty]
-    public partial bool IsExistsAppSession { get; set; }
-    [ObservableProperty]
-    public partial string UserDirectory { get; set; } = string.Empty;
-    [ObservableProperty]
     public partial string ApplicationDirectory { get; set; } = string.Empty;
     [ObservableProperty]
     public partial string SettingFile { get; set; } = string.Empty;
@@ -32,24 +26,24 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
     public IAsyncRelayCommand SettingsDefaultCommand { get; }
     public IAsyncRelayCommand SettingsSaveCommand { get; }
 
-    public TgSettingsViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgSettingsViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgSettingsViewModel))
+    public TgSettingsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgSettingsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgSettingsViewModel))
     {
         // Commands
         SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync);
         SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync);
         SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync);
 
-        //
+        // Callback updates UI: PropertyChanged
         PropertyChanged += (sender, args) =>
         {
             if (args.PropertyName == nameof(AppStorage))
                 SettingsService.AppStorage = AppStorage;
-            if (args.PropertyName == nameof(AppSession))
+            else if (args.PropertyName == nameof(AppSession))
                 SettingsService.AppSession = AppSession;
-            if (args.PropertyName == nameof(AppTheme))
+            else if (args.PropertyName == nameof(AppTheme))
                 SettingsService.AppTheme = AppTheme;
-            if (args.PropertyName == nameof(AppLanguage))
+            else if (args.PropertyName == nameof(AppLanguage))
                 SettingsService.AppLanguage = AppLanguage;
         };
     }
@@ -91,34 +85,20 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
 
     private void LoadSettingsFromService()
     {
-        AppStorage = SettingsService.AppStorage;
-        IsExistsAppStorage = SettingsService.IsExistsAppStorage;
+        AppThemes = SettingsService.AppThemes;
+        AppLanguages = SettingsService.AppLanguages;
 
+        AppStorage = SettingsService.AppStorage;
         AppSession = SettingsService.AppSession;
         // Fix windows path
         if (AppSession.Equals(TgFileUtils.FileTgSession))
         {
             AppSession = Path.Combine(SettingsService.ApplicationDirectory, TgFileUtils.FileTgSession);
         }
-        IsExistsAppSession = SettingsService.IsExistsAppSession;
-
-        if (!AppThemes.Any())
-        {
-            AppThemes = SettingsService.AppThemes;
-        }
-
-        if (!AppLanguages.Any())
-        {
-            AppLanguages = SettingsService.AppLanguages;
-        }
 
         AppTheme = SettingsService.AppTheme;
         AppLanguage = SettingsService.AppLanguage;
-
-        UserDirectory = SettingsService.UserDirectory;
-        
         ApplicationDirectory = SettingsService.ApplicationDirectory;
-        
         SettingFile = SettingsService.SettingFile;
     }
 

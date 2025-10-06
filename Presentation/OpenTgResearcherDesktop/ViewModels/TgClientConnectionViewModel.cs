@@ -59,9 +59,9 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand AppClearCommand { get; }
 	public IAsyncRelayCommand AppDeleteCommand { get; }
 
-	public TgClientConnectionViewModel(ITgSettingsService settingsService, INavigationService navigationService, IAppNotificationService appNotificationService,
-        ILoadStateService loadStateService, ILogger<TgClientConnectionViewModel> logger) 
-        : base(settingsService, navigationService, loadStateService, logger, nameof(TgClientConnectionViewModel))
+	public TgClientConnectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        IAppNotificationService appNotificationService, ILogger<TgClientConnectionViewModel> logger) 
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
 	{
 		AppNotificationService = appNotificationService;
         // Commands

@@ -19,7 +19,6 @@ public sealed class PageService : IPageService
 		Configure<TgFiltersViewModel, TgFiltersPage>();
 		Configure<TgHardwareResourceViewModel, TgHardwareResourcePage>();
 		Configure<TgLicenseViewModel, TgLicensePage>();
-		Configure<TgLoadDataViewModel, TgLoadDataPage>();
 		Configure<TgLogsViewModel, TgLogsPage>();
 		Configure<TgMainViewModel, TgMainPage>();
 		Configure<TgProxiesViewModel, TgProxiesPage>();

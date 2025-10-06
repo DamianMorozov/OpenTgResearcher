@@ -49,13 +49,13 @@
                         Grid.Column="1"
                         Margin="5"
                         HorizontalAlignment="Stretch"
-                        Text="{x:Bind ViewModel.SettingsService.UserDirectory, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.UserDirectory, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <styles:TgAnimatedClipboardButton
                         Grid.Column="2"
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                        Tag="{x:Bind ViewModel.SettingsService.UserDirectory, Mode=OneWay}" />
+                        Tag="{x:Bind ViewModel.UserDirectory, Mode=OneWay}" />
                     <!--  View logs  -->
                     <ListView
                         Grid.Row="1"

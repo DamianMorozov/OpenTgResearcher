@@ -1,5 +1,6 @@
 ﻿namespace OpenTgResearcherDesktop.Contracts.Services;
 
+/// <summary> Settings service </summary>
 public interface ITgSettingsService
 {
     public ObservableCollection<TgEnumTheme> AppThemes { get; }

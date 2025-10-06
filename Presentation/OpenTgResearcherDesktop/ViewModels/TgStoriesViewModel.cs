@@ -12,8 +12,8 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand DefaultSortCommand { get; }
 	public IAsyncRelayCommand UpdateOnlineCommand { get; }
 
-	public TgStoriesViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgStoriesViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgStoriesViewModel))
+	public TgStoriesViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgStoriesViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgStoriesViewModel))
 	{
 		// Commands
 		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);

@@ -8,8 +8,8 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Frame ContentFrame { get; set; } = default!;
 
-    public TgStorageViewModel(ITgSettingsService settingsService, INavigationService navigationService, ILoadStateService loadStateService, 
-        ILogger<TgStorageViewModel> logger) : base(settingsService, navigationService, loadStateService, logger, nameof(TgStorageViewModel))
+    public TgStorageViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+        ILogger<TgStorageViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgStorageViewModel))
     {
         //
     }

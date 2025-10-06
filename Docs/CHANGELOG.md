@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.500] - 2025-10-05
+## [0.7.520] - 2025-10-06
 ### Fixed
 - Optimization of table columns in `OpenTgResearcherDesktop`
 ### Changed
@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Adding the `Chat Users` table to `TgStorage`
 - Adding case-insensitive search on the `Chats` page in `OpenTgResearcherDesktop`
+- Adding status lines `Storage` and `Online` to `OpenTgResearcherDesktop`
 
 ## [0.7.400] - 2025-09-20
 ### Fixed

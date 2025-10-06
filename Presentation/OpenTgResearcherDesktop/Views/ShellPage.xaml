@@ -78,7 +78,7 @@
                 VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 IsEnabled="False"
-                IsOn="{x:Bind ViewModel.LoadStateService.IsOnlineReady, Mode=OneWay}" />
+                IsOn="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}" />
             <!--  Connect button  -->
             <Button
                 Grid.Column="6"
@@ -138,7 +138,7 @@
                 <!--  Storage  -->
                 <NavigationViewItem x:Uid="Shell_Storage" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B7;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEBC3;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Client connection  -->
@@ -258,12 +258,13 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Frame x:Name="NavigationFrame" Margin="0,0,0,0" />
-                <!--  Flood Control  -->
+                <Frame x:Name="NavigationFrame" />
+                <!--  Storage processing  -->
                 <Border
                     Grid.Row="1"
-                    Margin="0"
                     Padding="10,0,10,5"
                     Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                     BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
@@ -275,12 +276,112 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel
-                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEBC3;" />
+                            <TextBlock
+                                x:Uid="DataStorage"
+                                FontWeight="SemiBold"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock
+                                x:Uid="AppStorageNeedToCreate"
+                                FontWeight="Bold"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <!--  Waiting indication  -->
+                            <ProgressRing
+                                Width="16"
+                                Height="16"
+                                Margin="10,0,10,0"
+                                IsActive="True" />
+                            <TextBlock
+                                x:Uid="DataWaitStorageProcessing"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <!--  Online processing  -->
+                <Border
+                    Grid.Row="2"
+                    Padding="10,0,10,5"
+                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEDE4;" />
+                            <TextBlock
+                                x:Uid="FieldOnline"
+                                FontWeight="SemiBold"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock
+                                x:Uid="AppOnlineNeedToConnet"
+                                FontWeight="Bold"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="10,0,10,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <!--  Waiting indication  -->
+                            <ProgressRing
+                                Width="16"
+                                Height="16"
+                                Margin="10,0,10,0"
+                                IsActive="True" />
+                            <TextBlock
+                                x:Uid="DataWaitOnlineProcessing"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                <!--  Flood Control  -->
+                <Border
+                    Grid.Row="3"
+                    Padding="10,0,10,5"
+                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
                             Spacing="8">
                             <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE814;" />
-                            <TextBlock x:Uid="FloodControl" FontWeight="SemiBold" />
+                            <TextBlock
+                                x:Uid="FloodControl"
+                                FontWeight="SemiBold"
+                                Style="{ThemeResource BodyTextBlockStyle}" />
                         </StackPanel>
                         <StackPanel
                             Grid.Column="1"
@@ -295,7 +396,7 @@
                                 Height="16"
                                 Margin="10,0,10,0"
                                 IsActive="True" />
-                            <TextBlock>
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}">
                                 <Run x:Uid="RunWait" />
                                 <Run Text="{x:Bind ViewModel.FloodWaitSeconds, Mode=OneWay}" />
                                 <Run x:Uid="RunSeconds" />
@@ -304,6 +405,7 @@
                         <TextBlock
                             Grid.Column="2"
                             VerticalAlignment="Center"
+                            Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.FloodMessage, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis" />
                     </Grid>

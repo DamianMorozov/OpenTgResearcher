@@ -9,7 +9,7 @@
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
-		<Version>0.7.500.0</Version>
+		<Version>0.7.520.0</Version>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="TgLocale\**" />

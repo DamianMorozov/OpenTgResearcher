@@ -144,6 +144,9 @@
   <data name="Shell_UsersAndContacts.Content" xml:space="preserve">
     <value>Пользователи и контакты</value>
   </data>
+  <data name="Shell_SavedMessages.Content" xml:space="preserve">
+    <value>Сохраненные сообщения</value>
+  </data>
   <data name="Shell_UserDetails.Content" xml:space="preserve">
     <value>Редактирование пользователя</value>
   </data>
@@ -634,6 +637,9 @@
   </data>
   <data name="SettingAppDirectory.Text" xml:space="preserve">
     <value>Каталог приложения</value>
+  </data>
+  <data name="SettingLogDirectory.Text" xml:space="preserve">
+    <value>Каталог логов</value>
   </data>
   <data name="SettingUserDirectory.Text" xml:space="preserve">
     <value>Каталог пользователя</value>

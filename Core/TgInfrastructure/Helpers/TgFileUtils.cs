@@ -168,7 +168,15 @@ public static class TgFileUtils
 		}
 		: "0 B";
 
-	public static string GetDefaultDirectory()
+    public static string GetFileSizeAsString(string logFile)
+    {
+        if (string.IsNullOrEmpty(logFile) || !File.Exists(logFile))
+            return "0 B";
+        var length = new FileInfo(logFile).Length;
+        return GetFileSizeAsString(length);
+    }
+
+    public static string GetDefaultDirectory()
 	{
 		var os = Environment.OSVersion.Platform.ToString();
 		// Windows

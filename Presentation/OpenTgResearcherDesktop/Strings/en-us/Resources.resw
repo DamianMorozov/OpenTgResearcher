@@ -85,6 +85,9 @@
   <data name="Shell_UsersAndContacts.Content" xml:space="preserve">
     <value>Users and contacts</value>
   </data>
+  <data name="Shell_SavedMessages.Content" xml:space="preserve">
+    <value>Saved Messages</value>
+  </data>
   <data name="Shell_UserDetails.Content" xml:space="preserve">
     <value>Edit user</value>
   </data>
@@ -575,6 +578,9 @@
   </data>
   <data name="SettingAppDirectory.Text" xml:space="preserve">
     <value>App directory</value>
+  </data>
+  <data name="SettingLogDirectory.Text" xml:space="preserve">
+    <value>Log directory</value>
   </data>
   <data name="SettingUserDirectory.Text" xml:space="preserve">
     <value>User directory</value>

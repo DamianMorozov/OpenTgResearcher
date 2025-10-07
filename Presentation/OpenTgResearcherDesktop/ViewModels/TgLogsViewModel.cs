@@ -7,6 +7,9 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 
     [ObservableProperty]
     public partial ObservableCollection<TgLogFile> LogFiles { get; private set; } = [];
+    [ObservableProperty]
+    public partial string LogDirectory { get; private set; } = string.Empty;
+    
     public IAsyncRelayCommand DeleteLogFileCommand { get; }
 
 	public TgLogsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
@@ -31,9 +34,10 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		try
 		{
             LogFiles.Clear();
-            if (!Directory.Exists(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop))) return;
+            LogDirectory = TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop);
+            if (!Directory.Exists(LogDirectory)) return;
 
-            var files = Directory.GetFiles(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop))
+            var files = Directory.GetFiles(LogDirectory)
                 .Where(x =>
                 {
                     var fileName = Path.GetFileName(x);
@@ -59,14 +63,16 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 			if (!isRetry)
 			{
 				var content = await File.ReadAllTextAsync(logFile);
-				LogFiles.Add(new(this, Path.GetFileName(logFile), content));
+                var fileSize = TgFileUtils.GetFileSizeAsString(logFile);
+                LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, content));
 			}
 			else
 			{
 				await using var fileStream = new FileStream(logFile, FileMode.Open, FileAccess.Read, FileShare.Read);
 				using var reader = new StreamReader(fileStream);
 				var content = await reader.ReadToEndAsync();
-				LogFiles.Add(new(this, Path.GetFileName(logFile), content));
+                var fileSize = TgFileUtils.GetFileSizeAsString(logFile);
+                LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, content));
 			}
 		}
 		catch (Exception ex)
@@ -80,7 +86,8 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 			else
 			{
                 LogError(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
-				LogFiles.Add(new(this, Path.GetFileName(logFile), TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
+                var fileSize = TgFileUtils.GetFileSizeAsString(logFile);
+                LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
 			}
 		}
 	}

@@ -48,7 +48,7 @@ internal sealed partial class TgMenuHelper
 	public async Task VelopackUpdateAsync(bool isWait, bool isPreview)
 	{
 		TgLog.WriteLine("  Update started");
-		await Task.Delay(250);
+		await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 		TgLog.WriteLine("  Checking updates on the link github.com");
 
         // Check the current license for preview

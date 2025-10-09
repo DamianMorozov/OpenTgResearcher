@@ -106,7 +106,7 @@ public static class Program
 
         // Loading storage
         tgLog.WriteLine("  Loading storage ...");
-        await Task.Delay(250);
+        await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         await tgMenu.BusinessLogicManager.StorageManager.CreateAndUpdateDbAsync();
         await tgMenu.SetStorageVersionAsync();
         tgLog.WriteLine("  Loading storage   v");

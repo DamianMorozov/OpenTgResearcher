@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor

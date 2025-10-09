@@ -20,6 +20,8 @@ public partial class ShellViewModel : TgSensitiveModel
     public partial string FloodMessage { get; set; } = string.Empty;
     [ObservableProperty]
     public partial bool IsFloodVisible { get; set; }
+    [ObservableProperty]
+    public partial Guid UidSavedMessages { get; set; } = Guid.Empty;
 
     public NavigationEventArgs? EventArgs { get; private set; }
 

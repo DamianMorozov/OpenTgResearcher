@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgStorageViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -24,9 +23,13 @@ public sealed partial class TgStorageViewModel : TgPageViewModelBase
     {
         await base.ReloadUiAsync();
 
-        if (ContentFrame is not null && ContentFrame.GetPageViewModel() is TgPageViewModelBase pageViewModelBase)
+        if (ContentFrame is not null)
         {
-            await LoadStorageDataAsync(pageViewModelBase.ReloadUiAsync);
+            var viewModel = await ContentFrame.GetPageViewModelAsync();
+            if (viewModel is TgPageViewModelBase pageViewModelBase)
+            {
+                await LoadStorageDataAsync(pageViewModelBase.ReloadUiAsync);
+            }
         }
     }
 

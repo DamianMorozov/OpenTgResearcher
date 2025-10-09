@@ -24,7 +24,7 @@ public sealed partial class TgChatPage
         PageLoaded(sender, e);
 
         ViewModel.ChatDetailsFrame = ChatDetailsFrame;
-        ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), ViewModel.Uid);
+        ChatDetailsSelectorBar.SelectedItem = ChatDetailsSelectorBar.Items[0];
     }
 
     /// <summary> Chat details page </summary>

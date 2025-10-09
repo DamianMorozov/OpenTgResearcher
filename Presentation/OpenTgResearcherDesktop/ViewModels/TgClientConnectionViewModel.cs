@@ -1,13 +1,11 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 {
 	#region Fields, properties, constructor
 
-	private IAppNotificationService AppNotificationService { get; }
 	[ObservableProperty]
-	public partial TgEfAppEntity AppEntity { get; set; } = null!;
+	public partial TgEfAppDto AppDto { get; set; } = default!;
 	[ObservableProperty]
 	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new(TgGlobalTools.Container);
 	[ObservableProperty]
@@ -51,8 +49,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool UseClient { get; set; }
 
-    private bool _isLoad;
-
     public IAsyncRelayCommand ClientConnectCommand { get; }
 	public IAsyncRelayCommand ClientDisconnectCommand { get; }
 	public IAsyncRelayCommand AppSaveCommand { get; }
@@ -60,16 +56,15 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand AppDeleteCommand { get; }
 
 	public TgClientConnectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
-        IAppNotificationService appNotificationService, ILogger<TgClientConnectionViewModel> logger) 
-        : base(loadStateService, settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
+        ILogger<TgClientConnectionViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
 	{
-		AppNotificationService = appNotificationService;
         // Commands
 		ClientConnectCommand = new AsyncRelayCommand<bool>(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand<bool>(ClientDisconnectAsync);
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
+        AppClearCommand.Execute(null);
         // Callback updates UI
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateException);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
@@ -81,72 +76,78 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
-        if (_isLoad) return;
-
-        await AppClearCoreAsync();
         await LoadStorageDataAsync(AppLoadCoreAsync);
-        _isLoad = true;
     }
 
     private async Task AfterClientConnectAsync()
-	{
-        await TgDesktopUtils.InvokeOnUIThreadAsync(async () => { 
-            ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+    {
+        var uid = Guid.NewGuid();
+        try
+        {
+            await LoadStateService.PrepareOnlineTokenAsync(uid);
 
-            if (UseClient)
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
             {
-                var client = App.BusinessLogicManager.ConnectClient.Client;
+                ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 
-                // Check exceptions
-                // https://www.infotelbot.com/2021/06/telegram-error-lists.html
-                var msg = Exception?.Message ?? string.Empty;
+                if (UseClient)
+                {
+                    var client = App.BusinessLogicManager.ConnectClient.Client;
 
-                if (msg.Contains("PHONE_CODE_INVALID", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ConnectionMsg = TgResourceExtensions.GetRpcErrorPhoneCodeInvalid();
-                }
-                else if (msg.Contains("PASSWORD_HASH_INVALID", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ConnectionMsg = TgResourceExtensions.GetRpcErrorPasswordHashInvalid();
-                }
-                else if (msg.Contains("FLOOD_WAIT", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ConnectionMsg = TgResourceExtensions.GetRpcErrorFloodWait();
-                }
-                else if (msg.Contains("PHONE_PASSWORD_FLOOD", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    ConnectionMsg = TgResourceExtensions.GetRpcErrorPhonePasswordFlood();
-                }
-                else
-                {
-                    if (client is null || client.Disconnected)
+                    // Check exceptions
+                    // https://www.infotelbot.com/2021/06/telegram-error-lists.html
+                    var msg = Exception?.Message ?? string.Empty;
+
+                    if (msg.Contains("PHONE_CODE_INVALID", StringComparison.OrdinalIgnoreCase))
                     {
-                        ConnectionMsg = TgResourceExtensions.GetClientIsDisconnected();
+                        ConnectionMsg = TgResourceExtensions.GetRpcErrorPhoneCodeInvalid();
+                    }
+                    else if (msg.Contains("PASSWORD_HASH_INVALID", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ConnectionMsg = TgResourceExtensions.GetRpcErrorPasswordHashInvalid();
+                    }
+                    else if (msg.Contains("FLOOD_WAIT", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ConnectionMsg = TgResourceExtensions.GetRpcErrorFloodWait();
+                    }
+                    else if (msg.Contains("PHONE_PASSWORD_FLOOD", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ConnectionMsg = TgResourceExtensions.GetRpcErrorPhonePasswordFlood();
                     }
                     else
                     {
-                        ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
+                        if (client is null || client.Disconnected)
+                        {
+                            ConnectionMsg = TgResourceExtensions.GetClientIsDisconnected();
+                        }
+                        else
+                        {
+                            ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
+                        }
+                    }
+                    if (client is not null)
+                    {
+                        UserName = client.User?.MainUsername ?? string.Empty;
+                        MtProxyUrl = client.MTProxyUrl;
+                        MaxAutoReconnects = client.MaxAutoReconnects.ToString();
+                        FloodRetryThreshold = client.FloodRetryThreshold.ToString();
+                        PingInterval = client.PingInterval.ToString();
+                        MaxCodePwdAttempts = client.MaxCodePwdAttempts.ToString();
+                    }
+                    else
+                    {
+                        await ReloadUiAsync();
                     }
                 }
-                if (client is not null)
-                {
-                    UserName = client.User?.MainUsername ?? string.Empty;
-                    MtProxyUrl = client.MTProxyUrl;
-                    MaxAutoReconnects = client.MaxAutoReconnects.ToString();
-                    FloodRetryThreshold = client.FloodRetryThreshold.ToString();
-                    PingInterval = client.PingInterval.ToString();
-                    MaxCodePwdAttempts = client.MaxCodePwdAttempts.ToString();
-                }
-                else
-                {
-                    await ReloadUiAsync();
-                }
-            }
 
-            // Update connection buttons
-            await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
-            LoadStateService.IsOnlineReady = App.BusinessLogicManager.ConnectClient.IsReady;
-        });
+                // Update connection buttons
+                await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+            }, LoadStateService.OnlineToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftOnlineProcessing(uid);
+        }
     }
 
     private string? ConfigClientDesktop(string what)
@@ -185,7 +186,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
 	private async Task ClientConnectCoreAsync(bool isQuestion, bool isRetry)
 	{
-		try
+        var uid = Guid.NewGuid();
+        try
 		{
 			Exception.Default();
 			DataRequest = string.Empty;
@@ -194,9 +196,17 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                     TgResourceExtensions.AskClientConnect(), TgEnumLoadDesktopType.Online);
             else
             {
-                await TgDesktopUtils.InvokeOnUIThreadAsync(async () => {
-                    await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop);
-                });
+                try
+                {
+                    await LoadStateService.PrepareOnlineTokenAsync(uid);
+
+                    await TgDesktopUtils.InvokeOnUIThreadAsync(() => 
+                        App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop), LoadStateService.OnlineToken);
+                }
+                finally
+                {
+                    LoadStateService.StopSoftOnlineProcessing(uid);
+                }
             }
         }
         catch (Exception ex)
@@ -207,7 +217,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 				return;
 			if (Exception.Message.Contains("or delete the file to start a new session"))
 			{
-				await TgDesktopUtils.DeleteFileAsync(SettingsService.AppSession);
 				await ClientConnectCoreAsync(isQuestion, isRetry: true);
 			}
 		}
@@ -226,9 +235,17 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                     TgResourceExtensions.AskClientDisconnect(), TgEnumLoadDesktopType.Online);
             else
             {
-                await TgDesktopUtils.InvokeOnUIThreadAsync(async () => {
-                    await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
-                });
+                var uid = Guid.NewGuid();
+                try
+                {
+                    await LoadStateService.PrepareOnlineTokenAsync(uid);
+
+                    await TgDesktopUtils.InvokeOnUIThreadAsync(() => App.BusinessLogicManager.ConnectClient.DisconnectClientAsync(), LoadStateService.OnlineToken);
+                }
+                finally
+                {
+                    LoadStateService.StopSoftOnlineProcessing(uid);
+                }
             }
         }
         catch (Exception ex)
@@ -239,7 +256,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                 return;
             if (Exception.Message.Contains("or delete the file to start a new session"))
             {
-                await TgDesktopUtils.DeleteFileAsync(SettingsService.AppSession);
                 await ClientDisconnectCoreAsync(isQuestion, isRetry: true);
             }
         }
@@ -247,8 +263,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     
     private async Task AppLoadCoreAsync()
 	{
-		var appResult = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
-		AppEntity = appResult.IsExists && appResult.Item is not null ? appResult.Item : new();
+		AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
 
 		await ReloadUiAsync();
 	}
@@ -257,14 +272,14 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
 		await base.ReloadUiAsync();
 
-		ApiHash = TgDataFormatUtils.ParseGuidToString(AppEntity.ApiHash);
-		ApiId = AppEntity.ApiId;
-		PhoneNumber = AppEntity.PhoneNumber;
-		FirstName = AppEntity.FirstName;
-		LastName = AppEntity.LastName;
-		UseBot = AppEntity.UseBot;
-        BotTokenKey = AppEntity.BotTokenKey;
-        UseClient = AppEntity.UseClient;
+		ApiHash = TgDataFormatUtils.ParseGuidToString(AppDto.ApiHash);
+		ApiId = AppDto.ApiId;
+		PhoneNumber = AppDto.PhoneNumber;
+		FirstName = AppDto.FirstName;
+		LastName = AppDto.LastName;
+		UseBot = AppDto.UseBot;
+        BotTokenKey = AppDto.BotTokenKey;
+        UseClient = AppDto.UseClient;
 
         UserName = string.Empty;
 		MtProxyUrl = string.Empty;
@@ -277,7 +292,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		DataRequestEmptyResponse = TgResourceExtensions.GetClientDataRequestEmptyResponse();
 
 		await ReloadProxyAsync();
-		//OnFieldsTextChangedCore();
 	}
 
 	private async Task ReloadProxyAsync()
@@ -302,7 +316,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 		// Select proxy
 		var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
-		if (AppEntity.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
+		if (AppDto.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
 		{
 			ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
 		}
@@ -313,32 +327,33 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task AppSaveAsync() => await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
+	private async Task AppSaveAsync() => 
+        await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppSaveCoreAsync()
 	{
 		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
 
-		AppEntity.ApiHash = TgDataFormatUtils.ParseStringToGuid(ApiHash);
-		AppEntity.ApiId = ApiId;
-		AppEntity.FirstName = FirstName;
-		AppEntity.LastName = LastName;
-		AppEntity.PhoneNumber = PhoneNumber;
-		AppEntity.ProxyUid = ProxyVm?.Dto.Uid;
-		AppEntity.UseBot = UseBot;
-		AppEntity.BotTokenKey = BotTokenKey;
-        AppEntity.UseClient = UseClient;
-        if (AppEntity.ProxyUid is null || AppEntity.ProxyUid == Guid.Empty)
-			AppEntity.Proxy = null;
+        AppDto.ApiHash = TgDataFormatUtils.ParseStringToGuid(ApiHash);
+        AppDto.ApiId = ApiId;
+        AppDto.FirstName = FirstName;
+        AppDto.LastName = LastName;
+        AppDto.PhoneNumber = PhoneNumber;
+        AppDto.ProxyUid = ProxyVm?.Dto.Uid ?? Guid.Empty;
+        AppDto.UseBot = UseBot;
+        AppDto.BotTokenKey = BotTokenKey;
+        AppDto.UseClient = UseClient;
 
-		await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppEntity);
+        var appEntity = TgEfDomainUtils.CreateNewEntity(AppDto, isUidCopy: true);
+        await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
 	}
 
-	private async Task AppClearAsync() => await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear(), TgEnumLoadDesktopType.Storage);
+	private async Task AppClearAsync() => 
+        await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppClearCoreAsync()
 	{
-		AppEntity = new();
+        AppDto = new();
 		ProxiesVms.Clear();
 		ProxyVm?.Dto = new();
 
@@ -347,22 +362,14 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		VerificationCode = string.Empty;
 	}
 
-	private async Task AppDeleteAsync() => await ContentDialogAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete(), TgEnumLoadDesktopType.Storage);
+	private async Task AppDeleteAsync() => 
+        await ContentDialogAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppDeleteCoreAsync()
 	{
 		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
 		await AppLoadCoreAsync();
 	}
-
-	//public void OnFieldsTextChangedCore()
-	//{
-	//	if (TgDataFormatUtils.ParseStringToGuid(ApiHash) == Guid.Empty ||
-	//		ApiId <= 0 || string.IsNullOrEmpty(PhoneNumber))
-	//	{
-	//		return;
-	//	}
-	//}
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)
 	{

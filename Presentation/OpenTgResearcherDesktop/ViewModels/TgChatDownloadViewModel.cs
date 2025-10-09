@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -26,14 +25,16 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(() =>
-    {
-        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-        App.VmLocator.ClearChatViewModel();
-        App.VmLocator.ClearStateFile();
-    });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => 
+        await LoadStorageDataAsync(() =>
+        {
+            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+            App.VmLocator.ClearChatViewModel();
+            App.VmLocator.ClearStateFile();
+        });
 
-    private async Task DefaultSettingsAsync() => await ContentDialogAsync(DefaultSettingsCoreAsync, TgResourceExtensions.AskDefaultSettings(), TgEnumLoadDesktopType.Storage);
+    private async Task DefaultSettingsAsync() => 
+        await ContentDialogAsync(DefaultSettingsCoreAsync, TgResourceExtensions.AskDefaultSettings(), TgEnumLoadDesktopType.Storage);
 
     private async Task DefaultSettingsCoreAsync()
     {

@@ -338,7 +338,7 @@
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.UpdateOnlineCommand}"
+                        Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">

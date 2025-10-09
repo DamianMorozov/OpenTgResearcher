@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLicenseViewModel : TgPageViewModelBase
 {
 	#region Fields, properties, constructor
@@ -75,7 +74,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task LicenseClearAsync() => await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskLicenseClear(), TgEnumLoadDesktopType.Online);
+	private async Task LicenseClearAsync() => 
+        await ContentDialogAsync(LicenseClearCoreAsync, TgResourceExtensions.AskLicenseClear(), TgEnumLoadDesktopType.Online);
 
 	private async Task LicenseClearCoreAsync()
 	{
@@ -85,7 +85,8 @@ public partial class TgLicenseViewModel : TgPageViewModelBase
 	}
 
     /// <summary> Check current license </summary>
-	private async Task LicenseCheckAsync() => await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck(), TgEnumLoadDesktopType.Online);
+	private async Task LicenseCheckAsync() => 
+        await ContentDialogAsync(LicenseCheckCoreAsync, TgResourceExtensions.AskLicenseCheck(), TgEnumLoadDesktopType.Online);
 
 	private async Task LicenseCheckCoreAsync()
 	{

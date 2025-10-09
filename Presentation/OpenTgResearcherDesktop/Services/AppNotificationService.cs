@@ -2,16 +2,26 @@
 
 public sealed class AppNotificationService : IAppNotificationService
 {
-	#region Fields, properties, constructor
+    #region Fields, properties, constructor
 
-	public AppNotificationService()
+    /// <summary> Cancellation token source </summary>
+    private CancellationTokenSource? _notificationCts;
+    /// <summary> Cancellation token </summary>
+    private CancellationToken _notificationToken = CancellationToken.None;
+
+    public AppNotificationService()
 	{
 		//
 	}
 
 	~AppNotificationService()
 	{
-		Unregister();
+        _notificationCts?.Cancel();
+        _notificationCts?.Dispose();
+        _notificationCts = null;
+        _notificationToken = CancellationToken.None;
+        
+        Unregister();
 	}
 
 	#endregion
@@ -26,17 +36,22 @@ public sealed class AppNotificationService : IAppNotificationService
 
     /// <summary> Handle notification invocations when your app is already running </summary>
 	public async void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
-	{
+    {
+        _notificationCts?.Cancel();
+        _notificationCts?.Dispose();
+        _notificationCts = new CancellationTokenSource();
+        _notificationToken = _notificationCts.Token;
+
         await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
         {
             await App.MainWindow.ShowMessageDialogAsync(
                 $"{TgLocaleHelper.Instance.AppVersion}: v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}",
                 TgConstants.OpenTgResearcherDesktop);
             App.MainWindow.BringToFront();
-        });
-	}
+        }, _notificationToken);
+    }
 
-	public bool Show(string payload)
+    public bool Show(string payload)
 	{
 		var appNotification = new AppNotification(payload);
 
@@ -53,11 +68,6 @@ public sealed class AppNotificationService : IAppNotificationService
 	public void Unregister()
 	{
 		AppNotificationManager.Default.Unregister();
-	}
-
-	public void SetClientIsConnected()
-	{
-
 	}
 
 	#endregion

@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 {
     #region Fields, properties, constructor

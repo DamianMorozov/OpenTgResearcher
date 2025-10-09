@@ -5,6 +5,7 @@ public sealed class TgViewModelLocator
 {
     #region Fields, properties, constructor
 
+    private readonly ILoadStateService LoadStateService = default!;
     private CancellationTokenSource? _floodCts;
     private readonly ConcurrentDictionary<string, object> _viewModelsByName = new();
     private readonly ConcurrentDictionary<Type, object> _viewModelsByType = new();
@@ -52,6 +53,8 @@ public sealed class TgViewModelLocator
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
+
+        LoadStateService = App.GetService<ILoadStateService>() ?? throw new InvalidOperationException("Cannot resolve ILoadStateService");
     }
 
     #endregion
@@ -71,11 +74,25 @@ public sealed class TgViewModelLocator
             : throw new KeyNotFoundException($"ViewModel named '{name}' not found.");
 
     /// <summary> Update chat message ViewModel </summary>
-    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    public async Task UpdateChatViewModelAsync(long chatId, int messageId, int count, string message)
     {
-        UpdateChatViewModelCore(chatId, messageId, count, ref message);
-        await Task.CompletedTask;
-    });
+        var uid = Guid.NewGuid();
+        try
+        {
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+        
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+            {
+                UpdateChatViewModelCore(chatId, messageId, count, ref message);
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
 
     private void UpdateChatViewModelCore(long chatId, int messageId, int count, ref string message)
     {
@@ -94,11 +111,24 @@ public sealed class TgViewModelLocator
 
     /// <summary> Update chat media ViewModel </summary>
     public async Task UpdateStateFileAsync(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
-        bool isStartTask, int threadNumber) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+        bool isStartTask, int threadNumber)
+    {
+        var uid = Guid.NewGuid();
+        try
         {
-            UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
-            await Task.CompletedTask;
-        });
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+            {
+                UpdateStateFileCore(chatId, messageId, fileName, fileSize, transmitted, fileSpeed, isStartTask, threadNumber);
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
 
     private void UpdateStateFileCore(long chatId, int messageId, string fileName, long fileSize, long transmitted, long fileSpeed,
         bool isStartTask, int threadNumber)
@@ -138,12 +168,24 @@ public sealed class TgViewModelLocator
     }
 
     /// <summary> Update chats ViewModel </summary>
-    public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType) =>
-        await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    public async Task UpdateChatsViewModelAsync(int counter, int countAll, TgEnumChatsMessageType chatsMessageType)
+    {
+        var uid = Guid.NewGuid();
+        try
         {
-            UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
-            await Task.CompletedTask;
-        });
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+            {
+                UpdateChatsViewModelCore(ref counter, ref countAll, ref chatsMessageType);
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
 
     private void UpdateChatsViewModelCore(ref int counter, ref int countAll, ref TgEnumChatsMessageType chatsMessageType)
     {
@@ -201,49 +243,87 @@ public sealed class TgViewModelLocator
     }
 
     public async Task ShellClientConnectAsync(bool isQuestion)
-        => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    {
+        var uid = Guid.NewGuid();
+        try
         {
-            _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
-            if (_clientConnectionVm is not null)
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
             {
-                _shellVm ??= App.VmLocator.Get<ShellViewModel>();
-                await _clientConnectionVm.OnNavigatedToAsync(_shellVm.EventArgs);
-                if (!_clientConnectionVm.IsOnlineReady)
+                _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
+                if (_clientConnectionVm is not null)
                 {
-                    await _clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
-                    await Task.Delay(250);
+                    _shellVm ??= App.VmLocator.Get<ShellViewModel>();
+                    await _clientConnectionVm.OnNavigatedToAsync(_shellVm.EventArgs);
+                    if (!_clientConnectionVm.IsOnlineReady)
+                    {
+                        await _clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
+                        await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
+                    }
+                    _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
                 }
-            }
-            await Task.CompletedTask;
-        });
+
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
 
     public async Task ShellClientDisconnectAsync(bool isQuestion)
-        => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    {
+        var uid = Guid.NewGuid();
+        try
         {
-            _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
-            if (_clientConnectionVm is not null)
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
             {
-                if (_clientConnectionVm.IsOnlineReady)
+                _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
+                if (_clientConnectionVm is not null)
                 {
-                    await _clientConnectionVm.ClientDisconnectCommand.ExecuteAsync(isQuestion);
-                    await Task.Delay(250);
+                    if (_clientConnectionVm.IsOnlineReady)
+                    {
+                        await _clientConnectionVm.ClientDisconnectCommand.ExecuteAsync(isQuestion);
+                        await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
+                    }
                 }
-            }
-            await Task.CompletedTask;
-        });
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
 
     /// <summary> Update shell ViewModel </summary>
-    public async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message) =>
-        await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+    public async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message)
+    {
+        var uid = Guid.NewGuid();
+        try
         {
-            UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
-            // Start countdown if visible
-            if (isFloodVisible && seconds > 0)
-                StartFloodCountdown(seconds);
-            else
-                _floodCts?.Cancel();
-            await Task.CompletedTask;
-        });
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+            {
+                UpdateShellViewModelCore(ref isFloodVisible, ref seconds, ref message);
+                // Start countdown if visible
+                if (isFloodVisible && seconds > 0)
+                    StartFloodCountdown(seconds);
+                else
+                    _floodCts?.Cancel();
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
 
     private void UpdateShellViewModelCore(ref bool isFloodVisible, ref int seconds, ref string message)
     {
@@ -268,7 +348,7 @@ public sealed class TgViewModelLocator
             {
                 while (seconds > 0 && !_floodCts.Token.IsCancellationRequested)
                 {
-                    await Task.Delay(1000, _floodCts.Token);
+                    await Task.Delay(TgConstants.TimeOutUILongMilliseconds, _floodCts.Token);
                     seconds--;
 
                     if (_shellVm is not null)
@@ -291,7 +371,6 @@ public sealed class TgViewModelLocator
             }
         }, _floodCts.Token);
     }
-
 
     #endregion
 }

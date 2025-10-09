@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatContentViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -123,7 +122,8 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
         }
     });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    private async Task ClearViewAsync() => 
+        await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private async Task ClearDataStorageCoreAsync()
     {

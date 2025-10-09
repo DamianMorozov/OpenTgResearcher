@@ -123,13 +123,13 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-                            <!--  Connect to TG  -->
+                            <!--  Connect Telegram  -->
                             <Button
                                 Margin="0,0,5,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Command="{x:Bind ViewModel.ClientConnectCommand}"
-                                FontWeight="Bold">
+                                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                                 <Button.CommandParameter>
                                     <x:Boolean>True</x:Boolean>
                                 </Button.CommandParameter>
@@ -141,14 +141,14 @@
                                         VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
-                            <!--  Disconnect from TG  -->
+                            <!--  Disconnect Telegram  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="5,0,0,0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Command="{x:Bind ViewModel.ClientDisconnectCommand}"
-                                FontWeight="Bold">
+                                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
                                 <Button.CommandParameter>
                                     <x:Boolean>True</x:Boolean>
                                 </Button.CommandParameter>

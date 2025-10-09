@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -37,7 +36,8 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 		Dtos = [.. dtos.OrderBy(x => x.Name)];
 	}
 
-	private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+	private async Task ClearViewAsync() => 
+        await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
 	private async Task ClearDataStorageCoreAsync()
 	{
@@ -45,7 +45,8 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
+	private async Task LoadDataStorageAsync() => 
+        await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{

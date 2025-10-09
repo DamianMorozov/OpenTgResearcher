@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
@@ -40,54 +39,17 @@ public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, I
 
     #region IDisposable
 
-    /// <summary> To detect redundant calls </summary>
-    private bool _disposed;
-
-    /// <summary> Finalizer </summary>
-	~TgHardwareResourceViewModel() => Dispose(false);
-
-    /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
-
     /// <summary> Release managed resources </summary>
-    public void ReleaseManagedResources()
+    public override void ReleaseManagedResources()
     {
+        base.ReleaseManagedResources();
+
         CheckIfDisposed();
 
         HardwareResourceMonitoringService.MetricsUpdated -= OnMetricsUpdated;
         HardwareResourceMonitoringService.Dispose();
 
         Scope.Dispose();
-    }
-
-    /// <summary> Release unmanaged resources </summary>
-    public void ReleaseUnmanagedResources()
-    {
-        CheckIfDisposed();
-
-        //
-    }
-
-    /// <summary> Dispose pattern </summary>
-    public void Dispose()
-    {
-        // Dispose of unmanaged resources
-        Dispose(true);
-        // Suppress finalization
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary> Dispose pattern </summary>
-    private void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-        // Release managed resources
-        if (disposing)
-            ReleaseManagedResources();
-        // Release unmanaged resources
-        ReleaseUnmanagedResources();
-        // Flag
-        _disposed = true;
     }
 
     #endregion
@@ -131,7 +93,8 @@ public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, I
         }
     }
 
-    private async Task StartMonitorAsync() => await ContentDialogAsync(StartMonitorCoreAsync, TgResourceExtensions.AskStartMonitoring(), TgEnumLoadDesktopType.Online);
+    private async Task StartMonitorAsync() => 
+        await ContentDialogAsync(StartMonitorCoreAsync, TgResourceExtensions.AskStartMonitoring(), TgEnumLoadDesktopType.Online);
 
     private async Task StartMonitorCoreAsync() => await LoadOnlineDataAsync(() =>
     {
@@ -145,7 +108,8 @@ public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, I
         }
     });
 
-    private async Task StopMonitorAsync() => await ContentDialogAsync(StopMonitorCoreAsync, TgResourceExtensions.AskStopMonitoring(), TgEnumLoadDesktopType.Online);
+    private async Task StopMonitorAsync() => 
+        await ContentDialogAsync(StopMonitorCoreAsync, TgResourceExtensions.AskStopMonitoring(), TgEnumLoadDesktopType.Online);
 
     private async Task StopMonitorCoreAsync() => await LoadOnlineDataAsync(async () =>
     {

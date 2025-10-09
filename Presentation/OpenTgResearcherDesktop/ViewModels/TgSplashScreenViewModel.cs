@@ -1,7 +1,6 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
-public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
+public partial class TgSplashScreenViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
@@ -36,53 +35,15 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
 
     #region IDisposable
 
-    /// <summary> To detect redundant calls </summary>
-    private bool _disposed;
-
-    /// <summary> Finalizer </summary>
-	~TgSplashScreenViewModel() => Dispose(false);
-
-    /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
-
     /// <summary> Release managed resources </summary>
-    public void ReleaseManagedResources()
+    public override void ReleaseManagedResources()
     {
+        base.ReleaseManagedResources();
         CheckIfDisposed();
 
         HardwareResourceMonitoringService.Dispose();
 
         Scope.Dispose();
-    }
-
-    /// <summary> Release unmanaged resources </summary>
-    public void ReleaseUnmanagedResources()
-    {
-        CheckIfDisposed();
-
-        //
-    }
-
-    /// <summary> Dispose pattern </summary>
-    public void Dispose()
-    {
-        // Dispose of unmanaged resources
-        Dispose(true);
-        // Suppress finalization
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary> Dispose pattern </summary>
-    private void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-        // Release managed resources
-        if (disposing)
-            ReleaseManagedResources();
-        // Release unmanaged resources
-        ReleaseUnmanagedResources();
-        // Flag
-        _disposed = true;
     }
 
     #endregion
@@ -103,7 +64,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
         {
             LogInformation(TgResourceExtensions.GetLoggerLoading());
             IsLoadLogging = true;
-            await Task.Delay(250);
+            await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         }
         catch (Exception ex)
         {
@@ -123,7 +84,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
                 })
                 .Run();
             IsLoadVelopack = true;
-            await Task.Delay(250);
+            await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         }
         catch (Exception ex)
         {
@@ -222,7 +183,7 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase, IDisposable
     internal async Task LoadingCompleteAsync()
     {
         IsLoadComplete = true;
-        await Task.Delay(250);
+        await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
     }
 
     #endregion

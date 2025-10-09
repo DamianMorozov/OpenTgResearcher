@@ -47,50 +47,19 @@
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}"
                 TextWrapping="NoWrap" />
-            <!--  Storage version  -->
-            <TextBlock
-                Grid.Column="2"
-                Margin="24,0,12,0"
-                VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Bind ViewModel.StorageVersion, Mode=OneWay}"
-                TextWrapping="NoWrap" />
-            <!--  License  -->
-            <TextBlock
-                Grid.Column="3"
-                Margin="24,0,12,0"
-                VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Bind ViewModel.License, Mode=OneWay}"
-                TextWrapping="NoWrap" />
-            <!--  Connection state  -->
-            <TextBlock
-                x:Uid="ClientConnectionState"
-                Grid.Column="4"
-                Margin="24,0,12,0"
-                VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}" />
-            <!--  Connection switch  -->
-            <ToggleSwitch
-                Grid.Column="5"
-                Margin="0,0,0,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Center"
-                IsEnabled="False"
-                IsOn="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}" />
             <!--  Connect button  -->
             <Button
                 Grid.Column="6"
-                Margin="-60,0,5,0"
-                Command="{x:Bind ViewModel.ClientConnectCommand}">
+                Margin="0,0,5,0"
+                Command="{x:Bind ViewModel.ClientConnectCommand}"
+                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                 <Button.CommandParameter>
                     <x:Boolean>False</x:Boolean>
                 </Button.CommandParameter>
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xE703;" />
+                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xE930;" />
                     <TextBlock
-                        x:Uid="ClientConnectShort"
+                        x:Uid="ClientConnect"
                         Margin="0,-3,0,-3"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
@@ -100,14 +69,15 @@
             <Button
                 Grid.Column="7"
                 Margin="10,0,0,0"
-                Command="{x:Bind ViewModel.ClientDisconnectCommand}">
+                Command="{x:Bind ViewModel.ClientDisconnectCommand}"
+                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
                 <Button.CommandParameter>
                     <x:Boolean>False</x:Boolean>
                 </Button.CommandParameter>
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xE8BB;" />
+                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xEA39;" />
                     <TextBlock
-                        x:Uid="ClientDisconnectShort"
+                        x:Uid="ClientDisconnect"
                         Margin="0,-3,0,-3"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
@@ -127,6 +97,14 @@
             ItemInvoked="NavigationViewControl_ItemInvoked"
             OpenPaneLength="220"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
+            <!--  Navigation HeaderTemplate  -->
+            <NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{Binding}" />
+                    </Grid>
+                </DataTemplate>
+            </NavigationView.HeaderTemplate>
             <!--  Navigation MenuItems  -->
             <NavigationView.MenuItems>
                 <!--  Home  -->
@@ -171,6 +149,16 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--  Saved Messages  -->
+                <NavigationViewItem
+                    x:Uid="Shell_SavedMessages"
+                    helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatViewModel"
+                    helpers:TgNavigationHelper.NavigationParameter="{x:Bind ViewModel.UidSavedMessages, Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <!--  Users  -->
                 <NavigationViewItem x:Uid="Shell_UsersAndContacts" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel">
                     <NavigationViewItem.Icon>
@@ -202,14 +190,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <!--  Navigation HeaderTemplate  -->
-            <NavigationView.HeaderTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="{Binding}" />
-                    </Grid>
-                </DataTemplate>
-            </NavigationView.HeaderTemplate>
             <!--  Navigation Behaviors  -->
             <i:Interaction.Behaviors>
                 <behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
@@ -258,152 +238,177 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Frame x:Name="NavigationFrame" />
-                <!--  Storage processing  -->
                 <Border
                     Grid.Row="1"
-                    Padding="10,0,10,5"
-                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                    Padding="0,5,0,5"
                     BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                     BorderThickness="0,1,0,0">
+                    <Border.Background>
+                        <SolidColorBrush Opacity="0.5" Color="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                    </Border.Background>
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="8">
-                            <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEBC3;" />
-                            <TextBlock
-                                x:Uid="DataStorage"
-                                FontWeight="SemiBold"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="AppStorageNeedToCreate"
-                                FontWeight="Bold"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="1"
-                            Margin="10,0,10,0"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <!--  Waiting indication  -->
-                            <ProgressRing
-                                Width="16"
-                                Height="16"
-                                Margin="10,0,10,0"
-                                IsActive="True" />
-                            <TextBlock
-                                x:Uid="DataWaitStorageProcessing"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-                <!--  Online processing  -->
-                <Border
-                    Grid.Row="2"
-                    Padding="10,0,10,5"
-                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    BorderThickness="0,1,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="8">
-                            <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEDE4;" />
-                            <TextBlock
-                                x:Uid="FieldOnline"
-                                FontWeight="SemiBold"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock
-                                x:Uid="AppOnlineNeedToConnet"
-                                FontWeight="Bold"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="1"
-                            Margin="10,0,10,0"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <!--  Waiting indication  -->
-                            <ProgressRing
-                                Width="16"
-                                Height="16"
-                                Margin="10,0,10,0"
-                                IsActive="True" />
-                            <TextBlock
-                                x:Uid="DataWaitOnlineProcessing"
-                                Style="{ThemeResource BodyTextBlockStyle}"
-                                TextTrimming="CharacterEllipsis" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-                <!--  Flood Control  -->
-                <Border
-                    Grid.Row="3"
-                    Padding="10,0,10,5"
-                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    BorderThickness="0,1,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="8">
-                            <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE814;" />
-                            <TextBlock
-                                x:Uid="FloodControl"
-                                FontWeight="SemiBold"
-                                Style="{ThemeResource BodyTextBlockStyle}" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="1"
-                            Margin="10,0,10,0"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <!--  Waiting indication  -->
-                            <ProgressRing
-                                Width="16"
-                                Height="16"
-                                Margin="10,0,10,0"
-                                IsActive="True" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}">
-                                <Run x:Uid="RunWait" />
-                                <Run Text="{x:Bind ViewModel.FloodWaitSeconds, Mode=OneWay}" />
-                                <Run x:Uid="RunSeconds" />
-                            </TextBlock>
-                        </StackPanel>
+                        <!--  Storage processing  -->
+                        <FontIcon
+                            Grid.Column="0"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xEBC3;"
+                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <ProgressRing
+                            Grid.Column="0"
+                            Width="16"
+                            Height="16"
+                            Margin="5,0,5,0"
+                            IsActive="True"
+                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
+                            x:Uid="DataStorage"
+                            Grid.Column="1"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <FontIcon
                             Grid.Column="2"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE930;"
+                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <FontIcon
+                            Grid.Column="2"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xEA39;"
+                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="DataWaitStorageProcessing"
+                            Grid.Column="3"
+                            Grid.ColumnSpan="2"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            TextTrimming="CharacterEllipsis"
+                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="AppStorageNeedToCreate"
+                            Grid.Column="4"
+                            Grid.ColumnSpan="2"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <!--  Online processing  -->
+                        <FontIcon
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xEDE4;"
+                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <ProgressRing
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Width="16"
+                            Height="16"
+                            Margin="5,0,5,0"
+                            IsActive="True"
+                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="FieldNetwork"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <FontIcon
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE930;"
+                            Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <FontIcon
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xEA39;"
+                            Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="DataWaitOnlineProcessing"
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            TextTrimming="CharacterEllipsis"
+                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="AppOnlineNeedToConnet"
+                            Grid.Row="1"
+                            Grid.Column="4"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <!--  Flood Control  -->
+                        <FontIcon
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xEF31;"
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <ProgressRing
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Width="16"
+                            Height="16"
+                            Margin="5,0,5,0"
+                            IsActive="True"
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock
+                            x:Uid="FloodControl"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <FontIcon
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE930;"
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <FontIcon
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Margin="5,0,5,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xEA39;"
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="3"
+                            Margin="5,0,5,0"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Run x:Uid="RunWait" />
+                            <Run Text="{x:Bind ViewModel.FloodWaitSeconds, Mode=OneWay}" />
+                            <Run x:Uid="RunSeconds" />
+                        </TextBlock>
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="4"
+                            Margin="5,0,5,0"
                             VerticalAlignment="Center"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.FloodMessage, Mode=OneWay}"

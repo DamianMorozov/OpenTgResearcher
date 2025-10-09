@@ -2,7 +2,6 @@
 
 namespace OpenTgResearcherDesktop.Services;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgSettingsService : ObservableRecipient, ITgSettingsService
 {
     #region Fields, properties, constructor

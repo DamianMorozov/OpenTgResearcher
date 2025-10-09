@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -10,7 +9,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand LoadDataStorageCommand { get; }
 	public IAsyncRelayCommand ClearViewCommand { get; }
 	public IAsyncRelayCommand DefaultSortCommand { get; }
-	public IAsyncRelayCommand UpdateOnlineCommand { get; }
+	public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
 
 	public TgProxiesViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgProxiesViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgProxiesViewModel))
@@ -19,7 +18,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
-		UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
+		StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
 	}
 
 	#endregion
@@ -39,7 +38,8 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		Dtos = [.. dtos.OrderBy(x => x.HostName).ThenBy(x => x.Type)];
 	}
 
-	private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+	private async Task ClearViewAsync() => 
+        await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
 	private async Task ClearDataStorageCoreAsync()
 	{
@@ -47,7 +47,8 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
+	private async Task LoadDataStorageAsync() => 
+        await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
 	private async Task LoadDataStorageCoreAsync()
 	{
@@ -61,7 +62,8 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
+	private async Task StartUpdateOnlineAsync() => 
+        await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
 
     private async Task UpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
     {

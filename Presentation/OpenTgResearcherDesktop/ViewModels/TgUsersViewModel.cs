@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgUsersViewModel : TgSectionViewModel
 {
     #region Fields, properties, constructor
@@ -125,7 +124,7 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
             $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     }
 
-    protected override async Task UpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
+    protected override async Task StartUpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
@@ -142,6 +141,13 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
         
         await LazyLoadAsync(isNewQuery: true, isSearch: false);
     });
+
+    protected override async Task StopUpdateOnlineCoreAsync()
+    {
+        LoadStateService.StopHardOnlineProcessing();
+        LoadStateService.StopHardDownloadProcessing();
+        await Task.CompletedTask;
+    }
 
     #endregion
 }

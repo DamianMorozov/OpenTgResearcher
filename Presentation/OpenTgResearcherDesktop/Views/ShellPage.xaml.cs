@@ -81,11 +81,16 @@ public sealed partial class ShellPage
             return;
         }
 
-        if (ViewModel.NavigationService.Frame is not null && ViewModel.NavigationService.Frame.GetPageViewModel() is TgPageViewModelBase pageViewModel)
+        if (ViewModel.NavigationService.Frame is not null)
         {
-            await pageViewModel.LoadStorageDataAsync(() => {
-                ViewModel.LoadStateService.IsDisplaySensitiveData = ViewModel.LoadStateService.IsDisplaySensitiveData = toggleSwitch.IsOn;
-            });
+            var viewModel = await ViewModel.NavigationService.Frame.GetPageViewModelAsync();
+            if (viewModel is TgPageViewModelBase pageViewModel)
+            {
+                await pageViewModel.LoadStorageDataAsync(() =>
+                {
+                    ViewModel.LoadStateService.SetIsDisplaySensitiveData(toggleSwitch.IsOn);
+                });
+            }
         }
     }
 

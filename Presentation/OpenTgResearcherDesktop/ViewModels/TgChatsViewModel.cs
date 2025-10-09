@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatsViewModel : TgSectionViewModel
 {
     #region Fields, properties, constructor
@@ -56,8 +55,8 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
             var lower = raw.ToLower(CultureInfo.InvariantCulture);
             list = [.. list
                 .Where(x =>
-                    (IsFilterByName && !string.IsNullOrEmpty(x.UserName) && x.UserName.Contains(lower, StringComparison.InvariantCultureIgnoreCase)) ||
-                    (IsFilterByTitle && !string.IsNullOrEmpty(x.Title) && x.Title.Contains(lower, StringComparison.InvariantCultureIgnoreCase))
+                    (IsFilterByName && !string.IsNullOrEmpty(x.UserName) && x.UserName.Contains(lower, StringComparison.OrdinalIgnoreCase)) ||
+                    (IsFilterByTitle && !string.IsNullOrEmpty(x.Title) && x.Title.Contains(lower, StringComparison.OrdinalIgnoreCase))
                 )];
         }
 
@@ -135,13 +134,20 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
             $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
     }
 
-    protected override async Task UpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
+    protected override async Task StartUpdateOnlineCoreAsync()
     {
-        var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
-        await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);
+        await LoadOnlineDataAsync(async () =>
+        {
+            var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
+            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);
+            
+            await LoadStorageDataAsync(async () =>
+            {
+                await LazyLoadAsync(isNewQuery: true, isSearch: false);
+            });
+        });
         
-        await LazyLoadAsync(isNewQuery: true, isSearch: false);
-    });
+    }
 
     #endregion
 }

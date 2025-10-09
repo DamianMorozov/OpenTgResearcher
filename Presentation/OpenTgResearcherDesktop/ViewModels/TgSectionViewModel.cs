@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public abstract partial class TgSectionViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -40,7 +39,8 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public IAsyncRelayCommand ClearViewCommand { get; }
     public IAsyncRelayCommand LazyLoadCommand { get; }
     public IAsyncRelayCommand SearchCommand { get; }
-    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
+    public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
     public IAsyncRelayCommand<TgEfSourceLiteDto> OpenCommand { get; }
 
     public TgSectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
@@ -51,7 +51,8 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         LazyLoadCommand = new AsyncRelayCommand<bool>(async (isNewQuery) => await LazyLoadAsync(isNewQuery, isSearch: false), canExecute: _ => HasMoreItems && !IsLoading);
         OpenCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(OpenAsync);
         SearchCommand = new AsyncRelayCommand(async () => await LazyLoadAsync(isNewQuery: false, isSearch: true));
-        UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
+        StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
+        StopUpdateOnlineCommand = new AsyncRelayCommand(StopUpdateOnlineAsync);
     }
 
     #endregion
@@ -83,8 +84,8 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         }
     });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(async () => 
-        await ClearViewCoreAsync(isFinally: true), TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    private async Task ClearViewAsync() => 
+        await ContentDialogAsync(() => ClearViewCoreAsync(isFinally: true), TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     protected async Task ClearViewCoreAsync(bool isFinally)
     {
@@ -111,15 +112,22 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task UpdateOnlineAsync() => await ContentDialogAsync(() => LoadStorageDataAsync(async () =>
-    {
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+    private async Task StartUpdateOnlineAsync() => 
+        await ContentDialogAsync(() => LoadOnlineDataAsync(async () =>
+        {
+            if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-        await UpdateOnlineCoreAsync();
-    }), TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
+            await StartUpdateOnlineCoreAsync();
+        }), TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task OpenAsync(TgEfSourceLiteDto? sourceLiteDto) => await ContentDialogAsync(
-        async () => await OpenCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpen(), TgEnumLoadDesktopType.Storage);
+    private async Task StopUpdateOnlineAsync() => 
+        await ContentDialogAsync(() => LoadOnlineDataAsync(async () =>
+        {
+            await StopUpdateOnlineCoreAsync();
+        }), TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Online);
+
+    private async Task OpenAsync(TgEfSourceLiteDto? sourceLiteDto) => 
+        await ContentDialogAsync(() => OpenCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpen(), TgEnumLoadDesktopType.Storage);
 
     protected async Task OpenCoreAsync(TgEfSourceLiteDto? sourceLiteDto)
     {
@@ -140,7 +148,14 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
 
     protected virtual Task AfterDataUpdateCoreAsync() => throw new NotImplementedException();
 
-    protected virtual Task UpdateOnlineCoreAsync() => throw new NotImplementedException();
+    protected virtual Task StartUpdateOnlineCoreAsync() => throw new NotImplementedException();
+
+    protected virtual async Task StopUpdateOnlineCoreAsync()
+    {
+        LoadStateService.StopHardOnlineProcessing();
+        LoadStateService.StopHardDownloadProcessing();
+        await Task.CompletedTask;
+    }
 
     #endregion
 }

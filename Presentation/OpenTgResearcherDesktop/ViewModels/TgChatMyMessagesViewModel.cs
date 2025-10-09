@@ -1,7 +1,6 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
-public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDisposable
+public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
@@ -17,12 +16,8 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDi
     [ObservableProperty]
     public partial Action ScrollRequested { get; set; } = () => { };
 
-    /// <summary> Cancellation token for download session </summary>
-    private CancellationTokenSource? _loadCts;
-    private CancellationToken _loadToken;
-
-    public IAsyncRelayCommand LoadMyMessagesCommand { get; }
-    public IAsyncRelayCommand StopMyMessagesCommand { get; }
+    public IAsyncRelayCommand StartStorageMyMessagesCommand { get; }
+    public IAsyncRelayCommand StopStorageMyMessagesCommand { get; }
 
     public TgChatMyMessagesViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatMyMessagesViewModel> logger, IAppNotificationService appNotificationService)
@@ -30,57 +25,8 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDi
     {
         AppNotificationService = appNotificationService;
         // Commands
-        LoadMyMessagesCommand = new AsyncRelayCommand(LoadMyMessagesAsync);
-        StopMyMessagesCommand = new AsyncRelayCommand(StopMyMessagesAsync);
-    }
-
-    #endregion
-
-    #region IDisposable
-
-    /// <summary> To detect redundant calls </summary>
-    private bool _disposed;
-
-    /// <summary> Finalizer </summary>
-	~TgChatMyMessagesViewModel() => Dispose(false);
-
-    /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
-
-    /// <summary> Release managed resources </summary>
-    public void ReleaseManagedResources()
-    {
-        _loadCts?.Cancel();
-        _loadCts?.Dispose();
-        _loadToken = CancellationToken.None;
-    }
-
-    /// <summary> Release unmanaged resources </summary>
-    public void ReleaseUnmanagedResources()
-    {
-        //
-    }
-
-    /// <summary> Dispose pattern </summary>
-    public void Dispose()
-    {
-        // Dispose of unmanaged resources
-        Dispose(true);
-        // Suppress finalization
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary> Dispose pattern </summary>
-    private void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-        // Release managed resources
-        if (disposing)
-            ReleaseManagedResources();
-        // Release unmanaged resources
-        ReleaseUnmanagedResources();
-        // Flag
-        _disposed = true;
+        StartStorageMyMessagesCommand = new AsyncRelayCommand(StartStorageMyMessagesAsync);
+        StopStorageMyMessagesCommand = new AsyncRelayCommand(StopStorageMyMessagesAsync);
     }
 
     #endregion
@@ -90,25 +36,23 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDi
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-        await LoadMyMessagesCoreAsync();
+        await StartStorageMyMessagesCoreAsync();
         await Task.CompletedTask;
     });
 
-    private async Task LoadMyMessagesAsync() => await ContentDialogAsync(LoadMyMessagesCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
+    private async Task StartStorageMyMessagesAsync() => 
+        await ContentDialogAsync(StartStorageMyMessagesCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
-    private async Task LoadMyMessagesCoreAsync()
+    private async Task StartStorageMyMessagesCoreAsync()
     {
+        if (!SettingsService.IsExistsAppStorage) return;
+
+        var uid = Guid.NewGuid();
         try
         {
-            if (!SettingsService.IsExistsAppStorage) return;
+            await LoadStateService.PrepareOnlineTokenAsync(uid);
 
-            _loadCts?.Cancel();
-            _loadCts?.Dispose();
-            _loadCts = new CancellationTokenSource();
-            _loadToken = _loadCts.Token;
-
-            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, _loadToken);
-            await Task.Delay(250);
+            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.OnlineToken);
 
             // Get user Id
             var userId = App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0;
@@ -122,7 +66,7 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDi
             // Single query to get all distinct users for this source
             UserDtos.Clear();
 
-            var userDto = await App.BusinessLogicManager.StorageManager.UserRepository.GetMyselfUserAsync(Dto.Id, userId, _loadToken);
+            var userDto = await App.BusinessLogicManager.StorageManager.UserRepository.GetMyselfUserAsync(Dto.Id, userId, LoadStateService.OnlineToken);
             UserDtos.Add(userDto);
 
             IsEmptyData = false;
@@ -130,19 +74,20 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase, IDi
         }
         finally
         {
+            LoadStateService.StopSoftOnlineProcessing(uid);
+
             await ReloadUiAsync();
         }
     }
 
-    private async Task StopMyMessagesAsync() => await ContentDialogAsync(StopMyMessagesCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Storage);
+    private async Task StopStorageMyMessagesAsync() => 
+        await ContentDialogAsync(StopStorageMyMessagesCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Storage);
 
-    private async Task StopMyMessagesCoreAsync()
+    private async Task StopStorageMyMessagesCoreAsync()
     {
         try
         {
-            _loadCts?.Cancel();
-            _loadCts?.Dispose();
-            _loadToken = CancellationToken.None;
+            LoadStateService.StopHardOnlineProcessing();
         }
         finally
         {

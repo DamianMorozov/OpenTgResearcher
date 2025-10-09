@@ -15,7 +15,7 @@ public abstract class TgPageBase : Page
     {
         base.OnNavigatedTo(e);
 
-        await TgDesktopUtils.InvokeOnUIThreadAsync(() => ViewModel.OnNavigatedToAsync(e));
+        await TgDesktopUtils.InvokeOnUIThreadAsync(() => ViewModel.OnNavigatedToAsync(e), CancellationToken.None);
     }
 
     protected void PageLoaded(object sender, RoutedEventArgs e) => ViewModel.OnLoaded(XamlRoot);

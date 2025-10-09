@@ -13,6 +13,7 @@ public class AppNotificationActivationHandler : ActivationHandler<LaunchActivate
     }
 
     /// <summary> Handle the activation for app notifications </summary>
-	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args) => 
-        await TgDesktopUtils.InvokeOnUIThreadAsync(() => App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation"));
+    protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args) => 
+        await TgDesktopUtils.InvokeOnUIThreadAsync(() => 
+        App.MainWindow.ShowMessageDialogAsync("TODO: Handle notification activations.", "Notification Activation"), CancellationToken.None);
 }

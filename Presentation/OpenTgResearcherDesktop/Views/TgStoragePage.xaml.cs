@@ -24,7 +24,7 @@ public partial class TgStoragePage
         PageLoaded(sender, e);
 
         ViewModel.ContentFrame = ContentFrame;
-        ContentFrame.Navigate(typeof(TgStorageTablesPage));
+        StorageSelectorBar.SelectedItem = StorageSelectorBar.Items[0];
     }
 
     /// <summary> Storage details page </summary>

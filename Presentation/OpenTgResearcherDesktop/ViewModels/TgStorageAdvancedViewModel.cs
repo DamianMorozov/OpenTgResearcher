@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgStorageAdvancedViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -49,7 +48,7 @@ public sealed partial class TgStorageAdvancedViewModel : TgPageViewModelBase
         }
         finally
         {
-            await Task.Delay(250);
+            await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         }
     }
 
@@ -75,7 +74,7 @@ public sealed partial class TgStorageAdvancedViewModel : TgPageViewModelBase
         }
         finally
         {
-            await Task.Delay(250);
+            await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         }
     }
 

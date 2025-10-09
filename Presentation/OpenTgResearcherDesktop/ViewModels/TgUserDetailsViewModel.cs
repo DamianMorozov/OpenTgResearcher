@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -18,7 +17,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
 
     public IAsyncRelayCommand LoadDataStorageCommand { get; }
     public IAsyncRelayCommand ClearViewCommand { get; }
-    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
     public IAsyncRelayCommand<TgEfSourceDto> LoadUserMessagesCommand { get; }
 
     public TgUserDetailsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
@@ -27,7 +26,7 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
-        UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
+        StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
         LoadUserMessagesCommand = new AsyncRelayCommand<TgEfSourceDto>(LoadUserMessagesAsync);
     }
 
@@ -46,11 +45,13 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
             await ReloadUiAsync();
         });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCore, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    private async Task ClearViewAsync() => 
+        await ContentDialogAsync(ClearDataStorageCore, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private void ClearDataStorageCore() => Dto = new();
 
-    private async Task LoadDataStorageAsync() => await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
+    private async Task LoadDataStorageAsync() => 
+        await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
     // TODO: Add new table CHATS_USERS
     private async Task LoadDataStorageCoreAsync()
@@ -80,7 +81,8 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
         ChatsDtos = [.. ChatsDtos.OrderBy(x => x.ChatDto.UserName).ThenBy(x => x.ChatDto.Title)];
     }
 
-    private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
+    private async Task StartUpdateOnlineAsync() => 
+        await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
 
     private async Task UpdateOnlineCoreAsync() => await LoadOnlineDataAsync(async () =>
     {

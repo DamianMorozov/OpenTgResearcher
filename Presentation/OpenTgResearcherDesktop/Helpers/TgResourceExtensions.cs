@@ -55,8 +55,10 @@ public static class TgResourceExtensions
 	internal static string AskSettingsLoad() => "AskSettingsLoad".GetLocalizedResource();
 	internal static string AskSettingsSave() => "AskSettingsSave".GetLocalizedResource();
 	internal static string AskStartMonitoring() => "AskStartMonitoring".GetLocalizedResource();
+	internal static string AskStartParseTelegram() => "AskStartParseTelegram".GetLocalizedResource();
 	internal static string AskStopLoading() => "AskStopLoading".GetLocalizedResource();
 	internal static string AskStopMonitoring() => "AskStopMonitoring".GetLocalizedResource();
+	internal static string AskStopParseTelegram() => "AskStopParseTelegram".GetLocalizedResource();
 	internal static string AskUpdateChatDetails() => "AskUpdateChatDetails".GetLocalizedResource();
 	internal static string AskUpdateOnline() => "AskUpdateOnline".GetLocalizedResource();
 	internal static string AskUpdatePage() => "AskUpdatePage".GetLocalizedResource();

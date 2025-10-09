@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatSettingsViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -13,7 +12,7 @@ public sealed partial class TgChatSettingsViewModel : TgPageViewModelBase
     public partial TgEfSourceDto DiscussionDto { get; set; } = default!;
     [ObservableProperty]
     public partial bool IsDiscussionDtoExists { get; set; }
-
+    
     public IAsyncRelayCommand OpenDiscussionChatCommand { get; }
 
     public TgChatSettingsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
@@ -28,10 +27,11 @@ public sealed partial class TgChatSettingsViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(() =>
-    {
-        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-    });
+    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => 
+        await LoadStorageDataAsync(() =>
+        {
+            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        });
 
     private async Task OpenDiscussionChatAsync()
     {

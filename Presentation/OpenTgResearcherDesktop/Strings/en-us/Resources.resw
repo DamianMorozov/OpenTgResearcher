@@ -676,10 +676,7 @@
     <value>Ok</value>
   </data>
   <data name="ClientConnect.Text" xml:space="preserve">
-    <value>Connect to TG server</value>
-  </data>
-  <data name="ClientConnectShort.Text" xml:space="preserve">
-    <value>Connect to TG</value>
+    <value>Connect Telegram</value>
   </data>
   <data name="ButtonConnect.Content" xml:space="preserve">
     <value>Connect</value>
@@ -688,10 +685,7 @@
     <value>Disconnect</value>
   </data>
   <data name="ClientDisconnect.Text" xml:space="preserve">
-    <value>Disconnect from TG server</value>
-  </data>
-  <data name="ClientDisconnectShort.Text" xml:space="preserve">
-    <value>Disconnect from TG</value>
+    <value>Disconnect Telegram</value>
   </data>
   <data name="MenuClientIsQuery" xml:space="preserve">
     <value>Client requests data</value>
@@ -799,10 +793,10 @@
     <value>Premium license</value>
   </data>
   <data name="AppStorageNeedToCreate.Text" xml:space="preserve">
-    <value>You need to create a storage (check the settings)!</value>
+    <value>Need to connect storage</value>
   </data>
   <data name="AppOnlineNeedToConnet.Text" xml:space="preserve">
-    <value>You need to connect to Telegram online!</value>
+    <value>Need to connect Telegram</value>
   </data>
   <data name="ProductAssignment.Text" xml:space="preserve">
     <value>Product assignment</value>
@@ -942,11 +936,14 @@
   <data name="FieldOnline.Text" xml:space="preserve">
     <value>Online</value>
   </data>
+  <data name="FieldNetwork.Text" xml:space="preserve">
+    <value>Network</value>
+  </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Storage</value>
   </data>
   <data name="DataWaitStorageProcessing.Text" xml:space="preserve">
-    <value>Wait until the data has finished loading from the Storage</value>
+    <value>Wait until the data has finished loading from Storage</value>
   </data>
   <data name="DataWaitOnlineProcessing.Text" xml:space="preserve">
     <value>Wait until the data has finished loading from Telegram</value>
@@ -1035,11 +1032,17 @@
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Stop downloading</value>
   </data>
-  <data name="TextBlockRunParseAndDownloading.Text" xml:space="preserve">
-    <value>Run parse and download</value>
+  <data name="TextBlockStartParseTelegram.Text" xml:space="preserve">
+    <value>Start parsing Telegram</value>
   </data>
-  <data name="TextBlockStopParseAndDownloading.Text" xml:space="preserve">
-    <value>Stop parse and download</value>
+  <data name="AskStartParseTelegram" xml:space="preserve">
+    <value>Start parsing Telegram</value>
+  </data>
+  <data name="TextBlockStopParseTelegram.Text" xml:space="preserve">
+    <value>Stop parsing Telegram</value>
+  </data>
+  <data name="AskStopParseTelegram" xml:space="preserve">
+    <value>Stop parsing Telegram</value>
   </data>
   <data name="TextBlockGet.Text" xml:space="preserve">
     <value>Get</value>
@@ -1556,19 +1559,19 @@
   </data>
   <!--  Chats scan   -->
   <data name="StartScan" xml:space="preserve">
-    <value>Scanning started</value>
+    <value>Parsing started</value>
   </data>
   <data name="StopScan" xml:space="preserve">
-    <value>Scanning stopped</value>
+    <value>Parsing stopped</value>
   </data>
   <data name="ProcessingChats" xml:space="preserve">
-    <value>Chat processing</value>
+    <value>Parsing chats</value>
   </data>
   <data name="ProcessingGroups" xml:space="preserve">
-    <value>Group processing</value>
+    <value>Parsing groups</value>
   </data>
   <data name="ProcessingDialogs" xml:space="preserve">
-    <value>Dialogue processing</value>
+    <value>Parsing dialogues</value>
   </data>
   <!--  License  -->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

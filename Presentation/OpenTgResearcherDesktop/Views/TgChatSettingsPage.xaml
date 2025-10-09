@@ -106,7 +106,7 @@
                             IsEnabled="False"
                             IsReadOnly="True"
                             Style="{StaticResource FieldTextBoxStyle}"
-                            Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay, Converter={StaticResource IdFormatConverter}}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
                             Grid.Column="1"
@@ -260,9 +260,15 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
-                            Grid.Column="0"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <TextBlock
                             Style="{StaticResource FieldTextBlockStyle}"
-                            Text="{x:Bind ViewModel.Dto.Count, Mode=OneWay}" />
+                            Text="{x:Bind ViewModel.Dto.Count, Mode=OneWay, Converter={StaticResource IdFormatConverter}}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
                             Grid.Column="1"
                             Click="OnClipboardSilentWriteClick"

@@ -1,17 +1,16 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
 /// <summary> Sensitive model </summary>
-[DebuggerDisplay("{ToDebugString()}")]
 public partial class TgSensitiveModel : ObservableRecipient
 {
     #region Fields, properties, constructor
 
     /// <summary> Load state service </summary>
     [ObservableProperty]
-    public partial ILoadStateService LoadStateService { get; private set; }
+    public partial ILoadStateService LoadStateService { get; private set; } = default!;
     /// <summary> Settings service </summary>
     [ObservableProperty]
-    public partial ITgSettingsService SettingsService { get; private set; }
+    public partial ITgSettingsService SettingsService { get; private set; } = default!;
 
     public bool IsDisplaySensitiveData => LoadStateService.IsDisplaySensitiveData;
     public bool IsExistsAppSession => SettingsService.IsExistsAppSession;
@@ -41,8 +40,14 @@ public partial class TgSensitiveModel : ObservableRecipient
                     OnPropertyChanged(nameof(IsDisplaySensitiveData));
                 else if (e.PropertyName == nameof(LoadStateService.IsOnlineReady))
                     OnPropertyChanged(nameof(IsOnlineReady));
-                
-                else if (e.PropertyName == nameof(SettingsService.IsExistsAppStorage))
+            });
+        };
+
+        // Callback updates UI: PropertyChanged
+        SettingsService.PropertyChanged += (_, e) =>
+        {
+            TgDesktopUtils.InvokeOnUIThread(() => { 
+                if (e.PropertyName == nameof(SettingsService.IsExistsAppStorage))
                     OnPropertyChanged(nameof(IsExistsAppStorage));
                 else if (e.PropertyName == nameof(SettingsService.IsExistsAppSession))
                     OnPropertyChanged(nameof(IsExistsAppSession));

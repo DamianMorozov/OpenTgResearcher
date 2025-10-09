@@ -6,7 +6,7 @@ public sealed partial class TgEnumSourceTypeToBooleanConverter : IValueConverter
     {
         if (value == null || parameter == null) return false;
         var enumString = parameter.ToString();
-        return (value.ToString() ?? string.Empty).Equals(enumString, StringComparison.InvariantCultureIgnoreCase);
+        return (value.ToString() ?? string.Empty).Equals(enumString, StringComparison.OrdinalIgnoreCase);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

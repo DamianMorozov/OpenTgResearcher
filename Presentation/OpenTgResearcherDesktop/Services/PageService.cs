@@ -3,8 +3,9 @@
 public sealed class PageService : IPageService
 {
 	private readonly Dictionary<string, Type> _pages = [];
+    private static readonly Lock _locker = new();
 
-	public PageService()
+    public PageService()
 	{
 		Configure<TgChatContentViewModel, TgChatContentPage>();
 		Configure<TgChatSettingsViewModel, TgChatSettingsPage>();
@@ -37,13 +38,13 @@ public sealed class PageService : IPageService
 	public Type GetPageType(string key)
 	{
 		Type? pageType;
-		lock (_pages)
-		{
-			if (!_pages.TryGetValue(key, out pageType))
-			{
-				throw new ArgumentException($"Page not found: {key}. Did you forget to call PageService.Configure?");
-			}
-		}
+        using (_locker.EnterScope())
+        {
+            if (!_pages.TryGetValue(key, out pageType))
+            {
+                throw new ArgumentException($"Page not found: {key}. Did you forget to call PageService.Configure?");
+            }
+        }
 		return pageType;
 	}
 
@@ -51,8 +52,8 @@ public sealed class PageService : IPageService
 		where VM : ObservableObject
 		where V : Page
 	{
-		lock (_pages)
-		{
+        using (_locker.EnterScope())
+        {
 			var key = typeof(VM).FullName!;
 			if (_pages.ContainsKey(key))
 			{

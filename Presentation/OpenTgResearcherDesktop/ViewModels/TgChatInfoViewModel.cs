@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -41,14 +40,16 @@ public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task UpdateChatSettingsAsync() => await ContentDialogAsync(UpdateChatSettingsCoreAsync, TgResourceExtensions.AskUpdateChatDetails(), TgEnumLoadDesktopType.Online);
+    private async Task UpdateChatSettingsAsync() => 
+        await ContentDialogAsync(UpdateChatSettingsCoreAsync, TgResourceExtensions.AskUpdateChatDetails(), TgEnumLoadDesktopType.Online);
 
-    private async Task UpdateChatSettingsCoreAsync() => await LoadStorageDataAsync(async () =>
-    {
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+    private async Task UpdateChatSettingsCoreAsync() => 
+        await LoadStorageDataAsync(async () =>
+        {
+            if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-        ChatDetailsDto = await App.BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(Uid);
-    });
+            ChatDetailsDto = await App.BusinessLogicManager.ConnectClient.GetChatDetailsByClientAsync(Uid);
+        });
 
     #endregion
 }

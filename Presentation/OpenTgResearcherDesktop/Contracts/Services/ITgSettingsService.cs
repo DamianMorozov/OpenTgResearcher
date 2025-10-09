@@ -1,7 +1,9 @@
-﻿namespace OpenTgResearcherDesktop.Contracts.Services;
+﻿using System.ComponentModel;
+
+namespace OpenTgResearcherDesktop.Contracts.Services;
 
 /// <summary> Settings service </summary>
-public interface ITgSettingsService
+public interface ITgSettingsService : INotifyPropertyChanged
 {
     public ObservableCollection<TgEnumTheme> AppThemes { get; }
     public ObservableCollection<TgEnumLanguage> AppLanguages { get; }

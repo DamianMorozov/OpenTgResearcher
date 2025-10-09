@@ -152,7 +152,7 @@
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnPasswordTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                    ColumnWidth="3*"
+                                    ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridProxies}" />
                                 <!--  End  -->
                             </controls:DataGrid.Columns>

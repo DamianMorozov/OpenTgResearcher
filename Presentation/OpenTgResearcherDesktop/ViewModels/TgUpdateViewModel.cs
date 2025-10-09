@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public partial class TgUpdateViewModel : TgPageViewModelBase
 {
 	#region Fields, properties, constructor

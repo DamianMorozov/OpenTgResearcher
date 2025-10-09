@@ -735,10 +735,7 @@
     <value>Ок</value>
   </data>
   <data name="ClientConnect.Text" xml:space="preserve">
-    <value>Подключиться к серверу ТГ</value>
-  </data>
-  <data name="ClientConnectShort.Text" xml:space="preserve">
-    <value>Подключиться к ТГ</value>
+    <value>Подключить Telegram</value>
   </data>
   <data name="ButtonConnect.Content" xml:space="preserve">
     <value>Подключиться</value>
@@ -747,10 +744,7 @@
     <value>Отключиться</value>
   </data>
   <data name="ClientDisconnect.Text" xml:space="preserve">
-    <value>Отключиться от сервера ТГ</value>
-  </data>
-  <data name="ClientDisconnectShort.Text" xml:space="preserve">
-    <value>Отключиться от ТГ</value>
+    <value>Отключить Telegram</value>
   </data>
   <data name="MenuClientIsQuery" xml:space="preserve">
     <value>Клиент запрашивает данные</value>
@@ -861,10 +855,10 @@
     <value>Премиальная лицензия</value>
   </data>
   <data name="AppStorageNeedToCreate.Text" xml:space="preserve">
-    <value>Необходимо создать хранилище (проверьте настройки)!</value>
+    <value>Необходимо подключить хранилище</value>
   </data>
   <data name="AppOnlineNeedToConnet.Text" xml:space="preserve">
-    <value>Необходимо подключиться онлайн к Телеграм!</value>
+    <value>Необходимо подключить Телеграм</value>
   </data>
   <data name="ProductAssignment.Text" xml:space="preserve">
     <value>Назначение продукта</value>
@@ -1004,6 +998,9 @@
   <data name="FieldOnline.Text" xml:space="preserve">
     <value>Онлайн</value>
   </data>
+  <data name="FieldNetwork.Text" xml:space="preserve">
+    <value>Сеть</value>
+  </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Хранилище</value>
   </data>
@@ -1011,7 +1008,7 @@
     <value>Дождитесь окончания загрузки данных из Хранилища</value>
   </data>
   <data name="DataWaitOnlineProcessing.Text" xml:space="preserve">
-    <value>Дождитесь окончания загрузки данных из Телеграм</value>
+    <value>Дождитесь окончания загрузки данных из Telagram</value>
   </data>
   <data name="TextBlockCount.Text" xml:space="preserve">
     <value>Кол-во</value>
@@ -1097,11 +1094,17 @@
   <data name="TextBlockStopDownloading.Text" xml:space="preserve">
     <value>Остановить загрузку</value>
   </data>
-  <data name="TextBlockRunParseAndDownloading.Text" xml:space="preserve">
-    <value>Запустить парсинг и скачивание</value>
+  <data name="TextBlockStartParseTelegram.Text" xml:space="preserve">
+    <value>Запустить парсинг Telegram</value>
   </data>
-  <data name="TextBlockStopParseAndDownloading.Text" xml:space="preserve">
-    <value>Остановить парсинг и скачивание</value>
+  <data name="AskStartParseTelegram" xml:space="preserve">
+    <value>Запустить парсинг Telegram</value>
+  </data>
+  <data name="TextBlockStopParseTelegram.Text" xml:space="preserve">
+    <value>Остановить парсинг Telegram</value>
+  </data>
+  <data name="AskStopParseTelegram" xml:space="preserve">
+    <value>Остановить парсинг Telegram</value>
   </data>
   <data name="TextBlockGet.Text" xml:space="preserve">
     <value>Получить</value>
@@ -1618,19 +1621,19 @@
   </data>
   <!--  Chats scan   -->
   <data name="StartScan" xml:space="preserve">
-    <value>Сканирование запущено</value>
+    <value>Парсинг запущен</value>
   </data>
   <data name="StopScan" xml:space="preserve">
-    <value>Сканирование остановлено</value>
+    <value>Парсинг остановлен</value>
   </data>
   <data name="ProcessingChats" xml:space="preserve">
-    <value>Обработка чатов</value>
+    <value>Парсинг чатов</value>
   </data>
   <data name="ProcessingGroups" xml:space="preserve">
-    <value>Обработка групп</value>
+    <value>Парсинг групп</value>
   </data>
   <data name="ProcessingDialogs" xml:space="preserve">
-    <value>Обработка диалогов</value>
+    <value>Парсинг диалогов</value>
   </data>
   <!--License-->
   <data name="TextBlockIsConfirmed.Text" xml:space="preserve">

@@ -1,8 +1,7 @@
 ﻿namespace OpenTgResearcherDesktop.Common;
 
 /// <summary> Base class for TgViewModel </summary>
-[DebuggerDisplay("{ToDebugString()}")]
-public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel
+public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageViewModel, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -41,7 +40,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
 
     public IAsyncRelayCommand ShowPurchaseLicenseCommand { get; }
 
-    public TgPageViewModelBase(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+    public TgPageViewModelBase(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgPageViewModelBase> logger, string name) : base(loadStateService, settingsService)
     {
         NavigationService = navigationService;
@@ -53,9 +52,54 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
 
     #endregion
 
-    #region Methods
+    #region IDisposable
 
-    public virtual string ToDebugString() => TgObjectUtils.ToDebugString(this);
+    /// <summary> To detect redundant calls </summary>
+    private bool _disposed;
+
+    /// <summary> Finalizer </summary>
+	~TgPageViewModelBase() => Dispose(false);
+
+    /// <summary> Throw exception if disposed </summary>
+    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
+
+    /// <summary> Release managed resources </summary>
+    public virtual void ReleaseManagedResources()
+    {
+        CheckIfDisposed();
+    }
+
+    /// <summary> Release unmanaged resources </summary>
+    public virtual void ReleaseUnmanagedResources()
+    {
+        CheckIfDisposed();
+    }
+
+    /// <summary> Dispose pattern </summary>
+    public void Dispose()
+    {
+        // Dispose of unmanaged resources
+        Dispose(true);
+        // Suppress finalization
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary> Dispose pattern </summary>
+    private void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        // Release managed resources
+        if (disposing)
+            ReleaseManagedResources();
+        // Release unmanaged resources
+        ReleaseUnmanagedResources();
+        // Flag
+        _disposed = true;
+    }
+
+    #endregion
+
+    #region Methods
 
     public virtual void OnLoaded(object parameter)
     {
@@ -75,9 +119,13 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
 
     public virtual async Task ReloadUiAsync()
     {
-        ConnectionDt = string.Empty;
-        ConnectionMsg = string.Empty;
-        Exception.Default();
+        TgDesktopUtils.InvokeOnUIThread(() =>
+        {
+            ConnectionDt = string.Empty;
+            ConnectionMsg = string.Empty;
+            Exception.Default();
+        });
+        
         await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
     }
 
@@ -93,12 +141,13 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     }
 
     /// <summary> Update state client message </summary>
-    public virtual async Task UpdateStateProxyAsync(string message) => await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
-    {
-        StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
-        StateProxyMsg = message;
-        await Task.CompletedTask;
-    });
+    public virtual async Task UpdateStateProxyAsync(string message, CancellationToken ct) =>
+        await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+        {
+            StateProxyDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+            StateProxyMsg = message;
+            await Task.CompletedTask;
+        }, ct);
 
     /// <summary> Update exception message </summary>
     public virtual void UpdateException(Exception ex) => Exception = new(ex);
@@ -126,7 +175,8 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     }
 
     /// <summary> Shows a simple content dialog with exception handling </summary>
-    protected async Task ContentDialogAsync(Func<Task> task, string title, TgEnumLoadDesktopType loadType, ContentDialogButton defaultButton = ContentDialogButton.Close)
+    protected async Task ContentDialogAsync(Func<Task> task, string title, TgEnumLoadDesktopType loadType,
+        ContentDialogButton defaultButton = ContentDialogButton.Close)
     {
         if (XamlRootVm is null) return;
 
@@ -186,15 +236,17 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     /// <summary> Load storage data with async task </summary>
     public async Task LoadStorageDataAsync(Func<Task> task)
     {
+        var uid = Guid.NewGuid();
         try
         {
-            if (!LoadStateService.IsStorageProcessing)
-            {
-                LoadStateService.IsStorageProcessing = true;
-                await Task.Delay(250);
-            }
+            await LoadStateService.PrepareStorageTokenAsync(uid);
 
-            await TgDesktopUtils.InvokeOnUIThreadAsync(task);
+            await TgDesktopUtils.InvokeOnUIThreadAsync(task, LoadStateService.StorageToken);
+            
+            // Run the provided task on the thread pool; UI updates inside task must call InvokeOnUIThreadAsync explicitly.
+            //await Task.Run(() => task(), StorageToken);
+            
+            //await task().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -202,11 +254,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
         }
         finally
         {
-            if (LoadStateService.IsStorageProcessing)
-            {
-                LoadStateService.IsStorageProcessing = false;
-                await Task.Delay(250);
-            }
+            LoadStateService.StopSoftStorageProcessing(uid);
             RefreshLicenseInfo();
         }
     }
@@ -214,13 +262,10 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     /// <summary> Load storage data with action </summary>
     public async Task LoadStorageDataAsync(Action action)
     {
+        var uid = Guid.NewGuid();
         try
         {
-            if (!LoadStateService.IsStorageProcessing)
-            {
-                LoadStateService.IsStorageProcessing = true;
-                await Task.Delay(250);
-            }
+            await LoadStateService.PrepareStorageTokenAsync(uid);
 
             TgDesktopUtils.InvokeOnUIThread(action);
         }
@@ -230,11 +275,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
         }
         finally
         {
-            if (LoadStateService.IsStorageProcessing)
-            {
-                LoadStateService.IsStorageProcessing = false;
-                await Task.Delay(250);
-            }
+            LoadStateService.StopSoftStorageProcessing(uid);
             RefreshLicenseInfo();
         }
     }
@@ -242,23 +283,21 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     /// <summary> Load online data with async task </summary>
     protected async Task LoadOnlineDataAsync(Func<Task> task)
     {
+        var uid = Guid.NewGuid();
         try
         {
-            if (!LoadStateService.IsOnlineProcessing)
-            {
-                LoadStateService.IsOnlineProcessing = true;
-                await Task.Delay(250);
-            }
+            await LoadStateService.PrepareOnlineTokenAsync(uid);
 
-            await TgDesktopUtils.InvokeOnUIThreadAsync(task);
+            await TgDesktopUtils.InvokeOnUIThreadAsync(task, LoadStateService.OnlineToken);
+            
+            // Run the provided task on the thread pool; UI updates inside task must call InvokeOnUIThreadAsync explicitly.
+            //await Task.Run(() => task(), OnlineToken);
+            
+            //await task().ConfigureAwait(false);
         }
         finally
         {
-            if (LoadStateService.IsOnlineProcessing)
-            {
-                LoadStateService.IsOnlineProcessing = false;
-                await Task.Delay(250);
-            }
+            LoadStateService.StopSoftOnlineProcessing(uid);
             RefreshLicenseInfo();
         }
     }
@@ -266,23 +305,16 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     /// <summary> Load online data with action </summary>
     protected async Task LoadOnlineDataAsync(Action action)
     {
+        var uid = Guid.NewGuid();
         try
         {
-            if (!LoadStateService.IsOnlineProcessing)
-            {
-                LoadStateService.IsOnlineProcessing = true;
-                await Task.Delay(250);
-            }
+            await LoadStateService.PrepareOnlineTokenAsync(uid);
 
             TgDesktopUtils.InvokeOnUIThread(action);
         }
         finally
         {
-            if (LoadStateService.IsOnlineProcessing)
-            {
-                LoadStateService.IsOnlineProcessing = false;
-                await Task.Delay(250);
-            }
+            LoadStateService.StopSoftOnlineProcessing(uid);
             RefreshLicenseInfo();
         }
     }
@@ -295,7 +327,7 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     }
 
     /// <summary> Show required license dialog </summary>
-    private async Task ShowPurchaseLicenseAsync() => 
+    private async Task ShowPurchaseLicenseAsync() =>
         await ContentDialogAsync(TgResourceExtensions.GetFeatureLicenseManager, TgResourceExtensions.GetFeatureLicensePurchase);
 
     public void LogInformation(string message,

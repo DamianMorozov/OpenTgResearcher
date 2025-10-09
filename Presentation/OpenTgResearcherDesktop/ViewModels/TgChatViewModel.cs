@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgChatViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
@@ -18,10 +17,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public partial Frame ChatDetailsFrame { get; set; } = default!;
 
     public IAsyncRelayCommand LoadDataStorageCommand { get; }
-    public IAsyncRelayCommand UpdateOnlineCommand { get; }
+    public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
     public IAsyncRelayCommand ClearViewCommand { get; }
     public IAsyncRelayCommand SaveChatSettingsCommand { get; }
-    public IAsyncRelayCommand StopDownloadingCommand { get; }
+    public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
 
     public TgChatViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatViewModel> logger, IAppNotificationService appNotificationService)
@@ -30,10 +29,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         AppNotificationService = appNotificationService;
         // Commands
         LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageCoreAsync);
-        UpdateOnlineCommand = new AsyncRelayCommand(UpdateOnlineAsync);
+        StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
-        StopDownloadingCommand = new AsyncRelayCommand(StopDownloadingAsync);
+        StopUpdateOnlineCommand = new AsyncRelayCommand(StopUpdateOnlineAsync);
     }
 
     #endregion
@@ -46,7 +45,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         await LoadDataStorageCoreAsync();
     });
 
-    private async Task ClearViewAsync() => await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    private async Task ClearViewAsync() => 
+        await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
     private async Task ClearDataStorageCoreAsync()
     {
@@ -58,48 +58,70 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
     private async Task LoadDataStorageCoreAsync()
     {
-        try
-        {
-            if (!SettingsService.IsExistsAppStorage) return;
+        if (!SettingsService.IsExistsAppStorage) return;
 
-            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
-            DiscussionDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
-            
-            if (ChatDetailsFrame is not null && ChatDetailsFrame.GetPageViewModel() is TgChatSettingsViewModel chatSettingsViewModel)
+        await TgDesktopUtils.InvokeOnUIThreadAsync(async () => {
+            try
             {
-                chatSettingsViewModel.Dto = Dto;
-                chatSettingsViewModel.DiscussionDto = DiscussionDto;
-                chatSettingsViewModel.IsDiscussionDtoExists = DiscussionDto.Id > 0;
+                Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+                DiscussionDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
+            
+                if (ChatDetailsFrame is not null)
+                {
+                    var pageViewModel = await ChatDetailsFrame.GetPageViewModelAsync();
+                    if (pageViewModel is not null)
+                    {
+                        if (pageViewModel is TgChatSettingsViewModel chatSettingsViewModel)
+                        {
+                            chatSettingsViewModel.Uid = Uid;
+                            chatSettingsViewModel.Dto = Dto;
+                            chatSettingsViewModel.DiscussionDto = DiscussionDto;
+                            chatSettingsViewModel.IsDiscussionDtoExists = DiscussionDto.Id > 0;
+                            ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), Uid);
+                        }
+                        else if (pageViewModel is TgChatDownloadViewModel chatDownloadViewModel)
+                        {
+                            chatDownloadViewModel.Uid = Uid;
+                            chatDownloadViewModel.DownloadDto = Dto;
+                            ChatDetailsFrame.Navigate(typeof(TgChatDownloadPage), Uid);
+                        }
+                    }
+                }
+
+                IsEmptyData = false;
             }
-            if (ChatDetailsFrame is not null && ChatDetailsFrame.GetPageViewModel() is TgChatDownloadViewModel chatDetailsDownloadViewModel)
-                chatDetailsDownloadViewModel.DownloadDto = Dto;
-
-
-            IsEmptyData = false;
-        }
-        finally
-        {
-            await ReloadUiAsync();
-        }
+            finally
+            {
+                await ReloadUiAsync();
+            }
+        });
     }
 
-    private async Task UpdateOnlineAsync() => await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
+    private async Task StartUpdateOnlineAsync() => 
+        await ContentDialogAsync(StartUpdateOnlineCoreAsync, TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task UpdateOnlineCoreAsync() => await LoadOnlineDataAsync(async () =>
-    {
-        try
+    private async Task StartUpdateOnlineCoreAsync() => 
+        await LoadOnlineDataAsync(async () =>
         {
-            if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+            try
+            {
+                if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-            await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
+                // Saved Messages
+                //if (Dto.Id == App.BusinessLogicManager.ConnectClient.Me?.id)
+                //{
+                //    Dto.FirstId = 0;
+                //}
+                
+                await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
 
-            await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
-        }
-        finally
-        {
-            await LoadDataStorageCoreAsync();
-        }
-    });
+                await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
+            }
+            finally
+            {
+                await LoadDataStorageCoreAsync();
+            }
+        });
 
     public async Task SaveChatSettingsAsync() => 
         await ContentDialogAsync(() => SaveChatSettingsCoreAsync(isLoadDataStorage: true), TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
@@ -121,9 +143,15 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task StopDownloadingAsync() => await ContentDialogAsync(StopDownloadingCoreAsync, TgResourceExtensions.AskStopLoading(), TgEnumLoadDesktopType.Online);
+    private async Task StopUpdateOnlineAsync() => 
+        await ContentDialogAsync(StopUpdateOnlineCoreAsync, TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task StopDownloadingCoreAsync() => await App.BusinessLogicManager.ConnectClient.SetForceStopDownloadingAsync();
+    private async Task StopUpdateOnlineCoreAsync()
+    {
+        LoadStateService.StopHardOnlineProcessing();
+        LoadStateService.StopHardDownloadProcessing();
+        await Task.CompletedTask;
+    }
 
     #endregion
 }

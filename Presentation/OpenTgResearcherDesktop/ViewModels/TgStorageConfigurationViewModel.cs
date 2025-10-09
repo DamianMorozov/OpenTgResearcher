@@ -1,6 +1,5 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-[DebuggerDisplay("{ToDebugString()}")]
 public sealed partial class TgStorageConfigurationViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor

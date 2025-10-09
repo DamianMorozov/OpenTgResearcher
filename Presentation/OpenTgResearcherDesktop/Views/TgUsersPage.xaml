@@ -62,7 +62,7 @@
                         Margin="5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.UpdateOnlineCommand}"
+                        Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />

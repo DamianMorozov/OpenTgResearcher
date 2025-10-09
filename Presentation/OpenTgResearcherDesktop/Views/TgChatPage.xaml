@@ -35,34 +35,34 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Start parse  -->
+                    <!--  Start parse Telegram  -->
                     <Button
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.UpdateOnlineCommand}"
+                        Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                             <TextBlock
-                                x:Uid="TextBlockRunParseAndDownloading"
+                                x:Uid="TextBlockStartParseTelegram"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <!--  Stop parse  -->
+                    <!--  Stop parse Telegram  -->
                     <Button
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.StopDownloadingCommand}"
+                        Command="{x:Bind ViewModel.StopUpdateOnlineCommand}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xE71A;" />
                             <TextBlock
-                                x:Uid="TextBlockStopParseAndDownloading"
+                                x:Uid="TextBlockStopParseTelegram"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />
                         </StackPanel>
@@ -101,6 +101,7 @@
                     </Button>
                     <!--  SelectorBar  -->
                     <SelectorBar
+                        x:Name="ChatDetailsSelectorBar"
                         Grid.Row="1"
                         Grid.ColumnSpan="3"
                         Margin="0,-10,0,0"

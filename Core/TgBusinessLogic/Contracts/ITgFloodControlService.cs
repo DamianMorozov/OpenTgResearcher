@@ -20,4 +20,10 @@ public interface ITgFloodControlService : IDisposable
     public int TryExtractFloodWaitSeconds(string message);
     /// <summary> Check flood </summary>
     public bool IsFlood(string message);
+    /// <summary> Gets the size, in bytes, of the current data chunk being processed </summary>
+    public int CurrentChunkSize { get; }
+    /// <summary> Registers a flood hit event </summary>
+    public void RegisterFloodHit();
+    /// <summary> Registers a successful operation event </summary>
+    public void RegisterSuccess();
 }

@@ -129,29 +129,10 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 	}
 
     /// <inheritdoc />
-    public TgEfAppDto GetCurrentAppDto()
-	{
-		var task = GetCurrentDtoAsync();
-		task.Wait();
-		return task.Result;
-	}
-
-    /// <inheritdoc />
     public async Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => await
 		EfContext.Apps.AsTracking()
 			.Where(x => x.Uid != Guid.Empty)
-			.Select(x => new TgEfAppDto() {
-                Uid = x.Uid,
-                ApiHash = x.ApiHash, 
-                ApiId = x.ApiId, 
-                FirstName = x.FirstName, 
-                LastName = x.LastName, 
-                PhoneNumber = x.PhoneNumber,
-				ProxyUid = x.ProxyUid ?? Guid.Empty,
-                UseBot = x.UseBot,
-                BotTokenKey = x.BotTokenKey, 
-                UseClient = x.UseClient,
-            })
+			.Select(x => TgEfDomainUtils.CreateNewDto(x, isUidCopy: true))
 			.FirstOrDefaultAsync(ct)
 		?? new();
 

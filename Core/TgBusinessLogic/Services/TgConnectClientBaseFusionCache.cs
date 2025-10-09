@@ -184,7 +184,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         while (!isMessageFinally)
         {
             if (CheckShouldStop(ct)) return;
-            await Task.Delay(100, ct);
+            await Task.Delay(TgConstants.TimeOutUIMiddleMilliseconds, ct);
         }
 
         // Flush message relation buffer to database
@@ -341,7 +341,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return async (ctx, innerCt) =>
         {
             // Combine external cancellation token with download token
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(innerCt, DownloadToken);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(innerCt, LoadStateService.DownloadToken);
             var ct = linkedCts.Token;
 
             // Return default if cancellation already requested

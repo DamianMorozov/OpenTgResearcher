@@ -17,13 +17,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public StreamWriter? BotStreamWriterLogs { get; private set; } = default!;
     public TgExceptionViewModel ClientException { get; set; } = default!;
     public TgExceptionViewModel ProxyException { get; set; } = default!;
-    public bool IsReady { get; private set; } = default!;
+    [ObservableProperty]
+    public partial bool IsReady { get; private set; } = default!;
     public bool IsNotReady => !IsReady;
     public bool IsProxyUsage { get; private set; } = default!;
     public TL.User? Me { get; protected set; } = default!;
     public SqliteConnection? BotSqlConnection { get; private set; } = default!;
+    
     protected ITgStorageService StorageManager { get; set; } = default!;
     protected ITgFloodControlService FloodControlService { get; set; } = default!;
+    protected ILoadStateService LoadStateService { get; set; } = default!;
 
     public ConcurrentDictionary<long, TL.ChatBase> ChatCache { get; private set; } = [];
     public ConcurrentDictionary<long, TL.ChatBase> DicChats { get; private set; } = [];
@@ -42,15 +45,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
 
-    /// <summary> Cancellation token for download session </summary>
-    private CancellationTokenSource? _downloadCts;
-    /// <summary> Public token to query cancellation state </summary>
-    public CancellationToken DownloadToken { get; private set; } = CancellationToken.None;
-    /// <summary> Cancellation token for log session </summary>
-    private CancellationTokenSource? _logCts;
-    public CancellationToken LogToken { get; private set; } = CancellationToken.None;
     /// <summary> Checks if the operation should be stopped based on the provided cancellation token </summary>
-    private bool CheckShouldStop(CancellationToken ct) => ct.IsCancellationRequested || DownloadToken.IsCancellationRequested || Client is null || Client.Disconnected;
+    private bool CheckShouldStop(CancellationToken ct)
+    {
+        if (ct.IsCancellationRequested) return true;
+        if (Client is null) return true;
+        if (Client.Disconnected) return true;
+        if (LoadStateService.DownloadToken.IsCancellationRequested) return true;
+        return false;
+    }
 
     private IEnumerable<TgEfFilterDto> Filters { get; set; } = [];
     public Func<string, Task> UpdateTitleAsync { get; private set; } = default!;
@@ -69,12 +72,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private TgDownloadSettingsViewModel? _downloadSettings = null;
 
-    protected TgConnectClientBase(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : base()
+    protected TgConnectClientBase(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache, ILoadStateService loadStateService) : base()
     {
         InitializeClient();
         // Services
         StorageManager = storageManager;
         FloodControlService = floodControlService;
+        LoadStateService = loadStateService;
         // FusionCache
         ArgumentNullException.ThrowIfNull(cache);
         Cache = cache;
@@ -84,15 +88,25 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
         _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
+
+        // Callback updates: PropertyChanged
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IsReady))
+            {
+                LoadStateService.SetIsOnlineReady(IsReady);
+            }
+        };
     }
 
-    protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) :
-        base(webHostEnvironment)
+    protected TgConnectClientBase(IWebHostEnvironment webHostEnvironment, ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache, 
+        ILoadStateService loadStateService) : base(webHostEnvironment)
     {
         InitializeClient();
         // Services
         StorageManager = storageManager;
         FloodControlService = floodControlService;
+        LoadStateService = loadStateService;
         // FusionCache
         Cache = cache;
         _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), entity => $"{entity.Id}");
@@ -101,6 +115,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
         _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
+
+        // Callback updates: PropertyChanged
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(IsReady))
+            {
+                LoadStateService.SetIsOnlineReady(IsReady);
+            }
+        };
     }
 
     #endregion
@@ -130,7 +153,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     #region Methods - Flood control
 
     /// <summary> Create an action for logging Telegram messages with flood control </summary>
-    private Action<int, string> BuildTelegramLogAction() => async (level, message) => { await ProcessLogAndCheckFloodAsync(level, message, LogToken); };
+    private Action<int, string> BuildTelegramLogAction() => async (level, message) => { await ProcessLogAndCheckFloodAsync(level, message, LoadStateService.FloodLogToken); };
 
     /// <summary> Processes a log message, checking for flood control and handling it if necessary </summary>
     private async Task ProcessLogAndCheckFloodAsync(int level, string message, CancellationToken ct)
@@ -299,6 +322,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await DisconnectClientAsync(isAfterClientConnect: false);
         await DisconnectBotAsync(isAfterClientConnect: false);
 
+        var uid = Guid.NewGuid();
+        await LoadStateService.PrepareFloodLogTokenAsync(uid);
+
         Client = new(config);
         await ConnectThroughProxyAsync(proxyDto, false);
         Client.OnOther += OnClientOtherAsync;
@@ -365,9 +391,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public async Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config)
     {
-        if (IsReady)
-            return;
+        if (IsReady) return;
         await DisconnectClientAsync(isAfterClientConnect: false);
+
+        var uid = Guid.NewGuid();
+        await LoadStateService.PrepareFloodLogTokenAsync(uid);
+
         Client = new(config);
         await ConnectThroughProxyAsync(proxyDto, true);
         Client.OnOther += OnClientOtherAsync;
@@ -1648,8 +1677,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (iSettings is not TgDownloadSettingsViewModel tgDownloadSettings) return;
         _downloadSettings = tgDownloadSettings;
 
+        var uid = Guid.NewGuid();
         await TryCatchAsync(async () =>
         {
+            await LoadStateService.PrepareDownloadTokenAsync(uid);
             await UpdateChatsViewModelAsync(0, 0, TgEnumChatsMessageType.StartScan);
             await LoginUserAsync(isProxyUpdate: false);
             switch (sourceType)
@@ -1663,7 +1694,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChats.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchChatsAsync(tgDownloadSettings, listIds);
+                    await SearchChatsAsync(tgDownloadSettings, listIds, LoadStateService.DownloadToken);
                     break;
                 case TgEnumSourceType.Dialog:
                     await SetUserAccessForAllChatsAsync(listIds, isUserAccess: false);
@@ -1674,7 +1705,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
                     tgDownloadSettings.SourceScanCount = DicChats.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchChatsAsync(tgDownloadSettings, listIds);
+                    await SearchChatsAsync(tgDownloadSettings, listIds, LoadStateService.DownloadToken);
                     break;
                 case TgEnumSourceType.Story:
                     await CollectAllStoriesAsync();
@@ -1702,6 +1733,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             _downloadSettings = null;
             await UpdateChatsViewModelAsync(0, 0, TgEnumChatsMessageType.StopScan);
             await UpdateTitleAsync(string.Empty);
+            LoadStateService.StopSoftDownloadProcessing(uid);
         });
     }
 
@@ -1757,6 +1789,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             // Then the channels
             foreach (var channel in channels)
             {
+                if (ct.IsCancellationRequested) return;
+
                 counter++;
                 await UpdateChatsViewModelAsync(counter, countAll, TgEnumChatsMessageType.ProcessingChats);
                 tgDownloadSettings.SourceScanCurrent++;
@@ -1807,6 +1841,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         foreach (var group in groups)
         {
+            if (ct.IsCancellationRequested) return counter;
+
             counter++;
             tgDownloadSettings.SourceScanCurrent++;
             if (!group.IsActive) continue;
@@ -1906,25 +1942,27 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (tgDownloadSettings is not TgDownloadSettingsViewModel settings) return;
         _downloadSettings = settings;
 
-        var ct = InitializeTokenDownloadSession();
-        if (CheckShouldStop(ct)) return;
+        var uid = Guid.NewGuid();
+        await LoadStateService.PrepareDownloadTokenAsync(uid);
 
-        await PrepareChatAsync(_downloadSettings, ct);
+        if (CheckShouldStop(LoadStateService.DownloadToken)) return;
+
+        await PrepareChatAsync(_downloadSettings, LoadStateService.DownloadToken);
 
         await TryCatchAsync(async () =>
         {
-            if (CheckShouldStop(ct)) return;
+            if (CheckShouldStop(LoadStateService.DownloadToken)) return;
 
-            var parseHelper = await CheckAccessToMessagesAsync(_downloadSettings, ct);
+            var parseHelper = await CheckAccessToMessagesAsync(_downloadSettings, LoadStateService.DownloadToken);
 
             if (parseHelper.IsAccess)
             {
-                if (CheckShouldStop(ct)) return;
+                if (CheckShouldStop(LoadStateService.DownloadToken)) return;
 
                 // Creating subdirectories
                 if (_downloadSettings.SourceVm.Dto.IsCreatingSubdirectories)
                 {
-                    await EnsureForumDirectoriesAsync(_downloadSettings, parseHelper.Channel, parseHelper.ForumTopicSettings, ct);
+                    await EnsureForumDirectoriesAsync(_downloadSettings, parseHelper.Channel, parseHelper.ForumTopicSettings, LoadStateService.DownloadToken);
                 }
 
                 parseHelper.MessageSettings.CurrentChatId = _downloadSettings.SourceVm.Dto.Id;
@@ -1933,26 +1971,44 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
                 try
                 {
+                    var chunkSize = FloodControlService.CurrentChunkSize;
+
                     while (parseHelper.SourceFirstId <= parseHelper.SourceLastId)
                     {
-                        await DownloadMessagesWithClientAsync(_downloadSettings, parseHelper, ct);
-
-                        await DownloadMessagesWithBotAsync(_downloadSettings, parseHelper, ct);
-
-                        // Count threads
-                        parseHelper.SourceFirstId++;
-                        if (parseHelper.DownloadTasks.Count == _downloadSettings.SourceVm.Dto.CountThreads || parseHelper.SourceFirstId >= parseHelper.SourceLastId)
+                        try
                         {
-                            // Await only already started tasks
-                            await Task.WhenAll(parseHelper.DownloadTasks);
-                            parseHelper.DownloadTasks.Clear();
+                            // Download message portion with client
+                            await DownloadMessagesWithClientAsync(_downloadSettings, parseHelper, chunkSize, LoadStateService.DownloadToken);
+                            //// Download message portion with bot
+                            //await DownloadMessagesWithBotAsync(_downloadSettings, parseHelper, chunkSize, LoadStateService.DownloadToken);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // Cancel gracefully
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log error to keep app running
+                            TgLogUtils.WriteException(ex);
+                            await SetClientExceptionAsync(ex, LoadStateService.DownloadToken);
+                        }
+
+                        // Process tasks in batches limited by CountThreads
+                        while (parseHelper.DownloadTasks.Count >= _downloadSettings.SourceVm.Dto.CountThreads)
+                        {
+                            var tasksToRun = parseHelper.DownloadTasks.Take(_downloadSettings.SourceVm.Dto.CountThreads).ToList();
+
+                            parseHelper.DownloadTasks.RemoveRange(0, tasksToRun.Count);
+
+                            await Task.WhenAll(tasksToRun);
                             parseHelper.MessageSettings.ThreadNumber = 0;
                         }
                     }
                 }
                 finally
                 {
-                    // We guarantee to wait for all tasks
+                    // Ensure all tasks are awaited
                     if (parseHelper.DownloadTasks.Count > 0)
                     {
                         await Task.WhenAll(parseHelper.DownloadTasks);
@@ -1960,30 +2016,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         parseHelper.MessageSettings.ThreadNumber = 0;
                     }
                 }
-
-                //if (!CheckShouldStop(ct))
-                //    _downloadSettings.SourceVm.Dto.FirstId = Math.Min(parseHelper.SourceFirstId, parseHelper.SourceLastId);
             }
             _downloadSettings.SourceVm.Dto.IsDownload = false;
         },
-        async () => await FinalizeDownloadSessionAsync(_downloadSettings, ct),
-        ct: ct);
-    }
-
-    /// <summary> Initialize new cancellation token for current download session </summary>
-    private CancellationToken InitializeTokenDownloadSession()
-    {
-        _downloadCts?.Cancel();
-        _downloadCts?.Dispose();
-        _downloadCts = new CancellationTokenSource();
-        DownloadToken = _downloadCts.Token;
-
-        _logCts?.Cancel();
-        _logCts?.Dispose();
-        _logCts = new CancellationTokenSource();
-        LogToken = _logCts.Token;
-
-        return DownloadToken;
+        async () => await FinalizeDownloadSessionAsync(_downloadSettings, uid),
+        ct: LoadStateService.DownloadToken);
     }
 
     /// <summary> Prepare chat for downloading </summary>
@@ -2018,10 +2055,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             parseHelper.Channel = settings.Chat.Base as TL.Channel;
 
         parseHelper.AppDto = await StorageManager.AppRepository.GetCurrentDtoAsync(ct);
-        if (parseHelper.AppDto.UseClient && parseHelper.Channel is not null)
+        if (parseHelper.AppDto.UseClient)
         {
-            // Call Telegram API with cancellation support
-            parseHelper.IsAccess = await TelegramCallAsync(apiCt => Client.Channels_ReadMessageContents(parseHelper.Channel), isThrow: false, ct);
+            if (parseHelper.Channel is not null)
+            {
+                // Call Telegram API with cancellation support
+                parseHelper.IsAccess = await TelegramCallAsync(apiCt => Client.Channels_ReadMessageContents(parseHelper.Channel), isThrow: false, ct);
+            }
+            // Saved Messages
+            else if (settings.SourceVm.Dto.Id == Me?.id)
+            {
+                parseHelper.IsAccess = true;
+            }
         }
 
         if (parseHelper.AppDto.UseBot && Bot is not null)
@@ -2079,42 +2124,35 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Finalize current download session </summary>
-    private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct)
+    private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel tgDownloadSettings, Guid uid)
     {
         try
         {
-            // Dispose download token
-            _downloadCts?.Dispose();
-            _downloadCts = null;
-            DownloadToken = CancellationToken.None;
-
-            // Dispose log token
-            _logCts?.Dispose();
-            _logCts = null;
-            LogToken = CancellationToken.None;
-
-            if (!CheckShouldStop(ct))
+            if (!CheckShouldStop(LoadStateService.DownloadToken))
             {
-                await FlushMessageBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
+                await FlushMessageBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, 
+                    LoadStateService.DownloadToken);
                 await UpdateTitleAsync(string.Empty);
             }
         }
         finally
         {
             _downloadSettings = null;
+            LoadStateService.StopSoftDownloadProcessing(uid);
         }
     }
 
-    /// <summary> Download messages with client </summary>
-    private async Task DownloadMessagesWithClientAsync(TgDownloadSettingsViewModel settings, TgParseHelper parseHelper, CancellationToken ct)
+    /// <summary> Download message portion with client </summary>
+    private async Task DownloadMessagesWithClientAsync(TgDownloadSettingsViewModel settings, TgParseHelper parseHelper, int chunkSize, CancellationToken ct)
     {
+        var startId = parseHelper.SourceFirstId;
+        var endId = Math.Min(startId + chunkSize - 1, parseHelper.SourceLastId);
+
         if (CheckShouldStop(ct)) return;
         if (parseHelper.AppDto is null || !parseHelper.AppDto.UseClient) return;
 
         if (Client is null || !settings.SourceVm.Dto.IsDownload || (Client is not null && Client.Disconnected))
         {
-            //if (!CheckShouldStop(ct))
-            //    settings.SourceVm.Dto.FirstId = parseHelper.SourceLastId;
             settings.SourceVm.Dto.IsDownload = false;
             parseHelper.DownloadTasks.Clear();
             return;
@@ -2124,98 +2162,157 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             if (Client is null) return;
 
-            // Call Telegram API with cancellation support
-            var messages = parseHelper.Channel is not null
-                ? await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(parseHelper.Channel.id, parseHelper.SourceFirstId),
-                    factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, innerCt) => await TelegramCallAsync(
-                        apiCt => Client.Channels_GetMessages(parseHelper.Channel, parseHelper.SourceFirstId), isThrow: false, innerCt)),
-                    TgCacheUtils.CacheOptionsChannelMessages, ct)
-                : await TelegramCallAsync(apiCt => Client.GetMessages(settings.Chat.Base, parseHelper.SourceFirstId), isThrow: false, ct);
+            Messages_MessagesBase? messages = null;
+            // Saved Messages
+            if (settings.SourceVm.Dto.Id == Me?.id)
+            {
+                var savedPeer = new InputPeerSelf();
+                //messages = await TelegramCallAsync(apiCt => Client.Messages_GetHistory(
+                //    savedPeer, offset_id: 0, limit: 1, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
+                messages = await TelegramCallAsync(apiCt => Client.Messages_GetHistory(
+                    //savedPeer, offset_id: startId, limit: chunkSize, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
+                    // v2
+                    //savedPeer, offset_id: 0, limit: chunkSize, max_id: 0, min_id: startId, add_offset: 0), isThrow: false, ct);
+                    // v3
+                    //savedPeer, offset_id: 0, limit: 0, max_id: 0, min_id: startId, add_offset: chunkSize), isThrow: false, ct);
+                    // v4
+                    //savedPeer, offset_id: startId, limit: chunkSize, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
+                    // v5
+                    //savedPeer, offset_id: parseHelper.SourceFirstId, limit: chunkSize, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
+                    // v6
+                    savedPeer, offset_id: parseHelper.SourceFirstId + chunkSize, //parseHelper.SourceFirstId + chunkSize,
+                    limit: chunkSize,
+                    max_id: 0,
+                    min_id: 0,
+                    add_offset: 0), isThrow: false, ct);
 
-            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, parseHelper.SourceFirstId):#00.00} %");
+                if (messages.Messages.Length > 0)
+                {
+                    var startNew = messages.Messages.Min(x => x.ID);
+                    var endNew = messages.Messages.Max(x => x.ID);
+                    // Move window
+                    //parseHelper.SourceFirstId = startNew + 1;
+                    parseHelper.SourceFirstId += chunkSize;
+                }
+                else
+                {
+                    // Move window
+                    parseHelper.SourceFirstId += chunkSize;
+                }
+            }
+            else if (parseHelper.Channel is not null)
+            {
+                // Move window
+                parseHelper.SourceFirstId += chunkSize;
+
+                // Channel messages via InputMessage[]
+                var inputMessages = Enumerable.Range(startId, endId - startId + 1).Select(i => (TL.InputMessage)i).ToArray();
+                // Call Telegram API with cancellation support
+                messages = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessages(parseHelper.Channel.id, startId, endId),
+                    factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, innerCt) => await TelegramCallAsync(
+                        apiCt => Client.Channels_GetMessages(parseHelper.Channel, inputMessages), isThrow: false, innerCt)),
+                    TgCacheUtils.CacheOptionsChannelMessages, ct);
+            }
+            else
+            {
+                // Generic chat fallback
+                messages = await TelegramCallAsync(apiCt => Client.GetMessages(settings.Chat.Base, startId), isThrow: false, ct);
+            }
+
+            // Update progress per chunk
+            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, endId):#00.00} %");
+            if (settings.SourceVm.Dto.Id == Me?.id)
+            {
+                await UpdateChatViewModelAsync(settings.SourceVm.Dto.Id, startId, parseHelper.SourceLastId, "Read Saved Messages");
+            }
+
             // Check deleted messages and mark storage entity
             var firstMessage = messages?.Messages.FirstOrDefault();
             if (firstMessage is null)
             {
                 // Mark as deleted only if not cancelled
                 if (!CheckShouldStop(ct))
-                    await CheckDeletedMessageAndMarkEntityAsync(settings.SourceVm.Dto.Id, parseHelper.SourceFirstId);
+                    await CheckDeletedMessageAndMarkEntityAsync(settings.SourceVm.Dto.Id, startId);
+                return;
             }
-            else
-            {
-                if (messages is not null)
-                {
-                    foreach (var message in messages.Messages)
-                    {
-                        if (CheckShouldStop(ct)) break;
 
+            if (messages is not null)
+            {
+                foreach (var message in messages.Messages)
+                {
+                    if (CheckShouldStop(ct)) break;
+                    if (message.ID < startId || message.ID > endId) continue;
+
+                    if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
+                    {
+                        parseHelper.DownloadTasks.Add(ParseChatMessageAsync(settings, messageBase, parseHelper.ChatCache, parseHelper.MessageSettings, parseHelper.ForumTopicSettings, ct));
+                    }
+                    else
+                    {
                         // Check message exists
-                        if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
-                            parseHelper.DownloadTasks.Add(ParseChatMessageAsync(settings, messageBase, parseHelper.ChatCache, parseHelper.MessageSettings, parseHelper.ForumTopicSettings, ct));
-                        else
-                            await UpdateChatViewModelAsync(parseHelper.MessageSettings.CurrentChatId, message.ID, settings.SourceVm.Dto.Count, "Empty message");
+                        await UpdateChatViewModelAsync(parseHelper.MessageSettings.CurrentChatId, message.ID, settings.SourceVm.Dto.Count, "Empty message");
                     }
                 }
             }
         }, ct: ct);
     }
 
-    /// <summary> Download messages with bot </summary>
-    private async Task DownloadMessagesWithBotAsync(TgDownloadSettingsViewModel settings, TgParseHelper parseHelper, CancellationToken ct)
-    {
-        if (CheckShouldStop(ct)) return;
-        if (parseHelper.AppDto is null || !parseHelper.AppDto.UseBot) return;
+    /// <summary> Download message portion with bot </summary>
+    //private async Task DownloadMessagesWithBotAsync(TgDownloadSettingsViewModel settings, TgParseHelper parseHelper, int chunkSize, CancellationToken ct)
+    //{
+    //    if (CheckShouldStop(ct)) return;
+    //    if (parseHelper.AppDto is null || !parseHelper.AppDto.UseBot) return;
 
-        if (Bot is null || !settings.SourceVm.Dto.IsDownload || (Bot.Client is not null && Bot.Client.Disconnected))
-        {
-            //if (!CheckShouldStop(ct))
-            //    settings.SourceVm.Dto.FirstId = parseHelper.SourceLastId;
-            settings.SourceVm.Dto.IsDownload = false;
-            parseHelper.DownloadTasks.Clear();
-            return;
-        }
+    //    if (Bot is null || !settings.SourceVm.Dto.IsDownload || (Bot.Client is not null && Bot.Client.Disconnected))
+    //    {
+    //        //if (!CheckShouldStop(ct))
+    //        //    settings.SourceVm.Dto.FirstId = parseHelper.SourceLastId;
+    //        settings.SourceVm.Dto.IsDownload = false;
+    //        parseHelper.DownloadTasks.Clear();
+    //        return;
+    //    }
 
-        await TryCatchAsync(async () =>
-        {
-            if (Bot is null || parseHelper.BotChatFullInfo is null) return;
-            var messages = await Bot.GetMessagesById(parseHelper.BotChatFullInfo, [parseHelper.SourceFirstId]);
-            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, parseHelper.SourceFirstId):#00.00} %");
+    //    await TryCatchAsync(async () =>
+    //    {
+    //        if (Bot is null || parseHelper.BotChatFullInfo is null) return;
+    //        var messages = await Bot.GetMessagesById(parseHelper.BotChatFullInfo, [parseHelper.SourceFirstId]);
+    //        await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, parseHelper.SourceFirstId):#00.00} %");
 
-            if (CheckShouldStop(ct)) return;
+    //        if (CheckShouldStop(ct)) return;
 
-            foreach (var message in messages.AsReadOnly())
-            {
-                if (CheckShouldStop(ct)) break;
+    //        foreach (var message in messages.AsReadOnly())
+    //        {
+    //            if (CheckShouldStop(ct)) break;
 
-                // Check message exists
-                if (message.TLMessage is MessageBase messageBase && message.Date > DateTime.MinValue)
-                    parseHelper.DownloadTasks.Add(ParseChatMessageAsync(settings, messageBase, parseHelper.ChatCache, parseHelper.MessageSettings, parseHelper.ForumTopicSettings, ct));
-            }
+    //            // Check message exists
+    //            if (message.TLMessage is MessageBase messageBase && message.Date > DateTime.MinValue)
+    //                parseHelper.DownloadTasks.Add(ParseChatMessageAsync(settings, messageBase, parseHelper.ChatCache, parseHelper.MessageSettings, parseHelper.ForumTopicSettings, ct));
+    //        }
 
-            if (CheckShouldStop(ct) || Bot.Client is null) return;
+    //        if (CheckShouldStop(ct) || Bot.Client is null) return;
 
-            // Call Telegram API with cancellation support
-            var messages2 = parseHelper.Channel is not null
-                ? await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(parseHelper.Channel.id, parseHelper.SourceFirstId),
-                    factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, innerCt) => await TelegramCallAsync(
-                        apiCt => Bot.Client.Channels_GetMessages(parseHelper.Channel, parseHelper.SourceFirstId), isThrow: false, innerCt)),
-                    TgCacheUtils.CacheOptionsChannelMessages, ct)
-                : await TelegramCallAsync(apiCt => Bot.Client.GetMessages(settings.Chat.Base, parseHelper.SourceFirstId), isThrow: false, ct);
+    //        // Call Telegram API with cancellation support
+    //        var messages2 = parseHelper.Channel is not null
+    //            ? await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessage(parseHelper.Channel.id, parseHelper.SourceFirstId),
+    //                factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, innerCt) => await TelegramCallAsync(
+    //                    apiCt => Bot.Client.Channels_GetMessages(parseHelper.Channel, parseHelper.SourceFirstId), isThrow: false, innerCt)),
+    //                TgCacheUtils.CacheOptionsChannelMessages, ct)
+    //            : await TelegramCallAsync(apiCt => Bot.Client.GetMessages(settings.Chat.Base, parseHelper.SourceFirstId), isThrow: false, ct);
 
-            await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, parseHelper.SourceFirstId):#00.00} %");
-            if (messages2 is not null)
-            {
-                foreach (var message in messages2.Messages)
-                {
-                    if (CheckShouldStop(ct)) break;
+    //        await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, parseHelper.SourceFirstId):#00.00} %");
+    //        if (messages2 is not null)
+    //        {
+    //            foreach (var message in messages2.Messages)
+    //            {
+    //                if (CheckShouldStop(ct)) break;
 
-                    if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
-                        parseHelper.DownloadTasks.Add(ParseChatMessageAsync(settings, messageBase, parseHelper.ChatCache, parseHelper.MessageSettings,
-                            parseHelper.ForumTopicSettings, ct));
-                }
-            }
-        }, ct: ct);
-    }
+    //                if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
+    //                    parseHelper.DownloadTasks.Add(ParseChatMessageAsync(settings, messageBase, parseHelper.ChatCache, parseHelper.MessageSettings,
+    //                        parseHelper.ForumTopicSettings, ct));
+    //            }
+    //        }
+    //    }, ct: ct);
+    //}
 
     /// <summary> Mark storage entity as deleted </summary>
     private async Task CheckDeletedMessageAndMarkEntityAsync(long chatId, int messageId)
@@ -2227,24 +2324,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             messageEntity.IsDeleted = true;
 
             await StorageManager.MessageRepository.SaveAsync(messageEntity);
-        }
-    }
-
-    /// <summary> Request to cancel current download session </summary>
-    public async Task SetForceStopDownloadingAsync()
-    {
-        try
-        {
-            // Signal cancellation to all awaiting operations
-            _downloadCts?.Cancel();
-            _logCts?.Cancel();
-
-            await Task.CompletedTask;
-        }
-        catch (Exception ex)
-        {
-            // Log cancellation error
-            TgLogUtils.WriteException(ex);
         }
     }
 
@@ -2558,10 +2637,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Early exit if cancellation requested
         if (CheckShouldStop(ct)) return;
 
+        var key = TgCacheUtils.GetCacheKeyMessageProcessed(messageSettings.CurrentChatId, messageSettings.CurrentMessageId);
+        //TgLogUtils.WriteLog($"{nameof(ParseChatMessageCoreAsync)}: key={key} chat={messageSettings.CurrentChatId} msg={messageSettings.CurrentMessageId} " +
+        //    $"{nameof(ct)}.IsCanceled={ct.IsCancellationRequested} {nameof(_downloadToken)}.IsCanceled={_downloadToken.IsCancellationRequested} ClientNull={(Client == null)}");
+
         // Ensure message is processed only once using cache
-        _ = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessageProcessed(messageSettings.CurrentChatId, messageSettings.CurrentMessageId),
+        _ = await Cache.GetOrSetAsync(key,
             factory: SafeFactory<bool>(async (ctx, innerCt) =>
             {
+                //TgLogUtils.WriteLog($"Factory invoked for key={key} innerCt.IsCanceled={innerCt.IsCancellationRequested}");
+
                 // Merge external token with DownloadToken
                 using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(innerCt, ct);
                 var innerToken = linkedCts.Token;
@@ -3204,7 +3289,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (CheckShouldStop(ct)) return;
 
             // Save message entity
-            if (authorId > 0 && messageSettings.CurrentMessageId > 0 && messageSettings.CurrentChatId > 0)
+            if (messageSettings.CurrentMessageId > 0 && messageSettings.CurrentChatId > 0) 
             {
                 var messageItem = new TgEfMessageEntity
                 {
@@ -3216,10 +3301,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     Message = message,
                     UserId = authorId,
                 };
-                // Check if the message is not already in the batch
-                if (_messageBuffer.FirstOrDefault(x => x.Id == messageItem.Id && x.SourceId == messageItem.SourceId && x.UserId == messageItem.UserId) is null)
+                // Saved Messages
+                if (tgDownloadSettings.SourceVm.Dto.Id == Me?.id)
                 {
-                    _messageBuffer.Add(messageItem);
+                    messageItem.UserId = tgDownloadSettings.SourceVm.Dto.Id;
+                }
+                else if (authorId > 0)
+                {
+                    messageItem.UserId = authorId;
+                }
+                // Save message entity
+                {
+                    // Check if the message is not already in the batch
+                    if (_messageBuffer.FirstOrDefault(x => x.Id == messageItem.Id && x.SourceId == messageItem.SourceId && x.UserId == messageItem.UserId) is null)
+                    {
+                        _messageBuffer.Add(messageItem);
+                    }
                 }
             }
 
@@ -3269,8 +3366,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             if (!CheckShouldStop(ct))
             {
-                await UpdateStateMessageThreadAsync(
-                    messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, false, messageSettings.ThreadNumber);
+                await UpdateStateMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, false, messageSettings.ThreadNumber);
 
                 await FlushMessageBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }
@@ -3356,6 +3452,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             TgLogUtils.WriteException(ex);
             await SetClientExceptionAsync(ex);
+        }
+        finally
+        {
+            LoadStateService.StopHardFloodLogProcessing();
         }
     }
 
@@ -3899,6 +3999,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <inheritdoc />
     public async Task<int> GetChatLastMessageIdAsync(long chatId, CancellationToken ct)
     {
+        // Saved Messages
+        if (chatId == Me?.id)
+        {
+            var savedPeer = new InputPeerSelf();
+            var messages = await TelegramCallAsync(apiCt => Client.Messages_GetHistory(
+                savedPeer, offset_id: 0, limit: 1, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
+            var lastNumber = messages.Messages.FirstOrDefault()?.ID ?? 0;
+            return lastNumber;
+        }
+
         var chatBase = GetChatBaseFromUserChats(chatId);
         if (chatBase is null) return 0;
 
@@ -4200,6 +4310,32 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         
         return false;
+    }
+
+    #endregion
+
+    #region Methods - Saved Messages
+
+    /// <summary> Opens the saved messages chat for the current user, or creates it if it does not exist </summary>
+    public async Task<Guid> OpenOrCreateSavedMessagesAsync()
+    {
+        if (Client is null) return Guid.Empty;
+        if (Me is null) return Guid.Empty;
+
+        var chatId = Me.id;
+        var chatResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = chatId });
+        if (chatResult is { IsExists: true, Item: { } }) return chatResult.Item.Uid;
+        
+        var chatEntity = new TgEfSourceEntity
+        {
+            Uid = Guid.NewGuid(),
+            Id = chatId,
+            UserName = Me.username ?? string.Empty,
+            Title = $"{Me.first_name} {Me.last_name}".Trim(),
+            IsActive = true,
+        };
+        await StorageManager.SourceRepository.SaveAsync(chatEntity);
+        return chatEntity.Uid;
     }
 
     #endregion

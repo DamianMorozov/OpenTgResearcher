@@ -3,12 +3,12 @@
 /// <summary> Blazor connection client </summary>
 public sealed partial class TgConnectClientBlazor : TgConnectClientBase, ITgConnectClientBlazor
 {
-    public TgConnectClientBlazor(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
-        base(storageManager, floodControlService, cache) { }
+    public TgConnectClientBlazor(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache, ILoadStateService loadStateService) : 
+        base(storageManager, floodControlService, cache, loadStateService) { }
 
     public TgConnectClientBlazor(IWebHostEnvironment webHostEnvironment, ITgStorageService storageManager, ITgFloodControlService floodControlService,
-        IFusionCache cache) : 
-        base(webHostEnvironment, storageManager, floodControlService, cache)
+        IFusionCache cache, LoadStateService loadStateService) : 
+        base(webHostEnvironment, storageManager, floodControlService, cache, loadStateService)
     {
         //
     }

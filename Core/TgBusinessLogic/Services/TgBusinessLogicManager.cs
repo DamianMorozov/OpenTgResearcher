@@ -9,6 +9,7 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
     public ITgLicenseService LicenseService { get; private set; } = default!;
     public ITgConnectClient ConnectClient { get; private set; } = default!;
     public ITgFloodControlService FloodControlService { get; private set; } = default!;
+    public ILoadStateService LoadStateService { get; private set; } = default!;
     public IFusionCache Cache { get; private set; } = default!;
 
     public TgBusinessLogicManager() : base()
@@ -18,24 +19,25 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         StorageManager = Scope.Resolve<ITgStorageService>();
         LicenseService = Scope.Resolve<ITgLicenseService>(new TypedParameter(typeof(ITgStorageService), StorageManager));
         FloodControlService = Scope.Resolve<ITgFloodControlService>();
+        LoadStateService = Scope.Resolve<ILoadStateService>();
         Cache = Scope.Resolve<IFusionCache>();
         ConnectClient = TgGlobalTools.AppType switch
         {
             TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(
                 new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
-                new TypedParameter(typeof(IFusionCache), Cache)),
+                new TypedParameter(typeof(IFusionCache), Cache), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(
                 new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
-                new TypedParameter(typeof(IFusionCache), Cache)),
+                new TypedParameter(typeof(IFusionCache), Cache), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(
                 new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
-                new TypedParameter(typeof(IFusionCache), Cache)),
+                new TypedParameter(typeof(IFusionCache), Cache), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(
                 new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
-                new TypedParameter(typeof(IFusionCache), Cache)),
+                new TypedParameter(typeof(IFusionCache), Cache), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(
                 new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService),
-                new TypedParameter(typeof(IFusionCache), Cache)),
+                new TypedParameter(typeof(IFusionCache), Cache), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
         };
     }
 
@@ -50,15 +52,15 @@ public sealed class TgBusinessLogicManager : TgWebDisposable, ITgBusinessLogicMa
         ConnectClient = TgGlobalTools.AppType switch
         {
             TgEnumAppType.Console => Scope.Resolve<ITgConnectClientConsole>(
-                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Desktop => Scope.Resolve<ITgConnectClientDesktop>(
-                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Blazor => Scope.Resolve<ITgConnectClientBlazor>(new TypedParameter(typeof(IWebHostEnvironment), webHostEnvironment),
-                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Test => Scope.Resolve<ITgConnectClientTest>(
-                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
             TgEnumAppType.Memory or _ => Scope.Resolve<ITgConnectClient>(
-                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService)),
+                new TypedParameter(typeof(ITgStorageService), StorageManager), new TypedParameter(typeof(ITgFloodControlService), FloodControlService), new TypedParameter(typeof(ILoadStateService), LoadStateService)),
         };
     }
 

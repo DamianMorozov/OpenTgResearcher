@@ -20,6 +20,14 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     [GeneratedRegex(@"FLOOD_WAIT_(\d+)")]
     public static partial Regex RegexFloodWait();
 
+    private const int MinChunk = 50;
+    private const int MaxChunk = 200;
+    private const int DefaultChunk = 100;
+    private int _currentChunk = DefaultChunk;
+    private int _floodHits = 0;
+    private int _successHits = 0;
+    public int CurrentChunkSize => _currentChunk;
+
     #endregion
 
     #region TgDisposable
@@ -114,7 +122,16 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     {
         if (string.IsNullOrEmpty(message)) return 0;
         var match = RegexFloodWait().Match(message);
-        return match.Success && int.TryParse(match.Groups[1].Value, out var seconds) ? seconds + 1 : 0;
+        var waitSeconds = match.Success && int.TryParse(match.Groups[1].Value, out var seconds) ? seconds + 1 : 0;
+        if (waitSeconds > 0)
+        {
+            RegisterFloodHit();
+        }
+        else
+        {
+            RegisterSuccess();
+        }
+        return waitSeconds;
     }
 
     /// <inheritdoc />
@@ -143,6 +160,29 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 
         // Fallback: check message
         return TryExtractFloodWaitSeconds(ex.Message);
+    }
+
+    /// <inheritdoc />
+    public void RegisterFloodHit()
+    {
+        _floodHits++;
+        _successHits = 0;
+        if (_floodHits >= 2) // Two floods in a row → shrink
+        {
+            _currentChunk = Math.Max(MinChunk, _currentChunk / 2);
+            _floodHits = 0;
+        }
+    }
+
+    /// <inheritdoc />
+    public void RegisterSuccess()
+    {
+        _successHits++;
+        if (_successHits >= 5) // Five stable calls → grow
+        {
+            _currentChunk = Math.Min(MaxChunk, _currentChunk + 20);
+            _successHits = 0;
+        }
     }
 
     #endregion

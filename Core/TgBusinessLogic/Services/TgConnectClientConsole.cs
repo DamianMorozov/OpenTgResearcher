@@ -1,12 +1,12 @@
 ﻿namespace TgBusinessLogic.Services;
 
 /// <summary> Console connection client </summary>
-public partial class TgConnectClientConsole(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache) : 
-    TgConnectClientBase(storageManager, floodControlService, cache), ITgConnectClientConsole
+public partial class TgConnectClientConsole(ITgStorageService storageManager, ITgFloodControlService floodControlService, IFusionCache cache, ILoadStateService loadStateService) :
+    TgConnectClientBase(storageManager, floodControlService, cache, loadStateService), ITgConnectClientConsole
 {
     public override async Task LoginUserAsync(bool isProxyUpdate)
-	{
-		ClientException = new();
+    {
+        ClientException = new();
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
         if (appDto.UseClient)
         {

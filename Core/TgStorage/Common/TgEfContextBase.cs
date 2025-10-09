@@ -30,13 +30,19 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     /// <inheritdoc />
     public DbSet<TgEfVersionEntity> Versions { get; set; } = null!;
 
+    private bool _isCreated;
+
     public static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 
     // Public constructor need for resolve: The exception 'A suitable constructor for type 'TgStorage.Domain.TgEfContextBase' could not be located
     public TgEfContextBase()
     {
 #if DEBUG
-        Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+        if (!_isCreated)
+        {
+            Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+            _isCreated = true;
+        }
 #endif
     }
 
@@ -46,7 +52,11 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     public TgEfContextBase(DbContextOptions options) : base(options)
     {
 #if DEBUG
-        Debug.WriteLine($"{nameof(TgEfContextBase)} is created with {nameof(options)}", TgConstants.LogTypeStorage);
+        if (!_isCreated)
+        {
+            Debug.WriteLine($"{nameof(TgEfContextBase)} is created with {nameof(options)}", TgConstants.LogTypeStorage);
+            _isCreated = true;
+        }
 #endif
     }
 
@@ -56,10 +66,13 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     public TgEfContextBase(DbContextOptions<TgEfContextBase> options) : base(options)
     {
 #if DEBUG
-        Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+        if (!_isCreated)
+        {
+            Debug.WriteLine($"{nameof(TgEfContextBase)} is created", TgConstants.LogTypeStorage);
+            _isCreated = true;
+        }
 #endif
     }
-
 
     #endregion
 

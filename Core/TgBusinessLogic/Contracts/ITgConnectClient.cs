@@ -49,7 +49,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings, CancellationToken ct = default);
 	public Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings);
 	public Task MarkHistoryReadAsync(CancellationToken ct = default);
-	public Task SetForceStopDownloadingAsync();
 	public Task UpdateSourceDbAsync(ITgEfSourceViewModel sourceVm, ITgDownloadViewModel tgDownloadSettings, CancellationToken ct = default);
     /// <summary> Get user id </summary>
     public Task<long> GetUserIdAsync(CancellationToken ct = default);
@@ -94,4 +93,6 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task<bool> CheckUserMemberAsync(TL.InputChannel inputChannel, long userId, long accessHash);
     /// <summary> Check if user is a member of the chat </summary>
     public Task<bool> CheckUserMemberAsync(WTelegram.Client? client, TL.InputChannel inputChannel, long userId, long accessHash);
+    /// <summary> Opens or creates the "Saved Messages" chat </summary>
+    public Task<Guid> OpenOrCreateSavedMessagesAsync();
 }

@@ -22,4 +22,7 @@ public sealed class TgConstants
 	public static string OTR => "OTR";
 	public static string LocaleEnUs => "en-US";
 	public static string LocaleRuRu => "ru-RU";
+    public static int TimeOutUIShortMilliseconds = 50;
+    public static int TimeOutUIMiddleMilliseconds = 500;
+    public static int TimeOutUILongMilliseconds = 1_000;
 }

@@ -20,9 +20,9 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     [GeneratedRegex(@"FLOOD_WAIT_(\d+)")]
     public static partial Regex RegexFloodWait();
 
-    private const int MinChunk = 50;
-    private const int MaxChunk = 200;
-    private const int DefaultChunk = 100;
+    private const int MinChunk = 1;
+    private const int MaxChunk = 20;
+    private const int DefaultChunk = 10;
     private int _currentChunk = DefaultChunk;
     private int _floodHits = 0;
     private int _successHits = 0;

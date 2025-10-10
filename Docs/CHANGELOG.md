@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixing the Telegram parsing cancellation operation
 - Fixing auto-connection to Telegram when starting `OpenTgResearcherConsole`
 - Fixed Flood Control display when parsing chat in `OpenTgResearcherConsole`
+- Fixing of some errors in the basic logic of Telegram parsing
 ### Changed
 - NuGet package update
 - Optimization of `TgStorage`

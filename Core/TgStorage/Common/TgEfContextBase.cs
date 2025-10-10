@@ -30,7 +30,9 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
     /// <inheritdoc />
     public DbSet<TgEfVersionEntity> Versions { get; set; } = null!;
 
+#if DEBUG
     private bool _isCreated;
+#endif
 
     public static TgAppSettingsHelper TgAppSettings => TgAppSettingsHelper.Instance;
 
@@ -74,7 +76,7 @@ public abstract class TgEfContextBase : DbContext, ITgEfContext, ITgDisposable
 #endif
     }
 
-    #endregion
+#endregion
 
     #region IDisposable
 

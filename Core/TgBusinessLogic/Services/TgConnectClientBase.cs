@@ -1997,6 +1997,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         // Process tasks in batches limited by CountThreads
                         while (parseHelper.DownloadTasks.Count >= _downloadSettings.SourceVm.Dto.CountThreads)
                         {
+                            if (LoadStateService.DownloadToken.IsCancellationRequested) break;
+
                             var tasksToRun = parseHelper.DownloadTasks.Take(_downloadSettings.SourceVm.Dto.CountThreads).ToList();
 
                             parseHelper.DownloadTasks.RemoveRange(0, tasksToRun.Count);
@@ -2167,20 +2169,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (settings.SourceVm.Dto.Id == Me?.id)
             {
                 var savedPeer = new InputPeerSelf();
-                //messages = await TelegramCallAsync(apiCt => Client.Messages_GetHistory(
-                //    savedPeer, offset_id: 0, limit: 1, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
                 messages = await TelegramCallAsync(apiCt => Client.Messages_GetHistory(
-                    //savedPeer, offset_id: startId, limit: chunkSize, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
-                    // v2
-                    //savedPeer, offset_id: 0, limit: chunkSize, max_id: 0, min_id: startId, add_offset: 0), isThrow: false, ct);
-                    // v3
-                    //savedPeer, offset_id: 0, limit: 0, max_id: 0, min_id: startId, add_offset: chunkSize), isThrow: false, ct);
-                    // v4
-                    //savedPeer, offset_id: startId, limit: chunkSize, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
-                    // v5
-                    //savedPeer, offset_id: parseHelper.SourceFirstId, limit: chunkSize, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
-                    // v6
-                    savedPeer, offset_id: parseHelper.SourceFirstId + chunkSize, //parseHelper.SourceFirstId + chunkSize,
+                //  savedPeer, offset_id: 0, limit: 1, max_id: 0, min_id: 0, add_offset: 0), isThrow: false, ct);
+                    savedPeer, offset_id: parseHelper.SourceFirstId + chunkSize,
                     limit: chunkSize,
                     max_id: 0,
                     min_id: 0,
@@ -2191,7 +2182,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     var startNew = messages.Messages.Min(x => x.ID);
                     var endNew = messages.Messages.Max(x => x.ID);
                     // Move window
-                    //parseHelper.SourceFirstId = startNew + 1;
                     parseHelper.SourceFirstId += chunkSize;
                 }
                 else
@@ -2467,8 +2457,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             var authorId = headMessage.From?.ID ?? 0;
                             if (!CheckShouldStop(ct))
                             {
-                                //await SaveMessagesAsync(tgDownloadSettings, rootSettings, headMessage.Date, size: 0,
-                                //    headMessage.message, TgEnumMessageType.Message, isRetry: false, authorId, ct);
                                 await ParseChatMessageCoreAsync(tgDownloadSettings, headMessage, chatCache, forumTopicSettings, headMessage, rootSettings, ct);
                             }
 
@@ -2493,9 +2481,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                     if (replyMessage is Message rpl)
                                     {
                                         var replySettings = messageSettings.Clone();
-                                        //// Parent = the channel's original post (before switching chats)
-                                        //replySettings.ParentChatId = replySettings.CurrentChatId;
-                                        //replySettings.ParentMessageId = replySettings.CurrentMessageId;
                                         // Parent - channel's original post
                                         replySettings.ParentChatId = messageSettings.CurrentChatId;
                                         replySettings.ParentMessageId = messageSettings.CurrentMessageId;
@@ -2638,15 +2623,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (CheckShouldStop(ct)) return;
 
         var key = TgCacheUtils.GetCacheKeyMessageProcessed(messageSettings.CurrentChatId, messageSettings.CurrentMessageId);
-        //TgLogUtils.WriteLog($"{nameof(ParseChatMessageCoreAsync)}: key={key} chat={messageSettings.CurrentChatId} msg={messageSettings.CurrentMessageId} " +
-        //    $"{nameof(ct)}.IsCanceled={ct.IsCancellationRequested} {nameof(_downloadToken)}.IsCanceled={_downloadToken.IsCancellationRequested} ClientNull={(Client == null)}");
 
         // Ensure message is processed only once using cache
         _ = await Cache.GetOrSetAsync(key,
             factory: SafeFactory<bool>(async (ctx, innerCt) =>
             {
-                //TgLogUtils.WriteLog($"Factory invoked for key={key} innerCt.IsCanceled={innerCt.IsCancellationRequested}");
-
                 // Merge external token with DownloadToken
                 using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(innerCt, ct);
                 var innerToken = linkedCts.Token;

@@ -53,7 +53,8 @@ internal partial class TgMenuHelper
 	private async Task RunTaskProgressCoreAsync(ProgressContext progressContext, TgDownloadSettingsViewModel tgDownloadSettings,
 		Func<TgDownloadSettingsViewModel, Task> func, bool isScanCount)
 	{
-		var stringLimit = Console.WindowWidth / 2 - 10;
+        ProgressTask? floodTask = null;
+        var stringLimit = Console.WindowWidth / 2 - 10;
 		var progressSourceDefaultName = TgDataFormatUtils.GetFormatStringWithStrongLength("Starting reading the source", stringLimit).TrimEnd();
 		// progressMessages
 		var progressMessages = new List<ProgressTask>();
@@ -65,8 +66,9 @@ internal partial class TgMenuHelper
         BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
         BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
 		BusinessLogicManager.ConnectClient.SetupUpdateStateMessageThread(UpdateStateMessageThreadAsync);
-		// Task
-		await func(tgDownloadSettings);
+        BusinessLogicManager.ConnectClient.SetupUpdateShellViewModel(UpdateShellViewModelAsync);
+        // Task
+        await func(tgDownloadSettings);
 		//swMessage.Stop();
 		var progressMessagesStarted = progressMessages.Where(x => x.IsStarted).ToList();
 		foreach (var progress in progressMessagesStarted)
@@ -142,7 +144,7 @@ internal partial class TgMenuHelper
 			{
                 TgDebugUtils.WriteExceptionToDebug(ex);
             }
-		}
+        }
 		// Update message
 		async Task UpdateStateMessageThreadAsync(long sourceId, int messageId, string message, bool isStartTask, int threadNumber)
 		{
@@ -177,9 +179,43 @@ internal partial class TgMenuHelper
                 TgDebugUtils.WriteExceptionToDebug(ex);
             }
 		}
-	}
+        // Update shell ViewModel
+        async Task UpdateShellViewModelAsync(bool isFloodVisible, int seconds, string message)
+        {
+            if (isFloodVisible)
+            {
+                var desc = !string.IsNullOrEmpty(message)
+                    ? TgLog.GetMarkupString($" Flood control: wait {seconds} seconds | {message}")
+                    : TgLog.GetMarkupString($" Flood control: wait {seconds} seconds");
+                if (floodTask is null)
+                {
+                    floodTask = progressContext.AddTask(desc, autoStart: true, maxValue: 1);
+                }
+                else
+                {
+                    floodTask.Description = desc;
+                    if (!floodTask.IsStarted)
+                        floodTask.StartTask();
+                }
+            }
+            else
+            {
+                if (floodTask is not null)
+                {
+                    floodTask.StopTask();
+                    floodTask = null; // reset
+                }
+                if (!string.IsNullOrEmpty(message))
+                {
+                    progressContext.AddTask(TgLog.GetMarkupString(message), autoStart: true, maxValue: 1).StopTask();
+                }
+            }
+            progressContext.Refresh();
+            await Task.CompletedTask;
+        }
+    }
 
-	public async Task RunTaskStatusAsync(TgDownloadSettingsViewModel tgDownloadSettings, Func<TgDownloadSettingsViewModel, Task> func,
+    public async Task RunTaskStatusAsync(TgDownloadSettingsViewModel tgDownloadSettings, Func<TgDownloadSettingsViewModel, Task> func,
 		bool isSkipCheckTgSettings, bool isScanCount, bool isWaitComplete, bool isUpdateChatViewModel = true)
 	{
 		if (!isSkipCheckTgSettings && !await CheckTgSettingsWithWarningAsync(tgDownloadSettings))

@@ -9,6 +9,7 @@
 - Оптимизация колонок таблиц в `OpenTgResearcherDesktop`
 - Исправление операции отмены парсинга Телеграм
 - Исправление автоподключения к Telegram при старте в `OpenTgResearcherConsole`
+- Исправление отображения Flood Control при парсинге чата в `OpenTgResearcherConsole`
 ### Изменено
 - Обновление NuGet пакетов
 - Оптимизация `TgStorage`

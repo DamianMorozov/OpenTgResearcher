@@ -96,7 +96,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
     public string ToDebugString() => TgObjectUtils.ToDebugString(this);
 
-    // TODO: Fix here
+    // TODO: fix language
     public void SetAppLanguage()
     {
         try

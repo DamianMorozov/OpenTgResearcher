@@ -3070,6 +3070,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task DownloadMediaFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageBase messageBase, TL.MessageMedia messageMedia,
         TgChatCache chatCache, TgMessageSettings messageSettings, TgForumTopicSettings forumTopicSettings, CancellationToken ct)
     {
+        // TODO: add a counter for messages and media files
         if (CheckShouldStop(ct)) return;
 
         // Add chat from Storage to Cache

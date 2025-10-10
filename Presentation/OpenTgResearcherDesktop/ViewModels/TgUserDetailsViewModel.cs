@@ -53,7 +53,6 @@ public sealed partial class TgUserDetailsViewModel : TgPageViewModelBase
     private async Task LoadDataStorageAsync() => 
         await ContentDialogAsync(LoadDataStorageCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
-    // TODO: Add new table CHATS_USERS
     private async Task LoadDataStorageCoreAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;

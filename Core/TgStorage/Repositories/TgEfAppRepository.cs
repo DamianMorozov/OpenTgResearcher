@@ -132,8 +132,8 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
     public async Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => await
 		EfContext.Apps.AsTracking()
 			.Where(x => x.Uid != Guid.Empty)
-			.Select(x => TgEfDomainUtils.CreateNewDto(x, isUidCopy: true))
-			.FirstOrDefaultAsync(ct)
+            .Select(x => TgEfDomainUtils.CreateNewDto(x, true))
+            .FirstOrDefaultAsync(ct)
 		?? new();
 
     /// <inheritdoc />

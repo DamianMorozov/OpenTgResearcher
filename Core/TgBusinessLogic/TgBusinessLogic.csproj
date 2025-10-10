@@ -9,7 +9,6 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
-    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="WTelegramBot" Version="9.2.0" />
     <PackageReference Include="WTelegramClient" Version="4.3.10" />
     <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.4.0" />

@@ -75,7 +75,7 @@ internal partial class TgMenuHelper
     /// <summary> Set UseClient property </summary>
     public async Task<bool> SetUseClientAsync(bool isSilent)
     {
-        var useClient = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient);
+        var useClient = isSilent || AskQuestionYesNoReturnPositive(TgLocale.MenuClientUseClient, isYesFirst: true);
         return await BusinessLogicManager.StorageManager.AppRepository.SetUseClientAsync(useClient);
     }
 
@@ -159,7 +159,7 @@ internal partial class TgMenuHelper
         },
     };
 
-    private async Task ClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
+    public async Task ClientConnectAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isSilent)
     {
         try
         {
@@ -172,7 +172,7 @@ internal partial class TgMenuHelper
             if (!isSilent)
             {
                 // Question
-                if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect)) return;
+                if (AskQuestionYesNoReturnNegative(TgLocale.MenuClientConnect, isYesFirst: true)) return;
                 // Connect
                 TgLog.WriteLine("  TG client connect ...");
             }
@@ -184,9 +184,9 @@ internal partial class TgMenuHelper
             if (!isSilent)
             {
                 if (BusinessLogicManager.ConnectClient.ClientException.IsExist || BusinessLogicManager.ConnectClient.ProxyException.IsExist)
-                    TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteError);
+                    TgLog.WriteLine($"  {TgLocale.TgClientSetupCompleteError}");
                 else
-                    TgLog.MarkupInfo(TgLocale.TgClientSetupCompleteSuccess);
+                    TgLog.WriteLine($"  {TgLocale.TgClientSetupCompleteSuccess}");
                 TgLog.TypeAnyKeyForReturn();
                 
                 TgLog.WriteLine("  TG client connect   v");

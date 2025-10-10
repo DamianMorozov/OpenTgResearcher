@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.600] - 2025-10-09
+## [0.7.600] - 2025-10-10
 ### Fixed
 - Optimization of table columns in `OpenTgResearcherDesktop`
 - Fixing the Telegram parsing cancellation operation
+- Fixing auto-connection to Telegram when starting `OpenTgResearcherConsole`
 ### Changed
 - NuGet package update
 - Optimization of `TgStorage`

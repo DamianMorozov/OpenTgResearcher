@@ -6,7 +6,7 @@
 
 ## Быстрый старт
 - Application -> Specify the path to the EF storage file
-- Client connection -> Client setup -> Connect client to TG server
+- Client connection -> Client setup -> Connect Telegram
 
 ## Настройки по умолчанию для OpenTgResearcherConsole
 - Удалите файл `OpenTgResearcher.xml`

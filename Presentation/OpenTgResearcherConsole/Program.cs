@@ -119,12 +119,12 @@ public static class Program
         tgLog.WriteLine("  Loading license   v");
 
         // Loading TG Connection
-        //if (File.Exists(TgFileUtils.FileTgSession))
-        //{
-        //    tgLog.WriteLine("  Loading connection ...");
-        //    await tgMenu.ConnectClientAsync(tgDownloadSettings, isSilent: true);
-        //    tgLog.WriteLine("  Loading connection   v");
-        //}
+        if (File.Exists(TgFileUtils.FileTgSession))
+        {
+            tgLog.WriteLine("  Loading connection ...");
+            await tgMenu.ClientConnectAsync(tgDownloadSettings, isSilent: true);
+            tgLog.WriteLine("  Loading connection   v");
+        }
 
         // Check multiple instances
         if (tgMenu.CheckMultipleInstances()) return;

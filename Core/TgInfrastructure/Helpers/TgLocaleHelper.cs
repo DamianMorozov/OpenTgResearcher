@@ -183,9 +183,9 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string MenuClientClearConnectionData => "Clear client connection data (clear the application table and disconnect the client)";
 	public string MenuClientComplete => "Complete";
 	public string MenuClientConfigurationError => "Client configuration error";
-	public string MenuClientConnect => "Connect client to TG server";
+	public string MenuClientConnect => "Connect Telegram";
 	public string MenuClientConnectStatus => "Connect status";
-	public string MenuClientDisconnect => "Disconnect client from TG server";
+	public string MenuClientDisconnect => "Disconnect Telegram";
 	public string MenuClientDownload => "Client download";
 	public string MenuClientFirstName => "First name";
 	public string MenuClientIsConnected => "Client is connected";
@@ -394,8 +394,8 @@ public sealed class TgLocaleHelper : ObservableObject
 	public string TgClientProxySecret => "Proxy secret";
 	public string TgClientProxySetup => "Proxy setup";
 	public string TgClientProxyType => "Proxy type";
-	public string TgClientSetupCompleteError => "The TG client setup was completed with errors";
-	public string TgClientSetupCompleteSuccess => "The TG client setup was completed successfully";
+	public string TgClientSetupCompleteError => "Telegram connection have errors";
+	public string TgClientSetupCompleteSuccess => "Telegram connection complete successfully";
 	public string TgClientUserId => "User ID";
 	public string TgClientUserIsActive => "User active";
 	public string TgClientUserName => "User name";

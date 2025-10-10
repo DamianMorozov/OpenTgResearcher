@@ -4,10 +4,11 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.600] - 2025-10-09
+## [0.7.600] - 2025-10-10
 ### Исправлено
 - Оптимизация колонок таблиц в `OpenTgResearcherDesktop`
 - Исправление операции отмены парсинга Телеграм
+- Исправление автоподключения к Telegram при старте в `OpenTgResearcherConsole`
 ### Изменено
 - Обновление NuGet пакетов
 - Оптимизация `TgStorage`

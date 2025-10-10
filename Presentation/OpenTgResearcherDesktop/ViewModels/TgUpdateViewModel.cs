@@ -41,13 +41,6 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 			log.AppendLine($"{TgConstants.OpenTgResearcherDesktop} {TgAppSettingsHelper.Instance.AppVersion}");
 			log.AppendLine("Checking updates on the link github.com");
 
-            // Check the current license for preview
-            if (isPreview && App.BusinessLogicManager.LicenseService.CurrentLicense.LicenseType < TgEnumLicenseType.Community)
-            {
-                log.AppendLine("To check the preview version, you need to obtain a license");
-                return;
-            }
-
             var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
 			// Check for new version
 			var newVersion = await mgr.CheckForUpdatesAsync();
@@ -59,16 +52,6 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 			// Download new version
 			log.AppendLine("Download new version");
 			await mgr.DownloadUpdatesAsync(newVersion);
-            //// Install new version and restart app
-            //var prompt = AnsiConsole.Prompt(
-            //	new SelectionPrompt<string>()
-            //		.Title("  Install new version and restart app?")
-            //		.PageTake(Console.WindowHeight - 5)
-            //		.MoreChoicesText(TgLocale.MoveUpDown)
-            //		.AddChoices(TgLocale.MenuNo, TgLocale.MenuYes));
-            //var isYes = prompt.Equals(TgLocale.MenuYes);
-            //if (isYes)
-            //	mgr.ApplyUpdatesAndRestart(newVersion);
         }
         // Cannot perform this operation in an application which is not installed
         catch (Exception ex)

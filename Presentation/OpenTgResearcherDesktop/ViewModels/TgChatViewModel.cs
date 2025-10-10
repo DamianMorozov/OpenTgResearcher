@@ -107,12 +107,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             {
                 if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 
-                // Saved Messages
-                //if (Dto.Id == App.BusinessLogicManager.ConnectClient.Me?.id)
-                //{
-                //    Dto.FirstId = 0;
-                //}
-                
                 await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
 
                 await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);

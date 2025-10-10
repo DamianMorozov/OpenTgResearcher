@@ -16,4 +16,17 @@ public sealed partial class TgChatsPage
 	}
 
     #endregion
+
+    #region Methods
+
+    private void FieldFilter_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Enter && ViewModel.SearchCommand.CanExecute(null))
+        {
+            ViewModel.SearchCommand.Execute(null);
+            e.Handled = true;
+        }
+    }
+
+    #endregion
 }

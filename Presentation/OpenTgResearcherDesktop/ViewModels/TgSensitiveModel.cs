@@ -31,15 +31,22 @@ public partial class TgSensitiveModel : ObservableRecipient
         // Callback updates UI: PropertyChanged
         LoadStateService.PropertyChanged += (_, e) =>
         {
-            TgDesktopUtils.InvokeOnUIThread(() => { 
-                if (e.PropertyName == nameof(LoadStateService.IsStorageProcessing))
-                    OnPropertyChanged(nameof(IsStorageProcessing));
-                else if (e.PropertyName == nameof(LoadStateService.IsOnlineProcessing))
-                    OnPropertyChanged(nameof(IsOnlineProcessing));
-                else if (e.PropertyName == nameof(LoadStateService.IsDisplaySensitiveData))
-                    OnPropertyChanged(nameof(IsDisplaySensitiveData));
-                else if (e.PropertyName == nameof(LoadStateService.IsOnlineReady))
-                    OnPropertyChanged(nameof(IsOnlineReady));
+            TgDesktopUtils.InvokeOnUIThread(() => {
+                try
+                {
+                    if (e.PropertyName == nameof(LoadStateService.IsStorageProcessing))
+                        OnPropertyChanged(nameof(IsStorageProcessing));
+                    else if (e.PropertyName == nameof(LoadStateService.IsOnlineProcessing))
+                        OnPropertyChanged(nameof(IsOnlineProcessing));
+                    else if (e.PropertyName == nameof(LoadStateService.IsDisplaySensitiveData))
+                        OnPropertyChanged(nameof(IsDisplaySensitiveData));
+                    else if (e.PropertyName == nameof(LoadStateService.IsOnlineReady))
+                        OnPropertyChanged(nameof(IsOnlineReady));
+                }
+                catch (Exception)
+                {
+                    // silent
+                }
             });
         };
 

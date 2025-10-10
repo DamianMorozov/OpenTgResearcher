@@ -237,7 +237,7 @@ internal partial class TgMenuHelper
         await LoadTgClientSettingsByIdAsync(tgDownloadSettings);
         tgDownloadSettings.SourceVm.Dto.CountThreads = AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.MenuDownloadSetCountThreads}:"));
         if (tgDownloadSettings.SourceVm.Dto.CountThreads < 1)
-            tgDownloadSettings.SourceVm.Dto.CountThreads = 1;
+            tgDownloadSettings.SourceVm.Dto.CountThreads = (new TgEfSourceEntity()).GetDefaultPropertyInt(nameof(TgEfSourceEntity.CountThreads));
         else
         {
             if (tgDownloadSettings.SourceVm.Dto.CountThreads > TgGlobalTools.DownloadCountThreadsLimit)

@@ -134,7 +134,7 @@
                                     <x:Boolean>True</x:Boolean>
                                 </Button.CommandParameter>
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE703;" />
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE930;" />
                                     <TextBlock
                                         x:Uid="ClientConnect"
                                         HorizontalAlignment="Center"
@@ -153,7 +153,7 @@
                                     <x:Boolean>True</x:Boolean>
                                 </Button.CommandParameter>
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                    <FontIcon Margin="0,0,10,0" Glyph="&#xE8BB;" />
+                                    <FontIcon Margin="0,0,10,0" Glyph="&#xEA39;" />
                                     <TextBlock
                                         x:Uid="ClientDisconnect"
                                         HorizontalAlignment="Center"
@@ -742,7 +742,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
-                            IsEnabled="True"
+                            IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.DataRequest, Mode=OneWay}"
                             TextWrapping="Wrap"

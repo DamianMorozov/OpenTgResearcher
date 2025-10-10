@@ -10,7 +10,7 @@ internal sealed class TgAutofacServiceModule : Autofac.Module
         cb.RegisterType<TgConnectClientDesktop>().As<ITgConnectClientDesktop>().SingleInstance();
         cb.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
         cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
-        cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
         cb.RegisterType<LoadStateService>().As<ILoadStateService>().SingleInstance();
+        cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
     }
 }

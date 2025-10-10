@@ -81,6 +81,7 @@ public class TgStorageTestsBase : TgDisposable
         cb.RegisterType<TgConnectClientTest>().As<ITgConnectClientTest>().SingleInstance();
         cb.RegisterType<TgLicenseService>().As<ITgLicenseService>().SingleInstance();
         cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
+        cb.RegisterType<LoadStateService>().As<ILoadStateService>().SingleInstance();
         cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
         // Registering outside types
         registerTypes?.Invoke(cb);

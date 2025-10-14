@@ -14,114 +14,105 @@
     d:DataContext="{d:DesignInstance Type=viewmodels:TgChatViewModel}"
     mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <!--  Load data  -->
-        <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <!--  Start parse Telegram  -->
-                    <Button
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                            <TextBlock
-                                x:Uid="TextBlockStartParseTelegram"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Stop parse Telegram  -->
-                    <Button
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.StopUpdateOnlineCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE71A;" />
-                            <TextBlock
-                                x:Uid="TextBlockStopParseTelegram"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Clear viewing  -->
-                    <Button
-                        Grid.Column="1"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.ClearViewCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
-                            <TextBlock
-                                x:Uid="ActionClearView"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  Save settings  -->
-                    <Button
-                        Grid.Column="2"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.SaveChatSettingsCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
-                            <TextBlock
-                                x:Uid="TextBlockSaveChatSettings"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <!--  SelectorBar  -->
-                    <SelectorBar
-                        x:Name="ChatDetailsSelectorBar"
-                        Grid.Row="1"
-                        Grid.ColumnSpan="3"
-                        Margin="0,-10,0,0"
-                        SelectionChanged="ChatDetailsSelectorBar_SelectionChanged">
-                        <SelectorBarItem x:Uid="SelectorBarItemChatSettingsPage" Tag="TgChatSettingsPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemChatInfoPage" Tag="TgChatInfoPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemChatDownloadPage" Tag="TgChatDownloadPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemChatMyMessagesPage" Tag="TgChatMyMessagesPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemChatParticipantsPage" Tag="TgChatParticipantsPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemChatStatisticsPage" Tag="TgChatStatisticsPage" />
-                        <SelectorBarItem x:Uid="SelectorBarItemContentPage" Tag="TgChatContentPage" />
-                    </SelectorBar>
-                    <!--  Frame  -->
-                    <Frame
-                        x:Name="ChatDetailsFrame"
-                        Grid.Row="2"
-                        Grid.ColumnSpan="3"
-                        IsNavigationStackEnabled="False" />
-                </Grid>
-            </ContentControl>
-        </Grid>
+    <Grid Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <!--  Start parse Telegram  -->
+                <Button
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
+                        <TextBlock
+                            x:Uid="TextBlockStartParseTelegram"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Stop parse Telegram  -->
+                <Button
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.StopUpdateOnlineCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xE71A;" />
+                        <TextBlock
+                            x:Uid="TextBlockStopParseTelegram"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Clear viewing  -->
+                <Button
+                    Grid.Column="1"
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ClearViewCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
+                        <TextBlock
+                            x:Uid="ActionClearView"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Save settings  -->
+                <Button
+                    Grid.Column="2"
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.SaveChatSettingsCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
+                        <TextBlock
+                            x:Uid="TextBlockSaveChatSettings"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  SelectorBar  -->
+                <SelectorBar
+                    x:Name="ChatDetailsSelectorBar"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="3"
+                    Margin="0,-10,0,0"
+                    SelectionChanged="ChatDetailsSelectorBar_SelectionChanged">
+                    <SelectorBarItem x:Uid="SelectorBarItemChatSettingsPage" Tag="TgChatSettingsPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemChatInfoPage" Tag="TgChatInfoPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemChatDownloadPage" Tag="TgChatDownloadPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemChatMyMessagesPage" Tag="TgChatMyMessagesPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemChatParticipantsPage" Tag="TgChatParticipantsPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemChatStatisticsPage" Tag="TgChatStatisticsPage" />
+                    <SelectorBarItem x:Uid="SelectorBarItemContentPage" Tag="TgChatContentPage" />
+                </SelectorBar>
+                <!--  Frame  -->
+                <Frame
+                    x:Name="ChatDetailsFrame"
+                    Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    IsNavigationStackEnabled="False" />
+            </Grid>
+        </ContentControl>
     </Grid>
 </common:TgPageBase>

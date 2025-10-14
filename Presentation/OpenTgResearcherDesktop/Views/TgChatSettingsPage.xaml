@@ -30,7 +30,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -40,11 +40,11 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <!--  Uid  -->
                     <TextBlock x:Uid="FieldUid" Style="{StaticResource FieldTextBlockStyle}" />
@@ -156,13 +156,13 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <!--  UserName  -->
                     <TextBlock
@@ -284,9 +284,9 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <!--  DiscussionDto  -->
                     <TextBlock

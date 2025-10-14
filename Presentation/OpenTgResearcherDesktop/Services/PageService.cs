@@ -8,11 +8,11 @@ public sealed class PageService : IPageService
     public PageService()
 	{
 		Configure<TgChatContentViewModel, TgChatContentPage>();
-		Configure<TgChatSettingsViewModel, TgChatSettingsPage>();
 		Configure<TgChatDownloadViewModel, TgChatDownloadPage>();
 		Configure<TgChatInfoViewModel, TgChatInfoPage>();
 		Configure<TgChatMyMessagesViewModel, TgChatMyMessagesPage>();
 		Configure<TgChatParticipantsViewModel, TgChatParticipantsPage>();
+		Configure<TgChatSettingsViewModel, TgChatSettingsPage>();
 		Configure<TgChatStatisticsViewModel, TgChatStatisticsPage>();
 		Configure<TgChatsViewModel, TgChatsPage>();
 		Configure<TgChatViewModel, TgChatPage>();
@@ -23,6 +23,7 @@ public sealed class PageService : IPageService
 		Configure<TgLogsViewModel, TgLogsPage>();
 		Configure<TgMainViewModel, TgMainPage>();
 		Configure<TgProxiesViewModel, TgProxiesPage>();
+		Configure<TgProxyViewModel, TgProxyPage>();
 		Configure<TgSettingsViewModel, TgSettingsPage>();
 		Configure<TgSplashScreenViewModel, TgSplashScreenPage>();
 		Configure<TgStorageAdvancedViewModel, TgStorageAdvancedPage>();

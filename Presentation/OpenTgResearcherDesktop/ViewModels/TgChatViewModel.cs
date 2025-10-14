@@ -5,9 +5,6 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     #region Fields, properties, constructor
 
     [ObservableProperty]
-    public partial IAppNotificationService AppNotificationService { get; private set; }
-
-    [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
     public partial TgEfSourceDto Dto { get; set; } = default!;
@@ -23,10 +20,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
 
     public TgChatViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
-        ILogger<TgChatViewModel> logger, IAppNotificationService appNotificationService)
-        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatViewModel))
+        ILogger<TgChatViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatViewModel))
     {
-        AppNotificationService = appNotificationService;
         // Commands
         LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageCoreAsync);
         StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);

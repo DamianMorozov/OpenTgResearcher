@@ -52,53 +52,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
 
     #endregion
 
-    #region IDisposable
-
-    /// <summary> To detect redundant calls </summary>
-    private bool _disposed;
-
-    /// <summary> Finalizer </summary>
-	~TgPageViewModelBase() => Dispose(false);
-
-    /// <summary> Throw exception if disposed </summary>
-    public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
-
-    /// <summary> Release managed resources </summary>
-    public virtual void ReleaseManagedResources()
-    {
-        CheckIfDisposed();
-    }
-
-    /// <summary> Release unmanaged resources </summary>
-    public virtual void ReleaseUnmanagedResources()
-    {
-        CheckIfDisposed();
-    }
-
-    /// <summary> Dispose pattern </summary>
-    public void Dispose()
-    {
-        // Dispose of unmanaged resources
-        Dispose(true);
-        // Suppress finalization
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary> Dispose pattern </summary>
-    private void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-        // Release managed resources
-        if (disposing)
-            ReleaseManagedResources();
-        // Release unmanaged resources
-        ReleaseUnmanagedResources();
-        // Flag
-        _disposed = true;
-    }
-
-    #endregion
-
     #region Methods
 
     public virtual void OnLoaded(object parameter)

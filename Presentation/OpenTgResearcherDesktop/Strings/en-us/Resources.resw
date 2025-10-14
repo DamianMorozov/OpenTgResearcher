@@ -345,6 +345,12 @@
   <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
     <value>Add record</value>
   </data>
+  <data name="ActionCreate.Text" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="ActionCreateDefault.Text" xml:space="preserve">
+    <value>Create default</value>
+  </data>
   <data name="ActionClear.Text" xml:space="preserve">
     <value>Clear</value>
   </data>
@@ -354,11 +360,17 @@
   <data name="ActionDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="ActionDeleteAll.Text" xml:space="preserve">
+    <value>Delete all</value>
+  </data>
   <data name="ActionSearch.Text" xml:space="preserve">
     <value>Search</value>
   </data>
   <data name="ActionOpen.Text" xml:space="preserve">
     <value>Open</value>
+  </data>
+  <data name="ActionOpenOrEdit.Text" xml:space="preserve">
+    <value>Open/edit</value>
   </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
     <value>Checking for release updates</value>
@@ -627,8 +639,17 @@
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Update online?</value>
   </data>
+  <data name="AskCreateDefault" xml:space="preserve">
+    <value>Create default?</value>
+  </data>
+  <data name="AskDeleteAll" xml:space="preserve">
+    <value>Delete all?</value>
+  </data>
   <data name="AskOpen" xml:space="preserve">
     <value>Open?</value>
+  </data>
+  <data name="AskOpenOrEdit" xml:space="preserve">
+    <value>Open/edit?</value>
   </data>
   <data name="AskStartMonitoring" xml:space="preserve">
     <value>Start monitoring?</value>
@@ -1233,8 +1254,17 @@
   <data name="FieldLink.Text" xml:space="preserve">
     <value>Link</value>
   </data>
+  <data name="FieldPassword.Text" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="FieldPort.Text" xml:space="preserve">
+    <value>Port</value>
+  </data>
   <data name="FieldPhoneNumber.Text" xml:space="preserve">
     <value>Phone number</value>
+  </data>
+  <data name="FieldSecret.Text" xml:space="preserve">
+    <value>Secret</value>
   </data>
   <data name="FieldStatus.Text" xml:space="preserve">
     <value>Status</value>
@@ -1250,6 +1280,9 @@
   </data>
   <data name="FieldTitle.Text" xml:space="preserve">
     <value>Title</value>
+  </data>
+  <data name="FieldHostName.Text" xml:space="preserve">
+    <value>Host name</value>
   </data>
   <data name="FieldType.Text" xml:space="preserve">
     <value>Type</value>

@@ -75,11 +75,11 @@
                                         Margin="-20,0,10,0"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
-                                        Header="{x:Bind FileName, Mode=OneWay}"
+                                        Header="{x:Bind FileName, Mode=OneTime}"
                                         IsExpanded="False">
                                         <TextBlock
                                             Margin="0,-15,0,-30"
-                                            Text="{x:Bind Content, Mode=OneWay}"
+                                            Text="{x:Bind Content, Mode=OneTime}"
                                             TextWrapping="Wrap" />
                                     </Expander>
                                     <styles:TgAnimatedClipboardButton
@@ -95,7 +95,7 @@
                                         Margin="5,15,15,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"
-                                        Text="{x:Bind FileSize, Mode=OneWay}" />
+                                        Text="{x:Bind FileSize, Mode=OneTime}" />
                                     <Button
                                         x:Uid="ActionDeleteFile"
                                         Grid.Column="3"

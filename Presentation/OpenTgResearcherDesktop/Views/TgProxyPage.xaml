@@ -1,0 +1,255 @@
+﻿<common:TgPageBase
+    x:Class="OpenTgResearcherDesktop.Views.TgProxyPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="using:TgInfrastructure.Enums"
+    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
+    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
+    xmlns:views="using:OpenTgResearcherDesktop.Views"
+    d:DataContext="{d:DesignInstance Type=viewmodels:TgProxyViewModel}"
+    mc:Ignorable="d">
+
+    <Grid Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <!--  Clear viewing  -->
+                <Button
+                    Grid.Column="0"
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ClearViewCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
+                        <TextBlock
+                            x:Uid="ActionClearView"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Save settings  -->
+                <Button
+                    Grid.Column="1"
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.SaveProxySettingsCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                        <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
+                        <TextBlock
+                            x:Uid="TextBlockSaveChatSettings"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <!--  Grid  -->
+                <Grid
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Uid  -->
+                    <TextBlock
+                        x:Uid="FieldUid"
+                        Grid.Column="0"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Grid.Column="1"
+                        IsEnabled="False"
+                        IsReadOnly="True"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Column="2"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}" />
+                    <!--  HostName  -->
+                    <TextBlock
+                        x:Uid="FieldHostName"
+                        Grid.Column="3"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Column="4"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Grid.Column="4"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Dto.HostName, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Column="5"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.HostName, Mode=OneWay}" />
+                    <!--  Port  -->
+                    <TextBlock
+                        x:Uid="FieldPort"
+                        Grid.Row="0"
+                        Grid.Column="6"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Column="7"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Grid.Column="7"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Dto.Port, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Column="8"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.Port, Mode=OneWay}" />
+                    <!--  UserName  -->
+                    <TextBlock
+                        x:Uid="FieldUserName"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Dto.UserName, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}" />
+                    <!--  Password  -->
+                    <TextBlock
+                        x:Uid="FieldPassword"
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="4"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Dto.Password, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Row="1"
+                        Grid.Column="5"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.Password, Mode=OneWay}" />
+                    <!--  Secret  -->
+                    <TextBlock
+                        x:Uid="FieldSecret"
+                        Grid.Row="1"
+                        Grid.Column="6"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="7"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="7"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Dto.Secret, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Row="1"
+                        Grid.Column="8"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.Secret, Mode=OneWay}" />
+                    <!--  Type  -->
+                    <TextBlock
+                        x:Uid="FieldType"
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="7"
+                        Style="{StaticResource FieldTextBlockStyle}"
+                        Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <ComboBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="7"
+                        Margin="2"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
+                        ItemsSource="{x:Bind ViewModel.Types, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.Dto.Type, Mode=TwoWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="enums:TgEnumProxyType">
+                                <TextBlock Text="{x:Bind Mode=OneWay}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <styles:TgAnimatedClipboardButton
+                        Grid.Row="2"
+                        Grid.Column="8"
+                        Click="OnClipboardSilentWriteClick"
+                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                        Tag="{x:Bind ViewModel.Dto.Type, Mode=OneWay}" />
+                </Grid>
+            </Grid>
+        </ContentControl>
+    </Grid>
+</common:TgPageBase>

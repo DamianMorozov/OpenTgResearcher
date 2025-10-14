@@ -404,6 +404,12 @@
   <data name="ActionAddRecordToStorage.Text" xml:space="preserve">
     <value>Добавить запись</value>
   </data>
+  <data name="ActionCreate.Text" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="ActionCreateDefault.Text" xml:space="preserve">
+    <value>Создать по-умолчанию</value>
+  </data>
   <data name="ActionClear.Text" xml:space="preserve">
     <value>Очистить</value>
   </data>
@@ -413,11 +419,17 @@
   <data name="ActionDelete.Text" xml:space="preserve">
     <value>Удалить</value>
   </data>
+  <data name="ActionDeleteAll.Text" xml:space="preserve">
+    <value>Удалить все</value>
+  </data>
   <data name="ActionSearch.Text" xml:space="preserve">
     <value>Поиск</value>
   </data>
   <data name="ActionOpen.Text" xml:space="preserve">
     <value>Открыть</value>
+  </data>
+  <data name="ActionOpenOrEdit.Text" xml:space="preserve">
+    <value>Открыть/редактировать</value>
   </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
     <value>Проверка наличия обновлений релиза</value>
@@ -686,8 +698,17 @@
   <data name="AskUpdateOnline" xml:space="preserve">
     <value>Обновить онлайн?</value>
   </data>
+  <data name="AskCreateDefault" xml:space="preserve">
+    <value>Создать по-умолчанию?</value>
+  </data>
+  <data name="AskDeleteAll" xml:space="preserve">
+    <value>Удалить все?</value>
+  </data>
   <data name="AskOpen" xml:space="preserve">
     <value>Открыть?</value>
+  </data>
+  <data name="AskOpenOrEdit" xml:space="preserve">
+    <value>Открыть/редактировать?</value>
   </data>
   <data name="AskStartMonitoring" xml:space="preserve">
     <value>Запустить мониторинг?</value>
@@ -1298,6 +1319,15 @@
   <data name="FieldPhoneNumber.Text" xml:space="preserve">
     <value>Номер телефона</value>
   </data>
+  <data name="FieldPassword.Text" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
+  <data name="FieldPort.Text" xml:space="preserve">
+    <value>Порт</value>
+  </data>
+  <data name="FieldSecret.Text" xml:space="preserve">
+    <value>Секрет</value>
+  </data>
   <data name="FieldStatus.Text" xml:space="preserve">
     <value>Статус</value>
   </data>
@@ -1312,6 +1342,9 @@
   </data>
   <data name="FieldTitle.Text" xml:space="preserve">
     <value>Заголовок</value>
+  </data>
+  <data name="FieldHostName.Text" xml:space="preserve">
+    <value>Имя хоста</value>
   </data>
   <data name="FieldType.Text" xml:space="preserve">
     <value>Тип</value>

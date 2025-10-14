@@ -38,8 +38,10 @@ public static class TgResourceExtensions
 	internal static string AskClearParticipants() => "AskClearParticipants".GetLocalizedResource();
 	internal static string AskClientConnect() => "AskClientConnect".GetLocalizedResource();
 	internal static string AskClientDisconnect() => "AskClientDisconnect".GetLocalizedResource();
+	internal static string AskCreateDefault() => "AskCreateDefault".GetLocalizedResource();
 	internal static string AskDataClear() => "AskDataClear".GetLocalizedResource();
 	internal static string AskDefaultSettings() => "AskDefaultSettings".GetLocalizedResource();
+	internal static string AskDeleteAll() => "AskDeleteAll".GetLocalizedResource();
 	internal static string AskDeleteFile() => "AskDeleteFile".GetLocalizedResource();
 	internal static string AskGetParticipants() => "AskGetParticipants".GetLocalizedResource();
 	internal static string AskGetParticipantsFromMessages() => "AskGetParticipantsFromMessages".GetLocalizedResource();
@@ -48,6 +50,7 @@ public static class TgResourceExtensions
 	internal static string AskLicenseRequestCommunity() => "AskLicenseRequestCommunity".GetLocalizedResource();
 	internal static string AskLoading() => "AskLoading".GetLocalizedResource();
 	internal static string AskOpen() => "AskOpen".GetLocalizedResource();
+	internal static string AskOpenOrEdit() => "AskOpenOrEdit".GetLocalizedResource();
 	internal static string AskRestartApp() => "AskRestartApp".GetLocalizedResource();
 	internal static string AskSettingsClear() => "AskSettingsClear".GetLocalizedResource();
 	internal static string AskSettingsDefault() => "AskSettingsDefault".GetLocalizedResource();

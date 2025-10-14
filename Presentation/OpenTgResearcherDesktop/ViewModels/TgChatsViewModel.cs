@@ -97,9 +97,9 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (sender is not DataGrid dataGrid) return;
-        if (dataGrid.SelectedItem is not TgEfSourceLiteDto sourceLiteDto) return;
+        if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
 
-        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, sourceLiteDto.Uid);
+        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, dto.Uid);
     }
 
     #endregion

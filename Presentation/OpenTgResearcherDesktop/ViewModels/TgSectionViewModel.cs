@@ -41,7 +41,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public IAsyncRelayCommand SearchCommand { get; }
     public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
     public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
-    public IAsyncRelayCommand<TgEfSourceLiteDto> OpenCommand { get; }
+    public IAsyncRelayCommand<TgEfSourceLiteDto> OpenOrEditCommand { get; }
 
     public TgSectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgSectionViewModel> logger, string name) : base(loadStateService, settingsService, navigationService, logger, name)
@@ -49,7 +49,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         LazyLoadCommand = new AsyncRelayCommand<bool>(async (isNewQuery) => await LazyLoadAsync(isNewQuery, isSearch: false), canExecute: _ => HasMoreItems && !IsLoading);
-        OpenCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(OpenAsync);
+        OpenOrEditCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(OpenOrEditAsync);
         SearchCommand = new AsyncRelayCommand(async () => await LazyLoadAsync(isNewQuery: false, isSearch: true));
         StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
         StopUpdateOnlineCommand = new AsyncRelayCommand(StopUpdateOnlineAsync);
@@ -126,10 +126,10 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
             await StopUpdateOnlineCoreAsync();
         }), TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task OpenAsync(TgEfSourceLiteDto? sourceLiteDto) => 
-        await ContentDialogAsync(() => OpenCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpen(), TgEnumLoadDesktopType.Storage);
+    private async Task OpenOrEditAsync(TgEfSourceLiteDto? sourceLiteDto) => 
+        await ContentDialogAsync(() => OpenOrEditCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpenOrEdit(), TgEnumLoadDesktopType.Storage);
 
-    protected async Task OpenCoreAsync(TgEfSourceLiteDto? sourceLiteDto)
+    protected async Task OpenOrEditCoreAsync(TgEfSourceLiteDto? sourceLiteDto)
     {
         if (!SettingsService.IsExistsAppStorage) return;
         if (sourceLiteDto is null) return;

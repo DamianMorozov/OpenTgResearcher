@@ -223,18 +223,18 @@
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <!--  Open  -->
+                    <!--  Open or edit  -->
                     <Button
                         Grid.RowSpan="2"
                         Grid.Column="6"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.OpenCommand}"
+                        Command="{x:Bind Path=ViewModel.OpenOrEditCommand}"
                         CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xEA5B;" />
                             <TextBlock
-                                x:Uid="ActionOpen"
+                                x:Uid="ActionOpenOrEdit"
                                 Margin="10,0,10,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center" />

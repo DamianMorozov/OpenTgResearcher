@@ -189,7 +189,9 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <!--  API hash  -->
                         <TextBlock
@@ -216,18 +218,24 @@
                             Text="{x:Bind ViewModel.ApiHash, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <styles:TgAnimatedClipboardButton
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
                         <!--  API ID  -->
                         <TextBlock
                             x:Uid="ClientApiId"
                             Grid.Row="0"
-                            Grid.Column="2"
+                            Grid.Column="3"
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
                             Grid.Row="0"
-                            Grid.Column="3"
+                            Grid.Column="4"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
                             HorizontalTextAlignment="Left"
@@ -235,13 +243,19 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="0"
-                            Grid.Column="3"
+                            Grid.Column="4"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.ApiId, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiIdTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <styles:TgAnimatedClipboardButton
+                            Grid.Row="0"
+                            Grid.Column="5"
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
                         <!--  Phone number  -->
                         <TextBlock
                             x:Uid="ClientPhoneNumber"
@@ -267,18 +281,24 @@
                             Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
                             TextChanged="{x:Bind OnPhoneTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <styles:TgAnimatedClipboardButton
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
                         <!--  Proxy  -->
                         <TextBlock
                             x:Uid="ClientProxy"
                             Grid.Row="1"
-                            Grid.Column="2"
+                            Grid.Column="3"
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
                             Grid.Row="1"
-                            Grid.Column="3"
+                            Grid.Column="4"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
                             HorizontalTextAlignment="Left"
@@ -286,12 +306,11 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <ComboBox
                             Grid.Row="1"
-                            Grid.Column="3"
+                            Grid.Column="4"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             ItemsSource="{x:Bind ViewModel.ProxiesVms, Mode=OneWay}"
-                            SelectedIndex="0"
                             SelectedItem="{x:Bind ViewModel.ProxyVm, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <ComboBox.ItemTemplate>
@@ -324,18 +343,24 @@
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <styles:TgAnimatedClipboardButton
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
                         <!--  Last name  -->
                         <TextBlock
                             x:Uid="FieldLastName"
                             Grid.Row="2"
-                            Grid.Column="2"
+                            Grid.Column="3"
                             Margin="12,7,7,2"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
                             Grid.Row="2"
-                            Grid.Column="3"
+                            Grid.Column="4"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
                             HorizontalTextAlignment="Left"
@@ -343,12 +368,18 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
                             Grid.Row="2"
-                            Grid.Column="3"
+                            Grid.Column="4"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             Text="{x:Bind ViewModel.LastName, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <styles:TgAnimatedClipboardButton
+                            Grid.Row="2"
+                            Grid.Column="5"
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
                         <!--  UseClient  -->
                         <TextBlock
                             x:Uid="FieldUseClient"

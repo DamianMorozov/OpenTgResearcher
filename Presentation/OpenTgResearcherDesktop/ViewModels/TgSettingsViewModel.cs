@@ -1,6 +1,8 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+﻿using System.ComponentModel;
 
-public partial class TgSettingsViewModel : TgPageViewModelBase
+namespace OpenTgResearcherDesktop.ViewModels;
+
+public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
@@ -34,22 +36,40 @@ public partial class TgSettingsViewModel : TgPageViewModelBase
         SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync);
 
         // Callback updates UI: PropertyChanged
-        PropertyChanged += (sender, args) =>
-        {
-            if (args.PropertyName == nameof(AppStorage))
-                SettingsService.AppStorage = AppStorage;
-            else if (args.PropertyName == nameof(AppSession))
-                SettingsService.AppSession = AppSession;
-            else if (args.PropertyName == nameof(AppTheme))
-                SettingsService.AppTheme = AppTheme;
-            else if (args.PropertyName == nameof(AppLanguage))
-                SettingsService.AppLanguage = AppLanguage;
-        };
+        PropertyChanged += OnPropertyChanged;
+    }
+
+
+    #endregion
+
+    #region IDisposable
+
+    /// <summary> Release managed resources </summary>
+    public override void ReleaseManagedResources()
+    {
+        CheckIfDisposed();
+        PropertyChanged -= OnPropertyChanged;
+
+        base.ReleaseManagedResources();
     }
 
     #endregion
 
     #region Methods
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        TgDesktopUtils.InvokeOnUIThread(() => {
+            if (e.PropertyName == nameof(AppStorage))
+                SettingsService.AppStorage = AppStorage;
+            else if (e.PropertyName == nameof(AppSession))
+                SettingsService.AppSession = AppSession;
+            else if (e.PropertyName == nameof(AppTheme))
+                SettingsService.AppTheme = AppTheme;
+            else if (e.PropertyName == nameof(AppLanguage))
+                SettingsService.AppLanguage = AppLanguage;
+        });
+    }
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {

@@ -100,6 +100,9 @@
     <Page Update="Views\TgChatPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\TgProxyPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\TgStorageAdvancedPage.xaml">
       <SubType>Designer</SubType>
     </Page>

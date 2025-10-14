@@ -46,7 +46,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgEfAppDto
 		LastName = string.Empty;
 		UseBot = false;
 		BotTokenKey = string.Empty;
-        UseClient = false;
+        UseClient = true;
     }
 
     #endregion

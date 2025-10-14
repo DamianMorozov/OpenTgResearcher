@@ -25,24 +25,24 @@ public sealed class TgEfProxyEntity : ITgDbProxy, ITgEfProxyEntity
     [Column(TgEfConstants.ColumnType, TypeName = "INT")]
     public TgEnumProxyType Type { get; set; }
 
-    [DefaultValue("No proxy")]
+    [DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnHostName, TypeName = "NVARCHAR(128)")]
     public string HostName { get; set; } = null!;
 
-    [DefaultValue(404)]
+    [DefaultValue(0)]
     [ConcurrencyCheck]
     [Column(TgEfConstants.ColumnPort, TypeName = "INT(5)")]
     public ushort Port { get; set; }
 
-    [DefaultValue("No user")]
+    [DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnUserName, TypeName = "NVARCHAR(128)")]
     public string UserName { get; set; } = null!;
 
-    [DefaultValue("No password")]
+    [DefaultValue("")]
     [ConcurrencyCheck]
     [MaxLength(128)]
     [Column(TgEfConstants.ColumnPassword, TypeName = "NVARCHAR(128)")]

@@ -178,5 +178,65 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
             .FirstOrDefaultAsync()
         ?? new();
 
+    /// <inheritdoc />
+    public async Task CreateDefaultAsync()
+    {
+        try
+        {
+            // Check existing proxies count to avoid duplicates
+            var count = await EfContext.Proxies.AsNoTracking().CountAsync();
+            if (count > 0)
+                return;
+
+            // Build minimal default proxy entity
+            var defaultProxy = new TgEfProxyEntity();
+            EfContext.Proxies.Add(defaultProxy);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log and swallow to keep application stable
+            TgLogUtils.WriteException(ex, "Error creating default proxy!");
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfProxyDto dto)
+    {
+        try
+        {
+            if (dto is null || dto.Uid == Guid.Empty)
+                return;
+
+            // Try to find existing entity
+            var entity = await EfContext.Proxies
+                .FirstOrDefaultAsync(x => x.Uid == dto.Uid);
+
+            if (entity is null)
+            {
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Proxies.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                entity.Type = dto.Type;
+                entity.HostName = dto.HostName;
+                entity.Port = dto.Port;
+                entity.UserName = dto.UserName;
+                entity.Password = dto.Password;
+                entity.Secret = dto.Secret;
+            }
+
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log exception to keep application stable
+            TgLogUtils.WriteException(ex, "Error saving proxy");
+        }
+    }
+
     #endregion
 }

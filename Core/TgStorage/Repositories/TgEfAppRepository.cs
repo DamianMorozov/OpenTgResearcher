@@ -192,5 +192,12 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
         return result > 0;
     }
 
+    /// <inheritdoc />
+    public async Task ClearProxyAsync()
+    {
+        await EfContext.Apps
+            .ExecuteUpdateAsync(updates => updates.SetProperty(a => a.ProxyUid, a => (Guid?)null));
+    }
+
     #endregion
 }

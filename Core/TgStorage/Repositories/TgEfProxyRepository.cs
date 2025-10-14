@@ -203,17 +203,19 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
     /// <inheritdoc />
     public async Task SaveAsync(TgEfProxyDto dto)
     {
+        TgEfProxyEntity? entity = null;
         try
         {
-            if (dto is null || dto.Uid == Guid.Empty)
+            if (dto is null)
                 return;
 
             // Try to find existing entity
-            var entity = await EfContext.Proxies
-                .FirstOrDefaultAsync(x => x.Uid == dto.Uid);
+            entity = await EfContext.Proxies.FirstOrDefaultAsync(x => x.Uid == dto.Uid);
 
             if (entity is null)
             {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
                 // Create new entity
                 entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
                 EfContext.Proxies.Add(entity);
@@ -229,12 +231,20 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
                 entity.Secret = dto.Secret;
             }
 
+            ValidateAndNormalize(entity);
             await EfContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             // Log exception to keep application stable
             TgLogUtils.WriteException(ex, "Error saving proxy");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
         }
     }
 

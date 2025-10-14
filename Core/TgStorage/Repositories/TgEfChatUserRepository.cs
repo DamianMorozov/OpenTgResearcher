@@ -172,7 +172,7 @@ public sealed class TgEfChatUserRepository : TgEfRepositoryBase<TgEfChatUserEnti
 
         if (chatUserEntities.Count > 0)
         {
-            await SaveListAsync(chatUserEntities, isRewriteEntities: false, isFirstTry: true, ct: ct);
+            await SaveListAsync(chatUserEntities, isRewrite: false, isFirstTry: true, ct: ct);
         }
     }
 

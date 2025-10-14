@@ -32,7 +32,7 @@ public sealed partial class TgEfAppDto : TgDtoBase, ITgEfAppDto
 
 	public string ApiHashString
 	{
-		get => ApiHash.ToString();
+        get => ApiHash.ToString().Replace("-", "");
 		set => ApiHash = Guid.TryParse(value, out var apiHash) ? apiHash : Guid.Empty;
 	}
 

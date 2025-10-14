@@ -213,7 +213,7 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
             }).ToList();
 
             // Persist missing users (use repository to respect validation/normalization)
-            await SaveListAsync(newUsers, isRewriteEntities: false, isFirstTry: true, ct: ct);
+            await SaveListAsync(newUsers, isRewrite: false, isFirstTry: true, ct: ct);
         }
     }
 

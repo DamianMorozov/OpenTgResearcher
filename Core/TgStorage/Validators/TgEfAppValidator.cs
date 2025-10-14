@@ -9,9 +9,11 @@ public sealed class TgEfAppValidator : TgEfValidatorBase<TgEfAppEntity>
 	public TgEfAppValidator()
 	{
 		RuleFor(item => item.ApiHash)
+            .NotEmpty()
 			.NotNull();
 		RuleFor(item => item.ApiId)
-			.NotNull();
+            .NotEmpty()
+            .NotNull();
 		RuleFor(item => item.PhoneNumber)
 			.NotEmpty()
 			.NotNull();

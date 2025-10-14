@@ -456,14 +456,22 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             Debug.WriteLine(ex.StackTrace);
 #endif
             await transaction.RollbackAsync(ct);
+            
             // Retry
             if (isFirstTry)
             {
                 var entry = ex.Entries.Single();
-                var databaseValues = await entry.GetDatabaseValuesAsync(ct) ?? throw new Exception("The record you attempted to edit was deleted!");
+                var databaseValues = await entry.GetDatabaseValuesAsync(ct)
+                    ?? throw new Exception("The record you attempted to edit was deleted");
+
                 entry.OriginalValues.SetValues(databaseValues);
-                await SaveAsync(item, isFirstTry: false, ct);
+
+                // Detach entity before retry to avoid duplicate tracking
+                EfContext.DetachItem(item);
+
+                return await SaveAsync(item, isFirstTry: false, ct);
             }
+
             throw;
         }
 #if DEBUG
@@ -512,7 +520,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     }
 
     /// <summary> Validates and normalizes entity before saving </summary>
-    private void ValidateAndNormalize(TEfEntity entity)
+    protected void ValidateAndNormalize(TEfEntity entity)
     {
         var validationResult = TgGlobalTools.GetEfValid(entity);
         if (!validationResult.IsValid)
@@ -525,7 +533,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     public TgEfStorageResult<TEfEntity> Save(TEfEntity? item) => SaveAsync(item, isFirstTry: true).GetAwaiter().GetResult();
 
     /// <inheritdoc />
-    public virtual async Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewriteEntities, bool isFirstTry = true, CancellationToken ct = default)
+    public virtual async Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewrite, bool isFirstTry = true, CancellationToken ct = default)
     {
         var array = items as TEfEntity[] ?? [.. items];
         var uniqueItems = array.Distinct().ToArray();
@@ -537,7 +545,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
         {
             foreach (var item in uniqueItems)
             {
-                var storageResult = await PrepareEntityForSaveAsync(item, isRewrite: isRewriteEntities, ct);
+                var storageResult = await PrepareEntityForSaveAsync(item, isRewrite: isRewrite, ct);
                 if (storageResult.Item is not null)
                 {
                     storageItems.Add(storageResult.Item);
@@ -567,7 +575,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
                 var entry = ex.Entries.Single();
                 var databaseValues = await entry.GetDatabaseValuesAsync(ct) ?? throw new Exception("The record you attempted to edit was deleted!");
                 entry.OriginalValues.SetValues(databaseValues);
-                return await SaveListAsync(array, isRewriteEntities, isFirstTry: false, ct);
+                return await SaveListAsync(array, isRewrite, isFirstTry: false, ct);
             }
             throw;
         }

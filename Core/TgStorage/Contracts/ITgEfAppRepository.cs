@@ -14,4 +14,6 @@ public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity, TgEfAppDto>
     public Task<bool> SetUseClientAsync(bool useClient);
     /// <summary> Clear proxy settings </summary>
     public Task ClearProxyAsync();
+    /// <summary> Save app settings </summary>
+    public Task SaveAsync(TgEfAppDto dto);
 }

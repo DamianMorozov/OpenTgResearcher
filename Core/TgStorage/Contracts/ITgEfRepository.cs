@@ -71,7 +71,7 @@ public interface ITgEfRepository<TEfEntity, TDto>
 
     public Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity item, bool isFirstTry = true, CancellationToken ct = default);
 	public TgEfStorageResult<TEfEntity> Save(TEfEntity item);
-	public Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewriteEntities, bool isFirstTry = true, CancellationToken ct = default);
+	public Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewrite, bool isFirstTry = true, CancellationToken ct = default);
 
     #endregion
 

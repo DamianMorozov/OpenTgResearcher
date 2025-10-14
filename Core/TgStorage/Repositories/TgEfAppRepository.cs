@@ -199,5 +199,56 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
             .ExecuteUpdateAsync(updates => updates.SetProperty(a => a.ProxyUid, a => (Guid?)null));
     }
 
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfAppDto dto)
+    {
+        TgEfAppEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await EfContext.Apps.FirstOrDefaultAsync(x => x.Uid == dto.Uid);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Apps.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                entity.ApiHash = dto.ApiHash;
+                entity.ApiId = dto.ApiId;
+                entity.FirstName = dto.FirstName;
+                entity.LastName = dto.LastName;
+                entity.PhoneNumber = dto.PhoneNumber;
+                entity.ProxyUid = dto.ProxyUid;
+                entity.BotTokenKey = dto.BotTokenKey;
+                entity.UseClient = dto.UseClient;
+                entity.UseBot = dto.UseBot;
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log exception to keep application stable
+            TgLogUtils.WriteException(ex, "Error saving app");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
     #endregion
 }

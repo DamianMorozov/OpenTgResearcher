@@ -14,7 +14,8 @@ public sealed partial class TgConnectClientDesktop(ITgStorageService storageMana
                 return;
             try
             {
-                Me = await Client.LoginUserIfNeeded();
+                if (Me is null || !Me.IsActive)
+                    Me = await Client.LoginUserIfNeeded();
             }
             catch (Exception ex)
             {

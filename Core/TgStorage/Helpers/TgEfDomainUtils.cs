@@ -132,7 +132,7 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfAppEntity
+        var appEntity = new TgEfAppEntity
         {
             ApiHash = dto.ApiHash,
             ApiId = dto.ApiId,
@@ -141,17 +141,19 @@ public static class TgEfDomainUtils
             PhoneNumber = dto.PhoneNumber,
             ProxyUid = dto.ProxyUid,
             BotTokenKey = dto.BotTokenKey,
+            UseClient = dto.UseClient,
+            UseBot = dto.UseBot,
         };
 
         if (isUidCopy)
-            target.Uid = dto.Uid;
+            appEntity.Uid = dto.Uid;
 
         if (dto.UseBot)
-            target.SetUseBot(target.UseBot);
-        else if (target.UseClient)
-            target.SetUseClient(target.UseClient);
+            appEntity.SetUseBot(appEntity.UseBot);
+        else if (appEntity.UseClient)
+            appEntity.SetUseClient(appEntity.UseClient);
 
-        return target;
+        return appEntity;
     }
 
     /// <summary> Update an entity from entity </summary>

@@ -11,16 +11,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyViewModel> ProxiesVms { get; set; } = [];
 	[ObservableProperty]
-	public partial string ApiHash { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial int ApiId { get; set; } = 0;
-	[ObservableProperty]
-	public partial string PhoneNumber { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string FirstName { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial string LastName { get; set; } = string.Empty;
-	[ObservableProperty]
 	public partial string Password { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string VerificationCode { get; set; } = string.Empty;
@@ -42,12 +32,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	public partial string DataRequest { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string DataRequestEmptyResponse { get; set; } = string.Empty;
-	[ObservableProperty]
-	public partial bool UseBot { get; set; }
-	[ObservableProperty]
-	public partial string BotTokenKey { get; set; } = string.Empty;
-    [ObservableProperty]
-    public partial bool UseClient { get; set; }
 
     public IAsyncRelayCommand ClientConnectCommand { get; }
 	public IAsyncRelayCommand ClientDisconnectCommand { get; }
@@ -76,7 +60,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
-        await LoadStorageDataAsync(AppLoadCoreAsync);
+        await LoadStorageDataAsync(LoadDataStorageCoreAsync);
     }
 
     private async Task AfterClientConnectAsync()
@@ -90,7 +74,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
             {
                 ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 
-                if (UseClient)
+                if (AppDto.UseClient)
                 {
                     var client = App.BusinessLogicManager.ConnectClient.Client;
 
@@ -154,11 +138,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
         var response = what switch
 		{
-			"api_hash" => ApiHash,
-			"api_id" => ApiId.ToString(),
-			"phone_number" => PhoneNumber,
-			"first_name" => FirstName,
-			"last_name" => LastName,
+			"api_hash" => AppDto.ApiHashString,
+			"api_id" => AppDto.ApiId.ToString(),
+			"phone_number" => AppDto.PhoneNumber,
+			"first_name" => AppDto.FirstName,
+			"last_name" => AppDto.LastName,
 			"password" => Password,
 			"verification_code" => VerificationCode,
 			"session_pathname" => SettingsService.AppSession,
@@ -192,7 +176,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 			Exception.Default();
 			DataRequest = string.Empty;
             if (isQuestion == true)
-                await ContentDialogAsync(() => App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop),
+                await ContentDialogAsync(ClientConnectWithGetMeAsync,
                     TgResourceExtensions.AskClientConnect(), TgEnumLoadDesktopType.Online);
             else
             {
@@ -200,8 +184,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                 {
                     await LoadStateService.PrepareOnlineTokenAsync(uid);
 
-                    await TgDesktopUtils.InvokeOnUIThreadAsync(() => 
-                        App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop), LoadStateService.OnlineToken);
+                    await TgDesktopUtils.InvokeOnUIThreadAsync(ClientConnectWithGetMeAsync, LoadStateService.OnlineToken);
                 }
                 finally
                 {
@@ -222,7 +205,20 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 	}
 
-	private async Task ClientDisconnectAsync(bool isQuestion) => await ClientDisconnectCoreAsync(isQuestion, isRetry: false);
+    private async Task ClientConnectWithGetMeAsync()
+    {
+        await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop);
+        if (App.BusinessLogicManager.ConnectClient.Me is TL.User me)
+        {
+            AppDto.FirstName = me.first_name ?? string.Empty;
+            AppDto.LastName = me.last_name ?? string.Empty;
+        }
+
+        await AppSaveCoreAsync();
+    }
+
+
+    private async Task ClientDisconnectAsync(bool isQuestion) => await ClientDisconnectCoreAsync(isQuestion, isRetry: false);
 
     private async Task ClientDisconnectCoreAsync(bool isQuestion, bool isRetry)
     {
@@ -261,25 +257,16 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         }
     }
     
-    private async Task AppLoadCoreAsync()
+    private async Task LoadDataStorageCoreAsync()
 	{
-		AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
-
+        if (!SettingsService.IsExistsAppStorage) return;
+        AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
 		await ReloadUiAsync();
 	}
 
 	public override async Task ReloadUiAsync()
 	{
 		await base.ReloadUiAsync();
-
-		ApiHash = TgDataFormatUtils.ParseGuidToString(AppDto.ApiHash);
-		ApiId = AppDto.ApiId;
-		PhoneNumber = AppDto.PhoneNumber;
-		FirstName = AppDto.FirstName;
-		LastName = AppDto.LastName;
-		UseBot = AppDto.UseBot;
-        BotTokenKey = AppDto.BotTokenKey;
-        UseClient = AppDto.UseClient;
 
         UserName = string.Empty;
 		MtProxyUrl = string.Empty;
@@ -332,21 +319,19 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
 	private async Task AppSaveCoreAsync()
 	{
-		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
-
-        AppDto.ApiHash = TgDataFormatUtils.ParseStringToGuid(ApiHash);
-        AppDto.ApiId = ApiId;
-        AppDto.FirstName = FirstName;
-        AppDto.LastName = LastName;
-        AppDto.PhoneNumber = PhoneNumber;
-        AppDto.ProxyUid = ProxyVm?.Dto.Uid ?? Guid.Empty;
-        AppDto.UseBot = UseBot;
-        AppDto.BotTokenKey = BotTokenKey;
-        AppDto.UseClient = UseClient;
-
-        var appEntity = TgEfDomainUtils.CreateNewEntity(AppDto, isUidCopy: true);
-        await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
-	}
+        try
+        {
+            AppDto.ProxyUid = ProxyVm?.Dto.Uid ?? Guid.Empty;
+            //var appEntity = TgEfDomainUtils.CreateNewEntity(AppDto, isUidCopy: false);
+            //await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
+            await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppDto);
+            await LoadDataStorageCoreAsync();
+        }
+        catch (Exception ex)
+        {
+            Exception = new(ex);
+        }
+    }
 
 	private async Task AppClearAsync() => 
         await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear(), TgEnumLoadDesktopType.Storage);
@@ -368,7 +353,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	private async Task AppDeleteCoreAsync()
 	{
 		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
-		await AppLoadCoreAsync();
+		await LoadDataStorageCoreAsync();
 	}
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)

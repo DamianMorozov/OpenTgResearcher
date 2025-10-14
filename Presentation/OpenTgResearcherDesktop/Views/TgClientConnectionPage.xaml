@@ -193,119 +193,134 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <!--  Uid  -->
+                        <TextBlock
+                            x:Uid="FieldUid"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Style="{StaticResource FieldTextBlockStyle}" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Style="{StaticResource FieldTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            IsEnabled="False"
+                            IsReadOnly="True"
+                            Style="{StaticResource FieldTextBoxStyle}"
+                            Text="{x:Bind ViewModel.AppDto.Uid, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <styles:TgAnimatedClipboardButton
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Click="OnClipboardSilentWriteClick"
+                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                            Tag="{x:Bind ViewModel.AppDto.Uid, Mode=OneWay}" />
+                        <!--  UseClient  -->
+                        <TextBlock
+                            x:Uid="FieldUseClient"
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource FieldTextBlockStyle}" />
+                        <ToggleSwitch
+                            Grid.Row="0"
+                            Grid.Column="4"
+                            Margin="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="Left"
+                            IsOn="{x:Bind ViewModel.AppDto.UseClient, Mode=TwoWay}" />
                         <!--  API hash  -->
                         <TextBlock
                             x:Uid="ClientApiHash"
-                            Grid.Row="0"
-                            Margin="2,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                            Grid.Row="1"
+                            Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="1"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
+                            Style="{StaticResource FieldTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.ApiHash, Mode=TwoWay}"
+                            Style="{StaticResource FieldTextBoxStyle}"
+                            Text="{x:Bind ViewModel.AppDto.ApiHashString, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiHashTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="2"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
+                            Tag="{x:Bind ViewModel.AppDto.ApiHashString, Mode=OneWay}" />
                         <!--  API ID  -->
                         <TextBlock
                             x:Uid="ClientApiId"
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="3"
-                            Margin="12,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                            Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="4"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
+                            Style="{StaticResource FieldTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="4"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.ApiId, Mode=TwoWay}"
+                            Style="{StaticResource FieldTextBoxStyle}"
+                            Text="{x:Bind ViewModel.AppDto.ApiId, Mode=TwoWay}"
                             TextChanged="{x:Bind OnApiIdTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.Column="5"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
+                            Tag="{x:Bind ViewModel.AppDto.ApiId, Mode=OneWay}" />
                         <!--  Phone number  -->
                         <TextBlock
                             x:Uid="ClientPhoneNumber"
-                            Grid.Row="1"
-                            Margin="2,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                            Grid.Row="2"
+                            Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="1"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
+                            Style="{StaticResource FieldTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}"
+                            Style="{StaticResource FieldTextBoxStyle}"
+                            Text="{x:Bind ViewModel.AppDto.PhoneNumber, Mode=TwoWay}"
                             TextChanged="{x:Bind OnPhoneTextChanged, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="2"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
+                            Tag="{x:Bind ViewModel.AppDto.PhoneNumber, Mode=OneWay}" />
                         <!--  Proxy  -->
                         <TextBlock
                             x:Uid="ClientProxy"
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="3"
-                            Margin="12,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                            Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="4"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
+                            Style="{StaticResource FieldTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <ComboBox
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="4"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -322,79 +337,53 @@
                         <!--  First name  -->
                         <TextBlock
                             x:Uid="ClientFirstName"
-                            Grid.Row="2"
-                            Margin="2,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                            Grid.Row="3"
+                            Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="1"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
+                            Style="{StaticResource FieldTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}"
+                            IsEnabled="False"
+                            Style="{StaticResource FieldTextBoxStyle}"
+                            Text="{x:Bind ViewModel.AppDto.FirstName, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="2"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
+                            Tag="{x:Bind ViewModel.AppDto.FirstName, Mode=OneWay}" />
                         <!--  Last name  -->
                         <TextBlock
                             x:Uid="FieldLastName"
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="3"
-                            Margin="12,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                            Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="4"
-                            Margin="2,10,2,2"
-                            HorizontalAlignment="Stretch"
-                            HorizontalTextAlignment="Left"
+                            Style="{StaticResource FieldTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="4"
-                            Margin="2"
                             HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Text="{x:Bind ViewModel.LastName, Mode=TwoWay}"
+                            IsEnabled="False"
+                            Style="{StaticResource FieldTextBoxStyle}"
+                            Text="{x:Bind ViewModel.AppDto.LastName, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <styles:TgAnimatedClipboardButton
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="5"
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind ViewModel.ApiHash, Mode=OneWay}" />
-                        <!--  UseClient  -->
-                        <TextBlock
-                            x:Uid="FieldUseClient"
-                            Grid.Row="3"
-                            Margin="2,7,7,2"
-                            FontWeight="Bold"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Margin="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            HorizontalContentAlignment="Left"
-                            IsOn="{x:Bind ViewModel.UseClient, Mode=TwoWay}" />
+                            Tag="{x:Bind ViewModel.AppDto.LastName, Mode=OneWay}" />
                     </Grid>
                 </Expander>
             </ContentControl>
@@ -557,6 +546,7 @@
                             Grid.Row="2"
                             Grid.Column="0"
                             Margin="2,7,7,2"
+                            VerticalAlignment="Center"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox

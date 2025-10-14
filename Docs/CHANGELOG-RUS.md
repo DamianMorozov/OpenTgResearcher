@@ -4,20 +4,21 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.630] - 2025-10-14
+## [0.7.650] - 2025-10-14
 ### Исправлено
 - Оптимизация колонок таблиц в `OpenTgResearcherDesktop`
 - Исправление операции отмены парсинга Телеграм
 - Исправление автоподключения к Telegram при старте в `OpenTgResearcherConsole`
 - Исправление отображения Flood Control при парсинге чата в `OpenTgResearcherConsole`
 - Исправление некоторых ошибок в основной логике парсинга Telegram
+- Исправление страницы `Логи` в `OpenTgResearcherDesktop`
+- Исправление страницы 'Подключение клиента' в `OpenTgResearcherDesktop`
 ### Изменено
 - Обновление NuGet пакетов
 - Оптимизация `TgStorage`
 - Удаление требований лицензирования
 - Обновление таблицы `Чаты` в `TgStorage`
 - Обновление страницы `Чат` в `OpenTgResearcherDesktop`
-- Исправление страницы `Логи` в `OpenTgResearcherDesktop`
 ### Добавлено
 - Добавление таблицы `Пользователи чатов` в `TgStorage`
 - Поиск без учета регистра на странице `Чаты` в `OpenTgResearcherDesktop`

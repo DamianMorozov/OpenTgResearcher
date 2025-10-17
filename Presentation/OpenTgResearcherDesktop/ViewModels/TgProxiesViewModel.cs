@@ -93,7 +93,7 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
     });
 
 	private async Task DeleteAllProxiesAsync() => 
-        await ContentDialogAsync(DeleteAllProxiesCoreAsync, TgResourceExtensions.AskDeleteAll(), TgEnumLoadDesktopType.Online);
+        await ContentDialogAsync(DeleteAllProxiesCoreAsync, TgResourceExtensions.AskDeleteAllRecords(), TgEnumLoadDesktopType.Online);
 
     private async Task DeleteAllProxiesCoreAsync() => await LoadStorageDataAsync(async () =>
     {

@@ -41,8 +41,11 @@ public static class TgResourceExtensions
 	internal static string AskCreateDefault() => "AskCreateDefault".GetLocalizedResource();
 	internal static string AskDataClear() => "AskDataClear".GetLocalizedResource();
 	internal static string AskDefaultSettings() => "AskDefaultSettings".GetLocalizedResource();
+	internal static string AskDelete() => "AskDelete".GetLocalizedResource();
 	internal static string AskDeleteAll() => "AskDeleteAll".GetLocalizedResource();
+	internal static string AskDeleteAllRecords() => "AskDeleteAllRecords".GetLocalizedResource();
 	internal static string AskDeleteFile() => "AskDeleteFile".GetLocalizedResource();
+	internal static string AskDeleteRecord() => "AskDeleteRecord".GetLocalizedResource();
 	internal static string AskGetParticipants() => "AskGetParticipants".GetLocalizedResource();
 	internal static string AskGetParticipantsFromMessages() => "AskGetParticipantsFromMessages".GetLocalizedResource();
 	internal static string AskLicenseCheck() => "AskLicenseCheck".GetLocalizedResource();
@@ -135,7 +138,9 @@ public static class TgResourceExtensions
 	internal static string GetTgClientLoading() => "TgClientLoading".GetLocalizedResource();
 	internal static string GetYesButton() => "YesButton".GetLocalizedResource();
 	internal static string Navigation() => "Navigation".GetLocalizedResource();
+	internal static string RecordNotSelected() => "RecordNotSelected".GetLocalizedResource();
 	internal static string ViewImage() => "ViewImage".GetLocalizedResource();
+	internal static string Warning() => "Warning".GetLocalizedResource();
 
     #endregion
 }

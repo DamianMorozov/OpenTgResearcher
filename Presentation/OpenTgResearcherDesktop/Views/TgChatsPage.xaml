@@ -143,6 +143,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <!--  Filter by subscribe  -->
                     <TextBlock
@@ -240,10 +241,27 @@
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+                    <!--  Delete  -->
+                    <Button
+                        Grid.RowSpan="2"
+                        Grid.Column="7"
+                        Margin="5,0,5,5"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind Path=ViewModel.DeleteCommand}"
+                        CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}">
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE894;" />
+                            <TextBlock
+                                x:Uid="ActionDelete"
+                                Margin="10,0,10,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <!--  Table  -->
                     <ScrollView
                         Grid.Row="2"
-                        Grid.ColumnSpan="7"
+                        Grid.ColumnSpan="8"
                         Margin="0,0,5,0"
                         VerticalScrollMode="Auto">
                         <!--  Data  -->

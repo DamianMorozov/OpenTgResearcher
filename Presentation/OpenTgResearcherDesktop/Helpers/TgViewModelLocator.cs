@@ -264,7 +264,15 @@ public sealed class TgViewModelLocator
                     }
                 }
                 
+                // Open or create chat for Saved Messages
                 _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
+
+                // Update Chats ViewModel
+                _chatsVm ??= App.VmLocator.Get<TgChatsViewModel>();
+                if (_chatsVm is not null)
+                {
+                    await _chatsVm.OnNavigatedToAsync(_shellVm.EventArgs);
+                }
 
                 await Task.CompletedTask;
             }, LoadStateService.LocatorToken);

@@ -645,6 +645,15 @@
   <data name="AskDeleteAll" xml:space="preserve">
     <value>Delete all?</value>
   </data>
+  <data name="AskDeleteAllRecords" xml:space="preserve">
+    <value>Delete all records?</value>
+  </data>
+  <data name="AskDelete" xml:space="preserve">
+    <value>Delete?</value>
+  </data>
+  <data name="AskDeleteRecord" xml:space="preserve">
+    <value>Delete record?</value>
+  </data>
   <data name="AskOpen" xml:space="preserve">
     <value>Open?</value>
   </data>
@@ -683,6 +692,12 @@
   </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Restart the application.</value>
+  </data>
+  <data name="RecordNotSelected" xml:space="preserve">
+    <value>To continue, you must select an entry</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
   </data>
   <data name="YesButton" xml:space="preserve">
     <value>Yes</value>

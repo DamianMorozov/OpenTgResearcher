@@ -704,6 +704,15 @@
   <data name="AskDeleteAll" xml:space="preserve">
     <value>Удалить все?</value>
   </data>
+  <data name="AskDeleteAllRecords" xml:space="preserve">
+    <value>Удалить все записи?</value>
+  </data>
+  <data name="AskDelete" xml:space="preserve">
+    <value>Удалить?</value>
+  </data>
+  <data name="AskDeleteRecord" xml:space="preserve">
+    <value>Удалить запись?</value>
+  </data>
   <data name="AskOpen" xml:space="preserve">
     <value>Открыть?</value>
   </data>
@@ -742,6 +751,12 @@
   </data>
   <data name="AssertionRestartApp" xml:space="preserve">
     <value>Перезапустите приложение.</value>
+  </data>
+  <data name="RecordNotSelected" xml:space="preserve">
+    <value>Для продолжения необходимо выбрать запись</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Внимание</value>
   </data>
   <data name="YesButton" xml:space="preserve">
     <value>Да</value>

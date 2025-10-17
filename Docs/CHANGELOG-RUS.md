@@ -4,11 +4,13 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.670] - 2025-10-17
+## [0.7.680] - 2025-10-17
 ### Исправлено
 - Исправление создания прокси в `OpenTgResearcherConsole`
 - Исправление страницы `Подключение клиента` в `OpenTgResearcherDesktop`
 - Исправление создания чата `Сохранённые сообщения` в `OpenTgResearcherDesktop`
+### Добавлено
+- Добавление удаления чата на странице `Чаты` в `OpenTgResearcherDesktop`
 
 ## [0.7.650] - 2025-10-14
 ### Исправлено

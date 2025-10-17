@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <Version>0.7.650.0</Version>
+    <Version>0.7.680.0</Version>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 

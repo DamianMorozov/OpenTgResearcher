@@ -9,7 +9,7 @@
     <UseWinUI>true</UseWinUI>
 	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ProjectPriFileName>resources.pri</ProjectPriFileName>
-    <Version>0.7.650.0</Version>
+    <Version>0.7.680.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4">

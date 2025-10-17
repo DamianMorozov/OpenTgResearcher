@@ -251,18 +251,20 @@ public sealed class TgViewModelLocator
 
             await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
             {
+                _shellVm ??= App.VmLocator.Get<ShellViewModel>();
+                
                 _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
                 if (_clientConnectionVm is not null)
                 {
-                    _shellVm ??= App.VmLocator.Get<ShellViewModel>();
                     await _clientConnectionVm.OnNavigatedToAsync(_shellVm.EventArgs);
                     if (!_clientConnectionVm.IsOnlineReady)
                     {
                         await _clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
                         await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
                     }
-                    _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
                 }
+                
+                _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
 
                 await Task.CompletedTask;
             }, LoadStateService.LocatorToken);

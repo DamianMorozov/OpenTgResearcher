@@ -4289,9 +4289,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (Me is null) return Guid.Empty;
 
         var chatId = Me.id;
-        var chatResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = chatId });
-        if (chatResult is { IsExists: true, Item: { } }) return chatResult.Item.Uid;
-        
+        var chatDto = await StorageManager.SourceRepository.GetDtoAsync(x => x.Id == chatId);
+        if (chatDto.Uid != Guid.Empty) return chatDto.Uid;
+
         var chatEntity = new TgEfSourceEntity
         {
             Uid = Guid.NewGuid(),
@@ -4299,6 +4299,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             UserName = Me.username ?? string.Empty,
             Title = $"{Me.first_name} {Me.last_name}".Trim(),
             IsActive = true,
+            IsSubscribe = true,
+            IsUserAccess = true,
         };
         await StorageManager.SourceRepository.SaveAsync(chatEntity);
         return chatEntity.Uid;

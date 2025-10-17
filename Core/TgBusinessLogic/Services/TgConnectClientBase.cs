@@ -44,6 +44,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public bool IsClientUpdateStatus { get; set; }
     public bool IsBotUpdateStatus { get; set; }
+    private Guid _floodLogUid = Guid.Empty;
 
     /// <summary> Checks if the operation should be stopped based on the provided cancellation token </summary>
     private bool CheckShouldStop(CancellationToken ct)
@@ -302,37 +303,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return IsReady = false;
     }
 
-    private bool ClientResultConnected()
-    {
-        return IsReady = true;
-    }
-
-    public async Task ConnectClientConsoleAsync(Func<string, string?>? config, TgEfProxyDto proxyDto)
-    {
-        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-        if (appDto.UseBot)
-        {
-            await StorageManager.AppRepository.SetUseBotAsync(false);
-            appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-            if (appDto.UseBot)
-                throw new ArgumentOutOfRangeException(nameof(proxyDto), proxyDto, "Cannot set UseBot property!");
-        }
-        if (IsReady) return;
-
-        await DisconnectClientAsync(isAfterClientConnect: false);
-        await DisconnectBotAsync(isAfterClientConnect: false);
-
-        var uid = Guid.NewGuid();
-        await LoadStateService.PrepareFloodLogTokenAsync(uid);
-
-        Client = new(config);
-        await ConnectThroughProxyAsync(proxyDto, false);
-        Client.OnOther += OnClientOtherAsync;
-        Client.OnOwnUpdates += OnOwnUpdatesClientAsync;
-        Client.OnUpdates += OnUpdatesClientAsync;
-        await LoginUserAsync(isProxyUpdate: true);
-    }
-
     public async Task ConnectBotConsoleAsync()
     {
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
@@ -389,16 +359,28 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #endif
     }
 
-    public async Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config)
+    public async Task ConnectSessionAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop)
     {
+        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+        if (appDto.UseBot)
+        {
+            await StorageManager.AppRepository.SetUseBotAsync(false);
+            appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
+            if (appDto.UseBot)
+                throw new ArgumentOutOfRangeException(nameof(proxyDto), proxyDto, "Cannot set UseBot property!");
+        }
+
         if (IsReady) return;
+
         await DisconnectClientAsync(isAfterClientConnect: false);
-
-        var uid = Guid.NewGuid();
-        await LoadStateService.PrepareFloodLogTokenAsync(uid);
-
+        await DisconnectBotAsync(isAfterClientConnect: false);
+        
+        LoadStateService.StopSoftFloodLogProcessing(_floodLogUid);
+        _floodLogUid = Guid.NewGuid();
+        await LoadStateService.PrepareFloodLogTokenAsync(_floodLogUid);
+        
         Client = new(config);
-        await ConnectThroughProxyAsync(proxyDto, true);
+        await ConnectThroughProxyAsync(proxyDto, isDesktop);
         Client.OnOther += OnClientOtherAsync;
         Client.OnOwnUpdates += OnOwnUpdatesClientAsync;
         Client.OnUpdates += OnUpdatesClientAsync;
@@ -3690,7 +3672,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return ClientResultDisconnected();
         if (ProxyException.IsExist || ClientException.IsExist)
             return ClientResultDisconnected();
-        return ClientResultConnected();
+        
+        return IsReady = true;
     }
 
     /// <inheritdoc />
@@ -3707,7 +3690,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return ClientResultDisconnected();
         if (ProxyException.IsExist || ClientException.IsExist)
             return ClientResultDisconnected();
-        return ClientResultConnected();
+
+        return IsReady = true;
     }
 
     /// <inheritdoc />

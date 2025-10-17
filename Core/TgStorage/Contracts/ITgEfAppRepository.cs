@@ -3,6 +3,7 @@
 public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity, TgEfAppDto>, IDisposable
 {
     public Task<TgEfStorageResult<TgEfAppEntity>> GetCurrentAppAsync(bool isReadOnly = true);
+    public Task<TgEfAppDto> GetCurrentAppDtoAsync();
     public Task<Guid> GetCurrentAppUidAsync();
     public TgEfStorageResult<TgEfAppEntity> GetCurrentApp(bool isReadOnly = true);
     public Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default);

@@ -129,6 +129,15 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 	}
 
     /// <inheritdoc />
+    public async Task<TgEfAppDto> GetCurrentAppDtoAsync() => await
+		EfContext.Apps.AsTracking()
+			.Where(x => x.Uid != Guid.Empty)
+			.Include(x => x.Proxy)
+            .Select(x => TgEfDomainUtils.CreateNewDto(x, true))
+			.FirstOrDefaultAsync()
+        ?? new();
+
+    /// <inheritdoc />
     public async Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => await
 		EfContext.Apps.AsTracking()
 			.Where(x => x.Uid != Guid.Empty)

@@ -22,9 +22,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync(bool isAfterClientConnect = true);
     public Task DisconnectBotAsync(bool isAfterClientConnect = true);
-    public Task ConnectClientConsoleAsync(Func<string, string?>? config, TgEfProxyDto proxyDto);
     public Task ConnectBotConsoleAsync();
-	public Task ConnectSessionDesktopAsync(TgEfProxyDto proxyDto, Func<string, string?> config);
+	public Task ConnectSessionAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop);
 
 	public Task<IEnumerable<long>> CollectAllChatsAsync(CancellationToken ct = default);
 

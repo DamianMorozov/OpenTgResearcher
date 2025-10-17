@@ -11,12 +11,9 @@ public sealed class TgEfProxyValidator : TgEfValidatorBase<TgEfProxyEntity>
 		RuleFor(item => item.Type)
 			.NotNull();
 		RuleFor(item => item.HostName)
-			.NotEmpty()
 			.NotNull();
 		RuleFor(item => item.Port)
-			.NotNull()
-			.GreaterThan(ushort.MinValue)
-			.LessThan(ushort.MaxValue);
+			.NotNull();
 	}
 
 	#endregion

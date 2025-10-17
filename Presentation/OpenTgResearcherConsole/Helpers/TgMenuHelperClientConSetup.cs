@@ -124,28 +124,29 @@ internal partial class TgMenuHelper
                     nameof(TgEnumProxyType.Http),
                     nameof(TgEnumProxyType.Socks),
                     nameof(TgEnumProxyType.MtProto)));
-        var proxy = GetProxyFromPrompt(prompt);
-        if (!Equals(proxy.Type, TgEnumProxyType.None))
+        var proxyEntity = GetProxyFromPrompt(prompt);
+        if (!Equals(proxyEntity.Type, TgEnumProxyType.None))
         {
-            proxy.HostName = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyHostName}:"));
-            proxy.Port = AnsiConsole.Ask<ushort>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyPort}:"));
+            proxyEntity.HostName = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyHostName}:"));
+            proxyEntity.Port = AnsiConsole.Ask<ushort>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyPort}:"));
         }
-        var storageResult = await BusinessLogicManager.StorageManager.ProxyRepository.GetAsync(
-            new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false);
-        if (!storageResult.IsExists)
-            await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxy);
-        proxy = (await BusinessLogicManager.StorageManager.ProxyRepository.GetAsync(
-            new TgEfProxyEntity { Type = proxy.Type, HostName = proxy.HostName, Port = proxy.Port }, isReadOnly: false)).Item ?? new();
-
-        var storageResultApp = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppAsync(isReadOnly: false);
-        if (storageResultApp.IsExists && storageResultApp.Item is not null)
+        var proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(where: 
+            x => x.Type == proxyEntity.Type && x.HostName == proxyEntity.HostName && x.Port == proxyEntity.Port);
+        if (proxyDto.Uid == Guid.Empty)
         {
-            var appEntity = storageResultApp.Item;
-            appEntity.ProxyUid = storageResultApp.Item.Uid;
-            await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
+            await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxyEntity);
+            proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(where:
+                x => x.Uid == proxyEntity.Uid);
+        }
+
+        var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppDtoAsync();
+        if (appDto.Uid != Guid.Empty && proxyDto.Uid != Guid.Empty)
+        {
+            appDto.ProxyUid = proxyDto.Uid;
+            await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appDto);
         }
         
-        return proxy;
+        return proxyEntity;
     }
 
     private static TgEfProxyEntity GetProxyFromPrompt(string prompt) => new()
@@ -179,7 +180,7 @@ internal partial class TgMenuHelper
 
             var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync();
             var proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(x => x.Uid == appDto.ProxyUid);
-            await BusinessLogicManager.ConnectClient.ConnectClientConsoleAsync(ConfigClientConsole, proxyDto);
+            await BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientConsole, proxyDto, isDesktop: false);
             
             if (!isSilent)
             {

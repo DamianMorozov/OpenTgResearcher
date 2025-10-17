@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.660] - 2025-10-17
+### Fixed
+- Fixing proxy creation in `OpenTgResearcherConsole`
+- Fixing the `Client Connection` page in `OpenTgResearcherDesktop`
+
 ## [0.7.650] - 2025-10-14
 ### Fixed
 - Optimization of table columns in `OpenTgResearcherDesktop`

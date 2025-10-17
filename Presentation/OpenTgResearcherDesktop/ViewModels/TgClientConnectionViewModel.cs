@@ -80,35 +80,37 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
                     // Check exceptions
                     // https://www.infotelbot.com/2021/06/telegram-error-lists.html
-                    var msg = Exception?.Message ?? string.Empty;
-
-                    if (msg.Contains("PHONE_CODE_INVALID", StringComparison.OrdinalIgnoreCase))
+                    if (Exception?.Message is string msg && !string.IsNullOrEmpty(msg))
                     {
-                        ConnectionMsg = TgResourceExtensions.GetRpcErrorPhoneCodeInvalid();
-                    }
-                    else if (msg.Contains("PASSWORD_HASH_INVALID", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ConnectionMsg = TgResourceExtensions.GetRpcErrorPasswordHashInvalid();
-                    }
-                    else if (msg.Contains("FLOOD_WAIT", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ConnectionMsg = TgResourceExtensions.GetRpcErrorFloodWait();
-                    }
-                    else if (msg.Contains("PHONE_PASSWORD_FLOOD", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ConnectionMsg = TgResourceExtensions.GetRpcErrorPhonePasswordFlood();
-                    }
-                    else
-                    {
-                        if (client is null || client.Disconnected)
+                        if (msg.Contains("PHONE_CODE_INVALID", StringComparison.OrdinalIgnoreCase))
                         {
-                            ConnectionMsg = TgResourceExtensions.GetClientIsDisconnected();
+                            ConnectionMsg = TgResourceExtensions.GetRpcErrorPhoneCodeInvalid();
+                        }
+                        else if (msg.Contains("PASSWORD_HASH_INVALID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ConnectionMsg = TgResourceExtensions.GetRpcErrorPasswordHashInvalid();
+                        }
+                        else if (msg.Contains("FLOOD_WAIT", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ConnectionMsg = TgResourceExtensions.GetRpcErrorFloodWait();
+                        }
+                        else if (msg.Contains("PHONE_PASSWORD_FLOOD", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ConnectionMsg = TgResourceExtensions.GetRpcErrorPhonePasswordFlood();
                         }
                         else
                         {
-                            ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
+                            if (client is null || client.Disconnected)
+                            {
+                                ConnectionMsg = TgResourceExtensions.GetClientIsDisconnected();
+                            }
+                            else
+                            {
+                                ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
+                            }
                         }
                     }
+
                     if (client is not null)
                     {
                         UserName = client.User?.MainUsername ?? string.Empty;
@@ -207,7 +209,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     private async Task ClientConnectWithGetMeAsync()
     {
-        await App.BusinessLogicManager.ConnectClient.ConnectSessionDesktopAsync(ProxyVm?.Dto ?? new(), ConfigClientDesktop);
+        await App.BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientDesktop, ProxyVm?.Dto ?? new(), isDesktop: true);
         if (App.BusinessLogicManager.ConnectClient.Me is TL.User me)
         {
             AppDto.FirstName = me.first_name ?? string.Empty;
@@ -216,7 +218,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
         await AppSaveCoreAsync();
     }
-
 
     private async Task ClientDisconnectAsync(bool isQuestion) => await ClientDisconnectCoreAsync(isQuestion, isRetry: false);
 
@@ -261,7 +262,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
         if (!SettingsService.IsExistsAppStorage) return;
         AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
-		await ReloadUiAsync();
+		//await ReloadUiAsync();
 	}
 
 	public override async Task ReloadUiAsync()
@@ -322,8 +323,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         try
         {
             AppDto.ProxyUid = ProxyVm?.Dto.Uid ?? Guid.Empty;
-            //var appEntity = TgEfDomainUtils.CreateNewEntity(AppDto, isUidCopy: false);
-            //await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appEntity);
             await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppDto);
             await LoadDataStorageCoreAsync();
         }

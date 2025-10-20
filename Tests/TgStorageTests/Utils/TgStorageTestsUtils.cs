@@ -33,8 +33,8 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
 
-			var version = new TgEfVersionEntity();
-			await versionRepository.SaveAsync(version);
+			var versionDto = new TgEfVersionDto();
+			await versionRepository.SaveAsync(versionDto);
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == versionRepository.LastVersion);
@@ -54,8 +54,8 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 			await versionRepository.FillTableVersionsAsync();
 
 			await versionRepository.DeleteAllAsync();
-			var version = new TgEfVersionEntity();
-			await versionRepository.SaveAsync(version);
+			var versionDto = new TgEfVersionDto();
+			await versionRepository.SaveAsync(versionDto);
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == new TgEfVersionEntity().Version);

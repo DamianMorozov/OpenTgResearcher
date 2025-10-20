@@ -13,7 +13,7 @@
 - Исправление смены языка в `OpenTgResearcherDesktop`
 - Исправление сохранения данных в хранилище
 ### Изменено
-- Обновление страницы 'Обновление' в `OpenTgResearcherDesktop`
+- Обновление страницы `Обновление` в `OpenTgResearcherDesktop`
 ### Добавлено
 - Добавление удаления чата на странице `Чаты` в `OpenTgResearcherDesktop`
 

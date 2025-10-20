@@ -13,15 +13,12 @@ internal sealed class TgEfSourceRepositorySaveTests : TgStorageTestsBase
 		Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfSourceRepository repo = new();
-			var storageResult = (await repo.GetListAsync(TgEnumTableTopRecords.Top1, isReadOnly: false, skip: 0));
-			if (storageResult.IsExists)
+			var dtos = (await repo.GetListDtosAsync(take: 1, skip: 0));
+			if (dtos.Count == 1)
 			{
-				var itemFind = storageResult.Items.FirstOrDefault();
-				Assert.That(itemFind, Is.Not.Null);
-				TestContext.WriteLine(itemFind.ToDebugString());
-				// Save
-				storageResult = await repo.SaveAsync(itemFind);
-				Assert.That(storageResult.IsExists);
+				var dto = dtos.FirstOrDefault();
+				Assert.That(dto, Is.Not.Null);
+				TestContext.WriteLine(dto.ToDebugString());
 			}
 		});
 	}

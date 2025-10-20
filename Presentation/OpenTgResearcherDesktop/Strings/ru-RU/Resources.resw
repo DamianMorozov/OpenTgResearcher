@@ -1112,6 +1112,9 @@
   <data name="TextBlockSaveChatSettings.Text" xml:space="preserve">
     <value>Сохранить настройки чата</value>
   </data>
+  <data name="TextBlockSaveProxySettings.Text" xml:space="preserve">
+    <value>Сохранить настройки прокси</value>
+  </data>
   <data name="TextBlockLoadParticipants.Text" xml:space="preserve">
     <value>Загрузить участников из хранилища</value>
   </data>

@@ -52,7 +52,7 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
                         <TextBlock
-                            x:Uid="TextBlockSaveChatSettings"
+                            x:Uid="TextBlockSaveProxySettings"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center" />
                     </StackPanel>

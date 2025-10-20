@@ -263,6 +263,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     private async Task LoadDataStorageCoreAsync()
 	{
         if (!SettingsService.IsExistsAppStorage) return;
+
+        await ReloadProxyAsync();
         AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
 	}
 

@@ -41,17 +41,21 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     public IAsyncRelayCommand SearchCommand { get; }
     public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
     public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
-    public IAsyncRelayCommand<TgEfSourceLiteDto> OpenOrEditCommand { get; }
-    public IAsyncRelayCommand<TgEfSourceLiteDto> DeleteCommand { get; }
+    public IAsyncRelayCommand<TgEfProxyDto> DeleteProxyCommand { get; }
+    public IAsyncRelayCommand<TgEfProxyDto> OpenOrEditProxyCommand { get; }
+    public IAsyncRelayCommand<TgEfSourceLiteDto> DeleteChatCommand { get; }
+    public IAsyncRelayCommand<TgEfSourceLiteDto> OpenOrEditChatCommand { get; }
 
     public TgSectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgSectionViewModel> logger, string name) : base(loadStateService, settingsService, navigationService, logger, name)
     {
         // Commands
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
+        DeleteChatCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(DeleteChatAsync);
+        DeleteProxyCommand = new AsyncRelayCommand<TgEfProxyDto>(DeleteProxyAsync);
         LazyLoadCommand = new AsyncRelayCommand<bool>(async (isNewQuery) => await LazyLoadAsync(isNewQuery, isSearch: false), canExecute: _ => HasMoreItems && !IsLoading);
-        OpenOrEditCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(OpenOrEditAsync);
-        DeleteCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(DeleteAsync);
+        OpenOrEditChatCommand = new AsyncRelayCommand<TgEfSourceLiteDto>(OpenOrEditChatAsync);
+        OpenOrEditProxyCommand = new AsyncRelayCommand<TgEfProxyDto>(OpenOrEditProxyAsync);
         SearchCommand = new AsyncRelayCommand(async () => await LazyLoadAsync(isNewQuery: false, isSearch: true));
         StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
         StopUpdateOnlineCommand = new AsyncRelayCommand(StopUpdateOnlineAsync);
@@ -89,7 +93,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
     private async Task ClearViewAsync() => 
         await ContentDialogAsync(() => ClearViewCoreAsync(isFinally: true), TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
-    protected async Task ClearViewCoreAsync(bool isFinally)
+    protected virtual async Task ClearViewCoreAsync(bool isFinally)
     {
         try
         {
@@ -114,7 +118,7 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
         await Task.CompletedTask;
     }
 
-    private async Task StartUpdateOnlineAsync() => 
+    protected async Task StartUpdateOnlineAsync() => 
         await ContentDialogAsync(() => LoadOnlineDataAsync(async () =>
         {
             if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
@@ -122,13 +126,13 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
             await StartUpdateOnlineCoreAsync();
         }), TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task StopUpdateOnlineAsync() => 
+    protected async Task StopUpdateOnlineAsync() => 
         await ContentDialogAsync(() => LoadOnlineDataAsync(async () =>
         {
             await StopUpdateOnlineCoreAsync();
         }), TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task OpenOrEditAsync(TgEfSourceLiteDto? sourceLiteDto)
+    private async Task OpenOrEditChatAsync(TgEfSourceLiteDto? sourceLiteDto)
     {
         if (!SettingsService.IsExistsAppStorage) return;
         if (sourceLiteDto is null)
@@ -137,16 +141,34 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
             return;
         }
 
-        await ContentDialogAsync(() => OpenOrEditCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpenOrEdit(), TgEnumLoadDesktopType.Storage);
+        await ContentDialogAsync(() => OpenOrEditChatCoreAsync(sourceLiteDto), TgResourceExtensions.AskOpenOrEdit(), TgEnumLoadDesktopType.Storage);
     }
 
-    protected async Task OpenOrEditCoreAsync(TgEfSourceLiteDto sourceLiteDto)
+    protected async Task OpenOrEditChatCoreAsync(TgEfSourceLiteDto sourceLiteDto)
     {
         NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, sourceLiteDto.Uid);
         await Task.CompletedTask;
     }
 
-    private async Task DeleteAsync(TgEfSourceLiteDto? sourceLiteDto)
+    private async Task OpenOrEditProxyAsync(TgEfProxyDto? proxyDto)
+    {
+        if (!SettingsService.IsExistsAppStorage) return;
+        if (proxyDto is null)
+        {
+            await ContentDialogAsync(TgResourceExtensions.Warning(), TgResourceExtensions.RecordNotSelected());
+            return;
+        }
+
+        await ContentDialogAsync(() => OpenOrEditProxyCoreAsync(proxyDto), TgResourceExtensions.AskOpenOrEdit(), TgEnumLoadDesktopType.Storage);
+    }
+
+    private async Task OpenOrEditProxyCoreAsync(TgEfProxyDto proxyDto)
+    {
+        NavigationService.NavigateTo(typeof(TgProxyViewModel).FullName!, proxyDto.Uid);
+        await Task.CompletedTask;
+    }
+
+    private async Task DeleteChatAsync(TgEfSourceLiteDto? sourceLiteDto)
     {
         if (!SettingsService.IsExistsAppStorage) return;
         if (sourceLiteDto is null)
@@ -155,12 +177,31 @@ public abstract partial class TgSectionViewModel : TgPageViewModelBase
             return;
         }
 
-        await ContentDialogAsync(() => DeleteCoreAsync(sourceLiteDto), TgResourceExtensions.AskDeleteRecord(), TgEnumLoadDesktopType.Storage);
+        await ContentDialogAsync(() => DeleteChatCoreAsync(sourceLiteDto), TgResourceExtensions.AskDeleteRecord(), TgEnumLoadDesktopType.Storage);
     }
 
-    protected async Task DeleteCoreAsync(TgEfSourceLiteDto sourceLiteDto)
+    protected async Task DeleteChatCoreAsync(TgEfSourceLiteDto sourceLiteDto)
     {
         await App.BusinessLogicManager.StorageManager.SourceRepository.DeleteAsync(where: x => x.Uid == sourceLiteDto.Uid);
+        await OnNavigatedToAsync(null);
+        await Task.CompletedTask;
+    }
+
+    private async Task DeleteProxyAsync(TgEfProxyDto? proxyDto)
+    {
+        if (!SettingsService.IsExistsAppStorage) return;
+        if (proxyDto is null)
+        {
+            await ContentDialogAsync(TgResourceExtensions.Warning(), TgResourceExtensions.RecordNotSelected());
+            return;
+        }
+
+        await ContentDialogAsync(() => DeleteProxyCoreAsync(proxyDto), TgResourceExtensions.AskDeleteRecord(), TgEnumLoadDesktopType.Storage);
+    }
+
+    protected async Task DeleteProxyCoreAsync(TgEfProxyDto proxyDto)
+    {
+        await App.BusinessLogicManager.StorageManager.ProxyRepository.DeleteAsync(where: x => x.Uid == proxyDto.Uid);
         await OnNavigatedToAsync(null);
         await Task.CompletedTask;
     }

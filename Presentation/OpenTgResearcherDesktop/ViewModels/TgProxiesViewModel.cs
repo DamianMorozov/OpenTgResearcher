@@ -1,30 +1,24 @@
 ﻿namespace OpenTgResearcherDesktop.ViewModels;
 
-public sealed partial class TgProxiesViewModel : TgPageViewModelBase
+public sealed partial class TgProxiesViewModel : TgSectionViewModel
 {
     #region Fields, properties, constructor
 
 	[ObservableProperty]
 	public partial ObservableCollection<TgEfProxyDto> Dtos { get; set; } = [];
 	public IAsyncRelayCommand LoadDataStorageCommand { get; }
-	public IAsyncRelayCommand ClearViewCommand { get; }
 	public IAsyncRelayCommand DefaultSortCommand { get; }
-	public IAsyncRelayCommand StartUpdateOnlineCommand { get; }
 	public IAsyncRelayCommand CreateDefaultProxyCommand { get; }
 	public IAsyncRelayCommand DeleteAllProxiesCommand { get; }
-    public IAsyncRelayCommand<TgEfProxyDto> OpenOrEditCommand { get; }
 
     public TgProxiesViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgProxiesViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgProxiesViewModel))
 	{
 		// Commands
-		ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
 		DefaultSortCommand = new AsyncRelayCommand(DefaultSortAsync);
 		LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageAsync);
-		StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
         CreateDefaultProxyCommand = new AsyncRelayCommand(CreateDefaultProxyAsync);
         DeleteAllProxiesCommand = new AsyncRelayCommand(DeleteAllProxiesAsync);
-        OpenOrEditCommand = new AsyncRelayCommand<TgEfProxyDto>(OpenOrEditAsync);
     }
 
 	#endregion
@@ -49,12 +43,11 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		Dtos = [.. dtos.OrderBy(x => x.HostName).ThenBy(x => x.Type)];
 	}
 
-	private async Task ClearViewAsync() => 
-        await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
+    protected override async Task ClearViewCoreAsync(bool isFinally)
+    {
+        await base.ClearViewCoreAsync(isFinally);
 
-	private async Task ClearDataStorageCoreAsync()
-	{
-		Dtos.Clear();
+        Dtos.Clear();
 		await Task.CompletedTask;
 	}
 
@@ -73,15 +66,17 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
 		await Task.CompletedTask;
 	}
 
-	private async Task StartUpdateOnlineAsync() => 
-        await ContentDialogAsync(UpdateOnlineCoreAsync, TgResourceExtensions.AskUpdateOnline(), TgEnumLoadDesktopType.Online);
-
-    private async Task UpdateOnlineCoreAsync() => await LoadStorageDataAsync(async () =>
+    protected override async Task StartUpdateOnlineCoreAsync()
     {
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Story);
         await LoadDataStorageCoreAsync();
-    });
+    }
+
+    protected override async Task StopUpdateOnlineCoreAsync()
+    {
+        await Task.CompletedTask;
+    }
 
 	private async Task CreateDefaultProxyAsync() => 
         await ContentDialogAsync(CreateDefaultProxyCoreAsync, TgResourceExtensions.AskCreateDefault(), TgEnumLoadDesktopType.Online);
@@ -101,18 +96,6 @@ public sealed partial class TgProxiesViewModel : TgPageViewModelBase
         await App.BusinessLogicManager.StorageManager.ProxyRepository.DeleteAllAsync();
         await LoadDataStorageCoreAsync();
     });
-
-    private async Task OpenOrEditAsync(TgEfProxyDto? proxyDto) =>
-        await ContentDialogAsync(() => OpenOrEditCoreAsync(proxyDto), TgResourceExtensions.AskOpenOrEdit(), TgEnumLoadDesktopType.Storage);
-
-    private async Task OpenOrEditCoreAsync(TgEfProxyDto? proxyDto)
-    {
-        if (!SettingsService.IsExistsAppStorage) return;
-        if (proxyDto is null) return;
-
-        NavigationService.NavigateTo(typeof(TgProxyViewModel).FullName!, proxyDto.Uid);
-        await Task.CompletedTask;
-    }
 
     public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {

@@ -39,6 +39,7 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -92,7 +93,7 @@
                             Grid.Column="3"
                             Margin="0,0,5,0"
                             HorizontalAlignment="Stretch"
-                            Command="{x:Bind Path=ViewModel.OpenOrEditCommand}"
+                            Command="{x:Bind Path=ViewModel.OpenOrEditProxyCommand}"
                             CommandParameter="{x:Bind (proxies:TgEfProxyDto)DataGridProxies.SelectedItem, Mode=OneWay}">
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Glyph="&#xEA5B;" />
@@ -103,16 +104,32 @@
                                     VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
+                        <!--  Delete  -->
+                        <Button
+                            Grid.Column="4"
+                            Margin="0,0,5,0"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind Path=ViewModel.DeleteProxyCommand}"
+                            CommandParameter="{x:Bind (proxies:TgEfProxyDto)DataGridProxies.SelectedItem, Mode=OneWay}">
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE894;" />
+                                <TextBlock
+                                    x:Uid="ActionDelete"
+                                    Margin="10,0,10,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
                         <!--  Count  -->
                         <TextBlock
                             x:Uid="TextBlockCount"
-                            Grid.Column="4"
+                            Grid.Column="5"
                             Margin="10,0,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             TextAlignment="Right" />
                         <TextBlock
-                            Grid.Column="5"
+                            Grid.Column="6"
                             Margin="5,0,10,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"

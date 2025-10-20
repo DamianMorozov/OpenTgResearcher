@@ -230,7 +230,7 @@
                         Grid.Column="6"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.OpenOrEditCommand}"
+                        Command="{x:Bind Path=ViewModel.OpenOrEditChatCommand}"
                         CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xEA5B;" />
@@ -247,7 +247,7 @@
                         Grid.Column="7"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
-                        Command="{x:Bind Path=ViewModel.DeleteCommand}"
+                        Command="{x:Bind Path=ViewModel.DeleteChatCommand}"
                         CommandParameter="{x:Bind (sources:TgEfSourceLiteDto)DataGridChats.SelectedItem, Mode=OneWay}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xE894;" />

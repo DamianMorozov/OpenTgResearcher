@@ -185,6 +185,15 @@ public partial class App : Application
 
     public void OnProcessExit()
     {
+        var clientConnectionVm = VmLocator.Get<TgClientConnectionViewModel>();
+        if (clientConnectionVm is not null)
+        {
+            if (clientConnectionVm.IsOnlineReady)
+            {
+                clientConnectionVm.ClientDisconnectCommand.Execute(false);
+            }
+        }
+
         Host.Dispose();
         TgLogUtils.CloseAndFlush();
 

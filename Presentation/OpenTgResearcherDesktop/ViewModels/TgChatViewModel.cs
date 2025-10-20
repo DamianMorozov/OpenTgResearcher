@@ -122,8 +122,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             // Update and save current chat
             Dto.DtChanged = DateTime.UtcNow;
             DownloadSettings.SourceVm.Dto = Dto;
-            var sourceEntity = TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true);
-            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(sourceEntity);
+            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(Dto);
         }
         finally
         {

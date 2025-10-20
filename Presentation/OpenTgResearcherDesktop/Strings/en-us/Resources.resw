@@ -1050,6 +1050,9 @@
   <data name="TextBlockSaveChatSettings.Text" xml:space="preserve">
     <value>Save chat settings</value>
   </data>
+  <data name="TextBlockSaveProxySettings.Text" xml:space="preserve">
+    <value>Save proxy settings</value>
+  </data>
   <data name="TextBlockLoadParticipants.Text" xml:space="preserve">
     <value>Load participants from storage</value>
   </data>

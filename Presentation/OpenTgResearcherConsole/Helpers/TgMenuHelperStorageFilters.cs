@@ -66,7 +66,7 @@ internal partial class TgMenuHelper
 
     private async Task FiltersAddAsync(TgDownloadSettingsViewModel tgDownloadSettings)
     {
-        var filter = new TgEfFilterEntity();
+        var filterDto = new TgEfFilterDto();
         var type = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title($"  {TgLocale.MenuFiltersSetType}")
             .PageSize(Console.WindowHeight - 17)
@@ -76,46 +76,46 @@ internal partial class TgMenuHelper
         if (Equals(type, TgLocale.MenuReturn))
             return;
 
-        filter.IsEnabled = true;
-        filter.Name = AnsiConsole.Ask<string>(TgLog.GetMarkupString($"{TgLocale.MenuFiltersSetName}:"));
+        filterDto.IsEnabled = true;
+        filterDto.Name = AnsiConsole.Ask<string>(TgLog.GetMarkupString($"{TgLocale.MenuFiltersSetName}:"));
         switch (type)
         {
             case "Single name":
-                filter.FilterType = TgEnumFilterType.SingleName;
+                filterDto.FilterType = TgEnumFilterType.SingleName;
                 break;
             case "Single extension":
-                filter.FilterType = TgEnumFilterType.SingleExtension;
+                filterDto.FilterType = TgEnumFilterType.SingleExtension;
                 break;
             case "Multi name":
-                filter.FilterType = TgEnumFilterType.MultiName;
+                filterDto.FilterType = TgEnumFilterType.MultiName;
                 break;
             case "Multi extension":
-                filter.FilterType = TgEnumFilterType.MultiExtension;
+                filterDto.FilterType = TgEnumFilterType.MultiExtension;
                 break;
             case "File minimum size":
-                filter.FilterType = TgEnumFilterType.MinSize;
+                filterDto.FilterType = TgEnumFilterType.MinSize;
                 break;
             case "File maximum size":
-                filter.FilterType = TgEnumFilterType.MaxSize;
+                filterDto.FilterType = TgEnumFilterType.MaxSize;
                 break;
         }
-        switch (filter.FilterType)
+        switch (filterDto.FilterType)
         {
             case TgEnumFilterType.SingleName:
             case TgEnumFilterType.SingleExtension:
             case TgEnumFilterType.MultiName:
             case TgEnumFilterType.MultiExtension:
-                filter.Mask = AnsiConsole.Ask<string>(TgLog.GetMarkupString($"{TgLocale.MenuFiltersSetMask}:"));
+                filterDto.Mask = AnsiConsole.Ask<string>(TgLog.GetMarkupString($"{TgLocale.MenuFiltersSetMask}:"));
                 break;
             case TgEnumFilterType.MinSize:
-                SetFilterSize(filter, TgLocale.MenuFiltersSetMinSize);
+                SetFilterSize(filterDto, TgLocale.MenuFiltersSetMinSize);
                 break;
             case TgEnumFilterType.MaxSize:
-                SetFilterSize(filter, TgLocale.MenuFiltersSetMaxSize);
+                SetFilterSize(filterDto, TgLocale.MenuFiltersSetMaxSize);
                 break;
         }
 
-        await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filter);
+        await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filterDto);
         await FiltersViewAsync(tgDownloadSettings);
     }
 
@@ -127,21 +127,21 @@ internal partial class TgMenuHelper
         var dto = await GetDtoFromEnumerableAsync(TgLocale.MenuStorageViewFilters, dtos, BusinessLogicManager.StorageManager.FilterRepository);
         if (dto.Uid != Guid.Empty)
         {
-            var filter = await BusinessLogicManager.StorageManager.FilterRepository.GetItemWhereAsync(x => x.Uid == dto.Uid);
-            filter.IsEnabled = AskQuestionTrueFalseReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
-            await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filter);
+            var filterDto = await BusinessLogicManager.StorageManager.FilterRepository.GetDtoAsync(where: x => x.Uid == dto.Uid);
+            filterDto.IsEnabled = AskQuestionTrueFalseReturnPositive(TgLocale.MenuFiltersSetIsEnabled, true);
+            await BusinessLogicManager.StorageManager.FilterRepository.SaveAsync(filterDto);
             await FiltersViewAsync(tgDownloadSettings);
         }
     }
 
     /// <summary> Set filter size </summary>
-    private void SetFilterSize(TgEfFilterEntity filter, string question)
+    private void SetFilterSize(TgEfFilterDto filterDto, string question)
     {
-        filter.SizeType = AnsiConsole.Prompt(new SelectionPrompt<TgEnumFileSizeType>()
+        filterDto.SizeType = AnsiConsole.Prompt(new SelectionPrompt<TgEnumFileSizeType>()
             .Title($"  {TgLocale.MenuFiltersSetSizeType}")
             .PageSize(Console.WindowHeight - 17)
             .AddChoices(TgEnumFileSizeType.Bytes, TgEnumFileSizeType.KBytes, TgEnumFileSizeType.MBytes, TgEnumFileSizeType.GBytes, TgEnumFileSizeType.TBytes));
-        filter.Size = AnsiConsole.Ask<uint>(TgLog.GetMarkupString($"{question}:"));
+        filterDto.Size = AnsiConsole.Ask<uint>(TgLog.GetMarkupString($"{question}:"));
     }
 
     /// <summary> Remove filter </summary>

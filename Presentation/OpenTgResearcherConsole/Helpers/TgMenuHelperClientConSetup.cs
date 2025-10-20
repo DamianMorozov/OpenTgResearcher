@@ -90,9 +90,9 @@ internal partial class TgMenuHelper
 
     private async Task SetupClientProxyAsync()
     {
-        var proxy = await AddOrUpdateProxyAsync();
+        var proxyDto = await AddOrUpdateProxyAsync();
 
-        if (proxy.Type == TgEnumProxyType.MtProto)
+        if (proxyDto.Type == TgEnumProxyType.MtProto)
         {
             var prompt = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
@@ -106,13 +106,12 @@ internal partial class TgMenuHelper
                 _ => false
             };
             if (isSecret)
-                proxy.Secret = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxySecret}:"));
+                proxyDto.Secret = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxySecret}:"));
         }
-        await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxy);
-        //SetupClientProxyCore();
+        await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxyDto);
     }
 
-    private async Task<TgEfProxyEntity> AddOrUpdateProxyAsync()
+    private async Task<TgEfProxyDto> AddOrUpdateProxyAsync()
     {
         var prompt = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
@@ -124,20 +123,16 @@ internal partial class TgMenuHelper
                     nameof(TgEnumProxyType.Http),
                     nameof(TgEnumProxyType.Socks),
                     nameof(TgEnumProxyType.MtProto)));
-        var proxyEntity = GetProxyFromPrompt(prompt);
-        if (!Equals(proxyEntity.Type, TgEnumProxyType.None))
+        var proxyDto = GetProxyFromPrompt(prompt);
+        if (!Equals(proxyDto.Type, TgEnumProxyType.None))
         {
-            proxyEntity.HostName = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyHostName}:"));
-            proxyEntity.Port = AnsiConsole.Ask<ushort>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyPort}:"));
+            proxyDto.HostName = AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyHostName}:"));
+            proxyDto.Port = AnsiConsole.Ask<ushort>(TgLog.GetLineStampInfo($"{TgLocale.TypeTgProxyPort}:"));
         }
-        var proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(where: 
-            x => x.Type == proxyEntity.Type && x.HostName == proxyEntity.HostName && x.Port == proxyEntity.Port);
-        if (proxyDto.Uid == Guid.Empty)
-        {
-            await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxyEntity);
-            proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(where:
-                x => x.Uid == proxyEntity.Uid);
-        }
+
+        await BusinessLogicManager.StorageManager.ProxyRepository.SaveAsync(proxyDto);
+        proxyDto = await BusinessLogicManager.StorageManager.ProxyRepository.GetDtoAsync(
+            where: x => x.Type == proxyDto.Type && x.HostName == proxyDto.HostName && x.Port == proxyDto.Port);
 
         var appDto = await BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppDtoAsync();
         if (appDto.Uid != Guid.Empty && proxyDto.Uid != Guid.Empty)
@@ -146,10 +141,10 @@ internal partial class TgMenuHelper
             await BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appDto);
         }
         
-        return proxyEntity;
+        return proxyDto;
     }
 
-    private static TgEfProxyEntity GetProxyFromPrompt(string prompt) => new()
+    private static TgEfProxyDto GetProxyFromPrompt(string prompt) => new()
     {
         Type = prompt switch
         {
@@ -204,39 +199,39 @@ internal partial class TgMenuHelper
     private string? ConfigClientConsole(string what)
     {
         var appNew = BusinessLogicManager.StorageManager.AppRepository.GetNewItem();
-        var app = BusinessLogicManager.StorageManager.AppRepository.GetCurrentApp(isReadOnly: false).Item ?? new();
+        var appDto = BusinessLogicManager.StorageManager.AppRepository.GetCurrentAppDtoAsync().GetAwaiter().GetResult() ?? new();
         switch (what)
         {
             case "api_hash":
-                var apiHash = !Equals(app.ApiHash, appNew.ApiHash)
-                    ? TgDataFormatUtils.ParseGuidToString(app.ApiHash)
+                var apiHash = !Equals(appDto.ApiHash, appNew.ApiHash)
+                    ? TgDataFormatUtils.ParseGuidToString(appDto.ApiHash)
                     : TgDataFormatUtils.ParseGuidToString(TgDataFormatUtils.ParseStringToGuid(
                         AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TgSetupApiHash}:"))));
-                if (app.ApiHash != TgDataFormatUtils.ParseStringToGuid(apiHash))
+                if (appDto.ApiHash != TgDataFormatUtils.ParseStringToGuid(apiHash))
                 {
-                    app.ApiHash = TgDataFormatUtils.ParseStringToGuid(apiHash);
-                    BusinessLogicManager.StorageManager.AppRepository.Save(app);
+                    appDto.ApiHash = TgDataFormatUtils.ParseStringToGuid(apiHash);
+                    BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appDto).GetAwaiter().GetResult();
                 }
                 return apiHash;
             case "api_id":
-                var apiId = !Equals(app.ApiId, appNew.ApiId)
-                    ? app.ApiId.ToString()
+                var apiId = !Equals(appDto.ApiId, appNew.ApiId)
+                    ? appDto.ApiId.ToString()
                     : AnsiConsole.Ask<int>(TgLog.GetLineStampInfo($"{TgLocale.TgSetupAppId}:"))
                     .ToString();
-                if (app.ApiId != int.Parse(apiId))
+                if (appDto.ApiId != int.Parse(apiId))
                 {
-                    app.ApiId = int.Parse(apiId);
-                    BusinessLogicManager.StorageManager.AppRepository.Save(app);
+                    appDto.ApiId = int.Parse(apiId);
+                    BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appDto).GetAwaiter().GetResult();
                 }
                 return apiId;
             case "phone_number":
-                var phoneNumber = !Equals(app.PhoneNumber, appNew.PhoneNumber)
-                    ? app.PhoneNumber
+                var phoneNumber = !Equals(appDto.PhoneNumber, appNew.PhoneNumber)
+                    ? appDto.PhoneNumber
                     : AnsiConsole.Ask<string>(TgLog.GetLineStampInfo($"{TgLocale.TgSetupPhone}:"));
-                if (app.PhoneNumber != phoneNumber)
+                if (appDto.PhoneNumber != phoneNumber)
                 {
-                    app.PhoneNumber = phoneNumber;
-                    BusinessLogicManager.StorageManager.AppRepository.Save(app);
+                    appDto.PhoneNumber = phoneNumber;
+                    BusinessLogicManager.StorageManager.AppRepository.SaveAsync(appDto).GetAwaiter().GetResult();
                 }
                 return phoneNumber;
             case "verification_code":

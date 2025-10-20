@@ -5,7 +5,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	#region Fields, properties, constructor
 
 	[ObservableProperty]
-	public partial TgEfAppDto AppDto { get; set; } = default!;
+	public partial TgEfAppDto? AppDto { get; set; } = default!;
 	[ObservableProperty]
 	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new(TgGlobalTools.Container);
 	[ObservableProperty]
@@ -74,7 +74,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
             {
                 ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
 
-                if (AppDto.UseClient)
+                if (AppDto is not null && AppDto.UseClient)
                 {
                     var client = App.BusinessLogicManager.ConnectClient.Client;
 
@@ -138,6 +138,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     private string? ConfigClientDesktop(string what)
 	{
+        if (AppDto is null) return null;
+
         var response = what switch
 		{
 			"api_hash" => AppDto.ApiHashString,
@@ -210,7 +212,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     private async Task ClientConnectWithGetMeAsync()
     {
         await App.BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientDesktop, ProxyVm?.Dto ?? new(), isDesktop: true);
-        if (App.BusinessLogicManager.ConnectClient.Me is TL.User me)
+        if (AppDto is not null && App.BusinessLogicManager.ConnectClient.Me is TL.User me)
         {
             AppDto.FirstName = me.first_name ?? string.Empty;
             AppDto.LastName = me.last_name ?? string.Empty;
@@ -262,7 +264,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
         if (!SettingsService.IsExistsAppStorage) return;
         AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
-		//await ReloadUiAsync();
 	}
 
 	public override async Task ReloadUiAsync()
@@ -304,7 +305,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 		// Select proxy
 		var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
-		if (AppDto.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
+		if (AppDto?.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
 		{
 			ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
 		}
@@ -320,6 +321,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
 	private async Task AppSaveCoreAsync()
 	{
+        if (AppDto is null) return;
+
         try
         {
             AppDto.ProxyUid = ProxyVm?.Dto.Uid ?? Guid.Empty;

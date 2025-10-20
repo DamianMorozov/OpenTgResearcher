@@ -6,6 +6,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 
 	[ObservableProperty]
 	public partial string UpdateLog { get; set; } = string.Empty;
+
 	public IAsyncRelayCommand UpdateReleaseCommand { get; }
 	public IAsyncRelayCommand UpdatePreviewCommand { get; }
 
@@ -29,41 +30,45 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
 	private async Task UpdatePreviewAsync() => 
         await ContentDialogAsync(() => VelopackUpdateAsync(isPreview: true), TgResourceExtensions.AskUpdatePreviewApp(), TgEnumLoadDesktopType.Online);
 
-	/// <summary> Velopack installer update </summary>
-	private async Task VelopackUpdateAsync(bool isPreview)
-	{
-		UpdateLog = string.Empty;
-		var log = new StringBuilder();
-		try
-		{
-			log.AppendLine("Update started");
-			TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
-			log.AppendLine($"{TgConstants.OpenTgResearcherDesktop} {TgAppSettingsHelper.Instance.AppVersion}");
-			log.AppendLine("Checking updates on the link github.com");
+    /// <summary> Velopack installer update </summary>
+    private async Task VelopackUpdateAsync(bool isPreview)
+    {
+        // Update UI on UI thread
+        await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+        {
+            UpdateLog = string.Empty;
+            try
+            {
+                UpdateLog += "Update started" + Environment.NewLine;
+                TgAppSettingsHelper.Instance.SetVersion(Assembly.GetExecutingAssembly());
+                UpdateLog += $"{TgConstants.OpenTgResearcherDesktop} {TgAppSettingsHelper.Instance.AppVersion}" + Environment.NewLine;
+                UpdateLog += "Checking updates on the link github.com" + Environment.NewLine;
+                await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 
-            var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
-			// Check for new version
-			var newVersion = await mgr.CheckForUpdatesAsync();
-			if (newVersion is null)
-			{
-				log.AppendLine("You are using the latest version of the software");
-				return;
-			}
-			// Download new version
-			log.AppendLine("Download new version");
-			await mgr.DownloadUpdatesAsync(newVersion);
-        }
-        // Cannot perform this operation in an application which is not installed
-        catch (Exception ex)
-		{
-			log.AppendLine(ex.Message);
-			LogError(ex);
-		}
-		finally
-		{
-			UpdateLog = log.ToString();
-		}
-	}
+                var mgr = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
+                // Check for new version
+                var newVersion = await mgr.CheckForUpdatesAsync();
+                if (newVersion is null)
+                {
+                    UpdateLog += "You are using the latest version of the software" + Environment.NewLine;
+                    return;
+                }
 
-	#endregion
+                // Download new version
+                UpdateLog += "Download new version" + Environment.NewLine;
+                await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
+
+                await mgr.DownloadUpdatesAsync(newVersion);
+                await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
+            }
+            // Cannot perform this operation in an application which is not installed
+            catch (Exception ex)
+            {
+                UpdateLog += Environment.NewLine + ex.Message + Environment.NewLine;
+                LogError(ex);
+            }
+        });
+    }
+
+    #endregion
 }

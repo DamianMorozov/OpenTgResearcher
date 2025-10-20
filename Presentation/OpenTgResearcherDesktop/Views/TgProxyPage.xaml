@@ -233,12 +233,12 @@
                         Margin="2"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Left"
-                        ItemsSource="{x:Bind ViewModel.Types, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.Types, Mode=OneTime}"
                         SelectedItem="{x:Bind ViewModel.Dto.Type, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="enums:TgEnumProxyType">
-                                <TextBlock Text="{x:Bind Mode=OneWay}" />
+                                <TextBlock Text="{x:Bind Mode=OneTime}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

@@ -33,9 +33,9 @@ public interface ITgStorageService : IDisposable
     /// <summary> Version repository for managing version information in the Telegram storage </summary>
     public ITgEfVersionRepository VersionRepository { get; }
     /// <summary> Create or get a story entity based on peer ID and story item </summary>
-    public Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story);
+    public Task<TgEfStoryDto> CreateOrGetStoryAsync(long peerId, StoryItem story);
     /// <summary> Create or get a user entity based on the Telegram user and contact status </summary>
-    public Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, bool isSave, CancellationToken ct = default);
+    public Task<TgEfUserDto> CreateOrGetUserAsync(User user, bool isContact, bool isSave, CancellationToken ct = default);
     /// <summary> Check if table exists in the database </summary>
     Task<bool> CheckTableExistsAsync(string tableName = "");
     /// <summary> Remove duplicate messages from the database </summary>

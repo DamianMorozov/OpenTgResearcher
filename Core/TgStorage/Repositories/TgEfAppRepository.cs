@@ -37,8 +37,8 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
 	{
 		// Find by Uid
 		var itemFind = await GetQuery(isReadOnly)
-			.Where(x => x.Uid == dto.Uid)
-			.FirstOrDefaultAsync();
+            .Where(x => x.Uid == dto.Uid)
+            .FirstOrDefaultAsync(ct);
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 		// Find by ApiHash
@@ -209,7 +209,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
     }
 
     /// <inheritdoc />
-    public async Task SaveAsync(TgEfAppDto dto)
+    public async Task SaveAsync(TgEfAppDto dto, CancellationToken ct = default)
     {
         TgEfAppEntity? entity = null;
         try
@@ -218,7 +218,10 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
                 return;
 
             // Try to find existing entity
-            entity = await EfContext.Apps.FirstOrDefaultAsync(x => x.Uid == dto.Uid);
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by ApiHash
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.ApiHash == dto.ApiHash, ct);
 
             if (entity is null)
             {
@@ -231,15 +234,7 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
             else
             {
                 // Update existing entity
-                entity.ApiHash = dto.ApiHash;
-                entity.ApiId = dto.ApiId;
-                entity.FirstName = dto.FirstName;
-                entity.LastName = dto.LastName;
-                entity.PhoneNumber = dto.PhoneNumber;
-                entity.ProxyUid = dto.ProxyUid;
-                entity.BotTokenKey = dto.BotTokenKey;
-                entity.UseClient = dto.UseClient;
-                entity.UseBot = dto.UseBot;
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
             }
 
             ValidateAndNormalize(entity);
@@ -247,7 +242,6 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
         }
         catch (Exception ex)
         {
-            // Log exception to keep application stable
             TgLogUtils.WriteException(ex, "Error saving app");
             throw;
         }
@@ -256,6 +250,23 @@ public sealed class TgEfAppRepository : TgEfRepositoryBase<TgEfAppEntity, TgEfAp
             // Avoid EF tracking issues
             if (entity is not null)
                 EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfAppDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving apps");
+            throw;
         }
     }
 

@@ -83,12 +83,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // FusionCache
         ArgumentNullException.ThrowIfNull(cache);
         Cache = cache;
-        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), entity => $"{entity.Id}");
-        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), entity => $"{entity.SourceId}:{entity.Id}");
-        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
-        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
-        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
-        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
+        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
+        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), dto => $"{dto.SourceId}:{dto.Id}");
+        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
+        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.Id}");
+        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
+        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
 
         // Callback updates: PropertyChanged
         PropertyChanged += (_, e) =>
@@ -110,12 +110,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         LoadStateService = loadStateService;
         // FusionCache
         Cache = cache;
-        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), entity => $"{entity.Id}");
-        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), entity => $"{entity.SourceId}:{entity.Id}");
-        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), entity => $"{entity.ParentSourceId}:{entity.ParentMessageId}:{entity.ChildSourceId}:{entity.ChildMessageId}");
-        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), entity => $"{entity.Id}");
-        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
-        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), entity => $"{entity.Id}");
+        _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
+        _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), dto => $"{dto.SourceId}:{dto.Id}");
+        _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
+        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.Id}");
+        _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
+        _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
 
         // Callback updates: PropertyChanged
         PropertyChanged += (_, e) =>
@@ -1093,7 +1093,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 TgCacheUtils.CacheOptionsFullChat, ct);
             if (isSave)
             {
-                await StorageManager.SourceRepository.SaveAsync(new() { Id = channel.id, UserName = channel.username, Title = channel.title }, isFirstTry: true, ct);
+                await StorageManager.SourceRepository.SaveAsync(
+                    new TgEfSourceDto() { Id = channel.id, UserName = channel.username, Title = channel.title }, ct);
             }
             if (!isSilent)
             {
@@ -1358,59 +1359,57 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         if (tgDownloadSettings is not TgDownloadSettingsViewModel tgDownloadSettings2) return;
 
-        var sourceDto = tgDownloadSettings2.SourceVm.Dto;
-        var sourceEntity = await StorageManager.SourceRepository.GetItemAsync(new() { Id = sourceDto.Id }, isReadOnly: false, ct);
+        var chatDto = tgDownloadSettings2.SourceVm.Dto;
 
         await CreateChatBaseCoreAsync(tgDownloadSettings2);
 
         if (Bot is not null)
         {
-            var botChatFullInfo = await GetChatDetailsForBot(sourceDto.Id, sourceDto.UserName);
+            var botChatFullInfo = await GetChatDetailsForBot(chatDto.Id, chatDto.UserName);
             if (botChatFullInfo?.TLInfo is TL.Messages_ChatFull { full_chat: TL.ChannelFull channelFull })
             {
-                sourceEntity.IsUserAccess = true;
-                sourceEntity.IsSubscribe = true;
-                sourceEntity.UserName = botChatFullInfo.Username;
-                sourceEntity.Count = channelFull.read_outbox_max_id > 0 ? channelFull.read_outbox_max_id : channelFull.read_inbox_max_id;
-                sourceEntity.Title = botChatFullInfo.Title;
-                sourceEntity.Id = ReduceChatId(channelFull.ID);
-                sourceEntity.About = channelFull.About;
-                sourceEntity.AccessHash = botChatFullInfo.AccessHash;
+                chatDto.IsUserAccess = true;
+                chatDto.IsSubscribe = true;
+                chatDto.UserName = botChatFullInfo.Username ?? string.Empty;
+                chatDto.Count = channelFull.read_outbox_max_id > 0 ? channelFull.read_outbox_max_id : channelFull.read_inbox_max_id;
+                chatDto.Title = botChatFullInfo.Title ?? string.Empty;
+                chatDto.Id = ReduceChatId(channelFull.ID);
+                chatDto.About = channelFull.About;
+                chatDto.AccessHash = botChatFullInfo.AccessHash;
             }
         }
         else
         {
             if (tgDownloadSettings2.Chat.Base is { } chatBase && await IsChatBaseAccessAsync(chatBase, ct))
             {
-                sourceEntity.IsUserAccess = true;
-                sourceEntity.IsSubscribe = true;
-                sourceEntity.UserName = chatBase.MainUsername ?? string.Empty;
+                chatDto.IsUserAccess = true;
+                chatDto.IsSubscribe = true;
+                chatDto.UserName = chatBase.MainUsername ?? string.Empty;
 
                 // TODO: use smart method from scan chat
-                sourceEntity.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings, ct);
+                chatDto.Count = await GetChannelMessageIdLastAsync(tgDownloadSettings, ct);
                 // FullChat cache
                 var chatFull = await PrintChatsInfoChatBaseAsync(chatBase, isFull: true, isSilent, ct);
-                sourceEntity.Title = chatBase.Title;
+                chatDto.Title = chatBase.Title;
                 if (chatFull?.full_chat is TL.ChannelFull chatBaseFull)
                 {
-                    sourceEntity.Id = ReduceChatId(chatBaseFull.ID);
-                    sourceEntity.About = chatBaseFull.About;
+                    chatDto.Id = ReduceChatId(chatBaseFull.ID);
+                    chatDto.About = chatBaseFull.About;
                 }
                 if (chatBase is TL.Channel channel)
                 {
-                    sourceEntity.IsRestrictSavingContent = channel.flags.HasFlag(TL.Channel.Flags.noforwards);
+                    chatDto.IsRestrictSavingContent = channel.flags.HasFlag(TL.Channel.Flags.noforwards);
                 }
             }
             else
             {
-                sourceEntity.IsUserAccess = false;
+                chatDto.IsUserAccess = false;
             }
         }
-        sourceEntity.Directory = sourceDto.Directory;
-        sourceEntity.FirstId = sourceDto.FirstId;
+        chatDto.Directory = chatDto.Directory;
+        chatDto.FirstId = chatDto.FirstId;
 
-        await StorageManager.SourceRepository.SaveAsync(sourceEntity, isFirstTry: true, ct);
-        tgDownloadSettings2.SourceVm.Fill(sourceEntity);
+        await StorageManager.SourceRepository.SaveAsync(chatDto, ct);
     }
 
     /// <summary> Get chat details from bot </summary>
@@ -1464,26 +1463,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Build chat entity from Telegram chat </summary>
-    private async Task<TgEfSourceEntity> BuildChatEntityAsync(TL.ChatBase chat, string about, int messagesCount, bool isUserAccess)
+    private async Task<TgEfSourceDto> BuildChatEntityAsync(TL.ChatBase chat, string about, int messagesCount, bool isUserAccess)
     {
         var accessHash = chat is TL.Channel ch ? ch.access_hash : 0;
 
-        var storageResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = chat.ID });
-        var entity = storageResult.IsExists && storageResult.Item is not null
-            ? storageResult.Item
-            : new TgEfSourceEntity { Id = chat.ID };
-
-        entity.DtChanged = DateTime.UtcNow;
-        entity.AccessHash = accessHash;
-        entity.IsActive = chat.IsActive;
-        entity.UserName = chat.MainUsername;
-        entity.Title = chat.Title;
-        entity.About = about;
+        var chatDto = await StorageManager.SourceRepository.GetDtoAsync(where: x => x.Id == chat.ID) ?? new TgEfSourceDto { Id = chat.ID };
+        chatDto.DtChanged = DateTime.UtcNow;
+        chatDto.AccessHash = accessHash;
+        chatDto.IsActive = chat.IsActive;
+        chatDto.UserName = chat.MainUsername;
+        chatDto.Title = chat.Title;
+        chatDto.About = about;
         if (messagesCount > 0)
-            entity.Count = messagesCount;
-        entity.IsUserAccess = isUserAccess;
+            chatDto.Count = messagesCount;
+        chatDto.IsUserAccess = isUserAccess;
 
-        return entity;
+        return chatDto;
     }
 
     /// <inheritdoc />
@@ -1561,7 +1556,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         IsContact = dto.IsContact
     };
 
-    private static void TgEfStoryEntityByMessageType(TgEfStoryEntity storyNew, TL.MessageEntity message)
+    private static void TgEfStoryEntityByMessageType(TgEfStoryDto storyNew, TL.MessageEntity message)
     {
         if (message is null)
             return;
@@ -1612,7 +1607,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    private static void TgEfStoryEntityByMediaType(TgEfStoryEntity storyNew, TL.MessageMedia media)
+    private static void TgEfStoryEntityByMediaType(TgEfStoryDto storyNew, TL.MessageMedia media)
     {
         if (media is null)
             return;
@@ -1792,16 +1787,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             TgCacheUtils.CacheOptionsFullChat, ct);
                         if (fullChannel?.full_chat is TL.ChannelFull channelFull)
                         {
-                            var entity = await BuildChatEntityAsync(channel, channelFull.about, messagesCount: 0, isUserAccess: true);
-                            _chatBuffer.Add(entity);
+                            var chatDto = await BuildChatEntityAsync(channel, channelFull.about, messagesCount: 0, isUserAccess: true);
+                            _chatBuffer.Add(chatDto);
                             await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent,
                                 tgDownloadSettings.SourceScanCount, $"{channel} | {TgDataFormatUtils.TrimStringEnd(channelFull.about, 40)}");
                         }
                     }
                     else
                     {
-                        var entity = await BuildChatEntityAsync(channel, string.Empty, messagesCount: 0, isUserAccess: true);
-                        _chatBuffer.Add(entity);
+                        var chatDto = await BuildChatEntityAsync(channel, string.Empty, messagesCount: 0, isUserAccess: true);
+                        _chatBuffer.Add(chatDto);
                         await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent, tgDownloadSettings.SourceScanCount, $"{channel}");
                     }
                 }, async () =>
@@ -1835,13 +1830,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 tgDownloadSettings.Chat.Base = group;
                 // last-count from FusionCache
                 //var messagesCount = await GetCachedChatLastCountAsync(group.ID, () => GetChannelMessageIdLastAsync(tgDownloadSettings));
-                TgEfSourceEntity entity;
+                TgEfSourceDto chatDto;
                 if (group is TL.Channel ch)
-                    entity = await BuildChatEntityAsync(ch, string.Empty, messagesCount: 0, isUserAccess: true);
+                    chatDto = await BuildChatEntityAsync(ch, string.Empty, messagesCount: 0, isUserAccess: true);
                 else
-                    entity = await BuildChatEntityAsync(group, string.Empty, messagesCount: 0, isUserAccess: true);
+                    chatDto = await BuildChatEntityAsync(group, string.Empty, messagesCount: 0, isUserAccess: true);
 
-                _chatBuffer.Add(entity);
+                _chatBuffer.Add(chatDto);
 
                 if (tgDownloadSettings is TgDownloadSettingsViewModel tgDownloadSettings2)
                     await UpdateChatViewModelAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, 0, $"{group}");
@@ -2289,13 +2284,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Mark storage entity as deleted </summary>
     private async Task CheckDeletedMessageAndMarkEntityAsync(long chatId, int messageId)
     {
-        var storageResult = await StorageManager.MessageRepository.GetByDtoAsync(new() { SourceId = chatId, Id = messageId }, isReadOnly: false);
-
-        if (storageResult.IsExists && storageResult.Item is { } messageEntity && !messageEntity.IsDeleted)
+        var messageDto = await StorageManager.MessageRepository.GetDtoAsync(where: x => x.SourceId == chatId && x.Id == messageId);
+        if (messageDto is not null && !messageDto.IsDeleted)
         {
-            messageEntity.IsDeleted = true;
-
-            await StorageManager.MessageRepository.SaveAsync(messageEntity);
+            messageDto.IsDeleted = true;
+            await StorageManager.MessageRepository.SaveAsync(messageDto);
         }
     }
 
@@ -2759,23 +2752,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (channel is null) return;
         if (chatCache.IsSaved(channel.ID) && chatCache.CheckExistsDirectory(channel.ID)) return;
 
-        var chatResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = channel.ID });
-
-        if (chatResult.IsExists && chatResult.Item is TgEfSourceEntity chatEntity)
+        var chatDto = await StorageManager.SourceRepository.GetDtoAsync(where: x => x.Id == channel.ID);
+        if (chatDto is not null)
         {
             // AccessHash must be the hash of the discussion channel itself.
-            if (chatEntity.AccessHash != channel.access_hash)
+            if (chatDto.AccessHash != channel.access_hash)
             {
-                chatEntity.DtChanged = DateTime.UtcNow;
-                chatEntity.AccessHash = channel.access_hash;
-                await StorageManager.SourceRepository.SaveAsync(chatEntity);
+                chatDto.DtChanged = DateTime.UtcNow;
+                chatDto.AccessHash = channel.access_hash;
+                await StorageManager.SourceRepository.SaveAsync(chatDto);
             }
-            _ = await SetAndCreateChatDirectoryIfNotExists(channel, parentChatId, chatEntity, isNew: false);
+            _ = await SetAndCreateChatDirectoryIfNotExists(channel, parentChatId, chatDto, isNew: false);
         }
         else
         {
             // The ID of the new entity = channel.ID, not parentChatId
-            var newChatEntity = new TgEfSourceEntity
+            chatDto = new TgEfSourceDto
             {
                 DtChanged = DateTime.UtcNow,
                 Id = channel.ID,
@@ -2785,7 +2777,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 IsUserAccess = true,
                 IsSubscribe = false
             };
-            _ = await SetAndCreateChatDirectoryIfNotExists(channel, parentChatId, newChatEntity, isNew: true);
+            _ = await SetAndCreateChatDirectoryIfNotExists(channel, parentChatId, chatDto, isNew: true);
         }
 
         chatCache.TryAddChat(channel.ID, channel.access_hash, string.Empty);
@@ -2794,7 +2786,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <summary> Set directory for chat and create it if it does not exist </summary>
     private async Task<string> SetAndCreateChatDirectoryIfNotExists(TL.Channel channel, long parentChatId,
-        TgEfSourceEntity chatEntity, bool isNew)
+        TgEfSourceDto chatDto, bool isNew)
     {
         var isChanged = false;
 
@@ -2815,7 +2807,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return siblingPath;
         }
 
-        if (string.IsNullOrWhiteSpace(chatEntity.Directory) || !Directory.Exists(chatEntity.Directory))
+        if (string.IsNullOrWhiteSpace(chatDto.Directory) || !Directory.Exists(chatDto.Directory))
         {
             var parentChatResult = await StorageManager.SourceRepository.GetByDtoAsync(new() { Id = parentChatId });
             if (parentChatResult.IsExists && parentChatResult.Item is TgEfSourceEntity parentEntity && IsValidDirectory(parentEntity.Directory))
@@ -2835,15 +2827,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                 }
 
-                chatEntity.Directory = siblingDirectory;
+                chatDto.Directory = siblingDirectory;
                 isChanged = true;
             }
         }
 
         if (isChanged || isNew)
-            await StorageManager.SourceRepository.SaveAsync(chatEntity);
+            await StorageManager.SourceRepository.SaveAsync(chatDto);
 
-        return chatEntity.Directory ?? string.Empty;
+        return chatDto.Directory ?? string.Empty;
     }
 
     /// <summary> Get input TL.Peer </summary>
@@ -3060,7 +3052,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             case MessageMediaDocument { document: Document document }:
                 {
-                    TgEfDocumentEntity doc = new()
+                    TgEfDocumentDto docDto = new()
                     {
                         Id = document.ID,
                         SourceId = tgDownloadSettings.SourceVm.Dto.Id,
@@ -3069,7 +3061,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         FileSize = mediaInfo.RemoteSize,
                         AccessHash = document.access_hash
                     };
-                    await StorageManager.DocumentRepository.SaveAsync(doc, ct: ct);
+                    await StorageManager.DocumentRepository.SaveAsync(docDto, ct);
                 }
                 await SaveMessagesAsync(tgDownloadSettings, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
                     TgEnumMessageType.Document, isRetry: false, authorId, ct);
@@ -3255,7 +3247,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             // Save message entity
             if (messageSettings.CurrentMessageId > 0 && messageSettings.CurrentChatId > 0) 
             {
-                var messageItem = new TgEfMessageEntity
+                var messageDto = new TgEfMessageDto
                 {
                     Id = messageSettings.CurrentMessageId,
                     SourceId = messageSettings.CurrentChatId,
@@ -3268,18 +3260,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 // Saved Messages
                 if (tgDownloadSettings.SourceVm.Dto.Id == Me?.id)
                 {
-                    messageItem.UserId = tgDownloadSettings.SourceVm.Dto.Id;
+                    messageDto.UserId = tgDownloadSettings.SourceVm.Dto.Id;
                 }
                 else if (authorId > 0)
                 {
-                    messageItem.UserId = authorId;
+                    messageDto.UserId = authorId;
                 }
                 // Save message entity
                 {
                     // Check if the message is not already in the batch
-                    if (_messageBuffer.FirstOrDefault(x => x.Id == messageItem.Id && x.SourceId == messageItem.SourceId && x.UserId == messageItem.UserId) is null)
+                    if (_messageBuffer.FirstOrDefault(x => x.Id == messageDto.Id && x.SourceId == messageDto.SourceId && x.UserId == messageDto.UserId) is null)
                     {
-                        _messageBuffer.Add(messageItem);
+                        _messageBuffer.Add(messageDto);
                     }
                 }
             }
@@ -3287,7 +3279,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             // Save message relation entity
             if (messageSettings.ParentChatId > 0 && messageSettings.ParentMessageId > 0 && messageSettings.CurrentChatId > 0 && messageSettings.CurrentMessageId > 0)
             {
-                var relation = new TgEfMessageRelationEntity
+                var relationDto = new TgEfMessageRelationDto
                 {
                     ParentSourceId = messageSettings.ParentChatId,
                     ParentMessageId = messageSettings.ParentMessageId,
@@ -3297,7 +3289,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 if (_messageRelationBuffer.FirstOrDefault(x => x.ParentSourceId == messageSettings.ParentChatId && x.ParentMessageId == messageSettings.ParentMessageId &&
                     x.ChildSourceId == messageSettings.CurrentChatId && x.ChildMessageId == messageSettings.CurrentMessageId) is null)
                 {
-                    _messageRelationBuffer.Add(relation);
+                    _messageRelationBuffer.Add(relationDto);
                 }
             }
 
@@ -4292,18 +4284,16 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         var chatDto = await StorageManager.SourceRepository.GetDtoAsync(x => x.Id == chatId);
         if (chatDto.Uid != Guid.Empty) return chatDto.Uid;
 
-        var chatEntity = new TgEfSourceEntity
-        {
-            Uid = Guid.NewGuid(),
-            Id = chatId,
-            UserName = Me.username ?? string.Empty,
-            Title = $"{Me.first_name} {Me.last_name}".Trim(),
-            IsActive = true,
-            IsSubscribe = true,
-            IsUserAccess = true,
-        };
-        await StorageManager.SourceRepository.SaveAsync(chatEntity);
-        return chatEntity.Uid;
+        chatDto.Uid = Guid.NewGuid();
+        chatDto.Id = chatId;
+        chatDto.UserName = Me.username ?? string.Empty;
+        chatDto.Title = $"{Me.first_name} {Me.last_name}".Trim();
+        chatDto.IsActive = true;
+        chatDto.IsSubscribe = true;
+        chatDto.IsUserAccess = true;
+
+        await StorageManager.SourceRepository.SaveAsync(chatDto);
+        return chatDto.Uid;
     }
 
     #endregion

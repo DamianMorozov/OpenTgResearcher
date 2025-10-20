@@ -10,5 +10,7 @@ public interface ITgEfProxyRepository : ITgEfRepository<TgEfProxyEntity, TgEfPro
     /// <summary> Create a default proxy entity if none exists </summary>
     public Task CreateDefaultAsync();
     /// <summary> Save proxy dto </summary>
-    public Task SaveAsync(TgEfProxyDto dto);
+    public Task SaveAsync(TgEfProxyDto dto, CancellationToken ct = default);
+    /// <summary> Save list of proxy dtos </summary>
+    public Task SaveListAsync(IEnumerable<TgEfProxyDto> dtos, CancellationToken ct = default);
 }

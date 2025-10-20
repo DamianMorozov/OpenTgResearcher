@@ -114,5 +114,67 @@ public sealed class TgEfFilterRepository : TgEfRepositoryBase<TgEfFilterEntity, 
     public override async Task<int> GetCountAsync(Expression<Func<TgEfFilterEntity, bool>> where, CancellationToken ct = default) => 
         await EfContext.Filters.AsNoTracking().Where(where).CountAsync(ct);
 
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfFilterDto dto, CancellationToken ct = default)
+    {
+        TgEfFilterEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by FilterType and Name
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.FilterType == dto.FilterType && x.Name == dto.Name, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Filters.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving filter");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfFilterDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving filters");
+            throw;
+        }
+    }
+
     #endregion
 }

@@ -23,7 +23,7 @@ public sealed class TgEfMessageRelationRepository : TgEfRepositoryBase<TgEfMessa
         if (itemFind is not null)
             return new(TgEnumEntityState.IsExists, itemFind);
 
-        // Find by Id
+        // Find by ParentSourceId and ParentMessageId and ChildSourceId and ChildMessageId
         itemFind = await GetQuery(isReadOnly)
             .FirstOrDefaultAsync(x => 
                 x.ParentSourceId == item.ParentSourceId && x.ParentMessageId == item.ParentMessageId && 
@@ -126,6 +126,69 @@ public sealed class TgEfMessageRelationRepository : TgEfRepositoryBase<TgEfMessa
     /// <inheritdoc />
     public override async Task<int> GetCountAsync(Expression<Func<TgEfMessageRelationEntity, bool>> where, CancellationToken ct = default) => 
         await EfContext.MessagesRelations.AsNoTracking().Where(where).CountAsync(ct);
+
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfMessageRelationDto dto, CancellationToken ct = default)
+    {
+        TgEfMessageRelationEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by ParentSourceId and ParentMessageId and ChildSourceId and ChildMessageId
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.ParentSourceId == dto.ParentSourceId && x.ParentMessageId == dto.ParentMessageId &&
+                    x.ChildSourceId == dto.ChildSourceId && x.ChildMessageId == dto.ChildMessageId, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.MessagesRelations.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving message relation");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfMessageRelationDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving message relations");
+            throw;
+        }
+    }
 
     #endregion
 }

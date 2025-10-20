@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixing the creation of the `Saved Messages` chat in `OpenTgResearcherDesktop`
 - Fixing storage initialization in `OpenTgResearcherDesktop`
 - Fixing language change in `OpenTgResearcherDesktop`
+- Fixing for saving data in the storage
 ### Changed
 - Updating the `Update` page in `OpenTgResearcherDesktop`
 ### Added

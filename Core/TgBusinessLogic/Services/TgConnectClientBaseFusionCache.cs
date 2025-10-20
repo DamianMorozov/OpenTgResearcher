@@ -7,11 +7,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     #region FusionCache
 
     private readonly IFusionCache Cache = default!;
-    private readonly TgBufferCacheHelper<TgEfMessageEntity> _messageBuffer = default!;
-    private readonly TgBufferCacheHelper<TgEfMessageRelationEntity> _messageRelationBuffer = default!;
-    private readonly TgBufferCacheHelper<TgEfSourceEntity> _chatBuffer = default!;
-    private readonly TgBufferCacheHelper<TgEfStoryEntity> _storyBuffer = default!;
-    private readonly TgBufferCacheHelper<TgEfUserEntity> _userBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfMessageDto> _messageBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfMessageRelationDto> _messageRelationBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfSourceDto> _chatBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfStoryDto> _storyBuffer = default!;
+    private readonly TgBufferCacheHelper<TgEfUserDto> _userBuffer = default!;
     private readonly TgBufferCacheHelper<TgParticipantDto> _tlUserBuffer = default!;
 
     /// <summary> Release all buffers and cache </summary>
@@ -88,7 +88,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.SourceRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
+                await StorageManager.SourceRepository.SaveListAsync(list, ct);
             },
             postSaveAction: async list =>
             {
@@ -102,12 +102,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.StoryRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
+                await StorageManager.StoryRepository.SaveListAsync(list, ct);
             },
             postSaveAction: async list =>
             {
                 foreach (var item in list)
-                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyStory(item.FromId ?? 0, item.Id), token: ct);
+                    await Cache.RemoveAsync(TgCacheUtils.GetCacheKeyStory(item.FromId, item.Id), token: ct);
             });
 
     /// <summary> Flush user buffer to database </summary>
@@ -116,7 +116,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.UserRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
+                await StorageManager.UserRepository.SaveListAsync(list, ct);
             },
             postSaveAction: async list =>
             {
@@ -137,7 +137,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await WaitTransactionCompleteAsync();
 
                 if (CheckShouldStop(ct)) return;
-                await StorageManager.MessageRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
+                await StorageManager.MessageRepository.SaveListAsync(list, ct);
 
                 if (CheckShouldStop(ct)) return;
                 if (_downloadSettings is not null && list.Count > 0)
@@ -151,8 +151,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
                             // Save updated FirstId to database
-                            var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
-                            await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
+                            await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto, ct: ct);
                         }
                     }
                 }
@@ -173,8 +172,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     {
                         _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
                         // Save updated FirstId to database
-                        var sourceEntity = TgEfDomainUtils.CreateNewEntity(_downloadSettings.SourceVm.Dto, isUidCopy: true);
-                        await StorageManager.SourceRepository.SaveAsync(sourceEntity, ct: ct);
+                        await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto, ct: ct);
                     }
                 }
 
@@ -192,7 +190,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
-                await StorageManager.MessageRelationRepository.SaveListAsync(list, isRewriteMessages, ct: ct);
+                await StorageManager.MessageRelationRepository.SaveListAsync(list, ct);
             },
             postSaveAction: async list =>
             {
@@ -205,54 +203,54 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Fills the buffer with stories for a specific peer </summary>
-    public async Task<TgEfStoryEntity?> FillBufferStoriesAsync(long peerId, TL.StoryItem story, CancellationToken ct = default) =>
+    public async Task<TgEfStoryDto?> FillBufferStoriesAsync(long peerId, TL.StoryItem story, CancellationToken ct = default) =>
         await TryGetCatchAsync(async () =>
         {
-            TgEfStoryEntity? entity = null;
+            TgEfStoryDto? storyDto = null;
             if (story.entities is not null)
             {
                 foreach (var message in story.entities)
                 {
-                    entity = await StorageManager.CreateOrGetStoryAsync(peerId, story);
-                    await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), entity, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
+                    storyDto = await StorageManager.CreateOrGetStoryAsync(peerId, story);
+                    await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), storyDto, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
                     if (message is not null)
                     {
-                        entity.Type = message.Type;
-                        entity.Offset = message.Offset;
-                        entity.Length = message.Length;
-                        TgEfStoryEntityByMessageType(entity, message);
+                        storyDto.Type = message.Type;
+                        storyDto.Offset = message.Offset;
+                        storyDto.Length = message.Length;
+                        TgEfStoryEntityByMessageType(storyDto, message);
                     }
                     // Switch media type
-                    TgEfStoryEntityByMediaType(entity, story.media);
+                    TgEfStoryEntityByMediaType(storyDto, story.media);
                     // Save at memory
                     if (_storyBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
-                        _storyBuffer.Add(entity);
+                        _storyBuffer.Add(storyDto);
                 }
             }
             else
             {
-                entity = await StorageManager.CreateOrGetStoryAsync(peerId, story);
-                await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), entity, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
+                storyDto = await StorageManager.CreateOrGetStoryAsync(peerId, story);
+                await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), storyDto, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
                 // Save at memory
                 if (_storyBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
-                    _storyBuffer.Add(entity);
+                    _storyBuffer.Add(storyDto);
             }
-            return entity;
+            return storyDto;
         }, ct: ct);
 
     /// <summary> Fills the buffer with users with cancellation and exception handling </summary>
-    public async Task<TgEfUserEntity?> FillBufferUsersAsync(TL.User user, bool isContact, CancellationToken ct = default) =>
+    public async Task<TgEfUserDto?> FillBufferUsersAsync(TL.User user, bool isContact, CancellationToken ct = default) =>
         await TryGetCatchAsync(async () =>
         {
             // Create or get user entity from storage
-            var entity = await StorageManager.CreateOrGetUserAsync(user, isContact, isSave: true, ct);
+            var userDto = await StorageManager.CreateOrGetUserAsync(user, isContact, isSave: true, ct);
 
-            await Cache.SetAsync(TgCacheUtils.GetCacheKeyUser(user.id), entity, TgCacheUtils.CacheOptionsChannelMessages, ct);
+            await Cache.SetAsync(TgCacheUtils.GetCacheKeyUser(user.id), userDto, TgCacheUtils.CacheOptionsChannelMessages, ct);
 
             // Save to in-memory buffer if not already present
             if (_userBuffer.FirstOrDefault(x => x.Id == user.id) is null)
-                _userBuffer.Add(entity);
-            return entity;
+                _userBuffer.Add(userDto);
+            return userDto;
         }, ct: ct);
 
     /// <summary> Safely tries to get full channel information, utilizing caching to minimize API calls with cancellation and exception handling </summary>

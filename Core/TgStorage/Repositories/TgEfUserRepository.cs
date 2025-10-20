@@ -1,4 +1,6 @@
-﻿namespace TgStorage.Repositories;
+﻿using TgInfrastructure.Contracts;
+
+namespace TgStorage.Repositories;
 
 /// <summary> EF user repository </summary>
 public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEfUserDto>, ITgEfUserRepository
@@ -199,7 +201,7 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
         // Create minimal user entities for missing users to satisfy FK when creating chat links
         if (missingUserIds.Count > 0)
         {
-            var newUsers = missingUserIds.Select(id => new TgEfUserEntity
+            var newUserDtos = missingUserIds.Select(id => new TgEfUserDto
             {
                 Id = id,
                 // fill minimal safe defaults, adjust property names if needed
@@ -213,7 +215,72 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
             }).ToList();
 
             // Persist missing users (use repository to respect validation/normalization)
-            await SaveListAsync(newUsers, isRewrite: false, isFirstTry: true, ct: ct);
+            await SaveListAsync(newUserDtos, ct);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfUserDto dto, CancellationToken ct = default)
+    {
+        TgEfUserEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by ID
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Id == dto.Id, ct);
+            if (entity is null)
+                // Find by UserName
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.UserName == dto.UserName, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Users.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving user");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfUserDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving users");
+            throw;
         }
     }
 

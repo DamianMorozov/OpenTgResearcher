@@ -11,4 +11,8 @@ public interface ITgEfUserRepository : ITgEfRepository<TgEfUserEntity, TgEfUserD
     public Task<TgEfUserDto> GetMyselfUserAsync(long chatId, long userId, CancellationToken ct = default);
     /// <summary> Create missing users </summary>
     public Task CreateMissingUsersByMessagesAsync(long chatId, CancellationToken ct = default);
+    /// <summary> Save user </summary>
+    public Task SaveAsync(TgEfUserDto dto, CancellationToken ct = default);
+    /// <summary> Save user list </summary>
+    public Task SaveListAsync(IEnumerable<TgEfUserDto> dtos, CancellationToken ct = default);
 }

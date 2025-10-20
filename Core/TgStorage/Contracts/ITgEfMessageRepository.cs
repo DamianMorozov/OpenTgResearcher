@@ -16,4 +16,8 @@ public interface ITgEfMessageRepository : ITgEfRepository<TgEfMessageEntity, TgE
     public Task<List<long>> GetUserIdsFromMessagesAsync(Expression<Func<TgEfMessageEntity, bool>> where);
     /// <summary> Get distinct user IDs by source ID </summary>
     public Task<List<long>> GetDistinctUserIdsBySourceIdAsync(long sourceId, CancellationToken ct = default);
+    /// <summary> Save message </summary>
+    public Task SaveAsync(TgEfMessageDto dto, CancellationToken ct = default);
+    /// <summary> Save message list </summary>
+    public Task SaveListAsync(IEnumerable<TgEfMessageDto> dtos, CancellationToken ct = default);
 }

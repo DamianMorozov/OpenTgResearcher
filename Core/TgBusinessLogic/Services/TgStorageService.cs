@@ -118,54 +118,48 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
     #region Methods
 
     /// <inheritdoc />
-    public async Task<TgEfStoryEntity> CreateOrGetStoryAsync(long peerId, StoryItem story)
+    public async Task<TgEfStoryDto> CreateOrGetStoryAsync(long peerId, StoryItem story)
     {
-        var storageResult = await StoryRepository.GetByDtoAsync(new() { FromId = peerId, Id = story.id });
-        var storyEntity = storageResult.IsExists && storageResult.Item is not null ? storageResult.Item : new();
-        storyEntity.DtChanged = DateTime.UtcNow;
-        storyEntity.Id = story.id;
-        storyEntity.FromId = story.from_id?.ID ?? peerId;
-        storyEntity.Date = story.date;
-        storyEntity.ExpireDate = story.expire_date;
-        storyEntity.Caption = story.caption;
-        return storyEntity;
+        var storyDto = await StoryRepository.GetDtoAsync(where: x => x.FromId == peerId && x.Id == story.id) ?? new();
+        storyDto.DtChanged = DateTime.UtcNow;
+        storyDto.Id = story.id;
+        storyDto.FromId = story.from_id?.ID ?? peerId;
+        storyDto.Date = story.date;
+        storyDto.ExpireDate = story.expire_date;
+        storyDto.Caption = story.caption;
+        return storyDto;
     }
 
     /// <inheritdoc />
-    public async Task<TgEfUserEntity> CreateOrGetUserAsync(User user, bool isContact, bool isSave, CancellationToken ct = default)
+    public async Task<TgEfUserDto> CreateOrGetUserAsync(User user, bool isContact, bool isSave, CancellationToken ct = default)
     {
         // Try to get existing user from repository
-        var storageResult = await UserRepository.GetByDtoAsync(new() { Id = user.id }, ct: ct);
-
-        // Use existing entity or create a new one
-        var userEntity = storageResult.IsExists && storageResult.Item is not null
-            ? storageResult.Item
-            : new TgEfUserEntity();
+        var userDto = await UserRepository.GetDtoAsync(where: x => x.Id == user.id, ct: ct) ?? new();
 
         // Update entity fields
-        userEntity.DtChanged = DateTime.UtcNow;
-        userEntity.Id = user.id;
-        userEntity.AccessHash = user.access_hash;
-        userEntity.IsActive = user.IsActive;
-        userEntity.IsBot = user.IsBot;
-        userEntity.FirstName = user.first_name ?? string.Empty;
-        userEntity.LastName = user.last_name ?? string.Empty;
-        userEntity.UserName = user.username ?? string.Empty;
-        userEntity.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames);
-        userEntity.PhoneNumber = user.phone ?? string.Empty;
-        userEntity.Status = user.status?.ToString() ?? string.Empty;
-        userEntity.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason);
-        userEntity.LangCode = user.lang_code ?? string.Empty;
-        userEntity.StoriesMaxId = user.stories_max_id;
-        userEntity.BotInfoVersion = user.bot_info_version.ToString();
-        userEntity.BotInlinePlaceholder = user.bot_inline_placeholder?.ToString() ?? string.Empty;
-        userEntity.BotActiveUsers = user.bot_active_users;
-        userEntity.IsContact = isContact;
+        userDto.DtChanged = DateTime.UtcNow;
+        userDto.Id = user.id;
+        userDto.AccessHash = user.access_hash;
+        userDto.IsActive = user.IsActive;
+        userDto.IsBot = user.IsBot;
+        userDto.FirstName = user.first_name ?? string.Empty;
+        userDto.LastName = user.last_name ?? string.Empty;
+        userDto.UserName = user.username ?? string.Empty;
+        userDto.UserNames = user.usernames is null ? string.Empty : string.Join("|", user.usernames);
+        userDto.PhoneNumber = user.phone ?? string.Empty;
+        userDto.Status = user.status?.ToString() ?? string.Empty;
+        userDto.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason);
+        userDto.LangCode = user.lang_code ?? string.Empty;
+        userDto.StoriesMaxId = user.stories_max_id;
+        userDto.BotInfoVersion = user.bot_info_version.ToString();
+        userDto.BotInlinePlaceholder = user.bot_inline_placeholder?.ToString() ?? string.Empty;
+        userDto.BotActiveUsers = user.bot_active_users;
+        userDto.IsContact = isContact;
 
         if (isSave)
-            await UserRepository.SaveAsync(userEntity, ct: ct);
+            await UserRepository.SaveAsync(userDto, ct: ct);
 
-        return userEntity;
+        return userDto;
     }
 
     /// <inheritdoc />

@@ -14,4 +14,8 @@ public interface ITgEfSourceRepository : ITgEfRepository<TgEfSourceEntity, TgEfS
     public Task SetIsSubscribeAsync(List<long> chatIds, bool isSubscribe);
     /// <summary> Find comment source by chat id </summary>
     public Task<TgEfSourceDto> FindCommentDtoSourceAsync(long chatId);
+    /// <summary> Save source </summary>
+    public Task SaveAsync(TgEfSourceDto dto, CancellationToken ct = default);
+    /// <summary> Save source list </summary>
+    public Task SaveListAsync(IEnumerable<TgEfSourceDto> dtos, CancellationToken ct = default);
 }

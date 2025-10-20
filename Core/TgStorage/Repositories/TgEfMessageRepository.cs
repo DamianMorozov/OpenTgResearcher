@@ -23,7 +23,7 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
         if (itemFind is not null)
             return new(TgEnumEntityState.IsExists, itemFind);
 
-        // Find by Id
+        // Find by SourceId and Id
         itemFind = await GetQuery(isReadOnly)
             .FirstOrDefaultAsync(x => x.SourceId == item.SourceId && x.Id == item.Id, ct);
 
@@ -211,6 +211,67 @@ public sealed class TgEfMessageRepository : TgEfRepositoryBase<TgEfMessageEntity
         .Distinct()
         .ToListAsync(ct);
 
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfMessageDto dto, CancellationToken ct = default)
+    {
+        TgEfMessageEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by SourceId and Id
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.SourceId == dto.SourceId && x.Id == dto.Id, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Messages.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving message");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfMessageDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving messages");
+            throw;
+        }
+    }
 
     #endregion
 }

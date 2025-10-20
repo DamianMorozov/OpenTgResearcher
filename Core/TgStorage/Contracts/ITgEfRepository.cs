@@ -67,14 +67,6 @@ public interface ITgEfRepository<TEfEntity, TDto>
 
     #endregion
 
-    #region Methods - Write
-
-    public Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity item, bool isFirstTry = true, CancellationToken ct = default);
-	public TgEfStorageResult<TEfEntity> Save(TEfEntity item);
-	public Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewrite, bool isFirstTry = true, CancellationToken ct = default);
-
-    #endregion
-
     #region Methods - Remove
 
     /// <summary> Delete item from the storage table </summary>
@@ -86,5 +78,5 @@ public interface ITgEfRepository<TEfEntity, TDto>
     /// <summary> Delete all items from the storage table </summary>
 	public Task<TgEfStorageResult<TEfEntity>> DeleteAllAsync(CancellationToken ct = default);
 
-	#endregion
+    #endregion
 }

@@ -155,9 +155,9 @@ public sealed class TgEfChatUserRepository : TgEfRepositoryBase<TgEfChatUserEnti
 
         // Build new ChatUser entities (avoid duplicates)
         var now = DateTime.UtcNow;
-        var chatUserEntities = missingChatUserIds
+        var chatUserDtos = missingChatUserIds
             .Distinct()
-            .Select(uid => new TgEfChatUserEntity
+            .Select(uid => new TgEfChatUserDto
             {
                 ChatId = sourceId,
                 UserId = uid,
@@ -170,9 +170,71 @@ public sealed class TgEfChatUserRepository : TgEfRepositoryBase<TgEfChatUserEnti
             })
             .ToList();
 
-        if (chatUserEntities.Count > 0)
+        if (chatUserDtos.Count > 0)
         {
-            await SaveListAsync(chatUserEntities, isRewrite: false, isFirstTry: true, ct: ct);
+            await SaveListAsync(chatUserDtos, ct);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfChatUserDto dto, CancellationToken ct = default)
+    {
+        TgEfChatUserEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by ChatId and UserId
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.ChatId == dto.ChatId && x.UserId == dto.UserId, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.ChatUsers.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving app");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfChatUserDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving chat users");
+            throw;
         }
     }
 

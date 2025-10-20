@@ -98,26 +98,7 @@ public sealed class TgLicenseService : TgWebDisposable, ITgLicenseService
 	{
         try
         {
-            var licenseEntity = new TgEfLicenseEntity
-            {
-                IsConfirmed = licenseDto.IsConfirmed,
-                LicenseKey = licenseDto.LicenseKey,
-                LicenseType = licenseDto.LicenseType,
-                UserId = licenseDto.UserId,
-                ValidTo = DateTime.Parse($"{licenseDto.ValidTo:yyyy-MM-dd}")
-            };
-
-            var listDtos = await StorageManager.LicenseRepository.GetListDtosAsync(take: 0, skip: 0);
-            if (listDtos is null || listDtos.Count == 0)
-            {
-                await StorageManager.LicenseRepository.SaveAsync(licenseEntity);
-            }
-            else
-            {
-                var licenseExistsEntity = await StorageManager.LicenseRepository.GetItemAsync(licenseEntity, isReadOnly: false);
-                TgEfDomainUtils.UpdateEntity(licenseExistsEntity, licenseEntity, isUidCopy: false);
-                await StorageManager.LicenseRepository.SaveAsync(licenseExistsEntity);
-            }
+            await StorageManager.LicenseRepository.SaveAsync(licenseDto, CancellationToken.None);
         }
         catch (Exception ex)
         {

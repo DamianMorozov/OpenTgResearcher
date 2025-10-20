@@ -40,9 +40,6 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
     /// <inheritdoc />
     public void Fill(TgEfProxyEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-    /// <inheritdoc />
-    public async Task<TgEfStorageResult<TgEfProxyEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
-
     /// <summary> Check if the proxy is empty </summary>
     public bool IsEmptyProxy => Dto.Type == TgEnumProxyType.None && (Dto.UserName == "No user" || Dto.Password == "No password");
 

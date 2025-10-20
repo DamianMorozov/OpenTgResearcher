@@ -37,11 +37,11 @@ public sealed partial class TgEfSourceViewModel : TgEntityViewModelBase<TgEfSour
 
     public void Fill(TgEfSourceEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-    public async Task<TgEfStorageResult<TgEfSourceEntity>> SaveAsync()
+    public async Task SaveAsync()
     {
         if (Dto.CountThreads < 1)
             Dto.CountThreads = (new TgEfSourceEntity()).GetDefaultPropertyInt(nameof(TgEfSourceEntity.CountThreads));
-        return await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
+        await Repository.SaveAsync(Dto);
     }
 
     #endregion

@@ -39,8 +39,5 @@ public sealed partial class TgEfUserViewModel : TgEntityViewModelBase<TgEfUserEn
     /// <inheritdoc />
 	public void Fill(TgEfUserEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-    /// <inheritdoc />
-	public async Task<TgEfStorageResult<TgEfUserEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
-
     #endregion
 }

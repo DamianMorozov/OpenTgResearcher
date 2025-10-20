@@ -114,5 +114,67 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
     public override async Task<int> GetCountAsync(Expression<Func<TgEfStoryEntity, bool>> where, CancellationToken ct = default) => 
         await EfContext.Stories.AsNoTracking().Where(where).CountAsync(ct);
 
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfStoryDto dto, CancellationToken ct = default)
+    {
+        TgEfStoryEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by Id
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Id == dto.Id, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Stories.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving story");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfStoryDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving stories");
+            throw;
+        }
+    }
+
     #endregion
 }

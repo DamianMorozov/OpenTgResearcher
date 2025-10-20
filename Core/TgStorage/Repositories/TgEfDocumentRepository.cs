@@ -130,5 +130,67 @@ public sealed class TgEfDocumentRepository : TgEfRepositoryBase<TgEfDocumentEnti
     public override async Task<int> GetCountAsync(Expression<Func<TgEfDocumentEntity, bool>> where, CancellationToken ct = default) => 
         await EfContext.Documents.AsNoTracking().Where(where).CountAsync(ct);
 
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfDocumentDto dto, CancellationToken ct = default)
+    {
+        TgEfDocumentEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by SourceId and ID and MessageId
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.SourceId == dto.SourceId && x.Id == dto.Id && x.MessageId == dto.MessageId, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Documents.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving document");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfDocumentDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving documents");
+            throw;
+        }
+    }
+
     #endregion
 }

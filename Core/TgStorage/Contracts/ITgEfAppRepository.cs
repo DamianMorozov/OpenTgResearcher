@@ -16,5 +16,7 @@ public interface ITgEfAppRepository : ITgEfRepository<TgEfAppEntity, TgEfAppDto>
     /// <summary> Clear proxy settings </summary>
     public Task ClearProxyAsync();
     /// <summary> Save app settings </summary>
-    public Task SaveAsync(TgEfAppDto dto);
+    public Task SaveAsync(TgEfAppDto dto, CancellationToken ct = default);
+    /// <summary> Save app settings list </summary>
+    public Task SaveListAsync(IEnumerable<TgEfAppDto> dtos, CancellationToken ct = default);
 }

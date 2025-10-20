@@ -240,5 +240,70 @@ public sealed class TgEfSourceRepository : TgEfRepositoryBase<TgEfSourceEntity, 
         return sourceDto;
     }
 
+    /// <inheritdoc />
+    public async Task SaveAsync(TgEfSourceDto dto, CancellationToken ct = default)
+    {
+        TgEfSourceEntity? entity = null;
+        try
+        {
+            if (dto is null)
+                return;
+
+            // Try to find existing entity
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (entity is null)
+                // Find by ID
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Id == dto.Id, ct);
+            if (entity is null)
+                // Find by UserName
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.UserName == dto.UserName, ct);
+
+            if (entity is null)
+            {
+                if (EfContext is DbContext dbContext)
+                    dbContext.ChangeTracker.Clear();
+                // Create new entity
+                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                EfContext.Sources.Add(entity);
+            }
+            else
+            {
+                // Update existing entity
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+            }
+
+            ValidateAndNormalize(entity);
+            await EfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving source");
+            throw;
+        }
+        finally
+        {
+            // Avoid EF tracking issues
+            if (entity is not null)
+                EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfSourceDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving sources");
+            throw;
+        }
+    }
+
     #endregion
 }

@@ -39,8 +39,5 @@ public sealed partial class TgEfFilterViewModel : TgEntityViewModelBase<TgEfFilt
     /// <inheritdoc />
     public void Fill(TgEfFilterEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-    /// <inheritdoc />
-    public async Task<TgEfStorageResult<TgEfFilterEntity>> SaveAsync() => await Repository.SaveAsync(TgEfDomainUtils.CreateNewEntity(Dto, isUidCopy: true));
-
 	#endregion
 }

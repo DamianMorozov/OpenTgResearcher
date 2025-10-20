@@ -132,28 +132,34 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var appEntity = new TgEfAppEntity
-        {
-            ApiHash = dto.ApiHash,
-            ApiId = dto.ApiId,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            PhoneNumber = dto.PhoneNumber,
-            ProxyUid = dto.ProxyUid,
-            BotTokenKey = dto.BotTokenKey,
-            UseClient = dto.UseClient,
-            UseBot = dto.UseBot,
-        };
+        var target = new TgEfAppEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfAppDto dto, TgEfAppEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.ApiHash = dto.ApiHash;
+        target.ApiId = dto.ApiId;
+        target.FirstName = dto.FirstName;
+        target.LastName = dto.LastName;
+        target.PhoneNumber = dto.PhoneNumber;
+        target.ProxyUid = dto.ProxyUid;
+        target.BotTokenKey = dto.BotTokenKey;
+        target.UseClient = dto.UseClient;
+        target.UseBot = dto.UseBot;
 
         if (isUidCopy)
-            appEntity.Uid = dto.Uid;
+            target.Uid = dto.Uid;
 
         if (dto.UseBot)
-            appEntity.SetUseBot(appEntity.UseBot);
-        else if (appEntity.UseClient)
-            appEntity.SetUseClient(appEntity.UseClient);
-
-        return appEntity;
+            target.SetUseBot(target.UseBot);
+        else if (target.UseClient)
+            target.SetUseClient(target.UseClient);
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -236,22 +242,28 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var entity = new TgEfChatUserEntity
-        {
-            DtChanged = dto.DtChanged > DateTime.MinValue ? dto.DtChanged : DateTime.UtcNow,
-            ChatId = dto.ChatId,
-            UserId = dto.UserId,
-            Role = dto.Role,
-            JoinedAt = dto.JoinedAt,
-            IsMuted = dto.IsMuted,
-            MutedUntil = dto.MutedUntil,
-            IsDeleted = dto.IsDeleted
-        };
+        var target = new TgEfChatUserEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfChatUserDto dto, TgEfChatUserEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.DtChanged = DateTime.UtcNow;
+        target.ChatId = dto.ChatId;
+        target.UserId = dto.UserId;
+        target.Role = dto.Role;
+        target.JoinedAt = dto.JoinedAt;
+        target.IsMuted = dto.IsMuted;
+        target.MutedUntil = dto.MutedUntil;
+        target.IsDeleted = dto.IsDeleted;
 
         if (isUidCopy)
-            entity.Uid = dto.Uid;
-
-        return entity;
+            target.Uid = dto.Uid;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -337,20 +349,26 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfFilterEntity()
-        {
-            IsEnabled = dto.IsEnabled,
-            FilterType = dto.FilterType,
-            Name = dto.Name,
-            Mask = dto.Mask,
-            Size = dto.Size,
-            SizeType = dto.SizeType,
-        };
+        var target = new TgEfFilterEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfFilterDto dto, TgEfFilterEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.IsEnabled = dto.IsEnabled;
+        target.FilterType = dto.FilterType;
+        target.Name = dto.Name;
+        target.Mask = dto.Mask;
+        target.Size = dto.Size;
+        target.SizeType = dto.SizeType;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -422,20 +440,26 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfDocumentEntity
-        {
-            SourceId = dto.SourceId,
-            Id = dto.Id,
-            MessageId = dto.MessageId,
-            FileName = dto.FileName,
-            FileSize = dto.FileSize,
-            AccessHash = dto.AccessHash,
-        };
+        var target = new TgEfDocumentEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfDocumentDto dto, TgEfDocumentEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.SourceId = dto.SourceId;
+        target.Id = dto.Id;
+        target.MessageId = dto.MessageId;
+        target.FileName = dto.FileName;
+        target.FileSize = dto.FileSize;
+        target.AccessHash = dto.AccessHash;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -511,19 +535,25 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfLicenseEntity
-        {
-            LicenseKey = dto.LicenseKey,
-            UserId = dto.UserId,
-            LicenseType = dto.LicenseType,
-            ValidTo = DateTime.Parse($"{dto.ValidTo:yyyy-MM-d}"),
-            IsConfirmed = dto.IsConfirmed,
-        };
+        var target = new TgEfLicenseEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfLicenseDto dto, TgEfLicenseEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.LicenseKey = dto.LicenseKey;
+        target.UserId = dto.UserId;
+        target.LicenseType = dto.LicenseType;
+        target.ValidTo = DateTime.Parse($"{dto.ValidTo:yyyy-MM-d}");
+        target.IsConfirmed = dto.IsConfirmed;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -591,22 +621,28 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfMessageEntity
-        {
-            DtCreated = dto.DtCreated > DateTime.MinValue ? dto.DtCreated : DateTime.UtcNow,
-            SourceId = dto.SourceId,
-            Id = dto.Id,
-            Type = dto.Type,
-            Size = dto.Size,
-            Message = dto.Message,
-            UserId = dto.UserId,
-            IsDeleted = dto.IsDeleted,
-        };
+        var target = new TgEfMessageEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfMessageDto dto, TgEfMessageEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.DtCreated = DateTime.UtcNow;
+        target.SourceId = dto.SourceId;
+        target.Id = dto.Id;
+        target.Type = dto.Type;
+        target.Size = dto.Size;
+        target.Message = dto.Message;
+        target.UserId = dto.UserId;
+        target.IsDeleted = dto.IsDeleted;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -691,18 +727,24 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfMessageRelationEntity
-        {
-            ParentSourceId = dto.ParentSourceId,
-            ParentMessageId = dto.ParentMessageId,
-            ChildSourceId = dto.ChildSourceId,
-            ChildMessageId = dto.ChildMessageId,
-        };
+        var target = new TgEfMessageRelationEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfMessageRelationDto dto, TgEfMessageRelationEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.ParentSourceId = dto.ParentSourceId;
+        target.ParentMessageId = dto.ParentMessageId;
+        target.ChildSourceId = dto.ChildSourceId;
+        target.ChildMessageId = dto.ChildMessageId;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -784,20 +826,26 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfProxyEntity
-        {
-            Type = dto.Type,
-            HostName = dto.HostName,
-            Port = dto.Port,
-            UserName = dto.UserName,
-            Password = dto.Password,
-            Secret = dto.Secret,
-        };
+        var target = new TgEfProxyEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfProxyDto dto, TgEfProxyEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.Type = dto.Type;
+        target.HostName = dto.HostName;
+        target.Port = dto.Port;
+        target.UserName = dto.UserName;
+        target.Password = dto.Password;
+        target.Secret = dto.Secret;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -868,38 +916,44 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfSourceEntity
-        {
-            DtChanged = dto.DtChanged > DateTime.MinValue ? dto.DtChanged : DateTime.UtcNow,
-            Id = dto.Id,
-            AccessHash = dto.AccessHash,
-            IsActive = dto.IsSourceActive,
-            UserName = dto.UserName,
-            Title = dto.Title,
-            About = dto.About,
-            FirstId = dto.FirstId,
-            Count = dto.Count,
-            CountThreads = dto.CountThreads,
-            Directory = dto.Directory,
-            IsAutoUpdate = dto.IsAutoUpdate,
-            IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
-            IsUserAccess = dto.IsUserAccess,
-            IsFileNamingByMessage = dto.IsFileNamingByMessage,
-            IsRestrictSavingContent = dto.IsRestrictSavingContent,
-            IsSubscribe = dto.IsSubscribe,
-            IsDownloadThumbnail = dto.IsDownloadThumbnail,
-            IsJoinFileNameWithMessageId = dto.IsJoinFileNameWithMessageId,
-            IsRewriteFiles = dto.IsRewriteFiles,
-            IsRewriteMessages = dto.IsRewriteMessages,
-            IsSaveFiles = dto.IsSaveFiles,
-            IsSaveMessages = dto.IsSaveMessages,
-            IsParsingComments = dto.IsParsingComments,
-        };
+        var target = new TgEfSourceEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfSourceDto dto, TgEfSourceEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.DtChanged = DateTime.UtcNow;
+        target.Id = dto.Id;
+        target.AccessHash = dto.AccessHash;
+        target.IsActive = dto.IsSourceActive;
+        target.UserName = dto.UserName;
+        target.Title = dto.Title;
+        target.About = dto.About;
+        target.FirstId = dto.FirstId;
+        target.Count = dto.Count;
+        target.CountThreads = dto.CountThreads;
+        target.Directory = dto.Directory;
+        target.IsAutoUpdate = dto.IsAutoUpdate;
+        target.IsCreatingSubdirectories = dto.IsCreatingSubdirectories;
+        target.IsUserAccess = dto.IsUserAccess;
+        target.IsFileNamingByMessage = dto.IsFileNamingByMessage;
+        target.IsRestrictSavingContent = dto.IsRestrictSavingContent;
+        target.IsSubscribe = dto.IsSubscribe;
+        target.IsDownloadThumbnail = dto.IsDownloadThumbnail;
+        target.IsJoinFileNameWithMessageId = dto.IsJoinFileNameWithMessageId;
+        target.IsRewriteFiles = dto.IsRewriteFiles;
+        target.IsRewriteMessages = dto.IsRewriteMessages;
+        target.IsSaveFiles = dto.IsSaveFiles;
+        target.IsSaveMessages = dto.IsSaveMessages;
+        target.IsParsingComments = dto.IsParsingComments;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -1090,24 +1144,30 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfStoryEntity
-        {
-            DtChanged = dto.DtChanged > DateTime.MinValue ? dto.DtChanged : DateTime.UtcNow,
-            Id = dto.Id,
-            FromId = dto.FromId,
-            FromName = dto.FromName,
-            Date = dto.Date,
-            ExpireDate = dto.ExpireDate,
-            Caption = dto.Caption,
-            Type = dto.Type,
-            Offset = dto.Offset,
-            Message = dto.Message,
-        };
+        var target = new TgEfStoryEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfStoryDto dto, TgEfStoryEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.DtChanged = DateTime.UtcNow;
+        target.Id = dto.Id;
+        target.FromId = dto.FromId;
+        target.FromName = dto.FromName;
+        target.Date = dto.Date;
+        target.ExpireDate = dto.ExpireDate;
+        target.Caption = dto.Caption;
+        target.Type = dto.Type;
+        target.Offset = dto.Offset;
+        target.Message = dto.Message;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -1195,33 +1255,39 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfUserEntity
-        {
-            DtChanged = dto.DtChanged > DateTime.MinValue ? dto.DtChanged : DateTime.UtcNow,
-            Id = dto.Id,
-            AccessHash = dto.AccessHash,
-            IsActive = dto.IsUserActive,
-            IsBot = dto.IsBot,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            UserName = dto.UserName,
-            UserNames = dto.UserNames,
-            PhoneNumber = dto.PhoneNumber,
-            Status = dto.GetShortStatus(dto.Status),
-            RestrictionReason = dto.RestrictionReason,
-            LangCode = dto.LangCode,
-            IsContact = dto.IsContact,
-            IsDeleted = dto.IsDeleted,
-            StoriesMaxId = dto.StoriesMaxId,
-            BotInfoVersion = dto.BotInfoVersion,
-            BotInlinePlaceholder = dto.BotInlinePlaceholder,
-            BotActiveUsers = dto.BotActiveUsers,
-        };
+        var target = new TgEfUserEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill entity from DTO </summary>
+    public static void FillEntity(TgEfUserDto dto, TgEfUserEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.DtChanged = DateTime.UtcNow;
+        target.Id = dto.Id;
+        target.AccessHash = dto.AccessHash;
+        target.IsActive = dto.IsUserActive;
+        target.IsBot = dto.IsBot;
+        target.FirstName = dto.FirstName;
+        target.LastName = dto.LastName;
+        target.UserName = dto.UserName;
+        target.UserNames = dto.UserNames;
+        target.PhoneNumber = dto.PhoneNumber;
+        target.Status = dto.GetShortStatus(dto.Status);
+        target.RestrictionReason = dto.RestrictionReason;
+        target.LangCode = dto.LangCode;
+        target.IsContact = dto.IsContact;
+        target.IsDeleted = dto.IsDeleted;
+        target.StoriesMaxId = dto.StoriesMaxId;
+        target.BotInfoVersion = dto.BotInfoVersion;
+        target.BotInlinePlaceholder = dto.BotInlinePlaceholder;
+        target.BotActiveUsers = dto.BotActiveUsers;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>
@@ -1343,16 +1409,22 @@ public static class TgEfDomainUtils
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        var target = new TgEfVersionEntity
-        {
-            Version = dto.Version,
-            Description = dto.Description,
-        };
+        var target = new TgEfVersionEntity();
+        FillEntity(dto, target, isUidCopy);
+
+        return target;
+    }
+
+    /// <summary> Fill an entity from DTO </summary>
+    public static void FillEntity(TgEfVersionDto dto, TgEfVersionEntity target, bool isUidCopy)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        target.Version = dto.Version;
+        target.Description = dto.Description;
 
         if (isUidCopy)
             target.Uid = dto.Uid;
-
-        return target;
     }
 
     /// <summary> Update an entity from entity </summary>

@@ -1,4 +1,6 @@
-﻿namespace TgStorage.Repositories;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace TgStorage.Repositories;
 
 /// <summary> EF proxy repository </summary>
 public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
@@ -24,8 +26,8 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 
-		// Find by Type
-		itemFind = await GetQuery(isReadOnly)
+        // Find by Type and HostName and Port
+        itemFind = await GetQuery(isReadOnly)
 			.SingleOrDefaultAsync(x => x.Type == item.Type && x.HostName == item.HostName && x.Port == item.Port, ct);
 			
         return itemFind is not null
@@ -183,15 +185,8 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
     {
         try
         {
-            // Check existing proxies count to avoid duplicates
-            var count = await EfContext.Proxies.AsNoTracking().CountAsync();
-            if (count > 0)
-                return;
-
             // Build minimal default proxy entity
-            var defaultProxy = new TgEfProxyEntity();
-            EfContext.Proxies.Add(defaultProxy);
-            await EfContext.SaveChangesAsync();
+            await SaveAsync(new TgEfProxyDto());
         }
         catch (Exception ex)
         {
@@ -201,7 +196,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
     }
 
     /// <inheritdoc />
-    public async Task SaveAsync(TgEfProxyDto dto)
+    public async Task SaveAsync(TgEfProxyDto dto, CancellationToken ct = default)
     {
         TgEfProxyEntity? entity = null;
         try
@@ -210,7 +205,10 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
                 return;
 
             // Try to find existing entity
-            entity = await EfContext.Proxies.FirstOrDefaultAsync(x => x.Uid == dto.Uid);
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid);
+            // Find by Type and HostName and Port
+            if (entity is null)
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Type == dto.Type && x.HostName == dto.HostName && x.Port == dto.Port);
 
             if (entity is null)
             {
@@ -223,12 +221,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
             else
             {
                 // Update existing entity
-                entity.Type = dto.Type;
-                entity.HostName = dto.HostName;
-                entity.Port = dto.Port;
-                entity.UserName = dto.UserName;
-                entity.Password = dto.Password;
-                entity.Secret = dto.Secret;
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: true);
             }
 
             ValidateAndNormalize(entity);
@@ -236,7 +229,6 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
         }
         catch (Exception ex)
         {
-            // Log exception to keep application stable
             TgLogUtils.WriteException(ex, "Error saving proxy");
             throw;
         }
@@ -245,6 +237,23 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
             // Avoid EF tracking issues
             if (entity is not null)
                 EfContext.DetachItem(entity);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SaveListAsync(IEnumerable<TgEfProxyDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            foreach (var dto in dtos)
+            {
+                await SaveAsync(dto, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex, "Error saving proxies");
+            throw;
         }
     }
 

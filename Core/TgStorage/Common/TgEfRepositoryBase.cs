@@ -430,66 +430,6 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
 
     #region Methods - Write
 
-    // TODO: fix here
-    public virtual async Task<TgEfStorageResult<TEfEntity>> SaveAsync(TEfEntity? item, bool isFirstTry = true, CancellationToken ct = default)
-    {
-        TgEfStorageResult<TEfEntity> storageResult = new(TgEnumEntityState.Unknown, item);
-        if (item is null)
-            return storageResult;
-
-        await using var transaction = await EfContext.Database.BeginTransactionAsync(ct);
-
-        try
-        {
-            storageResult = await PrepareEntityForSaveAsync(item, isRewrite: true, ct);
-
-            await EfContext.SaveChangesAsync(ct);
-            EfContext.DetachItem(storageResult.Item!);
-
-            await transaction.CommitAsync(ct);
-            storageResult.State = TgEnumEntityState.IsSaved;
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-#if DEBUG
-            Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-            Debug.WriteLine(ex.StackTrace);
-#endif
-            await transaction.RollbackAsync(ct);
-            
-            // Retry
-            if (isFirstTry)
-            {
-                var entry = ex.Entries.Single();
-                var databaseValues = await entry.GetDatabaseValuesAsync(ct)
-                    ?? throw new Exception("The record you attempted to edit was deleted");
-
-                entry.OriginalValues.SetValues(databaseValues);
-
-                // Detach entity before retry to avoid duplicate tracking
-                EfContext.DetachItem(item);
-
-                return await SaveAsync(item, isFirstTry: false, ct);
-            }
-
-            throw;
-        }
-#if DEBUG
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-            Debug.WriteLine(ex.StackTrace);
-#else
-		catch (Exception)
-		{
-#endif
-            await transaction.RollbackAsync(ct);
-            throw;
-        }
-
-        return storageResult;
-    }
-
     /// <summary> Prepares entity for saving: loads existing, copies data, validates and normalizes </summary>
     private async Task<TgEfStorageResult<TEfEntity>> PrepareEntityForSaveAsync(TEfEntity item, bool isRewrite, CancellationToken ct)
     {
@@ -527,70 +467,6 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
             throw new FluentValidation.ValidationException(validationResult.Errors);
 
         TgGlobalTools.Normalize(entity);
-    }
-
-    /// <inheritdoc />
-    public TgEfStorageResult<TEfEntity> Save(TEfEntity? item) => SaveAsync(item, isFirstTry: true).GetAwaiter().GetResult();
-
-    /// <inheritdoc />
-    public virtual async Task<bool> SaveListAsync(IEnumerable<TEfEntity> items, bool isRewrite, bool isFirstTry = true, CancellationToken ct = default)
-    {
-        var array = items as TEfEntity[] ?? [.. items];
-        var uniqueItems = array.Distinct().ToArray();
-
-        await using var transaction = await EfContext.Database.BeginTransactionAsync(ct);
-        var storageItems = new List<TEfEntity>();
-
-        try
-        {
-            foreach (var item in uniqueItems)
-            {
-                var storageResult = await PrepareEntityForSaveAsync(item, isRewrite: isRewrite, ct);
-                if (storageResult.Item is not null)
-                {
-                    storageItems.Add(storageResult.Item);
-                }
-            }
-
-            await EfContext.SaveChangesAsync(ct);
-
-            foreach (var storageItem in storageItems)
-            {
-                EfContext.DetachItem(storageItem);
-            }
-
-            await transaction.CommitAsync(ct);
-            return true;
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-#if DEBUG
-            Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-            Debug.WriteLine(ex.StackTrace);
-#endif
-            await transaction.RollbackAsync(ct);
-            // Retry
-            if (isFirstTry)
-            {
-                var entry = ex.Entries.Single();
-                var databaseValues = await entry.GetDatabaseValuesAsync(ct) ?? throw new Exception("The record you attempted to edit was deleted!");
-                entry.OriginalValues.SetValues(databaseValues);
-                return await SaveListAsync(array, isRewrite, isFirstTry: false, ct);
-            }
-            throw;
-        }
-#if DEBUG
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-            Debug.WriteLine(ex.StackTrace);
-#else
-		catch (Exception)
-		{
-#endif
-            await transaction.RollbackAsync(ct);
-            throw;
-        }
     }
 
     #endregion

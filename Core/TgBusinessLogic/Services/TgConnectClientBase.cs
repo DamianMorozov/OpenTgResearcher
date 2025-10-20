@@ -4278,6 +4278,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public async Task<Guid> OpenOrCreateSavedMessagesAsync()
     {
         if (Client is null) return Guid.Empty;
+        await GetUserIdAsync();
         if (Me is null) return Guid.Empty;
 
         var chatId = Me.id;

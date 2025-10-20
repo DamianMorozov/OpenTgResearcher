@@ -33,6 +33,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	[ObservableProperty]
 	public partial string DataRequestEmptyResponse { get; set; } = string.Empty;
 
+    private ShellViewModel? _shellVm;
+
     public IAsyncRelayCommand ClientConnectCommand { get; }
 	public IAsyncRelayCommand ClientDisconnectCommand { get; }
 	public IAsyncRelayCommand AppSaveCommand { get; }
@@ -195,6 +197,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                     LoadStateService.StopSoftOnlineProcessing(uid);
                 }
             }
+
+            // Open or create chat for Saved Messages
+            _shellVm ??= App.VmLocator.Get<ShellViewModel>();
+            _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
+
         }
         catch (Exception ex)
 		{

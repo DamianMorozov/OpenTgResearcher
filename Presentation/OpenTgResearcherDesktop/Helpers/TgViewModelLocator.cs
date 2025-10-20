@@ -252,29 +252,33 @@ public sealed class TgViewModelLocator
             await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
             {
                 _shellVm ??= App.VmLocator.Get<ShellViewModel>();
-                
-                _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
-                if (_clientConnectionVm is not null)
+                try
                 {
-                    await _clientConnectionVm.OnNavigatedToAsync(_shellVm.EventArgs);
-                    if (!_clientConnectionVm.IsOnlineReady)
+
+                    _clientConnectionVm ??= App.VmLocator.Get<TgClientConnectionViewModel>();
+                    if (_clientConnectionVm is not null)
                     {
-                        await _clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
-                        await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
+                        await _clientConnectionVm.OnNavigatedToAsync(_shellVm.EventArgs);
+                        if (!_clientConnectionVm.IsOnlineReady)
+                        {
+                            await _clientConnectionVm.ClientConnectCommand.ExecuteAsync(isQuestion);
+                            await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
+                        }
                     }
                 }
-                
-                // Open or create chat for Saved Messages
-                _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
-
-                // Update Chats ViewModel
-                _chatsVm ??= App.VmLocator.Get<TgChatsViewModel>();
-                if (_chatsVm is not null)
+                catch (Exception ex)
                 {
-                    await _chatsVm.OnNavigatedToAsync(_shellVm.EventArgs);
+                    TgLogUtils.WriteException(ex);
                 }
-
-                await Task.CompletedTask;
+                finally
+                {
+                    // Update Chats ViewModel
+                    _chatsVm ??= App.VmLocator.Get<TgChatsViewModel>();
+                    if (_chatsVm is not null)
+                    {
+                        await _chatsVm.OnNavigatedToAsync(_shellVm.EventArgs);
+                    }
+                }
             }, LoadStateService.LocatorToken);
         }
         finally

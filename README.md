@@ -37,14 +37,6 @@
 ## Программа поощрения за обнаружение ошибок
 - [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bug-bounty)
 
-## Проверка текущей лицензии в OpenTgResearcherDesktop
-1. Очистить текущую лицензию
-2. Подключиться к TG
-3. Проверить свою текущую лицензию онлайн
-
-<p align="center"><img src="Docs/Assets/License/Check_your_current_license_online.png"></p>
-<p align="center"><img src="Docs/Assets/License/OpenTgResearcherDesktop_CheckCurrentLincense.gif"></p>
-
 ## Ключевые слова
 ОпенТгРесечер, ОпенТгРесёчер, Опен-Тг-Ресечер, Опен-Тг-Ресёчер, Телеграм, скачать, тгскачать, тг-скачать, ресёчер, ресечер, тгресечер, тг-ресечер, тгресёчер, тг-ресёчер
 
@@ -90,14 +82,6 @@
 
 ## Bug Bounty Program
 - [Bug Bounty Program](https://opentgresearcher.online/bug-bounty)
-
-## Checking your current license in OpenTgResearcherDesktop
-1. Clear your current license
-2. Connect to TG
-3. Check your current license online
-
-<p align="center"><img src="Docs/Assets/License/Check_your_current_license_online.png"></p>
-<p align="center"><img src="Docs/Assets/License/OpenTgResearcherDesktop_CheckCurrentLincense.gif"></p>
 
 ## Keywords
 OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-downloader, researcher, tgresearcher, tg-researcher
@@ -145,14 +129,6 @@ OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-dow
 ## Programa de recompensa por detectar errores
 - [Programa de recompensa por detectar errores](https://opentgresearcher.online/bug-bounty)
 
-## Comprobación de la licencia actual en OpenTgResearcherDesktop
-1. Borrar la licencia actual
-2. Conectarse a TG
-3. Compruebe su licencia actual en línea
-
-<p align="center"><img src="Docs/Assets/License/Check_your_current_license_online.png"></p>
-<p align="center"><img src="Docs/Assets/License/OpenTgResearcherDesktop_CheckCurrentLincense.gif"></p>
-
 ## Palabras clave
 OpenTGResearcher, OpenTGResearcher, Open-TG-Researcher, Open-TG-Researcher, Telegram, descargar, tgdescargar, tg-descargar, researcher, researcher, tgresearcher, tg-researcher, tgresearcher, tg-researcher
 
@@ -198,14 +174,6 @@ OpenTGResearcher, OpenTGResearcher, Open-TG-Researcher, Open-TG-Researcher, Tele
 
 ## 漏洞悬赏计划
 - [漏洞悬赏计划](https://opentgresearcher.online/bug-bounty)
-
-## 在 OpenTgResearcherDesktop 中检查当前许可证
-1. 清除当前许可证
-2. 连接 Telegram
-3. 在线检查当前许可证
-
-<p align="center"><img src="Docs/Assets/License/Check_your_current_license_online.png"></p>
-<p align="center"><img src="Docs/Assets/License/OpenTgResearcherDesktop_CheckCurrentLincense.gif"></p>
 
 ## 关键词
 OpenTgResearcher, Open-Tg-Researcher, Telegram, 下载器, tgdownloader, tg-downloader, 研究员, tgresearcher, tg-researcher

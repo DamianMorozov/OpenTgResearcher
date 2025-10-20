@@ -349,7 +349,7 @@ public abstract class TgEfRepositoryBase<TEfEntity, TDto> : TgDisposable, ITgEfR
     #region Methods - Read DTO
 
     /// <inheritdoc />
-    public Expression<Func<TEfEntity, TDto>> SelectDto() => item => (TDto)TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
+    public Expression<Func<TEfEntity, TDto>> SelectDto() => item => (TDto)TgEfDomainUtils.CreateNewDto(item, true);
 
     /// <inheritdoc />
     public async Task<TDto> GetDtoAsync(Expression<Func<TEfEntity, bool>> where, CancellationToken ct = default)

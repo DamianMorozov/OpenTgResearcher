@@ -162,6 +162,7 @@ public partial class App : Application
                     // Temporary provider for accessing SettingsService
                     var tempProvider = c.Resolve<IServiceProvider>();
                     var settingsService = tempProvider.GetRequiredService<ITgSettingsService>();
+                    settingsService.LoadStorage();
                     var storagePath = settingsService.AppStorage;
                     // Create DbContextOptionsBuilder with SQLite connection
                     var optionsBuilder = new DbContextOptionsBuilder<TgEfDesktopContext>();

@@ -31,7 +31,11 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     [ObservableProperty]
     public partial string AppStorage { get; set; } = string.Empty;
     [ObservableProperty]
+    public partial string AppStorageFileSize { get; set; } = string.Empty;
+    [ObservableProperty]
     public partial string AppSession { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string AppSessionFileSize { get; set; } = string.Empty;
     [ObservableProperty]
     public partial bool IsExistsAppStorage { get; set; }
     [ObservableProperty]
@@ -149,32 +153,33 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     }
 
     /// <inheritdoc />
-    public void SetupAppStorage()
+    public void LoadStorage()
     {
-        if (!string.IsNullOrEmpty(AppStorage))
-            return;
-
         // Attempt to read the path from settings
         var savedPath = ReadSetting<string>(SettingsKeyAppStorage);
 
         if (!string.IsNullOrEmpty(savedPath) && Directory.Exists(Path.GetDirectoryName(savedPath)))
         {
-            AppStorage = savedPath;
-            TgGlobalTools.AppStorage = AppStorage;
+            TgGlobalTools.AppStorage = AppStorage = savedPath;
+            var length = (File.Exists(AppStorage)) ? new FileInfo(AppStorage).Length : 0;
+            IsExistsAppStorage = File.Exists(AppStorage) && length > 0;
+            AppStorageFileSize = TgFileUtils.GetFileSizeAsString(AppStorage);
         }
         else
         {
-            // If the path is not found or is incorrect, use the default path.
-            var defaultFileName = TgGlobalTools.AppStorage;
-            var defaultPath = Path.Combine(ApplicationDirectory, defaultFileName);
-
-            AppStorage = defaultPath;
-
-            // Save the path to settings so that it does not need to be recalculated
-            SaveSetting(SettingsKeyAppStorage, AppStorage);
+            DefaultAppStorage();
         }
+    }
 
-        IsExistsAppStorage = File.Exists(AppStorage);
+    private void DefaultAppStorage()
+    {
+        // If the path is not found or is incorrect, use the default path.
+        var defaultFileName = TgGlobalTools.AppStorage;
+        var defaultPath = Path.Combine(ApplicationDirectory, defaultFileName);
+        TgGlobalTools.AppStorage = AppStorage = defaultPath;
+        var length = (File.Exists(AppStorage)) ? new FileInfo(AppStorage).Length : 0;
+        IsExistsAppStorage = File.Exists(AppStorage) && length > 0;
+        AppStorageFileSize = TgFileUtils.GetFileSizeAsString(AppStorage);
     }
 
     private string LoadAppSession() => ReadSetting<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
@@ -298,21 +303,25 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     {
         AppTheme = AppThemes.First(x => x == TgEnumTheme.Default);
         AppLanguage = AppLanguages.First(x => x == TgEnumLanguage.Default);
+
         SetUserDirectory();
         SetApplicationDirectory();
         SetSettingFile();
         if (Directory.Exists(ApplicationDirectory))
         {
             AppSession = Directory.Exists(ApplicationDirectory) ? Path.Combine(ApplicationDirectory, TgFileUtils.FileTgSession) : string.Empty;
-            IsExistsAppSession = File.Exists(AppSession);
+            var length = (File.Exists(AppSession)) ? new FileInfo(AppSession).Length : 0;
+            IsExistsAppSession = File.Exists(AppSession) && length > 0;
+            AppSessionFileSize = TgFileUtils.GetFileSizeAsString(AppSession);
         }
         else
         {
             AppSession = string.Empty;
             IsExistsAppSession = false;
+            AppSessionFileSize = TgFileUtils.GetFileSizeAsString(AppSession);
         }
 
-        SetupAppStorage();
+        DefaultAppStorage();
     }
 
     public void Load()
@@ -323,12 +332,19 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         var appLanguage = LoadAppLanguage();
         AppLanguage = AppLanguages.First(x => x == appLanguage);
 
-        SetupAppStorage();
+        LoadStorage();
         // Register TgEfContext as the DbContext for EF Core
         TgGlobalTools.AppStorage = App.GetService<ITgSettingsService>().AppStorage;
 
         AppSession = LoadAppSession();
-        IsExistsAppSession = File.Exists(AppSession);
+        // Fix windows path
+        if (AppSession.Equals(TgFileUtils.FileTgSession))
+        {
+            AppSession = Path.Combine(ApplicationDirectory, TgFileUtils.FileTgSession);
+        }
+        var length = (File.Exists(AppSession)) ? new FileInfo(AppSession).Length : 0;
+        IsExistsAppSession = File.Exists(AppSession) && length > 0;
+        AppSessionFileSize = TgFileUtils.GetFileSizeAsString(AppSession);
     }
 
     public void LoadWindow()
@@ -341,14 +357,22 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
     public void Save()
     {
-        SaveSetting(SettingsKeyAppStorage, AppStorage);
-        SaveSetting(SettingsKeyAppSession, AppSession);
-        SaveSetting(SettingsKeyAppTheme, AppTheme.ToString());
-        SaveSetting(SettingsKeyAppLanguage, AppLanguage.ToString());
+        try
+        {
+            SaveSetting(SettingsKeyAppStorage, AppStorage);
+            SaveSetting(SettingsKeyAppSession, AppSession);
+        
+            SaveSetting(SettingsKeyAppTheme, AppTheme.ToString());
+            SaveSetting(SettingsKeyAppLanguage, AppLanguage.ToString());
 
-        SetTheme(AppTheme);
+            SetTheme(AppTheme);
 
-        SetAppLanguage();
+            SetAppLanguage();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
     }
 
     public void SaveWindow(int width, int height, int x, int y)

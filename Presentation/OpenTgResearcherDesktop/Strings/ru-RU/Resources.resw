@@ -626,6 +626,12 @@
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Файлы</value>
   </data>
+  <data name="SettingReadOnly.Header" xml:space="preserve">
+    <value>Настройки только для чтения</value>
+  </data>
+  <data name="SettingRecording.Header" xml:space="preserve">
+    <value>Настройки для записи</value>
+  </data>
   <data name="ExpanderActions.Header" xml:space="preserve">
     <value>Действия</value>
   </data>
@@ -1036,6 +1042,18 @@
   </data>
   <data name="FieldNetwork.Text" xml:space="preserve">
     <value>Сеть</value>
+  </data>
+  <data name="FieldSettingsFileWarning1.Text" xml:space="preserve">
+    <value>Файлы хранилища и сессии лучше хранить в отдельном каталоге!</value>
+  </data>
+  <data name="FieldSettingsFileWarning2.Text" xml:space="preserve">
+    <value>После обновления программы на новую версию, файлы в каталоге приложения будут автоматически удалены инсталлятором!</value>
+  </data>
+  <data name="FieldSettingsFileWarning3.Text" xml:space="preserve">
+    <value>После изменения строки хранилища, перезапустите ПО вручную!</value>
+  </data>
+  <data name="FieldSettingsFileWarning4.Text" xml:space="preserve">
+    <value>После изменения языка, перезапустите ПО вручную!</value>
   </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Хранилище</value>

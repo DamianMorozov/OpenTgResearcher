@@ -567,6 +567,12 @@
   <data name="SettingAppFiles.Header" xml:space="preserve">
     <value>Files</value>
   </data>
+  <data name="SettingReadOnly.Header" xml:space="preserve">
+    <value>Read-only settings</value>
+  </data>
+  <data name="SettingRecording.Header" xml:space="preserve">
+    <value>Recording settings</value>
+  </data>
   <data name="ExpanderActions.Header" xml:space="preserve">
     <value>Actions</value>
   </data>
@@ -974,6 +980,18 @@
   </data>
   <data name="FieldNetwork.Text" xml:space="preserve">
     <value>Network</value>
+  </data>
+  <data name="FieldSettingsFileWarning1.Text" xml:space="preserve">
+    <value>It is best to store storage files and sessions in a separate directory!</value>
+  </data>
+  <data name="FieldSettingsFileWarning2.Text" xml:space="preserve">
+    <value>After updating the program to a new version, the files in the application directory will be automatically deleted by the installer!</value>
+  </data>
+  <data name="FieldSettingsFileWarning3.Text" xml:space="preserve">
+    <value>After changing the storage line, restart the software manually!</value>
+  </data>
+  <data name="FieldSettingsFileWarning4.Text" xml:space="preserve">
+    <value>After changing the language, restart the software manually!!</value>
   </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Storage</value>

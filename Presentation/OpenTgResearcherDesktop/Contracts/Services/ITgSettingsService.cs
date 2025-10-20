@@ -10,7 +10,9 @@ public interface ITgSettingsService : INotifyPropertyChanged
     public TgEnumTheme AppTheme { get; set; }
     public TgEnumLanguage AppLanguage { get; set; }
     public string AppStorage { get; set; }
+    public string AppStorageFileSize { get; set; }
     public string AppSession { get; set; }
+    public string AppSessionFileSize { get; set; }
     public string UserDirectory { get; }
     public string ApplicationDirectory { get; }
     public string SettingFile { get; }
@@ -29,6 +31,6 @@ public interface ITgSettingsService : INotifyPropertyChanged
     public void SetTheme(TgEnumTheme appTheme);
     public T? ReadSetting<T>(string key);
 	public void SaveSetting<T>(string key, T value);
-    /// <summary> Setup application storage path </summary>
-    public void SetupAppStorage();
+    /// <summary> Load storage path </summary>
+    public void LoadStorage();
 }

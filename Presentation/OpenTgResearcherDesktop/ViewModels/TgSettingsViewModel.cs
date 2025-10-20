@@ -6,23 +6,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
 {
     #region Fields, properties, constructor
 
-    [ObservableProperty]
-    public partial ObservableCollection<TgEnumTheme> AppThemes { get; set; } = [];
-    [ObservableProperty]
-    public partial ObservableCollection<TgEnumLanguage> AppLanguages { get; set; } = [];
-    [ObservableProperty]
-    public partial TgEnumTheme AppTheme { get; set; }
-    [ObservableProperty]
-    public partial TgEnumLanguage AppLanguage { get; set; }
-    [ObservableProperty]
-    public partial string AppStorage { get; set; } = string.Empty;
-    [ObservableProperty]
-    public partial string AppSession { get; set; } = string.Empty;
-    [ObservableProperty]
-    public partial string ApplicationDirectory { get; set; } = string.Empty;
-    [ObservableProperty]
-    public partial string SettingFile { get; set; } = string.Empty;
-
     public IAsyncRelayCommand SettingsLoadCommand { get; }
     public IAsyncRelayCommand SettingsDefaultCommand { get; }
     public IAsyncRelayCommand SettingsSaveCommand { get; }
@@ -34,9 +17,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
         SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync);
         SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync);
         SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync);
-
-        // Callback updates UI: PropertyChanged
-        PropertyChanged += OnPropertyChanged;
     }
 
 
@@ -48,7 +28,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     public override void ReleaseManagedResources()
     {
         CheckIfDisposed();
-        PropertyChanged -= OnPropertyChanged;
 
         base.ReleaseManagedResources();
     }
@@ -57,34 +36,14 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
 
     #region Methods
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        TgDesktopUtils.InvokeOnUIThread(() => {
-            if (e.PropertyName == nameof(AppStorage))
-                SettingsService.AppStorage = AppStorage;
-            else if (e.PropertyName == nameof(AppSession))
-                SettingsService.AppSession = AppSession;
-            else if (e.PropertyName == nameof(AppTheme))
-                SettingsService.AppTheme = AppTheme;
-            else if (e.PropertyName == nameof(AppLanguage))
-                SettingsService.AppLanguage = AppLanguage;
-        });
-    }
-
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
-        SettingsLoadCore();
+        SettingsService.Load();
         await Task.CompletedTask;
     }
 
     private async Task SettingsLoadAsync() => 
-        await ContentDialogAsync(SettingsLoadCore, TgResourceExtensions.AskSettingsLoad(), TgEnumLoadDesktopType.Storage);
-
-    private void SettingsLoadCore()
-    {
-        SettingsService.Load();
-        LoadSettingsFromService();
-    }
+        await ContentDialogAsync(SettingsService.Load, TgResourceExtensions.AskSettingsLoad(), TgEnumLoadDesktopType.Storage);
 
     private async Task SettingsDefaultAsync() => 
         await ContentDialogAsync(SettingsDefaultCoreAsync, TgResourceExtensions.AskSettingsDefault(), TgEnumLoadDesktopType.Storage);
@@ -92,7 +51,6 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     private async Task SettingsDefaultCoreAsync()
     {
         SettingsService.Default();
-        LoadSettingsFromService();
         await Task.CompletedTask;
     }
 
@@ -102,26 +60,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     private void SettingsSaveCore()
     {
         SettingsService.Save();
-        LoadSettingsFromService();
-    }
-
-    private void LoadSettingsFromService()
-    {
-        AppThemes = SettingsService.AppThemes;
-        AppLanguages = SettingsService.AppLanguages;
-
-        AppStorage = SettingsService.AppStorage;
-        AppSession = SettingsService.AppSession;
-        // Fix windows path
-        if (AppSession.Equals(TgFileUtils.FileTgSession))
-        {
-            AppSession = Path.Combine(SettingsService.ApplicationDirectory, TgFileUtils.FileTgSession);
-        }
-
-        AppTheme = SettingsService.AppTheme;
-        AppLanguage = SettingsService.AppLanguage;
-        ApplicationDirectory = SettingsService.ApplicationDirectory;
-        SettingFile = SettingsService.SettingFile;
+        SettingsService.Load();
     }
 
     #endregion

@@ -95,7 +95,7 @@
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
             IsSettingsVisible="True"
             ItemInvoked="NavigationViewControl_ItemInvoked"
-            OpenPaneLength="220"
+            OpenPaneLength="270"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <!--  Navigation HeaderTemplate  -->
             <NavigationView.HeaderTemplate>

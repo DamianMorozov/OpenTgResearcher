@@ -33,8 +33,8 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
 
-			var versionDto = new TgEfVersionDto();
-			await versionRepository.SaveAsync(versionDto);
+            var versionDto = new TgEfVersionDto() { Version = 1, Description = "Test" };
+            await versionRepository.SaveAsync(versionDto);
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
 			Assert.That(versionLast.Version == versionRepository.LastVersion);
@@ -54,14 +54,13 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 			await versionRepository.FillTableVersionsAsync();
 
 			await versionRepository.DeleteAllAsync();
-			var versionDto = new TgEfVersionDto();
+			var versionDto = new TgEfVersionDto() { Version = 1, Description = "Test" };
 			await versionRepository.SaveAsync(versionDto);
 			var versionLast = await versionRepository.GetLastVersionAsync();
 
-			Assert.That(versionLast.Version == new TgEfVersionEntity().Version);
+			Assert.That(versionLast.Version == 1);
 			TestContext.WriteLine($"  {nameof(versionLast)}.{nameof(versionLast.Version)}: {versionLast.Version}");
-			var versions = (await versionRepository.GetListAsync(TgEnumTableTopRecords.All, 0))
-				.Items.ToList();
+			var versions = (await versionRepository.GetListDtosAsync(take: 0, skip: 0)).ToList();
 			TestContext.WriteLine($"  Found {versions.Count} items");
 			await versionRepository.DeleteNewAsync();
 			await versionRepository.FillTableVersionsAsync();

@@ -90,10 +90,10 @@ internal sealed class TgEfModelTests : TgStorageTestsBase
             using (Assert.EnterMultipleScope())
             {
                 proxy.Type.Should().Be(TgEnumProxyType.None);
-                proxy.HostName.Should().Be("No proxy");
-                proxy.Port.Should().Be((ushort)404);
-                proxy.UserName.Should().Be("No user");
-                proxy.Password.Should().Be("No password");
+                proxy.HostName.Should().Be(string.Empty);
+                proxy.Port.Should().Be(0);
+                proxy.UserName.Should().Be(string.Empty);
+                proxy.Password.Should().Be(string.Empty);
                 proxy.Secret.Should().Be(string.Empty);
             }
         });

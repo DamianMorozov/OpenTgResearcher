@@ -3,7 +3,7 @@
 public interface ITgEfVersionRepository : ITgEfRepository<TgEfVersionEntity, TgEfVersionDto>, IDisposable
 {
     public short LastVersion { get; }
-	public Task<TgEfVersionEntity> GetLastVersionAsync();
+	public Task<TgEfVersionDto> GetLastVersionAsync();
     public Task FillTableVersionsAsync();
     /// <summary> Save version </summary>
     public Task SaveAsync(TgEfVersionDto dto, CancellationToken ct = default);

@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace TgStorage.Repositories;
+﻿namespace TgStorage.Repositories;
 
 /// <summary> EF proxy repository </summary>
 public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
@@ -221,7 +219,7 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
             else
             {
                 // Update existing entity
-                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: true);
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
             }
 
             ValidateAndNormalize(entity);

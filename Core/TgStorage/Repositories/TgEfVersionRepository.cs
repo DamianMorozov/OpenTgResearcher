@@ -122,12 +122,11 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
     public short LastVersion => 49;
 
     /// <inheritdoc />
-    public async Task<TgEfVersionEntity> GetLastVersionAsync()
+    public async Task<TgEfVersionDto> GetLastVersionAsync()
     {
-        TgEfVersionEntity versionLast = new();
+        TgEfVersionDto versionLast = new();
         var defaultVersion = new TgEfVersionEntity().Version;
-        var versions = (await GetListAsync(TgEnumTableTopRecords.All, 0)).Items
-            .Where(x => x.Version != defaultVersion).OrderBy(x => x.Version).ToList();
+        var versions = (await GetListDtosAsync(take: 0, skip: 0)).Where(x => x.Version != defaultVersion).OrderBy(x => x.Version).ToList();
         if (versions.Count != 0)
             versionLast = versions[^1];
         return versionLast;
@@ -324,7 +323,7 @@ public sealed class TgEfVersionRepository : TgEfRepositoryBase<TgEfVersionEntity
             else
             {
                 // Update existing entity
-                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: true);
+                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
             }
 
             ValidateAndNormalize(entity);

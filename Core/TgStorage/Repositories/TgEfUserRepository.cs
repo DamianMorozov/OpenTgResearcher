@@ -1,6 +1,4 @@
-﻿using TgInfrastructure.Contracts;
-
-namespace TgStorage.Repositories;
+﻿namespace TgStorage.Repositories;
 
 /// <summary> EF user repository </summary>
 public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEfUserDto>, ITgEfUserRepository

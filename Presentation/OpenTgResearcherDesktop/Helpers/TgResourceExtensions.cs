@@ -4,9 +4,8 @@ public static class TgResourceExtensions
 {
     #region Fields, properties, constructor
 
-    private static ResourceLoader LocalResourceLoader { get; } = new();
-
-    internal static string GetLocalizedResource(this string resourceKey) => LocalResourceLoader.GetString(resourceKey);
+    private static ILocalizer LocalizerLoader { get; } = Localizer.Get();
+    internal static string GetLocalizedResource(this string resourceKey) => LocalizerLoader.GetLocalizedString(resourceKey);
 
     #endregion
 

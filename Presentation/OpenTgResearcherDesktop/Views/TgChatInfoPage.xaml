@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -56,17 +57,17 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockUpdateChatDetails"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockUpdateChatDetails" />
                     </StackPanel>
                 </Button>
                 <!--  Title  -->
                 <TextBlock
-                    x:Uid="FieldTitle"
                     Grid.Row="1"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldTitle"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="1"
@@ -83,10 +84,10 @@
                 </StackPanel>
                 <!--  Type  -->
                 <TextBlock
-                    x:Uid="FieldType"
                     Grid.Row="1"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldType"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="1"
@@ -103,10 +104,10 @@
                 </StackPanel>
                 <!--  Id  -->
                 <TextBlock
-                    x:Uid="FieldId"
                     Grid.Row="2"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldId"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="2"
@@ -129,10 +130,10 @@
                 </StackPanel>
                 <!--  UserName  -->
                 <TextBlock
-                    x:Uid="FieldUserName"
                     Grid.Row="2"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldUserName"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="2"
@@ -149,10 +150,10 @@
                 </StackPanel>
                 <!--  InviteLink  -->
                 <TextBlock
-                    x:Uid="FieldInviteLink"
                     Grid.Row="3"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldInviteLink"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="3"
@@ -169,10 +170,10 @@
                 </StackPanel>
                 <!--  Description  -->
                 <TextBlock
-                    x:Uid="FieldDescription"
                     Grid.Row="3"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldDescription"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="3"
@@ -189,10 +190,10 @@
                 </StackPanel>
                 <!--  Permissions  -->
                 <TextBlock
-                    x:Uid="FieldPermissions"
                     Grid.Row="4"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldPermissions"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="4"
@@ -210,10 +211,10 @@
                 </StackPanel>
                 <!--  About  -->
                 <TextBlock
-                    x:Uid="FieldAbout"
                     Grid.Row="4"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldAbout"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="4"
@@ -230,10 +231,10 @@
                 </StackPanel>
                 <!--  Participants count  -->
                 <TextBlock
-                    x:Uid="FieldParticipantsCount"
                     Grid.Row="5"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldParticipantsCount"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="5"
@@ -251,10 +252,10 @@
                 </StackPanel>
                 <!--  OnlineCount  -->
                 <TextBlock
-                    x:Uid="FieldOnlineCount"
                     Grid.Row="5"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldOnlineCount"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="5"
@@ -271,10 +272,10 @@
                 </StackPanel>
                 <!--  SlowMode  -->
                 <TextBlock
-                    x:Uid="FieldSlowMode"
                     Grid.Row="6"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldSlowMode"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="6"
@@ -292,10 +293,10 @@
                 </StackPanel>
                 <!--  Available reactions  -->
                 <TextBlock
-                    x:Uid="FieldAvailableReactions"
                     Grid.Row="6"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldAvailableReactions"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="6"
@@ -312,10 +313,10 @@
                 </StackPanel>
                 <!--  TtlPeriod  -->
                 <TextBlock
-                    x:Uid="FieldTtlPeriod"
                     Grid.Row="7"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldTtlPeriod"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="7"
@@ -333,10 +334,10 @@
                 </StackPanel>
                 <!--  IsActive  -->
                 <TextBlock
-                    x:Uid="FieldIsActive"
                     Grid.Row="7"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldIsActive"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="7"
@@ -351,10 +352,10 @@
                 </StackPanel>
                 <!--  IsActive  -->
                 <TextBlock
-                    x:Uid="FieldIsBanned"
                     Grid.Row="8"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldIsBanned"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="8"
@@ -369,10 +370,10 @@
                 </StackPanel>
                 <!--  IsChannel  -->
                 <TextBlock
-                    x:Uid="FieldIsChannel"
                     Grid.Row="8"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldIsChannel"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="8"
@@ -387,10 +388,10 @@
                 </StackPanel>
                 <!--  IsGroup  -->
                 <TextBlock
-                    x:Uid="FieldIsGroup"
                     Grid.Row="9"
                     Grid.Column="0"
                     Margin="10,10,10,0"
+                    l:Uids.Uid="FieldIsGroup"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="9"
@@ -405,10 +406,10 @@
                 </StackPanel>
                 <!--  IsForum  -->
                 <TextBlock
-                    x:Uid="FieldIsForum"
                     Grid.Row="9"
                     Grid.Column="2"
                     Margin="12,7,7,2"
+                    l:Uids.Uid="FieldIsForum"
                     TextAlignment="Left" />
                 <StackPanel
                     Grid.Row="9"

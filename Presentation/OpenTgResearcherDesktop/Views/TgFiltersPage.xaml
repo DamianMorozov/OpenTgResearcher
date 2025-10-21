@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -25,12 +26,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderActions"
                     Grid.Row="2"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderActions"
                     IsExpanded="True">
                     <Grid Margin="0,-10,0,-10">
                         <Grid.ColumnDefinitions>
@@ -49,9 +50,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                                 <TextBlock
-                                    x:Uid="ActionLoadFromStorage"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionLoadFromStorage" />
                             </StackPanel>
                         </Button>
                         <!--  Clear viewing  -->
@@ -64,18 +65,18 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                                 <TextBlock
-                                    x:Uid="ActionClearView"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionClearView" />
                             </StackPanel>
                         </Button>
                         <!--  Count  -->
                         <TextBlock
-                            x:Uid="TextBlockCount"
                             Grid.Column="2"
                             Margin="0,0,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockCount"
                             TextAlignment="Right" />
                         <TextBlock
                             Grid.Column="3"
@@ -95,12 +96,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderDataInStorage"
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderDataInStorage"
                     IsExpanded="True">
                     <Grid Margin="0,0,10,0">
                         <controls:DataGrid
@@ -115,7 +116,7 @@
                             <controls:DataGrid.Columns>
                                 <!--  Is enabled  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnIsEnabledTemplate"
+                                    l:Uids.Uid="ColumnIsEnabledTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsEnabledTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -123,7 +124,7 @@
                                     OwnerGrid="{x:Bind DataGridFilters}" />
                                 <!--  FilterType  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnTypeTemplate"
+                                    l:Uids.Uid="ColumnTypeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnFilterTypeTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -131,7 +132,7 @@
                                     OwnerGrid="{x:Bind DataGridFilters}" />
                                 <!--  Name  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnNameTemplate"
+                                    l:Uids.Uid="ColumnNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -139,7 +140,7 @@
                                     OwnerGrid="{x:Bind DataGridFilters}" />
                                 <!--  Mask  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnMaskTemplate"
+                                    l:Uids.Uid="ColumnMaskTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnMaskTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -147,7 +148,7 @@
                                     OwnerGrid="{x:Bind DataGridFilters}" />
                                 <!--  Size  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnSizeTemplate"
+                                    l:Uids.Uid="ColumnSizeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnSizeTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"

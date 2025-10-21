@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -38,8 +39,8 @@
                         <controls:DataGrid.Columns>
                             <!--  Name  -->
                             <controls:DataGridTemplateColumn
-                                x:Uid="ColumnTableNameTemplate"
                                 Width="1*"
+                                l:Uids.Uid="ColumnTableNameTemplate"
                                 CanUserReorder="True"
                                 CanUserSort="True">
                                 <controls:DataGridTemplateColumn.CellTemplate>
@@ -55,7 +56,7 @@
                             </controls:DataGridTemplateColumn>
                             <!--  RecordsCount  -->
                             <styles:TgBindableDataGridTemplateColumn
-                                x:Uid="ColumnRecordsCountTemplate"
+                                l:Uids.Uid="ColumnRecordsCountTemplate"
                                 ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                 ColumnValue="{StaticResource ColumnRecordsCountTemplate}"
                                 ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"

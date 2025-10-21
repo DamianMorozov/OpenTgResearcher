@@ -79,7 +79,7 @@ public partial class App : Application
                         .EnableThreadSafetyChecks()
                         .UseLoggerFactory(new LoggerFactory());
                 }, poolSize: 128);
-                
+
                 // Register FusionCache
                 services.AddFusionCache().WithDefaultEntryOptions(TgCacheUtils.CacheOptionsChannelMessages);
                 // Default Activation Handler
@@ -230,6 +230,9 @@ public partial class App : Application
             await BusinessLogicManager.StorageManager.CreateAndUpdateDbAsync();
             // Clear FusionCache on startup
             await BusinessLogicManager.Cache.ClearAllAsync();
+            // Initialize application language
+            var settingsService = GetService<ITgSettingsService>();
+            await settingsService.InitializeLanguageAsync();
             // ViewModel locator
             VmLocator = new();
 
@@ -244,6 +247,8 @@ public partial class App : Application
                     {
                         // Activate the app
                         await GetService<IActivationService>().ActivateAsync(args);
+                        settingsService.Load();
+                        settingsService.Save();
                         tcs.SetResult();
                     }
                     catch (Exception ex)

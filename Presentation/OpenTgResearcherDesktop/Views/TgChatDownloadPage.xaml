@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -46,8 +47,8 @@
                 </Grid.ColumnDefinitions>
                 <!--  FirstId  -->
                 <TextBlock
-                    x:Uid="FieldFirstId"
                     Grid.Row="0"
+                    l:Uids.Uid="FieldFirstId"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <NumberBox
                     Grid.Row="0"
@@ -58,9 +59,9 @@
                     Value="{x:Bind ViewModel.DownloadDto.FirstId, Mode=TwoWay}" />
                 <!--  CountThreads  -->
                 <TextBlock
-                    x:Uid="FieldCountThreads"
                     Grid.Row="0"
                     Grid.Column="2"
+                    l:Uids.Uid="FieldCountThreads"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <NumberBox
                     Grid.Row="0"
@@ -72,9 +73,9 @@
                     Value="{x:Bind ViewModel.DownloadDto.CountThreads, Mode=TwoWay}" />
                 <!--  IsAutoUpdate  -->
                 <TextBlock
-                    x:Uid="FieldIsAutoUpdate"
                     Grid.Row="0"
                     Grid.Column="4"
+                    l:Uids.Uid="FieldIsAutoUpdate"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="0"
@@ -84,9 +85,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsSaveMessages  -->
                 <TextBlock
-                    x:Uid="FieldIsParseMessages"
                     Grid.Row="1"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldIsParseMessages"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="1"
@@ -96,9 +97,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsJoinFileNameWithMessageId  -->
                 <TextBlock
-                    x:Uid="FieldIsJoinFileNameWithMessageId"
                     Grid.Row="1"
                     Grid.Column="2"
+                    l:Uids.Uid="FieldIsJoinFileNameWithMessageId"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="1"
@@ -108,9 +109,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsRewriteMessages  -->
                 <TextBlock
-                    x:Uid="FieldIsRewriteMessages"
                     Grid.Row="1"
                     Grid.Column="4"
+                    l:Uids.Uid="FieldIsRewriteMessages"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="1"
@@ -119,9 +120,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsSaveFiles  -->
                 <TextBlock
-                    x:Uid="FieldIsDownloadFiles"
                     Grid.Row="2"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldIsDownloadFiles"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="2"
@@ -131,9 +132,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  Download thumbnails (covers)  -->
                 <TextBlock
-                    x:Uid="FieldIsDownloadThumbnail"
                     Grid.Row="2"
                     Grid.Column="2"
+                    l:Uids.Uid="FieldIsDownloadThumbnail"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="2"
@@ -143,9 +144,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsRewriteFiles  -->
                 <TextBlock
-                    x:Uid="FieldIsRewriteFiles"
                     Grid.Row="2"
                     Grid.Column="4"
+                    l:Uids.Uid="FieldIsRewriteFiles"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="2"
@@ -155,9 +156,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsParsingComments  -->
                 <TextBlock
-                    x:Uid="FieldIsParseComments"
                     Grid.Row="3"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldIsParseComments"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="3"
@@ -166,9 +167,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsCreatingSubdirectories  -->
                 <TextBlock
-                    x:Uid="FieldIsCreateSubdirectories"
                     Grid.Row="3"
                     Grid.Column="2"
+                    l:Uids.Uid="FieldIsCreateSubdirectories"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="3"
@@ -177,9 +178,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  IsFileNamingByMessage  -->
                 <TextBlock
-                    x:Uid="FieldIsFileNameByMessage"
                     Grid.Row="3"
                     Grid.Column="4"
+                    l:Uids.Uid="FieldIsFileNameByMessage"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <ToggleSwitch
                     Grid.Row="3"
@@ -188,9 +189,9 @@
                     Style="{StaticResource FieldToggleSwitchStyle}" />
                 <!--  Default  -->
                 <TextBlock
-                    x:Uid="FieldDefaultSettings"
                     Grid.Row="4"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldDefaultSettings"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <Button
                     Grid.Row="4"
@@ -202,15 +203,15 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                         <TextBlock
-                            x:Uid="ActionResetToDefault"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ActionResetToDefault" />
                     </StackPanel>
                 </Button>
                 <!--  Directory  -->
                 <TextBlock
-                    x:Uid="FieldDirectory"
                     Grid.Row="5"
+                    l:Uids.Uid="FieldDirectory"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <Grid
                     Grid.Row="5"
@@ -241,9 +242,9 @@
                 </Grid>
                 <!--  ChatProgressMessage  -->
                 <TextBlock
-                    x:Uid="FieldPercent"
                     Grid.Row="6"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldPercent"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <TextBox
                     Grid.Row="6"
@@ -254,9 +255,9 @@
                     Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
                 <!--  Message  -->
                 <TextBlock
-                    x:Uid="FieldMessage"
                     Grid.Row="7"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldMessage"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <TextBox
                     Grid.Row="7"
@@ -268,9 +269,9 @@
                     Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
                 <!--  Media  -->
                 <TextBlock
-                    x:Uid="FieldMedia"
                     Grid.Row="8"
                     Grid.Column="0"
+                    l:Uids.Uid="FieldMedia"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <TextBox
                     Grid.Row="8"

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:OpenTgResearcherDesktop.Models"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -18,11 +19,11 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Expander
-                x:Uid="ExpanderUpdate"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderUpdate"
                 IsExpanded="True">
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
@@ -36,9 +37,9 @@
                     </Grid.ColumnDefinitions>
                     <!--  Log directory  -->
                     <TextBlock
-                        x:Uid="SettingLogDirectory"
                         Grid.Column="0"
                         Margin="15,5,10,5"
+                        l:Uids.Uid="SettingLogDirectory"
                         TextAlignment="Left" />
                     <TextBlock
                         Grid.Column="1"
@@ -97,10 +98,10 @@
                                         VerticalAlignment="Top"
                                         Text="{x:Bind FileSize, Mode=OneTime}" />
                                     <Button
-                                        x:Uid="ActionDeleteFile"
                                         Grid.Column="3"
                                         Margin="0,7,5,5"
                                         VerticalAlignment="Top"
+                                        l:Uids.Uid="ActionDeleteFile"
                                         Command="{x:Bind ViewModel.DeleteLogFileCommand}"
                                         CommandParameter="{x:Bind}" />
                                 </Grid>

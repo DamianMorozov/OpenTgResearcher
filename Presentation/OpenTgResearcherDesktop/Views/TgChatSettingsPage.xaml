@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -47,7 +48,7 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <!--  Uid  -->
-                    <TextBlock x:Uid="FieldUid" Style="{StaticResource FieldTextBlockStyle}" />
+                    <TextBlock l:Uids.Uid="FieldUid" Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBox
                         Grid.Column="1"
                         IsEnabled="False"
@@ -64,8 +65,8 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  DtChanged  -->
                     <TextBlock
-                        x:Uid="FieldDtChanged"
                         Grid.Column="2"
+                        l:Uids.Uid="FieldDtChanged"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Column="3"
@@ -81,8 +82,8 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  Id  -->
                     <TextBlock
-                        x:Uid="FieldId"
                         Grid.Column="4"
+                        l:Uids.Uid="FieldId"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Grid
                         Grid.Row="0"
@@ -116,8 +117,8 @@
                     </Grid>
                     <!--  IsActive  -->
                     <TextBlock
-                        x:Uid="FieldIsActive"
                         Grid.Row="1"
+                        l:Uids.Uid="FieldIsActive"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <ToggleSwitch
                         Grid.Row="1"
@@ -127,9 +128,9 @@
                         Style="{StaticResource FieldToggleSwitchStyle}" />
                     <!--  IsSubscribe  -->
                     <TextBlock
-                        x:Uid="FieldIsSubscribe"
                         Grid.Row="1"
                         Grid.Column="2"
+                        l:Uids.Uid="FieldIsSubscribe"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <ToggleSwitch
                         Grid.Row="1"
@@ -139,9 +140,9 @@
                         Style="{StaticResource FieldToggleSwitchStyle}" />
                     <!--  IsRestrictSavingContent  -->
                     <TextBlock
-                        x:Uid="FieldIsRestrictSavingContent"
                         Grid.Row="1"
                         Grid.Column="4"
+                        l:Uids.Uid="FieldIsRestrictSavingContent"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <ToggleSwitch
                         Grid.Row="1"
@@ -166,9 +167,9 @@
                     </Grid.ColumnDefinitions>
                     <!--  UserName  -->
                     <TextBlock
-                        x:Uid="FieldUserName"
                         Grid.Row="0"
                         Grid.Column="0"
+                        l:Uids.Uid="FieldUserName"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Grid
                         Grid.Row="0"
@@ -199,9 +200,9 @@
                     </Grid>
                     <!--  Link  -->
                     <TextBlock
-                        x:Uid="FieldLink"
                         Grid.Row="0"
                         Grid.Column="2"
+                        l:Uids.Uid="FieldLink"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Grid
                         Grid.Row="0"
@@ -234,9 +235,9 @@
                     </Grid>
                     <!--  IsUserAccess  -->
                     <TextBlock
-                        x:Uid="FieldIsAccess"
                         Grid.Row="0"
                         Grid.Column="4"
+                        l:Uids.Uid="FieldIsAccess"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <ToggleSwitch
                         Grid.Row="0"
@@ -246,9 +247,9 @@
                         Style="{StaticResource FieldToggleSwitchStyle}" />
                     <!--  Count  -->
                     <TextBlock
-                        x:Uid="FieldCount"
                         Grid.Row="0"
                         Grid.Column="6"
+                        l:Uids.Uid="FieldCount"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Grid
                         Grid.Row="0"
@@ -290,9 +291,9 @@
                     </Grid.ColumnDefinitions>
                     <!--  DiscussionDto  -->
                     <TextBlock
-                        x:Uid="FieldDiscussion"
                         Grid.Row="0"
                         Grid.Column="0"
+                        l:Uids.Uid="FieldDiscussion"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Button
                         Grid.Row="0"
@@ -304,16 +305,16 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xE90A;" />
                             <TextBlock
-                                x:Uid="TextBlockOpenDiscussion"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="TextBlockOpenDiscussion" />
                         </StackPanel>
                     </Button>
                     <!--  Title  -->
                     <TextBlock
-                        x:Uid="FieldTitle"
                         Grid.Row="0"
                         Grid.Column="2"
+                        l:Uids.Uid="FieldTitle"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Grid
                         Grid.Row="0"
@@ -343,9 +344,9 @@
                     </Grid>
                     <!--  About  -->
                     <TextBlock
-                        x:Uid="FieldAbout"
                         Grid.Row="1"
                         Grid.Column="0"
+                        l:Uids.Uid="FieldAbout"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <Grid
                         Grid.Row="1"

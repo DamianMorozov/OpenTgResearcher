@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -70,7 +71,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xE729;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingLogging" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingLogging" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -86,7 +87,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xE7B8;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingVelopack" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingVelopack" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -102,7 +103,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xE713;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingSettings" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingSettings" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -118,7 +119,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xF12B;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingStorage" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingStorage" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -134,7 +135,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xE8C7;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingLicense" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingLicense" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -150,7 +151,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xEC42;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingNotifications" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingNotifications" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -166,7 +167,7 @@
                     Margin="0,0,20,0"
                     Glyph="&#xE950;"
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <TextBlock x:Uid="TextBlockLoadingHardwareResourceMonitoring" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock l:Uids.Uid="TextBlockLoadingHardwareResourceMonitoring" Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon
                     Margin="20,0,0,0"
                     Glyph="&#xE73E;"
@@ -197,9 +198,9 @@
             Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock
-                    x:Uid="ActionContinue"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
+                    l:Uids.Uid="ActionContinue"
                     HorizontalTextAlignment="Left"
                     Style="{StaticResource TitleTextBlockStyle}" />
                 <FontIcon Margin="30,0,10,0" Glyph="&#xF5B0;" />

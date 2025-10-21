@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enums="using:TgInfrastructure.Enums"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -36,9 +37,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                         <TextBlock
-                            x:Uid="ActionClearView"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ActionClearView" />
                     </StackPanel>
                 </Button>
                 <!--  Save settings  -->
@@ -52,9 +53,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
                         <TextBlock
-                            x:Uid="TextBlockSaveProxySettings"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockSaveProxySettings" />
                     </StackPanel>
                 </Button>
                 <!--  Grid  -->
@@ -80,8 +81,8 @@
                     </Grid.ColumnDefinitions>
                     <!--  Uid  -->
                     <TextBlock
-                        x:Uid="FieldUid"
                         Grid.Column="0"
+                        l:Uids.Uid="FieldUid"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Column="1"
@@ -102,8 +103,8 @@
                         Tag="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}" />
                     <!--  HostName  -->
                     <TextBlock
-                        x:Uid="FieldHostName"
                         Grid.Column="3"
+                        l:Uids.Uid="FieldHostName"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Column="4"
@@ -122,9 +123,9 @@
                         Tag="{x:Bind ViewModel.Dto.HostName, Mode=OneWay}" />
                     <!--  Port  -->
                     <TextBlock
-                        x:Uid="FieldPort"
                         Grid.Row="0"
                         Grid.Column="6"
+                        l:Uids.Uid="FieldPort"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Column="7"
@@ -143,9 +144,9 @@
                         Tag="{x:Bind ViewModel.Dto.Port, Mode=OneWay}" />
                     <!--  UserName  -->
                     <TextBlock
-                        x:Uid="FieldUserName"
                         Grid.Row="1"
                         Grid.Column="0"
+                        l:Uids.Uid="FieldUserName"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Row="1"
@@ -167,9 +168,9 @@
                         Tag="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}" />
                     <!--  Password  -->
                     <TextBlock
-                        x:Uid="FieldPassword"
                         Grid.Row="1"
                         Grid.Column="3"
+                        l:Uids.Uid="FieldPassword"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Row="1"
@@ -191,9 +192,9 @@
                         Tag="{x:Bind ViewModel.Dto.Password, Mode=OneWay}" />
                     <!--  Secret  -->
                     <TextBlock
-                        x:Uid="FieldSecret"
                         Grid.Row="1"
                         Grid.Column="6"
+                        l:Uids.Uid="FieldSecret"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Row="1"
@@ -215,9 +216,9 @@
                         Tag="{x:Bind ViewModel.Dto.Secret, Mode=OneWay}" />
                     <!--  Type  -->
                     <TextBlock
-                        x:Uid="FieldType"
                         Grid.Row="2"
                         Grid.Column="0"
+                        l:Uids.Uid="FieldType"
                         Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBlock
                         Grid.Row="2"

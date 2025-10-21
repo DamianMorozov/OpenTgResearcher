@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:proxies="using:TgStorage.Domain.Proxies"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -26,12 +27,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderActions"
                     Grid.Row="2"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderActions"
                     IsExpanded="True">
                     <Grid Margin="0,-10,0,-10">
                         <Grid.ColumnDefinitions>
@@ -53,9 +54,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                                 <TextBlock
-                                    x:Uid="ActionCreate"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionCreate" />
                             </StackPanel>
                         </Button>
                         <!--  Deleta all  -->
@@ -68,9 +69,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                                 <TextBlock
-                                    x:Uid="ActionDeleteAll"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionDeleteAll" />
                             </StackPanel>
                         </Button>
                         <!--  Clear viewing  -->
@@ -83,9 +84,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                                 <TextBlock
-                                    x:Uid="ActionClearView"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionClearView" />
                             </StackPanel>
                         </Button>
                         <!--  Open or edit  -->
@@ -98,10 +99,10 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Glyph="&#xEA5B;" />
                                 <TextBlock
-                                    x:Uid="ActionOpenOrEdit"
                                     Margin="10,0,10,0"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionOpenOrEdit" />
                             </StackPanel>
                         </Button>
                         <!--  Delete  -->
@@ -114,19 +115,19 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Glyph="&#xE894;" />
                                 <TextBlock
-                                    x:Uid="ActionDelete"
                                     Margin="10,0,10,0"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionDelete" />
                             </StackPanel>
                         </Button>
                         <!--  Count  -->
                         <TextBlock
-                            x:Uid="TextBlockCount"
                             Grid.Column="5"
                             Margin="10,0,5,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockCount"
                             TextAlignment="Right" />
                         <TextBlock
                             Grid.Column="6"
@@ -145,12 +146,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderDataInStorage"
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderDataInStorage"
                     IsExpanded="True">
                     <Grid Margin="0,0,10,0">
                         <controls:DataGrid
@@ -166,7 +167,7 @@
                             <controls:DataGrid.Columns>
                                 <!--  Type  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnTypeTemplate"
+                                    l:Uids.Uid="ColumnTypeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnTypeTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -174,7 +175,7 @@
                                     OwnerGrid="{x:Bind DataGridProxies}" />
                                 <!--  HostName  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnHostNameTemplate"
+                                    l:Uids.Uid="ColumnHostNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnHostNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -182,7 +183,7 @@
                                     OwnerGrid="{x:Bind DataGridProxies}" />
                                 <!--  Port  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnPortTemplate"
+                                    l:Uids.Uid="ColumnPortTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnPortTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -190,7 +191,7 @@
                                     OwnerGrid="{x:Bind DataGridProxies}" />
                                 <!--  UserName  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnUserNameTemplate"
+                                    l:Uids.Uid="ColumnUserNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnUserNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -198,7 +199,7 @@
                                     OwnerGrid="{x:Bind DataGridProxies}" />
                                 <!--  Password  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnPasswordTemplate"
+                                    l:Uids.Uid="ColumnPasswordTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnPasswordTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"

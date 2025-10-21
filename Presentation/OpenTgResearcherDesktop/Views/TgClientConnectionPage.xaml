@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:local="using:OpenTgResearcherDesktop"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:proxies="using:TgStorage.Domain.Proxies"
@@ -27,12 +28,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderActions"
                     Grid.Row="2"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderActions"
                     IsExpanded="True">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -51,8 +52,8 @@
                             Margin="10,5,0,0"
                             HorizontalAlignment="Left">
                             <CheckBox
-                                x:Uid="ClientTgSession"
                                 HorizontalContentAlignment="Left"
+                                l:Uids.Uid="ClientTgSession"
                                 IsChecked="{x:Bind ViewModel.IsExistsAppSession, Mode=OneWay}"
                                 IsEnabled="False" />
                         </StackPanel>
@@ -67,9 +68,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE74E;" />
                                 <TextBlock
-                                    x:Uid="ActionSave"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionSave" />
                             </StackPanel>
                         </Button>
                         <!--  Clear  -->
@@ -83,9 +84,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
                                 <TextBlock
-                                    x:Uid="ActionClearView"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionClearView" />
                             </StackPanel>
                         </Button>
                         <!--  Empty  -->
@@ -99,18 +100,18 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE894;" />
                                 <TextBlock
-                                    x:Uid="ActionDelete"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionDelete" />
                             </StackPanel>
                         </Button>
                         <!--  Link  -->
                         <Border Grid.Row="1">
                             <HyperlinkButton
-                                x:Uid="ClientPage_MyTelegram"
                                 Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Left"
+                                l:Uids.Uid="ClientPage_MyTelegram"
                                 Click="OnOpenHyperlink" />
                         </Border>
                         <!--  Grid  -->
@@ -136,9 +137,9 @@
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xE930;" />
                                     <TextBlock
-                                        x:Uid="ClientConnect"
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center" />
+                                        VerticalAlignment="Center"
+                                        l:Uids.Uid="ClientConnect" />
                                 </StackPanel>
                             </Button>
                             <!--  Disconnect Telegram  -->
@@ -155,9 +156,9 @@
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Margin="0,0,10,0" Glyph="&#xEA39;" />
                                     <TextBlock
-                                        x:Uid="ClientDisconnect"
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center" />
+                                        VerticalAlignment="Center"
+                                        l:Uids.Uid="ClientDisconnect" />
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -171,12 +172,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderSettingInStorage"
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderSettingInStorage"
                     IsExpanded="True">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
@@ -195,9 +196,9 @@
                         </Grid.ColumnDefinitions>
                         <!--  Uid  -->
                         <TextBlock
-                            x:Uid="FieldUid"
                             Grid.Row="0"
                             Grid.Column="0"
+                            l:Uids.Uid="FieldUid"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="0"
@@ -221,10 +222,10 @@
                             Tag="{x:Bind ViewModel.AppDto.Uid, Mode=OneWay}" />
                         <!--  UseClient  -->
                         <TextBlock
-                            x:Uid="FieldUseClient"
                             Grid.Row="0"
                             Grid.Column="3"
                             Margin="0,0,10,0"
+                            l:Uids.Uid="FieldUseClient"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <ToggleSwitch
                             Grid.Row="0"
@@ -236,8 +237,8 @@
                             IsOn="{x:Bind ViewModel.AppDto.UseClient, Mode=TwoWay}" />
                         <!--  API hash  -->
                         <TextBlock
-                            x:Uid="ClientApiHash"
                             Grid.Row="1"
+                            l:Uids.Uid="ClientApiHash"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="1"
@@ -260,9 +261,9 @@
                             Tag="{x:Bind ViewModel.AppDto.ApiHashString, Mode=OneWay}" />
                         <!--  API ID  -->
                         <TextBlock
-                            x:Uid="ClientApiId"
                             Grid.Row="1"
                             Grid.Column="3"
+                            l:Uids.Uid="ClientApiId"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="1"
@@ -285,8 +286,8 @@
                             Tag="{x:Bind ViewModel.AppDto.ApiId, Mode=OneWay}" />
                         <!--  Phone number  -->
                         <TextBlock
-                            x:Uid="ClientPhoneNumber"
                             Grid.Row="2"
+                            l:Uids.Uid="ClientPhoneNumber"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="2"
@@ -309,9 +310,9 @@
                             Tag="{x:Bind ViewModel.AppDto.PhoneNumber, Mode=OneWay}" />
                         <!--  Proxy  -->
                         <TextBlock
-                            x:Uid="ClientProxy"
                             Grid.Row="2"
                             Grid.Column="3"
+                            l:Uids.Uid="ClientProxy"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="2"
@@ -336,8 +337,8 @@
                         </ComboBox>
                         <!--  First name  -->
                         <TextBlock
-                            x:Uid="ClientFirstName"
                             Grid.Row="3"
+                            l:Uids.Uid="ClientFirstName"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="3"
@@ -360,9 +361,9 @@
                             Tag="{x:Bind ViewModel.AppDto.FirstName, Mode=OneWay}" />
                         <!--  Last name  -->
                         <TextBlock
-                            x:Uid="FieldLastName"
                             Grid.Row="3"
                             Grid.Column="3"
+                            l:Uids.Uid="FieldLastName"
                             Style="{StaticResource FieldTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="3"
@@ -394,12 +395,12 @@
                 HorizontalContentAlignment="Stretch"
                 Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
-                    x:Uid="ExpanderSettingWithoutSaving"
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"
                     Padding="{StaticResource ExpanderPadding}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ExpanderSettingWithoutSaving"
                     IsExpanded="True">
                     <Grid Margin="0,0,10,0">
                         <Grid.RowDefinitions>
@@ -419,10 +420,10 @@
                         </Grid.ColumnDefinitions>
                         <!--  Login code  -->
                         <TextBlock
-                            x:Uid="ClientLoginCode"
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="2,7,7,2"
+                            l:Uids.Uid="ClientLoginCode"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -444,10 +445,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  Password  -->
                         <TextBlock
-                            x:Uid="ClientPassword"
                             Grid.Row="0"
                             Grid.Column="2"
                             Margin="12,7,7,2"
+                            l:Uids.Uid="ClientPassword"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -469,10 +470,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  Connection dt  -->
                         <TextBlock
-                            x:Uid="ClientConnectionDt"
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="2,7,7,2"
+                            l:Uids.Uid="ClientConnectionDt"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -507,9 +508,9 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock
-                                x:Uid="ClientConnectionState"
                                 Grid.Column="0"
                                 Margin="12,7,7,2"
+                                l:Uids.Uid="ClientConnectionState"
                                 FontWeight="Bold"
                                 TextAlignment="Left" />
                             <ToggleSwitch
@@ -542,11 +543,11 @@
                         </Grid>
                         <!--  Connection exception  -->
                         <TextBlock
-                            x:Uid="ClientConnectionException"
                             Grid.Row="2"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             VerticalAlignment="Center"
+                            l:Uids.Uid="ClientConnectionException"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
@@ -563,10 +564,10 @@
                             TextWrapping="Wrap" />
                         <!--  User  -->
                         <TextBlock
-                            x:Uid="ClientUserName"
                             Grid.Row="3"
                             Grid.Column="0"
                             Margin="2,7,7,2"
+                            l:Uids.Uid="ClientUserName"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -592,10 +593,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  MtProxyUrl  -->
                         <TextBlock
-                            x:Uid="ClientMtProxyUrl"
                             Grid.Row="3"
                             Grid.Column="2"
                             Margin="12,7,7,2"
+                            l:Uids.Uid="ClientMtProxyUrl"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -621,10 +622,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  MaxAutoReconnects  -->
                         <TextBlock
-                            x:Uid="ClientMaxAutoReconnects"
                             Grid.Row="4"
                             Grid.Column="0"
                             Margin="2,7,7,2"
+                            l:Uids.Uid="ClientMaxAutoReconnects"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -650,10 +651,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  MaxCodePwdAttempts  -->
                         <TextBlock
-                            x:Uid="ClientMaxCodePwdAttempts"
                             Grid.Row="4"
                             Grid.Column="2"
                             Margin="12,7,7,2"
+                            l:Uids.Uid="ClientMaxCodePwdAttempts"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -679,10 +680,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  FloodRetryThreshold  -->
                         <TextBlock
-                            x:Uid="ClientFloodRetryThreshold"
                             Grid.Row="5"
                             Grid.Column="0"
                             Margin="2,7,7,2"
+                            l:Uids.Uid="ClientFloodRetryThreshold"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -708,10 +709,10 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  PingInterval  -->
                         <TextBlock
-                            x:Uid="ClientPingInterval"
                             Grid.Row="5"
                             Grid.Column="2"
                             Margin="12,7,7,2"
+                            l:Uids.Uid="ClientPingInterval"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
@@ -737,11 +738,11 @@
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  Data request  -->
                         <TextBlock
-                            x:Uid="ClientDataRequest"
                             Grid.Row="6"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             VerticalAlignment="Center"
+                            l:Uids.Uid="ClientDataRequest"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->

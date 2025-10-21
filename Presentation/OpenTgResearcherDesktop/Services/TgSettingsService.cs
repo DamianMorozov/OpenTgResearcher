@@ -14,6 +14,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     private const string SettingsKeyWindowHeight = nameof(LocalSettingsOptions.WindowHeight);
     private const string SettingsKeyWindowX = nameof(LocalSettingsOptions.WindowX);
     private const string SettingsKeyWindowY = nameof(LocalSettingsOptions.WindowY);
+
     [ObservableProperty]
     public partial ObservableCollection<TgEnumTheme> AppThemes { get; set; } = null!;
     [ObservableProperty]
@@ -98,51 +99,132 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
     #region Methods
 
-    public string ToDebugString() => TgObjectUtils.ToDebugString(this);
-
-    // TODO: fix language
-    public void SetAppLanguage()
+    /// <summary> Apply app language for MSIX and unpackaged scenarios; exceptions are logged and do not crash app </summary>
+    private void SetAppLanguage()
     {
         try
         {
+            var languageCode = TgEnumUtils.GetLanguageAsString(AppLanguage);
+
             if (TgRuntimeHelper.IsMSIX)
             {
-                var languageCode = TgEnumUtils.GetLanguageAsString(AppLanguage);
-
-                // The PrimaryLanguageOverride setting should be done in the UI thread
+                // MSIX apps load resources from PRI; PrimaryLanguageOverride must be set on UI thread and usually requires restart
                 TgDesktopUtils.InvokeOnUIThread(() =>
                 {
                     Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = languageCode;
                 });
+                // Try to refresh UI to reflect language change without full restart
+                TryRefreshUiResources(languageCode);
+                // Note: For MSIX the most reliable way is to prompt user for restart to fully reload PRI resources
+                TgLogUtils.WriteLog($"Language override set to {languageCode} for MSIX; restart may be required");
             }
             else
             {
+                // Unpackaged desktop: set thread cultures and resource context languages
+                var culture = new CultureInfo(languageCode);
+
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+
                 var context = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForViewIndependentUse();
                 context.Languages = AppLanguage switch
                 {
-                    TgEnumLanguage.Russian => [TgConstants.LocaleRuRu],
-                    _ => [TgConstants.LocaleEnUs],
+                    TgEnumLanguage.Russian => new[] { TgConstants.LocaleRuRu },
+                    _ => [TgConstants.LocaleEnUs]
                 };
+                // Refresh UI to pick up new resources
+                TryRefreshUiResources(languageCode);
+                // Log the change
+                TgLogUtils.WriteLog($"Language set to {languageCode} for unpackaged app");
             }
-
-            // TODO: update UI resources
-            //if (App.MainWindow?.Content is FrameworkElement rootElement)
-            //{
-            //    rootElement.Resources.MergedDictionaries.Clear();
-            //    rootElement.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"ms-appx:///Resources/Strings.{languageCode}.xaml") });
-            //}
-
-            // TODO: add logic for reloading the current page
-            //var frame = (App.MainWindow?.Content as Frame);
-            //if (frame != null)
-            //{
-            //    var currentPageType = frame.CurrentSourcePageType;
-            //    frame.Navigate(currentPageType);
-            //}
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteExceptionWithMessage(ex, "Error occurred while setting app language.");
+            TgLogUtils.WriteExceptionWithMessage(ex, "Error occurred while setting app language");
+        }
+    }
+
+    /// <summary> Refresh UI resources and re-navigate current page to apply language </summary>
+    private void TryRefreshUiResources(string languageCode)
+    {
+        try
+        {
+            if (App.MainWindow?.Content is not FrameworkElement rootElement) return;
+
+            // Force page re-navigation to rebuild visuals with new resources
+            if (rootElement is Page page && page.Frame is Frame frame)
+            {
+                var currentPageType = frame.CurrentSourcePageType;
+                var currentParam = frame.Tag;
+                frame.Navigate(currentPageType, currentParam);
+            }
+            else if (App.MainWindow.Content is Frame frame2)
+            {
+                var currentPageType = frame2.CurrentSourcePageType;
+                var currentParam = frame2.Tag;
+                frame2.Navigate(currentPageType, currentParam);
+            }
+            else
+            {
+                rootElement.UpdateLayout();
+            }
+
+            TgDesktopUtils.InvokeOnUIThread(async () =>
+            {
+                await SetLanguageFromLocalizerAsync(languageCode, rootElement);
+            });
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Error at refresh UI");
+        }
+    }
+
+    private async Task SetLanguageFromLocalizerAsync(string languageCode, FrameworkElement rootElement)
+    {
+        try
+        {
+            var localizer = Localizer.Get();
+            if (localizer == null)
+            {
+                TgLogUtils.WriteException(new InvalidOperationException("Localizer is not initialized"));
+                return;
+            }
+
+            var availableLanguages = localizer.GetAvailableLanguages();
+            if (!availableLanguages.Contains(languageCode))
+            {
+                TgLogUtils.WriteException(new InvalidOperationException($"Language {languageCode} is not available. Available languages: {string.Join(", ", availableLanguages)}"));
+                languageCode = "en-US";
+            }
+
+            await localizer.SetLanguage(languageCode);
+
+            // Force page re-navigation to rebuild visuals with new resources
+            if (rootElement is Page page && page.Frame is Frame frame)
+            {
+                var currentPageType = frame.CurrentSourcePageType;
+                var currentParam = frame.Tag;
+                frame.BackStack.Clear();
+                frame.Navigate(currentPageType, currentParam);
+            }
+            else if (App.MainWindow.Content is Frame frame2)
+            {
+                var currentPageType = frame2.CurrentSourcePageType;
+                var currentParam = frame2.Tag;
+                frame2.BackStack.Clear();
+                frame2.Navigate(currentPageType, currentParam);
+            }
+            else
+            {
+                rootElement.UpdateLayout();
+            }
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Error at Localizer");
         }
     }
 
@@ -329,8 +411,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         var appTheme = LoadAppTheme();
         AppTheme = AppThemes.First(x => x == appTheme);
 
-        var appLanguage = LoadAppLanguage();
-        AppLanguage = AppLanguages.First(x => x == appLanguage);
+        LoadLanguage();
 
         LoadStorage();
         // Register TgEfContext as the DbContext for EF Core
@@ -347,6 +428,12 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         AppSessionFileSize = TgFileUtils.GetFileSizeAsString(AppSession);
     }
 
+    private void LoadLanguage()
+    {
+        var appLanguage = LoadAppLanguage();
+        AppLanguage = AppLanguages.First(x => x == appLanguage);
+    }
+
     public void LoadWindow()
     {
         WindowWidth = LoadWindowWidth();
@@ -361,7 +448,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         {
             SaveSetting(SettingsKeyAppStorage, AppStorage);
             SaveSetting(SettingsKeyAppSession, AppSession);
-        
+
             SaveSetting(SettingsKeyAppTheme, AppTheme.ToString());
             SaveSetting(SettingsKeyAppLanguage, AppLanguage.ToString());
 
@@ -518,6 +605,91 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         catch (Exception ex)
         {
             TgLogUtils.WriteException(ex);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task InitializeLanguageAsync()
+    {
+        try
+        {
+            var languageCode = TgEnumUtils.GetLanguageAsString(AppLanguage);
+
+            if (TgRuntimeHelper.IsMSIX)
+                await InitializeLocalizerMsixAsync(languageCode);
+            else
+                await InitializeLocalizerUnpackagedAsync(languageCode);
+
+            //LoadLanguage();
+            //SetAppLanguage();
+            //Load();
+            //Save();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Error while app initialize");
+        }
+    }
+
+    private async Task InitializeLocalizerMsixAsync(string languageCode)
+    {
+        try
+        {
+            var localFolder = ApplicationData.Current.LocalFolder;
+            var stringsFolder = await localFolder.CreateFolderAsync("Strings", CreationCollisionOption.OpenIfExists);
+
+            var resourceFileName = "Resources.resw";
+            await CreateStringResourceFileIfNotExists(stringsFolder, "en-US", resourceFileName);
+            await CreateStringResourceFileIfNotExists(stringsFolder, "ru-RU", resourceFileName);
+
+            _ = await new LocalizerBuilder()
+                .AddStringResourcesFolderForLanguageDictionaries(stringsFolder.Path)
+                .SetOptions(options => { options.DefaultLanguage = languageCode; })
+                .Build();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Error while MSIX app initialize");
+        }
+    }
+
+    private static async Task CreateStringResourceFileIfNotExists(StorageFolder stringsFolder, string language, string resourceFileName)
+    {
+        var languageFolder = await stringsFolder.CreateFolderAsync(language, CreationCollisionOption.OpenIfExists);
+
+        if (await languageFolder.TryGetItemAsync(resourceFileName) is null)
+        {
+            var resourceFile = await LoadStringResourcesFileFromAppResource(language, resourceFileName);
+            _ = await resourceFile.CopyAsync(languageFolder);
+        }
+    }
+
+    private static async Task<StorageFile> LoadStringResourcesFileFromAppResource(string language, string resourceFileName)
+    {
+        var uri = new Uri($"ms-appx:///Strings/{language}/{resourceFileName}");
+        var result = await StorageFile.GetFileFromApplicationUriAsync(uri);
+        return result;
+    }
+
+    private async Task InitializeLocalizerUnpackagedAsync(string languageCode)
+    {
+        try
+        {
+            var stringsFolderPath = Path.Combine(AppContext.BaseDirectory, "Strings");
+            //var stringsFolderPath = Path.Combine(AppContext.BaseDirectory, "Strings/en-US");
+            //if (languageCode.Equals("ru-RU", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    stringsFolderPath = Path.Combine(AppContext.BaseDirectory, "Strings/ru-RU");
+            //}
+            var stringsFolder = await StorageFolder.GetFolderFromPathAsync(stringsFolderPath);
+            _ = await new LocalizerBuilder()
+                .AddStringResourcesFolderForLanguageDictionaries(stringsFolderPath)
+                .SetOptions(options => { options.DefaultLanguage = languageCode; })
+                .Build();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Error while unpackaged app initialize");
         }
     }
 

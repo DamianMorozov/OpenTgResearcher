@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -60,8 +61,8 @@
                             Text="·" />
                         <!--  Id  -->
                         <TextBlock
-                            x:Uid="TextBlockId"
                             Margin="0,5,0,0"
+                            l:Uids.Uid="TextBlockId"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
@@ -82,8 +83,8 @@
                             Text="·" />
                         <!--  Link  -->
                         <TextBlock
-                            x:Uid="TextBlockLink"
                             Margin="0,5,0,0"
+                            l:Uids.Uid="TextBlockLink"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
@@ -107,8 +108,8 @@
                             Text="·" />
                         <!--  Sender  -->
                         <TextBlock
-                            x:Uid="TextBlockSender"
                             Margin="0,5,0,0"
+                            l:Uids.Uid="TextBlockSender"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
@@ -130,8 +131,8 @@
                             Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <!--  Message deleted  -->
                         <TextBlock
-                            x:Uid="TextBlockMessageDeleted"
                             Margin="0,5,0,0"
+                            l:Uids.Uid="TextBlockMessageDeleted"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
@@ -144,8 +145,8 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                             <TextBlock
-                                x:Uid="TextBlockMessage"
                                 Margin="0,5,0,0"
+                                l:Uids.Uid="TextBlockMessage"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
                             <styles:TgAnimatedClipboardButton
                                 Click="OnClipboardSilentWriteClick"
@@ -238,10 +239,10 @@
                 </Grid.ColumnDefinitions>
                 <!--  Empty data  -->
                 <TextBlock
-                    x:Uid="FieldEmptyData"
                     Grid.ColumnSpan="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    l:Uids.Uid="FieldEmptyData"
                     Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <!--  Lazy load  -->
                 <Button
@@ -255,9 +256,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xE712;" />
                         <TextBlock
-                            x:Uid="TextBlockLoadMore"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockLoadMore" />
                     </StackPanel>
                 </Button>
                 <!--  Clear viewing  -->
@@ -271,9 +272,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                         <TextBlock
-                            x:Uid="ActionClearView"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ActionClearView" />
                     </StackPanel>
                 </Button>
                 <!--  Loaded data statistics  -->

@@ -62,7 +62,6 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     {
         try
         {
-            LogInformation(TgResourceExtensions.GetLoggerLoading());
             IsLoadLogging = true;
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         }

@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -28,9 +29,9 @@
                     x:Name="StorageSelectorBar"
                     Margin="0,-10,0,-10"
                     SelectionChanged="StorageSelectorBar_SelectionChanged">
-                    <SelectorBarItem x:Uid="SelectorBarItemPageStorageTables" Tag="TgStorageTablesPage" />
-                    <SelectorBarItem x:Uid="SelectorBarItemPageStorageConfiguration" Tag="TgStorageConfigurationPage" />
-                    <SelectorBarItem x:Uid="SelectorBarItemPageStorageAdvancedSettings" Tag="TgStorageAdvancedPage" />
+                    <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageTables" Tag="TgStorageTablesPage" />
+                    <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageConfiguration" Tag="TgStorageConfigurationPage" />
+                    <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageAdvancedSettings" Tag="TgStorageAdvancedPage" />
                 </SelectorBar>
                 <!--  Frame  -->
                 <Frame

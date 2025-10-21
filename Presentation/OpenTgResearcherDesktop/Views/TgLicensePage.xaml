@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -15,11 +16,11 @@
         <Grid>
             <!--  License & version  -->
             <Expander
-                x:Uid="ExpanderLicense"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderLicense"
                 IsExpanded="True">
                 <StackPanel>
                     <Grid>
@@ -44,9 +45,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
-                                    x:Uid="ActionLicenseClear"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionLicenseClear"
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
@@ -62,9 +63,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
-                                    x:Uid="ActionLicenseCheck"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionLicenseCheck"
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
@@ -80,9 +81,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
-                                    x:Uid="ActionLicenseRequestCommunity"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionLicenseRequestCommunity"
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
@@ -98,9 +99,9 @@
                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                 <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                                 <TextBlock
-                                    x:Uid="ActionLicenseBuy"
                                     HorizontalAlignment="Left"
-                                    VerticalAlignment="Center" />
+                                    VerticalAlignment="Center"
+                                    l:Uids.Uid="ActionLicenseBuy" />
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -118,10 +119,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
-                            x:Uid="TextBlockIsConfirmed"
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="10,0,10,0"
+                            l:Uids.Uid="TextBlockIsConfirmed"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="0"
@@ -130,10 +131,10 @@
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.IsConfirmed, Mode=OneWay}" />
                         <TextBlock
-                            x:Uid="TextBlockLicenseKey"
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="10,0,10,0"
+                            l:Uids.Uid="TextBlockLicenseKey"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -152,10 +153,10 @@
                             Text="{x:Bind ViewModel.LicenseKey, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="TextBlockLicenseDescription"
                             Grid.Row="2"
                             Grid.Column="0"
                             Margin="10,0,10,0"
+                            l:Uids.Uid="TextBlockLicenseDescription"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="2"
@@ -164,10 +165,10 @@
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.LicenseDescription, Mode=OneWay}" />
                         <TextBlock
-                            x:Uid="TextBlockUserId"
                             Grid.Row="3"
                             Grid.Column="0"
                             Margin="10,0,10,0"
+                            l:Uids.Uid="TextBlockUserId"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -186,10 +187,10 @@
                             Text="{x:Bind ViewModel.UserId, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="TextBlockExpiration"
                             Grid.Row="4"
                             Grid.Column="0"
                             Margin="10,0,10,0"
+                            l:Uids.Uid="TextBlockExpiration"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Grid.Row="4"

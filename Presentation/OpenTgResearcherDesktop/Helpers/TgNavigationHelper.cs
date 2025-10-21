@@ -3,7 +3,7 @@
 // Helper class to set the navigation target for a NavigationViewItem.
 //
 // Usage in XAML:
-// <NavigationViewItem x:Uid="Shell_Main" Icon="Document" helpers:TgNavigationHelper.NavigateTo="AppName.ViewModels.TgMainViewModel" />
+// <NavigationViewItem l:Uids.Uid="Shell_Main" Icon="Document" helpers:TgNavigationHelper.NavigateTo="AppName.ViewModels.TgMainViewModel" />
 //
 // Usage in code:
 // TgNavigationHelper.SetNavigateTo(navigationViewItem, typeof(TgMainViewModel).FullName);

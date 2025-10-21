@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -41,9 +42,9 @@
                         Command="{x:Bind ViewModel.StorageCreateBackupCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <TextBlock
-                                x:Uid="ActionStorageCreateBackup"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionStorageCreateBackup" />
                         </StackPanel>
                     </Button>
                     <!--  Shrink storage  -->
@@ -56,9 +57,9 @@
                         Command="{x:Bind ViewModel.StorageShrinkCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <TextBlock
-                                x:Uid="ActionStorageShrink"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionStorageShrink" />
                         </StackPanel>
                     </Button>
                     <!--  Clear storage  -->
@@ -71,9 +72,9 @@
                         Command="{x:Bind ViewModel.StorageClear}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <TextBlock
-                                x:Uid="ActionStorageClear"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionStorageClear" />
                         </StackPanel>
                     </Button>
                     <!--  Backups table  -->
@@ -93,7 +94,7 @@
                             <controls:DataGrid.Columns>
                                 <!--  FileName  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnFileNameTemplate"
+                                    l:Uids.Uid="ColumnFileNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnFileNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -101,7 +102,7 @@
                                     OwnerGrid="{x:Bind DataGridStorage}" />
                                 <!--  FileSizeAsString  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnFileSizeTemplate"
+                                    l:Uids.Uid="ColumnFileSizeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnFileSizeAsStringTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"

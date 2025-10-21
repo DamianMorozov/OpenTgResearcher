@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -41,8 +42,8 @@
                 </Grid.ColumnDefinitions>
                 <!--  CPU usage  -->
                 <TextBlock
-                    x:Uid="TextBlockCpuUsage"
                     HorizontalAlignment="Center"
+                    l:Uids.Uid="TextBlockCpuUsage"
                     FontWeight="Bold"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <!--  CPU app usage  -->
@@ -58,10 +59,10 @@
                     TickSpacing="10"
                     Value="{x:Bind ViewModel.CpuApp, Mode=OneWay}" />
                 <TextBlock
-                    x:Uid="TextBlockCpuAppUsage"
                     Grid.Row="2"
                     Grid.Column="1"
                     HorizontalAlignment="Center"
+                    l:Uids.Uid="TextBlockCpuAppUsage"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <!--  CPU total usage  -->
                 <controls:RadialGauge
@@ -76,16 +77,16 @@
                     TickSpacing="10"
                     Value="{x:Bind ViewModel.CpuTotal, Mode=OneWay}" />
                 <TextBlock
-                    x:Uid="TextBlockCpuTotalUsage"
                     Grid.Row="2"
                     Grid.Column="3"
                     HorizontalAlignment="Center"
+                    l:Uids.Uid="TextBlockCpuTotalUsage"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <!--  Memory usage  -->
                 <TextBlock
-                    x:Uid="TextBlockMemoryUsage"
                     Grid.Row="3"
                     HorizontalAlignment="Center"
+                    l:Uids.Uid="TextBlockMemoryUsage"
                     FontWeight="Bold"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <!--  Memory app usage  -->
@@ -101,10 +102,10 @@
                     TickSpacing="10"
                     Value="{x:Bind ViewModel.MemoryAppUsage, Mode=OneWay}" />
                 <TextBlock
-                    x:Uid="TextBlockMemoryAppUsage"
                     Grid.Row="5"
                     Grid.Column="1"
                     HorizontalAlignment="Center"
+                    l:Uids.Uid="TextBlockMemoryAppUsage"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <TextBlock
                     Grid.Row="4"
@@ -126,10 +127,10 @@
                     TickSpacing="10"
                     Value="{x:Bind ViewModel.MemoryTotalUsage, Mode=OneWay}" />
                 <TextBlock
-                    x:Uid="TextBlockMemoryTotalUsage"
                     Grid.Row="5"
                     Grid.Column="3"
                     HorizontalAlignment="Center"
+                    l:Uids.Uid="TextBlockMemoryTotalUsage"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <TextBlock
                     Grid.Row="4"

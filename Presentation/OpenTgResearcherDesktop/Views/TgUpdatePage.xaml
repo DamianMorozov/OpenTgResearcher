@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -28,9 +29,9 @@
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                     <TextBlock
-                        x:Uid="ActionUpdateReleaseApp"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="ActionUpdateReleaseApp" />
                 </StackPanel>
             </Button>
             <!--  License button: Update Preview  -->
@@ -49,7 +50,7 @@
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                     <TextBlock
-                        x:Uid="ActionUpdatePreviewApp"
+                        l:Uids.Uid="ActionUpdatePreviewApp"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 </StackPanel>
@@ -64,9 +65,9 @@
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
                     <TextBlock
-                        x:Uid="ActionUpdatePreviewApp"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="ActionUpdatePreviewApp" />
                 </StackPanel>
             </Button>
             <TextBlock

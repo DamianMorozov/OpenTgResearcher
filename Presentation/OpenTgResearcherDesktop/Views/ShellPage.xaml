@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:lottie="using:CommunityToolkit.WinUI.Lottie"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -59,10 +60,10 @@
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <FontIcon Margin="0,-5,10,-5" Glyph="&#xE930;" />
                     <TextBlock
-                        x:Uid="ClientConnect"
                         Margin="0,-3,0,-3"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="ClientConnect" />
                 </StackPanel>
             </Button>
             <!--  Disconnect Telegram  -->
@@ -77,10 +78,10 @@
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                     <FontIcon Margin="0,-5,10,-5" Glyph="&#xEA39;" />
                     <TextBlock
-                        x:Uid="ClientDisconnect"
                         Margin="0,-3,0,-3"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="ClientDisconnect" />
                 </StackPanel>
             </Button>
         </Grid>
@@ -108,83 +109,83 @@
             <!--  Navigation MenuItems  -->
             <NavigationView.MenuItems>
                 <!--  Home  -->
-                <NavigationViewItem x:Uid="Shell_Home" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgMainViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgMainViewModel" l:Uids.Uid="Shell_Home">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Storage  -->
-                <NavigationViewItem x:Uid="Shell_Storage" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel" l:Uids.Uid="Shell_Storage">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEBC3;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Client connection  -->
-                <NavigationViewItem x:Uid="Shell_ClientConnection" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel" l:Uids.Uid="Shell_ClientConnection">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Filters  -->
-                <NavigationViewItem x:Uid="Shell_Filters" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgFiltersViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgFiltersViewModel" l:Uids.Uid="Shell_Filters">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Proxies  -->
-                <NavigationViewItem x:Uid="Shell_Proxies" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgProxiesViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgProxiesViewModel" l:Uids.Uid="Shell_Proxies">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDA3;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Stories  -->
-                <NavigationViewItem x:Uid="Shell_Stories" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStoriesViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStoriesViewModel" l:Uids.Uid="Shell_Stories">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Chats  -->
-                <NavigationViewItem x:Uid="Shell_Chats" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatsViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatsViewModel" l:Uids.Uid="Shell_Chats">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Saved Messages  -->
                 <NavigationViewItem
-                    x:Uid="Shell_SavedMessages"
                     helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatViewModel"
                     helpers:TgNavigationHelper.NavigationParameter="{x:Bind ViewModel.UidSavedMessages, Mode=OneWay}"
+                    l:Uids.Uid="Shell_SavedMessages"
                     IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C1;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Users  -->
-                <NavigationViewItem x:Uid="Shell_UsersAndContacts" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel" l:Uids.Uid="Shell_UsersAndContacts">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Equipment  -->
-                <NavigationViewItem x:Uid="Shell_Equipment" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareResourceViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareResourceViewModel" l:Uids.Uid="Shell_Equipment">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE950;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Logs  -->
-                <NavigationViewItem x:Uid="Shell_Logs" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel" l:Uids.Uid="Shell_Logs">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A5;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Update  -->
-                <NavigationViewItem x:Uid="Shell_Update" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUpdateViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUpdateViewModel" l:Uids.Uid="Shell_Update">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  License  -->
-                <NavigationViewItem x:Uid="Shell_License" helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLicenseViewModel">
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLicenseViewModel" l:Uids.Uid="Shell_License">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE719;" />
                     </NavigationViewItem.Icon>
@@ -221,11 +222,11 @@
                                 <!--  ToggleSwitch: sensitive data  -->
                                 <ToggleSwitch
                                     x:Name="ToggleSwitchShowSensitiveData"
-                                    x:Uid="ToggleSwitchShowSensitiveData"
                                     Grid.Column="2"
                                     Margin="10,5,15,-5"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
+                                    l:Uids.Uid="ToggleSwitchShowSensitiveData"
                                     IsOn="True"
                                     Toggled="ToggleSwitchShowSecretFields_Toggled" />
                             </Grid>
@@ -276,9 +277,9 @@
                             IsActive="True"
                             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="DataStorage"
                             Grid.Column="1"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="DataStorage"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <FontIcon
@@ -294,18 +295,18 @@
                             Glyph="&#xEA39;"
                             Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="DataWaitStorageProcessing"
                             Grid.Column="3"
                             Grid.ColumnSpan="2"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="DataWaitStorageProcessing"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             TextTrimming="CharacterEllipsis"
                             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="AppStorageNeedToCreate"
                             Grid.Column="4"
                             Grid.ColumnSpan="2"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="AppStorageNeedToCreate"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <!--  Online processing  -->
@@ -325,10 +326,10 @@
                             IsActive="True"
                             Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="FieldNetwork"
                             Grid.Row="1"
                             Grid.Column="1"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="FieldNetwork"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <FontIcon
                             Grid.Row="1"
@@ -345,18 +346,18 @@
                             Glyph="&#xEA39;"
                             Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="DataWaitOnlineProcessing"
                             Grid.Row="1"
                             Grid.Column="3"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="DataWaitOnlineProcessing"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             TextTrimming="CharacterEllipsis"
                             Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="AppOnlineNeedToConnet"
                             Grid.Row="1"
                             Grid.Column="4"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="AppOnlineNeedToConnet"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <!--  Flood Control  -->
@@ -376,10 +377,10 @@
                             IsActive="True"
                             Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <TextBlock
-                            x:Uid="FloodControl"
                             Grid.Row="2"
                             Grid.Column="1"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="FloodControl"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <FontIcon
                             Grid.Row="2"
@@ -401,9 +402,9 @@
                             Margin="5,0,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <Run x:Uid="RunWait" />
+                            <Run l:Uids.Uid="RunWait" />
                             <Run Text="{x:Bind ViewModel.FloodWaitSeconds, Mode=OneWay}" />
-                            <Run x:Uid="RunSeconds" />
+                            <Run l:Uids.Uid="RunSeconds" />
                         </TextBlock>
                         <TextBlock
                             Grid.Row="2"

@@ -45,6 +45,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250907003" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
     <PackageReference Include="Velopack" Version="0.0.1298" />
+    <PackageReference Include="WinUI3Localizer" Version="2.3.0" />
     <PackageReference Include="WinUIEx" Version="2.8.0" />
     <PackageReference Include="WTelegramClient" Version="4.3.10" />
   </ItemGroup>
@@ -152,7 +153,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PRIResource Update="Strings\en-us\Resources.resw">
+    <PRIResource Update="Strings\en-US\Resources.resw">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </PRIResource>
   </ItemGroup>
@@ -163,6 +164,13 @@
     </PRIResource>
   </ItemGroup>
   
+  <!-- Copy all "Resources.resw" files in the "Strings" folder to the output folder -->
+  <ItemGroup>
+    <Content Include="Strings\**\*.resw">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+	
   <ItemGroup>
     <Folder Include="Docs\" />
   </ItemGroup>

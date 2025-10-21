@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
@@ -38,9 +39,9 @@
                         Command="{x:Bind ViewModel.StorageResetAutoUpdateCommand}">
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <TextBlock
-                                x:Uid="ActionStorageResetAutoUpdate"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionStorageResetAutoUpdate" />
                         </StackPanel>
                     </Button>
                     <!--  StorageLog  -->

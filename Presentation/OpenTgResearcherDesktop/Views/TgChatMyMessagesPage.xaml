@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -31,8 +32,8 @@
                     <StackPanel Orientation="Horizontal">
                         <!--  ID  -->
                         <TextBlock
-                            x:Uid="TextBlockId"
                             Margin="5,5,5,0"
+                            l:Uids.Uid="TextBlockId"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -50,8 +51,8 @@
                             Tag="{x:Bind Id, Mode=OneWay}" />
                         <!--  MainUserName  -->
                         <TextBlock
-                            x:Uid="FieldUserName"
                             Margin="20,5,7,2"
+                            l:Uids.Uid="FieldUserName"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -69,8 +70,8 @@
                             Tag="{x:Bind MainUserName, Mode=OneWay}" />
                         <!--  AccessHash  -->
                         <TextBlock
-                            x:Uid="FieldAccessHash"
                             Margin="20,5,7,2"
+                            l:Uids.Uid="FieldAccessHash"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -88,8 +89,8 @@
                             Tag="{x:Bind AccessHash, Mode=OneWay}" />
                         <!--  IsUserActive  -->
                         <TextBlock
-                            x:Uid="FieldIsActive"
                             Margin="5,5,7,2"
+                            l:Uids.Uid="FieldIsActive"
                             TextAlignment="Left" />
                         <ToggleSwitch
                             Margin="5,-2,0,0"
@@ -99,8 +100,8 @@
                             IsOn="{x:Bind IsUserActive, Mode=OneWay}" />
                         <!--  IsBot  -->
                         <TextBlock
-                            x:Uid="FieldIsBot"
                             Margin="-50,5,7,2"
+                            l:Uids.Uid="FieldIsBot"
                             TextAlignment="Left" />
                         <ToggleSwitch
                             Margin="-15,-2,0,0"
@@ -112,8 +113,8 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <!--  LastSeenAgo  -->
                         <TextBlock
-                            x:Uid="FieldLastSeenAgo"
                             Margin="-50,5,7,2"
+                            l:Uids.Uid="FieldLastSeenAgo"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -131,8 +132,8 @@
                             Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
                         <!--  RestrictionReason  -->
                         <TextBlock
-                            x:Uid="FieldRestrictionReason"
                             Margin="20,5,7,2"
+                            l:Uids.Uid="FieldRestrictionReason"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -150,8 +151,8 @@
                             Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
                         <!--  DisplayName  -->
                         <TextBlock
-                            x:Uid="FieldFirstName"
                             Margin="5,0,7,2"
+                            l:Uids.Uid="FieldFirstName"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -170,8 +171,8 @@
                             Tag="{x:Bind DisplayName, Mode=OneWay}" />
                         <!--  PhoneNumber  -->
                         <TextBlock
-                            x:Uid="FieldPhoneNumber"
                             Margin="5,0,7,2"
+                            l:Uids.Uid="FieldPhoneNumber"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -190,8 +191,8 @@
                             Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
                         <!--  Status  -->
                         <TextBlock
-                            x:Uid="FieldStatus"
                             Margin="5,0,7,2"
+                            l:Uids.Uid="FieldStatus"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -210,8 +211,8 @@
                             Tag="{x:Bind Status, Mode=OneWay}" />
                         <!--  Number of messages  -->
                         <TextBlock
-                            x:Uid="FieldCountMessages"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="FieldCountMessages"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="5,0,5,0"
@@ -252,9 +253,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockLoadMyMessages"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockLoadMyMessages" />
                     </StackPanel>
                 </Button>
                 <!--  Online stop update my messages  -->
@@ -267,9 +268,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockStopMyMessages"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockStopMyMessages" />
                     </StackPanel>
                 </Button>
                 <!--  List view with participants  -->

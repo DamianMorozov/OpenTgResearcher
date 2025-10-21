@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:sources="using:TgStorage.Domain.Sources"
@@ -61,8 +62,8 @@
                             Text="·" />
                         <!--  Id  -->
                         <TextBlock
-                            x:Uid="TextBlockId"
                             Margin="5,5,5,0"
+                            l:Uids.Uid="TextBlockId"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -84,8 +85,8 @@
                             Text="·" />
                         <!--  Link  -->
                         <TextBlock
-                            x:Uid="TextBlockLink"
                             Margin="0,5,0,0"
+                            l:Uids.Uid="TextBlockLink"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="0,5,0,0"
@@ -110,8 +111,8 @@
                             Text="·" />
                         <!--  Message deleted  -->
                         <TextBlock
-                            x:Uid="TextBlockMessageDeleted"
                             Margin="0,5,0,0"
+                            l:Uids.Uid="TextBlockMessageDeleted"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{Binding IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
@@ -124,8 +125,8 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                             <TextBlock
-                                x:Uid="TextBlockMessage"
                                 Margin="0,5,0,0"
+                                l:Uids.Uid="TextBlockMessage"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
                             <styles:TgAnimatedClipboardButton
                                 Click="OnClipboardSilentWriteClick"
@@ -215,8 +216,8 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <!--  Id  -->
                             <TextBlock
-                                x:Uid="TextBlockId"
                                 Margin="10,0,10,0"
+                                l:Uids.Uid="TextBlockId"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
                             <TextBlock Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}" Visibility="{Binding LoadStateService.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBlock
@@ -230,8 +231,8 @@
                                 Tag="{x:Bind ChatDto.Id, Mode=OneWay}" />
                             <!--  UserName  -->
                             <TextBlock
-                                x:Uid="TextBlockUserName"
                                 Margin="10,0,10,0"
+                                l:Uids.Uid="TextBlockUserName"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
                             <TextBlock Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}" Visibility="{Binding LoadStateService.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBlock
@@ -245,8 +246,8 @@
                                 Tag="{x:Bind ChatDto.UserName, Mode=OneWay}" />
                             <!--  Title  -->
                             <TextBlock
-                                x:Uid="FieldTitle"
                                 Margin="10,0,10,0"
+                                l:Uids.Uid="FieldTitle"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
                             <TextBlock Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}" Visibility="{Binding LoadStateService.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBlock
@@ -260,8 +261,8 @@
                                 Tag="{x:Bind ChatDto.Title, Mode=OneWay}" />
                             <!--  MessagesCount  -->
                             <TextBlock
-                                x:Uid="FieldCountMessages"
                                 Margin="10,0,10,0"
+                                l:Uids.Uid="FieldCountMessages"
                                 Style="{ThemeResource BodyTextBlockStyle}" />
                             <TextBlock Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}" Visibility="{Binding LoadStateService.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                             <TextBlock
@@ -275,14 +276,14 @@
                                 Tag="{x:Bind MessagesCount, Mode=OneWay}" />
                             <!--  Load user messages in chat  -->
                             <Button
-                                x:Uid="ActionLoadMessages"
                                 Margin="10,-10,0,0"
+                                l:Uids.Uid="ActionLoadMessages"
                                 Click="Button_LoadMessagesClick"
                                 Tag="{x:Bind ChatDto}" />
                             <!--  Update Preview  -->
                             <Button
-                                x:Uid="ActionLoadMessages"
                                 Margin="10,-10,0,0"
+                                l:Uids.Uid="ActionLoadMessages"
                                 Command="{Binding Path=ViewModel.LoadUserMessagesCommand}"
                                 CommandParameter="{x:Bind ChatDto, Mode=OneWay}" />
                         </StackPanel>
@@ -320,12 +321,12 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Expander
-                x:Uid="ExpanderActions"
                 Grid.Row="2"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderActions"
                 IsExpanded="True">
                 <Grid Margin="0,-10,0,-10">
                     <Grid.ColumnDefinitions>
@@ -344,9 +345,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                             <TextBlock
-                                x:Uid="TextBlockUpdateOnline"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="TextBlockUpdateOnline" />
                         </StackPanel>
                     </Button>
                     <!--  Clear viewing  -->
@@ -359,9 +360,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                             <TextBlock
-                                x:Uid="ActionClearView"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionClearView" />
                         </StackPanel>
                     </Button>
                 </Grid>
@@ -374,11 +375,11 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Expander
-                x:Uid="ExpanderDataInStorage"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderDataInStorage"
                 IsExpanded="True">
                 <Grid Margin="0,0,10,0">
                     <Grid.RowDefinitions>
@@ -398,9 +399,9 @@
                     </Grid.ColumnDefinitions>
                     <!--  Uid  -->
                     <TextBlock
-                        x:Uid="FieldUid"
                         Grid.Row="0"
                         Margin="10,7,7,2"
+                        l:Uids.Uid="FieldUid"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <TextBlock
@@ -419,10 +420,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  DtChanged  -->
                     <TextBlock
-                        x:Uid="FieldDtChanged"
                         Grid.Row="0"
                         Grid.Column="2"
                         Margin="15,7,7,2"
+                        l:Uids.Uid="FieldDtChanged"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <TextBlock
@@ -442,10 +443,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  Id  -->
                     <TextBlock
-                        x:Uid="FieldId"
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="10,7,7,2"
+                        l:Uids.Uid="FieldId"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <StackPanel
@@ -471,10 +472,10 @@
                     </StackPanel>
                     <!--  AccessHash  -->
                     <TextBlock
-                        x:Uid="FieldAccessHash"
                         Grid.Row="1"
                         Grid.Column="2"
                         Margin="15,7,7,2"
+                        l:Uids.Uid="FieldAccessHash"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <!--  Sensitive data  -->
@@ -504,9 +505,9 @@
                         </Grid.ColumnDefinitions>
                         <!--  IsContact  -->
                         <TextBlock
-                            x:Uid="FieldIsContact"
                             Grid.Column="0"
                             Margin="10,7,7,2"
+                            l:Uids.Uid="FieldIsContact"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <ToggleSwitch
@@ -519,9 +520,9 @@
                             IsOn="{x:Bind ViewModel.Dto.IsContact, Mode=OneWay}" />
                         <!--  IsUserActive  -->
                         <TextBlock
-                            x:Uid="FieldIsActive"
                             Grid.Column="2"
                             Margin="10,7,7,2"
+                            l:Uids.Uid="FieldIsActive"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <ToggleSwitch
@@ -534,10 +535,10 @@
                             IsOn="{x:Bind ViewModel.Dto.IsUserActive, Mode=OneWay}" />
                         <!--  IsBot  -->
                         <TextBlock
-                            x:Uid="FieldIsBot"
                             Grid.Row="2"
                             Grid.Column="4"
                             Margin="15,7,7,2"
+                            l:Uids.Uid="FieldIsBot"
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <ToggleSwitch
@@ -551,10 +552,10 @@
                     </Grid>
                     <!--  DisplayName  -->
                     <TextBlock
-                        x:Uid="FieldDisplayName"
                         Grid.Row="3"
                         Grid.Column="0"
                         Margin="10,7,7,2"
+                        l:Uids.Uid="FieldDisplayName"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <TextBlock
@@ -574,10 +575,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  UserName  -->
                     <TextBlock
-                        x:Uid="FieldUserName"
                         Grid.Row="3"
                         Grid.Column="2"
                         Margin="10,7,7,2"
+                        l:Uids.Uid="FieldUserName"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <TextBlock
@@ -597,10 +598,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  FirstName  -->
                     <TextBlock
-                        x:Uid="FieldFirstName"
                         Grid.Row="4"
                         Grid.Column="0"
                         Margin="10,7,7,2"
+                        l:Uids.Uid="FieldFirstName"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <!--  Sensitive data  -->
@@ -619,10 +620,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  LastName  -->
                     <TextBlock
-                        x:Uid="FieldLastName"
                         Grid.Row="4"
                         Grid.Column="2"
                         Margin="15,7,7,2"
+                        l:Uids.Uid="FieldLastName"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <!--  Sensitive data  -->
@@ -641,10 +642,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  StoriesMaxId  -->
                     <TextBlock
-                        x:Uid="FieldStoriesMaxId"
                         Grid.Row="5"
                         Grid.Column="2"
                         Margin="15,7,7,2"
+                        l:Uids.Uid="FieldStoriesMaxId"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <TextBox
@@ -657,10 +658,10 @@
                         Text="{x:Bind ViewModel.Dto.StoriesMaxId, Mode=TwoWay}" />
                     <!--  PhoneNumber  -->
                     <TextBlock
-                        x:Uid="FieldPhoneNumber"
                         Grid.Row="6"
                         Grid.Column="0"
                         Margin="10,7,7,2"
+                        l:Uids.Uid="FieldPhoneNumber"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <!--  Sensitive data  -->
@@ -679,10 +680,10 @@
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <!--  Status  -->
                     <TextBlock
-                        x:Uid="FieldStatus"
                         Grid.Row="6"
                         Grid.Column="2"
                         Margin="15,7,7,2"
+                        l:Uids.Uid="FieldStatus"
                         FontWeight="Bold"
                         TextAlignment="Left" />
                     <TextBox
@@ -703,11 +704,11 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Expander
-                x:Uid="ExpanderChats"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderChats"
                 IsExpanded="True">
                 <!--  User with chats  -->
                 <ListView

@@ -33,4 +33,6 @@ public interface ITgSettingsService : INotifyPropertyChanged
 	public void SaveSetting<T>(string key, T value);
     /// <summary> Load storage path </summary>
     public void LoadStorage();
+    /// <summary> Initialize application language </summary>
+    public Task InitializeLanguageAsync();
 }

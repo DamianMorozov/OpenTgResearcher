@@ -82,5 +82,6 @@ global using Windows.Storage;
 global using Windows.System;
 global using Windows.UI.ViewManagement;
 global using Windows.UI;
+global using WinUI3Localizer;
 global using WinUIEx;
 global using ZiggyCreatures.Caching.Fusion;

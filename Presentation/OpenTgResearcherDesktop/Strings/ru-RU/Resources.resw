@@ -1052,9 +1052,6 @@
   <data name="FieldSettingsFileWarning3.Text" xml:space="preserve">
     <value>После изменения строки хранилища, перезапустите ПО вручную!</value>
   </data>
-  <data name="FieldSettingsFileWarning4.Text" xml:space="preserve">
-    <value>После изменения языка, перезапустите ПО вручную!</value>
-  </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Хранилище</value>
   </data>

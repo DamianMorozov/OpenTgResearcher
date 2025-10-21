@@ -990,9 +990,6 @@
   <data name="FieldSettingsFileWarning3.Text" xml:space="preserve">
     <value>After changing the storage line, restart the software manually!</value>
   </data>
-  <data name="FieldSettingsFileWarning4.Text" xml:space="preserve">
-    <value>After changing the language, restart the software manually!!</value>
-  </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Storage</value>
   </data>

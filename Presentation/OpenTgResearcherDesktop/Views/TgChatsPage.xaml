@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sources="using:TgStorage.Domain.Sources"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -22,11 +23,11 @@
         <!--  Actions  -->
         <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <Expander
-                x:Uid="ExpanderActions"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderActions"
                 IsExpanded="True">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -49,9 +50,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xE712;" />
                             <TextBlock
-                                x:Uid="TextBlockLoadMore"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="TextBlockLoadMore" />
                         </StackPanel>
                     </Button>
                     <!--  Start parse Telegram  -->
@@ -66,9 +67,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                             <TextBlock
-                                x:Uid="TextBlockStartParseTelegram"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="TextBlockStartParseTelegram" />
                         </StackPanel>
                     </Button>
                     <!--  Stop parse Telegram  -->
@@ -83,9 +84,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                             <TextBlock
-                                x:Uid="TextBlockStopParseTelegram"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="TextBlockStopParseTelegram" />
                         </StackPanel>
                     </Button>
                     <!--  Clear viewing  -->
@@ -99,9 +100,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe894;" />
                             <TextBlock
-                                x:Uid="ActionClearView"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionClearView" />
                         </StackPanel>
                     </Button>
                     <!--  Loaded data statistics  -->
@@ -122,11 +123,11 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
             <Expander
-                x:Uid="ExpanderDataInStorage"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderDataInStorage"
                 IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                 IsExpanded="True">
                 <Grid>
@@ -147,8 +148,8 @@
                     </Grid.ColumnDefinitions>
                     <!--  Filter by subscribe  -->
                     <TextBlock
-                        x:Uid="FieldFilterBySubscribe"
                         Margin="5,0,5,5"
+                        l:Uids.Uid="FieldFilterBySubscribe"
                         TextAlignment="Left" />
                     <ToggleSwitch
                         Grid.Column="1"
@@ -158,9 +159,9 @@
                         IsOn="{x:Bind ViewModel.IsFilterBySubscribe, Mode=TwoWay}" />
                     <!--  Filter by Id  -->
                     <TextBlock
-                        x:Uid="FieldFilterById"
                         Grid.Column="2"
                         Margin="5,0,5,5"
+                        l:Uids.Uid="FieldFilterById"
                         TextAlignment="Left" />
                     <ToggleSwitch
                         Grid.Column="3"
@@ -171,10 +172,10 @@
                     <Grid />
                     <!--  Filter by Name  -->
                     <TextBlock
-                        x:Uid="FieldFilterByName"
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="5,0,5,5"
+                        l:Uids.Uid="FieldFilterByName"
                         TextAlignment="Left" />
                     <ToggleSwitch
                         Grid.Row="1"
@@ -185,10 +186,10 @@
                         IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
                     <!--  Filter by Title  -->
                     <TextBlock
-                        x:Uid="FieldFilterByTitle"
                         Grid.Row="1"
                         Grid.Column="2"
                         Margin="5,0,5,5"
+                        l:Uids.Uid="FieldFilterByTitle"
                         TextAlignment="Left" />
                     <ToggleSwitch
                         Grid.Row="1"
@@ -199,13 +200,13 @@
                         IsOn="{x:Bind ViewModel.IsFilterByTitle, Mode=TwoWay}" />
                     <!--  Text for filter  -->
                     <TextBox
-                        x:Uid="FieldFilter"
                         Grid.RowSpan="2"
                         Grid.Column="4"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
+                        l:Uids.Uid="FieldFilter"
                         KeyDown="FieldFilter_KeyDown"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
                     <!--  Search  -->
@@ -218,10 +219,10 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xE721;" />
                             <TextBlock
-                                x:Uid="ActionSearch"
                                 Margin="10,0,10,0"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionSearch" />
                         </StackPanel>
                     </Button>
                     <!--  Open or edit  -->
@@ -235,10 +236,10 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xEA5B;" />
                             <TextBlock
-                                x:Uid="ActionOpenOrEdit"
                                 Margin="10,0,10,0"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionOpenOrEdit" />
                         </StackPanel>
                     </Button>
                     <!--  Delete  -->
@@ -252,10 +253,10 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Glyph="&#xE894;" />
                             <TextBlock
-                                x:Uid="ActionDelete"
                                 Margin="10,0,10,0"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="ActionDelete" />
                         </StackPanel>
                     </Button>
                     <!--  Table  -->
@@ -278,7 +279,7 @@
                             <controls:DataGrid.Columns>
                                 <!--  Id  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnIdTemplate"
+                                    l:Uids.Uid="ColumnIdTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIdTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -286,7 +287,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Is subscribe  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnIsSubscribeTemplate"
+                                    l:Uids.Uid="ColumnIsSubscribeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsSubscribeTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -294,7 +295,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Is access  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnIsAccessTemplate"
+                                    l:Uids.Uid="ColumnIsAccessTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsUserAccessTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -302,7 +303,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Is active  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnIsActiveTemplate"
+                                    l:Uids.Uid="ColumnIsActiveTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsSourceActiveTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -310,7 +311,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  User name  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnUserNameTemplate"
+                                    l:Uids.Uid="ColumnUserNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnUserNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -318,7 +319,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Title  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnTitleTemplate"
+                                    l:Uids.Uid="ColumnTitleTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnTitleTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -326,7 +327,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Count  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnCountTemplate"
+                                    l:Uids.Uid="ColumnCountTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnCountTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -334,7 +335,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Progress  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnProgressTemplate"
+                                    l:Uids.Uid="ColumnProgressTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnProgressTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -342,7 +343,7 @@
                                     OwnerGrid="{x:Bind DataGridChats}" />
                                 <!--  Participants  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    x:Uid="ColumnParticipantsTemplate"
+                                    l:Uids.Uid="ColumnParticipantsTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnParticipantsTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -362,11 +363,11 @@
             HorizontalContentAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}">
             <Expander
-                x:Uid="ExpanderActions"
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="ExpanderActions"
                 IsExpanded="True">
                 <Grid Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -377,10 +378,10 @@
                     </Grid.ColumnDefinitions>
                     <!--  ChatsProgressMessage  -->
                     <TextBlock
-                        x:Uid="FieldPercentOfChatParsing"
                         Margin="10,0,10,0"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="FieldPercentOfChatParsing" />
                     <!--  Load data from Online  -->
                     <Slider
                         Grid.Column="1"

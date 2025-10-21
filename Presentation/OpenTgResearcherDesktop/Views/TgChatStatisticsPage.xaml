@@ -5,6 +5,7 @@
     xmlns:common="using:OpenTgResearcherDesktop.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -24,7 +25,7 @@
                 Tag="{x:Bind UserDto.Uid, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <!--  Id  -->
-                    <TextBlock x:Uid="FieldId" Margin="0,5,0,0" />
+                    <TextBlock Margin="0,5,0,0" l:Uids.Uid="FieldId" />
                     <TextBlock
                         Margin="0,5,0,0"
                         Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -60,7 +61,7 @@
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="·" />
                     <!--  Messages count  -->
-                    <TextBlock x:Uid="FieldMessagesCount" Margin="0,5,0,0" />
+                    <TextBlock Margin="0,5,0,0" l:Uids.Uid="FieldMessagesCount" />
                     <TextBlock
                         Margin="0,5,5,0"
                         Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -106,9 +107,9 @@
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                             <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                             <TextBlock
-                                x:Uid="TextBlockCalcChatStatistics"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="TextBlockCalcChatStatistics" />
                         </StackPanel>
                     </Button>
                     <!--  ChatStatisticsDto  -->
@@ -130,7 +131,7 @@
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <!--  DtStart  -->
-                        <TextBlock x:Uid="TextBlockDtStart" VerticalAlignment="Center" />
+                        <TextBlock VerticalAlignment="Center" l:Uids.Uid="TextBlockDtStart" />
                         <DatePicker
                             Grid.Column="1"
                             Margin="10,0,0,0"
@@ -138,20 +139,20 @@
                             SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtStart, Mode=TwoWay}" />
                         <!--  DtEnd  -->
                         <TextBlock
-                            x:Uid="TextBlockDtEnd"
                             Grid.Column="2"
                             Margin="50,0,0,0"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockDtEnd" />
                         <DatePicker
                             Grid.Column="3"
                             Margin="10,0,0,0"
                             SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtEnd, Mode=TwoWay}" />
                         <!--  User and bot statistics  -->
                         <TextBlock
-                            x:Uid="TextBlockUsers"
                             Grid.Column="4"
                             Margin="50,0,0,0"
                             VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockUsers"
                             Text="" />
                         <TextBlock
                             Grid.Column="5"
@@ -159,10 +160,10 @@
                             VerticalAlignment="Center"
                             Text="{x:Bind ViewModel.ChatStatisticsDto.UsersCount, Mode=OneWay}" />
                         <TextBlock
-                            x:Uid="TextBlockBots"
                             Grid.Column="6"
                             Margin="20,0,0,0"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockBots" />
                         <TextBlock
                             Grid.Column="7"
                             Margin="10,0,0,0"

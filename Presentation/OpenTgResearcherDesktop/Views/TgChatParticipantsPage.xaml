@@ -6,6 +6,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
+    xmlns:l="using:WinUI3Localizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:TgStorage.Domain.Messages"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
@@ -32,8 +33,8 @@
                     <StackPanel Orientation="Horizontal">
                         <!--  ID  -->
                         <TextBlock
-                            x:Uid="TextBlockId"
                             Margin="5,5,5,0"
+                            l:Uids.Uid="TextBlockId"
                             Style="{ThemeResource BodyTextBlockStyle}" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -51,8 +52,8 @@
                             Tag="{x:Bind Id, Mode=OneWay}" />
                         <!--  MainUserName  -->
                         <TextBlock
-                            x:Uid="FieldUserName"
                             Margin="20,5,7,2"
+                            l:Uids.Uid="FieldUserName"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -70,8 +71,8 @@
                             Tag="{x:Bind MainUserName, Mode=OneWay}" />
                         <!--  AccessHash  -->
                         <TextBlock
-                            x:Uid="FieldAccessHash"
                             Margin="20,5,7,2"
+                            l:Uids.Uid="FieldAccessHash"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -89,8 +90,8 @@
                             Tag="{x:Bind AccessHash, Mode=OneWay}" />
                         <!--  IsUserActive  -->
                         <TextBlock
-                            x:Uid="FieldIsActive"
                             Margin="5,5,7,2"
+                            l:Uids.Uid="FieldIsActive"
                             TextAlignment="Left" />
                         <ToggleSwitch
                             Margin="5,-2,0,0"
@@ -100,8 +101,8 @@
                             IsOn="{x:Bind IsUserActive, Mode=OneWay}" />
                         <!--  IsBot  -->
                         <TextBlock
-                            x:Uid="FieldIsBot"
                             Margin="-50,5,7,2"
+                            l:Uids.Uid="FieldIsBot"
                             TextAlignment="Left" />
                         <ToggleSwitch
                             Margin="-15,-2,0,0"
@@ -113,8 +114,8 @@
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <!--  LastSeenAgo  -->
                         <TextBlock
-                            x:Uid="FieldLastSeenAgo"
                             Margin="-50,5,7,2"
+                            l:Uids.Uid="FieldLastSeenAgo"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -132,8 +133,8 @@
                             Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
                         <!--  RestrictionReason  -->
                         <TextBlock
-                            x:Uid="FieldRestrictionReason"
                             Margin="20,5,7,2"
+                            l:Uids.Uid="FieldRestrictionReason"
                             TextAlignment="Left" />
                         <TextBlock
                             Margin="5,5,5,0"
@@ -151,8 +152,8 @@
                             Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
                         <!--  DisplayName  -->
                         <TextBlock
-                            x:Uid="FieldFirstName"
                             Margin="5,0,7,2"
+                            l:Uids.Uid="FieldFirstName"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -171,8 +172,8 @@
                             Tag="{x:Bind DisplayName, Mode=OneWay}" />
                         <!--  PhoneNumber  -->
                         <TextBlock
-                            x:Uid="FieldPhoneNumber"
                             Margin="5,0,7,2"
+                            l:Uids.Uid="FieldPhoneNumber"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -191,8 +192,8 @@
                             Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
                         <!--  Status  -->
                         <TextBlock
-                            x:Uid="FieldStatus"
                             Margin="5,0,7,2"
+                            l:Uids.Uid="FieldStatus"
                             TextAlignment="Left" />
                         <!--  Sensitive data  -->
                         <TextBlock
@@ -211,8 +212,8 @@
                             Tag="{x:Bind Status, Mode=OneWay}" />
                         <!--  User deleted  -->
                         <TextBlock
-                            x:Uid="TextBlockMessageDeleted"
                             Margin="5,0,5,0"
+                            l:Uids.Uid="TextBlockMessageDeleted"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
@@ -253,9 +254,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockLoadParticipants"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockLoadParticipants" />
                     </StackPanel>
                 </Button>
                 <!--  Stop participants  -->
@@ -268,9 +269,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockStopParticipants"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockStopParticipants" />
                     </StackPanel>
                 </Button>
                 <!--  Get participants from messages  -->
@@ -283,9 +284,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockGetParticipantsFromMessages"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockGetParticipantsFromMessages" />
                     </StackPanel>
                 </Button>
                 <!--  Get participants  -->
@@ -299,9 +300,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockGetParticipants"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockGetParticipants" />
                     </StackPanel>
                 </Button>
                 <!--  Clear participants  -->
@@ -314,9 +315,9 @@
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
                         <TextBlock
-                            x:Uid="TextBlockClearParticipants"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="TextBlockClearParticipants" />
                     </StackPanel>
                 </Button>
                 <!--  Data in storage  -->
@@ -328,11 +329,11 @@
                     HorizontalContentAlignment="Stretch"
                     Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     <Expander
-                        x:Uid="ExpanderDataInStorage"
                         Margin="{StaticResource ExpanderMargin}"
                         Padding="{StaticResource ExpanderPadding}"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
+                        l:Uids.Uid="ExpanderDataInStorage"
                         IsExpanded="True">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -349,9 +350,9 @@
                             </Grid.ColumnDefinitions>
                             <!--  Filter by Id  -->
                             <TextBlock
-                                x:Uid="FieldFilterById"
                                 Grid.Column="2"
                                 Margin="5,5,5,5"
+                                l:Uids.Uid="FieldFilterById"
                                 TextAlignment="Left" />
                             <ToggleSwitch
                                 Grid.Column="3"
@@ -362,9 +363,9 @@
                             <Grid />
                             <!--  Filter by Name  -->
                             <TextBlock
-                                x:Uid="FieldFilterByName"
                                 Grid.Column="0"
                                 Margin="5,5,5,5"
+                                l:Uids.Uid="FieldFilterByName"
                                 TextAlignment="Left" />
                             <ToggleSwitch
                                 Grid.Column="1"
@@ -374,12 +375,12 @@
                                 IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
                             <!--  Text for filter  -->
                             <TextBox
-                                x:Uid="FieldFilter"
                                 Grid.Column="4"
                                 Margin="5,0,5,5"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 VerticalContentAlignment="Center"
+                                l:Uids.Uid="FieldFilter"
                                 Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
                             <!--  Search  -->
                             <Button
@@ -390,10 +391,10 @@
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                     <FontIcon Glyph="&#xE721;" />
                                     <TextBlock
-                                        x:Uid="ActionSearch"
                                         Margin="10,0,10,0"
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center" />
+                                        VerticalAlignment="Center"
+                                        l:Uids.Uid="ActionSearch" />
                                 </StackPanel>
                             </Button>
                             <!--  Table  -->
@@ -416,7 +417,7 @@
                                     <controls:DataGrid.Columns>
                                         <!--  Id  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnIdTemplate"
+                                            l:Uids.Uid="ColumnIdTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnIdTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -424,7 +425,7 @@
                                             OwnerGrid="{x:Bind DataGridChats}" />
                                         <!--  IsUserActive  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnIsActiveTemplate"
+                                            l:Uids.Uid="ColumnIsActiveTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnIsUserActiveTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -432,7 +433,7 @@
                                             OwnerGrid="{x:Bind DataGridChats}" />
                                         <!--  UserName  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnUserNameTemplate"
+                                            l:Uids.Uid="ColumnUserNameTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnUserNameTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -440,7 +441,7 @@
                                             OwnerGrid="{x:Bind DataGridChats}" />
                                         <!--  FirstName  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnFirstNameTemplate"
+                                            l:Uids.Uid="ColumnFirstNameTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnFirstNameTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -448,7 +449,7 @@
                                             OwnerGrid="{x:Bind DataGridChats}" />
                                         <!--  LastName  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnLastNameTemplate"
+                                            l:Uids.Uid="ColumnLastNameTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnLastNameTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -456,7 +457,7 @@
                                             OwnerGrid="{x:Bind DataGridChats}" />
                                         <!--  PhoneNumber  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnPhoneTemplate"
+                                            l:Uids.Uid="ColumnPhoneTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnPhoneTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
@@ -464,7 +465,7 @@
                                             OwnerGrid="{x:Bind DataGridChats}" />
                                         <!--  MessagesCount  -->
                                         <styles:TgBindableDataGridTemplateColumn
-                                            x:Uid="ColumnMessagesTemplate"
+                                            l:Uids.Uid="ColumnMessagesTemplate"
                                             ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                             ColumnValue="{StaticResource ColumnMessagesCountTemplate}"
                                             ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"

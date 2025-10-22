@@ -609,7 +609,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     }
 
     /// <inheritdoc />
-    public async Task InitializeLanguageAsync()
+    public async Task InitializeLocalizationAsync()
     {
         try
         {
@@ -619,11 +619,6 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                 await InitializeLocalizerMsixAsync(languageCode);
             else
                 await InitializeLocalizerUnpackagedAsync(languageCode);
-
-            //LoadLanguage();
-            //SetAppLanguage();
-            //Load();
-            //Save();
         }
         catch (Exception ex)
         {
@@ -657,10 +652,17 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     {
         var languageFolder = await stringsFolder.CreateFolderAsync(language, CreationCollisionOption.OpenIfExists);
 
-        if (await languageFolder.TryGetItemAsync(resourceFileName) is null)
+        if (await languageFolder.TryGetItemAsync(resourceFileName) is not null)
         {
             var resourceFile = await LoadStringResourcesFileFromAppResource(language, resourceFileName);
-            _ = await resourceFile.CopyAsync(languageFolder);
+            var fileInfoSource = new FileInfo(resourceFile.Path);
+            var pathDest = Path.Combine(languageFolder.Path, resourceFileName);
+            var fileInfoDest = new FileInfo(pathDest);
+            if (fileInfoSource.Length != fileInfoDest.Length)
+            {
+                File.Delete(Path.Combine(languageFolder.Path, resourceFileName));
+                _ = await resourceFile.CopyAsync(languageFolder);
+            }
         }
     }
 

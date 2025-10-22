@@ -232,7 +232,7 @@ public partial class App : Application
             await BusinessLogicManager.Cache.ClearAllAsync();
             // Initialize application language
             var settingsService = GetService<ITgSettingsService>();
-            await settingsService.InitializeLanguageAsync();
+            await settingsService.InitializeLocalizationAsync();
             // ViewModel locator
             VmLocator = new();
 

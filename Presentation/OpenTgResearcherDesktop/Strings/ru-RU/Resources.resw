@@ -1406,6 +1406,12 @@
   <data name="FieldMedia.Text" xml:space="preserve">
     <value>Медиа</value>
   </data>
+  <data name="FieldMediaParsingStreams.Text" xml:space="preserve">
+    <value>Потоки парсинга медиа</value>
+  </data>
+  <data name="FieldMessageParsingStreams.Text" xml:space="preserve">
+    <value>Потоки парсинга сообщений</value>
+  </data>
   <data name="FieldProgress.Text" xml:space="preserve">
     <value>Прогресс</value>
   </data>

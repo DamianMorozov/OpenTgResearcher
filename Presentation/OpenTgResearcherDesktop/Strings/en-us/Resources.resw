@@ -1344,7 +1344,13 @@
   <data name="FieldMedia.Text" xml:space="preserve">
     <value>Media</value>
   </data>
-  <data name="FieldProgress.Text" xml:space="preserve">
+  <data name="FieldMediaParsingStreams.Text" xml:space="preserve">
+    <value>Media parsing streams</value>
+  </data>
+  <data name="FieldMessageParsingStreams.Text" xml:space="preserve">
+    <value>Message parsing streams</value>
+  </data>
+	<data name="FieldProgress.Text" xml:space="preserve">
     <value>Progress</value>
   </data>
   <data name="FieldPercent.Text" xml:space="preserve">

@@ -130,7 +130,7 @@
                 l:Uids.Uid="ExpanderDataInStorage"
                 IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                 IsExpanded="True">
-                <Grid>
+                <Grid Margin="0,5,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />

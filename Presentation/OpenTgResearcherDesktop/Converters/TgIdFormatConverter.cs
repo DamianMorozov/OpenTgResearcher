@@ -3,28 +3,8 @@
 /// <summary> ID format converter </summary>
 public sealed class TgIdFormatConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is long lid)
-        {
-            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nfi.NumberGroupSeparator = " ";
-            return lid.ToString("#,0 ", nfi);
-        }
-        else if (value is int id)
-        {
-            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nfi.NumberGroupSeparator = " ";
-            return id.ToString("#,0 ", nfi);
-        }
-        else if (value is double did)
-        {
-            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-            nfi.NumberGroupSeparator = " ";
-            return did.ToString("#,0 ", nfi);
-        }
-        return value?.ToString() ?? string.Empty;
-    }
+    public object Convert(object value, Type targetType, object parameter, string language) =>
+        TgDataFormatUtils.GetNumberFormatString(value);
 
     //public object ConvertBack(object value, Type targetType, object parameter, string language)
     //    => throw new NotImplementedException();

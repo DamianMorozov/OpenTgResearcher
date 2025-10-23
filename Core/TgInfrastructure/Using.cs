@@ -2,6 +2,7 @@ global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using System.ComponentModel;
 global using System.Diagnostics;
+global using System.Globalization;
 global using System.IO.Enumeration;
 global using System.Reflection;
 global using System.Runtime.CompilerServices;

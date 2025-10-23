@@ -118,7 +118,6 @@ public static class TgDataFormatUtils
         return value.Substring(0, trimIndex);
     }
 
-
     public static string GetFormatString(string? value, int len = 30) =>
 		string.IsNullOrEmpty(value) ? string.Empty : value.PadRight(len)[..len];
 
@@ -162,5 +161,28 @@ public static class TgDataFormatUtils
 
 	public static string GetTimeFormat(DateTime dt) => $"{dt:HH:mm:ss}";
 
-	#endregion
+    public static string GetNumberFormatString(object value)
+    {
+        if (value is long lid)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+            return lid.ToString("#,0 ", nfi);
+        }
+        else if (value is int id)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+            return id.ToString("#,0 ", nfi);
+        }
+        else if (value is double did)
+        {
+            var nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+            nfi.NumberGroupSeparator = " ";
+            return did.ToString("#,0 ", nfi);
+        }
+        return value?.ToString() ?? string.Empty;
+    }
+
+    #endregion
 }

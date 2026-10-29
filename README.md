@@ -9,9 +9,6 @@
 - Используй как OSINT инструмент
 - Используй как парсер инструмент
 
-## Официальный сайт
-### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
-
 ## Русская документация
 ### <div align="center"><b><a href="README.md">Прочти меня</a> | <a href="CHANGELOG.md">История версий</a> | <a href="RELEASES.md">Статистика</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
@@ -33,9 +30,6 @@
 ## Требования к установке
 - [Зарегистрируйте Telegram приложение](https://my.telegram.org/apps)
 - Сохраните значения полей секции `App configuration`: `App api_id` / `App api_hash`
-
-## Программа поощрения за обнаружение ошибок
-- [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bug-bounty)
 
 ## Локализация при отладке Desktop
 При запуске профиля `OpenTgResearcherDesktop (Package)` строки локализации читаются из `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Strings`.

@@ -42,12 +42,12 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
     /// <summary> Throw exception if disposed </summary>
     public void CheckIfDisposed() => ObjectDisposedException.ThrowIf(_disposed, this);
 
-    /// <summary> Release managed resources </summary>
+    /// <summary> Освобождает ресурсы после завершения фоновой задачи мониторинга </summary>
     public void ReleaseManagedResources()
     {
         CheckIfDisposed();
 
-        Task.WhenAll(StopMonitoringAsync(isClose: true));
+        StopMonitoringAsync(isClose: true).GetAwaiter().GetResult();
         _cache.Dispose();
         _scope.Dispose();
         _locker.Dispose();
@@ -126,7 +126,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
             _cts.Cancel();
             if (_worker != null)
             {
-                try { await _worker; }
+                try { await _worker.ConfigureAwait(false); }
                 catch (OperationCanceledException) { /* ignore */ }
             }
 

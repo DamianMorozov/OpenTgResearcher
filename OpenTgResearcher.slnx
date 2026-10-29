@@ -106,6 +106,7 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/SelfTests/">
+    <Project Path="Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.csproj" />
     <Project Path="Tests/SelfTests/LogsPage/LogsPage.SelfTest.csproj" />
   </Folder>
 </Solution>

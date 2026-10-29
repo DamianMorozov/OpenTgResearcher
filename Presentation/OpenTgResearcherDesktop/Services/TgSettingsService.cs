@@ -146,12 +146,14 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         }
     }
 
-    /// <summary> Refresh UI resources and re-navigate current page to apply language </summary>
+    // Обновляем ресурсы интерфейса только при изменении языка открытого окна
     private void TryRefreshUiResources(string languageCode)
     {
+        if (App.IsClosing) return;
         try
         {
             if (App.MainWindow?.Content is not FrameworkElement rootElement) return;
+            if (Localizer.Get().GetCurrentLanguage() == languageCode) return;
 
             // Force page re-navigation to rebuild visuals with new resources
             if (rootElement is Page page && page.Frame is Frame frame)
@@ -182,8 +184,10 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         }
     }
 
+    // Не обновляем XAML, если окно закрыто во время смены языка
     private async Task SetLanguageFromLocalizerAsync(string languageCode, FrameworkElement rootElement)
     {
+        if (App.IsClosing) return;
         try
         {
             var localizer = Localizer.Get();
@@ -201,8 +205,9 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
             }
 
             await localizer.SetLanguage(languageCode);
+            if (App.IsClosing) return;
 
-            // Force page re-navigation to rebuild visuals with new resources
+            // Пересоздаём страницу с ресурсами выбранного языка
             if (rootElement is Page page && page.Frame is Frame frame)
             {
                 var currentPageType = frame.CurrentSourcePageType;
@@ -608,17 +613,19 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         }
     }
 
-    /// <inheritdoc />
+    /// <summary> Применяет сохранённый язык до создания первого интерфейса </summary>
     public async Task InitializeLocalizationAsync()
     {
         try
         {
+            LoadLanguage();
             var languageCode = TgEnumUtils.GetLanguageAsString(AppLanguage);
 
             if (TgRuntimeHelper.IsMSIX)
                 await InitializeLocalizerMsixAsync(languageCode);
             else
                 await InitializeLocalizerUnpackagedAsync(languageCode);
+            await Localizer.Get().SetLanguage(languageCode);
         }
         catch (Exception ex)
         {

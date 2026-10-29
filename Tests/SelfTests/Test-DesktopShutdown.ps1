@@ -3,7 +3,7 @@ param(
     [string]$PackageFullName,
     [ValidateRange(0, 60)]
     [int]$CloseDelaySeconds = 0,
-    [string]$ReadyPattern = 'License loading',
+    [string]$ReadyPattern = 'License loading|Загрузка лицензии',
     [switch]$CaptureManagedExceptions,
     [string]$DebuggerPath = 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe'
 )
@@ -71,6 +71,10 @@ try {
     $debugOutput = Get-Content -LiteralPath $debuggerLog -Raw
     if ($debugOutput -match '(?m)^SHUTDOWN_SELFTEST_EXCEPTION\s*$|HResult: 8000ffff' -or $debugOutput -notmatch 'Exit process [^\r\n]*code 0\b') {
         throw "Сбой закрытия Desktop. Диагностика: $debuggerLog"
+    }
+    if ($CaptureManagedExceptions -and $debugOutput -match
+        '(?s)Exception type:\s+System.ObjectDisposedException(?:(?!Exception object:).)*TgHardwareResourceMonitoringService') {
+        throw "Мониторинг обращается к освобождённым ресурсам при закрытии. Диагностика: $debuggerLog"
     }
     Write-Output "PASS: Desktop загрузился и закрылся с кодом 0. Диагностика: $debuggerLog"
 }

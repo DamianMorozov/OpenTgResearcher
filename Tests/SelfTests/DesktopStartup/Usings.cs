@@ -1,0 +1,18 @@
+global using Autofac;
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using Microsoft.Extensions.Options;
+global using OpenTgResearcherDesktop.Contracts.Services;
+global using OpenTgResearcherDesktop.Models;
+global using OpenTgResearcherDesktop.Services;
+global using OpenTgResearcherDesktop.StartupSelfTests;
+global using System.Collections.ObjectModel;
+global using System.Globalization;
+global using System.Reflection;
+global using System.Runtime.CompilerServices;
+global using System.Text.Json;
+global using TgBusinessLogic.Services;
+global using TgInfrastructure.Enums;
+global using TgInfrastructure.Helpers;
+global using ZiggyCreatures.Caching.Fusion;
+global using TgGlobalTools = OpenTgResearcherDesktop.StartupSelfTests.TestGlobalTools;
+global using TgLogUtils = OpenTgResearcherDesktop.StartupSelfTests.TestLogUtils;

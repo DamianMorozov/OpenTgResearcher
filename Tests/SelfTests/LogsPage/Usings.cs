@@ -1,0 +1,12 @@
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using OpenTgResearcherDesktop.Contracts.ViewModels;
+global using OpenTgResearcherDesktop.Models;
+global using OpenTgResearcherDesktop.SelfTests;
+global using OpenTgResearcherDesktop.ViewModels;
+global using System.Collections.ObjectModel;
+global using System.Reflection;
+global using System.Text;
+global using TgInfrastructure.Enums;
+global using TgInfrastructure.Helpers;
+global using TgLogUtils = OpenTgResearcherDesktop.SelfTests.TestLogUtils;

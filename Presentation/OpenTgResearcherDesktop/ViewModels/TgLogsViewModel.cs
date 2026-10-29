@@ -14,7 +14,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 	public TgLogsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgLogsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgLogsViewModel))
 	{
-		// Commands
+		// Команды
 		DeleteLogFileCommand = new AsyncRelayCommand<TgLogFile>(DeleteLogFileAsync);
 	}
 
@@ -22,13 +22,15 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 
 	#region Methods
 
+	/// <summary> Загружает журналы при переходе на страницу </summary>
 	public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
 	{
 		await LoadLogsCoreAsync();
 		await ReloadUiAsync();
 	});
 
-	private async Task LoadLogsCoreAsync()
+	// Загружаем файлы журнала из каталога приложения
+	private async Task LoadLogsCoreAsync(CancellationToken ct = default)
 	{
 		try
 		{
@@ -45,7 +47,7 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
             foreach (var logFile in files)
             {
                 if (!string.IsNullOrEmpty(logFile))
-                    await TryLoadLogAsync(logFile);
+                    await TryLoadLogAsync(logFile, ct: ct);
             }
 		}
 		catch (Exception ex)
@@ -54,84 +56,77 @@ public partial class TgLogsViewModel : TgPageViewModelBase, ITgLogsViewModel
 		}
 	}
 
-	private async Task TryLoadLogAsync(string logFile, bool isRetry = false, int attempt = 0)
+	// Читаем журнал, разрешая приложению продолжать запись в открытый файл
+	private async Task TryLoadLogAsync(string logFile, int attempt = 0, CancellationToken ct = default)
 	{
 		const int maxAttempts = 5;
 		try
 		{
-			if (!isRetry)
-			{
-				var content = await File.ReadAllTextAsync(logFile);
-                var fileSize = TgFileUtils.GetFileSizeAsString(logFile);
-                LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, content));
-			}
-			else
-			{
-				await using var fileStream = new FileStream(logFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-				using var reader = new StreamReader(fileStream);
-				var content = await reader.ReadToEndAsync();
-                var fileSize = TgFileUtils.GetFileSizeAsString(logFile);
-                LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, content));
-			}
+			await using var fileStream = new FileStream(logFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+			using var reader = new StreamReader(fileStream);
+			var content = await reader.ReadToEndAsync(ct);
+            var fileSize = TgFileUtils.GetFileSizeAsString(fileStream.Length);
+            LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, content));
 		}
 		catch (Exception ex)
 		{
-			if (attempt < maxAttempts)
+			if (ex is IOException && attempt < maxAttempts)
 			{
 				int delay = 100 * (attempt + 1);
-				await Task.Delay(delay);
-				await TryLoadLogAsync(logFile, isRetry: true, attempt + 1);
+				await Task.Delay(delay, ct);
+				await TryLoadLogAsync(logFile, attempt + 1, ct);
 			}
 			else
 			{
                 LogError(ex, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs());
-                var fileSize = TgFileUtils.GetFileSizeAsString(logFile);
-                LogFiles.Add(new(this, Path.GetFileName(logFile), fileSize, TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
+                LogFiles.Add(new(this, Path.GetFileName(logFile), "0 B", TgResourceExtensions.GetErrorOccurredWhileLoadingLogs()));
 			}
 		}
 	}
 
-	private async Task DeleteLogFileAsync(TgLogFile? logFile)
+	// Запрашиваем подтверждение удаления выбранного журнала
+	private async Task DeleteLogFileAsync(TgLogFile? logFile, CancellationToken ct = default)
 	{
-		if (XamlRootVm is null)
+		if (XamlRootVm is null || logFile is null)
 			return;
-		ContentDialog dialog = new()
+		try
 		{
-			XamlRoot = XamlRootVm,
-			Title = TgResourceExtensions.AskDeleteFile(),
-			PrimaryButtonText = TgResourceExtensions.GetYesButton(),
-			CloseButtonText = TgResourceExtensions.GetCancelButton(),
-			DefaultButton = ContentDialogButton.Close,
-		};
-		dialog.PrimaryButtonClick += async (sender, args) =>
+			ContentDialog dialog = new()
+			{
+				XamlRoot = XamlRootVm,
+				Title = TgResourceExtensions.AskDeleteFile(),
+				PrimaryButtonText = TgResourceExtensions.GetYesButton(),
+				CloseButtonText = TgResourceExtensions.GetCancelButton(),
+				DefaultButton = ContentDialogButton.Close,
+			};
+			var result = await dialog.ShowAsync();
+			if (result != ContentDialogResult.Primary) return;
+
+			// Изменяем элементы страницы после закрытия модального диалога
+			await DeleteLogFileCoreAsync(logFile, ct);
+			await LoadLogsCoreAsync(ct);
+		}
+		catch (Exception ex)
 		{
-            // Wait async operations
-			var deferral = args.GetDeferral();
-			await DeleteLogFileCoreAsync(logFile);
-            await LoadLogsCoreAsync();
-            // Complete async operations
-            deferral.Complete();
-		};
-		_ = await dialog.ShowAsync();
+			LogError(ex, "Не удалось выполнить удаление журнала");
+		}
 	}
 
-	private async Task DeleteLogFileCoreAsync(TgLogFile? logFile)
+	// Удаляем только выбранный файл, сохраняя его в списке при ошибке
+	private Task DeleteLogFileCoreAsync(TgLogFile? logFile, CancellationToken ct = default)
 	{
-		if (logFile is null) return;
-		// Close logger
-		await TgLogUtils.CloseAndFlushAsync();
-
-        if (!Directory.Exists(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop))) return;
-        var files = Directory.GetFiles(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop));
-        var file = files.FirstOrDefault(x => x.EndsWith(logFile.FileName));
-        if (file is not null)
-        {
-		    if (File.Exists(file))
-		    {
-			    File.Delete(file);
-			    LogFiles.Remove(logFile);
-		    }
-        }
+		if (logFile is null) return Task.CompletedTask;
+		try
+		{
+			var file = Path.Combine(TgLogUtils.GetLogsDirectory(TgEnumAppType.Desktop), logFile.FileName);
+			File.Delete(file);
+			LogFiles.Remove(logFile);
+		}
+		catch (Exception ex)
+		{
+			LogError(ex, "Не удалось удалить файл журнала");
+		}
+		return Task.CompletedTask;
 	}
 
 	#endregion

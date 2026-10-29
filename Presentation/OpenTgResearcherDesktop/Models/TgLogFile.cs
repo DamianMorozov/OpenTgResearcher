@@ -6,4 +6,5 @@ public sealed class TgLogFile(ITgLogsViewModel viewModel, string fileName, strin
 	public string FileName { get; set; } = fileName;
 	public string FileSize { get; set; } = fileSize;
 	public string Content { get; set; } = content;
+	public string[] ContentLines => Content.Split(["\r\n", "\n", "\r"], StringSplitOptions.None);
 }

@@ -105,4 +105,7 @@
       <Platform Solution="*|x86" Project="x86" />
     </Project>
   </Folder>
+  <Folder Name="/Tests/SelfTests/">
+    <Project Path="Tests/SelfTests/LogsPage/LogsPage.SelfTest.csproj" />
+  </Folder>
 </Solution>

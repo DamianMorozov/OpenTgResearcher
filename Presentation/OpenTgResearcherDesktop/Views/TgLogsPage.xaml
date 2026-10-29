@@ -78,10 +78,20 @@
                                         HorizontalContentAlignment="Stretch"
                                         Header="{x:Bind FileName, Mode=OneTime}"
                                         IsExpanded="False">
-                                        <TextBlock
-                                            Margin="0,-15,0,-30"
-                                            Text="{x:Bind Content, Mode=OneTime}"
-                                            TextWrapping="Wrap" />
+                                        <!--  Отрисовываем видимые строки, не раскладывая весь журнал одним текстовым блоком  -->
+                                        <ListView
+                                            Height="400"
+                                            ItemsSource="{x:Bind ContentLines, Mode=OneTime}"
+                                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                            ScrollViewer.HorizontalScrollMode="Enabled"
+                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                            SelectionMode="None">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:DataType="x:String">
+                                                    <TextBlock Text="{x:Bind}" TextWrapping="NoWrap" />
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
                                     </Expander>
                                     <styles:TgAnimatedClipboardButton
                                         Grid.Column="1"

@@ -1,4 +1,4 @@
-# Screenshots
+# Скриншоты
 
 ## [0.7.840] - 2026-10-29
 ### OpenTgResearcherDesktop

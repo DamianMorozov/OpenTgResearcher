@@ -272,7 +272,7 @@
     <value>Download statistics</value>
   </data>
   <data name="SettingsPage_DownloadStatistics.Tag" xml:space="preserve">
-    <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/Docs/RELEASES.md"</value>
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher/blob/main/RELEASES.md"</value>
   </data>
   <data name="SettingsPage_GitHub_DockerConsole.Content" xml:space="preserve">
     <value>Docker image</value>

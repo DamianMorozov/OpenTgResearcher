@@ -76,6 +76,7 @@
     <File Path="ISSUE-TEMPLATE.md" />
     <File Path="LICENSE.md" />
     <File Path="README.md" />
+    <File Path="RELEASES.md" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/OpenTgResearcherConsoleTests/OpenTgResearcherConsoleTests.csproj">

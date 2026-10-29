@@ -13,7 +13,7 @@
 ### <div align="center"><b><a href="https://opentgresearcher.online">opentgresearcher.online</a></b></div>
 
 ## Русская документация
-### <div align="center"><b><a href="README.md">Прочти меня</a> | <a href="CHANGELOG.md">История версий</a> | <a href="Docs/RELEASES.md">Статистика</a></b></div>
+### <div align="center"><b><a href="README.md">Прочти меня</a> | <a href="CHANGELOG.md">История версий</a> | <a href="RELEASES.md">Статистика</a></b></div>
 ### <div align="center"><b><a href="Docs/SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
 
 ## Скачать

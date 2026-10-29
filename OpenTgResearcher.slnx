@@ -46,7 +46,6 @@
     <File Path="Docs/ISSUE-RUS.md" />
     <File Path="Docs/ISSUE.md" />
     <File Path="Docs/RELEASES.md" />
-    <File Path="Docs/SCREENSHOTS.md" />
     <File Path="LICENSE.md" />
     <File Path="TODO.md" />
   </Folder>
@@ -77,6 +76,7 @@
     <File Path="LICENSE.md" />
     <File Path="README.md" />
     <File Path="RELEASES.md" />
+    <File Path="SCREENSHOTS.md" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/OpenTgResearcherConsoleTests/OpenTgResearcherConsoleTests.csproj">

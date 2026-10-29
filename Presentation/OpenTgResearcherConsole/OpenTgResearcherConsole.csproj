@@ -9,7 +9,7 @@
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
-		<Version>1.0.840.0</Version>
+		<Version>0.7.840.0</Version>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="TgLocale\**" />
@@ -65,11 +65,11 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Include="..\..\RELEASES.md" Link="RELEASES.md" />
-	  <None Include="..\..\Docs\SCREENSHOTS.md" Link="Docs\SCREENSHOTS.md" />
-	  <None Include="..\..\LICENSE.md" Link="Docs\LICENSE.md">
+	  <None Include="..\..\SCREENSHOTS.md" Link="SCREENSHOTS.md" />
+	  <None Include="..\..\LICENSE.md" Link="LICENSE.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Include="..\..\README.md" Link="Docs\README.md">
+	  <None Include="..\..\README.md" Link="README.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

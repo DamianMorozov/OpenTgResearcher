@@ -1,5 +1,21 @@
 # Screenshots
 
+## [0.7.840] - 2026-10-29
+### OpenTgResearcherDesktop
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_01_SplashScreen.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_02_Main.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_03_Storage.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_04_Connection.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_05_Filters.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_06_Proxies.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_07_Stories.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_08_Chats.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_09_ChatDetails.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_11_Contacts.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_13_Hardware.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_14_Logs.png"></p>
+<p align="center"><img src="Assets/v0.7.840/OpenTgResearcherDesktop_17_Settings.png"></p>
+
 ## [0.7.300] - 2025-09-11
 ### OpenTgResearcherDesktop
 <p align="center"><img src="Assets/v0.7.300/OpenTgResearcherDesktop_01_SplashScreen.png"></p>

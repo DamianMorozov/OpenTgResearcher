@@ -49,10 +49,7 @@
 	  <None Include="..\..\..\Helpers\OpenTgResearcher.session" Link="OpenTgResearcher.session">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Include="..\..\Docs\CHANGELOG-RUS.md" Link="Docs\CHANGELOG-RUS.md">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Include="..\..\Docs\CHANGELOG.md" Link="Docs\CHANGELOG.md">
+	  <None Include="..\..\CHANGELOG.md" Link="CHANGELOG.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Include="..\..\Docs\GUIDE-SETUP-CONSOLE-RUS.md" Link="Docs\GUIDE-SETUP-CONSOLE-RUS.md" />

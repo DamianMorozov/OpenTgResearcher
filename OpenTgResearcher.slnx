@@ -30,7 +30,6 @@
   <Folder Name="/Docs/">
     <File Path="Docs/BUY-LICENSE-RUS.md" />
     <File Path="Docs/BUY-LICENSE.md" />
-    <File Path="Docs/CHANGELOG-RUS.md" />
     <File Path="Docs/CHANGELOG.md" />
     <File Path="Docs/GUIDE-SETUP-CONSOLE-RUS.md" />
     <File Path="Docs/GUIDE-SETUP-CONSOLE.md" />
@@ -71,6 +70,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
+    <File Path="CHANGELOG.md" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
     <File Path="LICENSE.md" />

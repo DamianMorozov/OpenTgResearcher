@@ -4,9 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.810] - 2026-10-29
+## [0.7.810]
+### Added
+- Download progress details, message/media task counters and active task list in `OpenTgResearcherDesktop`
+- Desktop shutdown self-test and bilingual README instructions for localization when debugging
 ### Changed
 - Updating `.gitignore`
+- Reworked download task tracking and completion; removed `IsDownload` from storage DTOs
+- Migrated the solution to SLNX and updated dependency restoration in CI
+### Fixed
+- Restoring the Telegram chat ID when the stored DTO has a zero ID
+- Fixed Desktop closing during startup: loading continuations no longer access XAML after the window closes
 
 ## [0.7.800] - 2025-10-21
 ### Fixed

@@ -19,6 +19,7 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
             }
             // Handle activation via ActivationHandlers
             await HandleActivationAsync(activationArgs);
+            if (App.IsClosing) return;
             // Activate the MainWindow
             App.MainWindow.Activate();
 

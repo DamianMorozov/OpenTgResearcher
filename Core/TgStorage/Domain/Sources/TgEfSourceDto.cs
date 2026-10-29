@@ -43,8 +43,6 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
     [ObservableProperty]
     public partial long CurrentFileSpeed { get; set; }
     [ObservableProperty]
-    public partial bool IsDownload { get; set; }
-    [ObservableProperty]
     public partial bool IsFileNamingByMessage { get; set; }
     [ObservableProperty]
     public partial bool IsRestrictSavingContent { get; set; }
@@ -114,7 +112,6 @@ public sealed partial class TgEfSourceDto : TgDtoBase, ITgEfSourceDto
         IsRewriteMessages = false;
         IsSaveFiles = false;
         IsSaveMessages = false;
-        IsDownload = false;
         CurrentFileName = string.Empty;
     }
 

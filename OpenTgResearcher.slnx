@@ -1,0 +1,106 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/action_build_windows.yml" />
+    <File Path=".github/workflows/action_preview_create.yml" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="Core/OpenTgResearcherDesktopCore/OpenTgResearcherDesktopCore.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Core/TgBusinessLogic/TgBusinessLogic.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Core/TgInfrastructure/TgInfrastructure.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Core/TgStorage/TgStorage.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+  <Folder Name="/Docs/">
+    <File Path="Docs/BUY-LICENSE-RUS.md" />
+    <File Path="Docs/BUY-LICENSE.md" />
+    <File Path="Docs/CHANGELOG-RUS.md" />
+    <File Path="Docs/CHANGELOG.md" />
+    <File Path="Docs/GUIDE-SETUP-CONSOLE-RUS.md" />
+    <File Path="Docs/GUIDE-SETUP-CONSOLE.md" />
+    <File Path="Docs/GUIDE-SETUP-DESKTOP-RUS.md" />
+    <File Path="Docs/GUIDE-SETUP-DESKTOP.md" />
+    <File Path="Docs/GUIDE-SETUP-DOCKER-RUS.md" />
+    <File Path="Docs/GUIDE-SETUP-DOCKER.md" />
+    <File Path="Docs/GUIDE-SETUP-FILTERS-RUS.md" />
+    <File Path="Docs/GUIDE-SETUP-FILTERS.md" />
+    <File Path="Docs/GUIDE-SETUP-GROUPS-RUS.md" />
+    <File Path="Docs/GUIDE-SETUP-GROUPS.md" />
+    <File Path="Docs/GUIDES-RUS.md" />
+    <File Path="Docs/GUIDES.md" />
+    <File Path="Docs/ISSUE-RUS.md" />
+    <File Path="Docs/ISSUE.md" />
+    <File Path="Docs/RELEASES.md" />
+    <File Path="Docs/SCREENSHOTS.md" />
+    <File Path="LICENSE.md" />
+    <File Path="TODO.md" />
+  </Folder>
+  <Folder Name="/Docs/Assets/">
+    <File Path="Docs/Assets/Icon.ico" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Presentation/OpenTgResearcherDesktop/OpenTgResearcherDesktop.csproj">
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="LICENSE.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/OpenTgResearcherConsoleTests/OpenTgResearcherConsoleTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Tests/OpenTgResearcherDesktop.Tests.MSTests/OpenTgResearcherDesktop.Tests.csproj">
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Tests/TgAssertCoreTests/TgAssertCoreTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Tests/TgBusinessLogicTests/TgBusinessLogicTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Tests/TgInfrastructureTests/TgInfrastructureTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="Tests/TgStorageTests/TgStorageTests.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+  </Folder>
+</Solution>

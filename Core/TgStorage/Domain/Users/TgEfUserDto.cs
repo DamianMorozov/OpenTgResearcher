@@ -49,8 +49,6 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
     [ObservableProperty]
     public partial int BotActiveUsers { get; set; }
     [ObservableProperty]
-    public partial bool IsDownload { get; set; }
-    [ObservableProperty]
     public partial int MessagesCount { get; set; }
 
     public string DisplayName => !string.IsNullOrWhiteSpace(FirstName) || !string.IsNullOrWhiteSpace(LastName) ? $"{FirstName} {LastName}".Trim(): UserName;
@@ -77,7 +75,6 @@ public sealed partial class TgEfUserDto : TgDtoBase, ITgEfUserDto
         BotInfoVersion = string.Empty;
         BotInlinePlaceholder = string.Empty;
         BotActiveUsers = 0;
-        IsDownload = false;
         MessagesCount = 0;
     }
 

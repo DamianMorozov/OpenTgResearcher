@@ -1407,10 +1407,13 @@
     <value>Медиа</value>
   </data>
   <data name="FieldMediaParsingStreams.Text" xml:space="preserve">
-    <value>Потоки парсинга медиа</value>
+    <value>Потоки медиа</value>
   </data>
   <data name="FieldMessageParsingStreams.Text" xml:space="preserve">
-    <value>Потоки парсинга сообщений</value>
+    <value>Потоки сообщений</value>
+  </data>
+  <data name="FieldActiveTasks.Text" xml:space="preserve">
+    <value>Активные задачи</value>
   </data>
   <data name="FieldProgress.Text" xml:space="preserve">
     <value>Прогресс</value>
@@ -1449,7 +1452,7 @@
     <value>Перезапись сообщений</value>
   </data>
   <data name="FieldIsJoinFileNameWithMessageId.Text" xml:space="preserve">
-    <value>Присоединять идентификатор сообщения к файлу</value>
+    <value>Присоединять Id к файлу</value>
   </data>
   <data name="FieldIsCreateSubdirectories.Text" xml:space="preserve">
     <value>Создавать подкаталоги (для топиков чата)</value>

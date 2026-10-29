@@ -3,7 +3,7 @@
 namespace TgBusinessLogic.Contracts;
 
 /// <summary> Load state service to track loading states in the application </summary>
-public interface ILoadStateService : INotifyPropertyChanged
+public interface ILoadStateService : INotifyPropertyChanged, IDisposable
 {
     /// <summary> Is memory processing </summary>
     public bool IsMemoryProcessing { get; }

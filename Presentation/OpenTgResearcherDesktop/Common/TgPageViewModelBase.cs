@@ -28,6 +28,12 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
     [ObservableProperty]
     public partial string StateSourceMedia { get; set; } = string.Empty;
     [ObservableProperty]
+    public partial string StateMediaParsingStreams { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string StateActiveTasks { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string StateMessageParsingStreams { get; set; } = string.Empty;
+    [ObservableProperty]
     public partial XamlRoot? XamlRootVm { get; set; }
     [ObservableProperty]
     public partial TgDownloadSettingsViewModel DownloadSettings { get; set; } = new();

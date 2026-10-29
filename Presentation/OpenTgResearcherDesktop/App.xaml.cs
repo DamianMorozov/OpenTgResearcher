@@ -32,6 +32,7 @@ public partial class App : Application
     }
 
     internal static WindowEx MainWindow { get; private set; } = default!;
+    internal static bool IsClosing { get; private set; }
 
     internal static UIElement? AppTitleBar { get; private set; }
     internal static ITgBusinessLogicManager BusinessLogicManager { get; private set; } = default!;
@@ -207,6 +208,13 @@ public partial class App : Application
 
     #region Methods
 
+    // Останавливаем обновление интерфейса запуска после закрытия главного окна
+    private static void MainWindow_Closed(object sender, WindowEventArgs args)
+    {
+        IsClosing = true;
+        TgLogUtils.WriteLog("Main window closed; stopping startup UI updates");
+    }
+
     private static void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
@@ -238,6 +246,7 @@ public partial class App : Application
 
             // MainWindow
             MainWindow ??= new MainWindow();
+            MainWindow.Closed += MainWindow_Closed;
             if (MainWindow?.DispatcherQueue is not null)
             {
                 var tcs = new TaskCompletionSource();
@@ -247,8 +256,11 @@ public partial class App : Application
                     {
                         // Activate the app
                         await GetService<IActivationService>().ActivateAsync(args);
-                        settingsService.Load();
-                        settingsService.Save();
+                        if (!IsClosing)
+                        {
+                            settingsService.Load();
+                            settingsService.Save();
+                        }
                         tcs.SetResult();
                     }
                     catch (Exception ex)

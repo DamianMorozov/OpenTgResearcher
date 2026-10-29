@@ -51,6 +51,7 @@ public sealed class TgViewModelLocator
         // Callback updates UI
         App.BusinessLogicManager.ConnectClient.SetupUpdateShellViewModel(UpdateShellViewModelAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatViewModel(UpdateChatViewModelAsync);
+        App.BusinessLogicManager.ConnectClient.SetupUpdateTasksViewModel(UpdateTasksViewModelAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateStateFile(UpdateStateFileAsync);
         App.BusinessLogicManager.ConnectClient.SetupUpdateChatsViewModel(UpdateChatsViewModelAsync);
 
@@ -80,7 +81,7 @@ public sealed class TgViewModelLocator
         try
         {
             await LoadStateService.PrepareLocatorTokenAsync(uid);
-        
+
             await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
             {
                 UpdateChatViewModelCore(chatId, messageId, count, ref message);
@@ -103,8 +104,52 @@ public sealed class TgViewModelLocator
             {
                 _chatDownloadingVm.DownloadDto.FirstId = messageId;
                 _chatDownloadingVm.ChatProgressMessage = $"{(messageId == 0 || count == 0 ? 0 : (float)messageId * 100 / count):00.00} %";
+                _chatDownloadingVm.ChatProgressInfo =
+                    $"{TgDataFormatUtils.GetNumberFormatString(messageId)} {TgResourceExtensions.GetFrom()} {TgDataFormatUtils.GetNumberFormatString(count)}";
                 _chatDownloadingVm.StateSourceDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
                 _chatDownloadingVm.StateSourceMsg = $"{messageId} | {message}";
+            }
+        }
+    }
+
+    /// <summary> Update tasks ViewModel </summary>
+    public async Task UpdateTasksViewModelAsync(TgParseHelper parseHelper)
+    {
+        var uid = Guid.NewGuid();
+        try
+        {
+            await LoadStateService.PrepareLocatorTokenAsync(uid);
+
+            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+            {
+                UpdateTasksViewModelCore(parseHelper);
+                await Task.CompletedTask;
+            }, LoadStateService.LocatorToken);
+        }
+        finally
+        {
+            LoadStateService.StopSoftLocatorProcessing(uid);
+        }
+    }
+
+    private void UpdateTasksViewModelCore(TgParseHelper parseHelper)
+    {
+        _chatDownloadingVm ??= App.VmLocator.Get<TgChatDownloadViewModel>();
+        if (_chatDownloadingVm is not null)
+        {
+            if (_chatDownloadingVm.DownloadDto?.Id == parseHelper.CurrentChatId)
+            {
+                _chatDownloadingVm.StateMessageParsingStreams =
+                    $"{TgDataFormatUtils.GetNumberFormatString(parseHelper.TasksMessage)} {TgResourceExtensions.GetFrom()} " +
+                    $"{TgDataFormatUtils.GetNumberFormatString(parseHelper.TasksCount)}";
+                _chatDownloadingVm.StateMediaParsingStreams =
+                    $"{TgDataFormatUtils.GetNumberFormatString(parseHelper.TasksMedia)} {TgResourceExtensions.GetFrom()} " +
+                    $"{TgDataFormatUtils.GetNumberFormatString(parseHelper.TasksCount)}";
+                var activeTasks = parseHelper.Tasks
+                    .OrderBy(x => x.TaskType)
+                    .Select(t => $"{t.TaskType} | MsgId={t.MessageId} | Uid={t.Uid}")
+                    .ToList();
+                _chatDownloadingVm.StateActiveTasks = string.Join(Environment.NewLine, activeTasks);
             }
         }
     }
@@ -222,16 +267,21 @@ public sealed class TgViewModelLocator
         if (_chatDownloadingVm is not null)
         {
             _chatDownloadingVm.ChatProgressMessage = string.Empty;
+            _chatDownloadingVm.ChatProgressInfo =
+                $"{TgDataFormatUtils.GetNumberFormatString(_chatDownloadingVm.DownloadDto.FirstId)} {TgResourceExtensions.GetFrom()} " +
+                $"{TgDataFormatUtils.GetNumberFormatString(_chatDownloadingVm.DownloadDto.Count)}";
             _chatDownloadingVm.StateSourceMsg = string.Empty;
         }
     }
 
-    public void ClearStateFile()
+    public void ClearStateDownloadingChat()
     {
         _chatDownloadingVm ??= App.VmLocator.Get<TgChatDownloadViewModel>();
         if (_chatDownloadingVm is not null)
         {
             _chatDownloadingVm.StateSourceMedia = string.Empty;
+            _chatDownloadingVm.StateMediaParsingStreams = string.Empty;
+            _chatDownloadingVm.StateMessageParsingStreams = string.Empty;
         }
     }
 
@@ -373,7 +423,8 @@ public sealed class TgViewModelLocator
                 if (!_floodCts.Token.IsCancellationRequested)
                 {
                     if (_shellVm is not null)
-                        TgDesktopUtils.InvokeOnUIThread(() => {
+                        TgDesktopUtils.InvokeOnUIThread(() =>
+                        {
                             _shellVm.IsFloodVisible = false;
                             _shellVm.FloodMessage = string.Empty;
                         });

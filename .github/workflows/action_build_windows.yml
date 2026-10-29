@@ -30,7 +30,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
       - name: Install dependencies
-        run: nuget restore OpenTgResearcher.sln
+        run: dotnet restore OpenTgResearcher.slnx
       - name: Restore OpenTgResearcherConsole
         run: dotnet restore Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj
       - name: Build OpenTgResearcherConsole AnyCPU

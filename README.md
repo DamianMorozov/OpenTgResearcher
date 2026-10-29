@@ -37,6 +37,13 @@
 ## Программа поощрения за обнаружение ошибок
 - [Программа поощрения за обнаружение ошибок](https://opentgresearcher.online/bug-bounty)
 
+## Локализация при отладке Desktop
+При запуске профиля `OpenTgResearcherDesktop (Package)` строки локализации читаются из `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Strings`.
+Если подписи интерфейса пустые, закройте приложение и скопируйте папки `en-US` и `ru-RU` с файлами `Resources.resw` из [Strings проекта](Presentation/OpenTgResearcherDesktop/Strings) в этот каталог, затем повторите запуск.
+Для текущего пакета `<PackageFamilyName>`; при изменении идентификатора или издателя пакета имя может отличаться.
+В текущей реализации отсутствующие файлы автоматически не копируются: проверяется только обновление существующих файлов по размеру.
+При запуске профиля `OpenTgResearcherDesktop (Unpackaged)` используется каталог `Strings` рядом с исполняемым файлом.
+
 ## Ключевые слова
 ОпенТгРесечер, ОпенТгРесёчер, Опен-Тг-Ресечер, Опен-Тг-Ресёчер, Телеграм, скачать, тгскачать, тг-скачать, ресёчер, ресечер, тгресечер, тг-ресечер, тгресёчер, тг-ресёчер
 
@@ -82,6 +89,13 @@
 
 ## Bug Bounty Program
 - [Bug Bounty Program](https://opentgresearcher.online/bug-bounty)
+
+## Localization when debugging Desktop
+The `OpenTgResearcherDesktop (Package)` profile loads localization strings from `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Strings`.
+If UI labels are empty, close the application and copy the `en-US` and `ru-RU` folders containing `Resources.resw` from the [project's Strings folder](Presentation/OpenTgResearcherDesktop/Strings) into that directory, then restart the application.
+For the current package, `<PackageFamilyName>`; it may differ if the package identity or publisher changes.
+The current implementation does not copy missing files automatically: it only checks existing files for size changes.
+The `OpenTgResearcherDesktop (Unpackaged)` profile uses the `Strings` directory next to the executable.
 
 ## Keywords
 OpenTgResearcher, Open-Tg-Researcher, Telegram, downloader, tgdownloader, tg-downloader, researcher, tgresearcher, tg-researcher

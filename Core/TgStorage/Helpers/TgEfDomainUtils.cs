@@ -1014,7 +1014,6 @@ public static class TgEfDomainUtils
             IsUserAccess = dto.IsUserAccess,
             IsFileNamingByMessage = dto.IsFileNamingByMessage,
             IsRestrictSavingContent = dto.IsRestrictSavingContent,
-            IsDownload = dto.IsDownload,
             CurrentFileName = dto.CurrentFileName,
             IsSubscribe = dto.IsSubscribe,
             IsDownloadThumbnail = dto.IsDownloadThumbnail,
@@ -1093,7 +1092,6 @@ public static class TgEfDomainUtils
             IsCreatingSubdirectories = dto.IsCreatingSubdirectories,
             IsFileNamingByMessage = dto.IsFileNamingByMessage,
             IsUserAccess = dto.IsUserAccess,
-            IsDownload = dto.IsDownload,
             ProgressPercent = dto.ProgressPercent,
             ProgressPercentString = dto.ProgressPercentString,
         };
@@ -1123,9 +1121,7 @@ public static class TgEfDomainUtils
             IsFileNamingByMessage = entity.IsFileNamingByMessage,
             IsRestrictSavingContent = entity.IsRestrictSavingContent,
             IsUserAccess = entity.IsUserAccess,
-            //IsDownload = entity.IsDownload,
             ProgressPercent = entity.Count == 0 ? 0 : entity.FirstId * 100 / entity.Count,
-            //ProgressPercentString = entity.ProgressPercentString,
             IsSubscribe = entity.IsSubscribe,
         };
 
@@ -1210,7 +1206,6 @@ public static class TgEfDomainUtils
             Offset = dto.Offset,
             Length = dto.Length,
             Message = dto.Message,
-            IsDownload = dto.IsDownload,
         };
 
         if (isUidCopy)
@@ -1237,7 +1232,6 @@ public static class TgEfDomainUtils
             Offset = entity.Offset,
             Length = entity.Length,
             Message = entity.Message ?? string.Empty,
-            IsDownload = false,
         };
 
         if (isUidCopy)
@@ -1346,7 +1340,6 @@ public static class TgEfDomainUtils
             BotInfoVersion = dto.BotInfoVersion,
             BotInlinePlaceholder = dto.BotInlinePlaceholder,
             BotActiveUsers = dto.BotActiveUsers,
-            IsDownload = dto.IsDownload,
             MessagesCount = dto.MessagesCount,
         };
 
@@ -1381,7 +1374,6 @@ public static class TgEfDomainUtils
             BotInfoVersion = entity.BotInfoVersion ?? string.Empty,
             BotInlinePlaceholder = entity.BotInlinePlaceholder ?? string.Empty,
             BotActiveUsers = entity.BotActiveUsers,
-            IsDownload = false,
             MessagesCount = 0,
         };
         target.Status = target.GetShortStatus(entity.Status ?? string.Empty);

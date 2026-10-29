@@ -27,8 +27,6 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgEfStoryDto
 	public partial int Length { get; set; }
 	[ObservableProperty]
 	public partial string Message { get; set; }
-	[ObservableProperty]
-	public partial bool IsDownload { get; set; }
 	public bool IsReady => Id > 0;
 
 	public TgEfStoryDto() : base()
@@ -44,7 +42,6 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgEfStoryDto
 		Offset = 0;
 		Length = 0;
 		Message = string.Empty;
-		IsDownload = false;
 	}
 
     #endregion

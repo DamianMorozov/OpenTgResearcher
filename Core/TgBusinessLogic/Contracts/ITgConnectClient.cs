@@ -29,6 +29,7 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 
     public void SetupUpdateTitle(Func<string, Task> updateTitleAsync);
     public void SetupUpdateChatViewModel(Func<long, int, int, string, Task> updateChatViewModelAsync);
+    public void SetupUpdateTasksViewModel(Func<TgParseHelper, Task> updateTasksViewModelAsync);
     public void SetupUpdateChatsViewModel(Func<int, int, TgEnumChatsMessageType, Task> updateChatsViewModel);
 	public void SetupUpdateShellViewModel(Func<bool, int, string, Task> updateShellViewModel);
 	public void SetupUpdateStateFile(Func<long, int, string, long, long, long, bool, int, Task> updateStateFileAsync);

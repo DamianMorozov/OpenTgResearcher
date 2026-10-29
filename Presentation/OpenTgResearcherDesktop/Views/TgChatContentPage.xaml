@@ -224,10 +224,7 @@
             VerticalAlignment="Stretch"
             Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
             CornerRadius="5">
-            <Grid
-                Grid.Row="1"
-                Margin="0,0,10,5"
-                Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <Grid Margin="0,0,10,5" Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="1*" />

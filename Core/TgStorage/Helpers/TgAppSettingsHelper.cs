@@ -2,7 +2,7 @@
 
 /// <summary> App helper </summary>
 [DebuggerDisplay("{ToDebugString()}")]
-public sealed class TgAppSettingsHelper : ITgHelper
+public sealed class TgAppSettingsHelper
 {
 	#region Design pattern "Lazy Singleton"
 

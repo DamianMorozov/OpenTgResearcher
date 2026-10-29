@@ -32,8 +32,6 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgEfSourceLiteDto
 	[ObservableProperty]
 	public partial bool IsSubscribe { get; set; }
 	[ObservableProperty]
-	public partial bool IsDownload { get; set; }
-	[ObservableProperty]
 	public partial int ProgressPercent { get; set; }
 	[ObservableProperty]
 	public partial string ProgressPercentString { get; set; }
@@ -53,7 +51,6 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgEfSourceLiteDto
 		IsCreatingSubdirectories = false;
 		IsFileNamingByMessage = false;
 		IsUserAccess = false;
-		IsDownload = false;
 		ProgressPercent = 0;
 		ProgressPercentString = string.Empty;
 	}
@@ -64,8 +61,6 @@ public sealed partial class TgEfSourceLiteDto : TgDtoBase, ITgEfSourceLiteDto
 
     /// <inheritdoc />
     public override string ToString() => ProgressPercentString;
-
-	public void SetIsDownload(bool isDownload) => IsDownload = isDownload;
 
 	#endregion
 }

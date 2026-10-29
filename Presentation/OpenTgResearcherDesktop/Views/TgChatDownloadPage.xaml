@@ -36,6 +36,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -187,7 +188,7 @@
                     Grid.Column="5"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsFileNamingByMessage, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  Default  -->
+                <!--  Reset to default  -->
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="0"
@@ -249,38 +250,80 @@
                 <TextBox
                     Grid.Row="6"
                     Grid.Column="1"
-                    Grid.ColumnSpan="5"
+                    IsEnabled="False"
+                    Style="{StaticResource FieldTextBoxStyle}"
+                    Text="{x:Bind ViewModel.ChatProgressInfo, Mode=OneWay}" />
+                <TextBox
+                    Grid.Row="6"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="4"
                     IsEnabled="False"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
-                <!--  Message  -->
+                <!--  Message streams  -->
                 <TextBlock
                     Grid.Row="7"
                     Grid.Column="0"
-                    l:Uids.Uid="FieldMessage"
+                    l:Uids.Uid="FieldMessageParsingStreams"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <TextBox
                     Grid.Row="7"
                     Grid.Column="1"
-                    Grid.ColumnSpan="5"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    Style="{StaticResource FieldTextBoxStyle}"
+                    Text="{x:Bind ViewModel.StateMessageParsingStreams, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    Grid.Row="7"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="4"
                     IsEnabled="False"
                     IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
-                <!--  Media  -->
+                <!--  Media streams  -->
                 <TextBlock
                     Grid.Row="8"
                     Grid.Column="0"
-                    l:Uids.Uid="FieldMedia"
+                    l:Uids.Uid="FieldMediaParsingStreams"
                     Style="{StaticResource FieldTextBlockStyle}" />
                 <TextBox
                     Grid.Row="8"
                     Grid.Column="1"
-                    Grid.ColumnSpan="5"
+                    IsEnabled="False"
+                    IsReadOnly="True"
+                    Style="{StaticResource FieldTextBoxStyle}"
+                    Text="{x:Bind ViewModel.StateMediaParsingStreams, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    Grid.Row="8"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="4"
                     IsEnabled="False"
                     IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.StateSourceMedia, Mode=OneWay}" />
+                <!--  Active tasks  -->
+                <TextBlock
+                    Grid.Row="9"
+                    Grid.Column="0"
+                    l:Uids.Uid="FieldActiveTasks"
+                    Style="{StaticResource FieldTextBlockStyle}" />
+                <ScrollView
+                    Grid.Row="9"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="5"
+                    VerticalScrollMode="Auto">
+                    <TextBox
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Top"
+                        IsEnabled="False"
+                        IsReadOnly="True"
+                        Style="{StaticResource FieldTextBoxStyle}"
+                        Text="{x:Bind ViewModel.StateActiveTasks, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </ScrollView>
             </Grid>
         </Border>
     </ContentControl>

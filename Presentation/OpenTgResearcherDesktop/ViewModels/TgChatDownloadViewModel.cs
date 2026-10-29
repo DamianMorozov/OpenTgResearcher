@@ -10,6 +10,8 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
     public partial TgEfSourceDto DownloadDto { get; set; } = default!;
     [ObservableProperty]
     public partial string ChatProgressMessage { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string ChatProgressInfo { get; set; } = string.Empty;
 
     public IAsyncRelayCommand DefaultSettingsCommand { get; }
 
@@ -30,7 +32,7 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
         {
             Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
             App.VmLocator.ClearChatViewModel();
-            App.VmLocator.ClearStateFile();
+            App.VmLocator.ClearStateDownloadingChat();
         });
 
     private async Task DefaultSettingsAsync() => 

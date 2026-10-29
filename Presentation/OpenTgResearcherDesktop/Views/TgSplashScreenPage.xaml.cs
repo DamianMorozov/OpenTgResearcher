@@ -21,39 +21,48 @@ public sealed partial class TgSplashScreenPage
 
     #region Methods
 
+    /// <summary> Загрузка заставки до завершения запуска или закрытия главного окна </summary>
     public async Task LoadSplashScreenAsync(Action backToMainWindow)
     {
+        if (App.IsClosing) return;
         ViewModel.BackToMainWindow = backToMainWindow;
 
-        // Loading logging
+        // Загрузка журналирования
         await ViewModel.LoadingLoggingAsync();
+        if (App.IsClosing) return;
         Bindings.Update();
 
-        // Loading Velopack Installer
+        // Загрузка установщика Velopack
         await ViewModel.LoadingVelopackInstallerAsync();
+        if (App.IsClosing) return;
         Bindings.Update();
 
-        // Loading settings
+        // Загрузка настроек
         await ViewModel.LoadingSettingsAsync();
+        if (App.IsClosing) return;
 
-        // Loading storage
+        // Загрузка хранилища
         await ViewModel.LoadingStorageAsync();
+        if (App.IsClosing) return;
         Bindings.Update();
 
-        // Loading license
+        // Загрузка лицензии
         await ViewModel.LoadingLicenseAsync();
+        if (App.IsClosing) return;
         Bindings.Update();
 
-        // Loading notifications
+        // Загрузка уведомлений
         await ViewModel.LoadingNotificationsAsync();
+        if (App.IsClosing) return;
         Bindings.Update();
 
-        // Loading hardware control
+        // Загрузка мониторинга оборудования
         ViewModel.LoadingHardwareControl();
         Bindings.Update();
 
-        // Loading complete
+        // Завершение загрузки
         await ViewModel.LoadingCompleteAsync();
+        if (App.IsClosing) return;
         Bindings.Update();
     }
 

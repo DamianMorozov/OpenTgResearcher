@@ -212,10 +212,7 @@
     <None Include="..\..\Docs\GUIDES.md" Link="Docs\GUIDES.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\Docs\ISSUE-RUS.md" Link="Docs\ISSUE-RUS.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\Docs\ISSUE.md" Link="Docs\ISSUE.md">
+    <None Include="..\..\ISSUE-TEMPLATE.md" Link="ISSUE-TEMPLATE.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\..\Docs\RELEASES.md" Link="Docs\RELEASES.md" />

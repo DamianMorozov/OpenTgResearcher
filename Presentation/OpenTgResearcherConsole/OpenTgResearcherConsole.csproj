@@ -64,8 +64,6 @@
 	  <None Include="..\..\Docs\GUIDES.md" Link="Docs\GUIDES.md">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Include="..\..\Docs\ISSUE-RUS.md" Link="Docs\ISSUE-RUS.md" />
-	  <None Include="..\..\Docs\ISSUE.md" Link="Docs\ISSUE.md" />
 	  <None Include="..\..\Docs\RELEASES.md" Link="Docs\RELEASES.md" />
 	  <None Include="..\..\Docs\SCREENSHOTS.md" Link="Docs\SCREENSHOTS.md" />
 	  <None Include="..\..\LICENSE.md" Link="Docs\LICENSE.md">

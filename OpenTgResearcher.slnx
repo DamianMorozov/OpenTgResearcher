@@ -73,6 +73,7 @@
     <File Path="CHANGELOG.md" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
+    <File Path="ISSUE-TEMPLATE.md" />
     <File Path="LICENSE.md" />
     <File Path="README.md" />
   </Folder>

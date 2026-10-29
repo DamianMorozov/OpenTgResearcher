@@ -411,3 +411,4 @@ FodyWeavers.xsd
 /Core/*.xml
 /Presentation/*.xml
 /Tests/*.xml
+AGENTS.md

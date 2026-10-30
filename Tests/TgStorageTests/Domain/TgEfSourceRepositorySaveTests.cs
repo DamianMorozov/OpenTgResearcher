@@ -1,4 +1,4 @@
-﻿#pragma warning disable NUnit1033
+#pragma warning disable NUnit1033
 
 namespace TgStorageTests.Domain;
 
@@ -8,9 +8,9 @@ internal sealed class TgEfSourceRepositorySaveTests : TgStorageTestsBase
 	#region Methods
 
 	[Test]
-	public void Save_sources_async()
+	public Task Save_sources_async()
 	{
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfSourceRepository repo = new();
 			var dtos = (await repo.GetListDtosAsync(take: 1, skip: 0));

@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.7.860.0</Version>
+    <Version>0.8.10.0</Version>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
@@ -22,23 +22,23 @@
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="FluentValidation" Version="12.2.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="ProxyLib" Version="1.0.2" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="WTelegramClient" Version="4.3.10" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
+    <PackageReference Include="WTelegramClient" Version="4.4.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TgInfrastructure\TgInfrastructure.csproj" />

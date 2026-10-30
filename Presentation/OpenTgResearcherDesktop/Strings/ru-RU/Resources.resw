@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -339,11 +339,11 @@
   <data name="SettingsPage_GitHub_InstallRequirementsNet8.Tag" xml:space="preserve">
     <value>"https://dotnet.microsoft.com/ru-ru/download/dotnet/8.0"</value>
   </data>
-  <data name="SettingsPage_GitHub_InstallRequirementsNet9.Content" xml:space="preserve">
-    <value>Скачать .NET 9.0</value>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet10.Content" xml:space="preserve">
+    <value>Скачать .NET 10.0</value>
   </data>
-  <data name="SettingsPage_GitHub_InstallRequirementsNet9.Tag" xml:space="preserve">
-    <value>"https://dotnet.microsoft.com/ru-ru/download/dotnet/9.0"</value>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet10.Tag" xml:space="preserve">
+    <value>"https://dotnet.microsoft.com/ru-ru/download/dotnet/10.0"</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsRegisterTelegram.Content" xml:space="preserve">
     <value>Зарегистрируйте Telegram приложение (открыть веб-сайт)</value>
@@ -1762,4 +1762,5 @@
   <data name="FeatureLicensePurchase" xml:space="preserve">
     <value>Чтобы воспользоваться функционалом необходимо приобрести указанную лицензию</value>
   </data>
+  <data name="ActionBackToList.Text" xml:space="preserve"><value>К списку</value></data>
 </root>

@@ -1,0 +1,9 @@
+global using Autofac;
+global using Microsoft.EntityFrameworkCore;
+global using System.Reflection;
+global using TgBusinessLogic.Services;
+global using TgInfrastructure.Dtos;
+global using TgStorage.Common;
+global using TgStorage.Contracts;
+global using TgStorage.Repositories;
+global using TgStorage.Utils;

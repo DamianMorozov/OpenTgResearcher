@@ -1,6 +1,6 @@
 namespace OpenTgResearcherDesktop.StartupSelfTests;
 
-internal static class Program
+internal static partial class Program
 {
     // Проверяем исходную службу настроек и фактическое завершение фоновой задачи мониторинга
     private static async Task<int> Main()
@@ -19,6 +19,8 @@ internal static class Program
             ("LanguageChangeAlreadyClosed", LanguageChangeAlreadyClosedAsync),
             ("UnchangedLanguageDoesNotRefreshUi", UnchangedLanguageDoesNotRefreshUiAsync),
             ("HardwareDisposalWaitsForWorker", HardwareDisposalWaitsForWorkerAsync),
+            ("CloseWaitsForTelegram", CloseWaitsForTelegramAsync),
+            ("FailedDisconnectKeepsWindowOpen", FailedDisconnectKeepsWindowOpenAsync),
         };
         var outputDirectory = Path.Combine(AppContext.BaseDirectory, "cases", Guid.NewGuid().ToString("N"));
         var failures = 0;

@@ -5,7 +5,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	#region Fields, properties, constructor
 
 	[ObservableProperty]
-	public partial TgEfAppDto? AppDto { get; set; } = default!;
+	public partial TgEfAppDto? AppDto { get; set; } = new();
 	[ObservableProperty]
 	public partial TgEfProxyViewModel? ProxyVm { get; set; } = new(TgGlobalTools.Container);
 	[ObservableProperty]
@@ -44,14 +44,13 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	public TgClientConnectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgClientConnectionViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
 	{
-        // Commands
+        // Команды выполняются только по действию пользователя
 		ClientConnectCommand = new AsyncRelayCommand<bool>(ClientConnectAsync);
 		ClientDisconnectCommand = new AsyncRelayCommand<bool>(ClientDisconnectAsync);
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
-        AppClearCommand.Execute(null);
-        // Callback updates UI
+        // Обратные вызовы обновляют интерфейс
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateException);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
     }
@@ -65,22 +64,25 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         await LoadStorageDataAsync(LoadDataStorageCoreAsync);
     }
 
+    // Обновляем состояние подключения, сохраняя сообщение об ошибке авторизации
     private async Task AfterClientConnectAsync()
     {
         var uid = Guid.NewGuid();
         try
         {
             await LoadStateService.PrepareOnlineTokenAsync(uid);
+            var isReady = await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
 
-            await TgDesktopUtils.InvokeOnUIThreadAsync(async () =>
+            await TgDesktopUtils.InvokeOnUIThreadAsync(() =>
             {
                 ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
+                ConnectionMsg = isReady ? TgResourceExtensions.GetClientIsConnected() : TgResourceExtensions.GetClientIsDisconnected();
 
                 if (AppDto is not null && AppDto.UseClient)
                 {
                     var client = App.BusinessLogicManager.ConnectClient.Client;
 
-                    // Check exceptions
+                    // Показываем понятное сообщение для известных ошибок RPC
                     // https://www.infotelbot.com/2021/06/telegram-error-lists.html
                     if (Exception?.Message is string msg && !string.IsNullOrEmpty(msg))
                     {
@@ -100,17 +102,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                         {
                             ConnectionMsg = TgResourceExtensions.GetRpcErrorPhonePasswordFlood();
                         }
-                        else
-                        {
-                            if (client is null || client.Disconnected)
-                            {
-                                ConnectionMsg = TgResourceExtensions.GetClientIsDisconnected();
-                            }
-                            else
-                            {
-                                ConnectionMsg = TgResourceExtensions.GetClientIsConnected();
-                            }
-                        }
                     }
 
                     if (client is not null)
@@ -124,17 +115,50 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                     }
                     else
                     {
-                        await ReloadUiAsync();
+                        ClearClientDetails();
                     }
                 }
 
-                // Update connection buttons
-                await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync();
+                return Task.CompletedTask;
             }, LoadStateService.OnlineToken);
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            Exception.Set(ex);
         }
         finally
         {
             LoadStateService.StopSoftOnlineProcessing(uid);
+        }
+    }
+
+    // Ожидаем закрытие вопроса и завершение подтверждённой операции в рамках исходной команды
+    private async Task ConfirmActionAsync(Func<Task> action, string title, TgEnumLoadDesktopType loadType, CancellationToken ct = default)
+    {
+        if (XamlRootVm is null) return;
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+            var dialog = new ContentDialog
+            {
+                XamlRoot = XamlRootVm,
+                Title = title,
+                PrimaryButtonText = TgResourceExtensions.GetYesButton(),
+                CloseButtonText = TgResourceExtensions.GetCancelButton(),
+                DefaultButton = ContentDialogButton.Close,
+            };
+            if (await dialog.ShowAsync() != ContentDialogResult.Primary) return;
+            ct.ThrowIfCancellationRequested();
+            if (loadType == TgEnumLoadDesktopType.Online)
+                await LoadOnlineDataAsync(action);
+            else
+                await LoadStorageDataAsync(action);
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            Exception.Set(ex);
         }
     }
 
@@ -182,7 +206,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 			Exception.Default();
 			DataRequest = string.Empty;
             if (isQuestion == true)
-                await ContentDialogAsync(ClientConnectWithGetMeAsync,
+                await ConfirmActionAsync(ClientConnectWithGetMeAsync,
                     TgResourceExtensions.AskClientConnect(), TgEnumLoadDesktopType.Online);
             else
             {
@@ -198,10 +222,6 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
                 }
             }
 
-            // Open or create chat for Saved Messages
-            _shellVm ??= App.VmLocator.Get<ShellViewModel>();
-            _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
-
         }
         catch (Exception ex)
 		{
@@ -216,9 +236,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		}
 	}
 
+    // Сохраняем профиль и открываем Избранное только после успешной авторизации
     private async Task ClientConnectWithGetMeAsync()
     {
         await App.BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientDesktop, ProxyVm?.Dto ?? new(), isDesktop: true);
+        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         if (AppDto is not null && App.BusinessLogicManager.ConnectClient.Me is TL.User me)
         {
             AppDto.FirstName = me.first_name ?? string.Empty;
@@ -226,6 +248,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         }
 
         await AppSaveCoreAsync();
+        _shellVm ??= App.VmLocator.Get<ShellViewModel>();
+        _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
     }
 
     private async Task ClientDisconnectAsync(bool isQuestion) => await ClientDisconnectCoreAsync(isQuestion, isRetry: false);
@@ -237,7 +261,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
             Exception.Default();
             DataRequest = string.Empty;
             if (isQuestion == true)
-                await ContentDialogAsync(() => App.BusinessLogicManager.ConnectClient.DisconnectClientAsync(), 
+                await ConfirmActionAsync(() => App.BusinessLogicManager.ConnectClient.DisconnectClientAsync(),
                     TgResourceExtensions.AskClientDisconnect(), TgEnumLoadDesktopType.Online);
             else
             {
@@ -267,24 +291,20 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         }
     }
     
+    // Сначала загружаем настройки, затем выбираем соответствующий им прокси
     private async Task LoadDataStorageCoreAsync()
 	{
         if (!SettingsService.IsExistsAppStorage) return;
 
-        await ReloadProxyAsync();
         AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
+        await ReloadProxyAsync();
 	}
 
 	public override async Task ReloadUiAsync()
 	{
 		await base.ReloadUiAsync();
 
-        UserName = string.Empty;
-		MtProxyUrl = string.Empty;
-		MaxAutoReconnects = string.Empty;
-		FloodRetryThreshold = string.Empty;
-		PingInterval = string.Empty;
-		MaxCodePwdAttempts = string.Empty;
+		ClearClientDetails();
 
 		DataRequest = string.Empty;
 		DataRequestEmptyResponse = TgResourceExtensions.GetClientDataRequestEmptyResponse();
@@ -292,6 +312,18 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		await ReloadProxyAsync();
 	}
 
+    // Очищаем сведения о клиенте без сброса ошибки подключения
+    private void ClearClientDetails()
+    {
+        UserName = string.Empty;
+        MtProxyUrl = string.Empty;
+        MaxAutoReconnects = string.Empty;
+        FloodRetryThreshold = string.Empty;
+        PingInterval = string.Empty;
+        MaxCodePwdAttempts = string.Empty;
+    }
+
+    // Выбираем сохранённый прокси или существующий пустой элемент списка
 	private async Task ReloadProxyAsync()
 	{
 		ProxiesVms.Clear();
@@ -304,21 +336,20 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 				ProxiesVms.Add(new(TgGlobalTools.Container, proxy));
 			}
 		}
-		// Insert empty proxy if not exists
-		TgEfProxyViewModel? emptyProxyVm = null;
-        var proxiesVmsEmpty = ProxiesVms.Where(x => x.IsEmptyProxy);
-		if (!proxiesVmsEmpty.Any())
+		// Создаём пустой прокси, только если его ещё нет в списке
+		var emptyProxyVm = ProxiesVms.FirstOrDefault(x => x.IsEmptyProxy);
+		if (emptyProxyVm is null)
 		{
 			emptyProxyVm = new(TgGlobalTools.Container, new());
 			ProxiesVms.Add(emptyProxyVm);
 		}
-		// Select proxy
+		// Выбираем сохранённый прокси
 		var proxiesUids = ProxiesVms.Select(x => x.Dto.Uid).ToList();
 		if (AppDto?.ProxyUid is { } proxyUid && proxiesUids.Contains(proxyUid))
 		{
 			ProxyVm = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid);
 		}
-		// Select empty proxy
+		// Используем пустой прокси, если сохранённый отсутствует
 		else
 		{
 			ProxyVm = emptyProxyVm;
@@ -326,8 +357,9 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	}
 
 	private async Task AppSaveAsync() => 
-        await ContentDialogAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
+		await ConfirmActionAsync(AppSaveCoreAsync, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
 
+    // Сохраняем выбранный прокси и регистрируем ошибки записи настроек
 	private async Task AppSaveCoreAsync()
 	{
         if (AppDto is null) return;
@@ -340,12 +372,13 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         }
         catch (Exception ex)
         {
+            LogError(ex);
             Exception = new(ex);
         }
     }
 
 	private async Task AppClearAsync() => 
-        await ContentDialogAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear(), TgEnumLoadDesktopType.Storage);
+		await ConfirmActionAsync(AppClearCoreAsync, TgResourceExtensions.AskSettingsClear(), TgEnumLoadDesktopType.Storage);
 
 	private async Task AppClearCoreAsync()
 	{
@@ -359,11 +392,15 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	}
 
 	private async Task AppDeleteAsync() => 
-        await ContentDialogAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete(), TgEnumLoadDesktopType.Storage);
+		await ConfirmActionAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete(), TgEnumLoadDesktopType.Storage);
 
+    // Удаляем настройки и очищаем данные прежней авторизации в форме
 	private async Task AppDeleteCoreAsync()
 	{
 		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
+		Password = string.Empty;
+		VerificationCode = string.Empty;
+		DataRequest = string.Empty;
 		await LoadDataStorageCoreAsync();
 	}
 

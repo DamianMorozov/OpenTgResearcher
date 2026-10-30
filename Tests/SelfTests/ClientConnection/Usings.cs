@@ -1,0 +1,12 @@
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using OpenTgResearcherDesktop.ConnectionSelfTests;
+global using OpenTgResearcherDesktop.ViewModels;
+global using System.Collections.ObjectModel;
+global using TgBusinessLogic.ViewModels;
+global using TgInfrastructure.Enums;
+global using TgInfrastructure.Helpers;
+global using TgStorage.Domain.Apps;
+global using TgStorage.Domain.Proxies;
+global using TgEfProxyViewModel = OpenTgResearcherDesktop.ConnectionSelfTests.TestProxyViewModel;
+global using TgGlobalTools = OpenTgResearcherDesktop.ConnectionSelfTests.TestGlobalTools;

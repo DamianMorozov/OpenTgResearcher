@@ -1,23 +1,14 @@
-﻿namespace TgStorage.Validators;
+namespace TgStorage.Validators;
 
-/// <summary> Proxy validator </summary>
-[DebuggerDisplay("{ToDebugString()}")]
+/// <summary> Проверка DTO по тем же правилам, что и при сохранении прокси </summary>
 public sealed class TgProxyDtoValidator : TgValidatorDtoBase<TgEfProxyEntity, TgEfProxyDto>
 {
-    #region Fields, properties, constructor
-
     public TgProxyDtoValidator()
     {
-        RuleFor(item => item.Type)
-            .NotNull();
-        RuleFor(item => item.HostName)
-            .NotEmpty()
-            .NotNull();
-        RuleFor(item => item.Port)
-            .NotNull()
-            .GreaterThan(ushort.MinValue)
-            .LessThan(ushort.MaxValue);
+        RuleFor(x => x).Custom((dto, context) =>
+        {
+            var result = new TgEfProxyValidator().Validate(TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true));
+            foreach (var error in result.Errors) context.AddFailure(error);
+        });
     }
-
-    #endregion
 }

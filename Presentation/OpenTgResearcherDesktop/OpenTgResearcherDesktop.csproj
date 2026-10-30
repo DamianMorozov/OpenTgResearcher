@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>OpenTgResearcherDesktop</RootNamespace>
     <ApplicationIcon>Assets\applicationIcon.ico</ApplicationIcon>
@@ -14,7 +14,7 @@
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-    <Version>0.7.860.0</Version>
+    <Version>0.8.10.0</Version>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
@@ -34,19 +34,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.250402" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Converters" Version="8.2.251219" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Animations" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250907003" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
-    <PackageReference Include="Velopack" Version="0.0.1298" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.6.4" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+    <PackageReference Include="Velopack" Version="1.2.161" />
     <PackageReference Include="WinUI3Localizer" Version="2.3.0" />
-    <PackageReference Include="WinUIEx" Version="2.8.0" />
-    <PackageReference Include="WTelegramClient" Version="4.3.10" />
+    <PackageReference Include="WinUIEx" Version="2.9.3" />
+    <PackageReference Include="WTelegramClient" Version="4.4.9" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿#pragma warning disable NUnit1033
+#pragma warning disable NUnit1033
 
 namespace TgStorageTests.Domain;
 
@@ -7,11 +7,11 @@ internal sealed class TgEfRepositoryGetFirstTests : TgStorageTestsBase
 {
 	#region Methods
 
-	private void GetFirst<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
+	private Task GetFirst<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo)
 		where TEfEntity : class, ITgEfEntity, new()
         where TDto : class, ITgDto, new()
     {
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			var item = (await repo.GetListAsync(TgEnumTableTopRecords.Top1, isReadOnly: true, skip: 0)).Items.FirstOrDefault();
 			TestContext.WriteLine($"  Found {item?.ToDebugString()}");
@@ -19,34 +19,34 @@ internal sealed class TgEfRepositoryGetFirstTests : TgStorageTestsBase
 	}
 
 	[Test]
-	public void TgEf_get_first_app() => GetFirst(new TgEfAppRepository());
+	public Task TgEf_get_first_app() => GetFirst(new TgEfAppRepository());
 
 	[Test]
-	public void TgEf_get_first_contact() => GetFirst(new TgEfUserRepository());
+	public Task TgEf_get_first_contact() => GetFirst(new TgEfUserRepository());
 
 	[Test]
-	public void TgEf_get_first_document() => GetFirst(new TgEfDocumentRepository());
+	public Task TgEf_get_first_document() => GetFirst(new TgEfDocumentRepository());
 
 	[Test]
-	public void TgEf_get_first_filter() => GetFirst(new TgEfFilterRepository());
+	public Task TgEf_get_first_filter() => GetFirst(new TgEfFilterRepository());
 
 	[Test]
-	public void TgEf_get_first_message() => GetFirst(new TgEfMessageRepository());
+	public Task TgEf_get_first_message() => GetFirst(new TgEfMessageRepository());
 
 	[Test]
-	public void TgEf_get_first_message_relation() => GetFirst(new TgEfMessageRelationRepository());
+	public Task TgEf_get_first_message_relation() => GetFirst(new TgEfMessageRelationRepository());
 
 	[Test]
-	public void TgEf_get_first_proxy() => GetFirst(new TgEfProxyRepository());
+	public Task TgEf_get_first_proxy() => GetFirst(new TgEfProxyRepository());
 
 	[Test]
-	public void TgEf_get_first_source() => GetFirst(new TgEfSourceRepository());
+	public Task TgEf_get_first_source() => GetFirst(new TgEfSourceRepository());
 
 	[Test]
-	public void TgEf_get_first_story() => GetFirst(new TgEfStoryRepository());
+	public Task TgEf_get_first_story() => GetFirst(new TgEfStoryRepository());
 
 	[Test]
-	public void TgEf_get_first_version() => GetFirst(new TgEfVersionRepository());
+	public Task TgEf_get_first_version() => GetFirst(new TgEfVersionRepository());
 
 	#endregion
 }

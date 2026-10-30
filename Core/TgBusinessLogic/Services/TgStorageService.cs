@@ -150,7 +150,7 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
         userDto.Status = user.status?.ToString() ?? string.Empty;
         userDto.RestrictionReason = user.restriction_reason is null ? string.Empty : string.Join("|", user.restriction_reason);
         userDto.LangCode = user.lang_code ?? string.Empty;
-        userDto.StoriesMaxId = user.stories_max_id;
+        userDto.StoriesMaxId = user.stories_max_id?.max_id ?? 0;
         userDto.BotInfoVersion = user.bot_info_version.ToString();
         userDto.BotInlinePlaceholder = user.bot_inline_placeholder?.ToString() ?? string.Empty;
         userDto.BotActiveUsers = user.bot_active_users;

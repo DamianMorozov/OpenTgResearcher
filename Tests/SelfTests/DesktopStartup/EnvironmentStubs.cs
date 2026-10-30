@@ -17,16 +17,13 @@ public sealed class MemoryFileService(string? language) : IFileService
     public void Save<T>(string folderPath, string fileName, T content) { }
 }
 
-public static class App
+public sealed class TestWindow
 {
-    public static bool IsClosing { get; set; }
-    public static TestWindow MainWindow { get; set; } = new();
-    public static ITgSettingsService? Settings { get; set; }
-    /// <summary> Возвращает исходную службу настроек </summary>
-    public static T GetService<T>() where T : class => (T)Settings!;
+    public object? Content { get; set; }
+    public int CloseCalls { get; private set; }
+    /// <summary> Запоминает закрытие без платформы Windows </summary>
+    public void Close() => CloseCalls++;
 }
-
-public sealed class TestWindow { public object? Content { get; set; } }
 public class FrameworkElement
 {
     public object? RequestedTheme { get; set; }

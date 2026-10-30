@@ -1,26 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <RootNamespace>OpenTgResearcherDesktop.Tests.MSTest</RootNamespace>
     <Platforms>x86;x64;arm64;AnyCPU</Platforms>
     <IsPackable>false</IsPackable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWinUI>true</UseWinUI>
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
     <ProjectPriFileName>resources.pri</ProjectPriFileName>
-    <Version>0.7.860.0</Version>
+    <Version>0.8.10.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
+    <PackageReference Include="coverlet.collector" Version="10.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-	<PackageReference Include="FluentAssertions" Version="8.6.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.10.4" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.10.4" />
-    <PackageReference Include="WTelegramClient" Version="4.3.10" />
+	<PackageReference Include="FluentAssertions" Version="8.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.5.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.5.2" />
+    <PackageReference Include="WTelegramClient" Version="4.4.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Presentation\OpenTgResearcherDesktop\OpenTgResearcherDesktop.csproj" />

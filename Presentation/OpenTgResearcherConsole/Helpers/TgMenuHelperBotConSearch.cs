@@ -162,7 +162,7 @@ internal partial class TgMenuHelper
         input = TgStringUtils.NormalizedTgName(input);
 
         // Get details about a user via the public username (even if not in discussion with bot)
-        var inputUser = await bot.InputUser(input);
+        var inputUser = bot.InputUser(input);
         if (inputUser is { user_id: var userId })
         {
             var userDetails = await bot.GetChat(userId);
@@ -210,7 +210,7 @@ internal partial class TgMenuHelper
         table.AddRow(TgLocale.FieldFlags, string.Join(',', tlUser.flags, tlUser.flags2));
         table.AddRow(TgLocale.FieldPhone, tlUser.phone ?? "-");
         table.AddRow(TgLocale.FieldSendPaidMessagesStars, tlUser.send_paid_messages_stars.ToString());
-        table.AddRow(TgLocale.FieldStoriesMaxId, tlUser.stories_max_id.ToString());
+        table.AddRow(TgLocale.FieldStoriesMaxId, (tlUser.stories_max_id?.max_id ?? 0).ToString());
 
         AnsiConsole.Write(table);
     }
@@ -239,7 +239,7 @@ internal partial class TgMenuHelper
             return;
         }
         BotMonitoringUserName = TgStringUtils.NormalizedTgName(userNameInput);
-        var inputUser = await bot.InputUser(BotMonitoringUserName);
+        var inputUser = bot.InputUser(BotMonitoringUserName);
         if (inputUser is { user_id: var userId })
         {
             var userDetails = await bot.GetChat(userId);

@@ -29,27 +29,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
         using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
         var tcs = new TaskCompletionSource<TgHardwareMetrics>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        service.MetricsUpdated += async (s, metrics) =>
-        {
-            try
-            {
-                await Assert.That(metrics.CpuAppPercent).IsGreaterThanOrEqualTo(0);
-                await Assert.That(metrics.CpuAppPercent).IsLessThanOrEqualTo(100);
-                await Assert.That(metrics.CpuAppPercent).IsGreaterThanOrEqualTo(0);
-                await Assert.That(metrics.CpuAppPercent).IsLessThanOrEqualTo(100);
-                await Assert.That(metrics.CpuTotalPercent).IsGreaterThanOrEqualTo(0);
-                await Assert.That(metrics.CpuTotalPercent).IsLessThanOrEqualTo(100);
-                await Assert.That(metrics.MemoryTotalPercent).IsGreaterThanOrEqualTo(0);
-                await Assert.That(metrics.MemoryTotalPercent).IsLessThanOrEqualTo(100);
-                await Assert.That(metrics.MemoryAppPercent).IsGreaterThanOrEqualTo(0);
-                await Assert.That(metrics.MemoryAppPercent).IsLessThanOrEqualTo(100);
-                tcs.TrySetResult(metrics);
-            }
-            catch (Exception ex)
-            {
-                tcs.TrySetException(ex);
-            }
-        };
+        service.MetricsUpdated += (_, metrics) => tcs.TrySetResult(metrics);
 
         service.StartMonitoring(TimeSpan.FromMilliseconds(200));
 
@@ -57,6 +37,16 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
         var completed = await Task.WhenAny(tcs.Task, Task.Delay(-1, cts.Token));
 
         await Assert.That<Task>(completed).IsSameReferenceAs(tcs.Task);
+
+        var metrics = await tcs.Task;
+        await Assert.That(metrics.CpuAppPercent).IsGreaterThanOrEqualTo(0);
+        await Assert.That(metrics.CpuAppPercent).IsLessThanOrEqualTo(100);
+        await Assert.That(metrics.CpuTotalPercent).IsGreaterThanOrEqualTo(0);
+        await Assert.That(metrics.CpuTotalPercent).IsLessThanOrEqualTo(100);
+        await Assert.That(metrics.MemoryTotalPercent).IsGreaterThanOrEqualTo(0);
+        await Assert.That(metrics.MemoryTotalPercent).IsLessThanOrEqualTo(100);
+        await Assert.That(metrics.MemoryAppPercent).IsGreaterThanOrEqualTo(0);
+        await Assert.That(metrics.MemoryAppPercent).IsLessThanOrEqualTo(100);
 
         await service.StopMonitoringAsync(isClose: false);
     }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -280,11 +280,11 @@
   <data name="SettingsPage_GitHub_InstallRequirementsNet8.Tag" xml:space="preserve">
     <value>"https://dotnet.microsoft.com/en-us/download/dotnet/8.0"</value>
   </data>
-  <data name="SettingsPage_GitHub_InstallRequirementsNet9.Content" xml:space="preserve">
-    <value>Download .NET 9.0</value>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet10.Content" xml:space="preserve">
+    <value>Download .NET 10.0</value>
   </data>
-  <data name="SettingsPage_GitHub_InstallRequirementsNet9.Tag" xml:space="preserve">
-    <value>"https://dotnet.microsoft.com/en-us/download/dotnet/9.0"</value>
+  <data name="SettingsPage_GitHub_InstallRequirementsNet10.Tag" xml:space="preserve">
+    <value>"https://dotnet.microsoft.com/en-us/download/dotnet/10.0"</value>
   </data>
   <data name="SettingsPage_GitHub_InstallRequirementsRegisterTelegram.Content" xml:space="preserve">
     <value>Register Telegram app (open web-site)</value>
@@ -1700,4 +1700,5 @@
   <data name="FeatureLicensePurchase" xml:space="preserve">
     <value>To use this feature, you must purchase the specified license</value>
   </data>
+  <data name="ActionBackToList.Text" xml:space="preserve"><value>Back to list</value></data>
 </root>

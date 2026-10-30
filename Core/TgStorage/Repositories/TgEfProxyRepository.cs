@@ -1,4 +1,4 @@
-﻿namespace TgStorage.Repositories;
+namespace TgStorage.Repositories;
 
 /// <summary> EF proxy repository </summary>
 public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, TgEfProxyDto>, ITgEfProxyRepository
@@ -183,13 +183,14 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
     {
         try
         {
-            // Build minimal default proxy entity
+            // Создаём стандартную запись без прокси
             await SaveAsync(new TgEfProxyDto());
         }
         catch (Exception ex)
         {
-            // Log and swallow to keep application stable
-            TgLogUtils.WriteException(ex, "Error creating default proxy!");
+            // Передаём ошибку вызывающей странице после журналирования
+            TgLogUtils.WriteExceptionWithMessage(ex, "Ошибка создания стандартного прокси");
+            throw;
         }
     }
 
@@ -199,44 +200,71 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
         TgEfProxyEntity? entity = null;
         try
         {
-            if (dto is null)
+            ArgumentNullException.ThrowIfNull(dto);
+            var candidate = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+            candidate.HostName = candidate.HostName.Trim();
+            ValidateAndNormalize(candidate);
+            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            var duplicate = await GetQuery().FirstOrDefaultAsync(x => x.Uid != dto.Uid && x.Type == candidate.Type &&
+                x.HostName == candidate.HostName && x.Port == candidate.Port, ct);
+            if (duplicate is not null)
+            {
+                if (candidate.Type != TgEnumProxyType.None || entity is not null)
+                    throw new InvalidOperationException("Прокси с таким типом, адресом и портом уже существует");
+                dto.Uid = duplicate.Uid;
                 return;
-
-            // Try to find existing entity
-            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid);
-            // Find by Type and HostName and Port
-            if (entity is null)
-                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Type == dto.Type && x.HostName == dto.HostName && x.Port == dto.Port);
-
+            }
             if (entity is null)
             {
-                if (EfContext is DbContext dbContext)
-                    dbContext.ChangeTracker.Clear();
-                // Create new entity
-                entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                entity = candidate;
                 EfContext.Proxies.Add(entity);
             }
             else
             {
-                // Update existing entity
-                TgEfDomainUtils.FillEntity(dto, entity, isUidCopy: false);
+                TgEfDomainUtils.FillEntity(TgEfDomainUtils.CreateNewDto(candidate, isUidCopy: true), entity, isUidCopy: false);
             }
-
-            ValidateAndNormalize(entity);
-            await EfContext.SaveChangesAsync();
+            await EfContext.SaveChangesAsync(ct);
+            dto.Uid = entity.Uid;
+            dto.HostName = entity.HostName;
         }
         catch (Exception ex)
         {
-            TgLogUtils.WriteException(ex, "Error saving proxy");
+            TgLogUtils.WriteExceptionWithMessage(ex, "Ошибка сохранения прокси");
             throw;
         }
         finally
         {
-            // Avoid EF tracking issues
-            if (entity is not null)
-                EfContext.DetachItem(entity);
+            // Освобождаем только изменённую запись, сохраняя остальные отслеживаемые объекты
+            if (entity is not null) EfContext.DetachItem(entity);
         }
     }
+
+    /// <inheritdoc />
+    public override Task<TgEfStorageResult<TgEfProxyEntity>> DeleteAsync(TgEfProxyEntity item, CancellationToken ct = default) =>
+        DeleteAsync(x => x.Uid == item.Uid, ct);
+
+    /// <inheritdoc />
+    public override async Task<TgEfStorageResult<TgEfProxyEntity>> DeleteAsync(Expression<Func<TgEfProxyEntity, bool>> where, CancellationToken ct = default)
+    {
+        try
+        {
+            await using var transaction = await EfContext.Database.BeginTransactionAsync(ct);
+            var proxies = EfContext.Proxies.Where(where);
+            await EfContext.Apps.Where(x => x.ProxyUid != null && proxies.Any(p => p.Uid == x.ProxyUid))
+                .ExecuteUpdateAsync(x => x.SetProperty(a => a.ProxyUid, (Guid?)null), ct);
+            var count = await proxies.ExecuteDeleteAsync(ct);
+            await transaction.CommitAsync(ct);
+            return new(count > 0 ? TgEnumEntityState.IsDeleted : TgEnumEntityState.NotDeleted);
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Ошибка удаления прокси");
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
+    public override Task<TgEfStorageResult<TgEfProxyEntity>> DeleteAllAsync(CancellationToken ct = default) => DeleteAsync(x => true, ct);
 
     /// <inheritdoc />
     public async Task SaveListAsync(IEnumerable<TgEfProxyDto> dtos, CancellationToken ct = default)

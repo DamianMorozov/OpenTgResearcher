@@ -1,4 +1,4 @@
-﻿namespace TgStorageTests;
+namespace TgStorageTests;
 
 [TestFixture]
 internal sealed class TgEfContextCompactTablesTests : TgStorageTestsBase
@@ -6,9 +6,9 @@ internal sealed class TgEfContextCompactTablesTests : TgStorageTestsBase
 	#region Methods
 
 	[Test]
-	public void Compact_db()
+	public Task Compact_db()
 	{
-		Assert.DoesNotThrowAsync(StorageManager.ShrinkDbAsync);
+		return Assert.DoesNotThrowAsync(StorageManager.ShrinkDbAsync);
 	}
 
 	#endregion

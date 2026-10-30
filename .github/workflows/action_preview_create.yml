@@ -44,7 +44,7 @@ jobs:
       # - name: Set up .NET
       #   uses: actions/setup-dotnet@v4
       #   with:
-      #     dotnet-version: '9.0.x'
+      #     dotnet-version: '10.0.x'
       # - name: Configure Git
       #   run: |
       #       git config --global user.name "Damian Viktorovich Morozov"

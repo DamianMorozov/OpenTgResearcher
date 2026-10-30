@@ -16,20 +16,8 @@
 	Rebuild			Clean and Build sequence											During rebuilding
 	AfterRebuild	Executed after the Rebuild process is complete						After rebuilding
 	-->
-	<!-- Setting the IsRebuild property before starting the rebuilding -->
-	<Target Name="SetRebuildFlag" BeforeTargets="BeforeRebuild">
-		<PropertyGroup>
-			<IsRebuild>true</IsRebuild>
-		</PropertyGroup>
-	</Target>
-	<!-- Standard cleaning target -->
-	<Target Name="CleanTargetDir" AfterTargets="Clean" Condition="'$(IsRebuild)' != 'true'">
+	<!-- Очистка выполняется один раз до сборки, включая Rebuild -->
+	<Target Name="CleanTargetDir" AfterTargets="Clean">
 		<RemoveDir Directories="$(TargetDir)" ContinueOnError="true" />
-	</Target>
-	<!-- Resetting the IsRebuild property after cleaning -->
-	<Target Name="ResetRebuildFlag" AfterTargets="Clean">
-		<PropertyGroup>
-			<IsRebuild>false</IsRebuild>
-		</PropertyGroup>
 	</Target>
 </Project>

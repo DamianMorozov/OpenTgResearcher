@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.7.860.0</Version>
+    <Version>0.8.10.0</Version>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <ProjectReference Include="../../../Core/TgInfrastructure/TgInfrastructure.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgLogsViewModel.cs" Link="TgLogsViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgLogFile.cs" Link="TgLogFile.cs" />

@@ -1,4 +1,4 @@
-﻿#pragma warning disable NUnit1033
+#pragma warning disable NUnit1033
 
 namespace TgStorageTests.Utils;
 
@@ -8,9 +8,9 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 	#region Methods
 
 	[Test]
-	public void Check_version_last_async()
+	public Task Check_version_last_async()
 	{
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
@@ -26,9 +26,9 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 	}
 
 	[Test]
-	public void Check_version_last_with_add_default_async()
+	public Task Check_version_last_with_add_default_async()
 	{
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();
@@ -46,9 +46,9 @@ internal sealed class TgStorageTestsUtils : TgStorageTestsBase
 	}
 
 	[Test]
-	public void Check_version_last_when_only_default_async()
+	public Task Check_version_last_when_only_default_async()
 	{
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfVersionRepository versionRepository = new();
 			await versionRepository.FillTableVersionsAsync();

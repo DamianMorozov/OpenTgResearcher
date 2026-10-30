@@ -1,4 +1,4 @@
-﻿#pragma warning disable NUnit1033
+#pragma warning disable NUnit1033
 
 namespace TgStorageTests.Domain;
 
@@ -7,11 +7,11 @@ internal sealed class TgEfRepositoryGetCountWhereTests : TgStorageTestsBase
 {
 	#region Methods
 
-	private void GetCountWhereAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo) 
+	private Task GetCountWhereAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo)
 		where TEfEntity : class, ITgEfEntity, new()
         where TDto : class, ITgDto, new()
     {
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			var count = await repo.GetCountAsync(TgGlobalTools.WhereUidNotEmpty<TEfEntity>());
 			TestContext.WriteLine($"  Found {count} items.");
@@ -19,34 +19,34 @@ internal sealed class TgEfRepositoryGetCountWhereTests : TgStorageTestsBase
 	}
 
 	[Test]
-	public void TgEf_get_count_apps_async() => GetCountWhereAsync(new TgEfAppRepository());
+	public Task TgEf_get_count_apps_async() => GetCountWhereAsync(new TgEfAppRepository());
 
 	[Test]
-	public void TgEf_get_count_contacts_async() => GetCountWhereAsync(new TgEfUserRepository());
+	public Task TgEf_get_count_contacts_async() => GetCountWhereAsync(new TgEfUserRepository());
 
 	[Test]
-	public void TgEf_get_count_documents_async() => GetCountWhereAsync(new TgEfDocumentRepository());
+	public Task TgEf_get_count_documents_async() => GetCountWhereAsync(new TgEfDocumentRepository());
 
 	[Test]
-	public void TgEf_get_count_filters_async() => GetCountWhereAsync(new TgEfFilterRepository());
+	public Task TgEf_get_count_filters_async() => GetCountWhereAsync(new TgEfFilterRepository());
 
 	[Test]
-	public void TgEf_get_count_messages_async() => GetCountWhereAsync(new TgEfMessageRepository());
+	public Task TgEf_get_count_messages_async() => GetCountWhereAsync(new TgEfMessageRepository());
 
 	[Test]
-	public void TgEf_get_count_messages_relations_async() => GetCountWhereAsync(new TgEfMessageRelationRepository());
+	public Task TgEf_get_count_messages_relations_async() => GetCountWhereAsync(new TgEfMessageRelationRepository());
 
 	[Test]
-	public void TgEf_get_count_proxies_async() => GetCountWhereAsync(new TgEfProxyRepository());
+	public Task TgEf_get_count_proxies_async() => GetCountWhereAsync(new TgEfProxyRepository());
 
 	[Test]
-	public void TgEf_get_count_sources_async() => GetCountWhereAsync(new TgEfSourceRepository());
+	public Task TgEf_get_count_sources_async() => GetCountWhereAsync(new TgEfSourceRepository());
 
 	[Test]
-	public void TgEf_get_count_stories_async() => GetCountWhereAsync(new TgEfStoryRepository());
+	public Task TgEf_get_count_stories_async() => GetCountWhereAsync(new TgEfStoryRepository());
 
 	[Test]
-	public void TgEf_get_count_versions_async() => GetCountWhereAsync(new TgEfVersionRepository());
+	public Task TgEf_get_count_versions_async() => GetCountWhereAsync(new TgEfVersionRepository());
 
 	#endregion
 }

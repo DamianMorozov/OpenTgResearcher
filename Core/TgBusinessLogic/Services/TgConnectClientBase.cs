@@ -12,6 +12,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private static TgLocaleHelper TgLocale => TgLocaleHelper.Instance;
     private static TgLogHelper TgLog => TgLogHelper.Instance;
     public Client? Client { get; set; } = default!;
+    private Client.TcpFactory? _defaultTcpHandler;
     public Bot? Bot { get; private set; } = default!;
     public TgBotInfoDto? BotInfoDto { get; private set; } = default!;
     public StreamWriter? BotStreamWriterLogs { get; private set; } = default!;
@@ -133,16 +134,20 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     #region IDisposable
 
-    /// <summary> Release managed resources </summary>
-    public override async void ReleaseManagedResources()
+    /// <summary> Отключает транспорт и освобождает ресурсы до возврата Dispose </summary>
+    public override void ReleaseManagedResources()
     {
-        var tasks = new List<Task>
-        {
-            DisconnectClientAsync(),
-            DisconnectBotAsync(),
-            ReleaseBuffersAsync(),
-        };
-        await Task.WhenAll(tasks);
+        ResetClientCallbacks();
+        LoadStateService.StopHardAllProcessing();
+        Task.Run(ReleaseClientResourcesAsync).GetAwaiter().GetResult();
+    }
+
+    // Ожидаем отключения без контекста интерфейса до освобождения буферов и кеша
+    private async Task ReleaseClientResourcesAsync()
+    {
+        await DisconnectClientAsync(isAfterClientConnect: false).ConfigureAwait(false);
+        await DisconnectBotAsync(isAfterClientConnect: false).ConfigureAwait(false);
+        await ReleaseBuffersAsync().ConfigureAwait(false);
     }
 
     /// <summary> Release unmanaged resources </summary>
@@ -224,6 +229,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         ClientException = new();
         ProxyException = new();
 
+        ResetClientCallbacks();
+        WTelegram.Helpers.Log = BuildTelegramLogAction();
+    }
+
+    // Отвязываем клиент от интерфейса перед освобождением ресурсов
+    private void ResetClientCallbacks()
+    {
         UpdateTitleAsync = _ => Task.CompletedTask;
         UpdateStateProxyAsync = _ => Task.CompletedTask;
         UpdateStateExceptionAsync = (_, _, _, _) => Task.CompletedTask;
@@ -238,8 +250,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         UpdateStateFileAsync = (_, _, _, _, _, _, _, _) => Task.CompletedTask;
         UpdateStateMessageAsync = _ => Task.CompletedTask;
         UpdateStateMessageThreadAsync = (_, _, _, _, _) => Task.CompletedTask;
-
-        WTelegram.Helpers.Log = BuildTelegramLogAction();
     }
 
     /// <inheritdoc />
@@ -386,6 +396,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await LoadStateService.PrepareFloodLogTokenAsync(_floodLogUid);
 
         Client = new(config);
+        _defaultTcpHandler = Client.TcpHandler;
         await ConnectThroughProxyAsync(proxyDto, isDesktop);
         Client.OnOther += OnClientOtherAsync;
         Client.OnOwnUpdates += OnOwnUpdatesClientAsync;
@@ -393,51 +404,66 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await LoginUserAsync(isProxyUpdate: true);
     }
 
+    /// <summary> Настраивает транспорт прокси до авторизации клиента </summary>
     public async Task ConnectThroughProxyAsync(TgEfProxyDto proxyDto, bool isDesktop)
     {
         IsProxyUsage = false;
-        if (!await CheckClientConnectionReadyAsync())
-            return;
+        ProxyException = new();
         if (Client is null)
             return;
-        if (proxyDto.Uid == Guid.Empty)
-            return;
+        // WTelegram вызывает фабрику напрямую, поэтому возвращаем штатный обработчик вместо null
+        _defaultTcpHandler ??= Client.TcpHandler;
+        Client.TcpHandler = _defaultTcpHandler;
+        Client.MTProxyUrl = null;
         if (!isDesktop && !TgAppSettings.IsUseProxy)
             return;
         if (Equals(proxyDto.Type, TgEnumProxyType.None))
             return;
-        if (!TgGlobalTools.GetValidDto<TgEfProxyEntity, TgEfProxyDto>(proxyDto).IsValid)
-            return;
-
         try
         {
-            ProxyException = new();
-            IsProxyUsage = true;
+            // Настраиваем транспорт до авторизации: пользователь Me ещё не получен
+            var validation = TgGlobalTools.GetValidDto<TgEfProxyEntity, TgEfProxyDto>(proxyDto);
+            if (!validation.IsValid) throw new ArgumentException(string.Join("; ", validation.Errors.Select(x => x.ErrorMessage)));
             switch (proxyDto.Type)
             {
                 case TgEnumProxyType.Http:
                 case TgEnumProxyType.Socks:
-                    Client.TcpHandler = (address, port) =>
+                    Client.TcpHandler = async (address, port) =>
                     {
-                        Socks5ProxyClient proxyClient = string.IsNullOrEmpty(proxyDto.UserName) && string.IsNullOrEmpty(proxyDto.Password)
-                            ? new(proxyDto.HostName, proxyDto.Port) : new(proxyDto.HostName, proxyDto.Port, proxyDto.UserName, proxyDto.Password);
-                        UpdateStateProxyAsync(TgLocale.ProxyIsConnected);
-                        return Task.FromResult(proxyClient.CreateConnection(address, port));
+                        try
+                        {
+                            var isAnonymous = string.IsNullOrEmpty(proxyDto.UserName) && string.IsNullOrEmpty(proxyDto.Password);
+                            IProxyClient proxyClient = proxyDto.Type == TgEnumProxyType.Http
+                                ? isAnonymous ? new HttpProxyClient(proxyDto.HostName, proxyDto.Port)
+                                    : new HttpProxyClient(proxyDto.HostName, proxyDto.Port, proxyDto.UserName, proxyDto.Password)
+                                : isAnonymous ? new Socks5ProxyClient(proxyDto.HostName, proxyDto.Port)
+                                    : new Socks5ProxyClient(proxyDto.HostName, proxyDto.Port, proxyDto.UserName, proxyDto.Password);
+                            var socket = await Task.Run(() => proxyClient.CreateConnection(address, port));
+                            await UpdateStateProxyAsync(TgLocale.ProxyIsConnected);
+                            return socket;
+                        }
+                        catch (Exception ex)
+                        {
+                            TgLogUtils.WriteException(ex);
+                            await SetProxyExceptionAsync(ex);
+                            throw;
+                        }
                     };
                     break;
                 case TgEnumProxyType.MtProto:
                     Client.MTProxyUrl = string.IsNullOrEmpty(proxyDto.Secret)
-                        ? $"https://t.me/proxy?server={proxyDto.HostName}&port={proxyDto.Port}"
-                        : $"https://t.me/proxy?server={proxyDto.HostName}&port={proxyDto.Port}&secret={proxyDto.Secret}";
-                    await UpdateStateProxyAsync(TgLocale.ProxyIsConnected);
+                        ? $"https://t.me/proxy?server={Uri.EscapeDataString(proxyDto.HostName)}&port={proxyDto.Port}"
+                        : $"https://t.me/proxy?server={Uri.EscapeDataString(proxyDto.HostName)}&port={proxyDto.Port}&secret={Uri.EscapeDataString(proxyDto.Secret)}";
                     break;
             }
+            IsProxyUsage = true;
         }
         catch (Exception ex)
         {
             TgLogUtils.WriteException(ex);
             IsProxyUsage = false;
             await SetProxyExceptionAsync(ex);
+            throw;
         }
     }
 
@@ -2521,7 +2547,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (message.From is TL.PeerUser peerUser)
             {
                 //var inputChannel = new TL.InputChannel(channel.id, channel.access_hash);
-                var chatBase = GetChatBaseFromUserChats(message.peer_id);
+                var chatBase = GetChatBaseFromUserChats(message.peer_id.ID);
                 var inputChannel = GetInputChannelFromChatBase(chatBase);
                 if (inputChannel is not null && inputChannel.access_hash != 0)
                 {
@@ -3011,8 +3037,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
                             // Call Telegram API with cancellation support
-                            await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, null,
-                                ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
+                            await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, thumbSize: null,
+                                progress: ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
                             var authorId = messageBase.From?.ID ?? 0;
                             await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
                                 TgEnumMessageType.Document, isRetry: false, authorId, ct);
@@ -3548,10 +3574,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     return ClientResultDisconnected();
                 break;
         }
-        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-        var proxyDto = await StorageManager.ProxyRepository.GetDtoAsync(appDto.ProxyUid);
-        if (TgAppSettings.IsUseProxy && proxyDto.Uid != Guid.Empty)
-            return ClientResultDisconnected();
         if (ProxyException.IsExist || ClientException.IsExist)
             return ClientResultDisconnected();
 
@@ -3566,10 +3588,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         if (!result)
             return ClientResultDisconnected();
 
-        var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
-        var proxyDto = await StorageManager.ProxyRepository.GetDtoAsync(appDto.ProxyUid);
-        if (TgAppSettings.IsUseProxy && proxyDto.Uid != Guid.Empty)
-            return ClientResultDisconnected();
         if (ProxyException.IsExist || ClientException.IsExist)
             return ClientResultDisconnected();
 
@@ -4121,7 +4139,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 permissions.Add(nameof(chatDetails.Permissions.CanInviteUsers));
             if (chatDetails.Permissions.CanPinMessages)
                 permissions.Add(nameof(chatDetails.Permissions.CanPinMessages));
-            if (chatDetails.Permissions.CanManageTopics)
+            if (chatDetails.Permissions.CanManageTopics == true)
                 permissions.Add(nameof(chatDetails.Permissions.CanManageTopics));
             chatDetailsDto.Permissions = string.Join(", ", permissions);
         }

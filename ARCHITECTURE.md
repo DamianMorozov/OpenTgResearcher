@@ -12,12 +12,12 @@ Desktop и Console работают в отдельных процессах, и
 
 | Проект | Платформа | Ответственность |
 | --- | --- | --- |
-| [OpenTgResearcherDesktop](Presentation/OpenTgResearcherDesktop/OpenTgResearcherDesktop.csproj) | `net9.0-windows10.0.19041.0`, WinUI 3 | XAML-страницы, модели представления, навигация, настройки, локализация, уведомления и сборка MSIX |
-| [OpenTgResearcherConsole](Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj) | `net9.0`, консоль | Интерактивные меню Spectre.Console, настройка подключения, поиск, скачивание и управление хранилищем |
-| [TgBusinessLogic](Core/TgBusinessLogic/TgBusinessLogic.csproj) | `net9.0` | Подключение к Telegram, обработка сообщений и медиа, кеширование, буферы записи, лицензирование, состояния операций и мониторинг оборудования |
-| [TgStorage](Core/TgStorage/TgStorage.csproj) | `net9.0` | EF Core и SQLite, контексты, сущности, DTO, репозитории, валидаторы, миграции и общие настройки приложения |
-| [TgInfrastructure](Core/TgInfrastructure/TgInfrastructure.csproj) | `net9.0` | Общие контракты, перечисления, DTO, базовые модели представления, локализация и вспомогательные операции с файлами и журналами |
-| [OpenTgResearcherDesktopCore](Core/OpenTgResearcherDesktopCore/OpenTgResearcherDesktopCore.csproj) | `net9.0` | Контракт `IFileService` и JSON-файловый сервис настроек Desktop; также содержит шаблонные модели `Sample*` и контракт `ISampleDataService` |
+| [OpenTgResearcherDesktop](Presentation/OpenTgResearcherDesktop/OpenTgResearcherDesktop.csproj) | `net10.0-windows10.0.19041.0`, WinUI 3 | XAML-страницы, модели представления, навигация, настройки, локализация, уведомления и сборка MSIX |
+| [OpenTgResearcherConsole](Presentation/OpenTgResearcherConsole/OpenTgResearcherConsole.csproj) | `net10.0`, консоль | Интерактивные меню Spectre.Console, настройка подключения, поиск, скачивание и управление хранилищем |
+| [TgBusinessLogic](Core/TgBusinessLogic/TgBusinessLogic.csproj) | `net10.0` | Подключение к Telegram, обработка сообщений и медиа, кеширование, буферы записи, лицензирование, состояния операций и мониторинг оборудования |
+| [TgStorage](Core/TgStorage/TgStorage.csproj) | `net10.0` | EF Core и SQLite, контексты, сущности, DTO, репозитории, валидаторы, миграции и общие настройки приложения |
+| [TgInfrastructure](Core/TgInfrastructure/TgInfrastructure.csproj) | `net10.0` | Общие контракты, перечисления, DTO, базовые модели представления, локализация и вспомогательные операции с файлами и журналами |
+| [OpenTgResearcherDesktopCore](Core/OpenTgResearcherDesktopCore/OpenTgResearcherDesktopCore.csproj) | `net10.0` | Контракт `IFileService` и JSON-файловый сервис настроек Desktop; также содержит шаблонные модели `Sample*` и контракт `ISampleDataService` |
 
 ### Ссылки между основными проектами
 
@@ -72,13 +72,15 @@ flowchart TD
     Host["App: Generic Host + Autofac"] --> Manager["OnLaunched: область и BusinessLogicManager"]
     Manager --> Database["Создание и обновление БД; очистка кеша"]
     Database --> Language["Чтение сохранённого языка; ожидание инициализации локализатора"]
-    Language --> Window["Создание MainWindow; обработчик Closed"]
+    Language --> Window["Создание MainWindow; обработчики Closing и Closed"]
     Window --> Activation["ActivationService: настройки, ShellPage, обработчики активации"]
     Activation --> Splash["Показ TgSplashScreenPage"]
     Splash --> Stages["Журнал → Velopack → настройки → хранилище → лицензия → уведомления → мониторинг"]
     Stages --> Complete["Завершение загрузки; команда Продолжить возвращает ShellPage"]
-    Window -. "Closed" .-> Closing["App.IsClosing = true"]
+    Window -. "Closing" .-> Closing["App.IsClosing = true; отмена немедленного закрытия"]
     Closing -.-> Guards["Продолжения загрузки и локализации прекращают обновление XAML"]
+    Closing --> Disconnect["Ожидание Dispose клиента: отмена операций, отключение транспорта, освобождение сессии и кеша"]
+    Disconnect --> Close["MainWindow.Close после завершения отключения"]
 ```
 
 Порядок подтверждается [ActivationService](Presentation/OpenTgResearcherDesktop/Services/ActivationService.cs),
@@ -86,7 +88,8 @@ flowchart TD
 и её [моделью представления](Presentation/OpenTgResearcherDesktop/ViewModels/TgSplashScreenViewModel.cs).
 Создание и обновление хранилища вызывается как до показа окна, так и на этапе заставки.
 Флаг `App.IsClosing` защищает конкретные продолжения интерфейса; он не является общим токеном отмены всех сервисов.
-При `ProcessExit` приложение освобождает Host, журнал, менеджер и область контейнера.
+Обработчик закрытия в [App.Shutdown.cs](Presentation/OpenTgResearcherDesktop/App.Shutdown.cs) ожидает освобождения Telegram-клиента до уничтожения окна. Клиент отвязывает UI-обработчики, завершает транспорт и освобождает файл сессии без выхода из учётной записи. При ошибке завершения окно остаётся открытым, исключение записывается в журнал.
+При `ProcessExit` приложение повторно вызывает идемпотентный Dispose клиента без UI-команд, освобождает Host, менеджер и область контейнера, затем закрывает журнал.
 [Мониторинг оборудования](Core/TgBusinessLogic/Services/TgHardwareResourceMonitoringService.cs) при освобождении ожидает остановки фоновой задачи.
 
 ## Обработка сообщений и медиа
@@ -140,7 +143,7 @@ FusionCache используется для результатов запрос�
 | Общие настройки | [TgAppSettingsHelper](Core/TgStorage/Helpers/TgAppSettingsHelper.cs): конфигурация приложения, включая XML; путь SQLite выбирается в `GetDataSource` по типу приложения |
 | Локализация Desktop | WinUI3Localizer; Package читает `LocalState/Strings`, Unpackaged — `Strings` рядом с исполняемым файлом; язык выбирается до создания окна |
 | Журналы | [TgLogUtils](Core/TgInfrastructure/Helpers/TgLogUtils.cs): у Desktop и Console отдельные каталоги `current` внутри LocalApplicationData; Desktop читает журналы через `TgLogsViewModel` |
-| Telegram | WTelegramClient, WTelegramBot; настройки подключения и прокси берутся из хранилища, авторизация использует файл сессии |
+| Telegram | WTelegramClient, WTelegramBot; настройки подключения и прокси берутся из хранилища; транспорт HTTP CONNECT, SOCKS5 или MTProto задаётся до авторизации, которая использует файл сессии |
 | Интерфейс и интеграции | WinUI 3, WinUIEx, CommunityToolkit.Mvvm, уведомления Windows; Spectre.Console в Console; Velopack в обоих приложениях |
 | Мониторинг | LibreHardwareMonitor и `TgHardwareResourceMonitoringService`; метрики передаются подписчикам |
 
@@ -163,6 +166,9 @@ FusionCache используется для результатов запрос�
 | [OpenTgResearcherDesktop.Tests](Tests/OpenTgResearcherDesktop.Tests.MSTests/OpenTgResearcherDesktop.Tests.csproj) | MSTest с WinUI-хостом и ссылкой на Desktop; текущий тест `Assert.IsTrue(true)` не проверяет поведение приложения |
 | [LogsPage.SelfTest](Tests/SelfTests/LogsPage/LogsPage.SelfTest.csproj) | Консольный селфтест: исходные VM, модель и контракт страницы журналов подключены через `Compile Link`; UI заменён заглушками, файловые операции реальные; прямая ссылка на `TgInfrastructure` |
 | [DesktopStartup.SelfTest](Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.csproj) | Консольный селфтест: исходные служба, модель и контракт настроек через `Compile Link`, заглушки WinUI/локализатора; реальный мониторинг из `TgBusinessLogic` |
+| [ClientConnection.SelfTest](Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj) | Консольный селфтест: исходная VM подключения через `Compile Link`, настоящие DTO из `TgBusinessLogic`/`TgStorage`; UI, репозитории и клиент подменены, подключения к Telegram не выполняются |
+| [Proxies.SelfTest](Tests/SelfTests/Proxies/Proxies.SelfTest.csproj) | Исходные VM списка и карточки прокси, общий обработчик подтверждений через `Compile Link`; настоящие репозиторий и SQLite в памяти, HTTP CONNECT и SOCKS5 на loopback, настройка MTProto без Telegram; явный режим `--live` проверяет Desktop-подключение без прокси и с первой записью, используя БД только для чтения и копии сессии |
+| [TelegramCompatibility.SelfTest](Tests/SelfTests/TelegramCompatibility/TelegramCompatibility.SelfTest.csproj) | Совместимость с обновлёнными API WTelegram и Telegram.Bot: сохранение ID истории настоящим сервисом и репозиторием в SQLite в памяти, три состояния разрешения управления темами; без Telegram |
 
 ```mermaid
 flowchart LR
@@ -176,17 +182,23 @@ flowchart LR
     DesktopTests["OpenTgResearcherDesktop.Tests"] --> Desktop["OpenTgResearcherDesktop"]
     LogsTests["LogsPage.SelfTest"] --> Infrastructure
     StartupTests["DesktopStartup.SelfTest"] --> Business
+    ConnectionTests["ClientConnection.SelfTest"] --> Business
+    ProxyTests["Proxies.SelfTest"] --> Business
+    TelegramCompatibilityTests["TelegramCompatibility.SelfTest"] --> Business
     ConsoleTests["OpenTgResearcherConsoleTests: без ProjectReference"]
     LogsTests -. "Compile Link" .-> LogsSource["Исходники страницы журналов Desktop"]
     StartupTests -. "Compile Link" .-> SettingsSource["Исходники настроек Desktop"]
+    ConnectionTests -. "Compile Link" .-> ConnectionSource["Исходная VM подключения Desktop"]
+    ProxyTests -. "Compile Link" .-> ProxySource["Исходники страниц прокси Desktop"]
 ```
 
 Селфтесты с заглушками проверяют поведение подключённых исходников, но не воспроизводят полностью отрисовку и жизненный цикл WinUI.
-Дополнительно существуют два скрипта:
+Дополнительные скрипты проверки:
 
 - [Test-DesktopArchitecture.ps1](Tests/SelfTests/Test-DesktopArchitecture.ps1) проверяет выбор архитектуры Windows App SDK в конфигурациях решения, не компилируя приложение.
+- [Test-RebuildOutputs.ps1](Tests/SelfTests/Test-RebuildOutputs.ps1) воспроизводит отложенный запуск цели очистки после Rebuild на отдельном MSBuild-проекте и проверяет сохранность результата сборки.
 - [Test-DesktopShutdown.ps1](Tests/SelfTests/Test-DesktopShutdown.ps1) запускает установленный Package под CDB, закрывает окно и анализирует завершение; требует Windows SDK Debuggers и полного имени установленного пакета.
 
-В решении `Any CPU` для Desktop и его MSTest-проекта сопоставлен с `x64`, поскольку `WindowsAppSDKSelfContained` требует конкретной архитектуры.
+В решении `Any CPU` для Desktop и его MSTest-проекта сопоставлен с `x64`. Приложение включает Windows App SDK в режиме `WindowsAppSDKSelfContained`; библиотека тестов использует SDK приложения и не включает его самостоятельно.
 Скрипт проверки архитектуры относится к платформе сборки; он не проверяет описанные здесь связи компонентов.
 Исходники Console включают Dockerfile с терминалом `ttyd`; Docker не является отдельным C#-проектом решения.

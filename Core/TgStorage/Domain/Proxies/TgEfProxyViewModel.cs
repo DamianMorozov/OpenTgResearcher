@@ -40,8 +40,8 @@ public sealed partial class TgEfProxyViewModel : TgEntityViewModelBase<TgEfProxy
     /// <inheritdoc />
     public void Fill(TgEfProxyEntity item) => Dto = TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
-    /// <summary> Check if the proxy is empty </summary>
-    public bool IsEmptyProxy => Dto.Type == TgEnumProxyType.None && (Dto.UserName == "No user" || Dto.Password == "No password");
+    /// <summary> Определяет прямое соединение независимо от текстовых заглушек реквизитов </summary>
+    public bool IsEmptyProxy => Dto.Type == TgEnumProxyType.None;
 
     #endregion
 }

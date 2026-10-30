@@ -184,24 +184,25 @@ public partial class App : Application
         AppDomain.CurrentDomain.ProcessExit += (s, e) => OnProcessExit();
     }
 
+    /// <summary> Освобождает ресурсы без обращения к уже закрытому интерфейсу </summary>
     public void OnProcessExit()
     {
-        var clientConnectionVm = VmLocator.Get<TgClientConnectionViewModel>();
-        if (clientConnectionVm is not null)
+        try
         {
-            if (clientConnectionVm.IsOnlineReady)
-            {
-                clientConnectionVm.ClientDisconnectCommand.Execute(false);
-            }
+            BusinessLogicManager?.ConnectClient.Dispose();
+            Host.Dispose();
+            BusinessLogicManager?.Dispose();
+            Scope?.Dispose();
         }
-
-        Host.Dispose();
-        TgLogUtils.CloseAndFlush();
-
-        BusinessLogicManager.Dispose();
-        Scope.Dispose();
-
-        GC.SuppressFinalize(this);
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+        finally
+        {
+            TgLogUtils.CloseAndFlush();
+            GC.SuppressFinalize(this);
+        }
     }
 
     #endregion
@@ -246,6 +247,7 @@ public partial class App : Application
 
             // MainWindow
             MainWindow ??= new MainWindow();
+            MainWindow.AppWindow.Closing += MainWindow_Closing;
             MainWindow.Closed += MainWindow_Closed;
             if (MainWindow?.DispatcherQueue is not null)
             {

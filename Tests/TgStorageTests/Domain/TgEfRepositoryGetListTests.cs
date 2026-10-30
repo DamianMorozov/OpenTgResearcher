@@ -1,4 +1,4 @@
-﻿#pragma warning disable NUnit1033
+#pragma warning disable NUnit1033
 
 namespace TgStorageTests.Domain;
 
@@ -7,11 +7,11 @@ internal sealed class TgEfRepositoryGetListTests : TgStorageTestsBase
 {
 	#region Methods
 
-	private void GetListAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20) 
+	private Task GetListAsync<TEfEntity, TDto>(ITgEfRepository<TEfEntity, TDto> repo, TgEnumTableTopRecords count = TgEnumTableTopRecords.Top20)
 		where TEfEntity : class, ITgEfEntity, new()
         where TDto : class, ITgDto, new()
     {
-		Assert.DoesNotThrowAsync(async () =>
+		return Assert.DoesNotThrowAsync(async () =>
 		{
 			TgEfStorageResult<TEfEntity> storageResult = await repo.GetListAsync(count, 0);
 			TestContext.WriteLine($"  Found {storageResult.Items.Count()} items.");
@@ -25,34 +25,34 @@ internal sealed class TgEfRepositoryGetListTests : TgStorageTestsBase
 	}
 
 	[Test]
-	public void Get_apps_async() => GetListAsync(new TgEfAppRepository());
+	public Task Get_apps_async() => GetListAsync(new TgEfAppRepository());
 
 	[Test]
-	public void Get_contacts_async() => GetListAsync(new TgEfUserRepository());
+	public Task Get_contacts_async() => GetListAsync(new TgEfUserRepository());
 
 	[Test]
-	public void Get_documents_async() => GetListAsync(new TgEfDocumentRepository());
+	public Task Get_documents_async() => GetListAsync(new TgEfDocumentRepository());
 
 	[Test]
-	public void Get_filters_async() => GetListAsync(new TgEfFilterRepository());
+	public Task Get_filters_async() => GetListAsync(new TgEfFilterRepository());
 
 	[Test]
-	public void Get_messages_async() => GetListAsync(new TgEfMessageRepository());
+	public Task Get_messages_async() => GetListAsync(new TgEfMessageRepository());
 
 	[Test]
-	public void Get_messages_relations_async() => GetListAsync(new TgEfMessageRelationRepository());
+	public Task Get_messages_relations_async() => GetListAsync(new TgEfMessageRelationRepository());
 
 	[Test]
-	public void Get_proxies_async() => GetListAsync(new TgEfProxyRepository());
+	public Task Get_proxies_async() => GetListAsync(new TgEfProxyRepository());
 
 	[Test]
-	public void Get_sources_async() => GetListAsync(new TgEfSourceRepository());
+	public Task Get_sources_async() => GetListAsync(new TgEfSourceRepository());
 
 	[Test]
-	public void Get_stories_async() => GetListAsync(new TgEfStoryRepository());
+	public Task Get_stories_async() => GetListAsync(new TgEfStoryRepository());
 
 	[Test]
-	public void Get_versions_async() => GetListAsync(new TgEfVersionRepository());
+	public Task Get_versions_async() => GetListAsync(new TgEfVersionRepository());
 
 	#endregion
 }

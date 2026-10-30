@@ -1198,7 +1198,7 @@
     <value>You have tried logging in too many times</value>
   </data>
   <data name="RpcErrorPhoneCodeInvalid" xml:space="preserve">
-    <value>The phone code entered was invalid</value>
+    <value>A valid Telegram login code is required. Copy the login code from a Telegram app where you are already logged in (for example, on your mobile device), paste it into Login code, and click Connect again. If you already entered a code, use the most recent code you received.</value>
   </data>
   <data name="RpcErrorPasswordHashInvalid" xml:space="preserve">
     <value>The password (and thus its hash value) you entered is invalid</value>
@@ -1701,4 +1701,32 @@
     <value>To use this feature, you must purchase the specified license</value>
   </data>
   <data name="ActionBackToList.Text" xml:space="preserve"><value>Back to list</value></data>
+  <data name="ClientApiSettingsHelp" xml:space="preserve">
+    <value>Cannot connect to Telegram: API ID or API hash is missing or was rejected by Telegram.
+Open Client connection and enter API ID (a positive integer), API hash (32 hexadecimal characters), and Phone number (including the country code). Get your matching api_id and api_hash from https://my.telegram.org under API development tools. Then click Connect; the profile will be saved after a successful login.
+If you connected before, open Settings → Files → Storage, select your previous database containing the profile, save the settings, and restart the application.</value>
+  </data>
+  <data name="ClientSessionReadHelp" xml:space="preserve">
+    <value>Cannot read the saved Telegram session: {0}
+The file may have been created with a different API ID / API hash pair or may be damaged. This error occurs before contacting Telegram.
+Check API ID and API hash on Client connection. Under Settings → Files → Session, enter the previous session file for that API ID / API hash pair and save the settings.
+For a new login, click Reset session on this page and confirm deletion of the specified file. API credentials, phone number, and proxy are preserved. Click Connect, enter the code received from Telegram in Verification code and your two-step verification Password if required, connecting again when prompted.
+To keep the previous file, enter a new file path that does not exist yet under Session and save the settings instead of resetting. Delete removes both the profile and session file.</value>
+  </data>
+  <data name="ClientSessionReset.Text" xml:space="preserve">
+    <value>Reset session</value>
+  </data>
+  <data name="AskClientSessionReset" xml:space="preserve">
+    <value>Reset the Telegram session?
+This local file will be deleted: {0}
+API credentials, phone number, and proxy will be preserved. A new login requires a Telegram code and your two-step verification password if enabled.</value>
+  </data>
+  <data name="AskClientProfileDelete" xml:space="preserve">
+    <value>Delete the connection profile and local Telegram session?
+This file will be deleted: {0}
+API credentials, phone number, and the selected proxy will be removed from the profile. Enter them again to log in.</value>
+  </data>
+  <data name="ClientSessionResetDone" xml:space="preserve">
+    <value>The local session has been reset. API credentials were preserved. Click Connect to log in again with a Telegram code and your two-step verification password if enabled.</value>
+  </data>
 </root>

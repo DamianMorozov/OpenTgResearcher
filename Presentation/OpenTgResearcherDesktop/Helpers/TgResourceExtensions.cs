@@ -71,6 +71,11 @@ public static class TgResourceExtensions
 	internal static string AskUpdateReleaseApp() => "AskUpdateReleaseApp".GetLocalizedResource();
 	internal static string AssertionRestartApp() => "AssertionRestartApp".GetLocalizedResource();
 	internal static string ClientSettingsAreNotValid() => "ClientSettingsAreNotValid".GetLocalizedResource();
+    internal static string GetClientApiSettingsHelp() => "ClientApiSettingsHelp".GetLocalizedResource();
+    internal static string GetClientSessionReadHelp(string sessionPath) => string.Format("ClientSessionReadHelp".GetLocalizedResource(), sessionPath);
+    internal static string AskClientProfileDelete(string sessionPath) => string.Format("AskClientProfileDelete".GetLocalizedResource(), sessionPath);
+    internal static string AskClientSessionReset(string sessionPath) => string.Format("AskClientSessionReset".GetLocalizedResource(), sessionPath);
+    internal static string GetClientSessionResetDone() => "ClientSessionResetDone".GetLocalizedResource();
 	internal static string DiscussionChatNotFound() => "DiscussionChatNotFound".GetLocalizedResource();
 	internal static string GetActionCheckLicenseMsg() => "ActionLicenseCheckMsg".GetLocalizedResource();
 	internal static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalizedResource();

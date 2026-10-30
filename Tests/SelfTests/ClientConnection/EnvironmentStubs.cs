@@ -15,11 +15,14 @@ public sealed class TestLoadStateService : ILoadStateService
     /// <summary> Заменяет завершение учёта операции </summary>
     public void StopSoftOnlineProcessing(Guid uid) { }
 }
-public interface ITgSettingsService { bool IsExistsAppStorage { get; } string AppSession { get; } }
+public interface ITgSettingsService { bool IsExistsAppStorage { get; } string AppSession { get; } void Load(); }
 public sealed class TestSettingsService : ITgSettingsService
 {
     public bool IsExistsAppStorage => true;
-    public string AppSession => "test.session";
+    public string AppSession { get; set; } = "test.session";
+    public int LoadCalls { get; private set; }
+    /// <summary> Запоминает обновление признака наличия сессии </summary>
+    public void Load() => LoadCalls++;
 }
 public interface INavigationService;
 public interface ILogger<T>;
@@ -34,6 +37,7 @@ public sealed class ContentDialog
     public static bool Confirm { get; set; }
     public static bool IsOpen { get; private set; }
     public static Task? LastAction { get; private set; }
+    public static string LastTitle { get; private set; } = string.Empty;
     public object? XamlRoot { get; set; }
     public string Title { get; set; } = string.Empty;
     public string PrimaryButtonText { get; set; } = string.Empty;
@@ -44,6 +48,7 @@ public sealed class ContentDialog
     public Task<ContentDialogResult> ShowAsync()
     {
         IsOpen = true;
+        LastTitle = Title;
         LastAction = null;
         if (Confirm && PrimaryButtonCommand is not null)
         {
@@ -81,7 +86,7 @@ public abstract class TgPageViewModelBase : ObservableObject
     /// <summary> Сохраняет ошибку для проверки результата </summary>
     public void LogError(Exception exception) => Errors.Add(exception);
     /// <summary> Повторяет обновление ошибки базовой модели </summary>
-    public void UpdateException(Exception exception) => Exception = new(exception);
+    public virtual void UpdateException(Exception exception) => Exception = new(exception);
     // Повторяем существующий базовый диалог: команда кнопки запускается, но её завершение не ожидается
     protected async Task ContentDialogAsync(Func<Task> action, string title, TgEnumLoadDesktopType loadType)
     {
@@ -159,6 +164,13 @@ public sealed class TestClient
 public sealed class TestConnection
 {
     private Func<Task> _afterConnect = () => Task.CompletedTask;
+    private Action<Exception> _updateException = _ => { };
+    public Exception? ConnectException { get; set; }
+    public Exception? ReportedException { get; set; }
+    public Func<Task>? OnDisconnect { get; set; }
+    public Func<Func<string, string?>, Task>? OnConnect { get; set; }
+    public int DisconnectCalls { get; private set; }
+    public bool KeepClientOnDisconnect { get; set; }
     public TestClient? Client { get; set; }
     public TL.User? Me { get; set; }
     public bool Ready { get; set; }
@@ -169,7 +181,7 @@ public sealed class TestConnection
     public bool StartedWhileDialogOpen { get; private set; }
     public Dictionary<string, string?> Configuration { get; } = [];
     /// <summary> Заменяет регистрацию обработчика ошибки </summary>
-    public void SetupUpdateException(Action<Exception> action) { }
+    public void SetupUpdateException(Action<Exception> action) => _updateException = action;
     /// <summary> Регистрирует исходный обработчик завершения подключения </summary>
     public void SetupAfterClientConnect(Func<Task> action) => _afterConnect = action;
     /// <summary> Выполняет исходный обратный вызов без сети </summary>
@@ -181,12 +193,28 @@ public sealed class TestConnection
     {
         ConnectCalls++;
         StartedWhileDialogOpen = ContentDialog.IsOpen;
+        if (ConnectException is not null) throw ConnectException;
+        if (ReportedException is not null)
+        {
+            _updateException(ReportedException);
+            await _afterConnect();
+            return;
+        }
         foreach (var key in new[] { "api_id", "api_hash", "phone_number", "password", "verification_code", "session_pathname" })
             Configuration[key] = config(key);
+        if (OnConnect is not null) await OnConnect(config);
         if (ConnectGate is not null) await ConnectGate.Task;
     }
     /// <summary> Имитирует отключение без обращения к сессии </summary>
-    public Task DisconnectClientAsync() { Ready = false; Client = null; Me = null; return Task.CompletedTask; }
+    public async Task DisconnectClientAsync()
+    {
+        DisconnectCalls++;
+        if (OnDisconnect is not null) await OnDisconnect();
+        if (KeepClientOnDisconnect) return;
+        Ready = false;
+        Client = null;
+        Me = null;
+    }
     /// <summary> Регистрирует попытку открыть Избранное </summary>
     public Task<Guid> OpenOrCreateSavedMessagesAsync() { SavedMessagesCalls++; return Task.FromResult(SavedMessagesUid); }
 }
@@ -206,12 +234,29 @@ public static class TgDesktopUtils
 }
 public static class TgResourceExtensions
 {
+    public static string Language { get; set; } = "ru-RU";
+    /// <summary> Возвращает настоящую подсказку из ресурсов приложения </summary>
+    public static string GetClientApiSettingsHelp() => ReadConnectionResource("ClientApiSettingsHelp");
+    /// <summary> Возвращает настоящую подсказку с путём сессии </summary>
+    public static string GetClientSessionReadHelp(string sessionPath) => string.Format(ReadConnectionResource("ClientSessionReadHelp"), sessionPath);
+    /// <summary> Возвращает подтверждение удаления профиля и сессии из ресурсов </summary>
+    public static string AskClientProfileDelete(string sessionPath) => string.Format(ReadConnectionResource("AskClientProfileDelete"), sessionPath);
+    /// <summary> Возвращает подтверждение сброса сессии из ресурсов </summary>
+    public static string AskClientSessionReset(string sessionPath) => string.Format(ReadConnectionResource("AskClientSessionReset"), sessionPath);
+    /// <summary> Возвращает инструкцию нового входа из ресурсов </summary>
+    public static string GetClientSessionResetDone() => ReadConnectionResource("ClientSessionResetDone");
+    // Читаем ресурсы приложения без запуска WinUI
+    private static string ReadConnectionResource(string key)
+    {
+        using var stream = typeof(TgResourceExtensions).Assembly.GetManifestResourceStream($"ConnectionMessages.{Language}.resw")!;
+        return System.Xml.Linq.XDocument.Load(stream).Root!.Elements("data").Single(x => (string?)x.Attribute("name") == key).Element("value")!.Value;
+    }
     /// <summary> Возвращает тестовую подпись подтверждения </summary>
     public static string GetYesButton() => "Да";
     /// <summary> Возвращает тестовую подпись отмены </summary>
     public static string GetCancelButton() => "Отмена";
     /// <summary> Возвращает тестовое сообщение </summary>
-    public static string GetRpcErrorPhoneCodeInvalid() => "Неверный код";
+    public static string GetRpcErrorPhoneCodeInvalid() => ReadConnectionResource("RpcErrorPhoneCodeInvalid");
     /// <summary> Возвращает тестовое сообщение </summary>
     public static string GetRpcErrorPasswordHashInvalid() => "Неверный пароль";
     /// <summary> Возвращает тестовое сообщение </summary>

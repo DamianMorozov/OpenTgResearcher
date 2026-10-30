@@ -5,7 +5,7 @@
 		<LangVersion>preview</LangVersion>
 		<WarningLevel>4</WarningLevel>
 		<AnalysisLevel>preview</AnalysisLevel>
-		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

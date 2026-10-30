@@ -22,7 +22,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--  Actions  -->
+            <!--  Действия  -->
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
@@ -39,6 +39,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
@@ -46,7 +47,7 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <!--  TG session  -->
+                        <!--  Сессия Telegram  -->
                         <StackPanel
                             Grid.Row="0"
                             Margin="10,5,0,0"
@@ -57,7 +58,7 @@
                                 IsChecked="{x:Bind ViewModel.IsExistsAppSession, Mode=OneWay}"
                                 IsEnabled="False" />
                         </StackPanel>
-                        <!--  Save  -->
+                        <!--  Сохранение настроек  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="1"
@@ -73,7 +74,7 @@
                                     l:Uids.Uid="ActionSave" />
                             </StackPanel>
                         </Button>
-                        <!--  Clear  -->
+                        <!--  Очистка формы  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="2"
@@ -89,7 +90,7 @@
                                     l:Uids.Uid="ActionClearView" />
                             </StackPanel>
                         </Button>
-                        <!--  Empty  -->
+                        <!--  Удаление профиля и локальной сессии  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="3"
@@ -105,7 +106,16 @@
                                     l:Uids.Uid="ActionDelete" />
                             </StackPanel>
                         </Button>
-                        <!--  Link  -->
+                        <!--  Новый вход с сохранением настроек профиля  -->
+                        <Button
+                            Grid.Row="2"
+                            Grid.ColumnSpan="4"
+                            Margin="0,5,0,0"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.SessionResetCommand}">
+                            <TextBlock l:Uids.Uid="ClientSessionReset" />
+                        </Button>
+                        <!--  Ссылка на настройки приложения Telegram  -->
                         <Border Grid.Row="1">
                             <HyperlinkButton
                                 Margin="{StaticResource SettingsPageHyperlinkButtonMargin}"
@@ -114,7 +124,7 @@
                                 l:Uids.Uid="ClientPage_MyTelegram"
                                 Click="OnOpenHyperlink" />
                         </Border>
-                        <!--  Grid  -->
+                        <!--  Кнопки подключения  -->
                         <Grid
                             Grid.Row="1"
                             Grid.Column="1"
@@ -124,7 +134,7 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-                            <!--  Connect Telegram  -->
+                            <!--  Подключение к Telegram  -->
                             <Button
                                 Margin="0,0,5,0"
                                 HorizontalAlignment="Stretch"
@@ -142,7 +152,7 @@
                                         l:Uids.Uid="ClientConnect" />
                                 </StackPanel>
                             </Button>
-                            <!--  Disconnect Telegram  -->
+                            <!--  Отключение от Telegram  -->
                             <Button
                                 Grid.Column="1"
                                 Margin="5,0,0,0"
@@ -165,7 +175,7 @@
                     </Grid>
                 </Expander>
             </ContentControl>
-            <!--  Settings in storage  -->
+            <!--  Настройки в хранилище  -->
             <ContentControl
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
@@ -194,7 +204,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--  Uid  -->
+                        <!--  Идентификатор профиля  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="0"
@@ -220,7 +230,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.AppDto.Uid, Mode=OneWay}" />
-                        <!--  UseClient  -->
+                        <!--  Использование клиента  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="3"
@@ -235,7 +245,7 @@
                             VerticalAlignment="Center"
                             HorizontalContentAlignment="Left"
                             IsOn="{x:Bind ViewModel.AppDto.UseClient, Mode=TwoWay}" />
-                        <!--  API hash  -->
+                        <!--  Хеш API  -->
                         <TextBlock
                             Grid.Row="1"
                             l:Uids.Uid="ClientApiHash"
@@ -259,7 +269,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.AppDto.ApiHashString, Mode=OneWay}" />
-                        <!--  API ID  -->
+                        <!--  Идентификатор API  -->
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="3"
@@ -284,7 +294,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.AppDto.ApiId, Mode=OneWay}" />
-                        <!--  Phone number  -->
+                        <!--  Номер телефона  -->
                         <TextBlock
                             Grid.Row="2"
                             l:Uids.Uid="ClientPhoneNumber"
@@ -308,7 +318,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.AppDto.PhoneNumber, Mode=OneWay}" />
-                        <!--  Proxy  -->
+                        <!--  Прокси  -->
                         <TextBlock
                             Grid.Row="2"
                             Grid.Column="3"
@@ -335,7 +345,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <!--  First name  -->
+                        <!--  Имя  -->
                         <TextBlock
                             Grid.Row="3"
                             l:Uids.Uid="ClientFirstName"
@@ -359,7 +369,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.AppDto.FirstName, Mode=OneWay}" />
-                        <!--  Last name  -->
+                        <!--  Фамилия  -->
                         <TextBlock
                             Grid.Row="3"
                             Grid.Column="3"
@@ -388,7 +398,7 @@
                     </Grid>
                 </Expander>
             </ContentControl>
-            <!--  Settings without saving  -->
+            <!--  Параметры текущего подключения  -->
             <ContentControl
                 Grid.Row="2"
                 HorizontalAlignment="Stretch"
@@ -411,6 +421,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -418,7 +429,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!--  Login code  -->
+                        <!--  Код входа  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="0"
@@ -426,7 +437,7 @@
                             l:Uids.Uid="ClientLoginCode"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="1"
@@ -443,7 +454,7 @@
                             HorizontalContentAlignment="Stretch"
                             Password="{x:Bind ViewModel.VerificationCode, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  Password  -->
+                        <!--  Пароль двухэтапной проверки  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="2"
@@ -451,7 +462,7 @@
                             l:Uids.Uid="ClientPassword"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="3"
@@ -468,7 +479,7 @@
                             HorizontalContentAlignment="Stretch"
                             Password="{x:Bind ViewModel.Password, Mode=TwoWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  Connection dt  -->
+                        <!--  Дата и время подключения  -->
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="0"
@@ -476,7 +487,7 @@
                             l:Uids.Uid="ClientConnectionDt"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="1"
@@ -497,53 +508,46 @@
                             Text="{x:Bind ViewModel.ConnectionDt, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  Connection state  -->
-                        <Grid
+                        <!--  Состояние подключения  -->
+                        <TextBlock
                             Grid.Row="1"
                             Grid.Column="2"
-                            Grid.ColumnSpan="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="12,7,7,2"
-                                l:Uids.Uid="ClientConnectionState"
-                                FontWeight="Bold"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Column="1"
-                                Margin="10,0,0,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                IsEnabled="False"
-                                IsOn="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}" />
-                            <!--  Sensitive data  -->
-                            <TextBlock
-                                Grid.Column="2"
-                                Margin="2,10,2,2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalTextAlignment="Left"
-                                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                            <TextBox
-                                Grid.Column="2"
-                                Margin="2"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"
-                                VerticalContentAlignment="Center"
-                                IsEnabled="False"
-                                IsReadOnly="True"
-                                Text="{x:Bind ViewModel.ConnectionMsg, Mode=OneWay}"
-                                TextWrapping="Wrap"
-                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        </Grid>
-                        <!--  Connection exception  -->
+                            Margin="12,7,7,2"
+                            l:Uids.Uid="ClientConnectionState"
+                            FontWeight="Bold"
+                            TextAlignment="Left" />
+                        <ToggleSwitch
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Margin="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            IsEnabled="False"
+                            IsOn="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}" />
+                        <!--  Сообщение о состоянии подключения  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Row="2"
+                            Grid.ColumnSpan="4"
+                            Margin="2,10,2,2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalTextAlignment="Left"
+                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <TextBox
+                            Grid.Row="2"
+                            Grid.ColumnSpan="4"
+                            Margin="2"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            VerticalContentAlignment="Center"
+                            IsReadOnly="True"
+                            Text="{x:Bind ViewModel.ConnectionMsg, Mode=OneWay}"
+                            TextWrapping="Wrap"
+                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <!--  Исключение подключения  -->
+                        <TextBlock
+                            Grid.Row="3"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             VerticalAlignment="Center"
@@ -551,28 +555,27 @@
                             FontWeight="Bold"
                             TextAlignment="Left" />
                         <TextBox
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="1"
                             Grid.ColumnSpan="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
-                            IsEnabled="False"
                             IsReadOnly="True"
                             Text="{x:Bind ViewModel.Exception.Message, Mode=OneWay}"
                             TextWrapping="Wrap" />
-                        <!--  User  -->
+                        <!--  Пользователь  -->
                         <TextBlock
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             l:Uids.Uid="ClientUserName"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="1"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
@@ -580,7 +583,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="1"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -591,17 +594,17 @@
                             Text="{x:Bind ViewModel.UserName, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  MtProxyUrl  -->
+                        <!--  Адрес прокси MTProto  -->
                         <TextBlock
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="2"
                             Margin="12,7,7,2"
                             l:Uids.Uid="ClientMtProxyUrl"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="3"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
@@ -609,7 +612,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -620,17 +623,17 @@
                             Text="{x:Bind ViewModel.MtProxyUrl, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  MaxAutoReconnects  -->
+                        <!--  Максимум автоматических переподключений  -->
                         <TextBlock
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             l:Uids.Uid="ClientMaxAutoReconnects"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="1"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
@@ -638,7 +641,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="1"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -649,17 +652,17 @@
                             Text="{x:Bind ViewModel.MaxAutoReconnects, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  MaxCodePwdAttempts  -->
+                        <!--  Максимум попыток ввода кода или пароля  -->
                         <TextBlock
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="2"
                             Margin="12,7,7,2"
                             l:Uids.Uid="ClientMaxCodePwdAttempts"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="3"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
@@ -667,7 +670,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -678,17 +681,17 @@
                             Text="{x:Bind ViewModel.MaxCodePwdAttempts, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  FloodRetryThreshold  -->
+                        <!--  Порог ожидания ограничения запросов  -->
                         <TextBlock
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             l:Uids.Uid="ClientFloodRetryThreshold"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="1"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
@@ -696,7 +699,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="1"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -707,17 +710,17 @@
                             Text="{x:Bind ViewModel.FloodRetryThreshold, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  PingInterval  -->
+                        <!--  Интервал проверки соединения  -->
                         <TextBlock
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="2"
                             Margin="12,7,7,2"
                             l:Uids.Uid="ClientPingInterval"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="3"
                             Margin="2,10,2,2"
                             HorizontalAlignment="Stretch"
@@ -725,7 +728,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="3"
                             Margin="2"
                             HorizontalAlignment="Stretch"
@@ -736,18 +739,18 @@
                             Text="{x:Bind ViewModel.PingInterval, Mode=OneWay}"
                             TextWrapping="Wrap"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  Data request  -->
+                        <!--  Запросы данных для подключения  -->
                         <TextBlock
-                            Grid.Row="6"
+                            Grid.Row="7"
                             Grid.Column="0"
                             Margin="2,7,7,2"
                             VerticalAlignment="Center"
                             l:Uids.Uid="ClientDataRequest"
                             FontWeight="Bold"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
-                            Grid.Row="6"
+                            Grid.Row="7"
                             Grid.Column="1"
                             Grid.ColumnSpan="3"
                             Margin="2,10,2,2"
@@ -756,7 +759,7 @@
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         <TextBox
-                            Grid.Row="6"
+                            Grid.Row="7"
                             Grid.Column="1"
                             Grid.ColumnSpan="3"
                             MaxHeight="1000"

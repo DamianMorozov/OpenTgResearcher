@@ -24,6 +24,8 @@ internal static partial class Program
             ("HardwareDisposalWaitsForWorker", HardwareDisposalWaitsForWorkerAsync),
             ("CloseWaitsForTelegram", CloseWaitsForTelegramAsync),
             ("FailedDisconnectKeepsWindowOpen", FailedDisconnectKeepsWindowOpenAsync),
+            ("CloseReleasesSessionFile", () => CloseReleasesSessionFileAsync(isAlreadyDisconnected: false)),
+            ("CloseAfterSessionDisconnected", () => CloseReleasesSessionFileAsync(isAlreadyDisconnected: true)),
         };
         var outputDirectory = Path.Combine(AppContext.BaseDirectory, "cases", Guid.NewGuid().ToString("N"));
         var failures = 0;

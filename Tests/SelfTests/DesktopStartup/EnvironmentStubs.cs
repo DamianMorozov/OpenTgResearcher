@@ -23,8 +23,9 @@ public sealed class TestWindow
 {
     public object? Content { get; set; }
     public int CloseCalls { get; private set; }
+    public Action? OnClose { get; set; }
     /// <summary> Запоминает закрытие без платформы Windows </summary>
-    public void Close() => CloseCalls++;
+    public void Close() { OnClose?.Invoke(); CloseCalls++; }
 }
 public class FrameworkElement
 {

@@ -40,6 +40,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	public IAsyncRelayCommand AppSaveCommand { get; }
 	public IAsyncRelayCommand AppClearCommand { get; }
 	public IAsyncRelayCommand AppDeleteCommand { get; }
+    public IAsyncRelayCommand SessionResetCommand { get; }
 
 	public TgClientConnectionViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgClientConnectionViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgClientConnectionViewModel))
@@ -50,6 +51,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		AppSaveCommand = new AsyncRelayCommand(AppSaveAsync);
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
+        SessionResetCommand = new AsyncRelayCommand(SessionResetAsync);
         // Обратные вызовы обновляют интерфейс
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateException);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
@@ -62,6 +64,22 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
         await LoadStorageDataAsync(LoadDataStorageCoreAsync);
+    }
+
+    /// <summary> Объясняет ошибки настройки API и чтения сессии на странице подключения </summary>
+    public override void UpdateException(Exception ex)
+    {
+        base.UpdateException(ex);
+        var message = Exception.Message;
+        if (message.Contains("Exception while reading session file", StringComparison.OrdinalIgnoreCase))
+            Exception.Message = TgResourceExtensions.GetClientSessionReadHelp(SettingsService.AppSession);
+        else if (message.Contains("API_ID_INVALID", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("API ID Invalid", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("API_HASH_INVALID", StringComparison.OrdinalIgnoreCase))
+            Exception.Message = TgResourceExtensions.GetClientApiSettingsHelp();
+        else if (message.Contains("PHONE_CODE_INVALID", StringComparison.OrdinalIgnoreCase))
+            Exception.Message = TgResourceExtensions.GetRpcErrorPhoneCodeInvalid();
+        ConnectionMsg = Exception.Message;
     }
 
     // Обновляем состояние подключения, сохраняя сообщение об ошибке авторизации
@@ -77,6 +95,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
             {
                 ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
                 ConnectionMsg = isReady ? TgResourceExtensions.GetClientIsConnected() : TgResourceExtensions.GetClientIsDisconnected();
+                if (!isReady && Exception.IsExist) ConnectionMsg = Exception.Message;
 
                 if (AppDto is not null && AppDto.UseClient)
                 {
@@ -196,9 +215,9 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         return response;
 	}
 
-    private async Task ClientConnectAsync(bool isQuestion) => await ClientConnectCoreAsync(isQuestion, isRetry: false);
+    private async Task ClientConnectAsync(bool isQuestion) => await ClientConnectCoreAsync(isQuestion);
 
-	private async Task ClientConnectCoreAsync(bool isQuestion, bool isRetry)
+	private async Task ClientConnectCoreAsync(bool isQuestion)
 	{
         var uid = Guid.NewGuid();
         try
@@ -226,30 +245,38 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         catch (Exception ex)
 		{
             LogError(ex);
-			Exception.Set(ex);
-			if (isRetry)
-				return;
-			if (Exception.Message.Contains("or delete the file to start a new session"))
-			{
-				await ClientConnectCoreAsync(isQuestion, isRetry: true);
-			}
+            UpdateException(ex);
 		}
 	}
 
     // Сохраняем профиль и открываем Избранное только после успешной авторизации
     private async Task ClientConnectWithGetMeAsync()
     {
-        await App.BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientDesktop, ProxyVm?.Dto ?? new(), isDesktop: true);
-        if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-        if (AppDto is not null && App.BusinessLogicManager.ConnectClient.Me is TL.User me)
+        if (AppDto is null || AppDto.ApiId <= 0 || AppDto.ApiHash == Guid.Empty)
         {
-            AppDto.FirstName = me.first_name ?? string.Empty;
-            AppDto.LastName = me.last_name ?? string.Empty;
+            UpdateException(new ArgumentException(TgResourceExtensions.GetClientApiSettingsHelp()));
+            return;
         }
 
-        await AppSaveCoreAsync();
-        _shellVm ??= App.VmLocator.Get<ShellViewModel>();
-        _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
+        try
+        {
+            await App.BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientDesktop, ProxyVm?.Dto ?? new(), isDesktop: true);
+            if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+            if (AppDto is not null && App.BusinessLogicManager.ConnectClient.Me is TL.User me)
+            {
+                AppDto.FirstName = me.first_name ?? string.Empty;
+                AppDto.LastName = me.last_name ?? string.Empty;
+            }
+
+            await AppSaveCoreAsync();
+            _shellVm ??= App.VmLocator.Get<ShellViewModel>();
+            _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            UpdateException(ex);
+        }
     }
 
     private async Task ClientDisconnectAsync(bool isQuestion) => await ClientDisconnectCoreAsync(isQuestion, isRetry: false);
@@ -391,18 +418,71 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		VerificationCode = string.Empty;
 	}
 
-	private async Task AppDeleteAsync() => 
-		await ConfirmActionAsync(AppDeleteCoreAsync, TgResourceExtensions.AskSettingsDelete(), TgEnumLoadDesktopType.Storage);
+    // Подтверждаем удаление профиля и выбранного файла локальной авторизации
+    private async Task AppDeleteAsync() => await ConfirmActionAsync(AppDeleteCoreAsync,
+        TgResourceExtensions.AskClientProfileDelete(SettingsService.AppSession), TgEnumLoadDesktopType.Online);
 
-    // Удаляем настройки и очищаем данные прежней авторизации в форме
-	private async Task AppDeleteCoreAsync()
-	{
-		await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
-		Password = string.Empty;
-		VerificationCode = string.Empty;
-		DataRequest = string.Empty;
-		await LoadDataStorageCoreAsync();
-	}
+    // Сначала освобождаем и удаляем сессию, затем удаляем профиль из БД
+    private async Task AppDeleteCoreAsync()
+    {
+        if (!await DeleteSessionFileAsync()) return;
+        try
+        {
+            await App.BusinessLogicManager.StorageManager.AppRepository.DeleteAllAsync();
+            ClearAuthorizationFields();
+            await ReloadUiAsync();
+            await LoadDataStorageCoreAsync();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            UpdateException(ex);
+        }
+    }
+
+    // Сбрасываем только локальную сессию после отдельного подтверждения пользователя
+    private async Task SessionResetAsync() => await ConfirmActionAsync(SessionResetCoreAsync,
+        TgResourceExtensions.AskClientSessionReset(SettingsService.AppSession), TgEnumLoadDesktopType.Online);
+
+    // Сохраняем профиль и прокси для нового входа с теми же API-параметрами
+    private async Task SessionResetCoreAsync()
+    {
+        if (!await DeleteSessionFileAsync()) return;
+        ClearAuthorizationFields();
+        await base.ReloadUiAsync();
+        ClearClientDetails();
+        ConnectionMsg = TgResourceExtensions.GetClientSessionResetDone();
+    }
+
+    // Удаляем выбранный файл только после завершения клиента и обновляем сведения о его наличии
+    private async Task<bool> DeleteSessionFileAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+            await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+            if (App.BusinessLogicManager.ConnectClient.Client is not null)
+                throw new InvalidOperationException("Не удалось завершить Telegram-клиент. Файл сессии и профиль не удалены");
+            ct.ThrowIfCancellationRequested();
+            if (!string.IsNullOrWhiteSpace(SettingsService.AppSession)) File.Delete(SettingsService.AppSession);
+            SettingsService.Load();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            UpdateException(ex);
+            return false;
+        }
+    }
+
+    // Очищаем данные предыдущей попытки входа, сохраняя API-параметры
+    private void ClearAuthorizationFields()
+    {
+        Password = string.Empty;
+        VerificationCode = string.Empty;
+        DataRequest = string.Empty;
+    }
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)
 	{

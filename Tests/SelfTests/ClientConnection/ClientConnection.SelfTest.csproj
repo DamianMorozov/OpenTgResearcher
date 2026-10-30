@@ -4,11 +4,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.8.30.0</Version>
+    <Version>0.8.50.0</Version>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgClientConnectionViewModel.cs" Link="TgClientConnectionViewModel.cs" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/ru-RU/Resources.resw" LogicalName="ConnectionMessages.ru-RU.resw" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/en-US/Resources.resw" LogicalName="ConnectionMessages.en-US.resw" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgClientConnectionPage.xaml" LogicalName="ConnectionPage.xaml" />
   </ItemGroup>
 </Project>

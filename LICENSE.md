@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2022 - 2025 Damian Viktorovich Morozov
+Copyright (c) 2022 - 2026 Damian Viktorovich Morozov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -9,8 +9,9 @@
 - Используй как OSINT инструмент
 - Используй как парсер инструмент
 
-## Русская документация
-### <div align="center"><b><a href="README.md">Прочти меня</a> | <a href="CHANGELOG.md">История версий</a> | <a href="RELEASES.md">Статистика</a></b></div>
+## Документация
+### <div align="center"><b><a href="README.md">Прочти меня</a> | <a href="CHANGELOG.md">Журнал изменений</a> | <a href="RELEASES.md">Статистика скачиваний</a></b></div>
+### <div align="center"><b><a href="ARCHITECTURE.md">Архитектура приложения</a> | <a href="TODO.md">Список задач</a></b></div>
 ### <div align="center"><b><a href="SCREENSHOTS.md">Скриншоты</a> | <a href="Docs/GUIDES-RUS.md">Руководства</a> | <a href="LICENSE.md">Лицензия</a></b></div>
 
 ## Скачать
@@ -46,13 +47,13 @@
 ## Анимации и скриншоты
 
 ### Заставка OpenTgResearcherDesktop
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
+<p align="center"><img src="Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
 ### Заставка OpenTgResearcherConsole
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
+<p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
 
 ### OpenTgResearcherConsole - Мониторинг чатов
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
+<p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
 
 ### OpenTgResearcherConsole - Поиск ключевых слов в чатах
-<p align="center"><img src="Docs/Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>
+<p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>

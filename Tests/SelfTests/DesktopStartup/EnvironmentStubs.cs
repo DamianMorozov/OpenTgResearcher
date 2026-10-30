@@ -88,36 +88,73 @@ public enum CreationCollisionOption { OpenIfExists }
 public sealed class ApplicationData
 {
     public static ApplicationData Current { get; } = new();
-    public StorageFolder LocalFolder { get; } = new();
+    public StorageFolder LocalFolder { get; set; } = new(AppContext.BaseDirectory);
 }
-public sealed class StorageFolder
+public sealed class StorageFolder(string path)
 {
-    public string Path { get; } = AppContext.BaseDirectory;
-    /// <summary> Заменяет открытие каталога ресурсов </summary>
-    public static Task<StorageFolder> GetFolderFromPathAsync(string path) => Task.FromResult(new StorageFolder());
-    /// <summary> Заменяет создание каталога ресурсов </summary>
-    public Task<StorageFolder> CreateFolderAsync(string name, CreationCollisionOption option) => Task.FromResult(new StorageFolder());
-    /// <summary> Возвращает отсутствие файла без обращения к профилю пользователя </summary>
-    public Task<object?> TryGetItemAsync(string name) => Task.FromResult<object?>(null);
+    public string Path { get; } = path;
+    /// <summary> Открывает временный каталог вместо платформенного хранилища </summary>
+    public static Task<StorageFolder> GetFolderFromPathAsync(string path) => Task.FromResult(new StorageFolder(path));
+    /// <summary> Создаёт настоящий каталог внутри селфтеста </summary>
+    public Task<StorageFolder> CreateFolderAsync(string name, CreationCollisionOption option)
+    {
+        var directory = Directory.CreateDirectory(System.IO.Path.Combine(Path, name));
+        return Task.FromResult(new StorageFolder(directory.FullName));
+    }
+    /// <summary> Проверяет наличие настоящего файла в каталоге селфтеста </summary>
+    public Task<object?> TryGetItemAsync(string name)
+    {
+        var filePath = System.IO.Path.Combine(Path, name);
+        return Task.FromResult<object?>(File.Exists(filePath) ? new StorageFile(filePath) : null);
+    }
 }
-public sealed class StorageFile
+public enum NameCollisionOption { ReplaceExisting }
+public sealed class StorageFile(string path)
 {
-    public string Path { get; } = string.Empty;
-    /// <summary> Заменяет получение ресурса из пакета </summary>
-    public static Task<StorageFile> GetFileFromApplicationUriAsync(Uri uri) => Task.FromResult(new StorageFile());
-    /// <summary> Заменяет копирование ресурса </summary>
-    public Task<StorageFile> CopyAsync(StorageFolder folder) => Task.FromResult(new StorageFile());
+    public static string PackageDirectory { get; set; } = AppContext.BaseDirectory;
+    public string Path { get; } = path;
+    /// <summary> Открывает настоящий файл из временного аналога пакета </summary>
+    public static Task<StorageFile> GetFileFromApplicationUriAsync(Uri uri)
+    {
+        var filePath = System.IO.Path.Combine(PackageDirectory, uri.AbsolutePath.TrimStart('/'));
+        if (!File.Exists(filePath)) throw new FileNotFoundException("Не найден ресурс тестового пакета", filePath);
+        return Task.FromResult(new StorageFile(filePath));
+    }
+    /// <summary> Копирует ресурс без перезаписи существующего файла </summary>
+    public Task<StorageFile> CopyAsync(StorageFolder folder) => CopyCoreAsync(folder, System.IO.Path.GetFileName(Path), overwrite: false);
+    /// <summary> Копирует ресурс с заменой существующего файла </summary>
+    public Task<StorageFile> CopyAsync(StorageFolder folder, string fileName, NameCollisionOption option) =>
+        CopyCoreAsync(folder, fileName, overwrite: option == NameCollisionOption.ReplaceExisting);
+
+    // Выполняем настоящую файловую операцию для проверки содержимого и ошибок копирования
+    private Task<StorageFile> CopyCoreAsync(StorageFolder folder, string fileName, bool overwrite)
+    {
+        var destination = System.IO.Path.Combine(folder.Path, fileName);
+        File.Copy(Path, destination, overwrite);
+        return Task.FromResult(new StorageFile(destination));
+    }
 }
 public sealed class LocalizerOptions { public string DefaultLanguage { get; set; } = string.Empty; }
 public sealed class LocalizerBuilder
 {
     private readonly LocalizerOptions _options = new();
-    /// <summary> Заменяет регистрацию каталога ресурсов </summary>
-    public LocalizerBuilder AddStringResourcesFolderForLanguageDictionaries(string path) => this;
+    private string _resourcesPath = string.Empty;
+    /// <summary> Запоминает каталог ресурсов, переданный исходной службой </summary>
+    public LocalizerBuilder AddStringResourcesFolderForLanguageDictionaries(string path) { _resourcesPath = path; return this; }
     /// <summary> Выполняет исходную настройку языка локализатора </summary>
     public LocalizerBuilder SetOptions(Action<LocalizerOptions> action) { action(_options); return this; }
     /// <summary> Фиксирует язык, выбранный службой до создания интерфейса </summary>
-    public Task<Localizer> Build() { Localizer.Instance.Language = _options.DefaultLanguage; return Task.FromResult(Localizer.Instance); }
+    public Task<Localizer> Build()
+    {
+        Localizer.Instance.Language = _options.DefaultLanguage;
+        Localizer.Instance.ResourcesAtBuild.Clear();
+        foreach (var language in Localizer.Instance.GetAvailableLanguages())
+        {
+            var resourcePath = Path.Combine(_resourcesPath, language, "Resources.resw");
+            if (File.Exists(resourcePath)) Localizer.Instance.ResourcesAtBuild[language] = File.ReadAllText(resourcePath);
+        }
+        return Task.FromResult(Localizer.Instance);
+    }
 }
 public sealed class Localizer
 {
@@ -125,6 +162,7 @@ public sealed class Localizer
     public string Language { get; set; } = string.Empty;
     public TaskCompletionSource? LanguageGate { get; set; }
     public int SetLanguageCalls { get; set; }
+    public Dictionary<string, string> ResourcesAtBuild { get; } = [];
     /// <summary> Возвращает тестовый локализатор </summary>
     public static Localizer Get() => Instance;
     /// <summary> Возвращает уже применённый язык </summary>

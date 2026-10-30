@@ -655,21 +655,23 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         }
     }
 
-    private static async Task CreateStringResourceFileIfNotExists(StorageFolder stringsFolder, string language, string resourceFileName)
+    // Копируем отсутствующий ресурс из пакета и обновляем существующий при изменении размера
+    private static async Task CreateStringResourceFileIfNotExists(StorageFolder stringsFolder, string language, string resourceFileName,
+        CancellationToken ct = default)
     {
-        var languageFolder = await stringsFolder.CreateFolderAsync(language, CreationCollisionOption.OpenIfExists);
-
-        if (await languageFolder.TryGetItemAsync(resourceFileName) is not null)
+        try
         {
+            ct.ThrowIfCancellationRequested();
+            var languageFolder = await stringsFolder.CreateFolderAsync(language, CreationCollisionOption.OpenIfExists);
             var resourceFile = await LoadStringResourcesFileFromAppResource(language, resourceFileName);
-            var fileInfoSource = new FileInfo(resourceFile.Path);
             var pathDest = Path.Combine(languageFolder.Path, resourceFileName);
-            var fileInfoDest = new FileInfo(pathDest);
-            if (fileInfoSource.Length != fileInfoDest.Length)
-            {
-                File.Delete(Path.Combine(languageFolder.Path, resourceFileName));
-                _ = await resourceFile.CopyAsync(languageFolder);
-            }
+            if (await languageFolder.TryGetItemAsync(resourceFileName) is null || new FileInfo(resourceFile.Path).Length != new FileInfo(pathDest).Length)
+                _ = await resourceFile.CopyAsync(languageFolder, resourceFileName, NameCollisionOption.ReplaceExisting);
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, $"Ошибка подготовки ресурса {language}/{resourceFileName}");
+            throw;
         }
     }
 

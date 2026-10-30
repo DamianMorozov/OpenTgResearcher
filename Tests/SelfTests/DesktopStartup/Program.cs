@@ -7,6 +7,11 @@ internal static class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("MsixCreatesMissingResources", MsixCreatesMissingResourcesAsync),
+            ("MsixUpdatesChangedResourceSize", MsixUpdatesChangedResourceSizeAsync),
+            ("MsixPreservesUnchangedResources", MsixPreservesUnchangedResourcesAsync),
+            ("MsixLogsMissingPackageResource", MsixLogsMissingPackageResourceAsync),
+            ("MsixLogsLockedResource", MsixLogsLockedResourceAsync),
             ("SavedRussianPackaged", SavedRussianPackagedAsync),
             ("SavedRussianUnpackaged", SavedRussianUnpackagedAsync),
             ("DefaultEnglish", DefaultEnglishAsync),
@@ -15,6 +20,7 @@ internal static class Program
             ("UnchangedLanguageDoesNotRefreshUi", UnchangedLanguageDoesNotRefreshUiAsync),
             ("HardwareDisposalWaitsForWorker", HardwareDisposalWaitsForWorkerAsync),
         };
+        var outputDirectory = Path.Combine(AppContext.BaseDirectory, "cases", Guid.NewGuid().ToString("N"));
         var failures = 0;
         foreach (var test in tests)
         {
@@ -24,12 +30,116 @@ internal static class Program
             Localizer.Instance.LanguageGate = null;
             Localizer.Instance.SetLanguageCalls = 0;
             Localizer.Instance.Language = string.Empty;
-            try { await test.Run(); Console.WriteLine($"PASS: {test.Name}"); }
+            Localizer.Instance.ResourcesAtBuild.Clear();
+            try
+            {
+                PrepareResourceFiles(Path.Combine(outputDirectory, test.Name));
+                await test.Run();
+                Console.WriteLine($"PASS: {test.Name}");
+            }
             catch (Exception ex) { failures++; Console.WriteLine($"FAIL: {test.Name}: {ex.GetBaseException().Message}"); }
         }
         Console.WriteLine($"Результат: {tests.Length - failures}/{tests.Length}");
         return failures == 0 ? 0 : 1;
     }
+
+    // Подготавливаем изолированные каталоги пакета и LocalState без доступа к профилю пользователя
+    private static void PrepareResourceFiles(string directory)
+    {
+        StorageFile.PackageDirectory = Path.Combine(directory, "package");
+        ApplicationData.Current.LocalFolder = new StorageFolder(Path.Combine(directory, "LocalState"));
+        foreach (var language in Localizer.Instance.GetAvailableLanguages())
+        {
+            var folder = Path.Combine(StorageFile.PackageDirectory, "Strings", language);
+            Directory.CreateDirectory(folder);
+            File.WriteAllText(Path.Combine(folder, "Resources.resw"), $"<root><data name=\"Greeting\"><value>{language}</value></data></root>");
+        }
+    }
+
+    // Проверяем создание обоих ресурсов до построения локализатора при первом запуске Package
+    private static async Task MsixCreatesMissingResourcesAsync()
+    {
+        TgRuntimeHelper.IsMSIX = true;
+        await CreateSettings("Russian").InitializeLocalizationAsync();
+        AssertResourceContents();
+        Assert(TestLogUtils.Errors.Count == 0, "Создание отсутствующих ресурсов зарегистрировало ошибку");
+    }
+
+    // Проверяем обновление существующих ресурсов, отличающихся размером от файлов пакета
+    private static async Task MsixUpdatesChangedResourceSizeAsync()
+    {
+        foreach (var language in Localizer.Instance.GetAvailableLanguages())
+        {
+            var destination = GetLocalResourcePath(language);
+            Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+            File.WriteAllText(destination, "Old resource");
+        }
+        TgRuntimeHelper.IsMSIX = true;
+        await CreateSettings("Russian").InitializeLocalizationAsync();
+        AssertResourceContents();
+        Assert(TestLogUtils.Errors.Count == 0, "Обновление ресурсов зарегистрировало ошибку");
+    }
+
+    // Проверяем сохранение содержимого и времени записи файлов того же размера при повторном запуске
+    private static async Task MsixPreservesUnchangedResourcesAsync()
+    {
+        var writeTimes = new Dictionary<string, DateTime>();
+        foreach (var language in Localizer.Instance.GetAvailableLanguages())
+        {
+            var destination = GetLocalResourcePath(language);
+            Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+            File.Copy(Path.Combine(StorageFile.PackageDirectory, "Strings", language, "Resources.resw"), destination);
+            File.SetLastWriteTimeUtc(destination, DateTime.UnixEpoch.AddDays(1));
+            writeTimes[language] = File.GetLastWriteTimeUtc(destination);
+        }
+        TgRuntimeHelper.IsMSIX = true;
+        await CreateSettings("Russian").InitializeLocalizationAsync();
+        AssertResourceContents();
+        foreach (var item in writeTimes)
+            Assert(File.GetLastWriteTimeUtc(GetLocalResourcePath(item.Key)) == item.Value, $"Неизменившийся ресурс {item.Key} перезаписан");
+        Assert(TestLogUtils.Errors.Count == 0, "Проверка неизменившихся ресурсов зарегистрировала ошибку");
+    }
+
+    // Проверяем регистрацию ошибки отсутствующего ресурса в пакете без фиктивного успешного копирования
+    private static async Task MsixLogsMissingPackageResourceAsync()
+    {
+        File.Delete(Path.Combine(StorageFile.PackageDirectory, "Strings", "ru-RU", "Resources.resw"));
+        TgRuntimeHelper.IsMSIX = true;
+        await CreateSettings("Russian").InitializeLocalizationAsync();
+        Assert(TestLogUtils.Errors.Any(x => x is FileNotFoundException), "Отсутствие ресурса в пакете не зарегистрировано в журнале");
+        Assert(!File.Exists(GetLocalResourcePath("ru-RU")), "Создан фиктивный ресурс вместо отсутствующего файла пакета");
+        Assert(File.Exists(GetLocalResourcePath("en-US")), "Не скопирован доступный ресурс перед ошибкой второго языка");
+    }
+
+    // Проверяем журналирование ошибки записи без потери содержимого заблокированного файла
+    private static async Task MsixLogsLockedResourceAsync()
+    {
+        var destination = GetLocalResourcePath("ru-RU");
+        Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+        File.WriteAllText(destination, "Locked resource");
+        TgRuntimeHelper.IsMSIX = true;
+        using (var lockedFile = new FileStream(destination, FileMode.Open, FileAccess.Read, FileShare.None))
+            await CreateSettings("Russian").InitializeLocalizationAsync();
+        Assert(TestLogUtils.Errors.Any(x => x is IOException), "Ошибка записи заблокированного ресурса не зарегистрирована");
+        Assert(File.ReadAllText(destination) == "Locked resource", "Ошибка копирования повредила существующий ресурс");
+    }
+
+    // Проверяем настоящий результат копирования для обоих языков и порядок подготовки локализатора
+    private static void AssertResourceContents()
+    {
+        foreach (var language in Localizer.Instance.GetAvailableLanguages())
+        {
+            var destination = GetLocalResourcePath(language);
+            Assert(File.Exists(destination), $"Не создан отсутствующий ресурс {language}/Resources.resw");
+            var expected = File.ReadAllText(Path.Combine(StorageFile.PackageDirectory, "Strings", language, "Resources.resw"));
+            Assert(File.ReadAllText(destination) == expected, $"Содержимое ресурса {language} отличается от пакета");
+            Assert(Localizer.Instance.ResourcesAtBuild.TryGetValue(language, out var content) && content == expected,
+                $"Ресурс {language} не подготовлен до построения локализатора");
+        }
+    }
+
+    // Возвращаем путь к ресурсу во временном аналоге LocalState
+    private static string GetLocalResourcePath(string language) => Path.Combine(ApplicationData.Current.LocalFolder.Path, "Strings", language, "Resources.resw");
 
     // Проверяем сохранённый русский язык до создания окна Package
     private static Task SavedRussianPackagedAsync() => CheckInitialLanguageAsync("Russian", "ru-RU", isMsix: true);

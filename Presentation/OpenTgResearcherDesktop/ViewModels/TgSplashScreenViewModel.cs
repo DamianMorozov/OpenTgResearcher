@@ -71,17 +71,12 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         }
     }
 
-    /// <summary> Loading Velopack Installer </summary>
+    /// <summary> Отображение результата раннего запуска Velopack </summary>
     internal async Task LoadingVelopackInstallerAsync()
     {
         try
         {
-            VelopackApp.Build()
-                .OnFirstRun((v) =>
-                {
-                    LogInformation($"  Thanks for installing the {TgConstants.OpenTgResearcherDesktop}!");
-                })
-                .Run();
+            if (Program.IsFirstRun) LogInformation($"  Thanks for installing the {TgConstants.OpenTgResearcherDesktop}!");
             IsLoadVelopack = true;
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
         }

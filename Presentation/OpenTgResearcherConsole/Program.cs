@@ -2,7 +2,17 @@
 
 public static class Program
 {
-    public static async Task Main()
+    private static bool _isFirstRun;
+
+    /// <summary> Обрабатывает служебные запуски Velopack до инициализации приложения </summary>
+    public static void Main()
+    {
+        VelopackApp.Build().OnFirstRun(_ => _isFirstRun = true).Run();
+        RunAsync().GetAwaiter().GetResult();
+    }
+
+    // Запускаем обычную работу консоли после обработки установщика
+    private static async Task RunAsync()
     {
         WaitForMakeScreenRecord();
 
@@ -94,8 +104,8 @@ public static class Program
         tgLog.WriteLine($"  {TgConstants.OpenTgResearcherConsole} {tgAppSettings.AppVersion}");
         tgLog.WriteLine("");
 
-        // Loading Velopack Installer
-        LoadingVelopackInstaller(tgLog);
+        // Отображение результата раннего запуска установщика Velopack
+        ShowInstallerStatus(tgLog);
 
         // Loading logging
         tgLog.WriteLine("  Loading logging ...");
@@ -193,18 +203,16 @@ public static class Program
         } while (tgMenu.Value is not TgEnumMenuMain.Exit);
     }
 
-    /// <summary> Loading Velopack Installer </summary>
-    private static void LoadingVelopackInstaller(TgLogHelper tgLog)
+    // Отображаем статус установщика и приветствие после подготовки вывода консоли
+    private static void ShowInstallerStatus(TgLogHelper tgLog)
     {
         tgLog.WriteLine("  Loading installer ...");
-        // Velopack installer update
-        VelopackApp.Build()
-            .OnFirstRun((v) =>
-            {
-                TgLogUtils.WriteLog($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
-                tgLog.WriteLine($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
-            })
-            .Run();
+        // Уведомление о первой установке не требует повторного запуска Velopack
+        if (_isFirstRun)
+        {
+            TgLogUtils.WriteLog($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
+            tgLog.WriteLine($"  Thanks for installing the {TgConstants.OpenTgResearcherConsole}!");
+        }
         tgLog.WriteLine("  Loading installer   v");
     }
 

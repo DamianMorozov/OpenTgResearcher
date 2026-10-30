@@ -69,13 +69,14 @@ flowchart TD
 
 ```mermaid
 flowchart TD
+    Entry["Program.Main: Velopack → WinRT → контекст UI"] --> Host
     Host["App: Generic Host + Autofac"] --> Manager["OnLaunched: область и BusinessLogicManager"]
     Manager --> Database["Создание и обновление БД; очистка кеша"]
     Database --> Language["Чтение сохранённого языка; ожидание инициализации локализатора"]
     Language --> Window["Создание MainWindow; обработчики Closing и Closed"]
     Window --> Activation["ActivationService: настройки, ShellPage, обработчики активации"]
     Activation --> Splash["Показ TgSplashScreenPage"]
-    Splash --> Stages["Журнал → Velopack → настройки → хранилище → лицензия → уведомления → мониторинг"]
+    Splash --> Stages["Журнал → статус Velopack → настройки → хранилище → лицензия → уведомления → мониторинг"]
     Stages --> Complete["Завершение загрузки; команда Продолжить возвращает ShellPage"]
     Window -. "Closing" .-> Closing["App.IsClosing = true; отмена немедленного закрытия"]
     Closing -.-> Guards["Продолжения загрузки и локализации прекращают обновление XAML"]
@@ -83,7 +84,9 @@ flowchart TD
     Disconnect --> Close["MainWindow.Close после завершения отключения"]
 ```
 
-Порядок подтверждается [ActivationService](Presentation/OpenTgResearcherDesktop/Services/ActivationService.cs),
+Velopack обрабатывается в начале [Program.Main](Presentation/OpenTgResearcherDesktop/Program.cs), до WinRT и создания `App`.
+В [Console](Presentation/OpenTgResearcherConsole/Program.cs) синхронный `Main` также сначала вызывает Velopack, затем ожидает обычный запуск `RunAsync`.
+Порядок последующей загрузки Desktop подтверждается [ActivationService](Presentation/OpenTgResearcherDesktop/Services/ActivationService.cs),
 [страницей заставки](Presentation/OpenTgResearcherDesktop/Views/TgSplashScreenPage.xaml.cs)
 и её [моделью представления](Presentation/OpenTgResearcherDesktop/ViewModels/TgSplashScreenViewModel.cs).
 Создание и обновление хранилища вызывается как до показа окна, так и на этапе заставки.
@@ -165,7 +168,7 @@ FusionCache используется для результатов запрос�
 | [OpenTgResearcherConsoleTests](Tests/OpenTgResearcherConsoleTests/OpenTgResearcherConsoleTests.csproj) | Подготовлен проект NUnit; ссылок на проекты приложения и реализованных тестовых сценариев сейчас нет |
 | [OpenTgResearcherDesktop.Tests](Tests/OpenTgResearcherDesktop.Tests.MSTests/OpenTgResearcherDesktop.Tests.csproj) | MSTest с WinUI-хостом и ссылкой на Desktop; текущий тест `Assert.IsTrue(true)` не проверяет поведение приложения |
 | [LogsPage.SelfTest](Tests/SelfTests/LogsPage/LogsPage.SelfTest.csproj) | Консольный селфтест: исходные VM, модель и контракт страницы журналов подключены через `Compile Link`; UI заменён заглушками, файловые операции реальные; прямая ссылка на `TgInfrastructure` |
-| [DesktopStartup.SelfTest](Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.csproj) | Консольный селфтест: исходные служба, модель и контракт настроек через `Compile Link`, заглушки WinUI/локализатора; реальный мониторинг из `TgBusinessLogic` |
+| [DesktopStartup.SelfTest](Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.csproj) | Консольный селфтест: исходные служба, модель и контракт настроек через `Compile Link`, заглушки WinUI/локализатора; реальный мониторинг из `TgBusinessLogic`; режим `--velopack` проверяет IL точек входа готовых Desktop и Console без их запуска |
 | [ClientConnection.SelfTest](Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj) | Консольный селфтест: исходная VM подключения через `Compile Link`, настоящие DTO из `TgBusinessLogic`/`TgStorage`; UI, репозитории и клиент подменены, подключения к Telegram не выполняются |
 | [Proxies.SelfTest](Tests/SelfTests/Proxies/Proxies.SelfTest.csproj) | Исходные VM списка и карточки прокси, общий обработчик подтверждений через `Compile Link`; настоящие репозиторий и SQLite в памяти, HTTP CONNECT и SOCKS5 на loopback, настройка MTProto без Telegram; явный режим `--live` проверяет Desktop-подключение без прокси и с первой записью, используя БД только для чтения и копии сессии |
 | [TelegramCompatibility.SelfTest](Tests/SelfTests/TelegramCompatibility/TelegramCompatibility.SelfTest.csproj) | Совместимость с обновлёнными API WTelegram и Telegram.Bot: сохранение ID истории настоящим сервисом и репозиторием в SQLite в памяти, три состояния разрешения управления темами; без Telegram |

@@ -74,6 +74,19 @@ dotnet run --project Tests/SelfTests/TelegramCompatibility/TelegramCompatibility
 ./Tests/SelfTests/Test-RebuildOutputs.ps1
 ```
 
+## Проверка запуска Velopack
+Desktop и Console вызывают `VelopackApp.Run()` в начале синхронного `Main`, до создания интерфейса, сервисов и хранилища.
+Приветствие после первой установки выводится после подготовки приложения. Селфтест читает IL готовых сборок без их запуска: проверяет порядок вызовов, отсутствие повторного запуска Velopack, STA и запуск WinUI в Desktop.
+После сборки решения `Debug | x64` выполните из корня решения:
+
+```powershell
+$desktopAssembly = 'Presentation/OpenTgResearcherDesktop/bin/Debug_x64/net10.0-windows10.0.19041.0/win-x64/OpenTgResearcherDesktop.dll'
+$consoleAssembly = 'Presentation/OpenTgResearcherConsole/bin/Debug_x64/net10.0/OpenTgResearcherConsole.dll'
+dotnet run --project Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.csproj -p:Platform=x64 --no-build -- --velopack $desktopAssembly $consoleAssembly
+```
+
+При упаковке `vpk` должен подтвердить `Verified VelopackApp.Run()` в `Program::Main()` для каждого приложения. Проверка IL и упаковка не заменяют проверку установки и обновления пользователем.
+
 ## Проверка закрытия Desktop
 При закрытии главного окна Desktop сначала ожидает отключения Telegram и освобождения файла сессии. Авторизация сохраняется для следующего запуска; завершение клиента не выполняет выход из учётной записи.
 

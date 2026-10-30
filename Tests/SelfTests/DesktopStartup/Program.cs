@@ -3,8 +3,9 @@ namespace OpenTgResearcherDesktop.StartupSelfTests;
 internal static partial class Program
 {
     // Проверяем исходную службу настроек и фактическое завершение фоновой задачи мониторинга
-    private static async Task<int> Main()
+    private static async Task<int> Main(string[] args)
     {
+        if (args.Length > 0) return CheckVelopackEntryPoints(args);
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("MsixCreatesMissingResources", MsixCreatesMissingResourcesAsync),

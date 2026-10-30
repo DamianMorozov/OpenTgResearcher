@@ -9,12 +9,14 @@ public interface IFileService
 
 public sealed class MemoryFileService(string? language) : IFileService
 {
+    public Dictionary<string, object> SavedSettings { get; private set; } = [];
     /// <summary> Возвращает сохранённый язык без доступа к настройкам пользователя </summary>
     public T Read<T>(string folderPath, string fileName) => (T)(object)new Dictionary<string, object>
         { [nameof(LocalSettingsOptions.AppLanguage)] = language ?? "Default" };
 
-    /// <summary> Не записывает настройки пользователя </summary>
-    public void Save<T>(string folderPath, string fileName, T content) { }
+    /// <summary> Сохраняет результат исходной службы в памяти вместо настроек пользователя </summary>
+    public void Save<T>(string folderPath, string fileName, T content) =>
+        SavedSettings = new Dictionary<string, object>((IDictionary<string, object>)(object)content!);
 }
 
 public sealed class TestWindow

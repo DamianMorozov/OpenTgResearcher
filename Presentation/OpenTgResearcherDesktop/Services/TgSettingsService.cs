@@ -99,7 +99,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
     #region Methods
 
-    /// <summary> Apply app language for MSIX and unpackaged scenarios; exceptions are logged and do not crash app </summary>
+    // Применяем язык через PRI для MSIX и через культуры и локализатор для приложения без пакета
     private void SetAppLanguage()
     {
         try
@@ -108,19 +108,19 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
 
             if (TgRuntimeHelper.IsMSIX)
             {
-                // MSIX apps load resources from PRI; PrimaryLanguageOverride must be set on UI thread and usually requires restart
+                // MSIX загружает ресурсы из PRI; переопределение языка выполняем в потоке интерфейса
                 TgDesktopUtils.InvokeOnUIThread(() =>
                 {
                     Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = languageCode;
                 });
-                // Try to refresh UI to reflect language change without full restart
+                // Обновляем локализатор и интерфейс после изменения языка
                 TryRefreshUiResources(languageCode);
-                // Note: For MSIX the most reliable way is to prompt user for restart to fully reload PRI resources
+                // Полная перезагрузка ресурсов PRI в MSIX может потребовать перезапуска
                 TgLogUtils.WriteLog($"Language override set to {languageCode} for MSIX; restart may be required");
             }
             else
             {
-                // Unpackaged desktop: set thread cultures and resource context languages
+                // Приложение без MSIX использует культуры .NET и WinUI3Localizer
                 var culture = new CultureInfo(languageCode);
 
                 CultureInfo.DefaultThreadCurrentCulture = culture;
@@ -128,15 +128,10 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = culture;
 
-                var context = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForViewIndependentUse();
-                context.Languages = AppLanguage switch
-                {
-                    TgEnumLanguage.Russian => new[] { TgConstants.LocaleRuRu },
-                    _ => [TgConstants.LocaleEnUs]
-                };
-                // Refresh UI to pick up new resources
+                // UWP ResourceContext требует пакетных ресурсов и аварийно завершает установленный Release без MSIX
+                // Обновляем интерфейс через уже инициализированный локализатор
                 TryRefreshUiResources(languageCode);
-                // Log the change
+                // Регистрируем успешное применение языка после загрузки заставки
                 TgLogUtils.WriteLog($"Language set to {languageCode} for unpackaged app");
             }
         }

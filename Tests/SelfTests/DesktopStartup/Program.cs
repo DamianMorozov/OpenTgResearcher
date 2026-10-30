@@ -19,6 +19,8 @@ internal static partial class Program
             ("LanguageContinuationAfterClose", LanguageContinuationAfterCloseAsync),
             ("LanguageChangeAlreadyClosed", LanguageChangeAlreadyClosedAsync),
             ("UnchangedLanguageDoesNotRefreshUi", UnchangedLanguageDoesNotRefreshUiAsync),
+            ("UnpackagedSaveRussian", () => UnpackagedSaveLanguageAsync(TgEnumLanguage.Russian, "ru-RU")),
+            ("UnpackagedSaveEnglish", () => UnpackagedSaveLanguageAsync(TgEnumLanguage.English, "en-US")),
             ("HardwareDisposalWaitsForWorker", HardwareDisposalWaitsForWorkerAsync),
             ("CloseWaitsForTelegram", CloseWaitsForTelegramAsync),
             ("FailedDisconnectKeepsWindowOpen", FailedDisconnectKeepsWindowOpenAsync),
@@ -34,6 +36,7 @@ internal static partial class Program
             Localizer.Instance.SetLanguageCalls = 0;
             Localizer.Instance.Language = string.Empty;
             Localizer.Instance.ResourcesAtBuild.Clear();
+            Windows.ApplicationModel.Resources.Core.ResourceContext.AccessCalls = 0;
             try
             {
                 PrepareResourceFiles(Path.Combine(outputDirectory, test.Name));
@@ -207,6 +210,41 @@ internal static partial class Program
         method.Invoke(settings, ["ru-RU"]);
         Assert(root.LayoutCalls == 0 && Localizer.Instance.SetLanguageCalls == 0, "Неизменившийся язык вызвал повторное обновление XAML");
         return Task.CompletedTask;
+    }
+
+    // Проверяем сохранение и применение языка без UWP-контекста ресурсов установленного приложения
+    private static Task UnpackagedSaveLanguageAsync(TgEnumLanguage language, string expected)
+    {
+        var oldCulture = CultureInfo.CurrentCulture;
+        var oldUiCulture = CultureInfo.CurrentUICulture;
+        var oldDefaultCulture = CultureInfo.DefaultThreadCurrentCulture;
+        var oldDefaultUiCulture = CultureInfo.DefaultThreadCurrentUICulture;
+        try
+        {
+            TgRuntimeHelper.IsMSIX = false;
+            var files = new MemoryFileService("English");
+            var settings = new TgSettingsService(files, Options.Create(new LocalSettingsOptions()));
+            App.Settings = settings;
+            var root = new FrameworkElement();
+            App.MainWindow.Content = root;
+            Localizer.Instance.Language = expected == "ru-RU" ? "en-US" : "ru-RU";
+            settings.AppLanguage = language;
+            settings.Save();
+            Assert(Windows.ApplicationModel.Resources.Core.ResourceContext.AccessCalls == 0, "Сохранение языка обращается к аварийному UWP ResourceContext");
+            Assert(TestLogUtils.Errors.Count == 0, "Применение языка зарегистрировало ошибку");
+            Assert(files.SavedSettings[nameof(LocalSettingsOptions.AppLanguage)].ToString() == language.ToString(), "Выбранный язык не сохранён");
+            Assert(Localizer.Instance.Language == expected && root.LayoutCalls > 0, "Локализатор и интерфейс не обновлены");
+            Assert(CultureInfo.CurrentUICulture.Name == expected && CultureInfo.DefaultThreadCurrentUICulture?.Name == expected,
+                "Не применена культура интерфейса");
+            return Task.CompletedTask;
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = oldCulture;
+            CultureInfo.CurrentUICulture = oldUiCulture;
+            CultureInfo.DefaultThreadCurrentCulture = oldDefaultCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = oldDefaultUiCulture;
+        }
     }
 
     // Проверяем освобождение ресурсов на управляемой фоновой задаче без доступа к оборудованию

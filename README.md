@@ -87,6 +87,16 @@ dotnet run --project Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.cspr
 
 При упаковке `vpk` должен подтвердить `Verified VelopackApp.Run()` в `Program::Main()` для каждого приложения. Проверка IL и упаковка не заменяют проверку установки и обновления пользователем.
 
+Для проверки опубликованного Desktop без MSIX выполните в PowerShell из корня решения:
+
+```powershell
+./Tests/SelfTests/Test-DesktopReleaseStartup.ps1 -ExecutablePath 'D:/DevMy/OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language Russian
+./Tests/SelfTests/Test-DesktopReleaseStartup.ps1 -ExecutablePath 'D:/DevMy/OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language English
+```
+
+Перед проверкой закройте Desktop. Каждый запуск использует отдельные настройки, БД и путь сессии в `Tests/SelfTests/bin/ReleaseStartup`; подключения к Telegram нет.
+Проверка требует сохранения языка после загрузки заставки, продолжения работы процесса и штатного закрытия с кодом 0. Она воспроизводит вылет UWP `ResourceContext` в Release без MSIX, который не обнаруживается одной сборкой и упаковкой.
+
 ## Проверка закрытия Desktop
 При закрытии главного окна Desktop сначала ожидает отключения Telegram и освобождения файла сессии. Авторизация сохраняется для следующего запуска; завершение клиента не выполняет выход из учётной записи.
 

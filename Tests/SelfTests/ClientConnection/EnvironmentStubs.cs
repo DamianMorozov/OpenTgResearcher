@@ -26,7 +26,7 @@ public sealed class TestSettingsService : ITgSettingsService
 }
 public interface INavigationService;
 public interface ILogger<T>;
-public sealed class NavigationEventArgs;
+public sealed class NavigationEventArgs { public object? Parameter { get; set; } }
 public sealed class TextChangedEventArgs;
 public sealed class TextBox { public string Text { get; set; } = string.Empty; }
 public static class TestGlobalTools { public static object Container { get; } = new(); }
@@ -121,7 +121,7 @@ public sealed class TestAppRepository
     /// <summary> Возвращает настройки из памяти </summary>
     public Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => Task.FromResult(Current);
     /// <summary> Проверяет сохранение изменённых настроек </summary>
-    public Task SaveAsync(TgEfAppDto dto)
+    public Task SaveAsync(TgEfAppDto dto, CancellationToken ct = default)
     {
         SaveCalls++;
         if (FailSave) throw new InvalidOperationException("Тестовая ошибка сохранения");
@@ -234,6 +234,8 @@ public static class TgDesktopUtils
 }
 public static class TgResourceExtensions
 {
+    /// <summary> Возвращает результат выбора прокси из ресурсов приложения </summary>
+    public static string GetProxyApplied(bool isSaved) => ReadConnectionResource(isSaved ? "ProxyApplied" : "ProxySelectedNewProfile");
     public static string Language { get; set; } = "ru-RU";
     /// <summary> Возвращает настоящую подсказку из ресурсов приложения </summary>
     public static string GetClientApiSettingsHelp() => ReadConnectionResource("ClientApiSettingsHelp");

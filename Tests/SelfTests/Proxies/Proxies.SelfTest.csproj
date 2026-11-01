@@ -4,10 +4,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.8.50.0</Version>
+    <Version>0.8.60.0</Version>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Fixtures/*.tdf" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgProxiesPage.xaml" LogicalName="ProxiesPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/ru-RU/Resources.resw" LogicalName="ProxyResources.ru.resw" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/en-us/Resources.resw" LogicalName="ProxyResources.en.resw" />
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgProxyViewModel.cs" Link="TgProxyViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgProxiesViewModel.cs" Link="TgProxiesViewModel.cs" />

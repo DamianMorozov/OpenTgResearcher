@@ -14,6 +14,7 @@ public sealed class INavigationService
     public bool NavigateTo(string key, object? parameter = null) { LastKey = key; Parameter = parameter; return true; }
 }
 public sealed class NavigationEventArgs { public object? Parameter { get; set; } }
+public sealed class TgClientConnectionViewModel;
 public enum ContentDialogResult { None, Primary }
 public enum ContentDialogButton { Close }
 public sealed class ContentDialog
@@ -67,6 +68,19 @@ public abstract class TgPageViewModelBase : ObservableObject
 }
 public static class TgResourceExtensions
 {
+    public static string ProxyHeaderLanguage { get; set; } = "ru";
+    /// <summary> Читает настоящие переводы заголовков без запуска WinUI </summary>
+    public static string GetProxyColumnHeader(string column)
+    {
+        using var stream = typeof(Program).Assembly.GetManifestResourceStream($"ProxyResources.{ProxyHeaderLanguage}.resw")!;
+        return XDocument.Load(stream).Root!.Elements("data").Single(x => (string?)x.Attribute("name") == $"ProxyColumn{column}").Element("value")!.Value;
+    }
+    /// <summary> Возвращает проверяемый статус TCP-подключения </summary>
+    public static string GetProxyAvailabilityStatus(string state, long elapsed = 0) => state switch
+    {
+        "Direct" => "Без прокси", "NotChecked" => "Не проверен", "Checking" => "Проверка",
+        "Available" => $"Доступен (TCP, {elapsed} мс)", _ => "Недоступен",
+    };
     /// <summary> Возвращает тестовую подпись </summary>
     public static string GetYesButton() => "Да";
     /// <summary> Возвращает тестовую подпись </summary>
@@ -83,6 +97,11 @@ public static class TgResourceExtensions
     public static string AskDeleteAllRecords() => "Удалить всё?";
     /// <summary> Возвращает тестовую подпись </summary>
     public static string AskCreateDefault() => "Создать стандартную запись?";
+    /// <summary> Возвращает подтверждение импорта </summary>
+    public static string AskImportTelegramProxies() => "Импортировать прокси из локальных настроек Telegram Desktop?";
+    /// <summary> Возвращает результат записи </summary>
+    public static string GetTelegramProxyImportResult(int added, int skipped, int skippedWeb) =>
+        $"Добавлено: {added}; совпадения: {skipped}; пропущено Web: {skippedWeb}";
 }
 public static class App { public static TestManager BusinessLogicManager { get; } = new(); }
 public sealed class TestManager { public TestStorage StorageManager { get; } = new(); }

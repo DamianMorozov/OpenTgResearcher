@@ -2,10 +2,22 @@ namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
 {
+    public string ProxyTypeHeader => TgResourceExtensions.GetProxyColumnHeader("Type");
+    public string ProxyHostHeader => TgResourceExtensions.GetProxyColumnHeader("Host");
+    public string ProxyPortHeader => TgResourceExtensions.GetProxyColumnHeader("Port");
+    public string ProxyUserHeader => TgResourceExtensions.GetProxyColumnHeader("User");
+    public string ProxyPasswordHeader => TgResourceExtensions.GetProxyColumnHeader("Password");
+    public string ProxyAvailabilityHeader => TgResourceExtensions.GetProxyColumnHeader("Availability");
     [ObservableProperty]
     public partial ObservableCollection<TgEfProxyDto> Dtos { get; set; } = [];
     [ObservableProperty]
     public partial TgEfProxyDto? SelectedProxy { get; set; }
+    [ObservableProperty]
+    public partial string TelegramDataPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Telegram Desktop", "tdata");
+    [ObservableProperty]
+    public partial string ImportResult { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool IsCheckingProxies { get; set; }
     public IAsyncRelayCommand LoadDataStorageCommand { get; }
     public IRelayCommand DefaultSortCommand { get; }
     public IRelayCommand AddProxyCommand { get; }
@@ -14,6 +26,9 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
     public IAsyncRelayCommand DeleteProxyCommand { get; }
     public IRelayCommand OpenOrEditProxyCommand { get; }
     public IRelayCommand ClearViewCommand { get; }
+    public IAsyncRelayCommand ImportTelegramProxiesCommand { get; }
+    public IAsyncRelayCommand CheckAllProxiesCommand { get; }
+    public IRelayCommand ApplyProxyCommand { get; }
 
     public TgProxiesViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgProxiesViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgProxiesViewModel))
@@ -26,6 +41,9 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
         DeleteProxyCommand = new AsyncRelayCommand(DeleteProxyAsync, () => SelectedProxy is not null);
         OpenOrEditProxyCommand = new RelayCommand(OpenOrEditProxy, () => SelectedProxy is not null);
         ClearViewCommand = new RelayCommand(ClearView);
+        ImportTelegramProxiesCommand = new AsyncRelayCommand(ImportTelegramProxiesAsync);
+        CheckAllProxiesCommand = new AsyncRelayCommand(CheckAllProxiesAsync, () => !IsCheckingProxies && Dtos.Any(x => x.Type != TgEnumProxyType.None));
+        ApplyProxyCommand = new RelayCommand(ApplyProxy, () => SelectedProxy is not null && !IsCheckingProxies);
     }
 
     /// <summary> Загружает список при открытии и после возврата из карточки </summary>
@@ -36,6 +54,52 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
     {
         DeleteProxyCommand.NotifyCanExecuteChanged();
         OpenOrEditProxyCommand.NotifyCanExecuteChanged();
+        ApplyProxyCommand.NotifyCanExecuteChanged();
+    }
+
+    // Обновляем доступность проверки после загрузки или очистки списка
+    partial void OnDtosChanged(ObservableCollection<TgEfProxyDto> value) => CheckAllProxiesCommand?.NotifyCanExecuteChanged();
+
+    // На время проверки исключаем повторный запуск и применение незавершённой строки
+    partial void OnIsCheckingProxiesChanged(bool value)
+    {
+        CheckAllProxiesCommand.NotifyCanExecuteChanged();
+        ApplyProxyCommand.NotifyCanExecuteChanged();
+    }
+
+    // Передаём выбранную запись форме подключения, которая сохраняет выбор в существующем профиле
+    private void ApplyProxy()
+    {
+        if (SelectedProxy is { } proxy) NavigationService.NavigateTo(typeof(TgClientConnectionViewModel).FullName!, proxy.Uid);
+    }
+
+    // Проверяем все серверы списка без изменения сессии и транспорта Telegram
+    private async Task CheckAllProxiesAsync(CancellationToken ct = default)
+    {
+        TgEfProxyDto? current = null;
+        try
+        {
+            IsCheckingProxies = true;
+            Exception.Default();
+            var proxies = Dtos.ToArray();
+            foreach (var proxy in proxies)
+                proxy.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus(proxy.Type == TgEnumProxyType.None ? "Direct" : "NotChecked");
+            foreach (var proxy in proxies.Where(x => x.Type != TgEnumProxyType.None))
+            {
+                ct.ThrowIfCancellationRequested();
+                current = proxy;
+                proxy.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus("Checking");
+                var result = await TgProxyAvailabilityChecker.CheckAsync(proxy, ct: ct);
+                proxy.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus(result.IsAvailable ? "Available" : "Unavailable", result.ElapsedMilliseconds);
+                current = null;
+            }
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            if (current is not null) current.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus("NotChecked");
+        }
+        catch (Exception ex) { LogError(ex); Exception.Set(ex); }
+        finally { IsCheckingProxies = false; }
     }
 
     // Сортируем список, сохраняя выделение
@@ -58,6 +122,8 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
         if (!SettingsService.IsExistsAppStorage) return;
         var uid = SelectedProxy?.Uid;
         Dtos = [.. await App.BusinessLogicManager.StorageManager.ProxyRepository.GetListDtosAsync()];
+        foreach (var proxy in Dtos)
+            proxy.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus(proxy.Type == TgEnumProxyType.None ? "Direct" : "NotChecked");
         SelectedProxy = Dtos.FirstOrDefault(x => x.Uid == uid);
         SetOrderData();
     }
@@ -79,6 +145,23 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
     {
         await App.BusinessLogicManager.StorageManager.ProxyRepository.CreateDefaultAsync();
         await LoadDataStorageCoreAsync();
+    }
+
+    // Фиксируем выбранный каталог до подтверждения чтения и сохранения
+    private async Task ImportTelegramProxiesAsync()
+    {
+        ImportResult = string.Empty;
+        var directory = TelegramDataPath;
+        await ConfirmStorageActionAsync(() => ImportTelegramProxiesCoreAsync(directory), TgResourceExtensions.AskImportTelegramProxies());
+    }
+
+    // Читаем только общие настройки Telegram и сохраняем новые записи без изменения текущего подключения
+    private async Task ImportTelegramProxiesCoreAsync(string directory, CancellationToken ct = default)
+    {
+        var result = await Task.Run(() => TgTelegramDesktopProxyImporter.ReadAsync(directory, ct), ct);
+        var added = await App.BusinessLogicManager.StorageManager.ProxyRepository.ImportAsync(result.Proxies, ct);
+        await LoadDataStorageCoreAsync();
+        ImportResult = TgResourceExtensions.GetTelegramProxyImportResult(added, result.Proxies.Count - added, result.SkippedWebCount);
     }
 
     // Фиксируем выбранную запись до показа подтверждения

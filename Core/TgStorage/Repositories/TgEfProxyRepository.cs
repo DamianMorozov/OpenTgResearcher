@@ -267,6 +267,38 @@ public sealed class TgEfProxyRepository : TgEfRepositoryBase<TgEfProxyEntity, Tg
     public override Task<TgEfStorageResult<TgEfProxyEntity>> DeleteAllAsync(CancellationToken ct = default) => DeleteAsync(x => true, ct);
 
     /// <inheritdoc />
+    public async Task<int> ImportAsync(IReadOnlyList<TgEfProxyDto> dtos, CancellationToken ct = default)
+    {
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+            await using var transaction = await EfContext.Database.BeginTransactionAsync(ct);
+            var existing = await EfContext.Proxies.AsNoTracking().Select(x => new { x.Type, x.HostName, x.Port }).ToListAsync(ct);
+            var endpoints = existing.Select(x => (x.Type, Host: x.HostName.ToUpperInvariant(), x.Port)).ToHashSet();
+            var added = 0;
+            foreach (var dto in dtos)
+            {
+                ct.ThrowIfCancellationRequested();
+                var endpoint = (dto.Type, Host: dto.HostName.Trim().ToUpperInvariant(), dto.Port);
+                if (!endpoints.Add(endpoint)) continue;
+                var candidate = new TgEfProxyDto
+                {
+                    Type = dto.Type, HostName = dto.HostName, Port = dto.Port, UserName = dto.UserName, Password = dto.Password, Secret = dto.Secret,
+                };
+                await SaveAsync(candidate, ct);
+                added++;
+            }
+            await transaction.CommitAsync(ct);
+            return added;
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteExceptionWithMessage(ex, "Ошибка импорта прокси");
+            throw;
+        }
+    }
+
+    /// <inheritdoc />
     public async Task SaveListAsync(IEnumerable<TgEfProxyDto> dtos, CancellationToken ct = default)
     {
         try

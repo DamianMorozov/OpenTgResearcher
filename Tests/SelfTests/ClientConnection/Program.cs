@@ -9,6 +9,10 @@ internal static partial class Program
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("ConstructorInitializesModel", ConstructorInitializesModelAsync),
+            ("ApplyProxyFromNavigation", ApplyProxyFromNavigationAsync),
+            ("ApplyProxyToNewProfile", ApplyProxyToNewProfileAsync),
+            ("ApplyMissingProxy", ApplyMissingProxyAsync),
+            ("ApplyProxySaveFailure", ApplyProxySaveFailureAsync),
             ("NavigationSelectsSavedProxy", NavigationSelectsSavedProxyAsync),
             ("SavePreservesSelectedProxy", SavePreservesSelectedProxyAsync),
             ("ExistingEmptyProxyIsSelected", ExistingEmptyProxyIsSelectedAsync),

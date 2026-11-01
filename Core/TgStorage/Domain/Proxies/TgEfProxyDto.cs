@@ -17,6 +17,9 @@ public sealed partial class TgEfProxyDto : TgDtoBase, ITgEfProxyDto
 	public partial string Password { get; set; } = string.Empty;
 	[ObservableProperty]
 	public partial string Secret { get; set; } = string.Empty;
+    // Результат текущей проверки отображается только в таблице и не переносится в сущность БД
+    [ObservableProperty]
+    public partial string AvailabilityStatus { get; set; } = string.Empty;
 	public string PrettyName => $"{Type} | {TgDataFormatUtils.GetFormatString(HostName, 30)} | {Port} | {UserName}";
 
 	public TgEfProxyDto() : base()

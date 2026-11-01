@@ -61,9 +61,28 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
     #region Methods
 
+    /// <summary> Загружает профиль и применяет прокси, переданный из таблицы </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
         await LoadStorageDataAsync(LoadDataStorageCoreAsync);
+        if (e?.Parameter is not Guid proxyUid) return;
+        Exception.Default();
+        ConnectionMsg = string.Empty;
+        try { await ApplyProxyAsync(proxyUid); }
+        catch (Exception ex) { LogError(ex); Exception.Set(ex); ConnectionMsg = Exception.Message; }
+    }
+
+    // Меняем только выбор прокси, сохраняя API-параметры и текущую авторизацию
+    private async Task ApplyProxyAsync(Guid proxyUid, CancellationToken ct = default)
+    {
+        var proxy = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid)
+            ?? throw new InvalidOperationException("Выбранный прокси больше не существует. Обновите список и повторите выбор");
+        if (AppDto is null) return;
+        ProxyVm = proxy;
+        AppDto.ProxyUid = proxyUid;
+        var isSaved = AppDto.Uid != Guid.Empty;
+        if (isSaved) await App.BusinessLogicManager.StorageManager.AppRepository.SaveAsync(AppDto, ct);
+        ConnectionMsg = TgResourceExtensions.GetProxyApplied(isSaved: isSaved);
     }
 
     /// <summary> Объясняет ошибки настройки API и чтения сессии на странице подключения </summary>

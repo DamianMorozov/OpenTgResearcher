@@ -11,6 +11,8 @@ public static class TgResourceExtensions
 
     #region Methods
 
+    // Возвращаем строку для Header: DataGridColumnHeader не принимает UIElement
+    internal static string GetProxyColumnHeader(string column) => $"ProxyColumn{column}".GetLocalizedResource();
     internal static string GetFeatureLicenseManager => "FeatureLicenseManager".GetLocalizedResource();
     internal static string GetFeatureLicensePurchase => "FeatureLicensePurchase".GetLocalizedResource();
     internal static string GetFeatureRequiresLicense(TgEnumLicenseType required) => string.Format("FeatureRequiresLicense".GetLocalizedResource(), required.ToString());
@@ -38,6 +40,12 @@ public static class TgResourceExtensions
 	internal static string AskClientConnect() => "AskClientConnect".GetLocalizedResource();
 	internal static string AskClientDisconnect() => "AskClientDisconnect".GetLocalizedResource();
 	internal static string AskCreateDefault() => "AskCreateDefault".GetLocalizedResource();
+    internal static string AskImportTelegramProxies() => "AskImportTelegramProxies".GetLocalizedResource();
+    internal static string GetTelegramProxyImportResult(int added, int skipped, int skippedWeb) =>
+        string.Format("TelegramProxyImportResult".GetLocalizedResource(), added, skipped, skippedWeb);
+    internal static string GetProxyAvailabilityStatus(string state, long elapsed = 0) =>
+        string.Format($"ProxyAvailability{state}".GetLocalizedResource(), elapsed);
+    internal static string GetProxyApplied(bool isSaved) => (isSaved ? "ProxyApplied" : "ProxySelectedNewProfile").GetLocalizedResource();
 	internal static string AskDataClear() => "AskDataClear".GetLocalizedResource();
 	internal static string AskDefaultSettings() => "AskDefaultSettings".GetLocalizedResource();
 	internal static string AskDelete() => "AskDelete".GetLocalizedResource();

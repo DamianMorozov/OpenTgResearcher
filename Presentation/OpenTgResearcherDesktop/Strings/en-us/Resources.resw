@@ -1729,4 +1729,37 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ClientSessionResetDone" xml:space="preserve">
     <value>The local session has been reset. API credentials were preserved. Click Connect to log in again with a Telegram code and your two-step verification password if enabled.</value>
   </data>
+  <data name="TelegramProxyImportAction.Text" xml:space="preserve">
+    <value>Import from Telegram Desktop</value>
+  </data>
+  <data name="TelegramDataDirectory.Header" xml:space="preserve">
+    <value>Telegram Desktop tdata folder</value>
+  </data>
+  <data name="TelegramProxyImportHelp.Text" xml:space="preserve">
+    <value>Close Telegram Desktop and enter its tdata folder. For a portable installation, it is next to Telegram.exe. Import adds saved SOCKS5, HTTP and MTProto proxies, preserving existing records and Telegram settings. Choose a proxy on the Client connection page to use it.</value>
+  </data>
+  <data name="AskImportTelegramProxies" xml:space="preserve">
+    <value>Add proxies from the selected Telegram Desktop folder? Entries with the same type, address and port will be skipped, preserving saved credentials.</value>
+  </data>
+  <data name="TelegramProxyImportResult" xml:space="preserve">
+    <value>Proxies added: {0}. Matching entries skipped: {1}. Unsupported Web proxies skipped: {2}.</value>
+  </data>
+  <data name="ProxyColumnType" xml:space="preserve"><value>Type</value></data>
+  <data name="ProxyColumnHost" xml:space="preserve"><value>Server</value></data>
+  <data name="ProxyColumnPort" xml:space="preserve"><value>Port</value></data>
+  <data name="ProxyColumnUser" xml:space="preserve"><value>User</value></data>
+  <data name="ProxyColumnPassword" xml:space="preserve"><value>Password</value></data>
+  <data name="ProxyColumnAvailability" xml:space="preserve"><value>TCP availability</value></data>
+  <data name="ProxyCheckAllAction.Text" xml:space="preserve"><value>Check all proxies</value></data>
+  <data name="ProxyApplyAction.Text" xml:space="preserve"><value>Apply proxy</value></data>
+  <data name="ProxyCheckHelp.Text" xml:space="preserve">
+    <value>Checks TCP access to each server and port, waiting up to 5 seconds per entry. Proxy authentication and access to Telegram are not tested.</value>
+  </data>
+  <data name="ProxyAvailabilityNotChecked" xml:space="preserve"><value>Not checked</value></data>
+  <data name="ProxyAvailabilityChecking" xml:space="preserve"><value>Checking…</value></data>
+  <data name="ProxyAvailabilityDirect" xml:space="preserve"><value>No proxy</value></data>
+  <data name="ProxyAvailabilityAvailable" xml:space="preserve"><value>Available (TCP, {0} ms)</value></data>
+  <data name="ProxyAvailabilityUnavailable" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="ProxyApplied" xml:space="preserve"><value>The proxy was saved to your profile. It will be used the next time you connect to Telegram.</value></data>
+  <data name="ProxySelectedNewProfile" xml:space="preserve"><value>Proxy selected. Enter your API ID, API hash and phone number, then save connection settings.</value></data>
 </root>

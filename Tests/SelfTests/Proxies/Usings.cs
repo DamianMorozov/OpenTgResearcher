@@ -10,6 +10,7 @@ global using System.Reflection;
 global using System.Net;
 global using System.Net.Sockets;
 global using System.Text;
+global using System.Xml.Linq;
 global using TgBusinessLogic.Services;
 global using TgBusinessLogic.ViewModels;
 global using TgInfrastructure.Enums;

@@ -31,108 +31,166 @@
                 l:Uids.Uid="ExpanderActions"
                 IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                 IsExpanded="True">
-                <Grid ColumnSpacing="8" RowSpacing="8">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.AddProxyCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE710;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionCreate" />
+                <ContentControl HorizontalContentAlignment="Stretch" IsEnabled="{x:Bind ViewModel.IsCheckingProxies, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <Grid ColumnSpacing="8" RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.AddProxyCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE710;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionCreate" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.CreateDefaultProxyCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE777;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionCreateDefault" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.LoadDataStorageCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE72C;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionLoadFromStorage" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.DefaultSortCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE8CB;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="TextBlockDefaultSort" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.OpenOrEditProxyCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xEA5B;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionOpenOrEdit" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.DeleteProxyCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE894;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionDelete" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.DeleteAllProxiesCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE74D;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionDeleteAll" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.ClearViewCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE894;" />
+                                <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionClearView" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Stretch"
+                            Command="{x:Bind ViewModel.CheckAllProxiesCommand}">
+                            <TextBlock l:Uids.Uid="ProxyCheckAllAction" />
+                        </Button>
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Grid.ColumnSpan="2"
+                            l:Uids.Uid="ProxyCheckHelp"
+                            TextWrapping="Wrap" />
+                        <!--  Импорт из локальных настроек Telegram Desktop  -->
+                        <Grid
+                            Grid.Row="3"
+                            Grid.ColumnSpan="4"
+                            ColumnSpacing="8"
+                            RowSpacing="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.ColumnSpan="2"
+                                l:Uids.Uid="TelegramProxyImportHelp"
+                                TextWrapping="Wrap" />
+                            <TextBox
+                                Grid.Row="1"
+                                HorizontalAlignment="Stretch"
+                                l:Uids.Uid="TelegramDataDirectory"
+                                Text="{x:Bind ViewModel.TelegramDataPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                VerticalAlignment="Bottom"
+                                Command="{x:Bind ViewModel.ImportTelegramProxiesCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE8B5;" />
+                                    <TextBlock l:Uids.Uid="TelegramProxyImportAction" />
+                                </StackPanel>
+                            </Button>
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                IsTextSelectionEnabled="True"
+                                Text="{x:Bind ViewModel.ImportResult, Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                        <StackPanel
+                            Grid.Row="4"
+                            Grid.ColumnSpan="4"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock l:Uids.Uid="TextBlockCount" />
+                            <TextBlock Text="{x:Bind ViewModel.Dtos.Count, Mode=OneWay}" />
                         </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.CreateDefaultProxyCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE777;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionCreateDefault" />
-                        </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.LoadDataStorageCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE72C;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionLoadFromStorage" />
-                        </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.DefaultSortCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE8CB;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="TextBlockDefaultSort" />
-                        </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.OpenOrEditProxyCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xEA5B;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionOpenOrEdit" />
-                        </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.DeleteProxyCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE894;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionDelete" />
-                        </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.DeleteAllProxiesCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE74D;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionDeleteAll" />
-                        </StackPanel>
-                    </Button>
-                    <Button
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        HorizontalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.ClearViewCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE894;" />
-                            <TextBlock VerticalAlignment="Center" l:Uids.Uid="ActionClearView" />
-                        </StackPanel>
-                    </Button>
-                    <StackPanel
-                        Grid.Row="2"
-                        Grid.ColumnSpan="4"
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                        <TextBlock l:Uids.Uid="TextBlockCount" />
-                        <TextBlock Text="{x:Bind ViewModel.Dtos.Count, Mode=OneWay}" />
-                    </StackPanel>
-                </Grid>
+                    </Grid>
+                </ContentControl>
             </Expander>
             <InfoBar
                 Grid.Row="1"
@@ -140,7 +198,7 @@
                 IsOpen="{x:Bind ViewModel.Exception.IsExist, Mode=OneWay}"
                 Message="{x:Bind ViewModel.Exception.Message, Mode=OneWay}"
                 Severity="Error" />
-            <!--  Data in storage  -->
+            <!--  Сохранённые прокси и результаты проверки доступности  -->
             <ContentControl
                 Grid.Row="2"
                 HorizontalAlignment="Stretch"
@@ -166,50 +224,55 @@
                             HeadersVisibility="Column"
                             IsReadOnly="True"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}"
+                            RightTapped="OnProxyRightTapped"
                             SelectedItem="{x:Bind ViewModel.SelectedProxy, Mode=TwoWay}"
                             SelectionMode="Single">
+                            <controls:DataGrid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem
+                                        l:Uids.Uid="ProxyApplyAction"
+                                        Command="{x:Bind ViewModel.ApplyProxyCommand}"
+                                        Text="Применить прокси" />
+                                </MenuFlyout>
+                            </controls:DataGrid.ContextFlyout>
                             <controls:DataGrid.Columns>
-                                <!--  Type  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnTypeTemplate"
+                                <!--  Тип прокси  -->
+                                <styles:TgBindableDataGridTemplateColumn Header="{x:Bind ViewModel.ProxyTypeHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnTypeTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridProxies}" />
-                                <!--  HostName  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnHostNameTemplate"
+                                <!--  Сервер  -->
+                                <styles:TgBindableDataGridTemplateColumn Header="{x:Bind ViewModel.ProxyHostHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnHostNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="1*"
                                     OwnerGrid="{x:Bind DataGridProxies}" />
-                                <!--  Port  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnPortTemplate"
+                                <!--  Порт  -->
+                                <styles:TgBindableDataGridTemplateColumn Header="{x:Bind ViewModel.ProxyPortHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnPortTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridProxies}" />
-                                <!--  UserName  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnUserNameTemplate"
+                                <!--  Пользователь  -->
+                                <styles:TgBindableDataGridTemplateColumn Header="{x:Bind ViewModel.ProxyUserHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnUserNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridProxies}" />
-                                <!--  Password  -->
-                                <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnPasswordTemplate"
+                                <!--  Пароль  -->
+                                <styles:TgBindableDataGridTemplateColumn Header="{x:Bind ViewModel.ProxyPasswordHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnPasswordTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridProxies}" />
-                                <!--  End  -->
+                                <!--  Проверка сервера и порта без входа в Telegram  -->
+                                <controls:DataGridTextColumn Header="{x:Bind ViewModel.ProxyAvailabilityHeader}" Width="Auto" Binding="{Binding AvailabilityStatus, Mode=OneWay}" />
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </Grid>

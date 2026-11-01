@@ -412,3 +412,4 @@ FodyWeavers.xsd
 /Presentation/*.xml
 /Tests/*.xml
 AGENTS.md
+*.tdf

@@ -13,4 +13,6 @@ public interface ITgEfProxyRepository : ITgEfRepository<TgEfProxyEntity, TgEfPro
     public Task SaveAsync(TgEfProxyDto dto, CancellationToken ct = default);
     /// <summary> Save list of proxy dtos </summary>
     public Task SaveListAsync(IEnumerable<TgEfProxyDto> dtos, CancellationToken ct = default);
+    /// <summary> Добавляет новые прокси одной транзакцией, сохраняя существующие реквизиты </summary>
+    public Task<int> ImportAsync(IReadOnlyList<TgEfProxyDto> dtos, CancellationToken ct = default);
 }

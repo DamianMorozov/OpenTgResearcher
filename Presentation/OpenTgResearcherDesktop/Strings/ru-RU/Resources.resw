@@ -1791,4 +1791,39 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ClientSessionResetDone" xml:space="preserve">
     <value>Локальная сессия сброшена. API-параметры сохранены. Нажмите «Подключить Telegram» для нового входа с кодом Telegram и паролем двухэтапной проверки, если он включён.</value>
   </data>
+  <data name="TelegramProxyImportAction.Text" xml:space="preserve">
+    <value>Импорт из Telegram Desktop</value>
+  </data>
+  <data name="TelegramDataDirectory.Header" xml:space="preserve">
+    <value>Каталог tdata Telegram Desktop</value>
+  </data>
+  <data name="TelegramProxyImportHelp.Text" xml:space="preserve">
+    <value>Закройте Telegram Desktop и укажите его каталог tdata. Для портативной установки он расположен рядом с Telegram.exe. Импорт добавит сохранённые SOCKS5, HTTP и MTProto-прокси; существующие записи и настройки Telegram сохранятся. Выбрать прокси для подключения можно на странице «Подключение клиента».</value>
+  </data>
+  <data name="AskImportTelegramProxies" xml:space="preserve">
+    <value>Добавить прокси из указанного каталога Telegram Desktop? Совпадающие тип, адрес и порт будут пропущены без изменения сохранённых реквизитов.</value>
+  </data>
+  <data name="TelegramProxyImportResult" xml:space="preserve">
+    <value>Добавлено прокси: {0}. Пропущено совпадающих записей: {1}. Пропущено неподдерживаемых Web-прокси: {2}.</value>
+  </data>
+  <data name="ProxyColumnType" xml:space="preserve"><value>Тип</value></data>
+  <data name="ProxyColumnHost" xml:space="preserve"><value>Сервер</value></data>
+  <data name="ProxyColumnPort" xml:space="preserve"><value>Порт</value></data>
+  <data name="ProxyColumnUser" xml:space="preserve"><value>Пользователь</value></data>
+  <data name="ProxyColumnPassword" xml:space="preserve"><value>Пароль</value></data>
+  <data name="ProxyColumnAvailability" xml:space="preserve"><value>Доступность TCP</value></data>
+  <data name="ProxyCheckAllAction.Text" xml:space="preserve"><value>Проверить все прокси</value></data>
+  <data name="ProxyApplyAction.Text" xml:space="preserve"><value>Применить прокси</value></data>
+  <data name="ProxyCheckHelp.Text" xml:space="preserve">
+    <value>Проверяется TCP-доступность сервера и порта, ожидание — до 5 секунд на запись. Авторизация прокси и доступ к Telegram не проверяются.</value>
+  </data>
+  <data name="ProxyAvailabilityNotChecked" xml:space="preserve"><value>Не проверен</value></data>
+  <data name="ProxyAvailabilityChecking" xml:space="preserve"><value>Проверка…</value></data>
+  <data name="ProxyAvailabilityDirect" xml:space="preserve"><value>Без прокси</value></data>
+  <data name="ProxyAvailabilityAvailable" xml:space="preserve"><value>Доступен (TCP, {0} мс)</value></data>
+  <data name="ProxyAvailabilityUnavailable" xml:space="preserve"><value>Недоступен</value></data>
+  <data name="ProxyApplied" xml:space="preserve"><value>Прокси сохранён в профиле. Он будет использоваться при следующем подключении к Telegram.</value></data>
+  <data name="ProxySelectedNewProfile" xml:space="preserve">
+    <value>Прокси выбран. Заполните API ID, API hash и телефон, затем сохраните настройки подключения.</value>
+  </data>
 </root>

@@ -1762,4 +1762,13 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ProxyAvailabilityUnavailable" xml:space="preserve"><value>Unavailable</value></data>
   <data name="ProxyApplied" xml:space="preserve"><value>The proxy was saved to your profile. It will be used the next time you connect to Telegram.</value></data>
   <data name="ProxySelectedNewProfile" xml:space="preserve"><value>Proxy selected. Enter your API ID, API hash and phone number, then save connection settings.</value></data>
+  <data name="ChatColumnAccess" xml:space="preserve"><value>Access</value></data>
+  <data name="ChatColumnActive" xml:space="preserve"><value>Active</value></data>
+  <data name="ChatColumnCount" xml:space="preserve"><value>Count</value></data>
+  <data name="ChatColumnId" xml:space="preserve"><value>ID</value></data>
+  <data name="ChatColumnParticipants" xml:space="preserve"><value>Participants</value></data>
+  <data name="ChatColumnProgress" xml:space="preserve"><value>Progress</value></data>
+  <data name="ChatColumnSubscribe" xml:space="preserve"><value>Subscribed</value></data>
+  <data name="ChatColumnTitle" xml:space="preserve"><value>Title</value></data>
+  <data name="ChatColumnUserName" xml:space="preserve"><value>Username</value></data>
 </root>

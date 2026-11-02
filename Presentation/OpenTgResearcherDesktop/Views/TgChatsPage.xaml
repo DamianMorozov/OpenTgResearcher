@@ -19,8 +19,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!--  Actions  -->
+        <!--  Действия  -->
         <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <Expander
                 Margin="{StaticResource ExpanderMargin}"
@@ -30,13 +31,16 @@
                 l:Uids.Uid="ExpanderActions"
                 IsExpanded="True">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Lazy load  -->
+                    <!--  Загрузка следующей порции  -->
                     <Button
                         Grid.Column="0"
                         Margin="5"
@@ -55,7 +59,7 @@
                                 l:Uids.Uid="TextBlockLoadMore" />
                         </StackPanel>
                     </Button>
-                    <!--  Start parse Telegram  -->
+                    <!--  Запуск парсинга Telegram  -->
                     <Button
                         Grid.Column="1"
                         Margin="5"
@@ -72,7 +76,7 @@
                                 l:Uids.Uid="TextBlockStartParseTelegram" />
                         </StackPanel>
                     </Button>
-                    <!--  Stop parse Telegram  -->
+                    <!--  Остановка парсинга Telegram  -->
                     <Button
                         Grid.Column="1"
                         Margin="5"
@@ -89,7 +93,7 @@
                                 l:Uids.Uid="TextBlockStopParseTelegram" />
                         </StackPanel>
                     </Button>
-                    <!--  Clear viewing  -->
+                    <!--  Очистка просмотра  -->
                     <Button
                         Grid.Column="2"
                         Margin="5"
@@ -105,9 +109,10 @@
                                 l:Uids.Uid="ActionClearView" />
                         </StackPanel>
                     </Button>
-                    <!--  Loaded data statistics  -->
+                    <!--  Статистика загруженных данных  -->
                     <TextBlock
-                        Grid.Column="3"
+                        Grid.Row="1"
+                        Grid.ColumnSpan="3"
                         Margin="5,5,15,5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
@@ -116,7 +121,7 @@
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Data in storage  -->
+        <!--  Данные в хранилище  -->
         <ContentControl
             Grid.Row="1"
             HorizontalAlignment="Stretch"
@@ -137,71 +142,41 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Filter by subscribe  -->
-                    <TextBlock
-                        Margin="5,0,5,5"
-                        l:Uids.Uid="FieldFilterBySubscribe"
-                        TextAlignment="Left" />
-                    <ToggleSwitch
-                        Grid.Column="1"
-                        Margin="5,-10,-65,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        IsOn="{x:Bind ViewModel.IsFilterBySubscribe, Mode=TwoWay}" />
-                    <!--  Filter by Id  -->
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="5,0,5,5"
-                        l:Uids.Uid="FieldFilterById"
-                        TextAlignment="Left" />
-                    <ToggleSwitch
-                        Grid.Column="3"
-                        Margin="5,-10,-65,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
-                    <Grid />
-                    <!--  Filter by Name  -->
-                    <TextBlock
+                    <!--  Переключатели фильтра не сжимают поле ввода и кнопки поиска  -->
+                    <Grid Grid.ColumnSpan="4" Margin="5,0,5,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <!--  Фильтр по подписке  -->
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsFilterBySubscribe, Mode=TwoWay}">
+                            <ToggleSwitch.Header><TextBlock l:Uids.Uid="FieldFilterBySubscribe" TextWrapping="Wrap" /></ToggleSwitch.Header>
+                        </ToggleSwitch>
+                        <!--  Фильтр по ИД  -->
+                        <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}">
+                            <ToggleSwitch.Header><TextBlock l:Uids.Uid="FieldFilterById" TextWrapping="Wrap" /></ToggleSwitch.Header>
+                        </ToggleSwitch>
+                        <!--  Фильтр по имени  -->
+                        <ToggleSwitch Grid.Column="2" IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}">
+                            <ToggleSwitch.Header><TextBlock l:Uids.Uid="FieldFilterByName" TextWrapping="Wrap" /></ToggleSwitch.Header>
+                        </ToggleSwitch>
+                        <!--  Фильтр по заголовку  -->
+                        <ToggleSwitch Grid.Column="3" IsOn="{x:Bind ViewModel.IsFilterByTitle, Mode=TwoWay}">
+                            <ToggleSwitch.Header><TextBlock l:Uids.Uid="FieldFilterByTitle" TextWrapping="Wrap" /></ToggleSwitch.Header>
+                        </ToggleSwitch>
+                    </Grid>
+                    <!--  Текст фильтра  -->
+                    <TextBox
                         Grid.Row="1"
                         Grid.Column="0"
-                        Margin="5,0,5,5"
-                        l:Uids.Uid="FieldFilterByName"
-                        TextAlignment="Left" />
-                    <ToggleSwitch
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="5,-10,-65,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
-                    <!--  Filter by Title  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Margin="5,0,5,5"
-                        l:Uids.Uid="FieldFilterByTitle"
-                        TextAlignment="Left" />
-                    <ToggleSwitch
-                        Grid.Row="1"
-                        Grid.Column="3"
-                        Margin="5,-10,-65,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        IsOn="{x:Bind ViewModel.IsFilterByTitle, Mode=TwoWay}" />
-                    <!--  Text for filter  -->
-                    <TextBox
-                        Grid.RowSpan="2"
-                        Grid.Column="4"
+                        AutomationProperties.AutomationId="ChatFilter"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
@@ -209,10 +184,10 @@
                         l:Uids.Uid="FieldFilter"
                         KeyDown="FieldFilter_KeyDown"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <!--  Search  -->
+                    <!--  Поиск  -->
                     <Button
-                        Grid.RowSpan="2"
-                        Grid.Column="5"
+                        Grid.Row="1"
+                        Grid.Column="1"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind Path=ViewModel.SearchCommand}">
@@ -225,10 +200,10 @@
                                 l:Uids.Uid="ActionSearch" />
                         </StackPanel>
                     </Button>
-                    <!--  Open or edit  -->
+                    <!--  Открытие или редактирование  -->
                     <Button
-                        Grid.RowSpan="2"
-                        Grid.Column="6"
+                        Grid.Row="1"
+                        Grid.Column="2"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind Path=ViewModel.OpenOrEditChatCommand}"
@@ -242,10 +217,10 @@
                                 l:Uids.Uid="ActionOpenOrEdit" />
                         </StackPanel>
                     </Button>
-                    <!--  Delete  -->
+                    <!--  Удаление  -->
                     <Button
-                        Grid.RowSpan="2"
-                        Grid.Column="7"
+                        Grid.Row="1"
+                        Grid.Column="3"
                         Margin="5,0,5,5"
                         HorizontalAlignment="Stretch"
                         Command="{x:Bind Path=ViewModel.DeleteChatCommand}"
@@ -259,17 +234,16 @@
                                 l:Uids.Uid="ActionDelete" />
                         </StackPanel>
                     </Button>
-                    <!--  Table  -->
-                    <ScrollView
+                    <!--  Таблица  -->
+                    <Grid
                         Grid.Row="2"
-                        Grid.ColumnSpan="8"
-                        Margin="0,0,5,0"
-                        VerticalScrollMode="Auto">
-                        <!--  Data  -->
+                        Grid.ColumnSpan="4"
+                        Margin="0,0,5,0">
+                        <!--  Данные  -->
                         <controls:DataGrid
                             x:Name="DataGridChats"
                             Margin="0,0,10,0"
-                            VerticalAlignment="Top"
+                            VerticalAlignment="Stretch"
                             AutoGenerateColumns="False"
                             Background="Transparent"
                             CanUserSortColumns="False"
@@ -277,86 +251,86 @@
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
-                                <!--  Id  -->
+                                <!--  ИД  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnIdTemplate"
+                                    Header="{x:Bind ViewModel.ChatIdHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIdTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Is subscribe  -->
+                                <!--  Подписка  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnIsSubscribeTemplate"
+                                    Header="{x:Bind ViewModel.ChatSubscribeHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsSubscribeTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Is access  -->
+                                <!--  Доступ  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnIsAccessTemplate"
+                                    Header="{x:Bind ViewModel.ChatAccessHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsUserAccessTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Is active  -->
+                                <!--  Активность  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnIsActiveTemplate"
+                                    Header="{x:Bind ViewModel.ChatActiveHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnIsSourceActiveTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  User name  -->
+                                <!--  Имя пользователя  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnUserNameTemplate"
+                                    Header="{x:Bind ViewModel.ChatUserNameHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnUserNameTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="2*"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Title  -->
+                                <!--  Заголовок  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnTitleTemplate"
+                                    Header="{x:Bind ViewModel.ChatTitleHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnTitleTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="3*"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Count  -->
+                                <!--  Количество  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnCountTemplate"
+                                    Header="{x:Bind ViewModel.ChatCountHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnCountTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Progress  -->
+                                <!--  Прогресс  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnProgressTemplate"
+                                    Header="{x:Bind ViewModel.ChatProgressHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnProgressTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  Participants  -->
+                                <!--  Участники  -->
                                 <styles:TgBindableDataGridTemplateColumn
-                                    l:Uids.Uid="ColumnParticipantsTemplate"
+                                    Header="{x:Bind ViewModel.ChatParticipantsHeader}"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
                                     ColumnValue="{StaticResource ColumnParticipantsTemplate}"
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridChats}" />
-                                <!--  End  -->
+                                <!--  Конец колонок  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
-                    </ScrollView>
+                    </Grid>
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Online update  -->
+        <!--  Обновление из Telegram  -->
         <ContentControl
             Grid.Row="2"
             HorizontalAlignment="Stretch"
@@ -376,13 +350,13 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  ChatsProgressMessage  -->
+                    <!--  Прогресс парсинга чатов  -->
                     <TextBlock
                         Margin="10,0,10,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         l:Uids.Uid="FieldPercentOfChatParsing" />
-                    <!--  Load data from Online  -->
+                    <!--  Загрузка данных из Telegram  -->
                     <Slider
                         Grid.Column="1"
                         Margin="10,5,10,0"
@@ -391,14 +365,14 @@
                         Maximum="{x:Bind ViewModel.ChatsProgressCountAll, Mode=OneWay}"
                         TickFrequency="1"
                         Value="{x:Bind ViewModel.ChatsProgressCounter, Mode=OneWay}" />
-                    <!--  Progress string  -->
+                    <!--  Текст прогресса  -->
                     <TextBlock
                         Grid.Column="2"
                         Margin="10,0,10,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Text="{x:Bind ViewModel.ChatsProgressString, Mode=OneWay}" />
-                    <!--  Message  -->
+                    <!--  Сообщение  -->
                     <TextBlock
                         Grid.Column="3"
                         Margin="10,0,10,0"

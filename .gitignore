@@ -411,5 +411,8 @@ FodyWeavers.xsd
 /Core/*.xml
 /Presentation/*.xml
 /Tests/*.xml
+TestResults/
+SECRETS.md
 AGENTS.md
 *.tdf
+*.trx

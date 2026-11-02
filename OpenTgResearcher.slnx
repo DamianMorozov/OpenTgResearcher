@@ -107,6 +107,10 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/SelfTests/">
+    <Project Path="Tests/SelfTests/Chat/Chat.SelfTest.csproj">
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
     <Project Path="Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj">
       <Platform Solution="*|x64" Project="x64" />
       <Platform Solution="*|x86" Project="x86" />

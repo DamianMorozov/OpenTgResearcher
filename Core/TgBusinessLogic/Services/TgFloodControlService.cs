@@ -99,8 +99,9 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 #if DEBUG
                     Debug.WriteLine($"[FloodControl] FLOOD_WAIT_{floodWaitSeconds} on attempt {attempt + 1}");
 #endif
-                    await Task.Delay(TimeSpan.FromSeconds(floodWaitSeconds + 1));
-                    continue; // retry
+                    // Прерываем защитную паузу при остановке парсинга
+                    await Task.Delay(TimeSpan.FromSeconds(floodWaitSeconds + 1), ct);
+                    continue; // Повторяем запрос после паузы
                 }
 
                 throw;

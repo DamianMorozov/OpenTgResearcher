@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatViewModel : TgPageViewModelBase
 {
@@ -7,9 +7,9 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto Dto { get; set; } = default!;
+    public partial TgEfSourceDto Dto { get; set; } = new();
     [ObservableProperty]
-    public partial TgEfSourceDto DiscussionDto { get; set; } = default!;
+    public partial TgEfSourceDto DiscussionDto { get; set; } = new();
     [ObservableProperty]
     public partial Frame ChatDetailsFrame { get; set; } = default!;
 
@@ -22,7 +22,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public TgChatViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatViewModel))
     {
-        // Commands
+        // Команды страницы чата
         LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageCoreAsync);
         StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
@@ -43,14 +43,16 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     private async Task ClearViewAsync() => 
         await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
 
+    // Очищаем форму и общий черновик открытой вкладки
     private async Task ClearDataStorageCoreAsync()
     {
         Dto = new();
         DiscussionDto = new();
-        IsEmptyData = false;
-        await Task.CompletedTask;
+        IsEmptyData = true;
+        await UpdateDetailsAsync();
     }
 
+    // Читаем настройки чата и обновляем модель открытой вкладки
     private async Task LoadDataStorageCoreAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;
@@ -61,35 +63,33 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
                 Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
                 DiscussionDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
             
-                if (ChatDetailsFrame is not null)
-                {
-                    var pageViewModel = await ChatDetailsFrame.GetPageViewModelAsync();
-                    if (pageViewModel is not null)
-                    {
-                        if (pageViewModel is TgChatSettingsViewModel chatSettingsViewModel)
-                        {
-                            chatSettingsViewModel.Uid = Uid;
-                            chatSettingsViewModel.Dto = Dto;
-                            chatSettingsViewModel.DiscussionDto = DiscussionDto;
-                            chatSettingsViewModel.IsDiscussionDtoExists = DiscussionDto.Id > 0;
-                            ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), Uid);
-                        }
-                        else if (pageViewModel is TgChatDownloadViewModel chatDownloadViewModel)
-                        {
-                            chatDownloadViewModel.Uid = Uid;
-                            chatDownloadViewModel.DownloadDto = Dto;
-                            ChatDetailsFrame.Navigate(typeof(TgChatDownloadPage), Uid);
-                        }
-                    }
-                }
-
-                IsEmptyData = false;
+                await UpdateDetailsAsync();
+                IsEmptyData = Dto.Id <= 0;
             }
             finally
             {
                 await ReloadUiAsync();
             }
         });
+    }
+
+    // Обновляем общий черновик открытой вкладки без повторной навигации
+    private async Task UpdateDetailsAsync()
+    {
+        if (ChatDetailsFrame is null) return;
+        var pageViewModel = await ChatDetailsFrame.GetPageViewModelAsync();
+        if (pageViewModel is TgChatSettingsViewModel settings)
+        {
+            settings.Uid = Uid;
+            settings.Dto = Dto;
+            settings.DiscussionDto = DiscussionDto;
+            settings.IsDiscussionDtoExists = DiscussionDto.Id > 0;
+        }
+        else if (pageViewModel is TgChatDownloadViewModel download)
+        {
+            download.Uid = Uid;
+            download.DownloadDto = Dto;
+        }
     }
 
     private async Task StartUpdateOnlineAsync() => 
@@ -115,11 +115,14 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public async Task SaveChatSettingsAsync() => 
         await ContentDialogAsync(() => SaveChatSettingsCoreAsync(isLoadDataStorage: true), TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
 
+    // Проверяем выбранный чат и сохраняем его настройки
     private async Task SaveChatSettingsCoreAsync(bool isLoadDataStorage)
     {
         try
         {
-            // Update and save current chat
+            if (Dto.Uid == Guid.Empty || Dto.Id <= 0)
+                throw new InvalidOperationException("Выберите чат в списке «Чаты» перед сохранением настроек");
+            // Сохраняем общий черновик настроек текущего чата
             Dto.DtChanged = DateTime.UtcNow;
             DownloadSettings.SourceVm.Dto = Dto;
             await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(Dto);

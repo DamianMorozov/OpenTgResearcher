@@ -16,9 +16,9 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <!--  Messages data template  -->
+        <!--  Шаблон сообщений  -->
         <DataTemplate x:Key="MessagesViewTemplate" x:DataType="messages:TgEfMessageDto">
-            <!--  General background and rounding  -->
+            <!--  Фон и скругление  -->
             <Border
                 Grid.Column="{x:Bind Direction, Converter={StaticResource EnumToColumnConverter}}"
                 Grid.ColumnSpan="{x:Bind Direction, Converter={StaticResource EnumToColumnSpanConverter}}"
@@ -39,104 +39,91 @@
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </Grid.Resources>
-                    <!--  Header: Changed, Id, Link, Sender  -->
-                    <StackPanel
-                        Grid.Row="0"
-                        Orientation="Horizontal"
-                        Spacing="5">
-                        <!--  DtChangedString  -->
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind DtChangedString, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="·" />
-                        <!--  Id  -->
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            l:Uids.Uid="TextBlockId"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind Id, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind Id, Mode=OneWay}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="·" />
-                        <!--  Link  -->
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            l:Uids.Uid="TextBlockLink"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <HyperlinkButton
-                            Margin="0,-6,0,0"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Left"
-                            Click="OnOpenHyperlink"
-                            Content="{x:Bind Link, Mode=OneWay}"
-                            Tag="{x:Bind Link, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind Link, Mode=OneWay}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="·" />
-                        <!--  Sender  -->
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            l:Uids.Uid="TextBlockSender"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind UserId, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind UserId, Mode=OneWay}" />
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind UserContact, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <!--  Message deleted  -->
-                        <TextBlock
-                            Margin="0,5,0,0"
-                            l:Uids.Uid="TextBlockMessageDeleted"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <!--  Message content: image, text message  -->
+                    <!--  Заголовок: изменение, ИД, ссылка и отправитель  -->
+                    <ScrollViewer
+                        HorizontalScrollMode="Enabled"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollMode="Disabled"
+                        VerticalScrollBarVisibility="Disabled">
+                        <StackPanel
+                            Grid.Row="0"
+                            Orientation="Horizontal"
+                            Spacing="5">
+                            <!--  Время изменения  -->
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind DtChangedString, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="5,5,5,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="·" />
+                            <!--  ИД  -->
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                l:Uids.Uid="TextBlockId"
+                                Style="{ThemeResource BodyTextBlockStyle}" />
+
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind Id, Mode=OneWay}" />
+                            <styles:TgAnimatedClipboardButton
+                                Click="OnClipboardSilentWriteClick"
+                                Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                Tag="{x:Bind Id, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="5,5,5,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="·" />
+                            <!--  Ссылка  -->
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                l:Uids.Uid="TextBlockLink"
+                                Style="{ThemeResource BodyTextBlockStyle}" />
+
+                            <HyperlinkButton
+                                Margin="0,-6,0,0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Click="OnOpenHyperlink"
+                                Content="{x:Bind Link, Mode=OneWay}"
+                                Tag="{x:Bind Link, Mode=OneWay}" />
+                            <styles:TgAnimatedClipboardButton
+                                Click="OnClipboardSilentWriteClick"
+                                Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                Tag="{x:Bind Link, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="5,5,5,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="·" />
+                            <!--  Отправитель  -->
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                l:Uids.Uid="TextBlockSender"
+                                Style="{ThemeResource BodyTextBlockStyle}" />
+
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind UserId, Mode=OneWay}" />
+                            <styles:TgAnimatedClipboardButton
+                                Click="OnClipboardSilentWriteClick"
+                                Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                Tag="{x:Bind UserId, Mode=OneWay}" />
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Text="{x:Bind UserContact, Mode=OneWay}" />
+                            <!--  Признак удалённого сообщения  -->
+                            <TextBlock
+                                Margin="0,5,0,0"
+                                l:Uids.Uid="TextBlockMessageDeleted"
+                                Style="{ThemeResource BodyTextBlockStyle}"
+                                Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                    <!--  Содержимое сообщения: изображение и текст  -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -153,7 +140,7 @@
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{x:Bind MessageText, Mode=OneWay}" />
                         </StackPanel>
-                        <!--  Image preview  -->
+                        <!--  Предпросмотр изображения  -->
                         <Border
                             Grid.Column="1"
                             MaxWidth="400"
@@ -163,16 +150,18 @@
                             BorderBrush="{ThemeResource SystemAccentColor}"
                             BorderThickness="1"
                             CornerRadius="10"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{x:Bind IsImageExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Image
+                                AutomationProperties.AutomationId="MessageImage"
+                                AutomationProperties.Name="{x:Bind FileName, Mode=OneWay}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Source="{x:Bind ImageFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
                                 Stretch="Uniform"
                                 Tapped="OnImagePreviewClick"
-                                Visibility="{x:Bind IsImageExists, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                Visibility="{x:Bind IsImageExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Border>
-                        <!--  Thumb preview  -->
+                        <!--  Предпросмотр обложки медиафайла  -->
                         <Border
                             Grid.Column="1"
                             MaxWidth="400"
@@ -182,21 +171,18 @@
                             BorderBrush="{ThemeResource SystemAccentColor}"
                             BorderThickness="1"
                             CornerRadius="10"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{x:Bind IsThumbExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Image
+                                AutomationProperties.AutomationId="MessageThumbnail"
+                                AutomationProperties.Name="{x:Bind FileName, Mode=OneWay}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Source="{x:Bind ThumbFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
                                 Stretch="Uniform"
                                 Tapped="OnImagePreviewClick"
-                                Visibility="{x:Bind IsThumbExists, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                Visibility="{x:Bind IsThumbExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Border>
-                        <!--  Message  -->
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="5,5,0,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <!--  Сообщение  -->
                         <TextBlock
                             Grid.Column="2"
                             Margin="5,5,0,0"
@@ -205,15 +191,14 @@
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind MessageText, Mode=OneWay}"
                             TextAlignment="Left"
-                            TextWrapping="WrapWholeWords"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            TextWrapping="WrapWholeWords" />
                     </Grid>
                 </Grid>
             </Border>
         </DataTemplate>
     </common:TgPageBase.Resources>
 
-    <!--  Messages and media  -->
+    <!--  Сообщения и медиафайлы  -->
     <ContentControl
         HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Stretch"
@@ -224,7 +209,7 @@
             VerticalAlignment="Stretch"
             Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
             CornerRadius="5">
-            <Grid Margin="0,0,10,5" Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <Grid Margin="0,0,10,5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="1*" />
@@ -234,14 +219,15 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <!--  Empty data  -->
+                <!--  Пустой список  -->
                 <TextBlock
+                    Grid.Row="1"
                     Grid.ColumnSpan="3"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     l:Uids.Uid="FieldEmptyData"
                     Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <!--  Lazy load  -->
+                <!--  Загрузка следующей порции  -->
                 <Button
                     Grid.Row="0"
                     Margin="10,0,5,0"
@@ -258,10 +244,11 @@
                             l:Uids.Uid="TextBlockLoadMore" />
                     </StackPanel>
                 </Button>
-                <!--  Clear viewing  -->
+                <!--  Очистка просмотра  -->
                 <Button
                     Grid.Row="0"
                     Grid.Column="1"
+                    AutomationProperties.AutomationId="ClearChatContent"
                     Margin="0,0,5,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -274,7 +261,7 @@
                             l:Uids.Uid="ActionClearView" />
                     </StackPanel>
                 </Button>
-                <!--  Loaded data statistics  -->
+                <!--  Статистика загруженных данных  -->
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="2"
@@ -282,48 +269,61 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}"
+                    TextWrapping="Wrap"
                     TextAlignment="Center" />
-                <!--  List view with messages  -->
-                <ListView
-                    x:Name="ListViewMessages"
+                <!--  Список сообщений  -->
+                <TextBlock
                     Grid.Row="1"
                     Grid.ColumnSpan="3"
-                    Margin="0,5,0,0"
-                    ItemTemplate="{StaticResource MessagesViewTemplate}"
-                    ItemsSource="{x:Bind ViewModel.MessageDtos, Mode=OneWay}"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    ScrollViewer.VerticalScrollMode="Auto"
-                    Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <!--  The ItemsStackPanel must be edited to update the following two properties  -->
-                    <!--  These properties allow the list to grow from the bottom  -->
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
-                <!--  Full-size image on top of ListView  -->
-                <Border
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                <Grid
                     Grid.Row="1"
                     Grid.ColumnSpan="3"
-                    Margin="0,5,0,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Background="#CC000000"
-                    Visibility="{x:Bind ViewModel.IsImageViewerVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Image
-                        x:Name="FullScreenImage"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Stretch="Uniform"
-                        Tapped="OnFullScreenImageTapped" />
-                </Border>
+                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <ListView
+                        x:Name="ListViewMessages"
+                        Grid.Row="1"
+                        Grid.ColumnSpan="3"
+                        Margin="0,5,0,0"
+                        ItemTemplate="{StaticResource MessagesViewTemplate}"
+                        ItemsSource="{x:Bind ViewModel.MessageDtos, Mode=OneWay}"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        ScrollViewer.VerticalScrollMode="Auto"
+                        Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <!--  Параметры ItemsStackPanel определяют расположение загруженных элементов  -->
+                        <!--  Новые сообщения добавляются с сохранением положения нижних элементов  -->
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <!--  Растягиваем содержимое элемента для правильного выравнивания сообщений  -->
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                    <!--  Полноразмерное изображение поверх списка  -->
+                    <Border
+                        Grid.Row="1"
+                        Grid.ColumnSpan="3"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="#CC000000"
+                        Visibility="{x:Bind ViewModel.IsImageViewerVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Image
+                            x:Name="FullScreenImage"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Stretch="Uniform"
+                            Tapped="OnFullScreenImageTapped" />
+                    </Border>
+                </Grid>
             </Grid>
         </Border>
     </ContentControl>

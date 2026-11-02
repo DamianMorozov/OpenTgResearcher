@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
 {
@@ -7,7 +7,7 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto DownloadDto { get; set; } = default!;
+    public partial TgEfSourceDto DownloadDto { get; set; } = new();
     [ObservableProperty]
     public partial string ChatProgressMessage { get; set; } = string.Empty;
     [ObservableProperty]
@@ -19,7 +19,7 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
         ILogger<TgChatDownloadViewModel> logger)
         : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatDownloadViewModel))
     {
-        // Commands
+        // Команда восстановления настроек загрузки
         DefaultSettingsCommand = new AsyncRelayCommand(DefaultSettingsAsync);
     }
 
@@ -27,10 +27,14 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
 
     #region Methods
 
+    /// <summary> Подготавливает настройки загрузки до обращения к прогрессу чата </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => 
-        await LoadStorageDataAsync(() =>
+        await LoadStorageDataAsync(async () =>
         {
-            Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+            DownloadDto = e?.Parameter as TgEfSourceDto ?? new();
+            Uid = e?.Parameter is Guid uid ? uid : DownloadDto.Uid;
+            if (SettingsService.IsExistsAppStorage && e?.Parameter is not TgEfSourceDto)
+                DownloadDto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
             App.VmLocator.ClearChatViewModel();
             App.VmLocator.ClearStateDownloadingChat();
         });

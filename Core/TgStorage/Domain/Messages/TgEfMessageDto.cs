@@ -51,7 +51,7 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
                 return string.Empty;
             var idx = Message.LastIndexOf('|');
             if (idx < 0)
-                return string.Empty;
+                return Type == TgEnumMessageType.Document ? Message.Trim() : string.Empty;
             return Message[(idx + 1)..].Trim();
         }
     }
@@ -62,27 +62,17 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
         {
             try
             {
-                if (string.IsNullOrEmpty(Directory)) return string.Empty;
-                if (string.IsNullOrEmpty(FileName)) return string.Empty;
-
-                var fullPath = Path.Combine(Directory, FileName);
-                if (File.Exists(fullPath) && !fullPath.EndsWith(TgFileUtils.ExtensionThumbnail) &&
-                    (fullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || fullPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
+                var fullPath = FindMediaFile(isThumbnail: false);
+                if (!fullPath.EndsWith(TgFileUtils.ExtensionThumbnail, StringComparison.OrdinalIgnoreCase) &&
+                    (fullPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || fullPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                    fullPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
                     return fullPath;
                 return string.Empty;
             }
-#if DEBUG
             catch (Exception ex)
             {
-                Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-                Debug.WriteLine(ex.StackTrace);
+                TgLogUtils.WriteException(ex);
             }
-#else
-        catch (Exception)
-        {
-            //
-        }
-#endif
             return string.Empty;
         }
     }
@@ -93,26 +83,12 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
         {
             try
             {
-                if (string.IsNullOrEmpty(Directory)) return string.Empty;
-                if (string.IsNullOrEmpty(FileName)) return string.Empty;
-
-                var fullPath = Path.Combine(Directory, FileName);
-                if (File.Exists(fullPath) && fullPath.EndsWith(TgFileUtils.ExtensionThumbnail, StringComparison.OrdinalIgnoreCase))
-                    return fullPath;
-                return string.Empty;
+                return FindMediaFile(isThumbnail: true);
             }
-#if DEBUG
             catch (Exception ex)
             {
-                Debug.WriteLine(ex, TgConstants.LogTypeStorage);
-                Debug.WriteLine(ex.StackTrace);
+                TgLogUtils.WriteException(ex);
             }
-#else
-        catch (Exception)
-        {
-            //
-        }
-#endif
             return string.Empty;
         }
     }
@@ -120,6 +96,35 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
     public bool IsImageExists => !string.IsNullOrEmpty(ImageFullPath);
 
     public bool IsThumbExists => !string.IsNullOrEmpty(ThumbFullPath);
+
+    // Находим непустой файл или его обложку, включая исторические имена без ID в сообщении
+    private string FindMediaFile(bool isThumbnail)
+    {
+        if (string.IsNullOrWhiteSpace(Directory) || string.IsNullOrWhiteSpace(FileName)) return string.Empty;
+        var fileName = FileName;
+        var fullPath = Path.IsPathFullyQualified(fileName) ? fileName : Path.Combine(Directory, fileName.TrimStart('\\', '/'));
+        if (isThumbnail && !fullPath.EndsWith(TgFileUtils.ExtensionThumbnail, StringComparison.OrdinalIgnoreCase))
+            fullPath = Path.Combine(Path.GetDirectoryName(fullPath)!, Path.GetFileNameWithoutExtension(fullPath) + TgFileUtils.ExtensionThumbnail);
+        if (TgFileUtils.CalculateFileSize(fullPath) > 0) return fullPath;
+        var folder = Path.GetDirectoryName(fullPath)!;
+        if (Id <= 0 || !System.IO.Directory.Exists(folder)) return string.Empty;
+        var localName = Path.GetFileName(fullPath);
+        var separator = localName.IndexOf(' ');
+        if (separator > 0 && long.TryParse(localName[..separator], out var prefixId) && prefixId == Id)
+        {
+            localName = localName[(separator + 1)..];
+            var withoutId = Path.Combine(folder, localName);
+            if (TgFileUtils.CalculateFileSize(withoutId) > 0) return withoutId;
+        }
+        var suffix = " " + localName;
+        foreach (var candidate in System.IO.Directory.EnumerateFiles(folder, "*" + suffix))
+        {
+            var name = Path.GetFileName(candidate);
+            if (long.TryParse(name[..^suffix.Length], out var messageId) && messageId == Id && TgFileUtils.CalculateFileSize(candidate) > 0)
+                return candidate;
+        }
+        return string.Empty;
+    }
 
     public string Link => TgStringUtils.FormatChatLink(string.Empty, SourceId, (int)Id).Item2;
 

@@ -83,8 +83,8 @@ dotnet run --project Tests/SelfTests/Proxies/Proxies.SelfTest.csproj
 Тест создаёт отдельные настройки и БД, открывает страницу «Прокси», проверяет шесть заголовков и отсутствие необработанных исключений в журнале, затем закрывает приложение с проверкой кода выхода. Подключение к Telegram не выполняется.
 
 ```powershell
-./Tests/SelfTests/Test-DesktopProxies.ps1 -ExecutablePath 'D:/DevMy/OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language Russian
-./Tests/SelfTests/Test-DesktopProxies.ps1 -ExecutablePath 'D:/DevMy/OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language English
+./Tests/SelfTests/Test-DesktopProxies.ps1 -ExecutablePath '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language Russian
+./Tests/SelfTests/Test-DesktopProxies.ps1 -ExecutablePath '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language English
 ```
 
 Для явной проверки реального подключения укажите БД и сохранённую сессию. Режим `--live` последовательно проверяет прямое соединение и первую запись с типом, отличным от `None`, в порядке списка страницы (сервер, тип, порт).
@@ -110,6 +110,44 @@ dotnet run --project Tests/SelfTests/Proxies/Proxies.SelfTest.csproj -- --live "
 dotnet run --project Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj -p:Platform=x64 -- --inspect-session "...TgStorage.db" "...OpenTgResearcher.session"
 ```
 
+## Проверка страницы чата
+Настройки и загрузка используют общий черновик: переключение вкладок сохраняет введённые значения до команды сохранения. Участники, сведения и статистика сбрасываются при открытии другого чата.
+Селфтест проверяет исходные модели всех восьми страниц чата, обработчик выбора вкладок, разметку, сохранение и пагинацию на настоящих репозиториях с SQLite в памяти. Telegram заменён тестовым клиентом:
+
+```powershell
+dotnet run --project Tests/SelfTests/Chat/Chat.SelfTest.csproj -c Debug -p:Platform=x64
+```
+
+Для проверки настоящего окна закройте Desktop и укажите опубликованное unpackaged-приложение. Скрипт создаёт отдельные настройки, БД и путь сессии, открывает чат, последовательно посещает семь вкладок и проверяет журнал и код завершения:
+
+```powershell
+$desktop = '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe'
+$chatTest = 'Tests/SelfTests/Chat/bin/Debug_x64/net10.0/Chat.SelfTest.dll'
+./Tests/SelfTests/Test-DesktopChat.ps1 -ExecutablePath $desktop -SelfTestAssembly $chatTest -Language Russian
+./Tests/SelfTests/Test-DesktopChat.ps1 -ExecutablePath $desktop -SelfTestAssembly $chatTest -Language English
+```
+
+Без дополнительных параметров создаётся синтетический чат. Параметры `-SourceDatabase`, `-ChatId` и `-ChatDirectory` позволяют проверить выбранный чат из существующей БД:
+источник открывается только для чтения, в тестовую БД копируются выбранный чат, до 100 последних сообщений и связанные пользователи. Реквизиты подключения и сессии не копируются.
+Результаты сохраняются в `Tests/SelfTests/bin/ChatPage`. Скрипт проверяет открытие и навигацию без Telegram; реальные сетевые команды и сохранение настроек через диалоги требуют отдельной пользовательской проверки.
+Параметр `-CheckMediaPreview` проверяет синтетический чат с настоящей JPEG-обложкой: находит видимый элемент `Image`, проверяет отрисованный цвет и сохраняет снимок области обложки. Этот режим запускается без `-SourceDatabase`.
+Он также проверяет скрытие обложки переключателем конфиденциальных данных и отображение подсказки пустого списка после подтверждённой очистки тестовой выборки.
+Параметр `-WindowWidth 1280` задаёт ширину тестового окна. Проверяются девять локализованных заголовков, доступная ширина фильтра, границы кнопок и выбор раздела «Чаты»; снимки страниц сохраняются рядом с журналом.
+Селфтесты чата также проверяют медиафайлы в отдельных временных каталогах: настоящий обработчик выбирает файл и открывает поток, подменяется только передача байтов из Telegram.
+Нулевые документы, фотографии и обложки загружаются заново независимо от разрешения перезаписи. Непустой файл меньшего размера заменяется только при включённой перезаписи файлов.
+При включённом присоединении ID готовый файл без ID переименовывается только при совпадении исходного имени и размера из Telegram; повторное скачивание не выполняется, существующая обложка переносится вместе с ним.
+Вкладка «Содержимое» ищет обложку с именем основного файла и расширением `.thumb.jpg`, включая исторические варианты с ID и без ID. После загрузки файлов обновите вкладку, чтобы перечитать содержимое.
+Остановка парсинга прерывает ожидание FLOOD_WAIT; цикл сохраняет токен своего запуска и ожидает очередь перед завершением. Отменённый проход не отмечается обработанным до конца чата.
+Для ограниченной сетевой проверки готовых документов используется отдельная команда:
+
+```powershell
+dotnet $chatTest --live-media '.../TgStorage.db' '.../OpenTgResearcher.session' ID '.../dir'
+```
+
+Проверка восстанавливает существующую авторизацию из временной копии сессии, читает метаданные двадцати документов и дважды вызывает настоящий обработчик пропуска готовых файлов.
+Исходная БД открывается только для чтения, готовые файлы блокируются от записи, скачивание запрещено. Новые коды и пароли не запрашиваются; временная сессия удаляется после отключения.
+Этот режим проверяет пропуск существующих документов; полный парсинг архива и восстановление отсутствующих файлов он не запускает.
+
 ## Проверка после обновления пакетов
 Совместимость с обновлёнными API Telegram проверяется без сетевого подключения, на SQLite в памяти. Отдельный селфтест проверяет сохранность результатов Rebuild при повторном запросе очистки:
 
@@ -134,8 +172,8 @@ dotnet run --project Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.cspr
 Для проверки опубликованного Desktop без MSIX выполните в PowerShell из корня решения:
 
 ```powershell
-./Tests/SelfTests/Test-DesktopReleaseStartup.ps1 -ExecutablePath 'D:/DevMy/OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language Russian
-./Tests/SelfTests/Test-DesktopReleaseStartup.ps1 -ExecutablePath 'D:/DevMy/OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language English
+./Tests/SelfTests/Test-DesktopReleaseStartup.ps1 -ExecutablePath '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language Russian
+./Tests/SelfTests/Test-DesktopReleaseStartup.ps1 -ExecutablePath '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language English
 ```
 
 Перед проверкой закройте Desktop. Каждый запуск использует отдельные настройки, БД и путь сессии в `Tests/SelfTests/bin/ReleaseStartup`; подключения к Telegram нет.

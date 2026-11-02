@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
 {
@@ -10,7 +10,7 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto Dto { get; set; } = null!;
+    public partial TgEfSourceDto Dto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
@@ -43,6 +43,7 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
     private async Task StartStorageMyMessagesAsync() => 
         await ContentDialogAsync(StartStorageMyMessagesCoreAsync, TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
+    // Читаем сведения текущего пользователя, если его идентификатор известен
     private async Task StartStorageMyMessagesCoreAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;
@@ -54,7 +55,7 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
 
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.OnlineToken);
 
-            // Get user Id
+            // Определяем идентификатор пользователя по клиенту или лицензии
             var userId = App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0;
             if (userId == 0)
             {
@@ -63,13 +64,14 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
                     userId = licenseDto.UserId;
             }
 
-            // Single query to get all distinct users for this source
+            // Показываем текущего пользователя, только если он найден в хранилище
             UserDtos.Clear();
-
-            var userDto = await App.BusinessLogicManager.StorageManager.UserRepository.GetMyselfUserAsync(Dto.Id, userId, LoadStateService.OnlineToken);
-            UserDtos.Add(userDto);
-
-            IsEmptyData = false;
+            if (userId > 0)
+            {
+                var userDto = await App.BusinessLogicManager.StorageManager.UserRepository.GetMyselfUserAsync(Dto.Id, userId, LoadStateService.OnlineToken);
+                if (userDto.Id > 0) UserDtos.Add(userDto);
+            }
+            IsEmptyData = UserDtos.Count == 0;
             ScrollRequested?.Invoke();
         }
         finally

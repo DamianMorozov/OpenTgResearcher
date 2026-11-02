@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1826,4 +1826,13 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ProxySelectedNewProfile" xml:space="preserve">
     <value>Прокси выбран. Заполните API ID, API hash и телефон, затем сохраните настройки подключения.</value>
   </data>
+  <data name="ChatColumnAccess" xml:space="preserve"><value>Доступ</value></data>
+  <data name="ChatColumnActive" xml:space="preserve"><value>Активно</value></data>
+  <data name="ChatColumnCount" xml:space="preserve"><value>Кол-во</value></data>
+  <data name="ChatColumnId" xml:space="preserve"><value>ИД</value></data>
+  <data name="ChatColumnParticipants" xml:space="preserve"><value>Участники</value></data>
+  <data name="ChatColumnProgress" xml:space="preserve"><value>Прогресс</value></data>
+  <data name="ChatColumnSubscribe" xml:space="preserve"><value>Подписка</value></data>
+  <data name="ChatColumnTitle" xml:space="preserve"><value>Заголовок</value></data>
+  <data name="ChatColumnUserName" xml:space="preserve"><value>Имя пользователя</value></data>
 </root>

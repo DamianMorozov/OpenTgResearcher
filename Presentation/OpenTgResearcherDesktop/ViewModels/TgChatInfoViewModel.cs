@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
 {
@@ -22,9 +22,11 @@ public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
 
     #region Methods
 
+    /// <summary> Открывает чат со сбросом сведений предыдущего чата </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        ChatDetailsDto = new();
         await LoadDataStorageCoreAsync();
     });
 

@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
 {
@@ -10,7 +10,7 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto Dto { get; set; } = null!;
+    public partial TgEfSourceDto Dto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
     [ObservableProperty]
@@ -33,9 +33,12 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
 
     #region Methods
 
+    /// <summary> Выбирает чат и сбрасывает ранее рассчитанную статистику </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        UserDtos.Clear();
+        ChatStatisticsDto.Default();
         await LoadDataStorageCoreAsync();
     });
 
@@ -59,6 +62,7 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
     private async Task CalcChatStatisticsAsync() => 
         await ContentDialogAsync(CalcChatStatisticsCoreAsync, TgResourceExtensions.AskCalcChatStatistics(), TgEnumLoadDesktopType.Online);
     
+    // Подсчитываем уникальных участников и их сообщения последовательными запросами
     private async Task CalcChatStatisticsCoreAsync()
     {
         ChatStatisticsDto.Default();
@@ -68,15 +72,15 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         await MergeUsersWithPlaceholdersAsync();
         await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
 
-        // Unique users
+        // Учитываем каждого пользователя один раз, даже если он найден в Telegram и в БД
         var distinctUsers = UserDtos.GroupBy(u => u.Id).Select(g => g.First()).ToList();
 
-        ChatStatisticsDto.UsersCount = UserDtos.Where(x => !x.IsBot).Count();
-        ChatStatisticsDto.BotsCount = UserDtos.Where(x => x.IsBot).Count();
+        ChatStatisticsDto.UsersCount = distinctUsers.Count(x => !x.IsBot);
+        ChatStatisticsDto.BotsCount = distinctUsers.Count(x => x.IsBot);
 
         var dtStartRaw = ChatStatisticsDto.DtStart ?? TgEfChatStatisticsDto.SafeMinDate;
         var dtEndRaw = ChatStatisticsDto.DtEnd ?? TgEfChatStatisticsDto.SafeMaxDate;
-        // If the minimum date is still obtained (which may contain a dangerous offset) replace
+        // Ограничиваем даты перед преобразованием часового пояса
         var dtStart = dtStartRaw < TgEfChatStatisticsDto.SafeMinDate ? TgEfChatStatisticsDto.SafeMinDate : dtStartRaw;
         var dtEnd = dtEndRaw > TgEfChatStatisticsDto.SafeMaxDate ? TgEfChatStatisticsDto.SafeMaxDate : dtEndRaw;
         DateTimeOffset startDate = dtStart.ToUniversalTime().Date;
@@ -84,14 +88,11 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         DateTimeOffset endDate = (tmpEnd < TgEfChatStatisticsDto.SafeMaxDate.Date) ? tmpEnd.AddDays(1).AddTicks(-1) : tmpEnd;
 
         
-        var list = await Task.WhenAll(distinctUsers.Select(async u => new TgEfUserWithCountDto { UserDto = u,
-            Count = await App.BusinessLogicManager.StorageManager.MessageRepository
-                .GetCountAsync(x =>
-                    x.SourceId == Dto.Id &&
-                    x.UserId == u.Id &&
-                    x.DtCreated >= startDate.UtcDateTime &&
-                    x.DtCreated <= endDate.UtcDateTime)
-        }));
+        // Один DbContext не поддерживает параллельное выполнение запросов
+        var list = new List<TgEfUserWithCountDto>();
+        foreach (var user in distinctUsers)
+            list.Add(new() { UserDto = user, Count = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(
+                x => x.SourceId == Dto.Id && x.UserId == user.Id && x.DtCreated >= startDate.UtcDateTime && x.DtCreated <= endDate.UtcDateTime) });
 
         foreach (var dto in list.OrderByDescending(x => x.Count).ThenBy(x => x.UserDto.DisplayName, StringComparer.CurrentCultureIgnoreCase))
         {

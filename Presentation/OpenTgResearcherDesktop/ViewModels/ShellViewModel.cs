@@ -72,6 +72,13 @@ public partial class ShellViewModel : TgSensitiveModel
     {
         if (NavigationViewService.MenuItems is null) return;
 
+        // Обычный чат и сохранённые сообщения используют одну страницу с разными ИД
+        if (pageType == typeof(TgChatPage) && parameter is Guid chatUid && chatUid != Guid.Empty && chatUid != UidSavedMessages)
+        {
+            Selected = NavigationViewService.GetSelectedItem(typeof(TgChatsPage));
+            return;
+        }
+
         var userTypeStr = parameter?.ToString();
         foreach (var item in NavigationViewService.MenuItems)
         {

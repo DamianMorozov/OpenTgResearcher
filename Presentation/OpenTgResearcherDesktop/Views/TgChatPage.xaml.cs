@@ -27,17 +27,18 @@ public sealed partial class TgChatPage
         ChatDetailsSelectorBar.SelectedItem = ChatDetailsSelectorBar.Items[0];
     }
 
-    /// <summary> Chat details page </summary>
+    // Переключаем вкладку, сохраняя общий черновик настроек чата
     private void ChatDetailsSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
     {
         var selectedItem = sender.SelectedItem;
+        if (selectedItem is null) return;
         switch (selectedItem.Tag)
         {
             case nameof(TgChatSettingsPage):
-                ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), ViewModel.Uid);
+                ChatDetailsFrame.Navigate(typeof(TgChatSettingsPage), ViewModel.Dto);
                 break;
             case nameof(TgChatDownloadPage):
-                ChatDetailsFrame.Navigate(typeof(TgChatDownloadPage), ViewModel.Uid);
+                ChatDetailsFrame.Navigate(typeof(TgChatDownloadPage), ViewModel.Dto);
                 break;
             case nameof(TgChatInfoPage):
                 ChatDetailsFrame.Navigate(typeof(TgChatInfoPage), ViewModel.Uid);
@@ -55,8 +56,6 @@ public sealed partial class TgChatPage
                 ChatDetailsFrame.Navigate(typeof(TgChatContentPage), ViewModel.Uid);
                 break;
         }
-
-        ViewModel.LoadDataStorageCommand.Execute(null);
     }
 
     #endregion

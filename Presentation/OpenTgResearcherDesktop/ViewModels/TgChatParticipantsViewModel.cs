@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, IDisposable
 {
@@ -10,7 +10,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto Dto { get; set; } = null!;
+    public partial TgEfSourceDto Dto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
 
@@ -37,9 +37,14 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
     #region Methods
 
+    /// <summary> Выбирает чат и сбрасывает список участников и пагинацию </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        UserDtos.Clear();
+        PageSkip = 0;
+        HasMoreItems = true;
+        IsEmptyData = true;
         //await LoadParticipantsCoreAsync();
         await Task.CompletedTask;
     });
@@ -60,6 +65,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
         PageSkip += newItems.Count;
     }
 
+    /// <summary> Читает страницу участников выбранного чата </summary>
     public async Task<List<TgEfUserDto>> GetListDtosAsync()
     {
         var uid = Guid.NewGuid();
@@ -69,15 +75,15 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
             await LoadStateService.PrepareMemoryTokenAsync(uid);
 
-            // Load source DTO
+            // Читаем настройки выбранного чата
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.MemoryToken);
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 
-            // Single query to get all distinct users for this source
+            // Читаем страницу участников одним запросом
             var userDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersByChatIdJoinAsync(
                 Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, PageSkip, PageTake, null, LoadStateService.MemoryToken);
 
-            IsEmptyData = UserDtos.Count == 0;
+            IsEmptyData = UserDtos.Count == 0 && userDtos.Count == 0;
             return userDtos;
         }
         finally
@@ -114,7 +120,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
         {
             await LoadStateService.PrepareStorageTokenAsync(uid);
 
-            // Load source DTO
+            // Читаем настройки выбранного чата
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.StorageToken);
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 
@@ -276,7 +282,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
         {
             await LoadStateService.PrepareStorageTokenAsync(uid);
 
-            // Load source DTO
+            // Читаем настройки выбранного чата
             Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.StorageToken);
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 

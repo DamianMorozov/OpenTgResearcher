@@ -172,6 +172,7 @@ FusionCache используется для результатов запрос�
 | [ClientConnection.SelfTest](Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj) | Консольный селфтест: исходная VM подключения через `Compile Link`, настоящие DTO из `TgBusinessLogic`/`TgStorage`; UI, репозитории и клиент подменены, подключения к Telegram не выполняются |
 | [Proxies.SelfTest](Tests/SelfTests/Proxies/Proxies.SelfTest.csproj) | Исходные VM списка и карточки прокси, общий обработчик подтверждений через `Compile Link`; настоящие репозиторий и SQLite в памяти, HTTP CONNECT и SOCKS5 на loopback, настройка MTProto без Telegram; явный режим `--live` проверяет Desktop-подключение без прокси и с первой записью, используя БД только для чтения и копии сессии |
 | [TelegramCompatibility.SelfTest](Tests/SelfTests/TelegramCompatibility/TelegramCompatibility.SelfTest.csproj) | Совместимость с обновлёнными API WTelegram и Telegram.Bot: сохранение ID истории настоящим сервисом и репозиторием в SQLite в памяти, три состояния разрешения управления темами; без Telegram |
+| [Chat.SelfTest](Tests/SelfTests/Chat/Chat.SelfTest.csproj) | Восемь исходных моделей чата и обработчик выбора вкладок через `Compile Link`, разметка девяти страниц; настоящие репозитории и SQLite в памяти, UI и Telegram заменены заглушками; режим `--seed` создаёт отдельную БД для проверки окна |
 
 ```mermaid
 flowchart LR
@@ -188,18 +189,22 @@ flowchart LR
     ConnectionTests["ClientConnection.SelfTest"] --> Business
     ProxyTests["Proxies.SelfTest"] --> Business
     TelegramCompatibilityTests["TelegramCompatibility.SelfTest"] --> Business
+    ChatTests["Chat.SelfTest"] --> Business
     ConsoleTests["OpenTgResearcherConsoleTests: без ProjectReference"]
     LogsTests -. "Compile Link" .-> LogsSource["Исходники страницы журналов Desktop"]
     StartupTests -. "Compile Link" .-> SettingsSource["Исходники настроек Desktop"]
     ConnectionTests -. "Compile Link" .-> ConnectionSource["Исходная VM подключения Desktop"]
     ProxyTests -. "Compile Link" .-> ProxySource["Исходники страниц прокси Desktop"]
+    ChatTests -. "Compile Link" .-> ChatSource["Исходники страницы чата и вложенных моделей Desktop"]
 ```
 
 Селфтесты с заглушками проверяют поведение подключённых исходников, но не воспроизводят полностью отрисовку и жизненный цикл WinUI.
+Проверки медиафайлов в `Chat.SelfTest` используют настоящие DTO и обработчики `TgConnectClientBase`, временные каталоги и сессию в памяти; подменяется передача байтов документа или фотографии. `Test-DesktopChat.ps1 -CheckMediaPreview` отдельно проверяет декодирование и отрисовку JPEG настоящим элементом `Image` на синтетических данных.
 Дополнительные скрипты проверки:
 
 - [Test-DesktopArchitecture.ps1](Tests/SelfTests/Test-DesktopArchitecture.ps1) проверяет выбор архитектуры Windows App SDK в конфигурациях решения, не компилируя приложение.
 - [Test-RebuildOutputs.ps1](Tests/SelfTests/Test-RebuildOutputs.ps1) воспроизводит отложенный запуск цели очистки после Rebuild на отдельном MSBuild-проекте и проверяет сохранность результата сборки.
+- [Test-DesktopChat.ps1](Tests/SelfTests/Test-DesktopChat.ps1) проверяет открытие чата и семи вкладок настоящего unpackaged-окна на русском или английском, журнал и завершение процесса; использует отдельные настройки и тестовую БД, необязательно с выборкой из источника только для чтения, без подключения к Telegram.
 - [Test-DesktopShutdown.ps1](Tests/SelfTests/Test-DesktopShutdown.ps1) запускает установленный Package под CDB, закрывает окно и анализирует завершение; требует Windows SDK Debuggers и полного имени установленного пакета.
 
 В решении `Any CPU` для Desktop и его MSTest-проекта сопоставлен с `x64`. Приложение включает Windows App SDK в режиме `WindowsAppSDKSelfContained`; библиотека тестов использует SDK приложения и не включает его самостоятельно.

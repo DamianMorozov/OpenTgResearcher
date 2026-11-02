@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatContentViewModel : TgPageViewModelBase
 {
@@ -10,7 +10,7 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial Guid Uid { get; set; } = Guid.Empty!;
     [ObservableProperty]
-    public partial TgEfSourceDto Dto { get; set; } = null!;
+    public partial TgEfSourceDto Dto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfMessageDto> MessageDtos { get; set; } = new();
     [ObservableProperty]
@@ -139,12 +139,14 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
         }
     }
 
+    // Обновляем состояние списка, доступность загрузки и счётчики сообщений
     private async Task AfterDataUpdateAsync()
     {
         IsLoading = false;
+        IsEmptyData = MessageDtos.Count == 0;
         (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
 
-        // Update loaded data statistics
+        // Обновляем статистику загруженных сообщений
         var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
         LoadedDataStatistics = $"{TgResourceExtensions.GetTextBlockFiltered()} {MessageDtos.Count} | " + $"{TgResourceExtensions.GetTextBlockTotalAmount()} {totalCount}";
 

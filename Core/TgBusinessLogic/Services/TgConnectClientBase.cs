@@ -1,4 +1,4 @@
-﻿using TL;
+using TL;
 using WTelegram;
 
 namespace TgBusinessLogic.Services;
@@ -1948,7 +1948,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    /// <summary> Parse Telegram chat </summary>
+    /// <summary> Разбирает чат Telegram и дожидается завершения задач перед освобождением состояния </summary>
     public async Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings)
     {
         if (tgDownloadSettings is not TgDownloadSettingsViewModel settings) return;
@@ -1956,124 +1956,132 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         var uid = Guid.NewGuid();
         await LoadStateService.PrepareDownloadTokenAsync(uid);
+        var ct = LoadStateService.DownloadToken;
+        var parseHelper = new TgParseHelper();
 
-        if (CheckShouldStop(LoadStateService.DownloadToken)) return;
-
-        await PrepareChatAsync(_downloadSettings, LoadStateService.DownloadToken);
-
-        var parseHelper = await CheckAccessToMessagesAsync(_downloadSettings, LoadStateService.DownloadToken);
-
-        await TryCatchAsync(async () =>
+        try
         {
-            if (CheckShouldStop(LoadStateService.DownloadToken)) return;
-            if (parseHelper.IsAccess)
+            if (CheckShouldStop(ct)) return;
+
+            await PrepareChatAsync(settings, ct);
+
+            parseHelper = await CheckAccessToMessagesAsync(settings, ct);
+
+            await TryCatchAsync(async () =>
             {
-                if (CheckShouldStop(LoadStateService.DownloadToken)) return;
-
-                // Creating subdirectories
-                if (_downloadSettings.SourceVm.Dto.IsCreatingSubdirectories)
+                if (CheckShouldStop(ct)) return;
+                if (parseHelper.IsAccess)
                 {
-                    await EnsureForumDirectoriesAsync(_downloadSettings, parseHelper.Channel, parseHelper.ForumTopicSettings, LoadStateService.DownloadToken);
-                }
+                    if (CheckShouldStop(ct)) return;
 
-                parseHelper.CurrentChatId = _downloadSettings.SourceVm.Dto.Id;
-                parseHelper.ChatCache.TryAddChat(parseHelper.CurrentChatId, _downloadSettings.SourceVm.Dto.AccessHash, _downloadSettings.SourceVm.Dto.Directory);
-                parseHelper.ChatCache.MarkAsSaved(parseHelper.CurrentChatId);
-
-                var chunkSize = FloodControlService.CurrentChunkSize;
-
-                while (parseHelper.SourceFirstId <= parseHelper.SourceLastId)
-                {
-                    try
+                    // Создаём подкаталоги топиков
+                    if (settings.SourceVm.Dto.IsCreatingSubdirectories)
                     {
-                        // Download message portion with client
-                        await DownloadMessagesWithClientAsync(_downloadSettings, parseHelper, chunkSize, LoadStateService.DownloadToken);
-                        //// Download message portion with bot
-                        //await DownloadMessagesWithBotAsync(_downloadSettings, parseHelper, chunkSize, LoadStateService.DownloadToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        // Cancel gracefully
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log error to keep app running
-                        TgLogUtils.WriteException(ex);
-                        await SetClientExceptionAsync(ex, LoadStateService.DownloadToken);
+                        await EnsureForumDirectoriesAsync(settings, parseHelper.Channel, parseHelper.ForumTopicSettings, ct);
                     }
 
-                    // Process tasks in batches limited by CountThreads
-                    while (parseHelper.TasksCount >= _downloadSettings.SourceVm.Dto.CountThreads)
+                    parseHelper.CurrentChatId = settings.SourceVm.Dto.Id;
+                    parseHelper.ChatCache.TryAddChat(parseHelper.CurrentChatId, settings.SourceVm.Dto.AccessHash, settings.SourceVm.Dto.Directory);
+                    parseHelper.ChatCache.MarkAsSaved(parseHelper.CurrentChatId);
+
+                    var chunkSize = FloodControlService.CurrentChunkSize;
+
+                    while (parseHelper.SourceFirstId <= parseHelper.SourceLastId && !CheckShouldStop(ct))
                     {
-                        if (LoadStateService.DownloadToken.IsCancellationRequested) break;
-
-                        var tasksToRun = new List<Task>();
-                        var dequeuedItems = new List<TgTaskItem>();
-
-                        for (int i = 0; i < _downloadSettings.SourceVm.Dto.CountThreads; i++)
-                        {
-                            if (parseHelper.TryDequeueTask(out var taskItem) && taskItem is not null)
-                            {
-                                tasksToRun.Add(taskItem.Task);
-                                dequeuedItems.Add(taskItem);
-                            }
-                        }
-
-                        await UpdateTasksViewModelAsync(parseHelper);
-
                         try
                         {
-                            await Task.WhenAll(tasksToRun);
+                            // Получаем порцию сообщений с токеном текущего запуска
+                            await DownloadMessagesWithClientAsync(settings, parseHelper, chunkSize, ct);
+                            //// Download message portion with bot
+                            //await DownloadMessagesWithBotAsync(_downloadSettings, parseHelper, chunkSize, LoadStateService.DownloadToken);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // Завершаем цикл при отмене
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            // Журналируем ошибку обработки порции
+                            TgLogUtils.WriteException(ex);
+                            await SetClientExceptionAsync(ex, ct);
+                        }
+
+                        // Ограничиваем число одновременно обрабатываемых задач
+                        while (parseHelper.TasksCount >= settings.SourceVm.Dto.CountThreads)
+                        {
+                            if (CheckShouldStop(ct)) break;
+
+                            var tasksToRun = new List<Task>();
+                            var dequeuedItems = new List<TgTaskItem>();
+
+                            for (int i = 0; i < settings.SourceVm.Dto.CountThreads; i++)
+                            {
+                                if (parseHelper.TryDequeueTask(out var taskItem) && taskItem is not null)
+                                {
+                                    tasksToRun.Add(taskItem.Task);
+                                    dequeuedItems.Add(taskItem);
+                                }
+                            }
+
+                            await UpdateTasksViewModelAsync(parseHelper);
+
+                            try
+                            {
+                                await Task.WhenAll(tasksToRun);
+                            }
+                            catch (Exception ex)
+                            {
+                                TgLogUtils.WriteException(ex);
+                            }
+
+                            parseHelper.MessageSettings.ThreadNumber = 0;
+                            await UpdateTasksViewModelAsync(parseHelper);
+                        }
+                    }
+                }
+            }, ct: ct);
+        }
+        finally
+        {
+            try
+            {
+                // Ожидаем задачи до записи буфера и сброса настроек загрузки
+                if (!parseHelper.TasksIsEmpty)
+                {
+                    var tasks = new List<Task>();
+                    var dequeuedItems = new List<TgTaskItem>();
+
+                    while (parseHelper.TryDequeueTask(out var taskItem) && taskItem is not null)
+                    {
+                        tasks.Add(taskItem.Task);
+                        dequeuedItems.Add(taskItem);
+                    }
+
+                    if (tasks.Count > 0)
+                    {
+                        try
+                        {
+                            await Task.WhenAll(tasks);
                         }
                         catch (Exception ex)
                         {
                             TgLogUtils.WriteException(ex);
                         }
-
-                        parseHelper.MessageSettings.ThreadNumber = 0;
-                        await UpdateTasksViewModelAsync(parseHelper);
                     }
+
+                    // Сбрасываем счётчики завершённых задач
+                    parseHelper.ClearTasks();
                 }
+
+                parseHelper.MessageSettings.ThreadNumber = 0;
+                await UpdateTasksViewModelAsync(parseHelper);
             }
-        },
-        async () =>
-        {
-            await FinalizeDownloadSessionAsync(_downloadSettings, parseHelper, uid);
-            await UpdateTasksViewModelAsync(parseHelper);
-            
-            // Ensure all tasks are awaited
-            if (!parseHelper.TasksIsEmpty)
+            finally
             {
-                var tasks = new List<Task>();
-                var dequeuedItems = new List<TgTaskItem>();
-
-                while (parseHelper.TryDequeueTask(out var taskItem) && taskItem is not null)
-                {
-                    tasks.Add(taskItem.Task);
-                    dequeuedItems.Add(taskItem);
-                }
-
-                if (tasks.Count > 0)
-                {
-                    try
-                    {
-                        await Task.WhenAll(tasks);
-                    }
-                    catch (Exception ex)
-                    {
-                        TgLogUtils.WriteException(ex);
-                    }
-                }
-
-                // Reset task counters
-                parseHelper.ClearTasks();
+                await FinalizeDownloadSessionAsync(settings, parseHelper, uid, ct);
             }
-
-            parseHelper.MessageSettings.ThreadNumber = 0;
-            await UpdateTasksViewModelAsync(parseHelper);
-        },
-        ct: LoadStateService.DownloadToken);
+        }
     }
 
     /// <summary> Prepare chat for downloading </summary>
@@ -2181,15 +2189,15 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    /// <summary> Finalize current download session </summary>
-    private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgParseHelper parseHelper, Guid uid)
+    // Завершаем текущую загрузку, не продвигая позицию отменённого прохода до конца чата
+    private async Task FinalizeDownloadSessionAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgParseHelper parseHelper, Guid uid, CancellationToken ct)
     {
         try
         {
-            if (!CheckShouldStop(LoadStateService.DownloadToken))
+            if (!CheckShouldStop(ct))
             {
                 await FlushMessageBufferAsync(parseHelper, tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true,
-                    LoadStateService.DownloadToken);
+                    ct);
                 await UpdateTitleAsync(string.Empty);
             }
         }
@@ -2210,7 +2218,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             parseHelper.AppDto is null || !parseHelper.AppDto.UseClient ||
             Client is null || (Client is not null && Client.Disconnected))
         {
-            parseHelper.ClearTasks();
             return;
         }
 
@@ -2993,10 +3000,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         UpdateFilesDateTime(mediaInfo);
     }
 
-    /// <summary> Download media thumbnail if exists </summary>
+    // Удаляем пустую обложку до проверки наличия и загружаем её повторно
     private async Task DownloadMediaThumbnailFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, MessageMedia messageMedia, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
         if (!tgDownloadSettings.SourceVm.Dto.IsDownloadThumbnail) return;
+
+        await DeleteEmptyOrLessSizeThumbFilesAsync(tgDownloadSettings, mediaInfo, ct);
 
         if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.ThumbnailPathWithNumber))
         {
@@ -3006,14 +3015,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     case MessageMediaDocument { document: Document doc }:
                         {
-                            // Select best quality thumbnail
+                            // Выбираем обложку наилучшего качества
                             var thumb = doc.thumbs?.OfType<PhotoSizeBase>().OrderByDescending(x => x.FileSize).FirstOrDefault();
                             if (thumb is not null)
                             {
-                                await DeleteEmptyOrLessSizeThumbFilesAsync(tgDownloadSettings, mediaInfo, ct);
                                 await using var localFileStream = File.Create(mediaInfo.ThumbnailPathWithNumber);
-                                // Call Telegram API with cancellation support
-                                await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, thumb), isThrow: false, ct);
+                                // Загружаем выбранную обложку с поддержкой отмены
+                                await DownloadDocumentMediaAsync(doc, localFileStream, thumb, progress: null, ct);
                                 localFileStream.Close();
                             }
                         }
@@ -3036,9 +3044,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     case MessageMediaDocument { document: Document doc }:
                         {
                             await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
-                            // Call Telegram API with cancellation support
-                            await TelegramCallAsync(apiCt => Client.DownloadFileAsync(doc, localFileStream, thumbSize: null,
-                                progress: ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber)), isThrow: false, ct);
+                            // Загружаем документ с поддержкой отмены и отображением прогресса
+                            await DownloadDocumentMediaAsync(doc, localFileStream, thumbSize: null,
+                                progress: ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber), ct);
                             var authorId = messageBase.From?.ID ?? 0;
                             await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
                                 TgEnumMessageType.Document, isRetry: false, authorId, ct);
@@ -3048,14 +3056,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
                     case MessageMediaPhoto { photo: Photo photo }:
                         {
-                            // Select best quality photo
+                            // Выбираем фотографию наилучшего качества
                             var thumb = photo.sizes?.OfType<PhotoSizeBase>().OrderByDescending(x => x.FileSize).FirstOrDefault();
                             if (thumb is not null)
                             {
                                 await DeleteEmptyOrLessSizeThumbFilesAsync(tgDownloadSettings, mediaInfo, ct);
                                 await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
-                                // Call Telegram API with cancellation support
-                                await TelegramCallAsync(apiCt => Client.DownloadFileAsync(photo, localFileStream, thumb), isThrow: false, ct);
+                                // Загружаем фотографию с поддержкой отмены
+                                await DownloadPhotoMediaAsync(photo, localFileStream, thumb, ct);
                                 localFileStream.Close();
                             }
                         }
@@ -3065,7 +3073,28 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    /// <summary> Delete empty or less size files </summary>
+    /// <summary> Загружает документ или его обложку в открытый поток </summary>
+    protected virtual async Task DownloadDocumentMediaAsync(Document document, Stream output, PhotoSizeBase? thumbSize,
+        Client.ProgressCallback? progress, CancellationToken ct = default)
+    {
+        try
+        {
+            await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(document, output, thumbSize, progress), isThrow: true, ct);
+        }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
+    }
+
+    /// <summary> Загружает выбранный размер фотографии в открытый поток </summary>
+    protected virtual async Task DownloadPhotoMediaAsync(Photo photo, Stream output, PhotoSizeBase size, CancellationToken ct = default)
+    {
+        try
+        {
+            await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(photo, output, size), isThrow: true, ct);
+        }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
+    }
+
+    // Удаляем пустой файл, а неполный файл удаляем только при разрешённой перезаписи
     private async Task DeleteEmptyOrLessSizeFilesAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
         await TryCatchAsync(async () =>
@@ -3097,31 +3126,47 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }, ct: ct);
     }
 
-    /// <summary> Move existing files at the current directory </summary>
+    // Присоединяем ID к готовому файлу и его обложке без повторного скачивания
     private async Task MoveExistsFilesAtCurrentDirAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
         if (!tgDownloadSettings.SourceVm.Dto.IsJoinFileNameWithMessageId) return;
 
         await TryCatchAsync(async () =>
         {
-            // File is already exists and size is correct
+            // Сохраняем существующий полный файл с ID
             var currentFileName = mediaInfo.LocalPathWithNumber;
             var fileSize = TgFileUtils.CalculateFileSize(currentFileName);
             if (File.Exists(currentFileName) && fileSize == mediaInfo.RemoteSize)
+            {
+                MoveExistingThumbnail(mediaInfo);
                 return;
-            // Other existing files
+            }
+            // Проверяем исходное имя без ID
             var files = Directory.GetFiles(mediaInfo.LocalPathOnly, mediaInfo.LocalNameOnly).ToList();
             if (files.Count == 0)
                 return;
             foreach (var file in files)
             {
                 fileSize = TgFileUtils.CalculateFileSize(file);
-                // Find other file with name and size
+                // Переносим только совпадающий по имени и размеру файл
                 if (fileSize == mediaInfo.RemoteSize)
+                {
                     File.Move(file, mediaInfo.LocalPathWithNumber, overwrite: true);
+                    MoveExistingThumbnail(mediaInfo);
+                    break;
+                }
             }
             await Task.CompletedTask;
         }, ct: ct);
+    }
+
+    // Сохраняем готовую обложку при присоединении ID к имени медиафайла
+    private static void MoveExistingThumbnail(TgMediaInfoModel mediaInfo)
+    {
+        var originalThumb = Path.Combine(mediaInfo.LocalPathOnly,
+            Path.GetFileNameWithoutExtension(mediaInfo.LocalNameOnly) + TgFileUtils.ExtensionThumbnail);
+        if (TgFileUtils.CalculateFileSize(originalThumb) > 0 && TgFileUtils.CalculateFileSize(mediaInfo.ThumbnailPathWithNumber) == 0)
+            File.Move(originalThumb, mediaInfo.ThumbnailPathWithNumber, overwrite: true);
     }
 
     /// <summary> Update date time for files </summary>

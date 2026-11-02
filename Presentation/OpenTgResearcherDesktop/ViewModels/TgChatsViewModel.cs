@@ -4,6 +4,16 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 {
     #region Fields, properties, constructor
 
+    public string ChatIdHeader => TgResourceExtensions.GetChatColumnHeader("Id");
+    public string ChatSubscribeHeader => TgResourceExtensions.GetChatColumnHeader("Subscribe");
+    public string ChatAccessHeader => TgResourceExtensions.GetChatColumnHeader("Access");
+    public string ChatActiveHeader => TgResourceExtensions.GetChatColumnHeader("Active");
+    public string ChatUserNameHeader => TgResourceExtensions.GetChatColumnHeader("UserName");
+    public string ChatTitleHeader => TgResourceExtensions.GetChatColumnHeader("Title");
+    public string ChatCountHeader => TgResourceExtensions.GetChatColumnHeader("Count");
+    public string ChatProgressHeader => TgResourceExtensions.GetChatColumnHeader("Progress");
+    public string ChatParticipantsHeader => TgResourceExtensions.GetChatColumnHeader("Participants");
+
     [ObservableProperty]
     public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
     [ObservableProperty]

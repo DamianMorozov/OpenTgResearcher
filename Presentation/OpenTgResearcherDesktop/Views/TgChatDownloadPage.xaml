@@ -1,4 +1,4 @@
-﻿<common:TgPageBase
+<common:TgPageBase
     x:Class="OpenTgResearcherDesktop.Views.TgChatDownloadPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,7 +18,6 @@
     <ContentControl
         HorizontalAlignment="Stretch"
         HorizontalContentAlignment="Stretch"
-        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
         Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
         <Border
             HorizontalAlignment="Stretch"
@@ -39,167 +38,189 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1.4*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1.4*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1.4*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <!--  FirstId  -->
+                <!--  Начальный идентификатор  -->
                 <TextBlock
                     Grid.Row="0"
                     l:Uids.Uid="FieldFirstId"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <NumberBox
                     Grid.Row="0"
                     Grid.Column="1"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     Minimum="1"
                     SpinButtonPlacementMode="Compact"
                     Style="{StaticResource FieldNumberBoxStyle}"
                     Value="{x:Bind ViewModel.DownloadDto.FirstId, Mode=TwoWay}" />
-                <!--  CountThreads  -->
+                <!--  Количество потоков  -->
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="2"
                     l:Uids.Uid="FieldCountThreads"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <NumberBox
                     Grid.Row="0"
                     Grid.Column="3"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=OneWay}"
                     Minimum="1"
                     SpinButtonPlacementMode="Compact"
                     Style="{StaticResource FieldNumberBoxStyle}"
                     Value="{x:Bind ViewModel.DownloadDto.CountThreads, Mode=TwoWay}" />
-                <!--  IsAutoUpdate  -->
+                <!--  Автообновление  -->
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="4"
                     l:Uids.Uid="FieldIsAutoUpdate"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="0"
                     Grid.Column="5"
-                    IsEnabled="True"
-                    IsOn="{x:Bind ViewModel.DownloadDto.IsAutoUpdate, Mode=OneWay}"
+                    AutomationProperties.AutomationId="ChatAutoUpdate"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                    IsOn="{x:Bind ViewModel.DownloadDto.IsAutoUpdate, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsSaveMessages  -->
+                <!--  Сохранение сообщений  -->
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="0"
                     l:Uids.Uid="FieldIsParseMessages"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="1"
                     Grid.Column="1"
-                    IsEnabled="True"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsSaveMessages, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsJoinFileNameWithMessageId  -->
+                <!--  Добавление идентификатора к имени файла  -->
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="2"
                     l:Uids.Uid="FieldIsJoinFileNameWithMessageId"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="1"
                     Grid.Column="3"
-                    IsEnabled="True"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsJoinFileNameWithMessageId, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsRewriteMessages  -->
+                <!--  Перезапись сообщений  -->
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="4"
                     l:Uids.Uid="FieldIsRewriteMessages"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="1"
                     Grid.Column="5"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteMessages, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsSaveFiles  -->
+                <!--  Скачивание файлов  -->
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="0"
                     l:Uids.Uid="FieldIsDownloadFiles"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="2"
                     Grid.Column="1"
-                    IsEnabled="True"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsSaveFiles, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  Download thumbnails (covers)  -->
+                <!--  Скачивание обложек  -->
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="2"
                     l:Uids.Uid="FieldIsDownloadThumbnail"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="2"
                     Grid.Column="3"
                     Margin="12,0,0,0"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsDownloadThumbnail, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsRewriteFiles  -->
+                <!--  Перезапись файлов  -->
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="4"
                     l:Uids.Uid="FieldIsRewriteFiles"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="2"
                     Grid.Column="5"
-                    IsEnabled="True"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteFiles, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsParsingComments  -->
+                <!--  Разбор комментариев  -->
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="0"
                     l:Uids.Uid="FieldIsParseComments"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="3"
                     Grid.Column="1"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsParsingComments, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsCreatingSubdirectories  -->
+                <!--  Создание подкаталогов  -->
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="2"
                     l:Uids.Uid="FieldIsCreateSubdirectories"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="3"
                     Grid.Column="3"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsCreatingSubdirectories, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  IsFileNamingByMessage  -->
+                <!--  Имя файла по сообщению  -->
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="4"
                     l:Uids.Uid="FieldIsFileNameByMessage"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ToggleSwitch
                     Grid.Row="3"
                     Grid.Column="5"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     IsOn="{x:Bind ViewModel.DownloadDto.IsFileNamingByMessage, Mode=TwoWay}"
                     Style="{StaticResource FieldToggleSwitchStyle}" />
-                <!--  Reset to default  -->
+                <!--  Восстановление настроек  -->
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="0"
                     l:Uids.Uid="FieldDefaultSettings"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <Button
                     Grid.Row="4"
                     Grid.Column="1"
                     Grid.ColumnSpan="5"
                     VerticalAlignment="Center"
                     Command="{x:Bind ViewModel.DefaultSettingsCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
                     Style="{StaticResource FieldButtonStyle}">
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                         <FontIcon Margin="0,0,10,0" Glyph="&#xE72C;" />
@@ -209,11 +230,12 @@
                             l:Uids.Uid="ActionResetToDefault" />
                     </StackPanel>
                 </Button>
-                <!--  Directory  -->
+                <!--  Каталог  -->
                 <TextBlock
                     Grid.Row="5"
                     l:Uids.Uid="FieldDirectory"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <Grid
                     Grid.Row="5"
                     Grid.Column="1"
@@ -224,7 +246,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Margin="2,10,2,2"
                         HorizontalAlignment="Stretch"
@@ -232,6 +254,7 @@
                         Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                     <TextBox
+                        IsReadOnly="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}"
                         Style="{StaticResource FieldTextBoxStyle}"
                         Text="{x:Bind ViewModel.DownloadDto.Directory, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
@@ -241,35 +264,37 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.DownloadDto.Directory, Mode=OneWay}" />
                 </Grid>
-                <!--  ChatProgressMessage  -->
+                <!--  Прогресс разбора  -->
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="0"
                     l:Uids.Uid="FieldPercent"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <TextBox
                     Grid.Row="6"
                     Grid.Column="1"
-                    IsEnabled="False"
+                    AutomationProperties.AutomationId="ChatDownloadPercent"
+                    IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
-                    Text="{x:Bind ViewModel.ChatProgressInfo, Mode=OneWay}" />
+                    Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
                 <TextBox
                     Grid.Row="6"
                     Grid.Column="2"
                     Grid.ColumnSpan="4"
-                    IsEnabled="False"
+                    IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
-                    Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
-                <!--  Message streams  -->
+                    Text="{x:Bind ViewModel.ChatProgressInfo, Mode=OneWay}" />
+                <!--  Потоки сообщений  -->
                 <TextBlock
                     Grid.Row="7"
                     Grid.Column="0"
                     l:Uids.Uid="FieldMessageParsingStreams"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <TextBox
                     Grid.Row="7"
                     Grid.Column="1"
-                    IsEnabled="False"
                     IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.StateMessageParsingStreams, Mode=OneWay}"
@@ -278,20 +303,19 @@
                     Grid.Row="7"
                     Grid.Column="2"
                     Grid.ColumnSpan="4"
-                    IsEnabled="False"
                     IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.StateSourceMsg, Mode=OneWay}" />
-                <!--  Media streams  -->
+                <!--  Потоки медиа  -->
                 <TextBlock
                     Grid.Row="8"
                     Grid.Column="0"
                     l:Uids.Uid="FieldMediaParsingStreams"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <TextBox
                     Grid.Row="8"
                     Grid.Column="1"
-                    IsEnabled="False"
                     IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.StateMediaParsingStreams, Mode=OneWay}"
@@ -300,16 +324,16 @@
                     Grid.Row="8"
                     Grid.Column="2"
                     Grid.ColumnSpan="4"
-                    IsEnabled="False"
                     IsReadOnly="True"
                     Style="{StaticResource FieldTextBoxStyle}"
                     Text="{x:Bind ViewModel.StateSourceMedia, Mode=OneWay}" />
-                <!--  Active tasks  -->
+                <!--  Активные задачи  -->
                 <TextBlock
                     Grid.Row="9"
                     Grid.Column="0"
                     l:Uids.Uid="FieldActiveTasks"
-                    Style="{StaticResource FieldTextBlockStyle}" />
+                    Style="{StaticResource FieldTextBlockStyle}"
+                    TextWrapping="Wrap" />
                 <ScrollView
                     Grid.Row="9"
                     Grid.Column="1"
@@ -318,7 +342,6 @@
                     <TextBox
                         VerticalAlignment="Stretch"
                         VerticalContentAlignment="Top"
-                        IsEnabled="False"
                         IsReadOnly="True"
                         Style="{StaticResource FieldTextBoxStyle}"
                         Text="{x:Bind ViewModel.StateActiveTasks, Mode=OneWay}"

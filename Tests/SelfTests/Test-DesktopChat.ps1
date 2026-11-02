@@ -90,6 +90,9 @@ try {
     if ($SourceDatabase) { $seedArgs += @('--source', (Resolve-Path -LiteralPath $SourceDatabase).Path, '--chat', "$ChatId", '--directory', $ChatDirectory) }
     & dotnet @seedArgs
     if ($LASTEXITCODE -ne 0) { throw 'Не удалось создать тестовую БД чата' }
+    $sourceInfo = & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --inspect-chat (Join-Path $caseDirectory 'TgStorage.db') $ChatId
+    if ($LASTEXITCODE -ne 0) { throw 'Не удалось прочитать выбранный чат тестовой БД' }
+    $expectedTitle = [regex]::Match(($sourceInfo -join "`n"), 'Title=(.*?); Directory=').Groups[1].Value
     $settings = @{
         AppStorage = Join-Path $caseDirectory 'TgStorage.db'
         AppSession = Join-Path $caseDirectory 'OpenTgResearcher.session'
@@ -180,6 +183,82 @@ try {
             Start-Sleep -Milliseconds 100
         }
         if ($models[$index] -eq 'Content') { Save-AppSnapshot 'Content' }
+        if ($models[$index] -eq 'Settings') {
+            $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+            $edits = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                    [System.Windows.Automation.ControlType]::Edit))
+            $values = foreach ($edit in $edits) {
+                $pattern = $null
+                if ($edit.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern, [ref]$pattern)) { $pattern.Current.Value }
+            }
+            if ($expectedTitle -notin $values) { throw "Настройки не отобразили название чата при открытии: $expectedTitle" }
+            Write-Output 'PASS: настройки сразу показывают выбранный чат'
+            Save-AppSnapshot 'Settings'
+        }
+        if ($models[$index] -eq 'Download') {
+            $percent = Wait-AppElement '.*' '' 'ChatDownloadPercent'
+            if ($percent.Current.BoundingRectangle.Width -lt 80) { throw 'Поле процента сжато до нечитаемой ширины' }
+            if (-not $percent.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.IsReadOnly) {
+                throw 'Поле процента разрешает редактирование'
+            }
+            if ($percent.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value -notmatch '\d+[.,]\d+\s*%') {
+                throw 'При открытии вкладки отсутствует процент сохранённого прогресса'
+            }
+            $toggle = (Wait-AppElement '.*' '' 'ChatAutoUpdate').GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+            $originalState = $toggle.Current.ToggleState
+            foreach ($attempt in 1..2) {
+                $toggle.Toggle()
+                $enabled = $toggle.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On
+                Invoke-AppElement (Wait-AppElement '^(Сохранить настройки чата|Save chat settings)$')
+                Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
+                $deadline = [DateTime]::UtcNow.AddSeconds(10)
+                do {
+                    $savedInfo = & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --inspect-chat (Join-Path $caseDirectory 'TgStorage.db') $ChatId
+                    $saved = ($savedInfo -join "`n") -match ('AutoUpdate=' + $enabled + ';')
+                    if (-not $saved) { Start-Sleep -Milliseconds 100 }
+                } until ($saved -or [DateTime]::UtcNow -gt $deadline)
+                if (-not $saved) { throw "Автообновление не сохранилось в БД: $enabled" }
+            }
+            if ($toggle.Current.ToggleState -ne $originalState) { throw 'Переключатель не вернулся в исходное состояние' }
+            Write-Output 'PASS: поле процента доступно только для чтения; оба состояния автообновления сохранены настоящим интерфейсом'
+            Save-AppSnapshot 'Download'
+        }
+        if ($models[$index] -eq 'Participants') {
+            $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+            $participantHeaders = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                    [System.Windows.Automation.ControlType]::HeaderItem))
+            $resourceCulture = if ($Language -eq 'Russian') { 'ru-RU' } else { 'en-us' }
+            [xml]$resources = Get-Content (Join-Path $PSScriptRoot "../../Presentation/OpenTgResearcherDesktop/Strings/$resourceCulture/Resources.resw")
+            $expectedParticipantHeaders = foreach ($column in @('Id', 'IsActive', 'UserName', 'FirstName', 'LastName', 'Phone', 'Messages')) {
+                ($resources.root.data | Where-Object name -eq "UserColumn${column}").value
+            }
+            $participantNames = foreach ($header in $participantHeaders) {
+                $header.Current.Name
+                $header.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition) |
+                    ForEach-Object { $_.Current.Name }
+            }
+            if ($participantHeaders.Count -ne 7 -or @($expectedParticipantHeaders | Where-Object { $_ -notin $participantNames }).Count -gt 0) {
+                throw "Неверные заголовки участников: $($participantNames -join ', ')"
+            }
+            Write-Output 'PASS: семь локализованных заголовков участников'
+            if ($SourceDatabase) {
+                Invoke-AppElement (Wait-AppElement '^(Получить участников из сообщений|Get participants from messages)$')
+                Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
+                $deadline = [DateTime]::UtcNow.AddSeconds(15)
+                do {
+                    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+                    $participantRows = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                            [System.Windows.Automation.ControlType]::DataItem))
+                    if ($participantRows.Count -eq 0) { Start-Sleep -Milliseconds 100 }
+                } until ($participantRows.Count -gt 0 -or [DateTime]::UtcNow -gt $deadline)
+                if ($participantRows.Count -eq 0) { throw 'Участники из сообщений не появились в таблице' }
+                Write-Output "PASS: участники из сообщений отображены настоящей таблицей; строк: $($participantRows.Count)"
+            }
+            Save-AppSnapshot 'Participants'
+        }
         if ($CheckMediaPreview -and $models[$index] -eq 'Content') {
             Add-Type -AssemblyName System.Drawing
             $image = Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail'

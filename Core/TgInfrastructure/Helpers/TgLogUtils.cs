@@ -6,6 +6,7 @@ public static class TgLogUtils
     #region Fields, properties, constructor
 
     private static string _startupLog = string.Empty;
+    private static readonly object _logLock = new();
 
     #endregion
 
@@ -72,20 +73,11 @@ public static class TgLogUtils
 		}
     }
 
-    public static async Task CloseAndFlushAsync()
+    /// <summary> Завершает запись журнала после остальных сообщений </summary>
+    public static Task CloseAndFlushAsync()
     {
-        if (string.IsNullOrEmpty(_startupLog) || !File.Exists(_startupLog)) return;
-        try
-        {
-            // Flush the log file
-            using var stream = new FileStream(_startupLog, FileMode.Append, FileAccess.Write, FileShare.Read);
-            using var writer = new StreamWriter(stream) { AutoFlush = true };
-            await writer.WriteLineAsync($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] App closed");
-        }
-        catch (Exception ex)
-        {
-            WriteExceptionWithMessage(ex, "Failed to close and flush app log!");
-        }
+        CloseAndFlush();
+        return Task.CompletedTask;
     }
 
     public static void CloseAndFlush()
@@ -93,10 +85,8 @@ public static class TgLogUtils
         if (string.IsNullOrEmpty(_startupLog) || !File.Exists(_startupLog)) return;
         try
         {
-            // Flush the log file
-            using var stream = new FileStream(_startupLog, FileMode.Append, FileAccess.Write, FileShare.Read);
-            using var writer = new StreamWriter(stream) { AutoFlush = true };
-            writer.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] App closed");
+            // Завершаем запись журнала под общей блокировкой
+            WriteLog("App closed");
         }
         catch (Exception ex)
         {
@@ -107,20 +97,22 @@ public static class TgLogUtils
     private static void WriteCallerCore(string filePath, int lineNumber, string memberName)
     {
         var fileName = TgFileUtils.GetShortFilePath(filePath);
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Location: {fileName} file, {memberName} method, {lineNumber} line{Environment.NewLine}");
+        WriteLog($"Location: {fileName} file, {memberName} method, {lineNumber} line");
     }
 
     private static void WriteCallerExceptionCore(string filePath, int lineNumber, string memberName)
     {
         WriteCallerCore(filePath, lineNumber, memberName);
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Exception: {Environment.NewLine}");
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] StackTrace: {Environment.NewLine}");
+        WriteLog("Exception: ");
+        WriteLog("StackTrace: ");
     }
 
+    /// <summary> Записывает сообщение без конфликта параллельных задач парсинга </summary>
     public static void WriteLog(string message)
     {
         if (string.IsNullOrEmpty(message)) return;
-        File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
+        lock (_logLock)
+            File.AppendAllText(_startupLog, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
     }
 
     public static void WriteLogWithCaller(string message,

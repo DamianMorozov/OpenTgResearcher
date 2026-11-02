@@ -6,7 +6,7 @@ public interface ITgEfUserRepository : ITgEfRepository<TgEfUserEntity, TgEfUserD
     public Task<List<TgEfUserDto>> GetUsersByChatIdAsync(long chatId, CancellationToken ct = default);
     /// <summary> Get all distinct users for a given source using join </summary>
     public Task<List<TgEfUserDto>> GetUsersByChatIdJoinAsync(long chatId, long userId, int pageSkip, int pageTake, 
-        Expression<Func<ITgEfEntity, bool>>? where, CancellationToken ct = default);
+        Expression<Func<TgEfUserEntity, bool>>? where, CancellationToken ct = default);
     /// <summary> Get myself user for a given source </summary>
     public Task<TgEfUserDto> GetMyselfUserAsync(long chatId, long userId, CancellationToken ct = default);
     /// <summary> Create missing users </summary>

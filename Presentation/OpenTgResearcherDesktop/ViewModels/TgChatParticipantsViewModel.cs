@@ -19,6 +19,13 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
     public IAsyncRelayCommand GetParticipantsCommand { get; }
     public IAsyncRelayCommand GetParticipantsFromMessagesCommand { get; }
     public IAsyncRelayCommand ClearParticipantsCommand { get; }
+    public string UserIdHeader => TgResourceExtensions.GetUserColumnHeader("Id");
+    public string UserActiveHeader => TgResourceExtensions.GetUserColumnHeader("IsActive");
+    public string UserNameHeader => TgResourceExtensions.GetUserColumnHeader("UserName");
+    public string UserFirstNameHeader => TgResourceExtensions.GetUserColumnHeader("FirstName");
+    public string UserLastNameHeader => TgResourceExtensions.GetUserColumnHeader("LastName");
+    public string UserPhoneHeader => TgResourceExtensions.GetUserColumnHeader("Phone");
+    public string UserMessagesHeader => TgResourceExtensions.GetUserColumnHeader("Messages");
 
     public TgChatParticipantsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatParticipantsViewModel> logger, IAppNotificationService appNotificationService)
@@ -80,8 +87,12 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 
             // Читаем страницу участников одним запросом
+            var text = FilterText.Trim().TrimStart('@');
+            Expression<Func<TgEfUserEntity, bool>>? filter = string.IsNullOrEmpty(text) ? null : user =>
+                (IsFilterById && user.Id.ToString().Contains(text)) || (IsFilterByName && (EF.Functions.Like(user.UserName, "%" + text + "%")
+                    || EF.Functions.Like(user.FirstName, "%" + text + "%") || EF.Functions.Like(user.LastName, "%" + text + "%")));
             var userDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersByChatIdJoinAsync(
-                Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, PageSkip, PageTake, null, LoadStateService.MemoryToken);
+                Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, PageSkip, PageTake, filter, LoadStateService.MemoryToken);
 
             IsEmptyData = UserDtos.Count == 0 && userDtos.Count == 0;
             return userDtos;
@@ -264,7 +275,31 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
             //// After persisting, load participants from storage (existing method loads from DB into UserDtos)
             //await LazyLoadCoreAsync(isSearch: false);
 
-            UserDtos = [.. incomingUserDtos];
+            // Сохраняем связь с чатом, чтобы полученные участники были доступны после повторного открытия
+            var links = await App.BusinessLogicManager.StorageManager.ChatUserRepository.GetQuery(isReadOnly: true)
+                .Where(x => x.ChatId == Dto.Id && participantIds.Contains(x.UserId)).ToListAsync(LoadStateService.StorageToken);
+            var now = DateTime.UtcNow;
+            var newLinks = new List<TgStorage.Domain.ChatUsers.TgEfChatUserEntity>();
+            foreach (var participantId in participantIds)
+            {
+                var link = links.SingleOrDefault(x => x.UserId == participantId);
+                if (link is null)
+                    newLinks.Add(new() { Uid = Guid.NewGuid(), ChatId = Dto.Id, UserId = participantId, JoinedAt = now, DtChanged = now });
+                else if (link.IsDeleted)
+                {
+                    link.IsDeleted = false;
+                    link.DtChanged = now;
+                    newLinks.Add(link);
+                }
+            }
+            if (newLinks.Count > 0)
+                await App.BusinessLogicManager.StorageManager.ChatUserRepository.SaveListAsync(
+                    newLinks.Select(x => TgEfDomainUtils.CreateNewDto(x, isUidCopy: true)), LoadStateService.StorageToken);
+            // Перечитываем единую отсортированную страницу со счётчиками сообщений и действующим фильтром
+            UserDtos.Clear();
+            PageSkip = 0;
+            HasMoreItems = true;
+            await LazyLoadCoreAsync(isSearch: false);
         }
         finally
         {
@@ -294,6 +329,9 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
             await App.BusinessLogicManager.StorageManager.ChatUserRepository.CreateMissingChatUsersByMessagesAsync(Dto.Id, LoadStateService.StorageToken);
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 
+            UserDtos.Clear();
+            PageSkip = 0;
+            HasMoreItems = true;
             await LazyLoadCoreAsync(isSearch: false);
         }
         finally
@@ -313,7 +351,9 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
             UserDtos.Clear();
 
-            IsEmptyData = false;
+            PageSkip = 0;
+            HasMoreItems = true;
+            IsEmptyData = true;
         }
         finally
         {

@@ -18,6 +18,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public IAsyncRelayCommand ClearViewCommand { get; }
     public IAsyncRelayCommand SaveChatSettingsCommand { get; }
     public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
+    public Task InitializationTask { get; private set; } = Task.CompletedTask;
 
     public TgChatViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatViewModel))
@@ -34,7 +35,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
     #region Methods
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
+    /// <summary> Загружает общий черновик до открытия первой вкладки </summary>
+    public override Task OnNavigatedToAsync(NavigationEventArgs? e) => InitializationTask = LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
         await LoadDataStorageCoreAsync();

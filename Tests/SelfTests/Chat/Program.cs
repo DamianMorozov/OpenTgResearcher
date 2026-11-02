@@ -1,6 +1,6 @@
 namespace OpenTgResearcherDesktop.ChatSelfTests;
 
-internal static class Program
+internal static partial class Program
 {
     internal static TgChatViewModel Chat { get; private set; } = null!;
     internal static TgChatDownloadViewModel Download { get; private set; } = null!;
@@ -12,6 +12,10 @@ internal static class Program
     // Проверяем исходные модели с настоящими репозиториями и отдельной SQLite в памяти
     private static async Task<int> Main(string[] args)
     {
+        if (args is ["--inspect-chat", var chatDatabase, var selectedChat])
+            return await InspectChatAsync(chatDatabase, long.Parse(selectedChat));
+        if (args is ["--live-chat", var sourceDatabase, var savedSession, var targetChat])
+            return await LiveChatTests.RunAsync(sourceDatabase, savedSession, long.Parse(targetChat));
         if (args is ["--inspect-media", var database, var chatId, var mediaDirectory])
             return await MediaTests.InspectAsync(database, long.Parse(chatId), mediaDirectory);
         if (args is ["--live-media", var liveDatabase, var session, var liveChat, var liveDirectory])
@@ -20,6 +24,8 @@ internal static class Program
         if (args is ["--seed", var target, "--source", var sourcePath, "--chat", var id, "--directory", var directory])
             return await SeedDatabaseAsync(target, sourcePath, long.Parse(id), directory);
         TgGlobalTools.SetAppType(TgEnumAppType.Test);
+        typeof(TgLogUtils).GetField("_startupLog", BindingFlags.Static | BindingFlags.NonPublic)!
+            .SetValue(null, Path.Combine(AppContext.BaseDirectory, "Chat.SelfTest.log"));
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("ChatFormsInitialized", ChatFormsInitializedAsync),
@@ -47,7 +53,8 @@ internal static class Program
             ("ContentTemplateUsesPageContext", ContentTemplateUsesPageContextAsync),
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
-        }.Concat(MediaTests.GetTests()).ToArray();
+        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).ToArray();
+        if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
         {
@@ -122,11 +129,13 @@ internal static class Program
                 var messages = await original.Messages.AsNoTracking().Where(x => x.SourceId == chatId).OrderByDescending(x => x.Id).Take(100).ToListAsync();
                 var userIds = messages.Select(x => x.UserId).Distinct().ToList();
                 var users = await original.Users.AsNoTracking().Where(x => userIds.Contains(x.Id)).ToListAsync();
+                var links = await original.ChatUsers.AsNoTracking().Where(x => x.ChatId == chatId && userIds.Contains(x.UserId)).ToListAsync();
                 source.IsSubscribe = true;
                 if (!string.IsNullOrWhiteSpace(directory)) source.Directory = directory;
                 context.Sources.Add(source);
                 context.Users.AddRange(users);
                 context.Messages.AddRange(messages);
+                context.ChatUsers.AddRange(links);
                 Console.WriteLine($"БД открыта только для чтения; чатов: {await original.Sources.CountAsync()}; выбран ID {chatId}; сообщений в выборке: {messages.Count}");
             }
             await context.SaveChangesAsync();

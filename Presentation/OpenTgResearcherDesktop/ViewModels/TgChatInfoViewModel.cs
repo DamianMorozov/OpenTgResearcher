@@ -14,7 +14,7 @@ public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
     public TgChatInfoViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatInfoViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatInfoViewModel))
     {
-        // Commands
+        // Команда обновления сведений
         UpdateChatSettingsCommand = new AsyncRelayCommand(UpdateChatSettingsAsync);
     }
 
@@ -28,6 +28,8 @@ public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
         ChatDetailsDto = new();
         await LoadDataStorageCoreAsync();
+        if (Uid != Guid.Empty && await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync())
+            await UpdateChatSettingsCoreAsync();
     });
 
     private async Task LoadDataStorageCoreAsync()

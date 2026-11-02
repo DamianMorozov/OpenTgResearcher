@@ -1835,4 +1835,25 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ChatColumnSubscribe" xml:space="preserve"><value>Подписка</value></data>
   <data name="ChatColumnTitle" xml:space="preserve"><value>Заголовок</value></data>
   <data name="ChatColumnUserName" xml:space="preserve"><value>Имя пользователя</value></data>
+  <data name="UserColumnId" xml:space="preserve">
+    <value>ИД</value>
+  </data>
+  <data name="UserColumnIsActive" xml:space="preserve">
+    <value>Активно</value>
+  </data>
+  <data name="UserColumnUserName" xml:space="preserve">
+    <value>Имя пользователя</value>
+  </data>
+  <data name="UserColumnFirstName" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="UserColumnLastName" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="UserColumnPhone" xml:space="preserve">
+    <value>Телефон</value>
+  </data>
+  <data name="UserColumnMessages" xml:space="preserve">
+    <value>Сообщений</value>
+  </data>
 </root>

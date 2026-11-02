@@ -37,6 +37,7 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
                 DownloadDto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
             App.VmLocator.ClearChatViewModel();
             App.VmLocator.ClearStateDownloadingChat();
+            ChatProgressMessage = $"{TgDataUtils.CalcSourceProgress(DownloadDto.Count, DownloadDto.FirstId):00.00} %";
         });
 
     private async Task DefaultSettingsAsync() => 

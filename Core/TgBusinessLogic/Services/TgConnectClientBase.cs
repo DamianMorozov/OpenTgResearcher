@@ -52,7 +52,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         if (ct.IsCancellationRequested) return true;
         if (Client is null) return true;
-        if (Client.Disconnected) return true;
         if (LoadStateService.DownloadToken.IsCancellationRequested) return true;
         return false;
     }
@@ -194,29 +193,35 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    /// <summary> Executes a Telegram API call with flood control and cancellation support, handling exceptions if needed </summary>
+    /// <summary> Выполняет запрос Telegram с отменой, контролем FLOOD_WAIT и повтором после временного обрыва </summary>
     private async Task<T> TelegramCallAsync<T>(Func<CancellationToken, Task<T>> telegramCall, bool isThrow, CancellationToken ct = default)
     {
-        // Check if cancellation was requested before starting
-        if (CheckShouldStop(ct))
-            return await Task.FromCanceled<T>(ct);
+        ct.ThrowIfCancellationRequested();
+        if (Client is null) throw new InvalidOperationException("Подключитесь к Telegram перед выполнением запроса");
 
-        try
+        for (var attempt = 0; ; attempt++)
         {
-            var result = await FloodControlService.ExecuteWithFloodControlAsync<T>(innerCt => telegramCall(innerCt), isThrow, ct);
-
-            // Check cancellation after execution
-            if (CheckShouldStop(ct))
-                return await Task.FromCanceled<T>(ct);
-
-            return result;
-        }
-        catch (OperationCanceledException)
-        {
-            // Return canceled task if operation was cancelled
-            return await Task.FromCanceled<T>(ct);
+            try
+            {
+                ct.ThrowIfCancellationRequested();
+                if (Client is null) throw new InvalidOperationException("Подключение к Telegram завершено");
+                if (attempt > 0 && Client.Disconnected) await Client.ConnectAsync().WaitAsync(ct);
+                var result = await FloodControlService.ExecuteWithFloodControlAsync(telegramCall, isThrow, ct);
+                ct.ThrowIfCancellationRequested();
+                return result;
+            }
+            catch (Exception ex) when (!ct.IsCancellationRequested && attempt < FloodControlService.MaxRetryCount - 1
+                && (ex is OperationCanceledException || IsTransientConnectionError(ex)))
+            {
+                TgLogUtils.WriteException(ex);
+                await Task.Delay(TimeSpan.FromSeconds(FloodControlService.WaitFallbackFast), ct);
+            }
         }
     }
+
+    // Повторяем транспортные ошибки, сохраняя ошибки прав доступа и авторизации
+    private static bool IsTransientConnectionError(Exception ex) => ex is IOException or System.Net.Sockets.SocketException or TimeoutException
+        || ex is InvalidOperationException && ex.Message.Contains("You must connect to Telegram first", StringComparison.OrdinalIgnoreCase);
 
     #endregion
 
@@ -386,7 +391,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 throw new ArgumentOutOfRangeException(nameof(proxyDto), proxyDto, "Cannot set UseBot property!");
         }
 
-        if (IsReady) return;
+        if (await CheckClientConnectionReadyAsync()) return;
 
         await DisconnectClientAsync(isAfterClientConnect: false);
         await DisconnectBotAsync(isAfterClientConnect: false);
@@ -2216,7 +2221,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         if (CheckShouldStop(ct) ||
             parseHelper.AppDto is null || !parseHelper.AppDto.UseClient ||
-            Client is null || (Client is not null && Client.Disconnected))
+            Client is null)
         {
             return;
         }
@@ -2546,53 +2551,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         // Early exit if cancellation requested
         if (CheckShouldStop(ct)) return;
-
-        // Enrich user data from the message author (persist/update TgEfUserEntity)
-        try
-        {
-            // From is TL.Peer (PeerUser/PeerChat/PeerChannel). We only enrich for PeerUser.
-            if (message.From is TL.PeerUser peerUser)
-            {
-                //var inputChannel = new TL.InputChannel(channel.id, channel.access_hash);
-                var chatBase = GetChatBaseFromUserChats(message.peer_id.ID);
-                var inputChannel = GetInputChannelFromChatBase(chatBase);
-                if (inputChannel is not null && inputChannel.access_hash != 0)
-                {
-                    var isMember = await CheckUserMemberAsync(inputChannel, peerUser.user_id, accessHash: 0);
-                }
-                //// Try to get full TL.User via client (uses cache/fallback to API)
-                //var tlUser = await GetParticipantAsync(messageSettings.CurrentChatId, peerUser.user_id, accessHash: 0, ct);
-                //if (tlUser is not null)
-                //{
-                //    var userDto = new TgEfUserDto
-                //    {
-                //        Id = tlUser.id,
-                //        IsUserActive = tlUser.IsActive,
-                //        IsBot = tlUser.IsBot,
-                //        LastSeenAgo = tlUser.LastSeenAgo,
-                //        UserName = tlUser.MainUsername ?? tlUser.username ?? string.Empty,
-                //        AccessHash = tlUser.access_hash,
-                //        FirstName = tlUser.first_name ?? string.Empty,
-                //        LastName = tlUser.last_name ?? string.Empty,
-                //        UserNames = tlUser.usernames is null ? string.Empty : string.Join("|", tlUser.usernames.ToList()),
-                //        PhoneNumber = tlUser.phone ?? string.Empty,
-                //        Status = tlUser.status?.ToString() ?? string.Empty,
-                //        RestrictionReason = tlUser.restriction_reason is null ? string.Empty : string.Join("|", tlUser.restriction_reason.ToList()),
-                //        LangCode = tlUser.lang_code ?? string.Empty,
-                //        IsContact = false,
-                //    };
-
-                //    // persist/merge into storage
-                //    await UpdateUsersAsync([userDto]);
-                //}
-            }
-        }
-        catch (OperationCanceledException) { return; }
-        catch (Exception ex)
-        {
-            // don't fail message processing because of user enrichment
-            TgLogUtils.WriteException(ex);
-        }
 
         // Parse documents and photos
         if ((message.flags & Message.Flags.has_media) != 0)
@@ -3609,9 +3567,23 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public async Task<bool> CheckClientConnectionReadyAsync()
     {
         if (Client is null) return ClientResultDisconnected();
-        if (Client is { Disconnected: true }) return ClientResultDisconnected();
         if (Me is null) return ClientResultDisconnected();
         if (Me.ID <= 0) return ClientResultDisconnected();
+        if (Client.Disconnected)
+        {
+            try
+            {
+                await Client.ConnectAsync();
+                ProxyException = new();
+                ClientException = new();
+            }
+            catch (Exception ex)
+            {
+                TgLogUtils.WriteException(ex);
+                await SetClientExceptionAsync(ex);
+                return ClientResultDisconnected();
+            }
+        }
         switch (TgGlobalTools.AppType)
         {
             case TgEnumAppType.Console:
@@ -3619,9 +3591,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     return ClientResultDisconnected();
                 break;
         }
-        if (ProxyException.IsExist || ClientException.IsExist)
-            return ClientResultDisconnected();
-
+        // Готовность определяется текущим соединением, прежние ошибки остаются доступны для диагностики
         return IsReady = true;
     }
 

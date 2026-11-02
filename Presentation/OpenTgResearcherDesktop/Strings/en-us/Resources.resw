@@ -1771,4 +1771,25 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ChatColumnSubscribe" xml:space="preserve"><value>Subscribed</value></data>
   <data name="ChatColumnTitle" xml:space="preserve"><value>Title</value></data>
   <data name="ChatColumnUserName" xml:space="preserve"><value>Username</value></data>
+  <data name="UserColumnId" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="UserColumnIsActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="UserColumnUserName" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="UserColumnFirstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="UserColumnLastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="UserColumnPhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="UserColumnMessages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
 </root>

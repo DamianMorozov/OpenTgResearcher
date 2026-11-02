@@ -19,16 +19,28 @@ public sealed partial class TgChatPage
 
     #region Methods
 
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    // Открываем первую вкладку после чтения настроек выбранного чата
+    private async void OnPageLoaded(object sender, RoutedEventArgs e)
     {
         PageLoaded(sender, e);
+        try { await LoadDetailsAsync(); }
+        catch (Exception ex) { ViewModel.LogError(ex); }
+    }
 
+    // Не передаём первой вкладке пустой черновик во время загрузки родительской страницы
+    private async Task LoadDetailsAsync()
+    {
+        await ViewModel.InitializationTask;
         ViewModel.ChatDetailsFrame = ChatDetailsFrame;
-        ChatDetailsSelectorBar.SelectedItem = ChatDetailsSelectorBar.Items[0];
+        var firstItem = ChatDetailsSelectorBar.Items[0];
+        if (ChatDetailsSelectorBar.SelectedItem == firstItem)
+            ChatDetailsSelectorBar_SelectionChanged(ChatDetailsSelectorBar, null);
+        else
+            ChatDetailsSelectorBar.SelectedItem = firstItem;
     }
 
     // Переключаем вкладку, сохраняя общий черновик настроек чата
-    private void ChatDetailsSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    private void ChatDetailsSelectorBar_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs? args)
     {
         var selectedItem = sender.SelectedItem;
         if (selectedItem is null) return;

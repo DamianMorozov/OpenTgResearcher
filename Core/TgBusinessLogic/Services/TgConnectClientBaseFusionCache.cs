@@ -127,8 +127,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     /// <summary> Flush message buffer to database </summary>
     private async Task FlushMessageBufferAsync(TgParseHelper parseHelper, bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default)
     {
-        var isMessageFinally = false;
-
         // Flush message buffer to database
         await _messageBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
@@ -178,14 +176,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                 }
 
-                isMessageFinally = true;
             });
-
-        while (!isMessageFinally)
-        {
-            if (CheckShouldStop(ct)) return;
-            await Task.Delay(TgConstants.TimeOutUIShortMilliseconds, ct);
-        }
 
         // Flush message relation buffer to database
         await _messageRelationBuffer.FlushAsync(isSaveMessages, isForce,

@@ -99,6 +99,9 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
 }
 public abstract class TgSectionViewModel : TgPageViewModelBase
 {
+    public string FilterText { get; set; } = string.Empty;
+    public bool IsFilterById { get; set; } = true;
+    public bool IsFilterByName { get; set; } = true;
     public int PageSkip { get; set; }
     public int PageTake { get; set; } = 2;
     public bool HasMoreItems { get; set; } = true;
@@ -168,6 +171,8 @@ public sealed class TestContext(DbContextOptions options) : TgEfContextBase(opti
 public sealed class TgUserDetailsViewModel;
 public static class TgResourceExtensions
 {
+    /// <summary> Возвращает ключ заголовка участника для проверки модели </summary>
+    public static string GetUserColumnHeader(string column) => column;
     /// <summary> Возвращает подпись тестового интерфейса </summary>
     public static string AskDataClear() => "Очистить";
     /// <summary> Возвращает подпись тестового интерфейса </summary>

@@ -122,15 +122,18 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
         .ToListAsync(ct);
 
     /// <inheritdoc />
-    public async Task<List<TgEfUserDto>> GetUsersByChatIdJoinAsync(long chatId, long userId, int pageSkip, int pageTake, Expression<Func<ITgEfEntity, bool>>? where, 
+    public async Task<List<TgEfUserDto>> GetUsersByChatIdJoinAsync(long chatId, long userId, int pageSkip, int pageTake, Expression<Func<TgEfUserEntity, bool>>? where,
         CancellationToken ct = default)
     {
-        // Query ChatUsers for given chat, join to Users and Messages, group messages per user and count
+        // Применяем поиск пользователей до соединения и пагинации
+        var users = EfContext.Users.AsNoTracking();
+        if (where is not null) users = users.Where(where);
+        // Соединяем участников чата с пользователями и считаем сообщения, включая нулевое количество
         var baseQuery =
                 from cu in EfContext.ChatUsers.AsNoTracking()
                 where cu.ChatId == chatId && !cu.IsDeleted
-                join u in EfContext.Users.AsNoTracking() on cu.UserId equals u.Id
-                // left join messages for this source by user
+                join u in users on cu.UserId equals u.Id
+                // Сохраняем пользователей без сообщений через групповое соединение
                 join m in EfContext.Messages.AsNoTracking().Where(m => m.SourceId == chatId)
                 on u.Id equals m.UserId into msgs
             select new
@@ -139,25 +142,22 @@ public sealed class TgEfUserRepository : TgEfRepositoryBase<TgEfUserEntity, TgEf
                 MsgCount = msgs.Count()
             };
 
-        // Filter: keep only users with at least one message (if you want all participants remove this filter)
-        baseQuery = baseQuery.Where(x => x.MsgCount > 0);
-
-        // Sort: current user first, then by username for stable ordering
+        // Сортируем по числу сообщений, текущему пользователю, имени и уникальному идентификатору
         var ordered = baseQuery
             .OrderByDescending(x => x.MsgCount)
             .ThenByDescending(x => x.User.Id == userId)
-            .ThenBy(x => x.User.UserName);
+            .ThenBy(x => x.User.UserName).ThenBy(x => x.User.Id);
 
-        // Pagination: apply on a separate variable to avoid IOrderedQueryable vs IQueryable mismatch
+        // Применяем пагинацию к типизированному запросу
         var safeSkip = Math.Max(0, pageSkip);
-        IQueryable<dynamic> paged = ordered.Skip(safeSkip); // inferred as IQueryable<anon>, but stored as IQueryable<dynamic> for reuse
+        var paged = ordered.Skip(safeSkip);
         if (pageTake > 0)
             paged = paged.Take(pageTake);
 
-        // Materialize
+        // Читаем выбранную страницу
         var list = await paged.ToListAsync(ct);
 
-        // Map to DTOs using domain util (preserves isUidCopy behavior)
+        // Формируем DTO с сохранением идентификаторов
         return [.. list.Select(x => TgEfDomainUtils.CreateNewDto(x.User, x.MsgCount, isUidCopy: true))];
     }
 

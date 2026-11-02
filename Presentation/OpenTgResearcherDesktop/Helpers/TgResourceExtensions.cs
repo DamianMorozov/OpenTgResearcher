@@ -15,6 +15,8 @@ public static class TgResourceExtensions
     internal static string GetProxyColumnHeader(string column) => $"ProxyColumn{column}".GetLocalizedResource();
     // Возвращаем заголовок таблицы чатов без зависимости от обхода колонок локализатором
     internal static string GetChatColumnHeader(string column) => $"ChatColumn{column}".GetLocalizedResource();
+    // Используем существующие строки заголовков для колонок участников
+    internal static string GetUserColumnHeader(string column) => $"UserColumn{column}".GetLocalizedResource();
     internal static string GetFeatureLicenseManager => "FeatureLicenseManager".GetLocalizedResource();
     internal static string GetFeatureLicensePurchase => "FeatureLicensePurchase".GetLocalizedResource();
     internal static string GetFeatureRequiresLicense(TgEnumLicenseType required) => string.Format("FeatureRequiresLicense".GetLocalizedResource(), required.ToString());

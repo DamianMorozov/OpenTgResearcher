@@ -75,6 +75,7 @@
     <File Path="ISSUE-TEMPLATE.md" />
     <File Path="LICENSE.md" />
     <File Path="README.md" />
+    <File Path="README-DEV.md" />
     <File Path="RELEASES.md" />
     <File Path="SCREENSHOTS.md" />
   </Folder>

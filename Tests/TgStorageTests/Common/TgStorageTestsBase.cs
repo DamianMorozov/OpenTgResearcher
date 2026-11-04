@@ -1,51 +1,25 @@
 ﻿#pragma warning disable NUnit1033
 
-using Autofac.Extensions.DependencyInjection;
-
 namespace TgStorageTests.Common;
 
-public class TgStorageTestsBase : TgDisposable
+[NonParallelizable]
+public abstract class TgStorageTestsBase : TgDisposable
 {
     #region Fields, properties, constructor
 
     protected ILifetimeScope Scope { get; set; }
     protected ITgStorageService StorageManager { get; }
+    private readonly IContainer _container;
 
     protected TgStorageTestsBase(Action<ContainerBuilder>? registerTypes = null, bool isRegisterEfContext = true)
     {
-        // Set app type
+        // Устанавливаем тестовый тип приложения
         TgGlobalTools.SetAppType(TgEnumAppType.Test);
 
-        var services = new ServiceCollection();
-        if (isRegisterEfContext)
-        {
-            // Get storage path
-            var context = new TgEfTestContext();
-            var storagePath = context.GetDataSource();
-            // Register the DbContext with SQLite
-            services.AddDbContextPool<TgEfConsoleContext>(options =>
-            {
-                options.UseSqlite(storagePath);
-                // Copy by TgEfConsoleContext.OnConfiguring
-                options
-#if DEBUG
-                    .LogTo(message => Debug.WriteLine($"{TgGlobalTools.AppType}: {message}", TgConstants.LogTypeStorage), LogLevel.Debug)
-                    .EnableDetailedErrors()
-                    .EnableSensitiveDataLogging()
-#endif
-                    .EnableThreadSafetyChecks()
-                    .UseLoggerFactory(new LoggerFactory());
-
-            }, poolSize: 128);
-
-            services.AddScoped<ITgEfContext>(sp => sp.GetRequiredService<TgEfTestContext>());
-        }
-
-        // DI register
+        // Регистрируем зависимости тестового окружения
         var cb = new ContainerBuilder();
-        cb.Populate(services);
 
-        // Register FusionCache
+        // Регистрируем FusionCache
         cb.RegisterInstance<IFusionCache>(new FusionCache(
             new FusionCacheOptions
             {
@@ -59,7 +33,7 @@ public class TgStorageTestsBase : TgDisposable
                 }
             }))
             .SingleInstance();
-        // Registering repositories
+        // Регистрируем репозитории
         cb.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
         cb.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
         cb.RegisterType<TgEfChatUserRepository>().As<ITgEfChatUserRepository>();
@@ -72,10 +46,18 @@ public class TgStorageTestsBase : TgDisposable
         cb.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
         cb.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
         cb.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
-        // Registering the EF context
+        // Сохраняем SQLite в памяти на время жизни тестового окружения
         if (isRegisterEfContext)
-            cb.RegisterType<TgEfTestContext>().As<ITgEfContext>().SingleInstance();
-        // Registering services
+        {
+            cb.Register(_ =>
+            {
+                var context = new TgEfTestContext();
+                context.Database.SetConnectionString("Data Source=:memory:");
+                context.Database.OpenConnection();
+                return context;
+            }).As<ITgEfContext>().SingleInstance();
+        }
+        // Регистрируем службы
         cb.RegisterType<TgStorageService>().As<ITgStorageService>().SingleInstance();
         cb.RegisterType<TgFloodControlService>().As<ITgFloodControlService>().SingleInstance();
         cb.RegisterType<TgConnectClientTest>().As<ITgConnectClientTest>().SingleInstance();
@@ -83,24 +65,34 @@ public class TgStorageTestsBase : TgDisposable
         cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().SingleInstance();
         cb.RegisterType<LoadStateService>().As<ILoadStateService>().SingleInstance();
         cb.RegisterType<TgBusinessLogicManager>().As<ITgBusinessLogicManager>().SingleInstance();
-        // Registering outside types
+        // Регистрируем дополнительные типы наследников
         registerTypes?.Invoke(cb);
-        // Building the container
-        var container = cb.Build();
-        TgGlobalTools.Container = container;
+        // Создаём контейнер тестового окружения
+        _container = cb.Build();
+        TgGlobalTools.Container = _container;
 
-        // TgGlobalTools
-        Scope = TgGlobalTools.Container.BeginLifetimeScope();
+        // Открываем область зависимостей
+        Scope = _container.BeginLifetimeScope();
         StorageManager = Scope.Resolve<ITgStorageService>();
 
-        // Clear FusionCache on startup
+        // Очищаем FusionCache перед проверками
         var fusionCache = Scope.Resolve<IFusionCache>();
         fusionCache.ClearAll();
 
-        // Create and update storage
-        var task = StorageManager.CreateAndUpdateDbAsync();
-        task.Wait();
+        // Применяем настоящие миграции и заполняем таблицу версий
+        StorageManager.CreateAndUpdateDbAsync().GetAwaiter().GetResult();
     }
 
     #endregion
+
+    /// <summary> Освобождает тестовое окружение после завершения набора проверок </summary>
+    [OneTimeTearDown]
+    public void TearDownStorage() => Dispose();
+
+    /// <summary> Освобождает службы, контекст SQLite и контейнер зависимостей </summary>
+    public override void ReleaseManagedResources()
+    {
+        Scope.Dispose();
+        _container.Dispose();
+    }
 }

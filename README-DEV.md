@@ -29,6 +29,14 @@ dotnet restore OpenTgResearcher.slnx -p:Platform=x64
 dotnet build OpenTgResearcher.slnx --no-restore -c Debug -p:Platform=x64 -p:AppxPackageSigningEnabled=false
 ```
 
+### Тесты хранилища
+
+`TgStorageTests` использует отдельную SQLite в памяти для каждого набора тестов, применяет настоящие миграции и заполняет таблицу версий. Соединение и контейнер зависимостей освобождаются после набора; пользовательская БД не требуется. Регрессионные тесты проверяют запись и чтение, изоляцию данных и освобождение ресурсов.
+
+```powershell
+dotnet test Tests/TgStorageTests/TgStorageTests.csproj -c Debug -p:Platform=x64
+```
+
 ## Локализация при отладке Desktop
 
 При запуске профиля `OpenTgResearcherDesktop (Package)` строки локализации читаются из `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Strings`.

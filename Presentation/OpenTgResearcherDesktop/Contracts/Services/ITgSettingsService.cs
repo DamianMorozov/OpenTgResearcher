@@ -29,6 +29,10 @@ public interface ITgSettingsService : INotifyPropertyChanged
     public void Save();
     public void SaveWindow(int width, int height, int x, int y);
     public void SetTheme(TgEnumTheme appTheme);
+    /// <summary> Сохраняет и применяет язык без изменения остальных настроек </summary>
+    public void SaveLanguage(TgEnumLanguage language);
+    /// <summary> Сохраняет и применяет тему без изменения остальных настроек </summary>
+    public void SaveTheme(TgEnumTheme theme);
     public T? ReadSetting<T>(string key);
 	public void SaveSetting<T>(string key, T value);
     /// <summary> Load storage path </summary>

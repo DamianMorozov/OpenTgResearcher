@@ -1892,4 +1892,25 @@ API-параметры, телефон и выбранный прокси буд
   <data name="UpdateFailed" xml:space="preserve">
     <value>Не удалось проверить или скачать обновление. Проверьте доступ к GitHub и повторите попытку. Подробности: {0}</value>
   </data>
+  <data name="ToolbarLanguage.Text" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="ToolbarTheme.Text" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="ToolbarUpdate.Text" xml:space="preserve">
+    <value>Проверить обновления</value>
+  </data>
+  <data name="ToolbarSystemLanguage.Text" xml:space="preserve">
+    <value>Язык системы</value>
+  </data>
+  <data name="ToolbarSystemTheme.Text" xml:space="preserve">
+    <value>Как в системе</value>
+  </data>
+  <data name="ToolbarLightTheme.Text" xml:space="preserve">
+    <value>Светлая</value>
+  </data>
+  <data name="ToolbarDarkTheme.Text" xml:space="preserve">
+    <value>Тёмная</value>
+  </data>
 </root>

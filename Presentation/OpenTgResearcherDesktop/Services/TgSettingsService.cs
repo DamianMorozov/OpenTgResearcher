@@ -305,6 +305,36 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         }
     }
 
+    /// <summary> Сохраняет и применяет выбранный язык отдельно от черновиков остальных настроек </summary>
+    public void SaveLanguage(TgEnumLanguage language)
+    {
+        try
+        {
+            AppLanguage = language;
+            SaveSetting(SettingsKeyAppLanguage, language.ToString());
+            SetAppLanguage();
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+    }
+
+    /// <summary> Сохраняет и применяет выбранную тему отдельно от черновиков остальных настроек </summary>
+    public void SaveTheme(TgEnumTheme theme)
+    {
+        try
+        {
+            AppTheme = theme;
+            SaveSetting(SettingsKeyAppTheme, theme.ToString());
+            SetTheme(theme);
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+        }
+    }
+
     private void SaveWindowWidth(int value) => SaveSetting(SettingsKeyWindowWidth, value);
 
     private void SaveWindowHeight(int value) => SaveSetting(SettingsKeyWindowHeight, value);

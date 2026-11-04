@@ -2,7 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$ExecutablePath,
     [ValidateSet('Russian', 'English')]
-    [string]$Language = 'Russian'
+    [string]$Language = 'Russian',
+    [switch]$Toolbar
 )
 
 $ErrorActionPreference = 'Stop'
@@ -25,7 +26,7 @@ function Get-NewAppLog {
     finally { $stream.Dispose() }
 }
 
-# Находим доступный элемент только в окне запущенного тестом процесса
+# Находим доступный элемент только в окнах тестового процесса, включая всплывающие меню
 function Wait-AppElement([string]$namePattern) {
     $deadline = [DateTime]::UtcNow.AddSeconds(30)
     while ([DateTime]::UtcNow -lt $deadline) {
@@ -33,7 +34,18 @@ function Wait-AppElement([string]$namePattern) {
         $appProcess.Refresh()
         if ($appProcess.MainWindowHandle -ne [IntPtr]::Zero) {
             $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
-            $elements = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition)
+            try {
+                $processCondition = [System.Windows.Automation.PropertyCondition]::new(
+                    [System.Windows.Automation.AutomationElement]::ProcessIdProperty, $appProcess.Id)
+                $elements = [System.Windows.Automation.AutomationElement]::RootElement.FindAll(
+                    [System.Windows.Automation.TreeScope]::Descendants, $processCondition)
+            }
+            catch {
+                # Открытие диалога временно перестраивает дерево UI Automation
+                if ($appProcess.HasExited) { throw }
+                Start-Sleep -Milliseconds 100
+                continue
+            }
             foreach ($element in $elements) {
                 if ($element.Current.Name -match $namePattern -and $element.Current.IsEnabled -and -not $element.Current.IsOffscreen) { return $element }
             }
@@ -55,13 +67,81 @@ function Invoke-AppElement($element) {
             $deadline = [DateTime]::UtcNow.AddSeconds(5)
             while (-not $current.Current.IsEnabled -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 50 }
             if (-not $current.Current.IsEnabled) { throw 'Кнопка не стала доступной после закрытия диалога' }
+            Add-Content -LiteralPath (Join-Path $caseDirectory 'actions.log') -Value "Invoke | $($current.Current.ClassName) | $($current.Current.Name)"
             $pattern.Invoke()
             return
         }
         if ($current.TryGetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern, [ref]$pattern)) { $pattern.Select(); return }
+        if ($current.TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$pattern)) {
+            # Вызываем действие и для уже выбранного варианта, чтобы закрыть меню
+            Add-Content -LiteralPath (Join-Path $caseDirectory 'actions.log') -Value "Toggle | $($current.Current.ClassName) | $($current.Current.Name)"
+            $pattern.Toggle()
+            return
+        }
         $current = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($current)
     }
     throw "Элемент не поддерживает вызов или выбор: $($element.Current.Name)"
+}
+
+# Нажимаем кнопки панели мышью, проверяя доступность поверх области перетаскивания
+function Invoke-ToolbarButton([string]$id) {
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    do {
+        $button = Get-ToolbarButton $id
+        if ($button.Current.IsEnabled) { break }
+        Start-Sleep -Milliseconds 50
+    } while ([DateTime]::UtcNow -lt $deadline)
+    if (-not $button.Current.IsEnabled) { throw "Кнопка панели не стала доступной: $id" }
+    # Даём завершиться анимации закрытия предыдущего меню или подтверждения
+    Start-Sleep -Milliseconds 350
+    [void][ToolbarTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
+    Start-Sleep -Milliseconds 150
+    $rect = $button.Current.BoundingRectangle
+    Add-Content -LiteralPath (Join-Path $caseDirectory 'actions.log') -Value "Click | $id | $rect"
+    [ToolbarTestNative]::Click([int]($rect.Left + $rect.Width / 2), [int]($rect.Top + $rect.Height / 2))
+}
+
+# Находим кнопку панели по идентификатору независимо от языка и видимых подписей
+function Get-ToolbarButton([string]$id) {
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    $condition = [System.Windows.Automation.PropertyCondition]::new(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty, $id)
+    $button = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+    if ($null -eq $button -or $button.Current.IsOffscreen) { throw "Не найдена кнопка панели: $id" }
+    return $button
+}
+
+# Проверяем реальную геометрию кнопок относительно окна и друг друга
+function Test-ToolbarBounds {
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    $windowRect = $window.Current.BoundingRectangle
+    $previousRight = $windowRect.Left
+    foreach ($id in @('ToolbarLanguage', 'ToolbarTheme', 'ToolbarUpdate', 'ToolbarConnect', 'ToolbarDisconnect')) {
+        $button = Get-ToolbarButton $id
+        $rect = $button.Current.BoundingRectangle
+        if ($rect.Width -lt 32 -or $rect.Height -lt 32 -or $rect.Left -lt $previousRight -or $rect.Right -gt $windowRect.Right - 100 -or
+            $rect.Top -lt $windowRect.Top -or $rect.Bottom -gt $windowRect.Top + 64) {
+            throw "Кнопка $id обрезана или перекрывается: $rect; окно $windowRect"
+        }
+        if ([string]::IsNullOrWhiteSpace($button.Current.Name)) { throw "У кнопки $id нет доступной подписи" }
+        $previousRight = $rect.Right
+    }
+}
+
+# Проверяем сохранение единственного выбранного параметра без доступа к настройкам пользователя
+function Assert-ToolbarSetting([string]$key, [string]$expected) {
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    do {
+        $saved = Get-Content -LiteralPath (Join-Path $caseDirectory 'Settings.json') -Raw | ConvertFrom-Json
+        if ($saved.$key -eq $expected) { break }
+        Start-Sleep -Milliseconds 50
+    } while ([DateTime]::UtcNow -lt $deadline)
+    if ($saved.$key -ne $expected) { throw "Выбор панели не сохранён: $key = $($saved.$key), ожидалось $expected" }
+    if ($saved.AppStorage -ne (Join-Path $caseDirectory 'TgStorage.db') -or
+        $saved.AppSession -ne (Join-Path $caseDirectory 'OpenTgResearcher.session')) { throw 'Панель изменила пути БД или сессии' }
+    # UI Automation меняет флажок напрямую; закрываем меню перед следующим действием
+    [ToolbarTestNative]::CloseMenu()
+    Start-Sleep -Milliseconds 250
 }
 
 # Находим журнал по стабильному идентификатору и проверяем доступность копирования
@@ -112,6 +192,36 @@ try {
     if (Get-Process OpenTgResearcherDesktop -ErrorAction SilentlyContinue) { throw 'Перед селфтестом закройте запущенный Desktop' }
     Add-Type -AssemblyName UIAutomationClient
     Add-Type -AssemblyName UIAutomationTypes
+    Add-Type -TypeDefinition @'
+public static class ToolbarTestNative
+{
+    /// <summary> Активирует только тестовое окно перед нажатием </summary>
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern bool SetForegroundWindow(System.IntPtr window);
+    // Перемещаем указатель к проверяемой кнопке
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+    // Передаём нажатие мыши в тестовое окно
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern void mouse_event(uint flags, uint x, uint y, uint data, System.UIntPtr extra);
+    // Передаём клавишу закрытия открытого меню
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern void keybd_event(byte key, byte scan, uint flags, System.UIntPtr extra);
+    /// <summary> Закрывает меню после выбора через UI Automation </summary>
+    public static void CloseMenu()
+    {
+        keybd_event(0x1B, 0, 0, System.UIntPtr.Zero);
+        keybd_event(0x1B, 0, 0x0002, System.UIntPtr.Zero);
+    }
+    /// <summary> Нажимает элемент по его фактическим координатам </summary>
+    public static void Click(int x, int y)
+    {
+        SetCursorPos(x, y);
+        mouse_event(0x0002, 0, 0, 0, System.UIntPtr.Zero);
+        mouse_event(0x0004, 0, 0, 0, System.UIntPtr.Zero);
+    }
+}
+'@
     New-Item -ItemType Directory -Path $caseDirectory -Force | Out-Null
     @{
         AppStorage = Join-Path $caseDirectory 'TgStorage.db'
@@ -132,6 +242,61 @@ try {
     $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern).SetWindowVisualState(
         [System.Windows.Automation.WindowVisualState]::Normal)
     $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern).Resize(1280, 900)
+    if ($Toolbar) {
+        Start-Sleep -Milliseconds 400
+        Test-ToolbarBounds
+        Save-AppSnapshot 'toolbar-wide'
+        $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern).Resize(800, 800)
+        Start-Sleep -Milliseconds 400
+        Test-ToolbarBounds
+        Save-AppSnapshot 'toolbar-compact'
+        Invoke-ToolbarButton 'ToolbarLanguage'
+        Invoke-AppElement (Wait-AppElement '^English$')
+        Assert-ToolbarSetting 'AppLanguage' 'English'
+        $deadline = [DateTime]::UtcNow.AddSeconds(5)
+        do {
+            $name = (Get-ToolbarButton 'ToolbarUpdate').Current.Name
+            if ($name -eq 'Check for updates') { break }
+            Start-Sleep -Milliseconds 50
+        } while ([DateTime]::UtcNow -lt $deadline)
+        if ($name -ne 'Check for updates') { throw 'Подпись верхней панели не переключилась на английский' }
+        Invoke-ToolbarButton 'ToolbarTheme'
+        Save-AppSnapshot 'toolbar-theme-menu'
+        Invoke-AppElement (Wait-AppElement '^Dark$')
+        Assert-ToolbarSetting 'AppTheme' 'Dark'
+        Save-AppSnapshot 'toolbar-dark'
+        Invoke-ToolbarButton 'ToolbarTheme'
+        Invoke-AppElement (Wait-AppElement '^Light$')
+        Assert-ToolbarSetting 'AppTheme' 'Light'
+        Save-AppSnapshot 'toolbar-light'
+        Invoke-ToolbarButton 'ToolbarTheme'
+        Invoke-AppElement (Wait-AppElement '^System theme$')
+        Assert-ToolbarSetting 'AppTheme' 'Default'
+        Invoke-ToolbarButton 'ToolbarLanguage'
+        Save-AppSnapshot 'toolbar-language-menu'
+        Invoke-AppElement (Wait-AppElement '^Русский$')
+        Assert-ToolbarSetting 'AppLanguage' 'Russian'
+        [void](Wait-AppElement '^Проверить обновления$')
+        if ($Language -eq 'English') {
+            Invoke-ToolbarButton 'ToolbarLanguage'
+            Invoke-AppElement (Wait-AppElement '^English$')
+            Assert-ToolbarSetting 'AppLanguage' 'English'
+            [void](Wait-AppElement '^Check for updates$')
+        }
+        Invoke-ToolbarButton 'ToolbarUpdate'
+        Invoke-AppElement (Wait-AppElement '^(Отмена|Cancel)$')
+        if ((Get-UpdateLogElement).GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value.Length -ne 0) {
+            throw 'Отказ от обновления из панели изменил журнал'
+        }
+        Invoke-ToolbarButton 'ToolbarUpdate'
+        Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
+        [void](Wait-UpdateLog 'Setup\.exe')
+        Test-ToolbarBounds
+        Save-AppSnapshot 'toolbar-update'
+        $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern).Resize(1280, 900)
+        Start-Sleep -Milliseconds 400
+        Test-ToolbarBounds
+    }
     $settingsCaption = if ($Language -eq 'Russian') { 'Настройки' } else { 'Settings' }
     $settings = Wait-AppElement ('^' + [regex]::Escape($settingsCaption) + '$')
     Save-AppSnapshot 'home'
@@ -143,9 +308,10 @@ try {
     $release = Wait-AppElement ('^' + [regex]::Escape($releaseCaption) + '$')
     [void](Wait-AppElement ('^' + [regex]::Escape($previewCaption) + '$'))
     [void](Get-UpdateLogElement)
+    $logBeforeCancel = (Get-UpdateLogElement).GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
     Invoke-AppElement $release
     Invoke-AppElement (Wait-AppElement '^(Отмена|Cancel)$')
-    if ((Get-UpdateLogElement).GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value.Length -ne 0) {
+    if ((Get-UpdateLogElement).GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value -ne $logBeforeCancel) {
         throw 'Отмена подтверждения изменила журнал обновлений'
     }
     Invoke-AppElement (Wait-AppElement ('^' + [regex]::Escape($releaseCaption) + '$'))
@@ -164,6 +330,7 @@ try {
     if ($newLog -match 'App_UnhandledException|COMException|System.InvalidOperationException') { throw 'В журнале найдено исключение' }
     if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000)) { throw 'Desktop не завершил закрытие окна' }
     if ($appProcess.ExitCode -ne 0) { throw "Desktop завершился с кодом $($appProcess.ExitCode)" }
+    if ($Toolbar) { Write-Output "PASS: верхняя панель ($Language), язык, все темы, сохранение выбора, обновление, ширина 800 и 1280" }
     Write-Output "PASS: настройки и обновления ($Language), диалоги, журнал, инструкция установки, завершение с кодом 0; $caseDirectory"
 }
 catch {

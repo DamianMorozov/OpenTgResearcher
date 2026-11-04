@@ -21,6 +21,8 @@ internal static partial class Program
             ("UnchangedLanguageDoesNotRefreshUi", UnchangedLanguageDoesNotRefreshUiAsync),
             ("UnpackagedSaveRussian", () => UnpackagedSaveLanguageAsync(TgEnumLanguage.Russian, "ru-RU")),
             ("UnpackagedSaveEnglish", () => UnpackagedSaveLanguageAsync(TgEnumLanguage.English, "en-US")),
+            ("ToolbarSavesOnlyLanguage", ToolbarSavesOnlyLanguageAsync),
+            ("ToolbarSavesOnlyTheme", ToolbarSavesOnlyThemeAsync),
             ("HardwareDisposalWaitsForWorker", HardwareDisposalWaitsForWorkerAsync),
             ("CloseWaitsForTelegram", CloseWaitsForTelegramAsync),
             ("FailedDisconnectKeepsWindowOpen", FailedDisconnectKeepsWindowOpenAsync),

@@ -28,18 +28,21 @@ public partial class ShellViewModel : TgSensitiveModel
     public IAppNotificationService AppNotificationService { get; }
     public INavigationService NavigationService { get; }
     public INavigationViewService NavigationViewService { get; }
+    public TgUpdateViewModel Updates { get; }
 
     public IAsyncRelayCommand ClientConnectCommand { get; set; } = default!;
     public IAsyncRelayCommand ClientDisconnectCommand { get; set; } = default!;
     public IAsyncRelayCommand UpdatePageCommand { get; set; } = default!;
 
-    public ShellViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
-        INavigationViewService navigationViewService, IAppNotificationService appNotificationService) : base(loadStateService, settingsService)
+    /// <summary> Создаёт оболочку с общей моделью проверки обновлений </summary>
+    public ShellViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
+        INavigationViewService navigationViewService, IAppNotificationService appNotificationService, TgUpdateViewModel updates) : base(loadStateService, settingsService)
     {
         AppNotificationService = appNotificationService;
         NavigationService = navigationService;
         NavigationService.Navigated += OnNavigated;
         NavigationViewService = navigationViewService;
+        Updates = updates;
     }
 
     #endregion

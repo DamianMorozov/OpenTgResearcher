@@ -1,6 +1,6 @@
 namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
-internal static class Program
+internal static partial class Program
 {
     // Проверяем исходную VM и навигацию с настоящими строками обоих языков
     private static async Task<int> Main(string[] args)
@@ -30,6 +30,14 @@ internal static class Program
             ("NavigationIndependentOfTelegram", NavigationIndependentOfTelegramAsync),
             ("ReloadKeepsResult", ReloadKeepsResultAsync),
             ("UpdateLogLayout", UpdateLogLayoutAsync),
+            ("ToolbarLanguageChoice", ToolbarLanguageChoiceAsync),
+            ("ToolbarThemeChoice", ToolbarThemeChoiceAsync),
+            ("ToolbarRejectsInvalidChoice", ToolbarRejectsInvalidChoiceAsync),
+            ("ToolbarWaitsForSharedUpdate", ToolbarWaitsForSharedUpdateAsync),
+            ("ToolbarCancelConfirmation", ToolbarCancelConfirmationAsync),
+            ("ToolbarControlsLayout", ToolbarControlsLayoutAsync),
+            ("ToolbarStringsRussian", () => ToolbarStringsAsync("ru-RU", "Язык", "Тема", "Проверить обновления")),
+            ("ToolbarStringsEnglish", () => ToolbarStringsAsync("en-US", "Language", "Theme", "Check for updates")),
         };
         var failed = 0;
         foreach (var test in tests.Where(test => args.Length < 2 || args[0] != "--test" || args[1] == test.Name))

@@ -1828,4 +1828,25 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="UpdateFailed" xml:space="preserve">
     <value>Could not check for or download an update. Check access to GitHub and try again. Details: {0}</value>
   </data>
+  <data name="ToolbarLanguage.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="ToolbarTheme.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="ToolbarUpdate.Text" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="ToolbarSystemLanguage.Text" xml:space="preserve">
+    <value>System language</value>
+  </data>
+  <data name="ToolbarSystemTheme.Text" xml:space="preserve">
+    <value>System theme</value>
+  </data>
+  <data name="ToolbarLightTheme.Text" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="ToolbarDarkTheme.Text" xml:space="preserve">
+    <value>Dark</value>
+  </data>
 </root>

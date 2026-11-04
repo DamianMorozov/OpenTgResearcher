@@ -12,78 +12,189 @@
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     x:Name="ShellPageRoot"
-    Loaded="OnLoaded">
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
     <Grid>
-        <!--  App title  -->
+        <!--  Заголовок и управление приложением  -->
         <Grid
             x:Name="AppTitleBar"
             Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
             VerticalAlignment="Top"
             Canvas.ZIndex="1"
-            IsHitTestVisible="True">
+            IsHitTestVisible="True"
+            SizeChanged="AppTitleBar_SizeChanged">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="80" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <!--  App icon  -->
-            <Image
-                Grid.Column="0"
-                Width="36"
-                Height="36"
-                HorizontalAlignment="Left"
-                Source="/Assets/applicationIcon.ico" />
-            <!--  App version  -->
-            <TextBlock
+            <!--  Перетаскивание доступно только в области значка и заголовка  -->
+            <Grid x:Name="TitleBarDragRegion" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image
+                    Width="28"
+                    Height="28"
+                    Source="/Assets/applicationIcon.ico" />
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="12,0,16,0"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+            </Grid>
+            <StackPanel
                 Grid.Column="1"
-                Margin="24,0,12,0"
                 VerticalAlignment="Center"
-                FontWeight="Bold"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}"
-                TextWrapping="NoWrap" />
-            <!--  Connect Telegram  -->
-            <Button
-                Grid.Column="6"
-                Margin="0,0,5,0"
-                Command="{x:Bind ViewModel.ClientConnectCommand}"
-                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                <Button.CommandParameter>
-                    <x:Boolean>False</x:Boolean>
-                </Button.CommandParameter>
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xE930;" />
-                    <TextBlock
-                        Margin="0,-3,0,-3"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        l:Uids.Uid="ClientConnect" />
-                </StackPanel>
-            </Button>
-            <!--  Disconnect Telegram  -->
-            <Button
-                Grid.Column="7"
-                Margin="10,0,0,0"
-                Command="{x:Bind ViewModel.ClientDisconnectCommand}"
-                IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
-                <Button.CommandParameter>
-                    <x:Boolean>False</x:Boolean>
-                </Button.CommandParameter>
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                    <FontIcon Margin="0,-5,10,-5" Glyph="&#xEA39;" />
-                    <TextBlock
-                        Margin="0,-3,0,-3"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        l:Uids.Uid="ClientDisconnect" />
-                </StackPanel>
-            </Button>
+                Orientation="Horizontal"
+                Spacing="4">
+                <!--  Выбор языка с немедленным сохранением  -->
+                <Button
+                    x:Name="ToolbarLanguageButton"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToolbarLanguage">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE774;" />
+                        <TextBlock
+                            x:Name="ToolbarLanguageLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ToolbarLanguage"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <RadioMenuFlyoutItem
+                                l:Uids.Uid="ToolbarSystemLanguage"
+                                Command="{x:Bind ViewModel.ChangeLanguageCommand}"
+                                CommandParameter="Default"
+                                GroupName="ToolbarLanguages"
+                                IsChecked="{x:Bind ViewModel.IsLanguageSelected(ViewModel.SettingsService.AppLanguage, 'Default'), Mode=OneWay}" />
+                            <RadioMenuFlyoutItem
+                                Command="{x:Bind ViewModel.ChangeLanguageCommand}"
+                                CommandParameter="English"
+                                GroupName="ToolbarLanguages"
+                                IsChecked="{x:Bind ViewModel.IsLanguageSelected(ViewModel.SettingsService.AppLanguage, 'English'), Mode=OneWay}"
+                                Text="English" />
+                            <RadioMenuFlyoutItem
+                                Command="{x:Bind ViewModel.ChangeLanguageCommand}"
+                                CommandParameter="Russian"
+                                GroupName="ToolbarLanguages"
+                                IsChecked="{x:Bind ViewModel.IsLanguageSelected(ViewModel.SettingsService.AppLanguage, 'Russian'), Mode=OneWay}"
+                                Text="Русский" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <!--  Выбор системной, светлой или тёмной темы  -->
+                <Button
+                    x:Name="ToolbarThemeButton"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToolbarTheme">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE790;" />
+                        <TextBlock
+                            x:Name="ToolbarThemeLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ToolbarTheme"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <RadioMenuFlyoutItem
+                                l:Uids.Uid="ToolbarSystemTheme"
+                                Command="{x:Bind ViewModel.ChangeThemeCommand}"
+                                CommandParameter="Default"
+                                GroupName="ToolbarThemes"
+                                IsChecked="{x:Bind ViewModel.IsThemeSelected(ViewModel.SettingsService.AppTheme, 'Default'), Mode=OneWay}" />
+                            <RadioMenuFlyoutItem
+                                l:Uids.Uid="ToolbarLightTheme"
+                                Command="{x:Bind ViewModel.ChangeThemeCommand}"
+                                CommandParameter="Light"
+                                GroupName="ToolbarThemes"
+                                IsChecked="{x:Bind ViewModel.IsThemeSelected(ViewModel.SettingsService.AppTheme, 'Light'), Mode=OneWay}" />
+                            <RadioMenuFlyoutItem
+                                l:Uids.Uid="ToolbarDarkTheme"
+                                Command="{x:Bind ViewModel.ChangeThemeCommand}"
+                                CommandParameter="Dark"
+                                GroupName="ToolbarThemes"
+                                IsChecked="{x:Bind ViewModel.IsThemeSelected(ViewModel.SettingsService.AppTheme, 'Dark'), Mode=OneWay}" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <!--  Проверка стабильного выпуска с общим журналом и подтверждением  -->
+                <Button
+                    x:Name="ToolbarUpdateButton"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToolbarUpdate"
+                    Command="{x:Bind ViewModel.CheckForUpdatesCommand}"
+                    IsEnabled="{x:Bind ViewModel.Updates.IsUpdating, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE895;" />
+                        <TextBlock
+                            x:Name="ToolbarUpdateLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ToolbarUpdate"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Button>
+                <Border
+                    Width="1"
+                    Height="24"
+                    Margin="6,0"
+                    Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                <!--  Подключение к Telegram  -->
+                <Button
+                    x:Name="ToolbarConnectButton"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToolbarConnect"
+                    Command="{x:Bind ViewModel.ClientConnectCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                    <Button.CommandParameter>
+                        <x:Boolean>False</x:Boolean>
+                    </Button.CommandParameter>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE930;" />
+                        <TextBlock
+                            x:Name="ToolbarConnectLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ClientConnect"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Button>
+                <!--  Отключение от Telegram  -->
+                <Button
+                    x:Name="ToolbarDisconnectButton"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToolbarDisconnect"
+                    Command="{x:Bind ViewModel.ClientDisconnectCommand}"
+                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                    <Button.CommandParameter>
+                        <x:Boolean>False</x:Boolean>
+                    </Button.CommandParameter>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xEA39;" />
+                        <TextBlock
+                            x:Name="ToolbarDisconnectLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ClientDisconnect"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </Grid>
         <!--  Navigation  -->
         <NavigationView
@@ -418,5 +529,36 @@
                 </Border>
             </Grid>
         </NavigationView>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="CompactToolbar">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="WideToolbar">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1200" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ToolbarLanguageLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarThemeLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarUpdateLabel.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ExtraWideToolbar">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ToolbarLanguageLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarThemeLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarUpdateLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarConnectLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarDisconnectLabel.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

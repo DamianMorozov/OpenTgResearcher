@@ -17,31 +17,68 @@ public sealed partial class ShellPage
         ViewModel.NavigationService.Frame = NavigationFrame;
         ViewModel.NavigationViewService.Initialize(NavigationViewControl);
 
-        // A custom title bar is required for full window theme and Mica support.
+        // Отдельная область перетаскивания сохраняет доступность кнопок верхней панели
         // https://docs.microsoft.com/windows/apps/develop/title-bar?tabs=winui3#full-customization
         App.MainWindow.ExtendsContentIntoTitleBar = true;
-        App.MainWindow.SetTitleBar(AppTitleBar);
+        App.MainWindow.SetTitleBar(TitleBarDragRegion);
     }
 
     #endregion
 
     #region Methods
 
+    // Подключаем команды и локализацию после появления корня окна
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
-        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
+        if (KeyboardAccelerators.Count == 0)
+        {
+            KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
+            KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
+        }
+        Localizer.Get().LanguageChanged += OnToolbarLanguageChanged;
+        ToolbarUpdateButton.CommandParameter = XamlRoot;
+        LocalizeToolbar();
+        UpdateTitleBarInsets();
     }
 
-    private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
+    // Освобождаем подписку при временной замене оболочки заставкой
+    private void OnUnloaded(object sender, RoutedEventArgs e) => Localizer.Get().LanguageChanged -= OnToolbarLanguageChanged;
+
+    // Обновляем подписи средств доступности и подсказки одновременно с языком приложения
+    private void OnToolbarLanguageChanged(object? sender, LanguageChangedEventArgs e) => TgDesktopUtils.InvokeOnUIThread(LocalizeToolbar);
+
+    // Сохраняем понятные подписи у компактных кнопок без видимого текста
+    private void LocalizeToolbar()
     {
-        AppTitleBar.Margin = new Thickness()
-        {
-            Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
-            Top = AppTitleBar.Margin.Top,
-            Right = AppTitleBar.Margin.Right,
-            Bottom = AppTitleBar.Margin.Bottom
-        };
+        SetToolbarCaption(ToolbarLanguageButton, "ToolbarLanguage");
+        SetToolbarCaption(ToolbarThemeButton, "ToolbarTheme");
+        SetToolbarCaption(ToolbarUpdateButton, "ToolbarUpdate");
+        SetToolbarCaption(ToolbarConnectButton, "ClientConnect");
+        SetToolbarCaption(ToolbarDisconnectButton, "ClientDisconnect");
+    }
+
+    // Используем одну подпись для подсказки и имени кнопки
+    private static void SetToolbarCaption(Button button, string resource)
+    {
+        var caption = resource.GetLocalizedResource();
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(button, caption);
+        ToolTipService.SetToolTip(button, caption);
+    }
+
+    // Пересчитываем отступы при изменении режима навигации
+    private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args) => UpdateTitleBarInsets();
+
+    // Учитываем размер окна и масштаб экрана
+    private void AppTitleBar_SizeChanged(object sender, SizeChangedEventArgs e) => UpdateTitleBarInsets();
+
+    // Оставляем системным кнопкам окна отдельное место справа
+    private void UpdateTitleBarInsets()
+    {
+        if (AppTitleBar is null || NavigationViewControl is null) return;
+        var scale = XamlRoot?.RasterizationScale ?? 1;
+        var right = App.MainWindow.AppWindow.TitleBar.RightInset / scale + 12;
+        var left = NavigationViewControl.CompactPaneLength * (NavigationViewControl.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1);
+        AppTitleBar.Margin = new Thickness(left, 0, right, 0);
     }
 
     private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)

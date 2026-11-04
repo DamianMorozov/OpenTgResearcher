@@ -2,13 +2,24 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
 // Подменяем только среду WinUI и источник пакетов, исходные VM, службу навигации и чтение строк компилируем без изменений
 public sealed class ILoadStateService;
-public sealed class ITgSettingsService;
+public sealed class ITgSettingsService
+{
+    public TgEnumLanguage AppLanguage { get; set; }
+    public TgEnumTheme AppTheme { get; set; }
+    public int LanguageWrites { get; private set; }
+    public int ThemeWrites { get; private set; }
+    /// <summary> Учитывает сохранение выбранного языка </summary>
+    public void SaveLanguage(TgEnumLanguage language) { AppLanguage = language; LanguageWrites++; }
+    /// <summary> Учитывает сохранение выбранной темы </summary>
+    public void SaveTheme(TgEnumTheme theme) { AppTheme = theme; ThemeWrites++; }
+}
 public interface ILogger<out T>;
 public sealed class INavigationService
 {
     public string? LastPage { get; private set; }
+    public int Navigations { get; private set; }
     /// <summary> Запоминает переход для проверки команды настроек </summary>
-    public bool NavigateTo(string pageKey) { LastPage = pageKey; return true; }
+    public bool NavigateTo(string pageKey) { LastPage = pageKey; Navigations++; return true; }
     /// <summary> Заменяет возврат на предыдущую страницу </summary>
     public bool GoBack() => true;
 }

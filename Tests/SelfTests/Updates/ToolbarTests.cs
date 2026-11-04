@@ -2,6 +2,15 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
 internal static partial class Program
 {
+    // Заголовок и заставка используют короткое название, имя установленного пакета сохраняется
+    private static Task WindowAndSplashTitleAsync(string language)
+    {
+        Localizer.Language = language;
+        Assert(TgResourceExtensions.GetAppDisplayName() == "OpenTgResearcher", "В заголовке и на заставке осталось название OpenTgResearcherDesktop");
+        Assert("AppDisplayName".GetLocalizedResource() == "OpenTgResearcherDesktop", "Изменилось имя приложения в манифесте пакета");
+        return Task.CompletedTask;
+    }
+
     // Выбор языка выполняет действие и не сохраняет остальные настройки
     private static Task ToolbarLanguageChoiceAsync()
     {

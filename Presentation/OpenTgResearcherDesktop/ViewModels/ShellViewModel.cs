@@ -62,8 +62,8 @@ public partial class ShellViewModel : TgSensitiveModel
 
         SetMenuItemByPageAndParameter(e.SourcePageType, e.Parameter);
 
-        // App version + Storage version + License
-        AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
+        // Версии приложения и хранилища, сведения о лицензии
+        AppVersion = $"v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
         StorageVersion = $"{TgResourceExtensions.GetStorage()} {TgAppSettingsHelper.Instance.StorageVersion}";
         if (App.BusinessLogicManager.LicenseService.CurrentLicense is not null)
         {

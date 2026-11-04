@@ -92,7 +92,8 @@ public static class TgResourceExtensions
 	internal static string GetActionCheckLicenseMsg() => "ActionLicenseCheckMsg".GetLocalizedResource();
 	internal static string GetActionLicenseBuyMsg() => "ActionLicenseBuyMsg".GetLocalizedResource();
 	internal static string GetActionLicenseRequestCommunityMsg() => "ActionLicenseRequestCommunityMsg".GetLocalizedResource();
-	internal static string GetAppDisplayName() => "AppDisplayName".GetLocalizedResource();
+	// Название заголовка и заставки отделено от имени установленного пакета
+	internal static string GetAppDisplayName() => "AppTitle".GetLocalizedResource();
 	internal static string GetAppLoading() => "AppLoading".GetLocalizedResource();
 	internal static string GetAppVersion() => "AppVersion".GetLocalizedResource();
 	internal static string GetCancelButton() => "CancelButton".GetLocalizedResource();

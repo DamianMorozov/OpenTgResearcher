@@ -9,6 +9,8 @@ internal static partial class Program
         {
             ("SettingsRussian", () => SettingsLocalizedAsync("ru-RU", "Настройки")),
             ("SettingsEnglish", () => SettingsLocalizedAsync("en-US", "Settings")),
+            ("WindowAndSplashTitleRussian", () => WindowAndSplashTitleAsync("ru-RU")),
+            ("WindowAndSplashTitleEnglish", () => WindowAndSplashTitleAsync("en-US")),
             ("SettingsNavigation", SettingsNavigationAsync),
             ("SettingsLanguageChange", SettingsLanguageChangeAsync),
             ("UpdateRussian", () => UpdateLocalizedAsync("ru-RU", "Установлена последняя версия")),

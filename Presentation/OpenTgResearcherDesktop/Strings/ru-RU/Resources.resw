@@ -120,6 +120,9 @@
   <data name="AppDisplayName" xml:space="preserve">
     <value>OpenTgResearcherDesktop</value>
   </data>
+  <data name="AppTitle" xml:space="preserve">
+    <value>OpenTgResearcher</value>
+  </data>
   <data name="AppDescription" xml:space="preserve">
     <value>OpenTgResearcher</value>
   </data>

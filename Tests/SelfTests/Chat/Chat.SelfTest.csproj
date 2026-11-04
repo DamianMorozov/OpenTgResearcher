@@ -5,7 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64;x86</Platforms>
-    <Version>0.8.80.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />

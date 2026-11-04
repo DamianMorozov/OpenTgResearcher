@@ -48,7 +48,7 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
         CheckIfDisposed();
 
         StopMonitoringAsync(isClose: true).GetAwaiter().GetResult();
-        _cache.Dispose();
+        // Общим кешем владеет контейнер, остальные службы продолжают его использовать
         _scope.Dispose();
         _locker.Dispose();
     }

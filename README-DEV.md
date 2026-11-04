@@ -37,6 +37,14 @@ dotnet build OpenTgResearcher.slnx --no-restore -c Debug -p:Platform=x64 -p:Appx
 dotnet test Tests/TgStorageTests/TgStorageTests.csproj -c Debug -p:Platform=x64
 ```
 
+### Тесты бизнес-логики
+
+`TgBusinessLogicTests` запускается через NUnit и VSTest, как тесты хранилища. Используется общее тестовое окружение с мигрированной SQLite в памяти. Проверяются доступ к данным через бизнес-логику, события настоящего мониторинга ресурсов, остановка событий, независимые экземпляры сервиса и сохранность общего кеша после освобождения мониторинга. Telegram и пользовательская БД не используются.
+
+```powershell
+dotnet test Tests/TgBusinessLogicTests/TgBusinessLogicTests.csproj -c Debug -p:Platform=x64
+```
+
 ## Локализация при отладке Desktop
 
 При запуске профиля `OpenTgResearcherDesktop (Package)` строки локализации читаются из `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Strings`.

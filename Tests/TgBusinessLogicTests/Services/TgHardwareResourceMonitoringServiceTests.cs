@@ -2,16 +2,41 @@
 
 internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTestsBase
 {
+    /// <summary> Подготавливает зависимости настоящего сервиса мониторинга </summary>
     public TgHardwareResourceMonitoringServiceTests() : base(RegisterHardwareResourceMonitoringTypes)
     {
         //
     }
 
+    // Создаём новый сервис для каждой проверки без повторного использования освобождённого экземпляра
     private static void RegisterHardwareResourceMonitoringTypes(ContainerBuilder cb)
     {
-        cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().InstancePerLifetimeScope();
+        cb.RegisterType<TgHardwareResourceMonitoringService>().As<ITgHardwareResourceMonitoringService>().InstancePerDependency();
     }
 
+    /// <summary> Проверяет получение нового сервиса вместо освобождённого предыдущей проверкой </summary>
+    [Test]
+    public void SeparateResolutionsUseDifferentMonitoringServices()
+    {
+        using var first = Scope.Resolve<ITgHardwareResourceMonitoringService>();
+        using var second = Scope.Resolve<ITgHardwareResourceMonitoringService>();
+        Assert.That(second, Is.Not.SameAs(first));
+    }
+
+    /// <summary> Проверяет сохранность общего кеша после освобождения сервиса мониторинга </summary>
+    [Test]
+    public void DisposeDoesNotDisposeSharedCache()
+    {
+        var cache = Scope.Resolve<IFusionCache>();
+        var key = $"monitoring-test-{Guid.NewGuid():N}";
+        cache.Set(key, 42);
+        Scope.Resolve<ITgHardwareResourceMonitoringService>().Dispose();
+        Assert.That(cache.GetOrDefault<int>(key), Is.EqualTo(42));
+        cache.Set(key, 43);
+        Assert.That(cache.GetOrDefault<int>(key), Is.EqualTo(43));
+    }
+
+    /// <summary> Проверяет запрет запуска освобождённого сервиса </summary>
     [Test]
     public void Dispose_ShouldPreventFurtherStart()
     {
@@ -19,10 +44,11 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
         service.Dispose();
 
         var act = () => service.StartMonitoring();
-        
+
         Assert.Throws<ObjectDisposedException>(act);
     }
 
+    /// <summary> Проверяет получение метрик и допустимые значения процентов </summary>
     [Test]
     public async Task StartMonitoring_ShouldRaiseMetricsUpdated()
     {
@@ -36,21 +62,18 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         var completed = await Task.WhenAny(tcs.Task, Task.Delay(-1, cts.Token));
 
-        await Assert.That<Task>(completed).IsSameReferenceAs(tcs.Task);
+        Assert.That(completed, Is.SameAs(tcs.Task));
 
         var metrics = await tcs.Task;
-        await Assert.That(metrics.CpuAppPercent).IsGreaterThanOrEqualTo(0);
-        await Assert.That(metrics.CpuAppPercent).IsLessThanOrEqualTo(100);
-        await Assert.That(metrics.CpuTotalPercent).IsGreaterThanOrEqualTo(0);
-        await Assert.That(metrics.CpuTotalPercent).IsLessThanOrEqualTo(100);
-        await Assert.That(metrics.MemoryTotalPercent).IsGreaterThanOrEqualTo(0);
-        await Assert.That(metrics.MemoryTotalPercent).IsLessThanOrEqualTo(100);
-        await Assert.That(metrics.MemoryAppPercent).IsGreaterThanOrEqualTo(0);
-        await Assert.That(metrics.MemoryAppPercent).IsLessThanOrEqualTo(100);
+        Assert.That(metrics.CpuAppPercent, Is.InRange(0, 100));
+        Assert.That(metrics.CpuTotalPercent, Is.InRange(0, 100));
+        Assert.That(metrics.MemoryTotalPercent, Is.InRange(0, 100));
+        Assert.That(metrics.MemoryAppPercent, Is.InRange(0, 100));
 
         await service.StopMonitoringAsync(isClose: false);
     }
 
+    /// <summary> Проверяет продолжение мониторинга при повторном запуске </summary>
     [Test]
     public async Task StartMonitoring_Twice_ShouldNotThrow_AndNotRestart()
     {
@@ -64,18 +87,29 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
         var completed = await Task.WhenAny(tcs.Task, Task.Delay(-1, cts.Token));
 
-        await Assert.That<Task>(completed).IsSameReferenceAs(tcs.Task);
+        Assert.That(completed, Is.SameAs(tcs.Task));
 
         await service.StopMonitoringAsync(isClose: false);
     }
 
+    /// <summary> Проверяет прекращение событий после остановки и повторную остановку </summary>
     [Test]
     public async Task StopMonitoring_ShouldStopWithoutExceptions()
     {
         using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
-        service.StartMonitoring(TimeSpan.FromMilliseconds(200));
+        var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var count = 0;
+        service.MetricsUpdated += (_, _) =>
+        {
+            Interlocked.Increment(ref count);
+            started.TrySetResult(true);
+        };
+        service.StartMonitoring(TimeSpan.FromMilliseconds(50));
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         await service.StopMonitoringAsync(isClose: false);
-
+        var stoppedCount = Volatile.Read(ref count);
         await service.StopMonitoringAsync(isClose: false);
+        await Task.Delay(TimeSpan.FromMilliseconds(200));
+        Assert.That(Volatile.Read(ref count), Is.EqualTo(stoppedCount));
     }
 }

@@ -1,9 +1,13 @@
 global using Autofac;
+global using NUnit.Framework;
 global using TgBusinessLogic.Contracts;
 global using TgBusinessLogic.Models;
 global using TgBusinessLogic.Services;
 global using TgBusinessLogicTests.Common;
+global using TgInfrastructure.Enums;
 global using TgStorage.Contracts;
 global using TgStorage.Domain;
+global using TgStorage.Domain.Proxies;
 global using TgStorage.Utils;
 global using TgStorageTests.Common;
+global using ZiggyCreatures.Caching.Fusion;

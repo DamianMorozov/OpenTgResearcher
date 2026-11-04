@@ -7,8 +7,13 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="TUnit" Version="1.76.45" />
-    <PackageReference Include="TUnit.Core" Version="1.76.45" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageReference Include="NUnit" Version="5.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.3.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="4.15.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\TgBusinessLogic\TgBusinessLogic.csproj" />

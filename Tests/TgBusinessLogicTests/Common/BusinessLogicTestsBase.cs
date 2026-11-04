@@ -8,20 +8,9 @@ internal abstract class BusinessLogicTestsBase : TgStorageTestsBase
 
     protected ITgBusinessLogicManager BusinessLogicManager { get; set; }
 
-    protected BusinessLogicTestsBase(Action<ContainerBuilder>? registerTypes = null) : base(cb => RegisterBusinessLogicTypes(cb, registerTypes), isRegisterEfContext: false)
+    protected BusinessLogicTestsBase(Action<ContainerBuilder>? registerTypes = null) : base(registerTypes)
     {
         BusinessLogicManager = Scope.Resolve<ITgBusinessLogicManager>();
-    }
-
-    #endregion
-
-    #region Methods
-
-    private static void RegisterBusinessLogicTypes(ContainerBuilder cb, Action<ContainerBuilder>? registerTypes)
-    {
-        registerTypes?.Invoke(cb);
-        // Add registering business logic types here
-        cb.RegisterType<TgEfTestContext>().As<ITgEfContext>().InstancePerLifetimeScope();
     }
 
     #endregion

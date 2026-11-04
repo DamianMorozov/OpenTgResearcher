@@ -7,7 +7,8 @@ public partial class App
     public static ITgSettingsService? Settings { get; set; }
     public static TestBusinessLogicManager BusinessLogicManager { get; set; } = new();
     /// <summary> Возвращает исходную службу настроек </summary>
-    public static T GetService<T>() where T : class => (T)Settings!;
+    public static T GetService<T>() where T : class => typeof(T) == typeof(TgSplashScreenViewModel)
+        ? (T)(object)SplashPageState.ViewModel : (T)Settings!;
 }
 
 public sealed class TestBusinessLogicManager { public IDisposable ConnectClient { get; set; } = null!; }

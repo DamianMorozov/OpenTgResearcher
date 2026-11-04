@@ -3,7 +3,10 @@ param(
     [string]$ExecutablePath,
     [ValidateSet('Russian', 'English')]
     [string]$Language = 'Russian',
-    [switch]$Toolbar
+    [switch]$Toolbar,
+    [switch]$Splash,
+    [ValidateSet('Default', 'Light', 'Dark')]
+    [string]$Theme = 'Default'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -111,11 +114,32 @@ function Get-ToolbarButton([string]$id) {
     return $button
 }
 
+# Находим заставку в дереве её окна до окончания пятисекундного появления строк
+function Wait-AppElementById([string]$id) {
+    $deadline = [DateTime]::UtcNow.AddSeconds(30)
+    do {
+        if ($appProcess.HasExited) { throw "Desktop завершился до появления элемента $id" }
+        $appProcess.Refresh()
+        if ($appProcess.MainWindowHandle -ne [IntPtr]::Zero) {
+            $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+            $condition = [System.Windows.Automation.PropertyCondition]::new(
+                [System.Windows.Automation.AutomationElement]::AutomationIdProperty, $id)
+            $element = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+            if ($element -and -not $element.Current.IsOffscreen) { return $element }
+        }
+        Start-Sleep -Milliseconds 50
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw "В окне Desktop не найден элемент $id"
+}
+
 # Проверяем реальную геометрию кнопок относительно окна и друг друга
 function Test-ToolbarBounds {
     $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
     $windowRect = $window.Current.BoundingRectangle
     $previousRight = $windowRect.Left
+    $logoRect = (Get-ToolbarButton 'ToolbarLogo').Current.BoundingRectangle
+    if ($logoRect.Width -lt 28 -or [Math]::Abs($logoRect.Width - $logoRect.Height) -gt 1 -or
+        $logoRect.Right -gt (Get-ToolbarButton 'ToolbarLanguage').Current.BoundingRectangle.Left) { throw 'Круглый знак OTR обрезан или перекрывает кнопки' }
     foreach ($id in @('ToolbarLanguage', 'ToolbarTheme', 'ToggleSwitchShowSensitiveData', 'ToolbarUpdate', 'ToolbarConnect', 'ToolbarDisconnect')) {
         $button = Get-ToolbarButton $id
         $rect = $button.Current.BoundingRectangle
@@ -232,10 +256,113 @@ function Save-AppSnapshot([string]$name) {
     finally { $graphics.Dispose(); $bitmap.Dispose() }
 }
 
+# Сравниваем настоящие кадры области логотипа, затем проверяем завершение эффектов и доступность продолжения
+function Test-SplashAnimation {
+    $logo = Wait-AppElementById 'SplashLogo'
+    [void][ToolbarTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
+    Start-Sleep -Milliseconds 400
+    $bounds = $logo.Current.BoundingRectangle
+    if ($bounds.Width -lt 40 -or $bounds.Height -lt 24) { throw 'Буквы OTR на заставке не получили размер для отрисовки' }
+    $hashes = [Collections.Generic.HashSet[string]]::new()
+    $scanHashes = [Collections.Generic.HashSet[string]]::new()
+    foreach ($index in 0..79) {
+        $bitmap = [Drawing.Bitmap]::new(120, 120)
+        $graphics = [Drawing.Graphics]::FromImage($bitmap)
+        $framePath = Join-Path $caseDirectory ('splash-frame-{0:D2}.png' -f $index)
+        try {
+            $graphics.CopyFromScreen([int]($bounds.Left + $bounds.Width / 2) - 60, [int]($bounds.Top + $bounds.Height / 2) - 60, 0, 0, $bitmap.Size)
+            $bitmap.Save($framePath)
+            [void]$hashes.Add([Convert]::ToHexString([Security.Cryptography.SHA256]::HashData([IO.File]::ReadAllBytes($framePath))))
+            # Центральная область не содержит орбиту, её изменение подтверждает именно сканирование
+            $scan = $bitmap.Clone([Drawing.Rectangle]::new(28, 28, 64, 64), $bitmap.PixelFormat)
+            $stream = [IO.MemoryStream]::new()
+            try {
+                $scan.Save($stream, [Drawing.Imaging.ImageFormat]::Png)
+                [void]$scanHashes.Add([Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream.ToArray())))
+            }
+            finally { $stream.Dispose(); $scan.Dispose() }
+        }
+        finally { $graphics.Dispose(); $bitmap.Dispose() }
+        Start-Sleep -Milliseconds 100
+    }
+    $continue = Wait-AppElement '^(Продолжить|Continue)$'
+    [void](Wait-AppElement '^OpenTgResearcher v\d+\.\d+\.\d+$')
+    $log = Get-NewAppLog
+    $reducedMotion = $log -match 'анимации отключены настройками Windows'
+    if (-not $reducedMotion -and $hashes.Count -lt 2) { throw 'Область орбиты и сканирования остаётся неподвижной во всех кадрах' }
+    if (-not $reducedMotion -and $scanHashes.Count -lt 2) { throw 'Сканирующая полоса не изменяет область букв OTR' }
+    if ($log -notmatch 'Заставка: загрузка завершена, продолжение доступно') { throw 'Не завершена подготовка приложения' }
+    if (-not $reducedMotion) {
+        $intro = $log.IndexOf('Заставка: мягкое появление и орбита запущены на пять секунд')
+        $scanStart = $log.IndexOf('Заставка: мягкое появление и орбита завершены, сканирование запущено')
+        $scanEnd = $log.IndexOf('Заставка: сканирование завершено')
+        if ($intro -lt 0 -or $scanStart -le $intro -or $scanEnd -le $scanStart) { throw 'Нарушена последовательность появления, орбиты и сканирования' }
+    }
+    # После прохода сканирования знак OTR остаётся неподвижным
+    $readyHashes = [Collections.Generic.HashSet[string]]::new()
+    foreach ($index in 0..5) {
+        $bitmap = [Drawing.Bitmap]::new(120, 120)
+        $graphics = [Drawing.Graphics]::FromImage($bitmap)
+        $stream = [IO.MemoryStream]::new()
+        try {
+            $graphics.CopyFromScreen([int]($bounds.Left + $bounds.Width / 2) - 60, [int]($bounds.Top + $bounds.Height / 2) - 60, 0, 0, $bitmap.Size)
+            $bitmap.Save($stream, [Drawing.Imaging.ImageFormat]::Png)
+            [void]$readyHashes.Add([Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream.ToArray())))
+        }
+        finally { $stream.Dispose(); $graphics.Dispose(); $bitmap.Dispose() }
+        Start-Sleep -Milliseconds 150
+    }
+    if ($readyHashes.Count -ne 1) { throw 'Логотип продолжает двигаться после завершения сканирования' }
+    # Маскируем внутренность кнопки: изменение кадров должно происходить именно снаружи, на пути точки со шлейфом
+    $buttonBounds = (Wait-AppElementById 'SplashContinue').Current.BoundingRectangle
+    $cometHashes = [Collections.Generic.HashSet[string]]::new()
+    foreach ($index in 0..19) {
+        $bitmap = [Drawing.Bitmap]::new([int]$buttonBounds.Width + 32, [int]$buttonBounds.Height + 32)
+        $graphics = [Drawing.Graphics]::FromImage($bitmap)
+        $stream = [IO.MemoryStream]::new()
+        try {
+            $graphics.CopyFromScreen([int]$buttonBounds.Left - 16, [int]$buttonBounds.Top - 16, 0, 0, $bitmap.Size)
+            $bitmap.Save((Join-Path $caseDirectory ('continue-comet-{0:D2}.png' -f $index)))
+            $graphics.FillRectangle([Drawing.Brushes]::Black, 16, 16, [int]$buttonBounds.Width, [int]$buttonBounds.Height)
+            $bitmap.Save($stream, [Drawing.Imaging.ImageFormat]::Png)
+            [void]$cometHashes.Add([Convert]::ToHexString([Security.Cryptography.SHA256]::HashData($stream.ToArray())))
+        }
+        finally { $stream.Dispose(); $graphics.Dispose(); $bitmap.Dispose() }
+        Start-Sleep -Milliseconds 150
+    }
+    if (-not $reducedMotion -and $cometHashes.Count -lt 2) { throw 'Точка со шлейфом не обходит кнопку продолжения' }
+    if ($reducedMotion -and $cometHashes.Count -ne 1) { throw 'Точка движется при отключённых анимациях Windows' }
+    [void][ToolbarTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
+    Save-AppSnapshot 'splash-ready'
+    [ToolbarTestNative]::Click([int]($buttonBounds.Left + $buttonBounds.Width / 2), [int]($buttonBounds.Top + $buttonBounds.Height / 2))
+    [void](Wait-AppElement '^v\d+\.\d+\.\d+$')
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    do {
+        $log = Get-NewAppLog
+        if ($log -match 'Заставка: анимации страницы остановлены') { break }
+        Start-Sleep -Milliseconds 100
+    } while ([DateTime]::UtcNow -lt $deadline)
+    if ($log -notmatch 'Заставка: анимации страницы остановлены') { throw 'Уход со страницы не освободил анимации заставки' }
+    Save-AppSnapshot 'splash-continued'
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    foreach ($width in 800, 1280) {
+        $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern).Resize($width, 800)
+        Start-Sleep -Milliseconds 400
+        Test-ToolbarBounds
+        Save-AppSnapshot ('toolbar-logo-' + $width)
+    }
+    if ($log -match 'App_UnhandledException|COMException|System.InvalidOperationException') { throw 'В журнале заставки найдено исключение' }
+    if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000) -or $appProcess.ExitCode -ne 0) {
+        throw 'Desktop не завершил штатное закрытие после заставки'
+    }
+    Write-Output "PASS: заставка ($Language, $Theme), этапы появления/орбиты/сканирования, шлейф ($($cometHashes.Count) кадров), OTR в панели, закрытие 0; $caseDirectory"
+}
+
 try {
     if (Get-Process OpenTgResearcherDesktop -ErrorAction SilentlyContinue) { throw 'Перед селфтестом закройте запущенный Desktop' }
     Add-Type -AssemblyName UIAutomationClient
     Add-Type -AssemblyName UIAutomationTypes
+    Add-Type -AssemblyName System.Drawing
     Add-Type -TypeDefinition @'
 public static class ToolbarTestNative
 {
@@ -267,12 +394,17 @@ public static class ToolbarTestNative
 }
 '@
     New-Item -ItemType Directory -Path $caseDirectory -Force | Out-Null
-    @{
+    $testSettings = @{
         AppStorage = Join-Path $caseDirectory 'TgStorage.db'
         AppSession = Join-Path $caseDirectory 'OpenTgResearcher.session'
         AppLanguage = $Language
-        AppTheme = 'Default'
-    } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $caseDirectory 'Settings.json') -Encoding utf8
+        AppTheme = $Theme
+    }
+    if ($Splash) {
+        $testSettings.WindowWidth = '1000'; $testSettings.WindowHeight = '800'
+        $testSettings.WindowX = '50'; $testSettings.WindowY = '50'
+    }
+    $testSettings | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $caseDirectory 'Settings.json') -Encoding utf8
     $start = [Diagnostics.ProcessStartInfo]::new($executable)
     $start.WorkingDirectory = Split-Path -Parent $executable
     $start.UseShellExecute = $false
@@ -281,6 +413,7 @@ public static class ToolbarTestNative
     $start.Environment['DOTNET_ENVIRONMENT'] = 'Production'
     $start.Environment['Logging__LogLevel__Default'] = 'Warning'
     $appProcess = [Diagnostics.Process]::Start($start)
+    if ($Splash) { Test-SplashAnimation; return }
     Invoke-AppElement (Wait-AppElement '^(Продолжить|Continue)$')
     $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
     $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern).SetWindowVisualState(

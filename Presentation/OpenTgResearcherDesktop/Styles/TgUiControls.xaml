@@ -6,6 +6,40 @@
     xmlns:convertersWinUI="using:CommunityToolkit.WinUI.Converters"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles">
 
+    <!--  Общий знак OTR для заставки и верхней панели, с необязательным слоем сканирования  -->
+    <Style x:Key="TgAppLogoStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="80" />
+        <Setter Property="Height" Value="80" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Border
+                        Width="80"
+                        Height="80"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}"
+                        BorderThickness="2"
+                        CornerRadius="40">
+                        <Grid Width="76" Height="76">
+                            <Grid.Clip>
+                                <RectangleGeometry Rect="0,0,76,76" />
+                            </Grid.Clip>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="28"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                Text="OTR" />
+                            <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--  Стиль кнопки копирования с анимацией галочки  -->
     <Style x:Key="ClipboardAnimatedButtonStyleSimple" TargetType="styles:TgAnimatedClipboardButton">
         <Setter Property="Template">

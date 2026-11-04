@@ -13,6 +13,19 @@
 
     <common:TgPageBase.Resources>
         <x:Double x:Key="ProgressBarTrackHeight">30</x:Double>
+        <!--  Мягкие края головы и частиц короткого шлейфа у кнопки продолжения  -->
+        <Style x:Key="SplashCometDotStyle" TargetType="Ellipse">
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <RadialGradientBrush Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                        <GradientStop Offset="0" Color="{ThemeResource SystemAccentColor}" />
+                        <GradientStop Offset="0.35" Color="{ThemeResource SystemAccentColor}" />
+                        <GradientStop Offset="1" Color="Transparent" />
+                    </RadialGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </common:TgPageBase.Resources>
 
     <Grid
@@ -36,27 +49,73 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <!--  Логотип приложения  -->
-        <Image
+        <Grid
             Grid.Row="1"
             Grid.Column="0"
-            Grid.ColumnSpan="4"
-            Width="50"
-            Height="50"
-            Margin="10,10,10,10"
-            HorizontalAlignment="Stretch"
-            Source="/Assets/StoreLogo.png"
-            Stretch="Uniform" />
+            Grid.ColumnSpan="3"
+            Width="112"
+            Height="112"
+            Margin="0,8,0,16"
+            HorizontalAlignment="Center">
+            <!--  Неподвижный контур орбиты  -->
+            <Ellipse
+                Width="104"
+                Height="104"
+                Opacity="0.16"
+                Stroke="{ThemeResource SystemControlForegroundAccentBrush}"
+                StrokeThickness="2" />
+            <!--  Дуга вращается, пока выполняются этапы загрузки  -->
+            <Grid
+                x:Name="SplashOrbit"
+                Width="112"
+                Height="112"
+                IsHitTestVisible="False">
+                <Path
+                    Data="M 56,4 A 52,52 0 0 1 108,56"
+                    Stroke="{ThemeResource SystemControlForegroundAccentBrush}"
+                    StrokeEndLineCap="Round"
+                    StrokeStartLineCap="Round"
+                    StrokeThickness="3" />
+                <Ellipse
+                    Width="5"
+                    Height="5"
+                    Margin="0,1,0,0"
+                    VerticalAlignment="Top"
+                    Fill="{ThemeResource SystemControlForegroundAccentBrush}" />
+            </Grid>
+            <ContentControl
+                AutomationProperties.AutomationId="SplashLogo"
+                AutomationProperties.Name="OTR"
+                Style="{StaticResource TgAppLogoStyle}">
+                <!--  Полоса света проходит поверх логотипа, не выходя за его область  -->
+                <Border
+                    x:Name="SplashScanBand"
+                    Width="76"
+                    Height="18"
+                    VerticalAlignment="Top"
+                    IsHitTestVisible="False">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Offset="0" Color="Transparent" />
+                            <GradientStop Offset="0.5" Color="#DDFFFFFF" />
+                            <GradientStop Offset="1" Color="Transparent" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
+            </ContentControl>
+        </Grid>
         <!--  Версия приложения  -->
         <TextBlock
             Grid.Row="2"
             Grid.Column="0"
-            Grid.ColumnSpan="4"
+            Grid.ColumnSpan="3"
             Margin="0,0,0,30"
             HorizontalAlignment="Center"
             Style="{StaticResource TitleLargeTextBlockStyle}"
             Text="{x:Bind ViewModel.AppVersion}" />
         <!--  Загрузка  -->
         <StackPanel
+            x:Name="SplashLoadingRows"
             Grid.Row="3"
             Grid.Column="1"
             Margin="0,10,0,0"
@@ -174,37 +233,43 @@
                     Visibility="{x:Bind ViewModel.IsLoadHardwareResourceMonitoring, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </StackPanel>
-        <!--  Индикатор выполнения  -->
-        <ProgressRing
-            Grid.Row="4"
-            Grid.Column="0"
-            Grid.ColumnSpan="4"
-            Width="40"
-            Height="40"
-            Margin="50,50,50,50"
-            Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
         <!--  Продолжение работы  -->
-        <Button
+        <Grid
+            x:Name="SplashContinueHost"
             Grid.Row="5"
             Grid.Column="0"
-            Grid.ColumnSpan="4"
+            Grid.ColumnSpan="3"
             Width="500"
-            MinHeight="50"
             Margin="50,50,50,50"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Command="{x:Bind ViewModel.ContinueCommand}"
-            FontWeight="Bold"
             Visibility="{x:Bind ViewModel.IsLoadComplete, Converter={StaticResource BoolToVisibilityConverter}}">
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <TextBlock
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    l:Uids.Uid="ActionContinue"
-                    HorizontalTextAlignment="Left"
-                    Style="{StaticResource TitleTextBlockStyle}" />
-                <FontIcon Margin="30,0,10,0" Glyph="&#xF5B0;" />
-            </StackPanel>
-        </Button>
+            <Button
+                x:Name="SplashContinueButton"
+                MinHeight="50"
+                Margin="8"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                AutomationProperties.AutomationId="SplashContinue"
+                Command="{x:Bind ViewModel.ContinueCommand}"
+                FontWeight="Bold">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="ActionContinue"
+                        HorizontalTextAlignment="Left"
+                        Style="{StaticResource TitleTextBlockStyle}" />
+                    <FontIcon Margin="30,0,10,0" Glyph="&#xF5B0;" />
+                </StackPanel>
+            </Button>
+            <!--  Декоративный слой не перехватывает нажатия и обходит кнопку по часовой стрелке  -->
+            <Canvas IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw">
+                <Ellipse x:Name="ContinueOrbitHead" Width="14" Height="14" Style="{StaticResource SplashCometDotStyle}" />
+                <Ellipse x:Name="ContinueOrbitTailNear" Width="10" Height="10" Style="{StaticResource SplashCometDotStyle}" />
+                <Ellipse x:Name="ContinueOrbitTailMiddle" Width="8" Height="8" Style="{StaticResource SplashCometDotStyle}" />
+                <Ellipse x:Name="ContinueOrbitTailFar" Width="6" Height="6" Style="{StaticResource SplashCometDotStyle}" />
+            </Canvas>
+        </Grid>
     </Grid>
 </common:TgPageBase>

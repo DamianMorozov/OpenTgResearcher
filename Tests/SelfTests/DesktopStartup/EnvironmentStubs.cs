@@ -29,6 +29,11 @@ public sealed class TestWindow
 }
 public class FrameworkElement
 {
+    public Visual Visual { get; } = new();
+    public double ActualWidth { get; set; }
+    public double ActualHeight { get; set; }
+    public double Opacity { get; set; } = 1;
+    public Visibility Visibility { get; set; }
     public object? RequestedTheme { get; set; }
     public bool IsClosed { get; set; }
     public int LayoutCalls { get; private set; }

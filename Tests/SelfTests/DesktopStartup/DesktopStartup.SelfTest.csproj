@@ -13,5 +13,11 @@
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Services/TgSettingsService.cs" Link="TgSettingsService.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/LocalSettingsOptions.cs" Link="LocalSettingsOptions.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Contracts/Services/ITgSettingsService.cs" Link="ITgSettingsService.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgSplashAnimationHelper.cs" Link="TgSplashAnimationHelper.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgButtonOrbitAnimationHelper.cs" Link="TgButtonOrbitAnimationHelper.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgSplashScreenPage.xaml.cs" Link="TgSplashScreenPage.xaml.cs" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgSplashScreenPage.xaml" LogicalName="TgSplashScreenPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/ShellPage.xaml" LogicalName="ShellPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Styles/TgUiControls.xaml" LogicalName="TgUiControls.xaml" />
   </ItemGroup>
 </Project>

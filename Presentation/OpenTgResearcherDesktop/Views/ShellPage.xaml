@@ -34,10 +34,12 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Image
-                    Width="28"
-                    Height="28"
-                    Source="/Assets/applicationIcon.ico" />
+                <Viewbox Width="32" Height="32" IsHitTestVisible="False">
+                    <ContentControl
+                        AutomationProperties.AutomationId="ToolbarLogo"
+                        AutomationProperties.Name="OTR"
+                        Style="{StaticResource TgAppLogoStyle}" />
+                </Viewbox>
                 <TextBlock
                     Grid.Column="1"
                     Margin="12,0,16,0"

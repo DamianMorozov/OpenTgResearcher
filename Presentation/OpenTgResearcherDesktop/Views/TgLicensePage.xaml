@@ -14,7 +14,7 @@
 
     <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
         <Grid>
-            <!--  License & version  -->
+            <!--  Лицензия и версия  -->
             <Expander
                 Margin="{StaticResource ExpanderMargin}"
                 Padding="{StaticResource ExpanderPadding}"
@@ -33,7 +33,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!--  Clear license  -->
+                        <!--  Сброс лицензии  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="0"
@@ -51,7 +51,7 @@
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
-                        <!--  Check current license  -->
+                        <!--  Проверка текущей лицензии  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="1"
@@ -69,7 +69,7 @@
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
-                        <!--  Request community license  -->
+                        <!--  Запрос общественной лицензии  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="2"
@@ -87,7 +87,7 @@
                                     HorizontalTextAlignment="Left" />
                             </StackPanel>
                         </Button>
-                        <!--  Buy license  -->
+                        <!--  Покупка лицензии  -->
                         <Button
                             Grid.Row="0"
                             Grid.Column="3"
@@ -105,7 +105,7 @@
                             </StackPanel>
                         </Button>
                     </Grid>
-                    <!--  License data  -->
+                    <!--  Данные лицензии  -->
                     <Grid Margin="0,20,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -136,7 +136,7 @@
                             Margin="10,0,10,0"
                             l:Uids.Uid="TextBlockLicenseKey"
                             Style="{ThemeResource BodyTextBlockStyle}" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="1"
@@ -144,7 +144,7 @@
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <!--  LicenseKey  -->
+                        <!--  Ключ лицензии  -->
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="1"
@@ -170,7 +170,7 @@
                             Margin="10,0,10,0"
                             l:Uids.Uid="TextBlockUserId"
                             Style="{ThemeResource BodyTextBlockStyle}" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Row="3"
                             Grid.Column="1"
@@ -178,7 +178,7 @@
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <!--  UserId  -->
+                        <!--  Идентификатор пользователя  -->
                         <TextBlock
                             Grid.Row="3"
                             Grid.Column="1"

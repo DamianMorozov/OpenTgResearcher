@@ -25,7 +25,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--  About  -->
+            <!--  О приложении  -->
             <Expander
                 Grid.Row="0"
                 Margin="{StaticResource ExpanderMargin}"
@@ -39,7 +39,7 @@
                     <TextBlock l:Uids.Uid="ProductAssignmentDescription" Style="{ThemeResource BodyStrongTextBlockStyle}" />
                 </StackPanel>
             </Expander>
-            <!--  Official site  -->
+            <!--  Официальный сайт  -->
             <Expander
                 Grid.Row="1"
                 Margin="{StaticResource ExpanderMargin}"
@@ -57,7 +57,7 @@
                         Click="{x:Bind ViewModel.OpenHyperlink}" />
                 </StackPanel>
             </Expander>
-            <!--  Download  -->
+            <!--  Скачивание  -->
             <Expander
                 Grid.Row="3"
                 Margin="{StaticResource ExpanderMargin}"
@@ -81,7 +81,7 @@
                         Click="{x:Bind ViewModel.OpenHyperlink}" />
                 </StackPanel>
             </Expander>
-            <!--  GitHub community  -->
+            <!--  Сообщество GitHub  -->
             <Expander
                 Grid.Row="4"
                 Margin="{StaticResource ExpanderMargin}"
@@ -111,7 +111,7 @@
                         Click="{x:Bind ViewModel.OpenHyperlink}" />
                 </StackPanel>
             </Expander>
-            <!--  User support  -->
+            <!--  Поддержка пользователей  -->
             <Expander
                 Grid.Row="5"
                 Margin="{StaticResource ExpanderMargin}"
@@ -129,7 +129,7 @@
                         Click="{x:Bind ViewModel.OpenHyperlink}" />
                 </StackPanel>
             </Expander>
-            <!--  Docker  -->
+            <!--  Контейнер Docker  -->
             <Expander
                 Grid.Row="6"
                 Margin="{StaticResource ExpanderMargin}"
@@ -147,7 +147,7 @@
                         Click="{x:Bind ViewModel.OpenHyperlink}" />
                 </StackPanel>
             </Expander>
-            <!--  Install Requirements  -->
+            <!--  Требования к установке  -->
             <Expander
                 Grid.Row="7"
                 Margin="{StaticResource ExpanderMargin}"

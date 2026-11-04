@@ -28,7 +28,7 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <!--  Start parse Telegram  -->
+                <!--  Запуск парсинга Telegram  -->
                 <Button
                     Margin="0,0,5,0"
                     HorizontalAlignment="Stretch"
@@ -44,7 +44,7 @@
                             l:Uids.Uid="TextBlockStartParseTelegram" />
                     </StackPanel>
                 </Button>
-                <!--  Stop parse Telegram  -->
+                <!--  Остановка парсинга Telegram  -->
                 <Button
                     Margin="0,0,5,0"
                     HorizontalAlignment="Stretch"
@@ -60,7 +60,7 @@
                             l:Uids.Uid="TextBlockStopParseTelegram" />
                     </StackPanel>
                 </Button>
-                <!--  Clear viewing  -->
+                <!--  Очистка просмотра  -->
                 <Button
                     Grid.Column="1"
                     Margin="0,0,5,0"
@@ -76,7 +76,7 @@
                             l:Uids.Uid="ActionClearView" />
                     </StackPanel>
                 </Button>
-                <!--  Save settings  -->
+                <!--  Сохранение настроек  -->
                 <Button
                     Grid.Column="2"
                     Margin="0,0,5,0"
@@ -92,7 +92,7 @@
                             l:Uids.Uid="TextBlockSaveChatSettings" />
                     </StackPanel>
                 </Button>
-                <!--  SelectorBar  -->
+                <!--  Панель выбора раздела  -->
                 <SelectorBar
                     x:Name="ChatDetailsSelectorBar"
                     Grid.Row="1"
@@ -107,7 +107,7 @@
                     <SelectorBarItem l:Uids.Uid="SelectorBarItemChatStatisticsPage" Tag="TgChatStatisticsPage" />
                     <SelectorBarItem l:Uids.Uid="SelectorBarItemContentPage" Tag="TgChatContentPage" />
                 </SelectorBar>
-                <!--  Frame  -->
+                <!--  Область отображения страницы  -->
                 <Frame
                     x:Name="ChatDetailsFrame"
                     Grid.Row="2"

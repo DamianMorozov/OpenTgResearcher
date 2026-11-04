@@ -16,7 +16,7 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <!--  Messages data template  -->
+        <!--  Шаблон данных сообщений  -->
         <DataTemplate x:Key="ParticipantsViewTemplate" x:DataType="users:TgEfUserDto">
             <Button
                 Margin="-5,5,5,-5"
@@ -30,7 +30,7 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
-                        <!--  ID  -->
+                        <!--  Идентификатор  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             l:Uids.Uid="TextBlockId"
@@ -49,7 +49,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Id, Mode=OneWay}" />
-                        <!--  MainUserName  -->
+                        <!--  Основное имя пользователя  -->
                         <TextBlock
                             Margin="20,5,7,2"
                             l:Uids.Uid="FieldUserName"
@@ -68,7 +68,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind MainUserName, Mode=OneWay}" />
-                        <!--  AccessHash  -->
+                        <!--  Хеш доступа  -->
                         <TextBlock
                             Margin="20,5,7,2"
                             l:Uids.Uid="FieldAccessHash"
@@ -87,7 +87,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind AccessHash, Mode=OneWay}" />
-                        <!--  IsUserActive  -->
+                        <!--  Признак активности пользователя  -->
                         <TextBlock
                             Margin="5,5,7,2"
                             l:Uids.Uid="FieldIsActive"
@@ -98,7 +98,7 @@
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             IsOn="{x:Bind IsUserActive, Mode=OneWay}" />
-                        <!--  IsBot  -->
+                        <!--  Признак бота  -->
                         <TextBlock
                             Margin="-50,5,7,2"
                             l:Uids.Uid="FieldIsBot"
@@ -111,7 +111,7 @@
                             IsOn="{x:Bind IsBot, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <!--  LastSeenAgo  -->
+                        <!--  Последнее посещение  -->
                         <TextBlock
                             Margin="-50,5,7,2"
                             l:Uids.Uid="FieldLastSeenAgo"
@@ -130,7 +130,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
-                        <!--  RestrictionReason  -->
+                        <!--  Причина ограничения  -->
                         <TextBlock
                             Margin="20,5,7,2"
                             l:Uids.Uid="FieldRestrictionReason"
@@ -149,12 +149,12 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
-                        <!--  DisplayName  -->
+                        <!--  Отображаемое имя  -->
                         <TextBlock
                             Margin="5,0,7,2"
                             l:Uids.Uid="FieldFirstName"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -169,12 +169,12 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind DisplayName, Mode=OneWay}" />
-                        <!--  PhoneNumber  -->
+                        <!--  Номер телефона  -->
                         <TextBlock
                             Margin="5,0,7,2"
                             l:Uids.Uid="FieldPhoneNumber"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -189,12 +189,12 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
-                        <!--  Status  -->
+                        <!--  Статус  -->
                         <TextBlock
                             Margin="5,0,7,2"
                             l:Uids.Uid="FieldStatus"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -209,7 +209,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Status, Mode=OneWay}" />
-                        <!--  Number of messages  -->
+                        <!--  Количество сообщений  -->
                         <TextBlock
                             Margin="5,0,5,0"
                             l:Uids.Uid="FieldCountMessages"
@@ -243,7 +243,7 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <!--  Online start update my messages  -->
+                <!--  Запуск обновления моих сообщений из Telegram  -->
                 <Button
                     Grid.Column="0"
                     Margin="0,0,5,5"
@@ -258,7 +258,7 @@
                             l:Uids.Uid="TextBlockLoadMyMessages" />
                     </StackPanel>
                 </Button>
-                <!--  Online stop update my messages  -->
+                <!--  Остановка обновления моих сообщений из Telegram  -->
                 <Button
                     Grid.Column="1"
                     Margin="0,0,5,5"
@@ -273,7 +273,7 @@
                             l:Uids.Uid="TextBlockStopMyMessages" />
                     </StackPanel>
                 </Button>
-                <!--  List view with participants  -->
+                <!--  Список участников  -->
                 <ListView
                     x:Name="ListViewMessages"
                     Grid.Row="1"
@@ -281,14 +281,14 @@
                     ItemTemplate="{StaticResource ParticipantsViewTemplate}"
                     ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <!--  The ItemsStackPanel must be edited to update the following two properties  -->
-                    <!--  These properties allow the list to grow from the bottom  -->
+                    <!--  Параметры ItemsStackPanel определяют расположение загруженных элементов  -->
+                    <!--  Новые элементы добавляются с сохранением положения нижних элементов  -->
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                    <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                    <!--  Растягиваем содержимое элемента для правильного выравнивания в списке  -->
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />

@@ -20,7 +20,7 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
-            <!--  Actions  -->
+            <!--  Действия  -->
             <Expander
                 Grid.Row="0"
                 Margin="{StaticResource ExpanderMargin}"
@@ -35,7 +35,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Load button  -->
+                    <!--  Кнопка загрузки настроек  -->
                     <Button
                         Margin="0,0,5,0"
                         HorizontalAlignment="Stretch"
@@ -49,7 +49,7 @@
                                 l:Uids.Uid="ActionLoad" />
                         </StackPanel>
                     </Button>
-                    <!--  Default button  -->
+                    <!--  Кнопка сброса настроек  -->
                     <Button
                         Grid.Column="1"
                         Margin="0,0,5,0"
@@ -64,7 +64,7 @@
                                 l:Uids.Uid="ActionResetToDefault" />
                         </StackPanel>
                     </Button>
-                    <!--  Save button  -->
+                    <!--  Кнопка сохранения  -->
                     <Button
                         Grid.Column="2"
                         Margin="5,0,0,0"
@@ -81,7 +81,7 @@
                     </Button>
                 </Grid>
             </Expander>
-            <!--  App  -->
+            <!--  Приложение  -->
             <Expander
                 Grid.Row="1"
                 Margin="{StaticResource ExpanderMargin}"
@@ -100,7 +100,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Language  -->
+                    <!--  Язык  -->
                     <TextBlock
                         Grid.Column="0"
                         Margin="10,5,10,5"
@@ -119,7 +119,7 @@
                         HorizontalAlignment="Stretch"
                         ItemsSource="{x:Bind ViewModel.SettingsService.AppLanguages, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.SettingsService.AppLanguage, Mode=TwoWay}" />
-                    <!--  Theme  -->
+                    <!--  Тема  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
@@ -142,7 +142,7 @@
                         SelectedItem="{x:Bind ViewModel.SettingsService.AppTheme, Mode=TwoWay}" />
                 </Grid>
             </Expander>
-            <!--  SettingReadOnly  -->
+            <!--  Настройки только для чтения  -->
             <Expander
                 Grid.Row="2"
                 Margin="{StaticResource ExpanderMargin}"
@@ -164,12 +164,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  User directory  -->
+                    <!--  Каталог пользователя  -->
                     <TextBlock
                         Margin="10,5,10,5"
                         l:Uids.Uid="SettingUserDirectory"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Column="2"
                         Margin="5"
@@ -186,13 +186,13 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.UserDirectory, Mode=OneWay}" />
-                    <!--  Setting file  -->
+                    <!--  Файл настроек  -->
                     <TextBlock
                         Grid.Row="1"
                         Margin="10,5,10,5"
                         l:Uids.Uid="SettingFile"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="2"
@@ -212,13 +212,13 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.SettingsService.SettingFile, Mode=OneWay}" />
-                    <!--  Application directory  -->
+                    <!--  Каталог приложения  -->
                     <TextBlock
                         Grid.Row="2"
                         Margin="10,5,10,5"
                         l:Uids.Uid="SettingAppDirectory"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="2"
@@ -240,7 +240,7 @@
                         Tag="{x:Bind ViewModel.SettingsService.ApplicationDirectory, Mode=OneWay}" />
                 </Grid>
             </Expander>
-            <!--  SettingRecording  -->
+            <!--  Изменяемые настройки  -->
             <Expander
                 Grid.Row="3"
                 Margin="{StaticResource ExpanderMargin}"
@@ -264,7 +264,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  EF storage  -->
+                    <!--  Хранилище базы данных  -->
                     <TextBlock
                         Grid.Row="0"
                         Margin="10,5,10,5"
@@ -281,7 +281,7 @@
                             IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppStorage, Mode=OneWay}"
                             IsEnabled="False" />
                     </StackPanel>
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="2"
@@ -309,7 +309,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.SettingsService.AppStorage, Mode=OneWay}" />
-                    <!--  Session  -->
+                    <!--  Сессия  -->
                     <TextBlock
                         Grid.Row="1"
                         Margin="10,5,10,5"
@@ -326,7 +326,7 @@
                             IsChecked="{x:Bind ViewModel.SettingsService.IsExistsAppSession, Mode=OneWay}"
                             IsEnabled="False" />
                     </StackPanel>
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="2"
@@ -354,7 +354,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.SettingsService.AppSession, Mode=OneWay}" />
-                    <!--  Warning  -->
+                    <!--  Предупреждение  -->
                     <FontIcon
                         Grid.Row="2"
                         Grid.RowSpan="3"

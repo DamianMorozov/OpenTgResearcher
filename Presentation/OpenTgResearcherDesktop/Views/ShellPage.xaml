@@ -196,7 +196,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <!--  Navigation  -->
+        <!--  Навигация  -->
         <NavigationView
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
@@ -209,7 +209,7 @@
             ItemInvoked="NavigationViewControl_ItemInvoked"
             OpenPaneLength="270"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
-            <!--  Navigation HeaderTemplate  -->
+            <!--  Шаблон заголовка навигации  -->
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
                     <Grid>
@@ -217,51 +217,51 @@
                     </Grid>
                 </DataTemplate>
             </NavigationView.HeaderTemplate>
-            <!--  Navigation MenuItems  -->
+            <!--  Пункты меню навигации  -->
             <NavigationView.MenuItems>
-                <!--  Home  -->
+                <!--  Главная страница  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgMainViewModel" l:Uids.Uid="Shell_Home">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Storage  -->
+                <!--  Хранилище  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel" l:Uids.Uid="Shell_Storage">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEBC3;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Client connection  -->
+                <!--  Подключение клиента  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel" l:Uids.Uid="Shell_ClientConnection">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Filters  -->
+                <!--  Фильтры  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgFiltersViewModel" l:Uids.Uid="Shell_Filters">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Proxies  -->
+                <!--  Прокси  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgProxiesViewModel" l:Uids.Uid="Shell_Proxies">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDA3;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Stories  -->
+                <!--  Истории  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStoriesViewModel" l:Uids.Uid="Shell_Stories">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Chats  -->
+                <!--  Чаты  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatsViewModel" l:Uids.Uid="Shell_Chats">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Saved Messages  -->
+                <!--  Сохранённые сообщения  -->
                 <NavigationViewItem
                     helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatViewModel"
                     helpers:TgNavigationHelper.NavigationParameter="{x:Bind ViewModel.UidSavedMessages, Mode=OneWay}"
@@ -271,38 +271,38 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C1;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Users  -->
+                <!--  Пользователи  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel" l:Uids.Uid="Shell_UsersAndContacts">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Equipment  -->
+                <!--  Оборудование  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareResourceViewModel" l:Uids.Uid="Shell_Equipment">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE950;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Logs  -->
+                <!--  Журналы  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel" l:Uids.Uid="Shell_Logs">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A5;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Update  -->
+                <!--  Обновление  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUpdateViewModel" l:Uids.Uid="Shell_Update">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  License  -->
+                <!--  Лицензия  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLicenseViewModel" l:Uids.Uid="Shell_License">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE719;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <!--  Navigation Behaviors  -->
+            <!--  Поведение навигации  -->
             <i:Interaction.Behaviors>
                 <behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
                     <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
@@ -313,7 +313,7 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
-                                <!--  Update page  -->
+                                <!--  Обновление страницы  -->
                                 <Button
                                     Grid.Column="0"
                                     Width="45"
@@ -324,13 +324,13 @@
                                     Command="{Binding DataContext.UpdatePageCommand, ElementName=ShellPageRoot}">
                                     <FontIcon Glyph="&#xE72C;" />
                                 </Button>
-                                <!--  Page title  -->
+                                <!--  Заголовок страницы  -->
                                 <TextBlock
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource TitleTextBlockStyle}"
                                     Text="{Binding}" />
-                                <!--  ToggleSwitch: sensitive data  -->
+                                <!--  Переключатель отображения конфиденциальных данных  -->
                                 <ToggleSwitch
                                     x:Name="ToggleSwitchShowSensitiveData"
                                     Grid.Column="2"
@@ -345,7 +345,7 @@
                     </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                 </behaviors:NavigationViewHeaderBehavior>
             </i:Interaction.Behaviors>
-            <!--  Page content  -->
+            <!--  Содержимое страницы  -->
             <Grid Margin="{StaticResource NavigationViewPageContentMargin}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -373,7 +373,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!--  Storage processing  -->
+                        <!--  Обработка запросов хранилища  -->
                         <FontIcon
                             Grid.Column="0"
                             Margin="5,0,5,0"
@@ -420,7 +420,7 @@
                             l:Uids.Uid="AppStorageNeedToCreate"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <!--  Online processing  -->
+                        <!--  Обработка сетевых запросов  -->
                         <FontIcon
                             Grid.Row="1"
                             Grid.Column="0"
@@ -471,7 +471,7 @@
                             l:Uids.Uid="AppOnlineNeedToConnet"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <!--  Flood Control  -->
+                        <!--  Защита от флуда  -->
                         <FontIcon
                             Grid.Row="2"
                             Grid.Column="0"

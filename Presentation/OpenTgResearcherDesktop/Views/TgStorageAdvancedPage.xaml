@@ -16,7 +16,7 @@
 
     <ScrollView VerticalScrollMode="Auto">
         <Grid>
-            <!--  Storage advanced settings  -->
+            <!--  Дополнительные настройки хранилища  -->
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
@@ -29,7 +29,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Reset auto update field  -->
+                    <!--  Сброс признака автоматического обновления  -->
                     <Button
                         Grid.Row="0"
                         Grid.Column="0"
@@ -44,7 +44,7 @@
                                 l:Uids.Uid="ActionStorageResetAutoUpdate" />
                         </StackPanel>
                     </Button>
-                    <!--  StorageLog  -->
+                    <!--  Журнал хранилища  -->
                     <TextBlock
                         Grid.Row="2"
                         Grid.ColumnSpan="3"

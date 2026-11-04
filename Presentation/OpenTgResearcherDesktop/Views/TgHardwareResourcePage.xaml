@@ -18,7 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <!--  Actions  -->
+        <!--  Действия  -->
         <ContentControl
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
@@ -40,13 +40,13 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--  CPU usage  -->
+                <!--  Использование процессора  -->
                 <TextBlock
                     HorizontalAlignment="Center"
                     l:Uids.Uid="TextBlockCpuUsage"
                     FontWeight="Bold"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  CPU app usage  -->
+                <!--  Использование процессора приложением  -->
                 <controls:RadialGauge
                     Grid.Row="1"
                     Grid.Column="1"
@@ -64,7 +64,7 @@
                     HorizontalAlignment="Center"
                     l:Uids.Uid="TextBlockCpuAppUsage"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  CPU total usage  -->
+                <!--  Общее использование процессора  -->
                 <controls:RadialGauge
                     Grid.Row="1"
                     Grid.Column="3"
@@ -82,14 +82,14 @@
                     HorizontalAlignment="Center"
                     l:Uids.Uid="TextBlockCpuTotalUsage"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  Memory usage  -->
+                <!--  Использование памяти  -->
                 <TextBlock
                     Grid.Row="3"
                     HorizontalAlignment="Center"
                     l:Uids.Uid="TextBlockMemoryUsage"
                     FontWeight="Bold"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  Memory app usage  -->
+                <!--  Использование памяти приложением  -->
                 <controls:RadialGauge
                     Grid.Row="4"
                     Grid.Column="1"
@@ -114,7 +114,7 @@
                     VerticalAlignment="Bottom"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Text="{x:Bind ViewModel.MemoryAppUsageString, Mode=OneWay}" />
-                <!--  Memory total usage  -->
+                <!--  Общее использование памяти  -->
                 <controls:RadialGauge
                     Grid.Row="4"
                     Grid.Column="3"

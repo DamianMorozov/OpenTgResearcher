@@ -20,7 +20,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <!--  Actions  -->
+            <!--  Действия  -->
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
@@ -41,7 +41,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--  Load from storage  -->
+                        <!--  Загрузка из хранилища  -->
                         <Button
                             Grid.Column="0"
                             Margin="0,0,5,0"
@@ -56,7 +56,7 @@
                                     l:Uids.Uid="ActionLoadFromStorage" />
                             </StackPanel>
                         </Button>
-                        <!--  Update from Telegram  -->
+                        <!--  Обновление из Telegram  -->
                         <Button
                             Grid.Column="1"
                             Margin="0,0,5,0"
@@ -72,7 +72,7 @@
                                     l:Uids.Uid="TextBlockUpdateOnline" />
                             </StackPanel>
                         </Button>
-                        <!--  Clear viewing  -->
+                        <!--  Очистка просмотра  -->
                         <Button
                             Grid.Column="2"
                             Margin="0,0,5,0"
@@ -87,7 +87,7 @@
                                     l:Uids.Uid="ActionClearView" />
                             </StackPanel>
                         </Button>
-                        <!--  Count  -->
+                        <!--  Количество  -->
                         <TextBlock
                             Grid.Column="3"
                             Margin="0,0,5,0"
@@ -105,7 +105,7 @@
                     </Grid>
                 </Expander>
             </ContentControl>
-            <!--  Data in storage  -->
+            <!--  Данные в хранилище  -->
             <ContentControl
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
@@ -130,7 +130,7 @@
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
-                                <!--  Id  -->
+                                <!--  Идентификатор  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnIdTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -138,7 +138,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridStories}" />
-                                <!--  Date  -->
+                                <!--  Дата  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnDateTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -146,7 +146,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridStories}" />
-                                <!--  Expire date  -->
+                                <!--  Дата истечения срока  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnExpireDateTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -154,7 +154,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridStories}" />
-                                <!--  Caption  -->
+                                <!--  Подпись  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnCaptionTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -162,7 +162,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="3*"
                                     OwnerGrid="{x:Bind DataGridStories}" />
-                                <!--  End  -->
+                                <!--  Конец таблицы  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </Grid>

@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <!--  Actions  -->
+        <!--  Действия  -->
         <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
             <Expander
                 Grid.Row="2"
@@ -36,7 +36,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Lazy load  -->
+                    <!--  Загрузка следующей порции данных  -->
                     <Button
                         Grid.Column="0"
                         Margin="5"
@@ -55,7 +55,7 @@
                                 l:Uids.Uid="TextBlockLoadMore" />
                         </StackPanel>
                     </Button>
-                    <!--  Update from Telegram  -->
+                    <!--  Обновление из Telegram  -->
                     <Button
                         Grid.Column="1"
                         Margin="5"
@@ -71,7 +71,7 @@
                                 l:Uids.Uid="TextBlockUpdateOnline" />
                         </StackPanel>
                     </Button>
-                    <!--  Clear viewing  -->
+                    <!--  Очистка просмотра  -->
                     <Button
                         Grid.Column="2"
                         Margin="5"
@@ -86,7 +86,7 @@
                                 l:Uids.Uid="ActionClearView" />
                         </StackPanel>
                     </Button>
-                    <!--  Loaded data statistics  -->
+                    <!--  Статистика загруженных данных  -->
                     <TextBlock
                         Grid.Column="3"
                         Margin="5,5,15,5"
@@ -97,7 +97,7 @@
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Data in storage  -->
+        <!--  Данные в хранилище  -->
         <ContentControl
             Grid.Row="1"
             HorizontalAlignment="Stretch"
@@ -125,7 +125,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Filter by contacts  -->
+                    <!--  Фильтр по контактам  -->
                     <TextBlock
                         Margin="5,0,5,5"
                         l:Uids.Uid="FieldFilterByContacts"
@@ -136,7 +136,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         IsOn="{x:Bind ViewModel.IsFilterByContacts, Mode=TwoWay}" />
-                    <!--  Filter by Id  -->
+                    <!--  Фильтр по идентификатору  -->
                     <TextBlock
                         Grid.Column="2"
                         Margin="5,0,5,5"
@@ -149,7 +149,7 @@
                         VerticalAlignment="Center"
                         IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
                     <Grid />
-                    <!--  Filter by Name  -->
+                    <!--  Фильтр по имени  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
@@ -163,7 +163,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
-                    <!--  Filter by Phone  -->
+                    <!--  Фильтр по телефону  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="2"
@@ -177,7 +177,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
                         IsOn="{x:Bind ViewModel.IsFilterByPhone, Mode=TwoWay}" />
-                    <!--  Text for filter  -->
+                    <!--  Текст фильтра  -->
                     <TextBox
                         Grid.RowSpan="2"
                         Grid.Column="4"
@@ -187,7 +187,7 @@
                         VerticalContentAlignment="Center"
                         l:Uids.Uid="FieldFilter"
                         Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                    <!--  Search  -->
+                    <!--  Поиск  -->
                     <Button
                         Grid.RowSpan="2"
                         Grid.Column="5"
@@ -203,13 +203,13 @@
                                 l:Uids.Uid="ActionSearch" />
                         </StackPanel>
                     </Button>
-                    <!--  Table  -->
+                    <!--  Таблица  -->
                     <ScrollView
                         Grid.Row="2"
                         Grid.ColumnSpan="7"
                         Margin="0,0,5,0"
                         VerticalScrollMode="Auto">
-                        <!--  Data  -->
+                        <!--  Данные  -->
                         <controls:DataGrid
                             x:Name="DataGridUsers"
                             Margin="0,0,10,0"
@@ -222,7 +222,7 @@
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}"
                             SelectionMode="Single">
                             <controls:DataGrid.Columns>
-                                <!--  Id  -->
+                                <!--  Идентификатор  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnIdTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -230,7 +230,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  Is active  -->
+                                <!--  Признак активности  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnIsActiveTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -238,7 +238,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  Is bot  -->
+                                <!--  Признак бота  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnIsBotTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -246,7 +246,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  DisplayName  -->
+                                <!--  Отображаемое имя  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnDisplayNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -254,7 +254,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  UserName  -->
+                                <!--  Имя пользователя  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnUserNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -262,7 +262,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  Phone  -->
+                                <!--  Телефон  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnPhoneTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -270,7 +270,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  Status  -->
+                                <!--  Статус  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnStatusTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -278,7 +278,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridUsers}" />
-                                <!--  End  -->
+                                <!--  Конец таблицы  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </ScrollView>

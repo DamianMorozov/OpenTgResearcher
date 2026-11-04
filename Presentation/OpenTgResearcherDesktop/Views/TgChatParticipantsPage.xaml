@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <!--  Participants data template  -->
+        <!--  Шаблон данных участников  -->
         <DataTemplate x:Key="ParticipantsViewTemplate" x:DataType="users:TgEfUserDto">
             <Button
                 Margin="-5,5,5,-5"
@@ -31,7 +31,7 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
-                        <!--  ID  -->
+                        <!--  Идентификатор  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             l:Uids.Uid="TextBlockId"
@@ -50,7 +50,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Id, Mode=OneWay}" />
-                        <!--  MainUserName  -->
+                        <!--  Основное имя пользователя  -->
                         <TextBlock
                             Margin="20,5,7,2"
                             l:Uids.Uid="FieldUserName"
@@ -69,7 +69,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind MainUserName, Mode=OneWay}" />
-                        <!--  AccessHash  -->
+                        <!--  Хеш доступа  -->
                         <TextBlock
                             Margin="20,5,7,2"
                             l:Uids.Uid="FieldAccessHash"
@@ -99,7 +99,7 @@
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             IsOn="{x:Bind IsUserActive, Mode=OneWay}" />
-                        <!--  IsBot  -->
+                        <!--  Признак бота  -->
                         <TextBlock
                             Margin="-50,5,7,2"
                             l:Uids.Uid="FieldIsBot"
@@ -112,7 +112,7 @@
                             IsOn="{x:Bind IsBot, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <!--  LastSeenAgo  -->
+                        <!--  Последнее посещение  -->
                         <TextBlock
                             Margin="-50,5,7,2"
                             l:Uids.Uid="FieldLastSeenAgo"
@@ -131,7 +131,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
-                        <!--  RestrictionReason  -->
+                        <!--  Причина ограничения  -->
                         <TextBlock
                             Margin="20,5,7,2"
                             l:Uids.Uid="FieldRestrictionReason"
@@ -150,12 +150,12 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
-                        <!--  DisplayName  -->
+                        <!--  Отображаемое имя  -->
                         <TextBlock
                             Margin="5,0,7,2"
                             l:Uids.Uid="FieldFirstName"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -175,7 +175,7 @@
                             Margin="5,0,7,2"
                             l:Uids.Uid="FieldPhoneNumber"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -190,12 +190,12 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
-                        <!--  Status  -->
+                        <!--  Статус  -->
                         <TextBlock
                             Margin="5,0,7,2"
                             l:Uids.Uid="FieldStatus"
                             TextAlignment="Left" />
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -210,7 +210,7 @@
                             Click="OnClipboardSilentWriteClick"
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind Status, Mode=OneWay}" />
-                        <!--  User deleted  -->
+                        <!--  Признак удалённого пользователя  -->
                         <TextBlock
                             Margin="5,0,5,0"
                             l:Uids.Uid="TextBlockMessageDeleted"

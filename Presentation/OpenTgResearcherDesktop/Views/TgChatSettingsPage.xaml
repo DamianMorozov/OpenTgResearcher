@@ -47,7 +47,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Uid  -->
+                    <!--  Уникальный идентификатор  -->
                     <TextBlock l:Uids.Uid="FieldUid" Style="{StaticResource FieldTextBlockStyle}" />
                     <TextBox
                         Grid.Column="1"
@@ -63,7 +63,7 @@
                         Style="{StaticResource FieldTextBoxStyle}"
                         Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  DtChanged  -->
+                    <!--  Дата изменения  -->
                     <TextBlock
                         Grid.Column="2"
                         l:Uids.Uid="FieldDtChanged"
@@ -80,7 +80,7 @@
                         Style="{StaticResource FieldTextBoxStyle}"
                         Text="{x:Bind ViewModel.Dto.DtChangedString, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  Id  -->
+                    <!--  Идентификатор  -->
                     <TextBlock
                         Grid.Column="4"
                         l:Uids.Uid="FieldId"
@@ -94,7 +94,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--  Sensitive data  -->
+                        <!--  Конфиденциальные данные  -->
                         <TextBlock
                             Grid.Column="0"
                             Margin="2,10,2,2"
@@ -115,7 +115,7 @@
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.Dto.Id, Mode=OneWay}" />
                     </Grid>
-                    <!--  IsActive  -->
+                    <!--  Признак активности  -->
                     <TextBlock
                         Grid.Row="1"
                         l:Uids.Uid="FieldIsActive"
@@ -126,7 +126,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.Dto.IsSourceActive, Mode=OneWay}"
                         Style="{StaticResource FieldToggleSwitchStyle}" />
-                    <!--  IsSubscribe  -->
+                    <!--  Признак подписки  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="2"
@@ -138,7 +138,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.Dto.IsSubscribe, Mode=OneWay}"
                         Style="{StaticResource FieldToggleSwitchStyle}" />
-                    <!--  IsRestrictSavingContent  -->
+                    <!--  Ограничение сохранения содержимого  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="4"
@@ -165,7 +165,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  UserName  -->
+                    <!--  Имя пользователя  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
@@ -198,7 +198,7 @@
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}" />
                     </Grid>
-                    <!--  Link  -->
+                    <!--  Ссылка  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="2"
@@ -233,7 +233,7 @@
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.Dto.Link, Mode=OneWay}" />
                     </Grid>
-                    <!--  IsUserAccess  -->
+                    <!--  Доступ пользователя  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="4"
@@ -245,7 +245,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.Dto.IsUserAccess, Mode=OneWay}"
                         Style="{StaticResource FieldToggleSwitchStyle}" />
-                    <!--  Count  -->
+                    <!--  Количество  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="6"
@@ -289,7 +289,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  DiscussionDto  -->
+                    <!--  Данные обсуждения  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
@@ -310,7 +310,7 @@
                                 l:Uids.Uid="TextBlockOpenDiscussion" />
                         </StackPanel>
                     </Button>
-                    <!--  Title  -->
+                    <!--  Заголовок  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="2"
@@ -342,7 +342,7 @@
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.Dto.Title, Mode=OneWay}" />
                     </Grid>
-                    <!--  About  -->
+                    <!--  О приложении  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"

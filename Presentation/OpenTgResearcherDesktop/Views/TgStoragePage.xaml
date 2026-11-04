@@ -15,7 +15,7 @@
     mc:Ignorable="d">
 
     <ScrollView VerticalScrollMode="Auto">
-        <!--  SelectorBar  -->
+        <!--  Панель выбора раздела  -->
         <ContentControl
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
@@ -33,7 +33,7 @@
                     <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageConfiguration" Tag="TgStorageConfigurationPage" />
                     <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageAdvancedSettings" Tag="TgStorageAdvancedPage" />
                 </SelectorBar>
-                <!--  Frame  -->
+                <!--  Область отображения страницы  -->
                 <Frame
                     x:Name="ContentFrame"
                     Grid.Row="1"

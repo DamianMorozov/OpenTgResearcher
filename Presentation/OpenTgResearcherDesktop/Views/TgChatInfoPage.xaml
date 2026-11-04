@@ -44,7 +44,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <!--  Update chat details  -->
+                <!--  Обновление сведений о чате  -->
                 <Button
                     Grid.Row="0"
                     Grid.Column="0"
@@ -62,7 +62,7 @@
                             l:Uids.Uid="TextBlockUpdateChatDetails" />
                     </StackPanel>
                 </Button>
-                <!--  Title  -->
+                <!--  Заголовок  -->
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="0"
@@ -82,7 +82,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}" />
                 </StackPanel>
-                <!--  Type  -->
+                <!--  Тип  -->
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="2"
@@ -102,7 +102,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}" />
                 </StackPanel>
-                <!--  Id  -->
+                <!--  Идентификатор  -->
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="0"
@@ -113,7 +113,7 @@
                     Grid.Row="2"
                     Grid.Column="1"
                     Orientation="Horizontal">
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Margin="10,10,10,2"
                         Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
@@ -128,7 +128,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}" />
                 </StackPanel>
-                <!--  UserName  -->
+                <!--  Имя пользователя  -->
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="2"
@@ -148,7 +148,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}" />
                 </StackPanel>
-                <!--  InviteLink  -->
+                <!--  Ссылка приглашения  -->
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="0"
@@ -168,7 +168,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}" />
                 </StackPanel>
-                <!--  Description  -->
+                <!--  Описание  -->
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="2"
@@ -188,7 +188,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}" />
                 </StackPanel>
-                <!--  Permissions  -->
+                <!--  Разрешения  -->
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="0"
@@ -209,7 +209,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}" />
                 </StackPanel>
-                <!--  About  -->
+                <!--  О приложении  -->
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="2"
@@ -229,7 +229,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}" />
                 </StackPanel>
-                <!--  Participants count  -->
+                <!--  Количество участников  -->
                 <TextBlock
                     Grid.Row="5"
                     Grid.Column="0"
@@ -250,7 +250,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}" />
                 </StackPanel>
-                <!--  OnlineCount  -->
+                <!--  Количество участников в сети  -->
                 <TextBlock
                     Grid.Row="5"
                     Grid.Column="2"
@@ -270,7 +270,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}" />
                 </StackPanel>
-                <!--  SlowMode  -->
+                <!--  Медленный режим  -->
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="0"
@@ -291,7 +291,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}" />
                 </StackPanel>
-                <!--  Available reactions  -->
+                <!--  Доступные реакции  -->
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="2"
@@ -311,7 +311,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}" />
                 </StackPanel>
-                <!--  TtlPeriod  -->
+                <!--  Срок хранения  -->
                 <TextBlock
                     Grid.Row="7"
                     Grid.Column="0"
@@ -332,7 +332,7 @@
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}" />
                 </StackPanel>
-                <!--  IsActive  -->
+                <!--  Признак активности  -->
                 <TextBlock
                     Grid.Row="7"
                     Grid.Column="2"
@@ -350,7 +350,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.ChatDetailsDto.IsActiveChat, Mode=OneWay}" />
                 </StackPanel>
-                <!--  IsActive  -->
+                <!--  Признак активности  -->
                 <TextBlock
                     Grid.Row="8"
                     Grid.Column="0"
@@ -368,7 +368,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.ChatDetailsDto.IsBanned, Mode=OneWay}" />
                 </StackPanel>
-                <!--  IsChannel  -->
+                <!--  Признак канала  -->
                 <TextBlock
                     Grid.Row="8"
                     Grid.Column="2"
@@ -386,7 +386,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.ChatDetailsDto.IsChannel, Mode=OneWay}" />
                 </StackPanel>
-                <!--  IsGroup  -->
+                <!--  Признак группы  -->
                 <TextBlock
                     Grid.Row="9"
                     Grid.Column="0"
@@ -404,7 +404,7 @@
                         IsEnabled="False"
                         IsOn="{x:Bind ViewModel.ChatDetailsDto.IsGroup, Mode=OneWay}" />
                 </StackPanel>
-                <!--  IsForum  -->
+                <!--  Признак форума  -->
                 <TextBlock
                     Grid.Row="9"
                     Grid.Column="2"

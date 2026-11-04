@@ -16,7 +16,7 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <!--  Participants data template  -->
+        <!--  Шаблон данных участников  -->
         <DataTemplate x:Key="ParticipantsStatisticsViewTemplate" x:DataType="users:TgEfUserWithCountDto">
             <Button
                 Margin="-5,10,5,-5"
@@ -24,7 +24,7 @@
                 CornerRadius="10"
                 Tag="{x:Bind UserDto.Uid, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                    <!--  Id  -->
+                    <!--  Идентификатор  -->
                     <TextBlock Margin="0,5,0,0" l:Uids.Uid="FieldId" />
                     <TextBlock
                         Margin="0,5,0,0"
@@ -43,7 +43,7 @@
                         Margin="5,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="·" />
-                    <!--  DisplayName  -->
+                    <!--  Отображаемое имя  -->
                     <TextBlock
                         Margin="0,5,0,0"
                         Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
@@ -60,7 +60,7 @@
                         Margin="5,0,5,0"
                         Style="{ThemeResource BodyTextBlockStyle}"
                         Text="·" />
-                    <!--  Messages count  -->
+                    <!--  Количество сообщений  -->
                     <TextBlock Margin="0,5,0,0" l:Uids.Uid="FieldMessagesCount" />
                     <TextBlock
                         Margin="0,5,5,0"
@@ -76,7 +76,7 @@
         </DataTemplate>
     </common:TgPageBase.Resources>
 
-    <!--  Chat statistics  -->
+    <!--  Статистика чата  -->
     <ScrollView VerticalScrollMode="Auto">
         <ContentControl
             HorizontalAlignment="Stretch"
@@ -97,7 +97,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Statistics calculation button  -->
+                    <!--  Кнопка расчёта статистики  -->
                     <Button
                         Margin="0,0,5,5"
                         HorizontalAlignment="Stretch"
@@ -112,7 +112,7 @@
                                 l:Uids.Uid="TextBlockCalcChatStatistics" />
                         </StackPanel>
                     </Button>
-                    <!--  ChatStatisticsDto  -->
+                    <!--  Данные статистики чата  -->
                     <Grid Grid.Row="1" Margin="10,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -130,14 +130,14 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <!--  DtStart  -->
+                        <!--  Дата начала  -->
                         <TextBlock VerticalAlignment="Center" l:Uids.Uid="TextBlockDtStart" />
                         <DatePicker
                             Grid.Column="1"
                             Margin="10,0,0,0"
                             HorizontalAlignment="Left"
                             SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtStart, Mode=TwoWay}" />
-                        <!--  DtEnd  -->
+                        <!--  Дата завершения  -->
                         <TextBlock
                             Grid.Column="2"
                             Margin="50,0,0,0"
@@ -147,7 +147,7 @@
                             Grid.Column="3"
                             Margin="10,0,0,0"
                             SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtEnd, Mode=TwoWay}" />
-                        <!--  User and bot statistics  -->
+                        <!--  Статистика пользователей и ботов  -->
                         <TextBlock
                             Grid.Column="4"
                             Margin="50,0,0,0"
@@ -169,7 +169,7 @@
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
                             Text="{x:Bind ViewModel.ChatStatisticsDto.BotsCount, Mode=OneWay}" />
-                        <!--  List view with participants  -->
+                        <!--  Список участников  -->
                         <ListView
                             x:Name="ListViewParticipantsStatistics"
                             Grid.Row="2"
@@ -177,14 +177,14 @@
                             Margin="-15,-5,-15,0"
                             ItemTemplate="{StaticResource ParticipantsStatisticsViewTemplate}"
                             ItemsSource="{x:Bind ViewModel.ChatStatisticsDto.UserWithCountDtos, Mode=OneWay}">
-                            <!--  The ItemsStackPanel must be edited to update the following two properties  -->
-                            <!--  These properties allow the list to grow from the bottom  -->
+                            <!--  Параметры ItemsStackPanel определяют расположение загруженных элементов  -->
+                            <!--  Новые элементы добавляются с сохранением положения нижних элементов  -->
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
-                            <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                            <!--  Растягиваем содержимое элемента для правильного выравнивания в списке  -->
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />

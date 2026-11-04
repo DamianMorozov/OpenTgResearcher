@@ -15,7 +15,7 @@
     mc:Ignorable="d">
 
     <ScrollView VerticalScrollMode="Auto">
-        <!--  Content  -->
+        <!--  Содержимое  -->
         <ContentControl
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
@@ -25,7 +25,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <!--  DB tables  -->
+                <!--  Таблицы базы данных  -->
                 <Grid Margin="0,0,10,0">
                     <controls:DataGrid
                         x:Name="DataGridStorage"
@@ -37,7 +37,7 @@
                         HeadersVisibility="Column"
                         ItemsSource="{x:Bind ViewModel.StorageTableDtos, Mode=OneWay}">
                         <controls:DataGrid.Columns>
-                            <!--  Name  -->
+                            <!--  Имя  -->
                             <controls:DataGridTemplateColumn
                                 Width="1*"
                                 l:Uids.Uid="ColumnTableNameTemplate"
@@ -54,7 +54,7 @@
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
-                            <!--  RecordsCount  -->
+                            <!--  Количество записей  -->
                             <styles:TgBindableDataGridTemplateColumn
                                 l:Uids.Uid="ColumnRecordsCountTemplate"
                                 ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"

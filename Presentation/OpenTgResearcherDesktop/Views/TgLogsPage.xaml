@@ -35,7 +35,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Log directory  -->
+                    <!--  Каталог журналов  -->
                     <TextBlock
                         Grid.Column="0"
                         Margin="15,5,10,5"
@@ -57,7 +57,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.LogDirectory, Mode=OneWay}" />
-                    <!--  View logs  -->
+                    <!--  Просмотр журналов  -->
                     <ListView
                         Grid.Row="1"
                         Grid.Column="0"

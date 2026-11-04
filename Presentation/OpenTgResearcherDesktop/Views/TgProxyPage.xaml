@@ -30,7 +30,7 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <!--  Clear viewing  -->
+                <!--  Очистка просмотра  -->
                 <Button
                     Grid.Column="0"
                     Margin="0,0,5,0"
@@ -46,7 +46,7 @@
                             l:Uids.Uid="ActionClearView" />
                     </StackPanel>
                 </Button>
-                <!--  Save settings  -->
+                <!--  Сохранение настроек  -->
                 <Button
                     Grid.Column="1"
                     Margin="0,0,5,0"
@@ -91,7 +91,7 @@
                     IsOpen="{x:Bind ViewModel.Exception.IsExist, Mode=OneWay}"
                     Message="{x:Bind ViewModel.Exception.Message, Mode=OneWay}"
                     Severity="Error" />
-                <!--  Grid  -->
+                <!--  Сетка полей  -->
                 <Grid
                     Grid.Row="2"
                     Grid.ColumnSpan="5"
@@ -112,7 +112,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <!--  Uid  -->
+                    <!--  Уникальный идентификатор  -->
                     <TextBlock
                         Grid.Column="0"
                         l:Uids.Uid="FieldUid"
@@ -134,7 +134,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}" />
-                    <!--  HostName  -->
+                    <!--  Адрес сервера  -->
                     <TextBlock
                         Grid.Column="3"
                         l:Uids.Uid="FieldHostName"
@@ -154,7 +154,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.Dto.HostName, Mode=OneWay}" />
-                    <!--  Port  -->
+                    <!--  Порт  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="6"
@@ -175,7 +175,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.Dto.Port, Mode=OneWay}" />
-                    <!--  UserName  -->
+                    <!--  Имя пользователя  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
@@ -199,7 +199,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.Dto.UserName, Mode=OneWay}" />
-                    <!--  Password  -->
+                    <!--  Пароль  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="3"
@@ -223,7 +223,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.Dto.Password, Mode=OneWay}" />
-                    <!--  Secret  -->
+                    <!--  Секретный ключ  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="6"
@@ -247,7 +247,7 @@
                         Click="OnClipboardSilentWriteClick"
                         Style="{StaticResource ClipboardAnimatedButtonStyle}"
                         Tag="{x:Bind ViewModel.Dto.Secret, Mode=OneWay}" />
-                    <!--  Type  -->
+                    <!--  Тип  -->
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="0"

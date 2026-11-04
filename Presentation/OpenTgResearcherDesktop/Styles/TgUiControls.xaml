@@ -6,7 +6,7 @@
     xmlns:convertersWinUI="using:CommunityToolkit.WinUI.Converters"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles">
 
-    <!--  Style for clipboard button with checkmark animation  -->
+    <!--  Стиль кнопки копирования с анимацией галочки  -->
     <Style x:Key="ClipboardAnimatedButtonStyleSimple" TargetType="styles:TgAnimatedClipboardButton">
         <Setter Property="Template">
             <Setter.Value>
@@ -18,7 +18,7 @@
                         <SymbolIcon x:Name="ClipboardIcon" Symbol="{TemplateBinding NormalSymbol}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="IconStates">
-                                <!--  Normal  -->
+                                <!--  Обычное состояние  -->
                                 <VisualState x:Name="NormalState">
                                     <VisualState.Setters>
                                         <Setter Target="ClipboardIcon.Symbol" Value="{Binding NormalSymbol, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -26,14 +26,14 @@
                                         <Setter Target="IconScale.ScaleY" Value="1" />
                                     </VisualState.Setters>
                                 </VisualState>
-                                <!--  Checked  -->
+                                <!--  Состояние подтверждения  -->
                                 <VisualState x:Name="CheckedState">
                                     <VisualState.Setters>
                                         <Setter Target="ClipboardIcon.Symbol" Value="{Binding CheckedSymbol, RelativeSource={RelativeSource TemplatedParent}}" />
                                     </VisualState.Setters>
                                     <VisualState.Storyboard>
                                         <Storyboard>
-                                            <!--  Scale up and down  -->
+                                            <!--  Увеличение и уменьшение масштаба  -->
                                             <DoubleAnimation
                                                 AutoReverse="True"
                                                 Storyboard.TargetName="IconScale"
@@ -59,7 +59,7 @@
         </Setter>
     </Style>
 
-    <!--  Style for clipboard button with checkmark and flash animation  -->
+    <!--  Стиль кнопки копирования с анимацией галочки и вспышки  -->
     <Style x:Key="ClipboardAnimatedButtonStyle" TargetType="styles:TgAnimatedClipboardButton">
         <Setter Property="Template">
             <Setter.Value>
@@ -68,13 +68,13 @@
                         <Grid.RenderTransform>
                             <ScaleTransform x:Name="IconScale" ScaleX="1" ScaleY="1" />
                         </Grid.RenderTransform>
-                        <!--  Icon  -->
+                        <!--  Значок  -->
                         <SymbolIcon
                             x:Name="ClipboardIcon"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Symbol="{TemplateBinding NormalSymbol}" />
-                        <!--  Soft color flash layer  -->
+                        <!--  Слой мягкой цветовой вспышки  -->
                         <Ellipse
                             x:Name="FlashOverlay"
                             Width="40"
@@ -85,16 +85,16 @@
                             Opacity="0">
                             <Ellipse.Fill>
                                 <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                                    <!--  Center — bright accent color  -->
+                                    <!--  Яркий акцентный цвет в центре  -->
                                     <GradientStop Offset="0" Color="{ThemeResource SystemAccentColor}" />
-                                    <!--  Edges — transparent  -->
+                                    <!--  Прозрачные края  -->
                                     <GradientStop Offset="1" Color="Transparent" />
                                 </RadialGradientBrush>
                             </Ellipse.Fill>
                         </Ellipse>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="IconStates">
-                                <!--  Normal  -->
+                                <!--  Обычное состояние  -->
                                 <VisualState x:Name="NormalState">
                                     <VisualState.Setters>
                                         <Setter Target="ClipboardIcon.Symbol" Value="{Binding NormalSymbol, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -103,14 +103,14 @@
                                         <Setter Target="FlashOverlay.Opacity" Value="0" />
                                     </VisualState.Setters>
                                 </VisualState>
-                                <!--  Checked  -->
+                                <!--  Состояние подтверждения  -->
                                 <VisualState x:Name="CheckedState">
                                     <VisualState.Setters>
                                         <Setter Target="ClipboardIcon.Symbol" Value="{Binding CheckedSymbol, RelativeSource={RelativeSource TemplatedParent}}" />
                                     </VisualState.Setters>
                                     <VisualState.Storyboard>
                                         <Storyboard>
-                                            <!--  Scale  -->
+                                            <!--  Масштаб  -->
                                             <DoubleAnimation
                                                 AutoReverse="True"
                                                 Storyboard.TargetName="IconScale"
@@ -125,7 +125,7 @@
                                                 From="1"
                                                 To="1.3"
                                                 Duration="0:0:0.15" />
-                                            <!--  Flash  -->
+                                            <!--  Вспышка  -->
                                             <DoubleAnimation
                                                 AutoReverse="True"
                                                 Storyboard.TargetName="FlashOverlay"
@@ -144,7 +144,7 @@
         </Setter>
     </Style>
 
-    <!--  Style for button with license verification  -->
+    <!--  Стиль кнопки с проверкой лицензии  -->
     <Style
         x:Key="LicenseButtonStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"

@@ -20,7 +20,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <!--  Actions  -->
+            <!--  Действия  -->
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
@@ -40,7 +40,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--  Load from storage  -->
+                        <!--  Загрузка из хранилища  -->
                         <Button
                             Grid.Column="0"
                             Margin="0,0,5,0"
@@ -55,7 +55,7 @@
                                     l:Uids.Uid="ActionLoadFromStorage" />
                             </StackPanel>
                         </Button>
-                        <!--  Clear viewing  -->
+                        <!--  Очистка просмотра  -->
                         <Button
                             Grid.Column="1"
                             Margin="0,0,5,0"
@@ -70,7 +70,7 @@
                                     l:Uids.Uid="ActionClearView" />
                             </StackPanel>
                         </Button>
-                        <!--  Count  -->
+                        <!--  Количество  -->
                         <TextBlock
                             Grid.Column="2"
                             Margin="0,0,5,0"
@@ -89,7 +89,7 @@
                     </Grid>
                 </Expander>
             </ContentControl>
-            <!--  Data in storage  -->
+            <!--  Данные в хранилище  -->
             <ContentControl
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
@@ -114,7 +114,7 @@
                             HeadersVisibility="Column"
                             ItemsSource="{x:Bind ViewModel.Dtos, Mode=OneWay}">
                             <controls:DataGrid.Columns>
-                                <!--  Is enabled  -->
+                                <!--  Признак включения  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnIsEnabledTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -122,7 +122,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridFilters}" />
-                                <!--  FilterType  -->
+                                <!--  Тип фильтра  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnTypeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -130,7 +130,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridFilters}" />
-                                <!--  Name  -->
+                                <!--  Имя  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnNameTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -138,7 +138,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="Auto"
                                     OwnerGrid="{x:Bind DataGridFilters}" />
-                                <!--  Mask  -->
+                                <!--  Маска  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnMaskTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -146,7 +146,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="3*"
                                     OwnerGrid="{x:Bind DataGridFilters}" />
-                                <!--  Size  -->
+                                <!--  Размер  -->
                                 <styles:TgBindableDataGridTemplateColumn
                                     l:Uids.Uid="ColumnSizeTemplate"
                                     ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
@@ -154,7 +154,7 @@
                                     ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
                                     ColumnWidth="3*"
                                     OwnerGrid="{x:Bind DataGridFilters}" />
-                                <!--  End  -->
+                                <!--  Конец таблицы  -->
                             </controls:DataGrid.Columns>
                         </controls:DataGrid>
                     </Grid>

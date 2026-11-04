@@ -17,9 +17,9 @@
     mc:Ignorable="d">
 
     <common:TgPageBase.Resources>
-        <!--  Messages data template  -->
+        <!--  Шаблон данных сообщений  -->
         <DataTemplate x:Key="MessagesViewTemplate" x:DataType="messages:TgEfMessageDto">
-            <!--  General background and rounding  -->
+            <!--  Общий фон и скругление  -->
             <Border
                 Grid.Column="{x:Bind Direction, Converter={StaticResource EnumToColumnConverter}}"
                 Grid.ColumnSpan="{x:Bind Direction, Converter={StaticResource EnumToColumnSpanConverter}}"
@@ -40,12 +40,12 @@
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </Grid.Resources>
-                    <!--  Header: Changed, Id, Link, Sender  -->
+                    <!--  Заголовок: изменение, идентификатор, ссылка и отправитель  -->
                     <StackPanel
                         Grid.Row="0"
                         Orientation="Horizontal"
                         Spacing="5">
-                        <!--  DtChangedString  -->
+                        <!--  Дата изменения в текстовом виде  -->
                         <TextBlock
                             Margin="0,5,0,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
@@ -60,7 +60,7 @@
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="·" />
-                        <!--  Id  -->
+                        <!--  Идентификатор  -->
                         <TextBlock
                             Margin="5,5,5,0"
                             l:Uids.Uid="TextBlockId"
@@ -83,7 +83,7 @@
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="·" />
-                        <!--  Link  -->
+                        <!--  Ссылка  -->
                         <TextBlock
                             Margin="0,5,0,0"
                             l:Uids.Uid="TextBlockLink"
@@ -109,14 +109,14 @@
                             Margin="5,5,5,0"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="·" />
-                        <!--  Message deleted  -->
+                        <!--  Признак удалённого сообщения  -->
                         <TextBlock
                             Margin="0,5,0,0"
                             l:Uids.Uid="TextBlockMessageDeleted"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Visibility="{Binding IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     </StackPanel>
-                    <!--  Message content: image, text message  -->
+                    <!--  Содержимое сообщения: изображение и текст  -->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -133,7 +133,7 @@
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{Binding MessageText, Mode=OneWay}" />
                         </StackPanel>
-                        <!--  Image preview  -->
+                        <!--  Предпросмотр изображения  -->
                         <Border
                             Grid.Column="1"
                             MaxWidth="400"
@@ -152,7 +152,7 @@
                                 Tapped="OnImagePreviewClick"
                                 Visibility="{Binding IsImageExists, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Border>
-                        <!--  Thumb preview  -->
+                        <!--  Предпросмотр обложки  -->
                         <Border
                             Grid.Column="1"
                             MaxWidth="400"
@@ -171,7 +171,7 @@
                                 Tapped="OnImagePreviewClick"
                                 Visibility="{Binding IsThumbExists, Converter={StaticResource BoolToVisibilityConverter}}" />
                         </Border>
-                        <!--  Message  -->
+                        <!--  Сообщение  -->
                         <TextBlock
                             Grid.Column="2"
                             Margin="5,5,0,0"
@@ -191,7 +191,7 @@
                 </Grid>
             </Border>
         </DataTemplate>
-        <!--  Chat item template  -->
+        <!--  Шаблон элемента чата  -->
         <DataTemplate x:Key="UserChatsListTemplate" x:DataType="sources:TgEfChatWithCountDto">
             <StackPanel
                 Height="Auto"
@@ -201,7 +201,7 @@
                 Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                 CornerRadius="10"
                 Opacity="1">
-                <!--  Expander  -->
+                <!--  Раскрывающийся блок  -->
                 <Expander
                     Margin="0,0,5,-10"
                     HorizontalAlignment="Stretch"
@@ -212,9 +212,9 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
-                        <!--  Empty data  -->
+                        <!--  Пустые данные  -->
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <!--  Id  -->
+                            <!--  Идентификатор  -->
                             <TextBlock
                                 Margin="10,0,10,0"
                                 l:Uids.Uid="TextBlockId"
@@ -229,7 +229,7 @@
                                 Click="OnClipboardSilentWriteClick"
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{x:Bind ChatDto.Id, Mode=OneWay}" />
-                            <!--  UserName  -->
+                            <!--  Имя пользователя  -->
                             <TextBlock
                                 Margin="10,0,10,0"
                                 l:Uids.Uid="TextBlockUserName"
@@ -244,7 +244,7 @@
                                 Click="OnClipboardSilentWriteClick"
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{x:Bind ChatDto.UserName, Mode=OneWay}" />
-                            <!--  Title  -->
+                            <!--  Заголовок  -->
                             <TextBlock
                                 Margin="10,0,10,0"
                                 l:Uids.Uid="FieldTitle"
@@ -259,7 +259,7 @@
                                 Click="OnClipboardSilentWriteClick"
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{x:Bind ChatDto.Title, Mode=OneWay}" />
-                            <!--  MessagesCount  -->
+                            <!--  Количество сообщений  -->
                             <TextBlock
                                 Margin="10,0,10,0"
                                 l:Uids.Uid="FieldCountMessages"
@@ -274,20 +274,20 @@
                                 Click="OnClipboardSilentWriteClick"
                                 Style="{StaticResource ClipboardAnimatedButtonStyle}"
                                 Tag="{x:Bind MessagesCount, Mode=OneWay}" />
-                            <!--  Load user messages in chat  -->
+                            <!--  Загрузка сообщений пользователя в чате  -->
                             <Button
                                 Margin="10,-10,0,0"
                                 l:Uids.Uid="ActionLoadMessages"
                                 Click="Button_LoadMessagesClick"
                                 Tag="{x:Bind ChatDto}" />
-                            <!--  Update Preview  -->
+                            <!--  Обновление предпросмотра  -->
                             <Button
                                 Margin="10,-10,0,0"
                                 l:Uids.Uid="ActionLoadMessages"
                                 Command="{Binding Path=ViewModel.LoadUserMessagesCommand}"
                                 CommandParameter="{x:Bind ChatDto, Mode=OneWay}" />
                         </StackPanel>
-                        <!--  Messages  -->
+                        <!--  Сообщения  -->
                         <ListView
                             Grid.Row="1"
                             ItemTemplate="{StaticResource MessagesViewTemplate}"
@@ -315,7 +315,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <!--  Actions  -->
+        <!--  Действия  -->
         <ContentControl
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
@@ -333,7 +333,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Online update  -->
+                    <!--  Обновление из сети  -->
                     <Button
                         Grid.Column="0"
                         Margin="0,0,5,0"
@@ -350,7 +350,7 @@
                                 l:Uids.Uid="TextBlockUpdateOnline" />
                         </StackPanel>
                     </Button>
-                    <!--  Clear viewing  -->
+                    <!--  Очистка просмотра  -->
                     <Button
                         Grid.Column="1"
                         Margin="0,0,5,0"
@@ -368,7 +368,7 @@
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Dto  -->
+        <!--  Данные объекта  -->
         <ContentControl
             Grid.Row="1"
             HorizontalAlignment="Stretch"
@@ -397,7 +397,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <!--  Uid  -->
+                    <!--  Уникальный идентификатор  -->
                     <TextBlock
                         Grid.Row="0"
                         Margin="10,7,7,2"
@@ -418,7 +418,7 @@
                         IsEnabled="False"
                         Text="{x:Bind ViewModel.Dto.Uid, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  DtChanged  -->
+                    <!--  Дата изменения  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="2"
@@ -441,7 +441,7 @@
                         IsReadOnly="True"
                         Text="{x:Bind ViewModel.Dto.DtChangedString, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  Id  -->
+                    <!--  Идентификатор  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
@@ -470,7 +470,7 @@
                             Style="{StaticResource ClipboardAnimatedButtonStyle}"
                             Tag="{x:Bind ViewModel.Dto.Id, Mode=OneWay}" />
                     </StackPanel>
-                    <!--  AccessHash  -->
+                    <!--  Хеш доступа  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="2"
@@ -478,7 +478,7 @@
                         l:Uids.Uid="FieldAccessHash"
                         FontWeight="Bold"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="3"
@@ -503,7 +503,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <!--  IsContact  -->
+                        <!--  Признак контакта  -->
                         <TextBlock
                             Grid.Column="0"
                             Margin="10,7,7,2"
@@ -518,7 +518,7 @@
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             IsOn="{x:Bind ViewModel.Dto.IsContact, Mode=OneWay}" />
-                        <!--  IsUserActive  -->
+                        <!--  Признак активности пользователя  -->
                         <TextBlock
                             Grid.Column="2"
                             Margin="10,7,7,2"
@@ -533,7 +533,7 @@
                             VerticalAlignment="Center"
                             IsEnabled="False"
                             IsOn="{x:Bind ViewModel.Dto.IsUserActive, Mode=OneWay}" />
-                        <!--  IsBot  -->
+                        <!--  Признак бота  -->
                         <TextBlock
                             Grid.Row="2"
                             Grid.Column="4"
@@ -550,7 +550,7 @@
                             IsEnabled="False"
                             IsOn="{x:Bind ViewModel.Dto.IsBot, Mode=OneWay}" />
                     </Grid>
-                    <!--  DisplayName  -->
+                    <!--  Отображаемое имя  -->
                     <TextBlock
                         Grid.Row="3"
                         Grid.Column="0"
@@ -573,7 +573,7 @@
                         IsReadOnly="True"
                         Text="{x:Bind ViewModel.Dto.DisplayName, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  UserName  -->
+                    <!--  Имя пользователя  -->
                     <TextBlock
                         Grid.Row="3"
                         Grid.Column="2"
@@ -596,7 +596,7 @@
                         IsReadOnly="True"
                         Text="{x:Bind ViewModel.Dto.UserName, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  FirstName  -->
+                    <!--  Имя  -->
                     <TextBlock
                         Grid.Row="4"
                         Grid.Column="0"
@@ -604,7 +604,7 @@
                         l:Uids.Uid="FieldFirstName"
                         FontWeight="Bold"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="4"
                         Grid.Column="1"
@@ -618,7 +618,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.Dto.FirstName, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  LastName  -->
+                    <!--  Фамилия  -->
                     <TextBlock
                         Grid.Row="4"
                         Grid.Column="2"
@@ -626,7 +626,7 @@
                         l:Uids.Uid="FieldLastName"
                         FontWeight="Bold"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="4"
                         Grid.Column="3"
@@ -640,7 +640,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.Dto.LastName, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  StoriesMaxId  -->
+                    <!--  Максимальный идентификатор истории  -->
                     <TextBlock
                         Grid.Row="5"
                         Grid.Column="2"
@@ -656,7 +656,7 @@
                         IsEnabled="False"
                         IsReadOnly="True"
                         Text="{x:Bind ViewModel.Dto.StoriesMaxId, Mode=TwoWay}" />
-                    <!--  PhoneNumber  -->
+                    <!--  Номер телефона  -->
                     <TextBlock
                         Grid.Row="6"
                         Grid.Column="0"
@@ -664,7 +664,7 @@
                         l:Uids.Uid="FieldPhoneNumber"
                         FontWeight="Bold"
                         TextAlignment="Left" />
-                    <!--  Sensitive data  -->
+                    <!--  Конфиденциальные данные  -->
                     <TextBlock
                         Grid.Row="6"
                         Grid.Column="1"
@@ -678,7 +678,7 @@
                         HorizontalAlignment="Stretch"
                         Text="{x:Bind ViewModel.Dto.PhoneNumber, Mode=TwoWay}"
                         Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <!--  Status  -->
+                    <!--  Статус  -->
                     <TextBlock
                         Grid.Row="6"
                         Grid.Column="2"
@@ -697,7 +697,7 @@
                 </Grid>
             </Expander>
         </ContentControl>
-        <!--  Chats  -->
+        <!--  Чаты  -->
         <ContentControl
             Grid.Row="2"
             HorizontalAlignment="Stretch"
@@ -710,21 +710,21 @@
                 HorizontalContentAlignment="Stretch"
                 l:Uids.Uid="ExpanderChats"
                 IsExpanded="True">
-                <!--  User with chats  -->
+                <!--  Пользователь и его чаты  -->
                 <ListView
                     x:Name="ListViewUserWithChats"
                     ItemTemplate="{StaticResource UserChatsListTemplate}"
                     ItemsSource="{x:Bind ViewModel.ChatsDtos, Mode=OneWay}">
                     <!--
-                        The ItemsStackPanel must be edited to update the following two properties
-                        These properties allow the list to grow from the bottom
+                        Параметры ItemsStackPanel определяют расположение загруженных элементов
+                        Новые элементы добавляются с сохранением положения нижних элементов
                     -->
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                    <!--  This setter property is created so ListViewItems correctly align to the left or right.  -->
+                    <!--  Растягиваем содержимое элемента для правильного выравнивания в списке  -->
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />

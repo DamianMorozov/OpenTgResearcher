@@ -36,6 +36,7 @@ internal static partial class Program
             ("ToolbarWaitsForSharedUpdate", ToolbarWaitsForSharedUpdateAsync),
             ("ToolbarCancelConfirmation", ToolbarCancelConfirmationAsync),
             ("ToolbarControlsLayout", ToolbarControlsLayoutAsync),
+            ("ToolbarSensitiveDataLayout", ToolbarSensitiveDataLayoutAsync),
             ("ToolbarStringsRussian", () => ToolbarStringsAsync("ru-RU", "Язык", "Тема", "Проверить обновления")),
             ("ToolbarStringsEnglish", () => ToolbarStringsAsync("en-US", "Language", "Theme", "Check for updates")),
         };

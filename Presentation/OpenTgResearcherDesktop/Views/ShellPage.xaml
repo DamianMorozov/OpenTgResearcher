@@ -129,6 +129,28 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
+                <!--  Общее отображение конфиденциальных данных на всех страницах  -->
+                <StackPanel
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <ToggleSwitch
+                        x:Name="ToggleSwitchShowSensitiveData"
+                        Width="40"
+                        Height="36"
+                        MinWidth="0"
+                        AutomationProperties.AutomationId="ToggleSwitchShowSensitiveData"
+                        IsOn="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
+                        OffContent=""
+                        OnContent=""
+                        Toggled="ToggleSwitchShowSecretFields_Toggled" />
+                    <TextBlock
+                        x:Name="ToolbarSensitiveDataLabel"
+                        VerticalAlignment="Center"
+                        l:Uids.Uid="ToolbarSensitiveData"
+                        AutomationProperties.AutomationId="ToolbarSensitiveDataLabel"
+                        Visibility="Collapsed" />
+                </StackPanel>
                 <!--  Проверка стабильного выпуска с общим журналом и подтверждением  -->
                 <Button
                     x:Name="ToolbarUpdateButton"
@@ -310,8 +332,7 @@
                             <Grid Margin="-60,-10,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <!--  Обновление страницы  -->
                                 <Button
@@ -329,17 +350,8 @@
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource TitleTextBlockStyle}"
-                                    Text="{Binding}" />
-                                <!--  Переключатель отображения конфиденциальных данных  -->
-                                <ToggleSwitch
-                                    x:Name="ToggleSwitchShowSensitiveData"
-                                    Grid.Column="2"
-                                    Margin="10,5,15,-5"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    l:Uids.Uid="ToggleSwitchShowSensitiveData"
-                                    IsOn="True"
-                                    Toggled="ToggleSwitchShowSecretFields_Toggled" />
+                                    Text="{Binding}"
+                                    TextTrimming="CharacterEllipsis" />
                             </Grid>
                         </DataTemplate>
                     </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
@@ -543,6 +555,7 @@
                     <VisualState.Setters>
                         <Setter Target="ToolbarLanguageLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarThemeLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarSensitiveDataLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarUpdateLabel.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
@@ -553,6 +566,7 @@
                     <VisualState.Setters>
                         <Setter Target="ToolbarLanguageLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarThemeLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarSensitiveDataLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarUpdateLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarConnectLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarDisconnectLabel.Visibility" Value="Visible" />

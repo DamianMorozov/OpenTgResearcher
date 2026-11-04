@@ -1509,12 +1509,6 @@
   <data name="Storage" xml:space="preserve">
     <value>Storage</value>
   </data>
-  <data name="ToggleSwitchShowSensitiveData.OffContent" xml:space="preserve">
-    <value>Hiding sensitive data</value>
-  </data>
-  <data name="ToggleSwitchShowSensitiveData.OnContent" xml:space="preserve">
-    <value>Displaying sensitive data</value>
-  </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Update the page?</value>
   </data>
@@ -1833,6 +1827,12 @@ API credentials, phone number, and the selected proxy will be removed from the p
   </data>
   <data name="ToolbarTheme.Text" xml:space="preserve">
     <value>Theme</value>
+  </data>
+  <data name="ToolbarSensitiveData.Text" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="ToolbarSensitiveDataToolTip" xml:space="preserve">
+    <value>Show sensitive data on all pages</value>
   </data>
   <data name="ToolbarUpdate.Text" xml:space="preserve">
     <value>Check for updates</value>

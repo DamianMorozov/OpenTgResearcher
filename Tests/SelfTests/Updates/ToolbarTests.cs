@@ -90,6 +90,27 @@ internal static partial class Program
         return Task.CompletedTask;
     }
 
+    // Общий переключатель принадлежит панели окна и читает текущее состояние вместо сброса при навигации
+    private static Task ToolbarSensitiveDataLayoutAsync()
+    {
+        using var stream = typeof(Program).Assembly.GetManifestResourceStream("ShellPage.xaml")!;
+        var root = XDocument.Load(stream);
+        XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
+        var toggles = root.Descendants().Where(element => (string?)element.Attribute(x + "Name") == "ToggleSwitchShowSensitiveData").ToArray();
+        Assert(toggles.Length == 1, "Должен остаться один общий переключатель конфиденциальных данных");
+        var toggle = toggles[0];
+        Assert(toggle.Ancestors().Any(element => (string?)element.Attribute(x + "Name") == "AppTitleBar"),
+            "Переключатель конфиденциальных данных остался в заголовке страницы вместо верхней панели");
+        Assert(!toggle.Ancestors().Any(element => element.Name.LocalName == "DataTemplate"), "Переключатель пересоздаётся при навигации");
+        Assert(!toggle.Ancestors().Any(element => (string?)element.Attribute(x + "Name") == "TitleBarDragRegion"),
+            "Переключатель попал в область перетаскивания окна");
+        Assert(toggle.Attribute("IsOn")?.Value.Contains("ViewModel.IsDisplaySensitiveData, Mode=OneWay") == true,
+            "Начальное состояние переключателя не связано с общим состоянием приложения");
+        Assert(toggle.Attribute("AutomationProperties.AutomationId")?.Value == "ToggleSwitchShowSensitiveData",
+            "Потерян идентификатор существующей проверки скрытия обложек");
+        return Task.CompletedTask;
+    }
+
     // Проверяем реальные подписи и варианты меню для обоих языков
     private static Task ToolbarStringsAsync(string language, string languageCaption, string themeCaption, string updateCaption)
     {
@@ -97,6 +118,11 @@ internal static partial class Program
         Assert("ToolbarLanguage".GetLocalizedResource() == languageCaption, "Не переведена кнопка языка");
         Assert("ToolbarTheme".GetLocalizedResource() == themeCaption, "Не переведена кнопка темы");
         Assert("ToolbarUpdate".GetLocalizedResource() == updateCaption, "Не переведена проверка обновлений");
+        Assert("ToolbarSensitiveData".GetLocalizedResource() == (language == "ru-RU" ? "Данные" : "Data"),
+            "Не переведена краткая подпись переключателя данных");
+        Assert("ToolbarSensitiveDataToolTip".GetLocalizedResource() == (language == "ru-RU"
+            ? "Показывать конфиденциальные данные на всех страницах" : "Show sensitive data on all pages"),
+            "Нет полной подсказки переключателя данных");
         foreach (var key in new[] { "ToolbarSystemLanguage", "ToolbarSystemTheme", "ToolbarLightTheme", "ToolbarDarkTheme" })
             Assert(!string.IsNullOrWhiteSpace(key.GetLocalizedResource()), $"Нет перевода {key}");
         return Task.CompletedTask;

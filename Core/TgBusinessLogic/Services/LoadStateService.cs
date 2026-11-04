@@ -25,7 +25,7 @@ public sealed partial class LoadStateService : ObservableObject, ILoadStateServi
     public partial bool IsFloodLogProcessing { get; private set; }
     /// <inheritdoc />
     [ObservableProperty]
-    public partial bool IsDisplaySensitiveData { get; private set; }
+    public partial bool IsDisplaySensitiveData { get; private set; } = true;
     /// <inheritdoc />
     [ObservableProperty]
     public partial bool IsOnlineReady { get; private set; }

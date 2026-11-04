@@ -43,9 +43,8 @@
     <File Path="Docs/GUIDE-SETUP-GROUPS.md" />
     <File Path="Docs/GUIDES-RUS.md" />
     <File Path="Docs/GUIDES.md" />
-    <File Path="Docs/ISSUE-RUS.md" />
-    <File Path="Docs/ISSUE.md" />
     <File Path="Docs/RELEASES.md" />
+    <File Path="ISSUE-TEMPLATE.md" />
     <File Path="LICENSE.md" />
     <File Path="TODO.md" />
   </Folder>

@@ -116,7 +116,7 @@ function Test-ToolbarBounds {
     $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
     $windowRect = $window.Current.BoundingRectangle
     $previousRight = $windowRect.Left
-    foreach ($id in @('ToolbarLanguage', 'ToolbarTheme', 'ToolbarUpdate', 'ToolbarConnect', 'ToolbarDisconnect')) {
+    foreach ($id in @('ToolbarLanguage', 'ToolbarTheme', 'ToggleSwitchShowSensitiveData', 'ToolbarUpdate', 'ToolbarConnect', 'ToolbarDisconnect')) {
         $button = Get-ToolbarButton $id
         $rect = $button.Current.BoundingRectangle
         if ($rect.Width -lt 32 -or $rect.Height -lt 32 -or $rect.Left -lt $previousRight -or $rect.Right -gt $windowRect.Right - 100 -or
@@ -126,6 +126,50 @@ function Test-ToolbarBounds {
         if ([string]::IsNullOrWhiteSpace($button.Current.Name)) { throw "У кнопки $id нет доступной подписи" }
         $previousRight = $rect.Right
     }
+    $labelCondition = [System.Windows.Automation.PropertyCondition]::new(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ToolbarSensitiveDataLabel')
+    $label = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $labelCondition)
+    if ($null -ne $label -and -not $label.Current.IsOffscreen) {
+        $toggleRect = (Get-ToolbarButton 'ToggleSwitchShowSensitiveData').Current.BoundingRectangle
+        $gap = $label.Current.BoundingRectangle.Left - $toggleRect.Right
+        if ($gap -lt 0 -or $gap -gt $toggleRect.Height / 4) { throw "Слишком большой отступ подписи переключателя: $gap" }
+    }
+}
+
+# Проверяем фактическое состояние общего переключателя после смены страниц и языка
+function Assert-SensitiveDataState([bool]$shown) {
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    do {
+        $control = Get-ToolbarButton 'ToggleSwitchShowSensitiveData'
+        $pattern = $control.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        $actual = $pattern.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On
+        if ($actual -eq $shown) { break }
+        Start-Sleep -Milliseconds 100
+    } while ([DateTime]::UtcNow -lt $deadline)
+    if ($actual -ne $shown) { throw "Переключатель данных сбросил состояние: ожидалось $shown" }
+    if ($control.Current.Name -notmatch '^(Показывать конфиденциальные данные на всех страницах|Show sensitive data on all pages)$') {
+        throw "Переключатель данных не локализован: $($control.Current.Name)"
+    }
+}
+
+# Проверяем результат скрытия на настоящем поле настроек, содержащем путь только к тестовой БД
+function Assert-SettingsStorageShown([bool]$shown) {
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    do {
+        $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+        $edits = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                [System.Windows.Automation.ControlType]::Edit))
+        $found = $false
+        foreach ($edit in $edits) {
+            $pattern = $null
+            if ($edit.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern, [ref]$pattern) -and
+                $pattern.Current.Value -eq (Join-Path $caseDirectory 'TgStorage.db')) { $found = $true }
+        }
+        if ($found -eq $shown) { return }
+        Start-Sleep -Milliseconds 100
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw "Видимость пути тестовой БД не соответствует переключателю: ожидалось $shown"
 }
 
 # Проверяем сохранение единственного выбранного параметра без доступа к настройкам пользователя
@@ -246,6 +290,9 @@ public static class ToolbarTestNative
         Start-Sleep -Milliseconds 400
         Test-ToolbarBounds
         Save-AppSnapshot 'toolbar-wide'
+        Assert-SensitiveDataState $true
+        Invoke-ToolbarButton 'ToggleSwitchShowSensitiveData'
+        Assert-SensitiveDataState $false
         $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern).Resize(800, 800)
         Start-Sleep -Milliseconds 400
         Test-ToolbarBounds
@@ -260,6 +307,7 @@ public static class ToolbarTestNative
             Start-Sleep -Milliseconds 50
         } while ([DateTime]::UtcNow -lt $deadline)
         if ($name -ne 'Check for updates') { throw 'Подпись верхней панели не переключилась на английский' }
+        Assert-SensitiveDataState $false
         Invoke-ToolbarButton 'ToolbarTheme'
         Save-AppSnapshot 'toolbar-theme-menu'
         Invoke-AppElement (Wait-AppElement '^Dark$')
@@ -285,6 +333,11 @@ public static class ToolbarTestNative
         }
         Invoke-ToolbarButton 'ToolbarUpdate'
         Invoke-AppElement (Wait-AppElement '^(Отмена|Cancel)$')
+        Assert-SensitiveDataState $false
+        Invoke-ToolbarButton 'ToggleSwitchShowSensitiveData'
+        Assert-SensitiveDataState $true
+        Invoke-ToolbarButton 'ToggleSwitchShowSensitiveData'
+        Assert-SensitiveDataState $false
         if ((Get-UpdateLogElement).GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value.Length -ne 0) {
             throw 'Отказ от обновления из панели изменил журнал'
         }
@@ -302,7 +355,19 @@ public static class ToolbarTestNative
     Save-AppSnapshot 'home'
     Invoke-AppElement $settings
     [void](Wait-AppElement '^(Язык|Language)$')
+    if ($Toolbar) {
+        Assert-SensitiveDataState $false
+        Invoke-ToolbarButton 'ToggleSwitchShowSensitiveData'
+        Assert-SensitiveDataState $true
+        Assert-SettingsStorageShown $true
+        Save-AppSnapshot 'settings-data-shown'
+        Invoke-ToolbarButton 'ToggleSwitchShowSensitiveData'
+        Assert-SensitiveDataState $false
+        Assert-SettingsStorageShown $false
+        Save-AppSnapshot 'settings-data-hidden'
+    }
     Invoke-AppElement (Wait-AppElement '^(Обновление|Update)$')
+    if ($Toolbar) { Assert-SensitiveDataState $false }
     $releaseCaption = if ($Language -eq 'Russian') { 'Проверка наличия обновлений релиза' } else { 'Checking for release updates' }
     $previewCaption = if ($Language -eq 'Russian') { 'Проверка обновлений предварительного просмотра' } else { 'Checking for preview updates' }
     $release = Wait-AppElement ('^' + [regex]::Escape($releaseCaption) + '$')
@@ -330,7 +395,10 @@ public static class ToolbarTestNative
     if ($newLog -match 'App_UnhandledException|COMException|System.InvalidOperationException') { throw 'В журнале найдено исключение' }
     if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000)) { throw 'Desktop не завершил закрытие окна' }
     if ($appProcess.ExitCode -ne 0) { throw "Desktop завершился с кодом $($appProcess.ExitCode)" }
-    if ($Toolbar) { Write-Output "PASS: верхняя панель ($Language), язык, все темы, сохранение выбора, обновление, ширина 800 и 1280" }
+    if ($Toolbar) {
+        Write-Output "PASS: верхняя панель ($Language), язык, все темы, обновление, ширина 800 и 1280"
+        Write-Output 'PASS: общий переключатель скрывает поля и сохраняет состояние при навигации без подключения Telegram'
+    }
     Write-Output "PASS: настройки и обновления ($Language), диалоги, журнал, инструкция установки, завершение с кодом 0; $caseDirectory"
 }
 catch {

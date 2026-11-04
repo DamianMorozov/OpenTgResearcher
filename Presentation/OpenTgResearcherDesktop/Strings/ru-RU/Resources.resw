@@ -1571,12 +1571,6 @@
   <data name="Storage" xml:space="preserve">
     <value>Хранилище</value>
   </data>
-  <data name="ToggleSwitchShowSensitiveData.OffContent" xml:space="preserve">
-    <value>Скрытие конфиденциальных данных</value>
-  </data>
-  <data name="ToggleSwitchShowSensitiveData.OnContent" xml:space="preserve">
-    <value>Отображение конфиденциальных данных</value>
-  </data>
   <data name="AskUpdatePage" xml:space="preserve">
     <value>Обновить страницу?</value>
   </data>
@@ -1897,6 +1891,12 @@ API-параметры, телефон и выбранный прокси буд
   </data>
   <data name="ToolbarTheme.Text" xml:space="preserve">
     <value>Тема</value>
+  </data>
+  <data name="ToolbarSensitiveData.Text" xml:space="preserve">
+    <value>Данные</value>
+  </data>
+  <data name="ToolbarSensitiveDataToolTip" xml:space="preserve">
+    <value>Показывать конфиденциальные данные на всех страницах</value>
   </data>
   <data name="ToolbarUpdate.Text" xml:space="preserve">
     <value>Проверить обновления</value>

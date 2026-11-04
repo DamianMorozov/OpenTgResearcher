@@ -5,7 +5,6 @@ public sealed partial class ShellPage
     #region Fields, properties, constructor
 
     public ShellViewModel ViewModel { get; }
-    private bool _isHandlingToggle = false;
 
     public ShellPage(ShellViewModel viewModel)
     {
@@ -47,22 +46,23 @@ public sealed partial class ShellPage
     // Обновляем подписи средств доступности и подсказки одновременно с языком приложения
     private void OnToolbarLanguageChanged(object? sender, LanguageChangedEventArgs e) => TgDesktopUtils.InvokeOnUIThread(LocalizeToolbar);
 
-    // Сохраняем понятные подписи у компактных кнопок без видимого текста
+    // Сохраняем понятные подписи у компактных элементов без видимого текста
     private void LocalizeToolbar()
     {
         SetToolbarCaption(ToolbarLanguageButton, "ToolbarLanguage");
         SetToolbarCaption(ToolbarThemeButton, "ToolbarTheme");
+        SetToolbarCaption(ToggleSwitchShowSensitiveData, "ToolbarSensitiveDataToolTip");
         SetToolbarCaption(ToolbarUpdateButton, "ToolbarUpdate");
         SetToolbarCaption(ToolbarConnectButton, "ClientConnect");
         SetToolbarCaption(ToolbarDisconnectButton, "ClientDisconnect");
     }
 
-    // Используем одну подпись для подсказки и имени кнопки
-    private static void SetToolbarCaption(Button button, string resource)
+    // Используем одну подпись для подсказки и доступного имени элемента
+    private static void SetToolbarCaption(Control control, string resource)
     {
         var caption = resource.GetLocalizedResource();
-        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(button, caption);
-        ToolTipService.SetToolTip(button, caption);
+        Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(control, caption);
+        ToolTipService.SetToolTip(control, caption);
     }
 
     // Пересчитываем отступы при изменении режима навигации
@@ -100,48 +100,10 @@ public sealed partial class ShellPage
         args.Handled = result;
     }
 
-    private async void ToggleSwitchShowSecretFields_Toggled(object sender, RoutedEventArgs e)
+    // Меняем общее состояние без обращения к текущей странице, хранилищу и Telegram
+    private void ToggleSwitchShowSecretFields_Toggled(object sender, RoutedEventArgs e)
     {
-        if (_isHandlingToggle)
-            return;
-
-        if (sender is not ToggleSwitch toggleSwitch)
-            return;
-        if (NavigationFrame.Content is not TgPageBase pageBase)
-        {
-            DefaultToggleSwitch(toggleSwitch);
-            return;
-        }
-        if (pageBase.ViewModel is not TgPageViewModelBase viewModelBase)
-        {
-            DefaultToggleSwitch(toggleSwitch);
-            return;
-        }
-
-        if (ViewModel.NavigationService.Frame is not null)
-        {
-            var viewModel = await ViewModel.NavigationService.Frame.GetPageViewModelAsync();
-            if (viewModel is TgPageViewModelBase pageViewModel)
-            {
-                await pageViewModel.LoadStorageDataAsync(() =>
-                {
-                    ViewModel.LoadStateService.SetIsDisplaySensitiveData(toggleSwitch.IsOn);
-                });
-            }
-        }
-    }
-
-    private void DefaultToggleSwitch(ToggleSwitch toggleSwitch)
-    {
-        try
-        {
-            _isHandlingToggle = true;
-            toggleSwitch.IsOn = false;
-        }
-        finally
-        {
-            _isHandlingToggle = false;
-        }
+        if (sender is ToggleSwitch toggleSwitch) ViewModel.LoadStateService.SetIsDisplaySensitiveData(toggleSwitch.IsOn);
     }
 
     private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

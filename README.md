@@ -105,18 +105,10 @@ Web-прокси пропускаются, остальные записи им�
 
 ## Анимации и скриншоты
 
-### Заставка OpenTgResearcherDesktop
+### OpenTgResearcher Desktop
 
 <p align="center"><img src="Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
 
-### Заставка OpenTgResearcherConsole
+### OpenTgResearcher Console
 
 <p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>
-
-### OpenTgResearcherConsole - Мониторинг чатов
-
-<p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_Start_monitoring_chats.gif"></p>
-
-### OpenTgResearcherConsole - Поиск ключевых слов в чатах
-
-<p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_Start_search_for_keywords_in_chats.gif"></p>

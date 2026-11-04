@@ -1856,4 +1856,40 @@ API-параметры, телефон и выбранный прокси буд
   <data name="UserColumnMessages" xml:space="preserve">
     <value>Сообщений</value>
   </data>
+  <data name="Shell_Settings.Content" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="ActionCancelUpdate.Content" xml:space="preserve">
+    <value>Отменить загрузку</value>
+  </data>
+  <data name="UpdateLogCaption.Text" xml:space="preserve">
+    <value>Журнал обновления</value>
+  </data>
+  <data name="UpdateStarted" xml:space="preserve">
+    <value>Проверка обновлений OpenTgResearcherDesktop. Установленная версия: {0}</value>
+  </data>
+  <data name="UpdateCheckingRelease" xml:space="preserve">
+    <value>Проверяем стабильные версии на GitHub…</value>
+  </data>
+  <data name="UpdateCheckingPreview" xml:space="preserve">
+    <value>Проверяем стабильные и предварительные версии на GitHub…</value>
+  </data>
+  <data name="UpdateAlreadyLatest" xml:space="preserve">
+    <value>Установлена последняя версия приложения для выбранного типа выпуска.</value>
+  </data>
+  <data name="UpdateNotInstalled" xml:space="preserve">
+    <value>Встроенное обновление доступно в версии, установленной через Velopack. Скачайте OpenTgResearcherDesktop-win-x64-Setup.exe на странице релизов GitHub и установите приложение. Из Visual Studio и обычного каталога публикации используйте новую сборку вручную.</value>
+  </data>
+  <data name="UpdateDownloading" xml:space="preserve">
+    <value>Скачиваем обновление {0}…</value>
+  </data>
+  <data name="UpdateDownloaded" xml:space="preserve">
+    <value>Обновление {0} скачано и подготовлено. Закройте приложение штатно и перезапустите его, чтобы применить новую версию.</value>
+  </data>
+  <data name="UpdateCancelled" xml:space="preserve">
+    <value>Загрузка обновления отменена. Проверку можно запустить снова.</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Не удалось проверить или скачать обновление. Проверьте доступ к GitHub и повторите попытку. Подробности: {0}</value>
+  </data>
 </root>

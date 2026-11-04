@@ -1,0 +1,13 @@
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using OpenTgResearcherDesktop.Helpers;
+global using OpenTgResearcherDesktop.Services;
+global using OpenTgResearcherDesktop.UpdateSelfTests;
+global using OpenTgResearcherDesktop.ViewModels;
+global using System.Diagnostics.CodeAnalysis;
+global using System.Globalization;
+global using System.Reflection;
+global using System.Xml.Linq;
+global using TgInfrastructure.Enums;
+global using TgInfrastructure.Helpers;
+global using TgConstants = OpenTgResearcherDesktop.UpdateSelfTests.TestConstants;

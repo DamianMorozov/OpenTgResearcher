@@ -168,6 +168,7 @@ FusionCache используется для результатов запрос�
 | [OpenTgResearcherConsoleTests](Tests/OpenTgResearcherConsoleTests/OpenTgResearcherConsoleTests.csproj) | Подготовлен проект NUnit; ссылок на проекты приложения и реализованных тестовых сценариев сейчас нет |
 | [OpenTgResearcherDesktop.Tests](Tests/OpenTgResearcherDesktop.Tests.MSTests/OpenTgResearcherDesktop.Tests.csproj) | MSTest с WinUI-хостом и ссылкой на Desktop; текущий тест `Assert.IsTrue(true)` не проверяет поведение приложения |
 | [LogsPage.SelfTest](Tests/SelfTests/LogsPage/LogsPage.SelfTest.csproj) | Консольный селфтест: исходные VM, модель и контракт страницы журналов подключены через `Compile Link`; UI заменён заглушками, файловые операции реальные; прямая ссылка на `TgInfrastructure` |
+| [Updates.SelfTest](Tests/SelfTests/Updates/Updates.SelfTest.csproj) | Исходные VM обновлений, служба навигации и помощник ресурсов через `Compile Link`; настоящие русские и английские ресурсы, подменённые WinUI и источник пакетов; проверяет подтверждения, ожидание, прогресс, отмену и обработку ошибок без установки обновлений |
 | [DesktopStartup.SelfTest](Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.csproj) | Консольный селфтест: исходные служба, модель и контракт настроек через `Compile Link`, заглушки WinUI/локализатора; реальный мониторинг из `TgBusinessLogic`; режим `--velopack` проверяет IL точек входа готовых Desktop и Console без их запуска |
 | [ClientConnection.SelfTest](Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj) | Консольный селфтест: исходная VM подключения через `Compile Link`, настоящие DTO из `TgBusinessLogic`/`TgStorage`; UI, репозитории и клиент подменены, подключения к Telegram не выполняются |
 | [Proxies.SelfTest](Tests/SelfTests/Proxies/Proxies.SelfTest.csproj) | Исходные VM списка и карточки прокси, общий обработчик подтверждений через `Compile Link`; настоящие репозиторий и SQLite в памяти, HTTP CONNECT и SOCKS5 на loopback, настройка MTProto без Telegram; явный режим `--live` проверяет Desktop-подключение без прокси и с первой записью, используя БД только для чтения и копии сессии |
@@ -185,6 +186,7 @@ flowchart LR
     BusinessTests --> StorageTests
     DesktopTests["OpenTgResearcherDesktop.Tests"] --> Desktop["OpenTgResearcherDesktop"]
     LogsTests["LogsPage.SelfTest"] --> Infrastructure
+    UpdatesTests["Updates.SelfTest"] --> Infrastructure
     StartupTests["DesktopStartup.SelfTest"] --> Business
     ConnectionTests["ClientConnection.SelfTest"] --> Business
     ProxyTests["Proxies.SelfTest"] --> Business
@@ -203,6 +205,7 @@ flowchart LR
 Дополнительные скрипты проверки:
 
 - [Test-DesktopArchitecture.ps1](Tests/SelfTests/Test-DesktopArchitecture.ps1) проверяет выбор архитектуры Windows App SDK в конфигурациях решения, не компилируя приложение.
+- [Test-DesktopUpdates.ps1](Tests/SelfTests/Test-DesktopUpdates.ps1) проверяет настройки и страницу обновлений настоящего unpackaged-окна на русском или английском, диалоги и журнал с отдельной тестовой БД; обновления не устанавливаются.
 - [Test-RebuildOutputs.ps1](Tests/SelfTests/Test-RebuildOutputs.ps1) воспроизводит отложенный запуск цели очистки после Rebuild на отдельном MSBuild-проекте и проверяет сохранность результата сборки.
 - [Test-DesktopChat.ps1](Tests/SelfTests/Test-DesktopChat.ps1) проверяет открытие чата и семи вкладок настоящего unpackaged-окна на русском или английском, журнал и завершение процесса; использует отдельные настройки и тестовую БД, необязательно с выборкой из источника только для чтения, без подключения к Telegram.
 - [Test-DesktopShutdown.ps1](Tests/SelfTests/Test-DesktopShutdown.ps1) запускает установленный Package под CDB, закрывает окно и анализирует завершение; требует Windows SDK Debuggers и полного имени установленного пакета.

@@ -18,6 +18,8 @@ public sealed class NavigationViewService : INavigationViewService
 	public void Initialize(NavigationView navigationView)
 	{
 		_navigationView = navigationView;
+		_navigationView.Loaded += OnLoaded;
+		Localizer.Get().LanguageChanged += OnLanguageChanged;
 		_navigationView.BackRequested += OnBackRequested;
 		_navigationView.ItemInvoked += OnItemInvoked;
 	}
@@ -26,6 +28,8 @@ public sealed class NavigationViewService : INavigationViewService
 	{
 		if (_navigationView != null)
 		{
+			_navigationView.Loaded -= OnLoaded;
+			Localizer.Get().LanguageChanged -= OnLanguageChanged;
 			_navigationView.BackRequested -= OnBackRequested;
 			_navigationView.ItemInvoked -= OnItemInvoked;
 		}
@@ -42,6 +46,22 @@ public sealed class NavigationViewService : INavigationViewService
 	}
 
 	private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) => _navigationService.GoBack();
+
+    // Подключаем встроенный пункт настроек к локализатору приложения после создания шаблона NavigationView
+    private void OnLoaded(object sender, RoutedEventArgs e) => LocalizeSettingsItem();
+
+    // Обновляем встроенную кнопку при смене языка приложения
+    private void OnLanguageChanged(object? sender, LanguageChangedEventArgs e) => TgDesktopUtils.InvokeOnUIThread(LocalizeSettingsItem);
+
+    // Видимая подпись и имя для средств доступности встроенной кнопки задаются раздельно
+    private void LocalizeSettingsItem()
+    {
+        if (_navigationView?.SettingsItem is not NavigationViewItem settingsItem) return;
+        Uids.SetUid(settingsItem, "Shell_Settings");
+        var caption = "Shell_Settings".GetLocalizedResource();
+        settingsItem.Content = caption;
+        settingsItem.SetValue(Microsoft.UI.Xaml.Automation.AutomationProperties.NameProperty, caption);
+    }
 
 	private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
 	{

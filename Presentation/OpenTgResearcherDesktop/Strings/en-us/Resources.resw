@@ -1792,4 +1792,40 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="UserColumnMessages" xml:space="preserve">
     <value>Messages</value>
   </data>
+  <data name="Shell_Settings.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ActionCancelUpdate.Content" xml:space="preserve">
+    <value>Cancel download</value>
+  </data>
+  <data name="UpdateLogCaption.Text" xml:space="preserve">
+    <value>Update log</value>
+  </data>
+  <data name="UpdateStarted" xml:space="preserve">
+    <value>Checking updates for OpenTgResearcherDesktop. Installed version: {0}</value>
+  </data>
+  <data name="UpdateCheckingRelease" xml:space="preserve">
+    <value>Checking stable releases on GitHub…</value>
+  </data>
+  <data name="UpdateCheckingPreview" xml:space="preserve">
+    <value>Checking stable and preview releases on GitHub…</value>
+  </data>
+  <data name="UpdateAlreadyLatest" xml:space="preserve">
+    <value>You have the latest version available for the selected release type.</value>
+  </data>
+  <data name="UpdateNotInstalled" xml:space="preserve">
+    <value>Built-in updates are available in the version installed with Velopack. Download OpenTgResearcherDesktop-win-x64-Setup.exe from GitHub Releases and install the application. When running from Visual Studio or a regular publish folder, replace the build manually.</value>
+  </data>
+  <data name="UpdateDownloading" xml:space="preserve">
+    <value>Downloading update {0}…</value>
+  </data>
+  <data name="UpdateDownloaded" xml:space="preserve">
+    <value>Update {0} has been downloaded and prepared. Close the application normally and restart it to apply the new version.</value>
+  </data>
+  <data name="UpdateCancelled" xml:space="preserve">
+    <value>The update download was cancelled. You can check for updates again.</value>
+  </data>
+  <data name="UpdateFailed" xml:space="preserve">
+    <value>Could not check for or download an update. Check access to GitHub and try again. Details: {0}</value>
+  </data>
 </root>

@@ -31,7 +31,10 @@ internal static partial class Program
         await Repository.CreateDefaultAsync();
         var vm = CreateListViewModel();
         await vm.OnNavigatedToAsync(null);
+        var sawNetworkActivity = false;
+        vm.LoadStateService.PropertyChanged += (_, _) => sawNetworkActivity |= vm.LoadStateService.IsDownloadProcessing;
         await GetCheckAllCommand(vm).ExecuteAsync(null);
+        Assert(sawNetworkActivity && !vm.LoadStateService.IsDownloadProcessing, "Проверка прокси не сообщила начало и завершение сетевой активности");
         Assert(GetAvailability(vm.Dtos.Single(x => x.Uid == open.Uid)).Contains("Доступен")
             && GetAvailability(vm.Dtos.Single(x => x.Uid == closed.Uid)).Contains("Недоступен")
             && GetAvailability(vm.Dtos.Single(x => x.Type == TgEnumProxyType.None)) == "Без прокси", "Результаты TCP-проверки не соответствуют портам");

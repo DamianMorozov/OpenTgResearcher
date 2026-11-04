@@ -34,11 +34,31 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Viewbox Width="32" Height="32" IsHitTestVisible="False">
+                <Viewbox
+                    Width="32"
+                    Height="32"
+                    IsHitTestVisible="False">
                     <ContentControl
                         AutomationProperties.AutomationId="ToolbarLogo"
                         AutomationProperties.Name="OTR"
-                        Style="{StaticResource TgAppLogoStyle}" />
+                        Style="{StaticResource TgAppLogoStyle}">
+                        <!--  Сканирование показывает сетевую загрузку, не перекрывая управление окном  -->
+                        <Border
+                            x:Name="ToolbarScanBand"
+                            Width="76"
+                            Height="18"
+                            VerticalAlignment="Top"
+                            IsHitTestVisible="False"
+                            Opacity="0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Offset="0" Color="Transparent" />
+                                    <GradientStop Offset="0.5" Color="#DD7DDFFF" />
+                                    <GradientStop Offset="1" Color="Transparent" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                    </ContentControl>
                 </Viewbox>
                 <TextBlock
                     Grid.Column="1"

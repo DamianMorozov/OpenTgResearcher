@@ -14,8 +14,7 @@ public sealed partial class MainWindow : WindowEx
 
         try
         {
-            if (!string.IsNullOrEmpty(TgFileUtils.BaseDirectory))
-                AppWindow.SetIcon(Path.Combine(TgFileUtils.BaseDirectory, "Assets/applicationIcon.ico"));
+            AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/Otr.ico"));
             Content = null;
             Title = TgResourceExtensions.GetAppDisplayName();
 

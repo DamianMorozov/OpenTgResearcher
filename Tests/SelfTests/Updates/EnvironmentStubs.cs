@@ -1,7 +1,6 @@
 namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
 // Подменяем только среду WinUI и источник пакетов, исходные VM, службу навигации и чтение строк компилируем без изменений
-public sealed class ILoadStateService;
 public sealed class ITgSettingsService
 {
     public TgEnumLanguage AppLanguage { get; set; }
@@ -101,11 +100,13 @@ public sealed class ContentDialog
 }
 public abstract class TgPageViewModelBase : ObservableObject
 {
+    public ILoadStateService LoadStateService { get; }
     public object? XamlRootVm { get; set; } = new();
     public List<Exception> Errors { get; } = [];
     public int StorageCalls { get; private set; }
     public int TelegramChecks { get; private set; }
-    protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name) { }
+    protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
+        => LoadStateService = state;
     /// <summary> Заменяет навигацию без сети </summary>
     public virtual Task OnNavigatedToAsync(NavigationEventArgs? e) => Task.CompletedTask;
     /// <summary> Учитывает ненужную проверку Telegram из базовой перезагрузки страницы </summary>

@@ -6,6 +6,7 @@ internal static partial class Program
     private static async Task<int> Main(string[] args)
     {
         if (args.Length > 0 && args[0] == "--live") return await RunLiveConnectionAsync(args);
+        if (args is ["--seed-network-proxy", var targetDatabase, var port]) return await SeedNetworkProxyAsync(targetDatabase, ushort.Parse(port));
         TgGlobalTools.SetAppType(TgEnumAppType.Test);
         typeof(TgInfrastructure.Helpers.TgLogUtils).GetField("_startupLog", BindingFlags.Static | BindingFlags.NonPublic)!.SetValue(null,
             Path.Combine(AppContext.BaseDirectory, "proxy-selftest.log"));

@@ -5,6 +5,7 @@ public sealed partial class ShellPage
     #region Fields, properties, constructor
 
     public ShellViewModel ViewModel { get; }
+    private TgNetworkAnimationHelper? _networkAnimation;
 
     public ShellPage(ShellViewModel viewModel)
     {
@@ -38,10 +39,17 @@ public sealed partial class ShellPage
         ToolbarUpdateButton.CommandParameter = XamlRoot;
         LocalizeToolbar();
         UpdateTitleBarInsets();
+        _networkAnimation ??= new(ToolbarScanBand, ViewModel.LoadStateService, action => DispatcherQueue.TryEnqueue(() => action()),
+            () => new UISettings().AnimationsEnabled);
+        _networkAnimation.Start();
     }
 
     // Освобождаем подписку при временной замене оболочки заставкой
-    private void OnUnloaded(object sender, RoutedEventArgs e) => Localizer.Get().LanguageChanged -= OnToolbarLanguageChanged;
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        Localizer.Get().LanguageChanged -= OnToolbarLanguageChanged;
+        _networkAnimation?.Stop();
+    }
 
     // Обновляем подписи средств доступности и подсказки одновременно с языком приложения
     private void OnToolbarLanguageChanged(object? sender, LanguageChangedEventArgs e) => TgDesktopUtils.InvokeOnUIThread(LocalizeToolbar);

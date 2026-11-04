@@ -9,5 +9,7 @@ global using System.Globalization;
 global using System.Reflection;
 global using System.Xml.Linq;
 global using TgInfrastructure.Enums;
+global using TgBusinessLogic.Contracts;
+global using TgBusinessLogic.Services;
 global using TgInfrastructure.Helpers;
 global using TgConstants = OpenTgResearcherDesktop.UpdateSelfTests.TestConstants;

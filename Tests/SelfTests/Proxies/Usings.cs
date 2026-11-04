@@ -12,6 +12,7 @@ global using System.Net.Sockets;
 global using System.Text;
 global using System.Xml.Linq;
 global using TgBusinessLogic.Services;
+global using TgBusinessLogic.Contracts;
 global using TgBusinessLogic.ViewModels;
 global using TgInfrastructure.Enums;
 global using TgStorage.Common;

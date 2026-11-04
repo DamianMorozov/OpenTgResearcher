@@ -5,7 +5,7 @@ public partial class ShellViewModel : ObservableObject
 {
     public ITgSettingsService SettingsService { get; } = new();
     public INavigationService NavigationService { get; } = new();
-    public TgUpdateViewModel Updates { get; } = new(new(), new(), new(), null!);
+    public TgUpdateViewModel Updates { get; } = new(new LoadStateService(), new(), new(), null!);
 }
 
 public sealed class XamlRoot;

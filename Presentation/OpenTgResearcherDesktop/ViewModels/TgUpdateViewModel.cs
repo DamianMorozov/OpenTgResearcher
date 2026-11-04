@@ -84,23 +84,30 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
             AppendUpdateLog("UpdateNotInstalled");
             return;
         }
-        AppendUpdateLog("UpdateStarted", manager.CurrentVersion);
-        AppendUpdateLog(isPreview ? "UpdateCheckingPreview" : "UpdateCheckingRelease");
-        // Velopack не принимает токен для проверки; отмена останавливает дальнейшую загрузку после её завершения
-        var update = await manager.CheckForUpdatesAsync();
-        ct.ThrowIfCancellationRequested();
-        if (update is null)
+        var uid = Guid.NewGuid();
+        try
         {
-            AppendUpdateLog("UpdateAlreadyLatest");
-            return;
+            await LoadStateService.PrepareDownloadTokenAsync(uid);
+            ct.ThrowIfCancellationRequested();
+            AppendUpdateLog("UpdateStarted", manager.CurrentVersion);
+            AppendUpdateLog(isPreview ? "UpdateCheckingPreview" : "UpdateCheckingRelease");
+            // Velopack не принимает токен для проверки; отмена останавливает дальнейшую загрузку после её завершения
+            var update = await manager.CheckForUpdatesAsync();
+            ct.ThrowIfCancellationRequested();
+            if (update is null)
+            {
+                AppendUpdateLog("UpdateAlreadyLatest");
+                return;
+            }
+            AppendUpdateLog("UpdateDownloading", update.TargetFullRelease.Version);
+            IsDownloading = true;
+            await manager.DownloadUpdatesAsync(update, progress => SetDownloadProgress(progress, ct), cancelToken: ct);
+            ct.ThrowIfCancellationRequested();
+            DownloadProgress = 100;
+            // Ранний вызов Velopack в Main применит подготовленный пакет при следующем запуске
+            AppendUpdateLog("UpdateDownloaded", update.TargetFullRelease.Version);
         }
-        AppendUpdateLog("UpdateDownloading", update.TargetFullRelease.Version);
-        IsDownloading = true;
-        await manager.DownloadUpdatesAsync(update, progress => SetDownloadProgress(progress, ct), cancelToken: ct);
-        ct.ThrowIfCancellationRequested();
-        DownloadProgress = 100;
-        // Ранний вызов Velopack в Main применит подготовленный пакет при следующем запуске
-        AppendUpdateLog("UpdateDownloaded", update.TargetFullRelease.Version);
+        finally { LoadStateService.StopSoftDownloadProcessing(uid); }
     }
 
     // Переносим уведомления загрузчика в поток интерфейса

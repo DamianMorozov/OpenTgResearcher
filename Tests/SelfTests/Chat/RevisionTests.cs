@@ -78,6 +78,7 @@ internal static partial class Program
         var vm = new TgChatInfoViewModel(_state, _settings, _navigation, null!);
         await vm.OnNavigatedToAsync(new() { Parameter = _source.Uid });
         Assert(vm.ChatDetailsDto.Title == "Online" && vm.Errors.Count == 0, "При подключении сведения чата остались пустыми");
+        Assert(vm.OnlineLoads == 1, "Автоматический запрос сведений не сообщает о сетевой загрузке верхней панели");
     }
 
     // Первая вкладка не должна получить пустой черновик, пока родитель ещё читает SQLite

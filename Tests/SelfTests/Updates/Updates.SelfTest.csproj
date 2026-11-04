@@ -7,7 +7,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../Core/TgInfrastructure/TgInfrastructure.csproj" />
+    <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgUpdateViewModel.cs" Link="TgUpdateViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/ShellViewModel.Toolbar.cs" Link="ShellViewModel.Toolbar.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Services/NavigationViewService.cs" Link="NavigationViewService.cs" />

@@ -77,9 +77,11 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
     private async Task CheckAllProxiesAsync(CancellationToken ct = default)
     {
         TgEfProxyDto? current = null;
+        var networkUid = Guid.NewGuid();
         try
         {
             IsCheckingProxies = true;
+            await LoadStateService.PrepareDownloadTokenAsync(networkUid);
             Exception.Default();
             var proxies = Dtos.ToArray();
             foreach (var proxy in proxies)
@@ -99,7 +101,11 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
             if (current is not null) current.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus("NotChecked");
         }
         catch (Exception ex) { LogError(ex); Exception.Set(ex); }
-        finally { IsCheckingProxies = false; }
+        finally
+        {
+            LoadStateService.StopSoftDownloadProcessing(networkUid);
+            IsCheckingProxies = false;
+        }
     }
 
     // Сортируем список, сохраняя выделение

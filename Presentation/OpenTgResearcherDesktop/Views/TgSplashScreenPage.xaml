@@ -264,11 +264,27 @@
                 </StackPanel>
             </Button>
             <!--  Декоративный слой не перехватывает нажатия и обходит кнопку по часовой стрелке  -->
-            <Canvas IsHitTestVisible="False" AutomationProperties.AccessibilityView="Raw">
-                <Ellipse x:Name="ContinueOrbitHead" Width="14" Height="14" Style="{StaticResource SplashCometDotStyle}" />
-                <Ellipse x:Name="ContinueOrbitTailNear" Width="10" Height="10" Style="{StaticResource SplashCometDotStyle}" />
-                <Ellipse x:Name="ContinueOrbitTailMiddle" Width="8" Height="8" Style="{StaticResource SplashCometDotStyle}" />
-                <Ellipse x:Name="ContinueOrbitTailFar" Width="6" Height="6" Style="{StaticResource SplashCometDotStyle}" />
+            <Canvas AutomationProperties.AccessibilityView="Raw" IsHitTestVisible="False">
+                <Ellipse
+                    x:Name="ContinueOrbitHead"
+                    Width="14"
+                    Height="14"
+                    Style="{StaticResource SplashCometDotStyle}" />
+                <Ellipse
+                    x:Name="ContinueOrbitTailNear"
+                    Width="10"
+                    Height="10"
+                    Style="{StaticResource SplashCometDotStyle}" />
+                <Ellipse
+                    x:Name="ContinueOrbitTailMiddle"
+                    Width="8"
+                    Height="8"
+                    Style="{StaticResource SplashCometDotStyle}" />
+                <Ellipse
+                    x:Name="ContinueOrbitTailFar"
+                    Width="6"
+                    Height="6"
+                    Style="{StaticResource SplashCometDotStyle}" />
             </Canvas>
         </Grid>
     </Grid>

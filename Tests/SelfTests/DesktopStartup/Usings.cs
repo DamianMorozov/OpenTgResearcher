@@ -21,6 +21,7 @@ global using System.Runtime.Versioning;
 global using System.Text.Json;
 global using System.Xml.Linq;
 global using TgBusinessLogic.Services;
+global using TgBusinessLogic.Contracts;
 global using TgInfrastructure.Enums;
 global using TgInfrastructure.Helpers;
 global using ZiggyCreatures.Caching.Fusion;

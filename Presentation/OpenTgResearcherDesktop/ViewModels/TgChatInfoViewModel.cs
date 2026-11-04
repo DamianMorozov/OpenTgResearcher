@@ -28,7 +28,7 @@ public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
         ChatDetailsDto = new();
         await LoadDataStorageCoreAsync();
-        if (Uid != Guid.Empty && await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync())
+        if (Uid != Guid.Empty)
             await UpdateChatSettingsCoreAsync();
     });
 
@@ -47,8 +47,9 @@ public sealed partial class TgChatInfoViewModel : TgPageViewModelBase
     private async Task UpdateChatSettingsAsync() => 
         await ContentDialogAsync(UpdateChatSettingsCoreAsync, TgResourceExtensions.AskUpdateChatDetails(), TgEnumLoadDesktopType.Online);
 
-    private async Task UpdateChatSettingsCoreAsync() => 
-        await LoadStorageDataAsync(async () =>
+    // Сообщаем о сетевой загрузке и при автоматическом открытии, без диалога команды
+    private async Task UpdateChatSettingsCoreAsync() =>
+        await LoadOnlineDataAsync(async () =>
         {
             if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
 

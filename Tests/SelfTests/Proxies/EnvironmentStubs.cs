@@ -1,6 +1,5 @@
 namespace OpenTgResearcherDesktop.ProxySelfTests;
 
-public interface ILoadStateService;
 public interface ITgSettingsService { bool IsExistsAppStorage { get; } }
 public sealed class TestSettings : ITgSettingsService { public bool IsExistsAppStorage => true; }
 public interface ILogger<out T>;
@@ -40,6 +39,7 @@ public sealed class ContentDialog
 }
 public abstract class TgPageViewModelBase : ObservableObject
 {
+    public TgBusinessLogic.Contracts.ILoadStateService LoadStateService { get; }
     protected ITgSettingsService SettingsService { get; }
     public INavigationService NavigationService { get; }
     public object? XamlRootVm { get; set; } = new();
@@ -47,8 +47,9 @@ public abstract class TgPageViewModelBase : ObservableObject
     public List<Exception> Errors { get; } = [];
     public int OnlineCalls { get; private set; }
     public bool StorageStartedWhileDialogOpen { get; private set; }
-    protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
-    { SettingsService = settings; NavigationService = navigation; }
+    protected TgPageViewModelBase(TgBusinessLogic.Contracts.ILoadStateService state, ITgSettingsService settings, INavigationService navigation,
+        object logger, string name)
+    { LoadStateService = state ?? new LoadStateService(); SettingsService = settings; NavigationService = navigation; }
     /// <summary> Заменяет навигацию без платформы Windows </summary>
     public virtual Task OnNavigatedToAsync(NavigationEventArgs? e) => Task.CompletedTask;
     /// <summary> Выполняет настоящие операции с изолированной SQLite </summary>

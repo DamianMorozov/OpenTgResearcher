@@ -75,6 +75,7 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
     public TgDownloadSettingsViewModel DownloadSettings { get; } = new();
     public bool IsEmptyData { get; set; } = true;
     public List<Exception> Errors { get; } = [];
+    public int OnlineLoads { get; private set; }
     protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
     { LoadStateService = state; SettingsService = settings; NavigationService = navigation; }
     /// <summary> Заменяет навигацию базовой модели </summary>
@@ -87,7 +88,7 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
     /// <summary> Выполняет действие и сохраняет исключение для проверки </summary>
     public Task LoadStorageDataAsync(Action action) => LoadStorageDataAsync(() => { action(); return Task.CompletedTask; });
     // Выполняет действие с подменённым сетевым клиентом
-    protected Task LoadOnlineDataAsync(Func<Task> action) => LoadStorageDataAsync(action);
+    protected Task LoadOnlineDataAsync(Func<Task> action) { OnlineLoads++; return LoadStorageDataAsync(action); }
     // Заменяет подтверждение действия без настоящего диалога
     protected Task ContentDialogAsync(Func<Task> action, string title, TgEnumLoadDesktopType type) => LoadStorageDataAsync(action);
     // Заменяет подтверждение действия без настоящего диалога

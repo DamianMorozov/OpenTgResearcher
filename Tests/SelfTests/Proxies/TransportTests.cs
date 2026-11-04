@@ -171,7 +171,9 @@ internal static partial class Program
             Assert(!fixture.Client.Disconnected, "Тестовый клиент отмечен отключённым до первой попытки соединения");
             Assert(await fixture.Connection.CheckClientConnectionReadyAsync(), "Сохранённый прокси запрещает готовность клиента");
             fixture.Connection.ProxyException.Set(new InvalidOperationException("Тестовая ошибка прокси"));
-            Assert(!await fixture.Connection.CheckClientConnectionReadyAsync(), "Реальная ошибка прокси проигнорирована");
+            // Сохранённая диагностика не означает разрыв уже готового соединения
+            Assert(await fixture.Connection.CheckClientConnectionReadyAsync() && fixture.Connection.ProxyException.IsExist,
+                "Прежняя ошибка прокси блокирует готовое соединение или потеряна диагностика");
         }
         finally { TgAppSettingsHelper.Instance.IsUseProxy = false; }
     }

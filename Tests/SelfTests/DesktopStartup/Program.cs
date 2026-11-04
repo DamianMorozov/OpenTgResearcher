@@ -8,6 +8,9 @@ internal static partial class Program
         if (args.Length > 0) return CheckVelopackEntryPoints(args);
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("ToolbarNetworkLayoutAndIcon", ToolbarNetworkLayoutAndIconAsync),
+            ("NetworkScanTracksOverlappingLoads", NetworkScanTracksOverlappingLoadsAsync),
+            ("NetworkScanDetachAndReducedMotion", NetworkScanDetachAndReducedMotionAsync),
             ("MsixCreatesMissingResources", MsixCreatesMissingResourcesAsync),
             ("SplashAnimationLayout", SplashAnimationLayoutAsync),
             ("SplashVectorLogo", SplashVectorLogoAsync),

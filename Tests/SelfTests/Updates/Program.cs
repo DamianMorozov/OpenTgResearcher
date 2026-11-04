@@ -7,6 +7,7 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("UpdateNetworkActivity", UpdateNetworkActivityAsync),
             ("SettingsRussian", () => SettingsLocalizedAsync("ru-RU", "Настройки")),
             ("SettingsEnglish", () => SettingsLocalizedAsync("en-US", "Settings")),
             ("WindowAndSplashTitleRussian", () => WindowAndSplashTitleAsync("ru-RU")),
@@ -64,7 +65,32 @@ internal static partial class Program
     }
 
     // Создаём исходную модель без БД пользователя и обращения к Telegram
-    private static TgUpdateViewModel CreateViewModel() => new(new(), new(), new(), null!);
+    private static TgUpdateViewModel CreateViewModel() => new(new LoadStateService(), new(), new(), null!);
+
+    // Подтверждение не включает сканирование, проверка и скачивание включают, ошибка освобождает состояние
+    private static async Task UpdateNetworkActivityAsync()
+    {
+        ContentDialog.Gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        UpdateManager.State.CheckGate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        UpdateManager.State.DownloadGate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        UpdateManager.State.Update = new();
+        var vm = CreateViewModel();
+        var action = vm.UpdateReleaseCommand.ExecuteAsync(null);
+        var dialogIdle = !vm.LoadStateService.IsDownloadProcessing && !vm.LoadStateService.IsOnlineProcessing;
+        ContentDialog.Gate.SetResult();
+        await WaitAsync(() => UpdateManager.State.Checks == 1);
+        var checkingActive = vm.LoadStateService.IsDownloadProcessing || vm.LoadStateService.IsOnlineProcessing;
+        UpdateManager.State.CheckGate.SetResult();
+        await WaitAsync(() => UpdateManager.State.Downloads == 1);
+        var downloadActive = vm.LoadStateService.IsDownloadProcessing || vm.LoadStateService.IsOnlineProcessing;
+        UpdateManager.State.DownloadGate.SetResult();
+        await action;
+        Assert(dialogIdle && checkingActive && downloadActive, "Сетевая активность проверки и скачивания не отражена в общей службе");
+        Assert(!vm.LoadStateService.IsDownloadProcessing && !vm.LoadStateService.IsOnlineProcessing, "Завершение оставило сетевое состояние");
+        UpdateManager.State.CheckError = new IOException("Проверка сетевой ошибки");
+        await ExecuteAsync(vm.UpdateReleaseCommand);
+        Assert(vm.Errors.Count == 1 && !vm.LoadStateService.IsDownloadProcessing, "Ошибка оставила сканирование активным");
+    }
 
     // Проверяем конкретную подпись встроенного пункта и подключение ресурса
     private static Task SettingsLocalizedAsync(string language, string expected)
@@ -220,6 +246,7 @@ internal static partial class Program
         Assert(cancellable && UpdateManager.State.DownloadCancelled, "Отмена команды не передана загрузчику");
         Assert(vm.UpdateLog.Contains("отменена") && vm.Errors.Count == 0, "Отмена не объяснена или записана как ошибка");
         Assert(vm.UpdatePreviewCommand.CanExecute(null), "После отмены нельзя повторить проверку");
+        Assert(!vm.LoadStateService.IsDownloadProcessing, "Отмена скачивания оставила сканирование включённым");
     }
 
     // Кнопка отмены вызывает активную команду и останавливает передачу пакета
@@ -249,6 +276,7 @@ internal static partial class Program
         UpdateManager.State.CheckGate.SetResult();
         await action;
         Assert(UpdateManager.State.Downloads == 0 && vm.UpdateLog.Contains("отменена"), "После отмены проверки началась загрузка");
+        Assert(!vm.LoadStateService.IsDownloadProcessing, "Отмена проверки оставила сканирование включённым");
     }
 
     // Все сообщения и подписи страницы существуют на обоих языках и отличаются переводом

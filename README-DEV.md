@@ -20,10 +20,11 @@
 
 Для сборки всех проектов требуется SDK .NET 10 или новее.
 
-Проверка целевых платформ проектов, профилей публикации, CI и Docker, затем сборка решения:
+Проверка целевых платформ проектов, профилей публикации, CI и Docker, относительных ссылок тестовых проектов и отсутствия привязки тестов к локальным дискам, затем сборка решения:
 
 ```powershell
 ./Tests/SelfTests/Test-Net10.ps1
+./Tests/SelfTests/Test-RelativePaths.ps1
 dotnet restore OpenTgResearcher.slnx -p:Platform=x64
 dotnet build OpenTgResearcher.slnx --no-restore -c Debug -p:Platform=x64 -p:AppxPackageSigningEnabled=false
 ```
@@ -209,7 +210,7 @@ dotnet run --project Tests/SelfTests/DesktopStartup/DesktopStartup.SelfTest.cspr
 ```
 
 Селфтест запускает выбранный профиль, нажимает «Продолжить», подтверждает загрузку главной страницы по новым строкам журнала и закрывает окно. Успех требует завершения процесса с кодом 0. При остановке отладчика состояние сохраняется в `Tests/SelfTests/bin/DesktopShutdownVs/break.txt`; неудачный запуск остаётся доступен для диагностики. SHA256 загруженной WinUI выводится в консоль; параметр `-ExpectedXamlSha256` позволяет проверить конкретную DLL. Команда с `-StopFailedRun` завершает активную отладку этого решения.
-Отдельная проверка под CDB из Windows SDK не включает инструменты Live Visual Tree:
+Отдельная проверка под CDB из Windows SDK не включает инструменты Live Visual Tree. Каталог Windows SDK определяется через системный каталог Program Files (x86); другой путь можно передать параметром `-DebuggerPath`, в том числе относительно текущего каталога консоли:
 
 ```powershell
 ./Tests/SelfTests/Test-DesktopShutdown.ps1 -PackageFullName '<PackageFullName>' -ReadyPattern 'Notification loading|Загрузка уведомлений' -OpenMainPage -CaptureManagedExceptions

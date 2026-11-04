@@ -30,7 +30,7 @@ def proxy(kind, host, port, user="", password=""):
 
 def application(proxies):
     # Непустые переменные поля перед прокси обнаруживают ошибочные фиксированные смещения
-    data = blob(b"accent") + integer(1) * 5 + string("D:/Downloads") + blob(b"bookmark")
+    data = blob(b"accent") + integer(1) * 5 + string("Downloads") + blob(b"bookmark")
     data += integer(1) * 9 + string("output") + string("input") + integer(1) * 4
     data += integer(1) + string("sound") + string("path")
     data += integer(1) * 13 + blob(b"pip") + integer(1) + struct.pack(">Q", 42)

@@ -6,7 +6,7 @@ param(
     [string]$ReadyPattern = 'License loading|Загрузка лицензии',
     [switch]$CaptureManagedExceptions,
     [switch]$OpenMainPage,
-    [string]$DebuggerPath = 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\cdb.exe'
+    [string]$DebuggerPath = (Join-Path ([Environment]::GetFolderPath('ProgramFilesX86')) 'Windows Kits/10/Debuggers/x64/cdb.exe')
 )
 
 $ErrorActionPreference = 'Stop'

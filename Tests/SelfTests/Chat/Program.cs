@@ -72,17 +72,20 @@ internal static partial class Program
             ("ContentTemplateUsesPageContext", ContentTemplateUsesPageContextAsync),
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
-        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).ToArray();
+        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
         {
-            await using var context = new TestContext(new DbContextOptionsBuilder().UseSqlite("Data Source=:memory:")
-                .AddInterceptors(new DelayedQueryInterceptor()).Options);
+            var isolatedReaders = test.Name.StartsWith("Registry", StringComparison.Ordinal);
+            var connection = isolatedReaders ? $"Data Source=registry-{Guid.NewGuid():N};Mode=Memory;Cache=Shared" : "Data Source=:memory:";
+            var options = new DbContextOptionsBuilder().UseSqlite(connection).AddInterceptors(new DelayedQueryInterceptor()).Options;
+            await using var context = new TestContext(options);
             await context.Database.OpenConnectionAsync();
             await context.Database.EnsureCreatedAsync();
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(context).As<ITgEfContext>().ExternallyOwned();
+            if (isolatedReaders) builder.Register(_ => new TestContext(options)).As<ITgEfContext>().InstancePerLifetimeScope();
+            else builder.RegisterInstance(context).As<ITgEfContext>().ExternallyOwned();
             builder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
             builder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
             builder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
@@ -110,6 +113,7 @@ internal static partial class Program
             App.BusinessLogicManager.ConnectClient.CheckConnection = null;
             App.BusinessLogicManager.ConnectClient.Parse = null;
             App.BusinessLogicManager.ConnectClient.ReadDetails = null;
+            App.BusinessLogicManager.ConnectClient.ReadParticipants = null;
             DelayedQueryInterceptor.Enabled = false;
             try
             {
@@ -435,8 +439,8 @@ internal static partial class Program
     private static Task ChatsHeadersHaveBindingsAsync()
     {
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgChatsPage.xaml")!;
-        var columns = XDocument.Load(stream).Descendants().Where(x => x.Name.LocalName == "TgBindableDataGridTemplateColumn").ToArray();
-        Assert(columns.Length == 9 && columns.All(x => ((string?)x.Attribute("Header"))?.StartsWith("{x:Bind ViewModel.") == true),
+        var columns = XDocument.Load(stream).Descendants().Where(x => x.Name.LocalName is "DataGridTemplateColumn" or "DataGridTextColumn").ToArray();
+        Assert(columns.Length == 5 && columns.All(x => ((string?)x.Attribute("Header"))?.StartsWith("{x:Bind ViewModel.") == true),
             "Заголовки колонок чатов не привязаны к строкам модели");
         return Task.CompletedTask;
     }
@@ -447,8 +451,9 @@ internal static partial class Program
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgChatsPage.xaml")!;
         var page = XDocument.Load(stream);
         var filter = page.Descendants().Single(x => x.Name.LocalName == "TextBox");
-        Assert((string?)filter.Attribute("Grid.Row") == "1" && (string?)filter.Attribute("Grid.Column") == "0",
-            "Поле фильтра сжимается подписями переключателей и кнопками");
+        Assert(filter.Parent?.Name.LocalName == "Grid" && !filter.Parent.Descendants().Any(x => x.Name.LocalName == "ToggleSwitch")
+            && filter.Parent.Elements().Any(x => x.Name.LocalName == "Grid.ColumnDefinitions"
+                && x.Elements().First().Attribute("Width")?.Value == "*"), "Поле поиска сжимается переключателями или не занимает свободную ширину");
         return Task.CompletedTask;
     }
 

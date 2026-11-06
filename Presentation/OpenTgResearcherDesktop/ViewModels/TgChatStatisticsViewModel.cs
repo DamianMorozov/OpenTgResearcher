@@ -73,7 +73,8 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         {
             if (!SettingsService.IsExistsAppStorage) return;
 
-            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+            using var reader = IsOnlineProcessing ? new TgEfSourceRepository() : null;
+            Dto = await (reader ?? App.BusinessLogicManager.StorageManager.SourceRepository).GetDtoAsync(x => x.Uid == Uid);
 
             IsEmptyData = false;
             ScrollRequested?.Invoke();
@@ -146,8 +147,11 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         ChatStatisticsDto.UserWithCountDtos.Clear();
         if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
         
-        await MergeUsersWithPlaceholdersAsync();
-        await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
+        var isParsing = LoadStateService.NetworkActivity.Operations.Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running);
+        await MergeUsersWithPlaceholdersAsync(useLocalData: isParsing);
+        // При просмотре во время парсинга не записываем справочник через занятый репозиторий
+        if (!isParsing)
+            await App.BusinessLogicManager.ConnectClient.UpdateUsersAsync([.. UserDtos]);
 
         // Учитываем каждого пользователя один раз, даже если он найден в Telegram и в БД
         var distinctUsers = UserDtos.GroupBy(u => u.Id).Select(g => g.First()).ToList();
@@ -166,9 +170,11 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
 
         
         // Один DbContext не поддерживает параллельное выполнение запросов
+        using var reader = IsOnlineProcessing ? new TgEfMessageRepository() : null;
+        var messages = reader ?? App.BusinessLogicManager.StorageManager.MessageRepository;
         var list = new List<TgEfUserWithCountDto>();
         foreach (var user in distinctUsers)
-            list.Add(new() { UserDto = user, Count = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(
+            list.Add(new() { UserDto = user, Count = await messages.GetCountAsync(
                 x => x.SourceId == Dto.Id && x.UserId == user.Id && x.DtCreated >= startDate.UtcDateTime && x.DtCreated <= endDate.UtcDateTime) });
 
         foreach (var dto in list.OrderByDescending(x => x.Count).ThenBy(x => x.UserDto.DisplayName, StringComparer.CurrentCultureIgnoreCase))
@@ -185,11 +191,14 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         IsPeriodExpanded = false;
     }
 
-    private async Task MergeUsersWithPlaceholdersAsync()
+    // Во время парсинга используем сохранённых авторов, не запуская параллельное обновление справочника через Telegram
+    private async Task MergeUsersWithPlaceholdersAsync(bool useLocalData)
     {
-        var participantDtos = await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
-        var userIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
-        var usersDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
+        List<TgParticipantDto> participantDtos = useLocalData ? [] : await App.BusinessLogicManager.ConnectClient.GetParticipantsAsync(Dto.Id);
+        using var messageReader = IsOnlineProcessing ? new TgEfMessageRepository() : null;
+        using var userReader = IsOnlineProcessing ? new TgEfUserRepository() : null;
+        var userIds = await (messageReader ?? App.BusinessLogicManager.StorageManager.MessageRepository).GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
+        var usersDtos = await (userReader ?? App.BusinessLogicManager.StorageManager.UserRepository).GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
 
         // Собираем все известные идентификаторы
         var existingIds = new HashSet<long>(participantDtos.Select(p => p.Id).Concat(usersDtos.Select(u => u.Id)));

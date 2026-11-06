@@ -2280,4 +2280,109 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ChatStatisticsPeriod.Header" xml:space="preserve">
     <value>Период и расчёт</value>
   </data>
+  <data name="RegistryChat" xml:space="preserve">
+    <value>Чат</value>
+  </data>
+  <data name="RegistryMessages" xml:space="preserve">
+    <value>Сообщения</value>
+  </data>
+  <data name="RegistryFiles" xml:space="preserve">
+    <value>Медиа</value>
+  </data>
+  <data name="RegistryParsing" xml:space="preserve">
+    <value>Парсинг</value>
+  </data>
+  <data name="RegistryUpdated" xml:space="preserve">
+    <value>Обновление</value>
+  </data>
+  <data name="RegistryLoaded" xml:space="preserve">
+    <value>Показано {0:N0} из {1:N0} чатов</value>
+  </data>
+  <data name="RegistrySelectionDetails" xml:space="preserve">
+    <value>Участников: {0:N0} · {1} · {2}</value>
+  </data>
+  <data name="RegistrySubscribed" xml:space="preserve">
+    <value>Подписка</value>
+  </data>
+  <data name="RegistryNotSubscribed" xml:space="preserve">
+    <value>Без подписки</value>
+  </data>
+  <data name="RegistryHasAccess" xml:space="preserve">
+    <value>Доступ есть</value>
+  </data>
+  <data name="RegistryNoAccess" xml:space="preserve">
+    <value>Нет доступа</value>
+  </data>
+  <data name="RegistrySelectChat" xml:space="preserve">
+    <value>Выберите чат для просмотра сведений и доступных действий</value>
+  </data>
+  <data name="RegistrySearch.PlaceholderText" xml:space="preserve">
+    <value>Название, имя или ID чата</value>
+  </data>
+  <data name="RegistrySearch.AutomationProperties.Name" xml:space="preserve">
+    <value>Поиск чата</value>
+  </data>
+  <data name="RegistryActions.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Действия и поля поиска</value>
+  </data>
+  <data name="RegistryActions.AutomationProperties.Name" xml:space="preserve">
+    <value>Действия</value>
+  </data>
+  <data name="RegistrySync.Text" xml:space="preserve">
+    <value>Обновить список из Telegram</value>
+  </data>
+  <data name="RegistryClear.Text" xml:space="preserve">
+    <value>Очистить просмотр</value>
+  </data>
+  <data name="RegistryFilterId.Text" xml:space="preserve">
+    <value>Искать по ID</value>
+  </data>
+  <data name="RegistryFilterName.Text" xml:space="preserve">
+    <value>Искать по имени</value>
+  </data>
+  <data name="RegistryFilterTitle.Text" xml:space="preserve">
+    <value>Искать по названию</value>
+  </data>
+  <data name="RegistryAll.Text" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="RegistryWorking.Text" xml:space="preserve">
+    <value>В работе</value>
+  </data>
+  <data name="RegistrySubscriptions.Text" xml:space="preserve">
+    <value>Подписки</value>
+  </data>
+  <data name="RegistrySortActivity.Content" xml:space="preserve">
+    <value>По активности</value>
+  </data>
+  <data name="RegistrySortName.Content" xml:space="preserve">
+    <value>По названию</value>
+  </data>
+  <data name="RegistrySortMessages.Content" xml:space="preserve">
+    <value>По сообщениям</value>
+  </data>
+  <data name="RegistryEmpty.Text" xml:space="preserve">
+    <value>Чаты не найдены. Измените запрос или фильтр.</value>
+  </data>
+  <data name="RegistryHint.Text" xml:space="preserve">
+    <value>Двойное нажатие открывает чат</value>
+  </data>
+  <data name="RegistryOpenChat.Text" xml:space="preserve">
+    <value>Открыть чат</value>
+  </data>
+  <data name="RegistryDetails.Header" xml:space="preserve">
+    <value>Сведения</value>
+  </data>
+  <data name="RegistryDelete.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Удалить выбранный чат из базы</value>
+  </data>
+  <data name="RegistryDelete.AutomationProperties.Name" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="RegistryStart" xml:space="preserve">
+    <value>Парсинг</value>
+  </data>
+  <data name="RegistryStop" xml:space="preserve">
+    <value>Прервать</value>
+  </data>
 </root>

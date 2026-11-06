@@ -10,6 +10,7 @@ global using OpenTgResearcherDesktop.Views;
 global using System.Collections.ObjectModel;
 global using System.Reflection;
 global using System.Linq.Expressions;
+global using System.Globalization;
 global using System.Xml.Linq;
 global using TgBusinessLogic.Models;
 global using TgBusinessLogic.ViewModels;

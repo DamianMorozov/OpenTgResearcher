@@ -2,162 +2,263 @@
 
 public sealed partial class TgChatsViewModel : TgSectionViewModel
 {
-    #region Fields, properties, constructor
-
-    public string ChatIdHeader => TgResourceExtensions.GetChatColumnHeader("Id");
-    public string ChatSubscribeHeader => TgResourceExtensions.GetChatColumnHeader("Subscribe");
-    public string ChatAccessHeader => TgResourceExtensions.GetChatColumnHeader("Access");
-    public string ChatActiveHeader => TgResourceExtensions.GetChatColumnHeader("Active");
-    public string ChatUserNameHeader => TgResourceExtensions.GetChatColumnHeader("UserName");
-    public string ChatTitleHeader => TgResourceExtensions.GetChatColumnHeader("Title");
-    public string ChatCountHeader => TgResourceExtensions.GetChatColumnHeader("Count");
-    public string ChatProgressHeader => TgResourceExtensions.GetChatColumnHeader("Progress");
-    public string ChatParticipantsHeader => TgResourceExtensions.GetChatColumnHeader("Participants");
-
+    private List<OpenTgResearcherDesktop.Models.TgChatRegistryRow> _pageRows = [];
+    private long? _parsingChatId;
+    public string ChatTitleHeader => "RegistryChat".GetLocalizedResource();
+    public string ChatCountHeader => "RegistryMessages".GetLocalizedResource();
+    public string ChatFilesHeader => "RegistryFiles".GetLocalizedResource();
+    public string ChatProgressHeader => "RegistryParsing".GetLocalizedResource();
+    public string ChatUpdatedHeader => "RegistryUpdated".GetLocalizedResource();
     [ObservableProperty]
     public partial ObservableCollection<TgEfSourceLiteDto> Dtos { get; set; } = [];
     [ObservableProperty]
-    public partial bool IsFilterBySubscribe { get; set; } = true;
+    public partial ObservableCollection<OpenTgResearcherDesktop.Models.TgChatRegistryRow> RegistryRows { get; private set; } = [];
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSelectedChat))]
+    public partial OpenTgResearcherDesktop.Models.TgChatRegistryRow? SelectedRow { get; set; }
+    public bool HasSelectedChat => SelectedRow is not null;
+    [ObservableProperty]
+    public partial bool IsFilterBySubscribe { get; set; }
     [ObservableProperty]
     public partial bool IsFilterByTitle { get; set; } = true;
+    [ObservableProperty]
+    public partial int RegistryFilter { get; set; }
+    [ObservableProperty]
+    public partial int RegistrySort { get; set; }
+    [ObservableProperty]
+    public partial bool CanPauseSelected { get; private set; }
+    [ObservableProperty]
+    public partial string PauseCaption { get; private set; } = string.Empty;
+    [ObservableProperty]
+    public partial string SelectionDetails { get; private set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool CanToggleSelectedParsing { get; private set; }
+    [ObservableProperty]
+    public partial string ParsingCaption { get; private set; } = string.Empty;
+    [ObservableProperty]
+    public partial string ParsingGlyph { get; private set; } = "\uE768";
+    public IAsyncRelayCommand RefreshRegistryCommand { get; }
+    public IRelayCommand PauseSelectedCommand { get; }
+    public IRelayCommand OpenSelectedChatCommand { get; }
+    public IAsyncRelayCommand ToggleSelectedParsingCommand { get; }
 
-    public TgChatsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, ILogger<TgChatsViewModel> logger)
-        : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatsViewModel))
+    public TgChatsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
+        ILogger<TgChatsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatsViewModel))
     {
-        //
+        RefreshRegistryCommand = new AsyncRelayCommand(() => LazyLoadAsync(isNewQuery: true, isSearch: true));
+        PauseSelectedCommand = new RelayCommand(PauseSelected);
+        OpenSelectedChatCommand = new RelayCommand(OpenSelectedChat, () => HasSelectedChat);
+        // Повторный вызов нужен для прерывания ещё выполняющейся команды запуска
+        ToggleSelectedParsingCommand = new AsyncRelayCommand(ToggleSelectedParsingAsync, () => CanToggleSelectedParsing,
+            AsyncRelayCommandOptions.AllowConcurrentExecutions);
     }
 
-    #endregion
+    /// <summary> Открывает реестр без остановки выполняющегося парсинга </summary>
+    public override Task OnNavigatedToAsync(NavigationEventArgs? e) => RefreshRegistryCommand.ExecuteAsync(null);
 
-    #region Methods
-
-    private Expression<Func<TgEfSourceEntity, TgEfSourceLiteDto>> SelectDto() => item => TgEfDomainUtils.CreateNewLiteDto(item, isUidCopy: true);
-
+    /// <summary> Читает независимый снимок чатов и фактические количества из локального хранилища </summary>
     public async Task<List<TgEfSourceLiteDto>> GetListDtosAsync()
     {
-        // Build base query
-        var query = App.BusinessLogicManager.StorageManager.SourceRepository.GetQuery(isReadOnly: true);
-
-        // Prepare search strings
-        var raw = FilterText.Trim();
-        if (raw.StartsWith('@')) raw = raw[1..];
-
-        // Apply subscribe filter first (to reduce data set)
-        if (IsFilterBySubscribe)
-            query = query.Where(x => x.IsSubscribe);
-
-        // Apply database-side filtering by Id only (to reduce data set)
-        var idParsed = long.TryParse(raw, out var id) ? id : (long?)null;
-        if (IsFilterById)
+        try
         {
-            if (idParsed.HasValue)
-                query = query.Where(x => x.Id == idParsed.Value);
+            // Отдельные контексты чтения не занимают репозитории выполняющегося парсера
+            using var sources = new TgEfSourceRepository();
+            using var messages = new TgEfMessageRepository();
+            using var chatUsers = new TgEfChatUserRepository();
+            var query = sources.GetQuery(isReadOnly: true);
+            var operations = LoadStateService.NetworkActivity.Operations;
+            var runningIds = operations.Where(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running)
+                .Select(x => x.ChatId ?? 0).ToArray();
+            // Отбираем подписки и работающие чаты до пагинации
+            if (IsFilterBySubscribe || RegistryFilter == 2) query = query.Where(x => x.IsSubscribe);
+            if (RegistryFilter == 1) query = query.Where(x => runningIds.Contains(x.Id));
+            var raw = FilterText.Trim().TrimStart('@');
+            // Поиск по ID, имени и заголовку не зависит от регистра кириллицы и латиницы
+            var entities = await query.ToListAsync();
+            if (!string.IsNullOrWhiteSpace(raw))
+                entities = [.. entities.Where(x => (IsFilterById && x.Id.ToString().Contains(raw, StringComparison.OrdinalIgnoreCase))
+                    || (IsFilterByName && (x.UserName?.Contains(raw, StringComparison.OrdinalIgnoreCase) ?? false))
+                    || (IsFilterByTitle && (x.Title?.Contains(raw, StringComparison.OrdinalIgnoreCase) ?? false)))];
+            // Считаем сообщения и медиа по отобранным чатам, не подменяя количество последним ID Telegram
+            var allIds = entities.Select(x => x.Id).ToArray();
+            var totals = await messages.GetQuery(isReadOnly: true).Where(x => allIds.Contains(x.SourceId))
+                .GroupBy(x => x.SourceId).Select(g => new { Id = g.Key, Messages = g.Count(),
+                    Files = g.Count(x => x.Type == TgEnumMessageType.Document || x.Type == TgEnumMessageType.Photo) }).ToListAsync();
+            var counts = totals.ToDictionary(x => x.Id);
+            var ordered = RegistrySort switch
+            {
+                1 => entities.OrderBy(x => x.Title ?? x.UserName, StringComparer.CurrentCultureIgnoreCase),
+                2 => entities.OrderByDescending(x => counts.TryGetValue(x.Id, out var count) ? count.Messages : 0),
+                _ => entities.OrderByDescending(x => runningIds.Contains(x.Id)).ThenByDescending(x => x.DtChanged),
+            };
+            var page = ordered.ThenBy(x => x.Id).Skip(Math.Max(0, PageSkip)).Take(PageTake).ToArray();
+            var pageIds = page.Select(x => x.Id).ToArray();
+            var participants = await chatUsers.GetQuery(isReadOnly: true).Where(x => pageIds.Contains(x.ChatId) && !x.IsDeleted)
+                .GroupBy(x => x.ChatId).Select(g => new { Id = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Id, x => x.Count);
+            _pageRows = [];
+            foreach (var entity in page)
+            {
+                var dto = TgEfDomainUtils.CreateNewLiteDto(entity, isUidCopy: true);
+                dto.ParticipantsCount = participants.GetValueOrDefault(dto.Id);
+                counts.TryGetValue(dto.Id, out var count);
+                var row = new OpenTgResearcherDesktop.Models.TgChatRegistryRow(dto, entity.Directory ?? string.Empty,
+                    count?.Messages ?? 0, count?.Files ?? 0, entity.DtChanged);
+                row.Refresh(operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == dto.Id));
+                _pageRows.Add(row);
+            }
+            LoadedDataStatistics = string.Format("RegistryLoaded".GetLocalizedResource(), PageSkip + page.Length, entities.Count);
+            return [.. _pageRows.Select(x => x.Source)];
         }
-
-        // Projection to DTOs first
-        var projected = query.Select(SelectDto());
-        var list = await projected.ToListAsync();
-
-        // Apply case-insensitive text search in memory (for Cyrillic and Latin)
-        if (!idParsed.HasValue && !string.IsNullOrWhiteSpace(FilterText) && (IsFilterByName || IsFilterByTitle))
-        {
-            // Prepare search strings
-            var lower = raw.ToLower(CultureInfo.InvariantCulture);
-            list = [.. list
-                .Where(x =>
-                    (IsFilterByName && !string.IsNullOrEmpty(x.UserName) && x.UserName.Contains(lower, StringComparison.OrdinalIgnoreCase)) ||
-                    (IsFilterByTitle && !string.IsNullOrEmpty(x.Title) && x.Title.Contains(lower, StringComparison.OrdinalIgnoreCase))
-                )];
-        }
-
-        // Order & pagination in memory
-        list = [.. list
-            .OrderByDescending(x => x.IsSubscribe)
-            .ThenBy(x => x.UserName)
-            .ThenBy(x => x.Title)
-            .Skip(PageSkip > 0 ? PageSkip : 0)
-            .Take(PageTake > 0 ? PageTake : int.MaxValue)];
-
-        // If no items, return early
-        if (list.Count == 0) return list;
-
-        // Collect ids for counting participants
-        var ids = list.Select(d => d.Id).ToList();
-
-        // Query chat users grouped by ChatId to get counts; exclude soft-deleted rows if applicable
-        var counts = await App.BusinessLogicManager
-            .StorageManager
-            .ChatUserRepository
-            .GetQuery(isReadOnly: true)
-            .Where(cu => ids.Contains(cu.ChatId) && !cu.IsDeleted)
-            .GroupBy(cu => cu.ChatId)
-            .Select(g => new { ChatId = g.Key, Count = g.Count() })
-            .ToListAsync();
-
-        // Merge counts into DTOs; default zero when no group found
-        var countsDict = counts.ToDictionary(x => x.ChatId, x => x.Count);
-        foreach (var dto in list)
-        {
-            dto.ParticipantsCount = countsDict.TryGetValue(dto.Id, out var c) ? c : 0;
-        }
-
-        return list;
+        catch (Exception ex) { LogError(ex); throw; }
     }
 
+    /// <summary> Обновляет живые состояния без обращения к БД и сетевым токенам </summary>
+    public void RefreshActivity()
+    {
+        var operations = LoadStateService.NetworkActivity.Operations;
+        foreach (var row in RegistryRows)
+            row.Refresh(operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == row.Source.Id));
+        var selected = operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == SelectedRow?.Source.Id);
+        CanPauseSelected = selected?.State == TgNetworkOperationState.Running && selected.CanCancel && !selected.IsCancellationRequested;
+        var isRunning = selected?.State == TgNetworkOperationState.Running;
+        CanToggleSelectedParsing = isRunning ? CanPauseSelected : SelectedRow?.Source.Id > 0 && IsOnlineReady && !IsOnlineProcessing
+            && _parsingChatId is null && !operations.Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running);
+        ParsingCaption = (isRunning ? selected!.IsCancellationRequested ? "NetworkStateStopping" : "RegistryStop" : "RegistryStart").GetLocalizedResource();
+        ParsingGlyph = isRunning ? "\uE71A" : "\uE768";
+        ToggleSelectedParsingCommand.NotifyCanExecuteChanged();
+        PauseCaption = (selected?.IsPaused == true ? "NetworkResume" : "NetworkPause").GetLocalizedResource();
+        SelectionDetails = SelectedRow is null ? "RegistrySelectChat".GetLocalizedResource()
+            : string.Format("RegistrySelectionDetails".GetLocalizedResource(), SelectedRow.Source.ParticipantsCount,
+                SelectedRow.Source.IsSubscribe ? "RegistrySubscribed".GetLocalizedResource() : "RegistryNotSubscribed".GetLocalizedResource(),
+                SelectedRow.Source.IsUserAccess ? "RegistryHasAccess".GetLocalizedResource() : "RegistryNoAccess".GetLocalizedResource());
+        OnPropertyChanged(nameof(ChatTitleHeader));
+        OnPropertyChanged(nameof(ChatCountHeader));
+        OnPropertyChanged(nameof(ChatFilesHeader));
+        OnPropertyChanged(nameof(ChatProgressHeader));
+        OnPropertyChanged(nameof(ChatUpdatedHeader));
+    }
+
+    // Обновляем действия выбранного чата
+    partial void OnSelectedRowChanged(OpenTgResearcherDesktop.Models.TgChatRegistryRow? value)
+    {
+        OpenSelectedChatCommand.NotifyCanExecuteChanged();
+        RefreshActivity();
+    }
+
+    // Открываем выбранный чат напрямую, без диалога подтверждения
+    private void OpenSelectedChat()
+    {
+        if (SelectedRow is { } row) NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, row.Source.Uid);
+    }
+
+    // Сохраняем цель до подтверждения и управляем только выбранным чатом
+    private async Task ToggleSelectedParsingAsync()
+    {
+        RefreshActivity();
+        if (!CanToggleSelectedParsing || SelectedRow is not { } row) return;
+        var chatId = row.Source.Id;
+        try
+        {
+            if (CanPauseSelected)
+            {
+                await ContentDialogAsync(() =>
+                {
+                    LoadStateService.NetworkActivity.CancelParsing(chatId);
+                    RefreshActivity();
+                    return Task.CompletedTask;
+                }, TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Storage);
+            }
+            else
+                await ContentDialogAsync(() => StartSelectedParsingAsync(row.Source.Uid, chatId),
+                    TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Storage);
+        }
+        catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+        {
+            // Запрошенное прерывание не является ошибкой подключения
+        }
+        catch (Exception ex) { LogError(ex); }
+        finally { RefreshActivity(); }
+    }
+
+    // Загружаем сохранённые настройки в отдельный снимок, не меняя черновик открытого чата
+    private async Task StartSelectedParsingAsync(Guid uid, long chatId)
+    {
+        if (_parsingChatId is not null || IsOnlineProcessing || LoadStateService.NetworkActivity.Operations
+            .Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running)) return;
+        _parsingChatId = chatId;
+        RefreshActivity();
+        try
+        {
+            using var sources = new TgEfSourceRepository();
+            var source = await sources.GetDtoAsync(x => x.Uid == uid);
+            if (source.Id <= 0) throw new InvalidOperationException("Выбранный чат не найден в хранилище");
+            var settings = new TgDownloadSettingsViewModel();
+            settings.SourceVm.Dto = source;
+            await LoadOnlineDataAsync(async () =>
+            {
+                if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+                await App.BusinessLogicManager.ConnectClient.ParseChatAsync(settings);
+            });
+        }
+        catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+        {
+            // Обрабатываем штатную отмену до общего обработчика диалога
+        }
+        catch (Exception ex) { LogError(ex); }
+        finally
+        {
+            _parsingChatId = null;
+            await RefreshRegistryCommand.ExecuteAsync(null);
+            RefreshActivity();
+        }
+    }
+
+    // Приостанавливаем только выбранный чат, не затрагивая другие сетевые операции
+    private void PauseSelected()
+    {
+        if (!CanPauseSelected || SelectedRow is null) return;
+        LoadStateService.NetworkActivity.ToggleParsingPause(SelectedRow.Source.Id);
+        RefreshActivity();
+    }
+
+    /// <summary> Открывает пульт выбранного чата двойным нажатием </summary>
     public void DataGrid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (sender is not DataGrid dataGrid) return;
-        if (dataGrid.SelectedItem is not TgEfSourceLiteDto dto) return;
-
-        NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, dto.Uid);
+        if (dataGrid.SelectedItem is OpenTgResearcherDesktop.Models.TgChatRegistryRow row)
+            NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, row.Source.Uid);
     }
 
-    #endregion
+    // Очищаем только локальный просмотр, сохраняя выбранный чат для восстановления после поиска
+    protected override void ItemsClearCore()
+    {
+        Dtos.Clear();
+        RegistryRows.Clear();
+    }
 
-    #region Override methods
-
-    protected override void ItemsClearCore() => Dtos.Clear();
-
+    // Добавляем следующую порцию и сохраняем выбор при повторном чтении
     protected override async Task LazyLoadCoreAsync(bool isSearch)
     {
         if (!HasMoreItems) return;
-
+        var selectedId = SelectedRow?.Source.Id;
         var newItems = await GetListDtosAsync();
-        if (newItems.Count < PageTake)
-            HasMoreItems = false;
-
+        HasMoreItems = newItems.Count == PageTake;
         Dtos = isSearch ? [.. newItems] : [.. Dtos, .. newItems];
-
+        RegistryRows = isSearch ? [.. _pageRows] : [.. RegistryRows, .. _pageRows];
+        SelectedRow = RegistryRows.FirstOrDefault(x => x.Source.Id == selectedId) ?? RegistryRows.FirstOrDefault();
+        IsEmptyData = RegistryRows.Count == 0;
         PageSkip += newItems.Count;
+        RefreshActivity();
     }
 
-    protected override async Task AfterDataUpdateCoreAsync()
+    // Статистика снимка уже рассчитана тем же запросом и не занимает контекст парсера
+    protected override Task AfterDataUpdateCoreAsync() => Task.CompletedTask;
+
+    // Обновляем список из Telegram отдельной командой, локальный реестр остаётся доступным
+    protected override async Task StartUpdateOnlineCoreAsync() => await LoadOnlineDataAsync(async () =>
     {
-        // Update loaded data statistics
-        var countAll = await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
-        var countFiltered = IsFilterBySubscribe 
-            ? await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync(x => x.IsSubscribe)
-            : await App.BusinessLogicManager.StorageManager.SourceRepository.GetCountAsync();
-        LoadedDataStatistics =
-            $"{TgResourceExtensions.GetTextBlockLoaded()} {Dtos.Count} | " +
-            $"{TgResourceExtensions.GetTextBlockFiltered()} {countFiltered} | " +
-            $"{TgResourceExtensions.GetTextBlockTotalAmount()} {countAll}";
-    }
-
-    protected override async Task StartUpdateOnlineCoreAsync()
-    {
-        await LoadOnlineDataAsync(async () =>
-        {
-            var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
-            await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);
-            
-            await LoadStorageDataAsync(async () =>
-            {
-                await LazyLoadAsync(isNewQuery: true, isSearch: false);
-            });
-        });
-        
-    }
-
-    #endregion
+        var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
+        await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);
+        await RefreshRegistryCommand.ExecuteAsync(null);
+    });
 }

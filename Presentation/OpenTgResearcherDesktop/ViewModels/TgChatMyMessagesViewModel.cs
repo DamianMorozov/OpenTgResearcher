@@ -51,15 +51,19 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
         var uid = Guid.NewGuid();
         try
         {
-            await LoadStateService.PrepareOnlineTokenAsync(uid);
+            await LoadStateService.PrepareMemoryTokenAsync(uid);
 
-            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.OnlineToken);
+            // Локальный профиль читается независимо от репозиториев и сетевого токена парсера
+            using var sourceReader = IsOnlineProcessing ? new TgEfSourceRepository() : null;
+            using var userReader = IsOnlineProcessing ? new TgEfUserRepository() : null;
+            using var licenseReader = IsOnlineProcessing ? new TgEfLicenseRepository() : null;
+            Dto = await (sourceReader ?? App.BusinessLogicManager.StorageManager.SourceRepository).GetDtoAsync(x => x.Uid == Uid, LoadStateService.MemoryToken);
 
             // Определяем идентификатор пользователя по клиенту или лицензии
             var userId = App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0;
             if (userId == 0)
             {
-                var licenseDto = await App.BusinessLogicManager.StorageManager.LicenseRepository.GetDtoAsync(x => x.UserId > 0);
+                var licenseDto = await (licenseReader ?? App.BusinessLogicManager.StorageManager.LicenseRepository).GetDtoAsync(x => x.UserId > 0);
                 if (licenseDto is not null)
                     userId = licenseDto.UserId;
             }
@@ -68,7 +72,7 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
             UserDtos.Clear();
             if (userId > 0)
             {
-                var userDto = await App.BusinessLogicManager.StorageManager.UserRepository.GetMyselfUserAsync(Dto.Id, userId, LoadStateService.OnlineToken);
+                var userDto = await (userReader ?? App.BusinessLogicManager.StorageManager.UserRepository).GetMyselfUserAsync(Dto.Id, userId, LoadStateService.MemoryToken);
                 if (userDto.Id > 0) UserDtos.Add(userDto);
             }
             IsEmptyData = UserDtos.Count == 0;
@@ -76,7 +80,7 @@ public sealed partial class TgChatMyMessagesViewModel : TgPageViewModelBase
         }
         finally
         {
-            LoadStateService.StopSoftOnlineProcessing(uid);
+            LoadStateService.StopSoftMemoryProcessing(uid);
 
             await ReloadUiAsync();
         }

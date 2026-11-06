@@ -97,8 +97,11 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
             await LoadStateService.PrepareMemoryTokenAsync(uid);
 
+            // Просмотр участников не использует контексты выполняющегося парсера
+            using var sourceReader = IsOnlineProcessing ? new TgEfSourceRepository() : null;
+            using var userReader = IsOnlineProcessing ? new TgEfUserRepository() : null;
             // Читаем настройки выбранного чата
-            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid, LoadStateService.MemoryToken);
+            Dto = await (sourceReader ?? App.BusinessLogicManager.StorageManager.SourceRepository).GetDtoAsync(x => x.Uid == Uid, LoadStateService.MemoryToken);
             await Task.Delay(TgConstants.TimeOutUIShortMilliseconds);
 
             // Читаем страницу участников одним запросом
@@ -106,7 +109,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
             Expression<Func<TgEfUserEntity, bool>>? filter = string.IsNullOrEmpty(text) ? null : user =>
                 (IsFilterById && user.Id.ToString().Contains(text)) || (IsFilterByName && (EF.Functions.Like(user.UserName, "%" + text + "%")
                     || EF.Functions.Like(user.FirstName, "%" + text + "%") || EF.Functions.Like(user.LastName, "%" + text + "%")));
-            var userDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetUsersByChatIdJoinAsync(
+            var userDtos = await (userReader ?? App.BusinessLogicManager.StorageManager.UserRepository).GetUsersByChatIdJoinAsync(
                 Dto.Id, App.BusinessLogicManager.ConnectClient.Client?.UserId ?? 0, PageSkip, PageTake, filter, LoadStateService.MemoryToken);
 
             IsEmptyData = UserDtos.Count == 0 && userDtos.Count == 0;

@@ -78,7 +78,10 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
             DownloadDto = e?.Parameter as TgEfSourceDto ?? new();
             Uid = e?.Parameter is Guid uid ? uid : DownloadDto.Uid;
             if (SettingsService.IsExistsAppStorage && e?.Parameter is not TgEfSourceDto)
-                DownloadDto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+            {
+                using var reader = IsOnlineProcessing ? new TgEfSourceRepository() : null;
+                DownloadDto = await (reader ?? App.BusinessLogicManager.StorageManager.SourceRepository).GetDtoAsync(x => x.Uid == Uid);
+            }
             if (previousUid != Uid)
             {
                 ChatDetailsDto = new();

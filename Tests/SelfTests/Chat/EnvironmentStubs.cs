@@ -92,6 +92,7 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
     public bool IsEmptyData { get; set; } = true;
     public List<Exception> Errors { get; } = [];
     public int OnlineLoads { get; private set; }
+    public int ConfirmationCount { get; private set; }
     protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
     { LoadStateService = state; SettingsService = settings; NavigationService = navigation; }
     /// <summary> Заменяет навигацию базовой модели </summary>
@@ -106,7 +107,8 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
     // Выполняет действие с подменённым сетевым клиентом
     protected Task LoadOnlineDataAsync(Func<Task> action) { OnlineLoads++; return action(); }
     // Заменяет подтверждение действия без настоящего диалога
-    protected Task ContentDialogAsync(Func<Task> action, string title, TgEnumLoadDesktopType type) => LoadStorageDataAsync(action);
+    protected Task ContentDialogAsync(Func<Task> action, string title, TgEnumLoadDesktopType type)
+    { ConfirmationCount++; return LoadStorageDataAsync(action); }
     // Заменяет подтверждение действия без настоящего диалога
     protected Task ContentDialogAsync(string title, string content) => Task.CompletedTask;
     /// <summary> Сохраняет исключение для проверки результата </summary>
@@ -116,6 +118,7 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
 }
 public abstract class TgSectionViewModel : TgPageViewModelBase
 {
+    public string LoadedDataStatistics { get; set; } = string.Empty;
     public string FilterText { get; set; } = string.Empty;
     public bool IsFilterById { get; set; } = true;
     public bool IsFilterByName { get; set; } = true;
@@ -129,6 +132,14 @@ public abstract class TgSectionViewModel : TgPageViewModelBase
     // Сохраняем переопределяемые точки очистки и обновления списка
     protected virtual void ItemsClearCore() { }
     protected virtual Task AfterDataUpdateCoreAsync() => Task.CompletedTask;
+    protected virtual Task StartUpdateOnlineCoreAsync() => Task.CompletedTask;
+    // Выполняем последовательную загрузку настоящего запроса модели реестра
+    protected async Task LazyLoadAsync(bool isNewQuery, bool isSearch)
+    {
+        if (isNewQuery || isSearch) { ItemsClearCore(); PageSkip = 0; HasMoreItems = true; }
+        await LazyLoadCoreAsync(isSearch);
+        await AfterDataUpdateCoreAsync();
+    }
 }
 public static class TgDesktopUtils
 {
@@ -168,6 +179,8 @@ public sealed class TestStorage
 }
 public sealed class TestClient
 {
+    /// <summary> Заменяет обновление списка чатов без сети </summary>
+    public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids) => Task.CompletedTask;
     public TestClient? Client => this;
     public long UserId { get; set; } = 10;
     public bool Ready { get; set; }
@@ -175,6 +188,7 @@ public sealed class TestClient
     public Func<Task<bool>>? CheckConnection { get; set; }
     public Func<TgDownloadSettingsViewModel, Task>? Parse { get; set; }
     public Func<Task<TgChatDetailsDto>>? ReadDetails { get; set; }
+    public Func<Task<List<TgParticipantDto>>>? ReadParticipants { get; set; }
     /// <summary> Возвращает заданную готовность тестового клиента </summary>
     public Task<bool> CheckClientConnectionReadyAsync() => CheckConnection?.Invoke() ?? Task.FromResult(Ready);
     /// <summary> Заменяет сетевую загрузку без обращения к Telegram </summary>
@@ -183,7 +197,7 @@ public sealed class TestClient
     public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid, CancellationToken ct = default) =>
         ReadDetails?.Invoke() ?? Task.FromResult(new TgChatDetailsDto { Title = "Online" });
     /// <summary> Возвращает заданный список участников </summary>
-    public Task<List<TgParticipantDto>> GetParticipantsAsync(long id) => Task.FromResult(Participants);
+    public Task<List<TgParticipantDto>> GetParticipantsAsync(long id) => ReadParticipants?.Invoke() ?? Task.FromResult(Participants);
     /// <summary> Заменяет обновление пользователей в Telegram </summary>
     public Task UpdateUsersAsync(List<TgEfUserDto> users) => Task.CompletedTask;
 }
@@ -195,6 +209,10 @@ public sealed class TestContext(DbContextOptions options) : TgEfContextBase(opti
 public sealed class TgUserDetailsViewModel;
 public static class TgResourceExtensions
 {
+    /// <summary> Возвращает заголовок реестра чатов </summary>
+    public static string GetChatColumnHeader(string column) => column;
+    /// <summary> Возвращает подпись числа загруженных строк </summary>
+    public static string GetTextBlockLoaded() => "Загружено";
     /// <summary> Возвращает формат локализованной строки для проверки живого снимка </summary>
     public static string GetLocalizedResource(this string key) => key switch
     {

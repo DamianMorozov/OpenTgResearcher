@@ -2216,4 +2216,109 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ChatStatisticsPeriod.Header" xml:space="preserve">
     <value>Period and calculation</value>
   </data>
+  <data name="RegistryChat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="RegistryMessages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="RegistryFiles" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="RegistryParsing" xml:space="preserve">
+    <value>Parsing</value>
+  </data>
+  <data name="RegistryUpdated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="RegistryLoaded" xml:space="preserve">
+    <value>Showing {0:N0} of {1:N0} chats</value>
+  </data>
+  <data name="RegistrySelectionDetails" xml:space="preserve">
+    <value>Participants: {0:N0} · {1} · {2}</value>
+  </data>
+  <data name="RegistrySubscribed" xml:space="preserve">
+    <value>Subscribed</value>
+  </data>
+  <data name="RegistryNotSubscribed" xml:space="preserve">
+    <value>Not subscribed</value>
+  </data>
+  <data name="RegistryHasAccess" xml:space="preserve">
+    <value>Accessible</value>
+  </data>
+  <data name="RegistryNoAccess" xml:space="preserve">
+    <value>No access</value>
+  </data>
+  <data name="RegistrySelectChat" xml:space="preserve">
+    <value>Select a chat to see its details and available actions</value>
+  </data>
+  <data name="RegistrySearch.PlaceholderText" xml:space="preserve">
+    <value>Chat title, username or ID</value>
+  </data>
+  <data name="RegistrySearch.AutomationProperties.Name" xml:space="preserve">
+    <value>Search chats</value>
+  </data>
+  <data name="RegistryActions.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Actions and search fields</value>
+  </data>
+  <data name="RegistryActions.AutomationProperties.Name" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="RegistrySync.Text" xml:space="preserve">
+    <value>Update list from Telegram</value>
+  </data>
+  <data name="RegistryClear.Text" xml:space="preserve">
+    <value>Clear view</value>
+  </data>
+  <data name="RegistryFilterId.Text" xml:space="preserve">
+    <value>Search by ID</value>
+  </data>
+  <data name="RegistryFilterName.Text" xml:space="preserve">
+    <value>Search by username</value>
+  </data>
+  <data name="RegistryFilterTitle.Text" xml:space="preserve">
+    <value>Search by title</value>
+  </data>
+  <data name="RegistryAll.Text" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="RegistryWorking.Text" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="RegistrySubscriptions.Text" xml:space="preserve">
+    <value>Subscribed</value>
+  </data>
+  <data name="RegistrySortActivity.Content" xml:space="preserve">
+    <value>By activity</value>
+  </data>
+  <data name="RegistrySortName.Content" xml:space="preserve">
+    <value>By title</value>
+  </data>
+  <data name="RegistrySortMessages.Content" xml:space="preserve">
+    <value>By message count</value>
+  </data>
+  <data name="RegistryEmpty.Text" xml:space="preserve">
+    <value>No chats found. Change the search or filter.</value>
+  </data>
+  <data name="RegistryHint.Text" xml:space="preserve">
+    <value>Double-click to open a chat</value>
+  </data>
+  <data name="RegistryOpenChat.Text" xml:space="preserve">
+    <value>Open chat</value>
+  </data>
+  <data name="RegistryDetails.Header" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="RegistryDelete.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Delete selected chat from storage</value>
+  </data>
+  <data name="RegistryDelete.AutomationProperties.Name" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="RegistryStart" xml:space="preserve">
+    <value>Parse</value>
+  </data>
+  <data name="RegistryStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
 </root>

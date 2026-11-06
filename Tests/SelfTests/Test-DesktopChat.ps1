@@ -177,32 +177,92 @@ try {
     Invoke-AppElement (Wait-AppElement '^(Чаты|Chats)$')
     # Проверяем настоящие заголовки: колонки не входят в обычный обход локализатора
     $expectedHeaders = if ($Language -eq 'Russian') {
-        @('ИД', 'Подписка', 'Доступ', 'Активно', 'Имя пользователя', 'Заголовок', 'Кол-во', 'Прогресс', 'Участники')
-    } else { @('ID', 'Subscribed', 'Access', 'Active', 'Username', 'Title', 'Count', 'Progress', 'Participants') }
+        @('Чат', 'Сообщения', 'Медиа', 'Парсинг', 'Обновление')
+    } else { @('Chat', 'Messages', 'Media', 'Parsing', 'Updated') }
+    if ($WindowWidth -gt 0 -and $WindowWidth -lt 1000) { $expectedHeaders = $expectedHeaders[0..3] }
     $deadline = [DateTime]::UtcNow.AddSeconds(15)
     do {
         $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
         $headers = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
             [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
-                [System.Windows.Automation.ControlType]::HeaderItem))
+                [System.Windows.Automation.ControlType]::HeaderItem)) | Where-Object { -not $_.Current.IsOffscreen }
         $headerNames = foreach ($header in $headers) {
             $header.Current.Name
             $header.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition) |
                 ForEach-Object { $_.Current.Name }
         }
-        $headersReady = $headers.Count -eq 9 -and @($expectedHeaders | Where-Object { $_ -notin $headerNames }).Count -eq 0
+        $headersReady = @($headers).Count -eq $expectedHeaders.Count -and @($expectedHeaders | Where-Object { $_ -notin $headerNames }).Count -eq 0
         if (-not $headersReady) { Start-Sleep -Milliseconds 100 }
     } until ($headersReady -or [DateTime]::UtcNow -gt $deadline)
-    if (-not $headersReady) { throw "Не отображены девять заголовков чатов: $($headerNames -join ', ')" }
+    if (-not $headersReady) {
+        Save-AppSnapshot 'Chats-HeadersFailure'
+        $headers | ForEach-Object { "$($_.Current.Name): $($_.Current.BoundingRectangle)" } |
+            Set-Content -LiteralPath (Join-Path $caseDirectory 'headers-failure.txt') -Encoding utf8
+        throw "Не отображены $($expectedHeaders.Count) заголовков реестра: $($headerNames -join ', '); $caseDirectory"
+    }
     $headerNames | Set-Content -LiteralPath (Join-Path $caseDirectory 'headers.txt') -Encoding utf8
-    Write-Output 'PASS: девять локализованных заголовков таблицы чатов'
+    Write-Output "PASS: $($expectedHeaders.Count) локализованных заголовков реестра чатов"
     Save-AppSnapshot 'Chats'
-    $open = Wait-AppElement '^(Открыть/редактировать|Open/edit)$'
+    $open = Wait-AppElement '.*' '' 'ChatOpenChat'
     $rect = $window.Current.BoundingRectangle
     $buttonRect = $open.Current.BoundingRectangle
     if ($buttonRect.Right -gt $rect.Right -or $buttonRect.Left -lt $rect.Left) { throw 'Кнопка открытия чата вышла за границы окна' }
     $filter = Wait-AppElement '.*' '' 'ChatFilter'
     if ($filter.Current.BoundingRectangle.Width -lt 120) { throw 'Поле фильтра чатов сжалось до недоступной ширины' }
+    # Проверяем поиск и фильтр без подключения к Telegram
+    $filterValue = $filter.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+    $filterValue.SetValue('registry_missing_483291')
+    Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSearch')
+    [void](Wait-AppElement '^(Чаты не найдены|No chats found)')
+    $filterValue.SetValue('')
+    Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSearch')
+    [void](Wait-AppElement '.*' '' 'ChatOpenChat')
+    Invoke-AppElement (Wait-AppElement '^(В работе|In progress)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+    [void](Wait-AppElement '^(Чаты не найдены|No chats found)')
+    Invoke-AppElement (Wait-AppElement '^(Все|All)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+    [void](Wait-AppElement '.*' '' 'ChatOpenChat')
+    $sort = Wait-AppElement '.*' '' 'ChatsSort'
+    $sort.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+    Invoke-AppElement (Wait-AppElement '^(По названию|By title)$')
+    [void](Wait-AppElement '.*' '' 'ChatOpenChat')
+    $details = Wait-AppElement '^(Сведения|Details)$' 'Microsoft.UI.Xaml.Controls.Expander'
+    $expand = $details.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+    $expand.Expand()
+    Save-AppSnapshot 'Chats-Details'
+    $expand.Collapse()
+    $privacy = (Wait-AppElement '.*' '' 'ToggleSwitchShowSensitiveData').GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+    $privacy.Toggle()
+    Start-Sleep -Milliseconds 200
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    foreach ($hiddenId in @('ChatsRegistry', 'ChatSelectionActions')) {
+        $hidden = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, $hiddenId))
+        if (@($hidden | Where-Object { -not $_.Current.IsOffscreen }).Count -gt 0) { throw "Конфиденциальные данные не скрыты: $hiddenId" }
+    }
+    $privacy.Toggle()
+    [void](Wait-AppElement '.*' '' 'ChatOpenChat')
+    Write-Output 'PASS: поиск, пустой фильтр работающих чатов, сортировка, сведения и конфиденциальность реестра'
+    # Без подключения кнопка запуска видна, но недоступна; управление расположено в порядке парсинг, пауза, открытие
+    $parsing = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatRegistryParsing'))
+    $pause = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatRegistryPause'))
+    $open = Wait-AppElement '.*' '' 'ChatOpenChat'
+    if ($null -eq $parsing -or $null -eq $pause -or $parsing.Current.IsOffscreen -or $parsing.Current.IsEnabled) {
+        throw 'Кнопка парсинга не видна или разрешает запуск без подключения'
+    }
+    $parseRect = $parsing.Current.BoundingRectangle
+    $pauseRect = $pause.Current.BoundingRectangle
+    $openRect = $open.Current.BoundingRectangle
+    if ($parseRect.Right -gt $pauseRect.Left -or $pauseRect.Right -gt $openRect.Left -or $openRect.Right -gt $rect.Right) {
+        throw 'Кнопки парсинга, паузы и открытия перекрываются или выходят за границы окна'
+    }
+    $expectedParseCaption = if ($Language -eq 'Russian') { 'Парсинг' } else { 'Parse' }
+    $parseTexts = $parsing.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition)
+    if ($expectedParseCaption -notin @($parsing.Current.Name) + @($parseTexts | ForEach-Object { $_.Current.Name })) {
+        throw 'Кнопка парсинга не переведена на выбранный язык'
+    }
+    Write-Output 'PASS: локализованная кнопка парсинга слева от паузы; без подключения запуск недоступен, кнопки не перекрываются'
     $delete = Wait-AppElement '^(Удалить|Delete)$'
     if ($delete.Current.BoundingRectangle.Right -gt $rect.Right) { throw 'Кнопка удаления чата обрезана краем окна' }
     $deadline = [DateTime]::UtcNow.AddSeconds(20)
@@ -222,9 +282,9 @@ try {
         Start-Sleep -Milliseconds 100
     }
     if (-not $selected) { throw 'В таблице не найден тестовый чат' }
-    Invoke-AppElement (Wait-AppElement '^(Открыть/редактировать|Open/edit)$')
-    Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
+    Invoke-AppElement (Wait-AppElement '.*' '' 'ChatOpenChat')
     [void](Wait-AppElement '^(Обзор|Overview)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+    Write-Output 'PASS: выбранный чат открыт без диалога подтверждения'
     $chatsMenu = Wait-AppElement '^(Чаты|Chats)$' 'Microsoft.UI.Xaml.Controls.NavigationViewItem'
     if (-not $chatsMenu.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Current.IsSelected) {
         throw 'Обычный чат ошибочно открыт в разделе сохранённых сообщений'

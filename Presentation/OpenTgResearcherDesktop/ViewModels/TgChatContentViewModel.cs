@@ -69,7 +69,9 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
             MessageDtos.Clear();
             UserDtos.Clear();
 
-            Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
+            // Читаем отдельным контекстом, когда основные репозитории заняты парсером
+            using var reader = IsOnlineProcessing ? new TgEfSourceRepository() : null;
+            Dto = await (reader ?? App.BusinessLogicManager.StorageManager.SourceRepository).GetDtoAsync(x => x.Uid == Uid);
 
             await LazyLoadMessagesAsync();
         }
@@ -90,14 +92,19 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
         {
             IsLoading = true;
 
+            using var userReader = IsOnlineProcessing ? new TgEfUserRepository() : null;
+            using var messageReader = IsOnlineProcessing ? new TgEfMessageRepository() : null;
+            var users = userReader ?? App.BusinessLogicManager.StorageManager.UserRepository;
+            var messages = messageReader ?? App.BusinessLogicManager.StorageManager.MessageRepository;
+
             if (UserDtos.Count == 0)
-                UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, where: x => x.Id > 0, order: x => x.Id)];
+                UserDtos = [.. await users.GetListDtosAsync(take: 0, skip: 0, where: x => x.Id > 0, order: x => x.Id)];
 
             // Получаем общее число сообщений выбранного чата
-            var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
+            var totalCount = await messages.GetCountAsync(x => x.SourceId == Dto.Id);
 
             // Читаем последнюю порцию сообщений в порядке убывания ID
-            var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: PageSkip,
+            var newItems = await messages.GetListDtosAsync(take: PageSize, skip: PageSkip,
                 where: x => x.SourceId == Dto.Id, order: x => x.Id, isOrderDesc: true);
 
             // Сдвигаем начало следующей порции
@@ -151,7 +158,8 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
         (LazyLoadMessagesCommand as AsyncRelayCommand)?.NotifyCanExecuteChanged();
 
         // Обновляем статистику загруженных сообщений
-        var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
+        using var reader = IsOnlineProcessing ? new TgEfMessageRepository() : null;
+        var totalCount = await (reader ?? App.BusinessLogicManager.StorageManager.MessageRepository).GetCountAsync(x => x.SourceId == Dto.Id);
         LoadedDataStatistics = $"{TgResourceExtensions.GetTextBlockFiltered()} {MessageDtos.Count} | " + $"{TgResourceExtensions.GetTextBlockTotalAmount()} {totalCount}";
 
         await Task.CompletedTask;

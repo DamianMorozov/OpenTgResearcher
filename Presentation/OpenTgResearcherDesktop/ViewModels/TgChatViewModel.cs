@@ -84,8 +84,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         await TgDesktopUtils.InvokeOnUIThreadAsync(async () => {
             try
             {
-                Dto = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == Uid);
-                DiscussionDto = await App.BusinessLogicManager.StorageManager.SourceRepository.FindCommentDtoSourceAsync(Dto.Id);
+                using var reader = IsOnlineProcessing ? new TgEfSourceRepository() : null;
+                var sources = reader ?? App.BusinessLogicManager.StorageManager.SourceRepository;
+                Dto = await sources.GetDtoAsync(x => x.Uid == Uid);
+                DiscussionDto = await sources.FindCommentDtoSourceAsync(Dto.Id);
             
                 await UpdateDetailsAsync();
                 IsEmptyData = Dto.Id <= 0;

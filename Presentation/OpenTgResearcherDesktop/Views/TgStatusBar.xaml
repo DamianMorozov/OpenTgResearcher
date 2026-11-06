@@ -1,0 +1,174 @@
+<UserControl
+    x:Class="OpenTgResearcherDesktop.Views.TgStatusBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l="using:WinUI3Localizer"
+    xmlns:models="using:OpenTgResearcherDesktop.Models"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles">
+    <UserControl.Resources>
+        <Style x:Key="StatusButton" TargetType="Button" BasedOn="{StaticResource SubtleButtonStyle}">
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="MinWidth" Value="36" />
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+        <DataTemplate x:Key="StatusOperation" x:DataType="models:TgNetworkOperationModel">
+            <StackPanel Margin="0,6" Spacing="4">
+                <TextBlock Text="{x:Bind Caption}" TextWrapping="Wrap" />
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind State}" TextWrapping="Wrap" />
+                    <TextBlock Grid.Column="1" FontSize="12" Text="{x:Bind ProgressCompact}" ToolTipService.ToolTip="{x:Bind ProgressText}" />
+                </Grid>
+                <ProgressBar Value="{x:Bind Progress}" Visibility="{x:Bind HasProgress, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid x:Name="StatusBar" AutomationProperties.AutomationId="StatusBar">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  Ожидание Telegram занимает место только при действующем ограничении  -->
+        <Border
+            Padding="12,8"
+            Background="{ThemeResource InfoBarWarningSeverityBackgroundBrush}"
+            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <FontIcon FontSize="14" Glyph="&#xE823;" />
+                <TextBlock Grid.Column="1" AutomationProperties.AutomationId="StatusFloodNotice" Text="{x:Bind ViewModel.StatusFloodDetail, Mode=OneWay}" TextWrapping="Wrap" />
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" Padding="0,4" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0">
+            <Grid ColumnSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="StatusTelegramButton" AutomationProperties.AutomationId="StatusTelegram" Style="{StaticResource StatusButton}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Ellipse x:Name="StatusTelegramIcon" Width="7" Height="7" VerticalAlignment="Center" />
+                        <TextBlock x:Name="StatusTelegramLabel" VerticalAlignment="Center" FontSize="12"
+                            Text="{x:Bind ViewModel.StatusTelegramText, Mode=OneWay}" Visibility="Collapsed" />
+                    </StackPanel>
+                    <Button.Flyout>
+                        <Flyout Placement="Top">
+                            <StackPanel x:Name="StatusTelegramDetails" Spacing="12">
+                                <TextBlock l:Uids.Uid="StatusConnectionTitle" FontWeight="SemiBold" />
+                                <TextBlock Text="{x:Bind ViewModel.StatusTelegramDetail, Mode=OneWay}" TextWrapping="Wrap" />
+                                <Button l:Uids.Uid="StatusOpenConnection" Click="StatusNavigate_Click" Command="{x:Bind ViewModel.OpenStatusConnectionCommand}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="StatusStorageButton" Grid.Column="1" AutomationProperties.AutomationId="StatusStorage" Style="{StaticResource StatusButton}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <styles:TgOutlineIcon Width="16" Height="16" Kind="storage" />
+                        <TextBlock x:Name="StatusStorageLabel" VerticalAlignment="Center" FontSize="12"
+                            Text="{x:Bind ViewModel.StatusStorageText, Mode=OneWay}" Visibility="Collapsed" />
+                    </StackPanel>
+                    <Button.Flyout>
+                        <Flyout Placement="Top">
+                            <StackPanel x:Name="StatusStorageDetails" Spacing="12">
+                                <TextBlock l:Uids.Uid="StatusStorageTitle" FontWeight="SemiBold" />
+                                <TextBlock Text="{x:Bind ViewModel.StatusStorageDetail, Mode=OneWay}" TextWrapping="Wrap" />
+                                <Button l:Uids.Uid="StatusOpenSettings" Click="StatusNavigate_Click" Command="{x:Bind ViewModel.OpenStatusSettingsCommand}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="StatusActivityButton" Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                    AutomationProperties.AutomationId="StatusActivity" Style="{StaticResource StatusButton}">
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <styles:TgOutlineIcon Width="16" Height="16" VerticalAlignment="Center" Kind="activity" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="12"
+                            Text="{x:Bind ViewModel.StatusActivityText, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="{x:Bind ViewModel.StatusActivityCount, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.IsStatusActivityEmpty, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        <FontIcon Grid.Column="3" FontSize="10" Glyph="&#xE70E;" />
+                    </Grid>
+                    <Button.Flyout>
+                        <Flyout Placement="Top">
+                            <StackPanel x:Name="StatusActivityDetails" Spacing="12">
+                                <TextBlock l:Uids.Uid="StatusActivityTitle" FontWeight="SemiBold" />
+                                <TextBlock l:Uids.Uid="StatusActivityEmptyDetail" TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsStatusActivityEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <ScrollViewer MaxHeight="340" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{x:Bind ViewModel.StatusChatGroups}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:TgNetworkChatGroupModel">
+                                                <Expander Margin="0,0,0,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                                    IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">
+                                                    <Expander.Header>
+                                                        <TextBlock Text="{x:Bind Title, Mode=OneWay}" TextTrimming="CharacterEllipsis"
+                                                            ToolTipService.ToolTip="{x:Bind Title, Mode=OneWay}" />
+                                                    </Expander.Header>
+                                                    <ItemsControl ItemTemplate="{StaticResource StatusOperation}" ItemsSource="{x:Bind Operations}" />
+                                                </Expander>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                                <Button l:Uids.Uid="StatusOpenActivity" AutomationProperties.AutomationId="StatusOpenActivity"
+                                    Click="StatusNavigate_Click" Command="{x:Bind ViewModel.OpenStatusActivityCommand}" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+                <Button x:Name="StatusFloodButton" Grid.Column="3" AutomationProperties.AutomationId="StatusFlood" Style="{StaticResource StatusButton}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xEA18;" />
+                        <TextBlock x:Name="StatusFloodLabel" VerticalAlignment="Center" FontSize="12"
+                            Text="{x:Bind ViewModel.StatusFloodText, Mode=OneWay}" Visibility="Collapsed" />
+                    </StackPanel>
+                    <Button.Flyout>
+                        <Flyout Placement="Top">
+                            <StackPanel x:Name="StatusFloodDetails" Spacing="12">
+                                <TextBlock l:Uids.Uid="StatusFloodTitle" FontWeight="SemiBold" />
+                                <TextBlock Text="{x:Bind ViewModel.StatusFloodDetail, Mode=OneWay}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+        </Border>
+        <!--  Подробные подписи появляются только при достаточной ширине окна  -->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="CompactStatus">
+                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="0" /></VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="MediumStatus">
+                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="760" /></VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="StatusTelegramLabel.Visibility" Value="Visible" />
+                        <Setter Target="StatusStorageLabel.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="WideStatus">
+                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="1000" /></VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="StatusTelegramLabel.Visibility" Value="Visible" />
+                        <Setter Target="StatusStorageLabel.Visibility" Value="Visible" />
+                        <Setter Target="StatusFloodLabel.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</UserControl>

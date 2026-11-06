@@ -7,6 +7,9 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("StatusBarLayout", StatusBarLayoutAsync), ("StatusBarActivity", StatusBarActivityAsync),
+            ("StatusBarStates", StatusBarStatesAsync), ("StatusBarPrivacyAndLanguage", StatusBarPrivacyAndLanguageAsync),
+            ("StatusBarNavigation", StatusBarNavigationAsync),
             ("NetworkChatGroups", NetworkChatGroupsAsync), ("NetworkGroupRefresh", NetworkGroupRefreshAsync),
             ("NetworkGroupPrivacy", NetworkGroupPrivacyAsync),
             ("NetworkUnifiedActivity", NetworkUnifiedActivityAsync),

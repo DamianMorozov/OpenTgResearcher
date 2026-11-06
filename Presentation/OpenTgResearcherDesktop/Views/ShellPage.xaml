@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="OpenTgResearcherDesktop.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,6 +9,7 @@
     xmlns:l="using:WinUI3Localizer"
     xmlns:lottie="using:CommunityToolkit.WinUI.Lottie"
     xmlns:styles="using:OpenTgResearcherDesktop.Styles"
+    xmlns:views="using:OpenTgResearcherDesktop.Views"
     xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     x:Name="ShellPageRoot"
@@ -418,181 +419,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Frame x:Name="NavigationFrame" />
-                <Border
-                    Grid.Row="1"
-                    Padding="0,5,0,5"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    BorderThickness="0,1,0,0">
-                    <Border.Background>
-                        <SolidColorBrush Opacity="0.5" Color="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
-                    </Border.Background>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <!--  Обработка запросов хранилища  -->
-                        <FontIcon
-                            Grid.Column="0"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xEBC3;"
-                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <ProgressRing
-                            Grid.Column="0"
-                            Width="16"
-                            Height="16"
-                            Margin="5,0,5,0"
-                            IsActive="True"
-                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="DataStorage"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <FontIcon
-                            Grid.Column="2"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE930;"
-                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <FontIcon
-                            Grid.Column="2"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xEA39;"
-                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Column="3"
-                            Grid.ColumnSpan="2"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="DataWaitStorageProcessing"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            TextTrimming="CharacterEllipsis"
-                            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Column="4"
-                            Grid.ColumnSpan="2"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="AppStorageNeedToCreate"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind ViewModel.IsExistsAppStorage, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <!--  Обработка сетевых запросов  -->
-                        <FontIcon
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xEDE4;"
-                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <ProgressRing
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Width="16"
-                            Height="16"
-                            Margin="5,0,5,0"
-                            IsActive="True"
-                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="FieldNetwork"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <FontIcon
-                            Grid.Row="1"
-                            Grid.Column="2"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE930;"
-                            Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <FontIcon
-                            Grid.Row="1"
-                            Grid.Column="2"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xEA39;"
-                            Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="3"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="DataWaitOnlineProcessing"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            TextTrimming="CharacterEllipsis"
-                            Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="4"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="AppOnlineNeedToConnet"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <!--  Защита от флуда  -->
-                        <FontIcon
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xEF31;"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <ProgressRing
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Width="16"
-                            Height="16"
-                            Margin="5,0,5,0"
-                            IsActive="True"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="FloodControl"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <FontIcon
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE930;"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <FontIcon
-                            Grid.Row="2"
-                            Grid.Column="2"
-                            Margin="5,0,5,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xEA39;"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Grid.Row="2"
-                            Grid.Column="3"
-                            Margin="5,0,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind ViewModel.IsFloodVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <Run l:Uids.Uid="RunWait" />
-                            <Run Text="{x:Bind ViewModel.FloodWaitSeconds, Mode=OneWay}" />
-                            <Run l:Uids.Uid="RunSeconds" />
-                        </TextBlock>
-                        <TextBlock
-                            Grid.Row="2"
-                            Grid.Column="4"
-                            Margin="5,0,5,0"
-                            VerticalAlignment="Center"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind ViewModel.FloodMessage, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis" />
-                    </Grid>
-                </Border>
+                <views:TgStatusBar Grid.Row="1" />
             </Grid>
         </NavigationView>
         <VisualStateManager.VisualStateGroups>

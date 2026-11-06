@@ -13,10 +13,12 @@
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgUpdateViewModel.cs" Link="TgUpdateViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/ShellViewModel.Toolbar.cs" Link="ShellViewModel.Toolbar.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/ShellViewModel.Status.cs" Link="ShellViewModel.Status.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Services/NavigationViewService.cs" Link="NavigationViewService.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgResourceExtensions.cs" Link="TgResourceExtensions.cs" />
     <Content Include="../../../Presentation/OpenTgResearcherDesktop/Strings/**/Resources.resw" Link="Strings/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgUpdatePage.xaml" LogicalName="TgUpdatePage.xaml" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/ShellPage.xaml" LogicalName="ShellPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgStatusBar.xaml" LogicalName="TgStatusBar.xaml" />
   </ItemGroup>
 </Project>

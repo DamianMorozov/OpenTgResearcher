@@ -2321,4 +2321,88 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="RegistryStop" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <data name="StatusActivityDownloading" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="StatusActivityEmpty" xml:space="preserve">
+    <value>No operations</value>
+  </data>
+  <data name="StatusActivityEmptyDetail.Text" xml:space="preserve">
+    <value>There are no active network operations.</value>
+  </data>
+  <data name="StatusActivityParsing" xml:space="preserve">
+    <value>Parsing</value>
+  </data>
+  <data name="StatusActivityTitle.Text" xml:space="preserve">
+    <value>Activity by chat</value>
+  </data>
+  <data name="StatusActivityWorking" xml:space="preserve">
+    <value>Network activity</value>
+  </data>
+  <data name="StatusChatCount" xml:space="preserve">
+    <value>Chats: {0}</value>
+  </data>
+  <data name="StatusConnectionTitle.Text" xml:space="preserve">
+    <value>Telegram connection</value>
+  </data>
+  <data name="StatusFloodReady" xml:space="preserve">
+    <value>No restrictions</value>
+  </data>
+  <data name="StatusFloodReadyDetail" xml:space="preserve">
+    <value>No active Telegram restrictions. If requests are rate limited, the waiting time will appear here.</value>
+  </data>
+  <data name="StatusFloodTitle.Text" xml:space="preserve">
+    <value>Telegram limits</value>
+  </data>
+  <data name="StatusFloodWaiting" xml:space="preserve">
+    <value>Waiting · {0} s</value>
+  </data>
+  <data name="StatusFloodWaitingDetail" xml:space="preserve">
+    <value>Telegram asks you to wait {0} s. Requests will resume automatically.</value>
+  </data>
+  <data name="StatusOpenActivity.Content" xml:space="preserve">
+    <value>Network activity</value>
+  </data>
+  <data name="StatusOpenConnection.Content" xml:space="preserve">
+    <value>Client connection</value>
+  </data>
+  <data name="StatusOpenSettings.Content" xml:space="preserve">
+    <value>Open settings</value>
+  </data>
+  <data name="StatusStorageMissing" xml:space="preserve">
+    <value>No database</value>
+  </data>
+  <data name="StatusStorageMissingDetail" xml:space="preserve">
+    <value>The database is unavailable. Select an existing database or create a new one in Settings → Files.</value>
+  </data>
+  <data name="StatusStorageReady" xml:space="preserve">
+    <value>Database ready</value>
+  </data>
+  <data name="StatusStorageReadyDetail" xml:space="preserve">
+    <value>The selected database is available.</value>
+  </data>
+  <data name="StatusStorageTitle.Text" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="StatusStorageWriting" xml:space="preserve">
+    <value>Database busy…</value>
+  </data>
+  <data name="StatusStorageWritingDetail" xml:space="preserve">
+    <value>A database operation is in progress. Wait for it to finish.</value>
+  </data>
+  <data name="StatusTelegramOffline" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="StatusTelegramOfflineDetail" xml:space="preserve">
+    <value>Telegram is disconnected. Check your network and the settings on the Client connection page.</value>
+  </data>
+  <data name="StatusTelegramReady" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="StatusTelegramReadyDetail" xml:space="preserve">
+    <value>Telegram is connected. The session is authorized.</value>
+  </data>
+  <data name="StatusOperationCount" xml:space="preserve">
+    <value>Operations: {0}</value>
+  </data>
 </root>

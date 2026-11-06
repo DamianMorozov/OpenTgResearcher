@@ -3,6 +3,7 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 // Подменяем только среду WinUI и источник пакетов, исходные VM, службу навигации и чтение строк компилируем без изменений
 public sealed class ITgSettingsService
 {
+    public bool IsExistsAppStorage { get; set; } = true;
     public TgEnumLanguage AppLanguage { get; set; }
     public TgEnumTheme AppTheme { get; set; }
     public int LanguageWrites { get; private set; }

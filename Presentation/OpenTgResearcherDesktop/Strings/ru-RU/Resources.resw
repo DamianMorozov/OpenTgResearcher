@@ -2385,4 +2385,88 @@ API-параметры, телефон и выбранный прокси буд
   <data name="RegistryStop" xml:space="preserve">
     <value>Прервать</value>
   </data>
+  <data name="StatusActivityDownloading" xml:space="preserve">
+    <value>Скачивание</value>
+  </data>
+  <data name="StatusActivityEmpty" xml:space="preserve">
+    <value>Нет операций</value>
+  </data>
+  <data name="StatusActivityEmptyDetail.Text" xml:space="preserve">
+    <value>Сейчас нет активных сетевых операций.</value>
+  </data>
+  <data name="StatusActivityParsing" xml:space="preserve">
+    <value>Парсинг</value>
+  </data>
+  <data name="StatusActivityTitle.Text" xml:space="preserve">
+    <value>Активность по чатам</value>
+  </data>
+  <data name="StatusActivityWorking" xml:space="preserve">
+    <value>Сетевая активность</value>
+  </data>
+  <data name="StatusChatCount" xml:space="preserve">
+    <value>Чаты: {0}</value>
+  </data>
+  <data name="StatusConnectionTitle.Text" xml:space="preserve">
+    <value>Подключение к Telegram</value>
+  </data>
+  <data name="StatusFloodReady" xml:space="preserve">
+    <value>Без ограничений</value>
+  </data>
+  <data name="StatusFloodReadyDetail" xml:space="preserve">
+    <value>Активных ограничений Telegram нет. При ограничении частоты запросов здесь появится время ожидания.</value>
+  </data>
+  <data name="StatusFloodTitle.Text" xml:space="preserve">
+    <value>Ограничения Telegram</value>
+  </data>
+  <data name="StatusFloodWaiting" xml:space="preserve">
+    <value>Ожидание · {0} с</value>
+  </data>
+  <data name="StatusFloodWaitingDetail" xml:space="preserve">
+    <value>Telegram просит подождать {0} с. Запросы продолжатся автоматически.</value>
+  </data>
+  <data name="StatusOpenActivity.Content" xml:space="preserve">
+    <value>Сетевая активность</value>
+  </data>
+  <data name="StatusOpenConnection.Content" xml:space="preserve">
+    <value>Подключение клиента</value>
+  </data>
+  <data name="StatusOpenSettings.Content" xml:space="preserve">
+    <value>Открыть настройки</value>
+  </data>
+  <data name="StatusStorageMissing" xml:space="preserve">
+    <value>База не выбрана</value>
+  </data>
+  <data name="StatusStorageMissingDetail" xml:space="preserve">
+    <value>База данных недоступна. Выберите существующую базу или создайте новую в «Настройки» → «Файлы».</value>
+  </data>
+  <data name="StatusStorageReady" xml:space="preserve">
+    <value>База готова</value>
+  </data>
+  <data name="StatusStorageReadyDetail" xml:space="preserve">
+    <value>База данных выбрана и доступна для работы.</value>
+  </data>
+  <data name="StatusStorageTitle.Text" xml:space="preserve">
+    <value>Хранилище</value>
+  </data>
+  <data name="StatusStorageWriting" xml:space="preserve">
+    <value>База занята</value>
+  </data>
+  <data name="StatusStorageWritingDetail" xml:space="preserve">
+    <value>Выполняется операция с базой данных. Дождитесь её завершения.</value>
+  </data>
+  <data name="StatusTelegramOffline" xml:space="preserve">
+    <value>Нет подключения</value>
+  </data>
+  <data name="StatusTelegramOfflineDetail" xml:space="preserve">
+    <value>Нет подключения к Telegram. Проверьте сеть и параметры на странице «Подключение клиента».</value>
+  </data>
+  <data name="StatusTelegramReady" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="StatusTelegramReadyDetail" xml:space="preserve">
+    <value>Подключение к Telegram активно. Сессия авторизована.</value>
+  </data>
+  <data name="StatusOperationCount" xml:space="preserve">
+    <value>Операции: {0}</value>
+  </data>
 </root>

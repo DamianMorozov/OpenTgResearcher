@@ -100,10 +100,11 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             VerticalAlignment="Center"
-                            l:Uids.Uid="NetworkActiveTitle"
+                            l:Uids.Uid="NetworkGroupsTitle"
                             FontSize="18"
                             FontWeight="SemiBold"
                             TextWrapping="Wrap" />
@@ -118,52 +119,64 @@
                             l:Uids.Uid="NetworkStopParsing"
                             AutomationProperties.AutomationId="NetworkStopParsing"
                             Command="{x:Bind ViewModel.StopParsingCommand}" />
-                    </Grid>
-                    <ProgressBar IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsActiveEmpty, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    <TextBlock
-                        l:Uids.Uid="NetworkEmpty"
-                        AutomationProperties.AutomationId="NetworkEmpty"
-                        TextWrapping="Wrap"
-                        Visibility="{x:Bind ViewModel.IsActiveEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <ItemsControl
-                        AutomationProperties.AutomationId="NetworkActive"
-                        ItemTemplate="{StaticResource OperationRow}"
-                        ItemsSource="{x:Bind ViewModel.Active}" />
-                </StackPanel>
-            </Border>
-            <Border Style="{StaticResource NetworkCard}">
-                <StackPanel Spacing="12">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel VerticalAlignment="Center" Spacing="4">
-                            <TextBlock
-                                l:Uids.Uid="NetworkHistoryTitle"
-                                FontSize="18"
-                                FontWeight="SemiBold" />
-                            <TextBlock
-                                AutomationProperties.AutomationId="NetworkHistoryCount"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{x:Bind ViewModel.CompletedSummary, Mode=OneWay}"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
                         <Button
-                            Grid.Column="1"
+                            Grid.Column="3"
                             l:Uids.Uid="NetworkClear"
                             AutomationProperties.AutomationId="NetworkClear"
                             Command="{x:Bind ViewModel.ClearHistoryCommand}" />
                     </Grid>
                     <TextBlock
-                        l:Uids.Uid="NetworkHistoryEmpty"
+                        AutomationProperties.AutomationId="NetworkHistoryCount"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="{x:Bind ViewModel.CompletedSummary, Mode=OneWay}" />
+                    <ProgressBar IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsActiveEmpty, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBlock
+                        l:Uids.Uid="NetworkEmpty"
+                        AutomationProperties.AutomationId="NetworkEmpty"
                         TextWrapping="Wrap"
-                        Visibility="{x:Bind ViewModel.IsHistoryEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        Visibility="{x:Bind ViewModel.IsActivityEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <ItemsControl
-                        AutomationProperties.AutomationId="NetworkHistory"
-                        ItemTemplate="{StaticResource OperationRow}"
-                        ItemsSource="{x:Bind ViewModel.History}" />
+                        AutomationProperties.AutomationId="NetworkChatGroups"
+                        ItemsSource="{x:Bind ViewModel.ChatGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:TgNetworkChatGroupModel">
+                                <!--  Группа сохраняет раскрытие при обновлении прогресса и завершении файлов  -->
+                                <Expander
+                                    Margin="0,0,0,8"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    AutomationProperties.AutomationId="NetworkChatGroup"
+                                    IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}">
+                                    <Expander.Header>
+                                        <Grid ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <styles:TgOutlineIcon VerticalAlignment="Center" Kind="{x:Bind Icon}" />
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock
+                                                    AutomationProperties.AutomationId="NetworkChatTitle"
+                                                    FontWeight="SemiBold"
+                                                    Text="{x:Bind Title, Mode=OneWay}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTipService.ToolTip="{x:Bind Title, Mode=OneWay}" />
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="{x:Bind Summary, Mode=OneWay}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Expander.Header>
+                                    <ItemsControl
+                                        AutomationProperties.AutomationId="NetworkGroupOperations"
+                                        ItemTemplate="{StaticResource OperationRow}"
+                                        ItemsSource="{x:Bind Operations}" />
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <TextBlock
                         l:Uids.Uid="NetworkHistoryNote"
                         FontSize="12"

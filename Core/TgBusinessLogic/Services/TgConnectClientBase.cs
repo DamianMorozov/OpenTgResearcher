@@ -1968,6 +1968,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         var uid = Guid.NewGuid();
         await LoadStateService.PrepareDownloadTokenAsync(uid);
         LoadStateService.NetworkActivity.SetKind(uid, TgNetworkOperationKind.Parsing);
+        LoadStateService.NetworkActivity.SetChat(uid, settings.SourceVm.Dto.Id, settings.SourceVm.Dto.Title);
         using var parsingCts = CancellationTokenSource.CreateLinkedTokenSource(LoadStateService.DownloadToken);
         var ct = parsingCts.Token;
         LoadStateService.NetworkActivity.RegisterCancellation(uid, parsingCts.Cancel);
@@ -2235,7 +2236,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    /// <summary> Download message portion with client </summary>
+    // Получаем порцию сообщений клиентом, публикуя её начальный ID до ожидания ответа
     private async Task DownloadMessagesWithClientAsync(TgDownloadSettingsViewModel settings, TgParseHelper parseHelper, int chunkSize, CancellationToken ct)
     {
         var startId = parseHelper.SourceFirstId;
@@ -2253,8 +2254,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             if (Client is null) return;
 
+            LoadStateService.NetworkActivity.ReportParsingRequest(parseHelper.NetworkOperationId, startId, parseHelper.SourceLastId);
             Messages_MessagesBase? messages = null;
-            // Saved Messages
+            // Сохранённые сообщения
             if (settings.SourceVm.Dto.Id == Me?.id)
             {
                 var savedPeer = new InputPeerSelf();
@@ -2270,23 +2272,23 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 {
                     var startNew = messages.Messages.Min(x => x.ID);
                     var endNew = messages.Messages.Max(x => x.ID);
-                    // Move window
+                    // Сдвигаем окно сообщений
                     parseHelper.SourceFirstId += chunkSize;
                 }
                 else
                 {
-                    // Move window
+                    // Сдвигаем окно сообщений
                     parseHelper.SourceFirstId += chunkSize;
                 }
             }
             else if (parseHelper.Channel is not null)
             {
-                // Move window
+                // Сдвигаем окно сообщений
                 parseHelper.SourceFirstId += chunkSize;
 
-                // Channel messages via InputMessage[]
+                // Сообщения канала через InputMessage[]
                 var inputMessages = Enumerable.Range(startId, endId - startId + 1).Select(i => (TL.InputMessage)i).ToArray();
-                // Call Telegram API with cancellation support
+                // Вызываем API Telegram с поддержкой отмены
                 messages = await Cache.GetOrSetAsync(TgCacheUtils.GetCacheKeyMessages(parseHelper.Channel.id, startId, endId),
                     factory: SafeFactory<TL.Messages_MessagesBase?>(async (ctx, innerCt) => await TelegramCallAsync(
                         apiCt => Client.Channels_GetMessages(parseHelper.Channel, inputMessages), isThrow: false, innerCt)),
@@ -2294,7 +2296,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             else
             {
-                // Generic chat fallback
+                // Запрашиваем сообщения обычного чата
                 messages = await TelegramCallAsync(apiCt => Client.GetMessages(settings.Chat.Base, startId), isThrow: false, ct);
             }
 
@@ -2306,11 +2308,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await UpdateChatViewModelAsync(settings.SourceVm.Dto.Id, startId, parseHelper.SourceLastId, "Read Saved Messages");
             }
 
-            // Check deleted messages and mark storage entity
+            // Проверяем удалённые сообщения и отмечаем запись хранилища
             var firstMessage = messages?.Messages.FirstOrDefault();
             if (firstMessage is null)
             {
-                // Mark as deleted only if not cancelled
+                // Отмечаем удаление только при отсутствии отмены
                 if (!CheckShouldStop(ct))
                     await CheckDeletedMessageAndMarkEntityAsync(settings.SourceVm.Dto.Id, startId);
                 return;
@@ -2331,7 +2333,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     }
                     else
                     {
-                        // Check message exists
+                        // Проверяем наличие сообщения
                         await UpdateChatViewModelAsync(parseHelper.CurrentChatId, message.ID, settings.SourceVm.Dto.Count, "Empty message");
                     }
                 }
@@ -3005,7 +3007,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             {
                                 await using var localFileStream = File.Create(mediaInfo.ThumbnailPathWithNumber);
                                 // Загружаем выбранную обложку с поддержкой отмены
-                                await DownloadDocumentMediaAsync(doc, localFileStream, thumb, progress: null, ct);
+                                await DownloadDocumentMediaAsync(doc, localFileStream, thumb, progress: null,
+                                    tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.Title, ct);
                                 localFileStream.Close();
                             }
                         }
@@ -3031,7 +3034,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
                             // Загружаем документ с поддержкой отмены и отображением прогресса
                             await DownloadDocumentMediaAsync(doc, localFileStream, thumbSize: null,
-                                progress: ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber), ct);
+                                progress: ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber),
+                                tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.Title, ct);
                             var authorId = messageBase.From?.ID ?? 0;
                             await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
                                 TgEnumMessageType.Document, isRetry: false, authorId, ct);
@@ -3048,7 +3052,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                                 await DeleteEmptyOrLessSizeThumbFilesAsync(tgDownloadSettings, mediaInfo, ct);
                                 await using var localFileStream = File.Create(mediaInfo.LocalPathWithNumber);
                                 // Загружаем фотографию с поддержкой отмены
-                                await DownloadPhotoMediaAsync(photo, localFileStream, thumb, ct);
+                                await DownloadPhotoMediaAsync(photo, localFileStream, thumb, tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.Title, ct);
                                 localFileStream.Close();
                             }
                         }
@@ -3060,12 +3064,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <summary> Загружает документ или его обложку в открытый поток </summary>
     protected virtual async Task DownloadDocumentMediaAsync(Document document, Stream output, PhotoSizeBase? thumbSize,
-        Client.ProgressCallback? progress, CancellationToken ct = default)
+        Client.ProgressCallback? progress, long chatId, string chatTitle, CancellationToken ct = default)
     {
         try
         {
             await LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Download, async uid =>
             {
+                LoadStateService.NetworkActivity.SetChat(uid, chatId, chatTitle);
                 var fileName = output is FileStream file ? Path.GetFileName(file.Name) : document.ID.ToString();
                 LoadStateService.NetworkActivity.ReportTransfer(uid, fileName, 0, thumbSize?.FileSize ?? document.size);
                 await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(document, output, thumbSize,
@@ -3076,12 +3081,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Загружает выбранный размер фотографии в открытый поток </summary>
-    protected virtual async Task DownloadPhotoMediaAsync(Photo photo, Stream output, PhotoSizeBase size, CancellationToken ct = default)
+    protected virtual async Task DownloadPhotoMediaAsync(Photo photo, Stream output, PhotoSizeBase size, long chatId, string chatTitle, CancellationToken ct = default)
     {
         try
         {
             await LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Download, async uid =>
             {
+                LoadStateService.NetworkActivity.SetChat(uid, chatId, chatTitle);
                 var fileName = output is FileStream file ? Path.GetFileName(file.Name) : photo.ID.ToString();
                 LoadStateService.NetworkActivity.ReportTransfer(uid, fileName, 0, size.FileSize);
                 await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(photo, output, size,

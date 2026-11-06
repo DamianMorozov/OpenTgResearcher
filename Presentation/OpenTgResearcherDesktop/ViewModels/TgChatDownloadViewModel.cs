@@ -13,14 +13,14 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial string ChatProgressInfo { get; set; } = string.Empty;
 
-    public IAsyncRelayCommand DefaultSettingsCommand { get; }
+    public IRelayCommand OpenNetworkActivityCommand { get; }
 
     public TgChatDownloadViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgChatDownloadViewModel> logger)
         : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatDownloadViewModel))
     {
-        // Команда восстановления настроек загрузки
-        DefaultSettingsCommand = new AsyncRelayCommand(DefaultSettingsAsync);
+        // Команда перехода к общей активности остаётся доступной во время парсинга
+        OpenNetworkActivityCommand = new RelayCommand(OpenNetworkActivity);
     }
 
     #endregion
@@ -40,26 +40,8 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
             ChatProgressMessage = $"{TgDataUtils.CalcSourceProgress(DownloadDto.Count, DownloadDto.FirstId):00.00} %";
         });
 
-    private async Task DefaultSettingsAsync() => 
-        await ContentDialogAsync(DefaultSettingsCoreAsync, TgResourceExtensions.AskDefaultSettings(), TgEnumLoadDesktopType.Storage);
-
-    private async Task DefaultSettingsCoreAsync()
-    {
-        var chatEntity = new TgEfSourceEntity();
-        DownloadDto.CountThreads = chatEntity.CountThreads;
-        DownloadDto.IsAutoUpdate = chatEntity.IsAutoUpdate;
-        DownloadDto.IsSaveMessages = chatEntity.IsSaveMessages;
-        DownloadDto.IsRewriteMessages = chatEntity.IsRewriteMessages;
-        DownloadDto.IsSaveFiles = chatEntity.IsSaveFiles;
-        DownloadDto.IsRewriteFiles = chatEntity.IsRewriteFiles;
-        DownloadDto.IsJoinFileNameWithMessageId = chatEntity.IsJoinFileNameWithMessageId;
-        DownloadDto.IsDownloadThumbnail = chatEntity.IsDownloadThumbnail;
-        DownloadDto.IsParsingComments = chatEntity.IsParsingComments;
-        DownloadDto.IsCreatingSubdirectories = chatEntity.IsCreatingSubdirectories;
-        DownloadDto.IsFileNamingByMessage = chatEntity.IsFileNamingByMessage;
-        
-        await Task.CompletedTask;
-    }
+    // Открываем общую страницу сетевых операций без остановки текущего парсинга
+    private void OpenNetworkActivity() => NavigationService.NavigateTo(typeof(TgNetworkActivityViewModel).FullName!);
 
     #endregion
 }

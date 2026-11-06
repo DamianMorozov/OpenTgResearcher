@@ -30,6 +30,14 @@ public sealed class TgNetworkActivityService
             if (_operations.TryGetValue(uid, out var item)) _operations[uid] = item with { Kind = kind };
     }
 
+    /// <summary> Связывает операцию с чатом независимо от имени файла, названия и отображения конфиденциальных данных </summary>
+    public void SetChat(Guid uid, long chatId, string chatTitle)
+    {
+        using (_gate.EnterScope())
+            if (_operations.TryGetValue(uid, out var item) && item.State == TgNetworkOperationState.Running)
+                _operations[uid] = item with { ChatId = chatId, ChatTitle = chatTitle };
+    }
+
     /// <summary> Связывает активный парсинг с его собственным токеном отмены </summary>
     public void RegisterCancellation(Guid uid, Action cancel)
     {
@@ -93,6 +101,18 @@ public sealed class TgNetworkActivityService
             var received = size > 0 ? Math.Clamp(transferred, 0, size) : Math.Max(0, transferred);
             _operations[uid] = item with { Detail = Path.GetFileName(fileName), TransferredBytes = received, TotalBytes = size,
                 Progress = size > 0 ? received * 100d / size : null };
+        }
+    }
+
+    /// <summary> Сохраняет первый запрашиваемый ID порции до ожидания ответа, не меняя процент уже прочитанных сообщений </summary>
+    public void ReportParsingRequest(Guid uid, long currentMessageId, long lastMessageId)
+    {
+        using (_gate.EnterScope())
+        {
+            if (!_operations.TryGetValue(uid, out var item) || item.State != TgNetworkOperationState.Running
+                || item.Kind != TgNetworkOperationKind.Parsing) return;
+            _operations[uid] = item with { CurrentMessageId = currentMessageId >= 0 ? currentMessageId : null,
+                LastMessageId = lastMessageId > 0 ? lastMessageId : null };
         }
     }
 

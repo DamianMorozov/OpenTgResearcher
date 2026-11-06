@@ -13,7 +13,8 @@ public sealed record TgNetworkOperationModel
     public double Progress { get; }
     public bool HasProgress { get; }
     public string ProgressText { get; }
-    public string Caption => HasDetail ? $"{Title} · {Detail}" : Title;
+    public string MessageReading { get; }
+    public string Caption => string.Join(" · ", new[] { Title, MessageReading, Detail }.Where(x => !string.IsNullOrEmpty(x)));
     public string ProgressCompact { get; }
 
     /// <summary> Подготавливает безопасные подписи снимка для отображения в списке </summary>
@@ -24,6 +25,10 @@ public sealed record TgNetworkOperationModel
             ? operation.IsCancellationRequested ? "NetworkStateStopping" : operation.IsPaused ? "NetworkStatePaused" : "NetworkStateRunning"
             : $"NetworkState{operation.State}").GetLocalizedResource();
         Detail = string.IsNullOrEmpty(operation.Detail) ? string.Empty : showSensitiveData ? operation.Detail : "**********";
+        MessageReading = operation.Kind != TgNetworkOperationKind.Parsing || !operation.CurrentMessageId.HasValue ? string.Empty
+            : operation.LastMessageId.HasValue
+                ? string.Format(CultureInfo.CurrentCulture, "NetworkParsingMessageIds".GetLocalizedResource(), operation.CurrentMessageId, operation.LastMessageId)
+                : string.Format(CultureInfo.CurrentCulture, "NetworkParsingMessageId".GetLocalizedResource(), operation.CurrentMessageId);
         HasProgress = operation.Progress.HasValue;
         Progress = operation.Progress ?? 0;
         ProgressText = !HasProgress ? string.Empty : operation.Kind == TgNetworkOperationKind.Download

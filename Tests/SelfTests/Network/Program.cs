@@ -14,7 +14,7 @@ internal static class Program
             ("DownloadStateIntegration", DownloadStateIntegrationAsync), ("ToolbarPlacement", ToolbarPlacementAsync),
             ("NetworkPage", NetworkPageAsync), ("Localization", LocalizationAsync),
             ("TransferProgress", TransferProgressAsync), ("ParsingCancellation", ParsingCancellationAsync),
-            ("ParsingPause", ParsingPauseAsync), ("CompactRows", CompactRowsAsync)
+            ("ParsingPause", ParsingPauseAsync), ("CompactRows", CompactRowsAsync), ("ChatAssociation", ChatAssociationAsync)
         };
         var failures = 0;
         foreach (var test in tests)
@@ -28,6 +28,22 @@ internal static class Program
     // Получаем реальный экземпляр без зависимости компиляции от ещё отсутствующего API
     private static object Tracker(LoadStateService state) => state.GetType().GetProperty("NetworkActivity")?.GetValue(state)
         ?? throw new InvalidOperationException("Нет общего учёта сетевых операций");
+
+    // Имя скачиваемого файла и завершение не теряют принадлежность чату
+    private static Task ChatAssociationAsync()
+    {
+        using var state = new LoadStateService(); var uid = Guid.NewGuid();
+        var tracker = state.NetworkActivity;
+        tracker.Start(uid, TgBusinessLogic.Models.TgNetworkOperationKind.Download);
+        tracker.SetChat(uid, 101, "Первый чат");
+        tracker.ReportTransfer(uid, "clip.mp4", 25, 100);
+        tracker.Finish(uid, TgBusinessLogic.Models.TgNetworkOperationState.Completed);
+        tracker.SetChat(uid, 202, "Другой чат");
+        var operation = tracker.Operations.Single();
+        Assert(operation.ChatId == 101 && operation.ChatTitle == "Первый чат" && operation.Detail == "clip.mp4" && operation.Progress == 25,
+            "Прогресс, завершение или позднее событие потеряли исходный чат");
+        return Task.CompletedTask;
+    }
 
     // Пауза удерживает реальную работу, продолжение освобождает её, а отмена прерывает ожидание
     private static async Task ParsingPauseAsync()
@@ -145,13 +161,22 @@ internal static class Program
         return Task.CompletedTask;
     }
 
-    // У страницы есть навигация, независимое открытие и отдельные активные и завершённые списки
+    // У страницы есть навигация, независимое открытие и единый блок со всеми операциями
     private static Task NetworkPageAsync()
     {
         var page = Load("Views/TgNetworkActivityPage.xaml");
-        foreach (var id in new[] { "NetworkActive", "NetworkHistory", "NetworkClear", "NetworkEmpty", "NetworkStopParsing",
+        foreach (var id in new[] { "NetworkChatGroups", "NetworkGroupOperations", "NetworkClear", "NetworkEmpty", "NetworkStopParsing",
             "NetworkOperationDetail", "NetworkOperationProgress" })
             Assert(page.Descendants().Any(x => (string?)x.Attribute("AutomationProperties.AutomationId") == id), $"Нет области {id}");
+        Assert(!page.Descendants().Any(x => (string?)x.Attribute("AutomationProperties.AutomationId") == "NetworkHistory"
+            || x.Attributes().Any(a => a.Name.LocalName == "Uids.Uid" && a.Value == "NetworkHistoryTitle")), "Остался отдельный блок последних операций");
+        var clear = page.Descendants().Single(x => (string?)x.Attribute("AutomationProperties.AutomationId") == "NetworkClear");
+        var groups = page.Descendants().Single(x => (string?)x.Attribute("AutomationProperties.AutomationId") == "NetworkChatGroups");
+        Assert(clear.Ancestors().First(x => x.Name.LocalName == "Border") == groups.Ancestors().First(x => x.Name.LocalName == "Border"),
+            "Очистка истории находится вне блока активности");
+        foreach (var language in new[] { "ru-RU", "en-US" })
+            Assert(Load($"Strings/{language}/Resources.resw").Descendants("data").Single(x => (string?)x.Attribute("name") == "NetworkGroupsTitle.Text")
+                .Element("value")!.Value == (language == "ru-RU" ? "Активность" : "Activity"), "Неправильное название блока активности");
         Assert(Load("Views/ShellPage.xaml").ToString().Contains("TgNetworkActivityViewModel"), "Нет пункта меню сети");
         return Task.CompletedTask;
     }

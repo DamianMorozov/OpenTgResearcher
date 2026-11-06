@@ -5,6 +5,7 @@ public sealed partial class TgNetworkActivityViewModel : TgPageViewModelBase
 {
     public ObservableCollection<TgNetworkOperationModel> Active { get; } = [];
     public ObservableCollection<TgNetworkOperationModel> History { get; } = [];
+    public ObservableCollection<TgNetworkChatGroupModel> ChatGroups { get; } = [];
     public IRelayCommand ClearHistoryCommand { get; }
     public IAsyncRelayCommand StopParsingCommand { get; }
     public IRelayCommand PauseParsingCommand { get; }
@@ -21,7 +22,7 @@ public sealed partial class TgNetworkActivityViewModel : TgPageViewModelBase
     [ObservableProperty]
     public partial bool IsActiveEmpty { get; private set; } = true;
     [ObservableProperty]
-    public partial bool IsHistoryEmpty { get; private set; } = true;
+    public partial bool IsActivityEmpty { get; private set; } = true;
     [ObservableProperty]
     public partial string ConnectionStatus { get; private set; } = string.Empty;
     [ObservableProperty]
@@ -55,18 +56,48 @@ public sealed partial class TgNetworkActivityViewModel : TgPageViewModelBase
         foreach (var operation in operations)
         {
             var row = new TgNetworkOperationModel(operation, now, showSensitiveData: LoadStateService.IsDisplaySensitiveData);
-            if (operation.State == TgNetworkOperationState.Running) active.Add(row); else history.Add(row);
+            if (operation.State == TgNetworkOperationState.Running) active.Add(row);
+            else history.Add(row);
         }
         UpdateRows(Active, active);
         UpdateRows(History, history);
+        UpdateChatGroups(operations, now);
         CanStopParsing = operations.Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running && x.CanCancel);
         PauseButtonText = (operations.Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.IsPaused)
             ? "NetworkResume" : "NetworkPause").GetLocalizedResource();
         IsActiveEmpty = Active.Count == 0;
-        IsHistoryEmpty = History.Count == 0;
+        IsActivityEmpty = ChatGroups.Count == 0;
         ConnectionStatus = (LoadStateService.IsOnlineReady ? "NetworkConnected" : "NetworkDisconnected").GetLocalizedResource();
         ActivitySummary = string.Format(CultureInfo.CurrentCulture, "NetworkActiveCount".GetLocalizedResource(), Active.Count);
         CompletedSummary = string.Format(CultureInfo.CurrentCulture, "NetworkHistoryCount".GetLocalizedResource(), History.Count);
+    }
+
+    // Сохраняем экземпляры групп и раскрытие при изменении прогресса, порядка и состояния операций
+    private void UpdateChatGroups(IReadOnlyList<TgNetworkOperation> operations, DateTime nowUtc)
+    {
+        var groups = operations.GroupBy(x => x.ChatId).ToArray();
+        for (var index = ChatGroups.Count - 1; index >= 0; index--)
+            if (!groups.Any(x => x.Key == ChatGroups[index].ChatId)) ChatGroups.RemoveAt(index);
+        for (var index = 0; index < groups.Length; index++)
+        {
+            var operationsGroup = groups[index];
+            var group = ChatGroups.FirstOrDefault(x => x.ChatId == operationsGroup.Key);
+            if (group is null)
+            {
+                group = new(operationsGroup.Key);
+                ChatGroups.Insert(index, group);
+            }
+            else if (ChatGroups.IndexOf(group) != index) ChatGroups.Move(ChatGroups.IndexOf(group), index);
+            var title = operationsGroup.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.ChatTitle))?.ChatTitle;
+            group.Title = !group.ChatId.HasValue ? "NetworkGeneralGroup".GetLocalizedResource()
+                : !LoadStateService.IsDisplaySensitiveData ? LoadStateService.SensitiveData
+                : !string.IsNullOrWhiteSpace(title) ? title
+                : string.Format(CultureInfo.CurrentCulture, "NetworkChatGroupFallback".GetLocalizedResource(), group.ChatId);
+            var running = operationsGroup.Count(x => x.State == TgNetworkOperationState.Running);
+            group.Summary = string.Format(CultureInfo.CurrentCulture, "NetworkChatGroupSummary".GetLocalizedResource(), running, operationsGroup.Count() - running);
+            UpdateRows(group.Operations, operationsGroup.Select(x => new TgNetworkOperationModel(x, nowUtc,
+                showSensitiveData: LoadStateService.IsDisplaySensitiveData)).ToList());
+        }
     }
 
     // Запрашиваем подтверждение перед отменой, не создавая новую сетевую операцию

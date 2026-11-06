@@ -7,6 +7,10 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("NetworkChatGroups", NetworkChatGroupsAsync), ("NetworkGroupRefresh", NetworkGroupRefreshAsync),
+            ("NetworkGroupPrivacy", NetworkGroupPrivacyAsync),
+            ("NetworkUnifiedActivity", NetworkUnifiedActivityAsync),
+            ("NetworkParsingMessageIds", NetworkParsingMessageIdsAsync),
             ("NetworkFileDetails", NetworkFileDetailsAsync), ("NetworkStopParsing", NetworkStopParsingAsync),
             ("NetworkStopConfirmation", NetworkStopConfirmationAsync), ("NetworkPauseCommand", NetworkPauseCommandAsync),
             ("UpdateNetworkActivity", UpdateNetworkActivityAsync),

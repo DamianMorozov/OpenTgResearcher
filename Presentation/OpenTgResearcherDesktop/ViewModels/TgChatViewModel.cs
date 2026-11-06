@@ -18,6 +18,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public IAsyncRelayCommand ClearViewCommand { get; }
     public IAsyncRelayCommand SaveChatSettingsCommand { get; }
     public IAsyncRelayCommand StopUpdateOnlineCommand { get; }
+    public IRelayCommand ResetChatSettingsCommand { get; }
     public Task InitializationTask { get; private set; } = Task.CompletedTask;
 
     public TgChatViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
@@ -29,6 +30,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopUpdateOnlineCommand = new AsyncRelayCommand(StopUpdateOnlineAsync);
+        ResetChatSettingsCommand = new RelayCommand(ResetChatSettings);
     }
 
     #endregion
@@ -40,7 +42,25 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
         await LoadDataStorageCoreAsync();
+        if (Dto.Id > 0 && !HasSelectedChatOptions()) ResetChatSettingsCommand.Execute(null);
     });
+
+    // Проверяем все переключатели загрузки, сохраняя любую выбранную пользователем комбинацию
+    private bool HasSelectedChatOptions() => Dto.IsSaveMessages || Dto.IsSaveFiles || Dto.IsParsingComments || Dto.IsJoinFileNameWithMessageId
+        || Dto.IsDownloadThumbnail || Dto.IsCreatingSubdirectories || Dto.IsAutoUpdate || Dto.IsRewriteMessages || Dto.IsRewriteFiles || Dto.IsFileNamingByMessage;
+
+    // Включаем основные опции в общем черновике без изменения каталога, позиции, потоков и остальных переключателей
+    private void ResetChatSettings()
+    {
+        if (Dto.Id <= 0 || Dto.Uid == Guid.Empty) return;
+        Dto.IsSaveMessages = true;
+        Dto.IsSaveFiles = true;
+        Dto.IsParsingComments = true;
+        Dto.IsJoinFileNameWithMessageId = true;
+        Dto.IsDownloadThumbnail = true;
+        Dto.IsCreatingSubdirectories = true;
+        Dto.IsAutoUpdate = true;
+    }
 
     private async Task ClearViewAsync() => 
         await ContentDialogAsync(ClearDataStorageCoreAsync, TgResourceExtensions.AskDataClear(), TgEnumLoadDesktopType.Storage);
@@ -100,11 +120,11 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     private async Task StartUpdateOnlineCoreAsync() => 
         await LoadOnlineDataAsync(async () =>
         {
+            // Сохраняем общий черновик до обращения к Telegram без повторного диалога подтверждения
+            await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
             try
             {
                 if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-
-                await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
 
                 await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
             }

@@ -109,6 +109,9 @@ try {
  Invoke-Element (Find-Element '^(Продолжить|Continue)$')
  [void][NetworkPageTestNative]::SetWindowPos($appProcess.MainWindowHandle,[IntPtr](-1),100,80,1200,1000,0x0040)
  Invoke-Element (Find-Element '^(Сетевая активность|Network activity)$' '' 'Microsoft.UI.Xaml.Controls.NavigationViewItem')
+ [void](Find-Element '^(Активность|Activity)$')
+ $elements=(Get-Window).FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+ if($elements|Where-Object{$_.Current.Name -match '^(Последние операции|Recent operations)$'}){throw 'На странице остался удалённый блок последних операций'}
  [void](Find-Element '.*' 'NetworkEmpty')
  Invoke-Element (Find-Element '.*' 'NetworkClear')
  $refresh=Find-Element '.*' 'ToolbarRefresh';$update=Find-Element '.*' 'ToolbarUpdate'
@@ -122,10 +125,7 @@ try {
  # Загружаем реальную строку прокси обновлением уже открытой страницы
  Invoke-Element (Find-Element '^(Прокси|Proxies)$' '' 'Microsoft.UI.Xaml.Controls.NavigationViewItem')
  $testListener=[Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback,0)
- $testListener.Start(1);$port=$testListener.LocalEndpoint.Port;$testClients=@()
- for($index=0;$index -lt 32;$index++){
-  $client=[Net.Sockets.TcpClient]::new();$testClients+=$client;[void]$client.ConnectAsync([Net.IPAddress]::Loopback,$port)
- }
+ $testListener.Start(1);$port=$testListener.LocalEndpoint.Port
  & dotnet run --project (Join-Path $PSScriptRoot 'Proxies/Proxies.SelfTest.csproj') -c Debug -p:Platform=x64 --no-build -- `
   --seed-network-proxy (Join-Path $caseDirectory 'TgStorage.db') $port
  if($LASTEXITCODE -ne 0){throw 'Не удалось подготовить тестовую БД'}
@@ -133,26 +133,31 @@ try {
  [void](Find-Element '^127\.0\.0\.1$')
  Write-Output 'PASS: верхняя кнопка действительно перечитывает данные текущей страницы'
  Invoke-Element (Find-Element '^(Проверить все прокси|Check all proxies)$')
+ [void](Find-Element '^(Доступен|Available) \(TCP,')
+ if(!$testListener.Pending()){throw 'Проверка прокси не создала реальное TCP-подключение'}
+ $accepted=$testListener.AcceptTcpClient();$accepted.Dispose()
  Invoke-Element (Find-Element '^(Сетевая активность|Network activity)$' '' 'Microsoft.UI.Xaml.Controls.NavigationViewItem')
- [void](Find-Element '^(Выполняется|Running)$')
  $row=Find-Element '^(Проверка прокси|Proxy check)$'
  if($row.Current.BoundingRectangle.Height -gt 32){throw 'Строка операции не компактная'}
- Save-Snapshot 'network-active'
-
- # Освобождаем очередь loopback, чтобы настоящая проверка завершилась без сетевой ошибки
- $deadline=[DateTime]::UtcNow.AddSeconds(2)
- do{
-  while($testListener.Pending()){ $accepted=$testListener.AcceptTcpClient();$accepted.Dispose() }
-  Start-Sleep -Milliseconds 25
- }while([DateTime]::UtcNow -lt $deadline)
- [void](Find-Element '.*' 'NetworkEmpty')
  [void](Find-Element '^(Завершено|Completed)$')
+ $elements=(Get-Window).FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+ if($elements|Where-Object{$_.Current.AutomationId -eq 'NetworkEmpty' -and !$_.Current.IsOffscreen}){throw 'История показана вместе с пустым состоянием'}
  Save-Snapshot 'network-history'
  Invoke-Element (Find-Element '.*' 'ToolbarRefresh')
  [void](Find-Element '^(Завершено|Completed)$')
- Write-Output 'PASS: настоящая TCP-проверка видна в активных операциях, затем в истории; обновление не сбрасывает историю'
+ Write-Output 'PASS: настоящее TCP-подключение завершено, строка видна в группе; обновление не сбрасывает историю'
+ # Раскрытие группы должно сохраняться после очередного обновления страницы
+ $group=Find-Element '.*' 'NetworkChatGroup'
+ $expand=$group.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+ $expand.Collapse();Start-Sleep -Milliseconds 1300
+ $expand=(Find-Element '.*' 'NetworkChatGroup').GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+ if($expand.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Collapsed){throw 'Таймер раскрыл свёрнутую группу'}
+ $expand.Expand();[void](Find-Element '^(Завершено|Completed)$')
+ Save-Snapshot 'network-group-expanded'
+ Write-Output 'PASS: группа сворачивается, раскрывается и сохраняет состояние после опроса таймера'
  Invoke-Element (Find-Element '.*' 'NetworkClear')
- [void](Find-Element '^(В истории: 0 из 100|In history: 0 of 100)$')
+ [void](Find-Element '^(Завершённых операций: 0 из 100|Finished operations: 0 of 100)$')
+ [void](Find-Element '.*' 'NetworkEmpty')
  $transform=(Get-Window).GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
  $transform.Resize(800,900);Start-Sleep -Milliseconds 400
  foreach($id in @('ToolbarRefresh','ToolbarUpdate','ToolbarLanguage','ToolbarTheme','ToggleSwitchShowSensitiveData','NetworkClear','NetworkStopParsing','NetworkPauseParsing')){
@@ -169,6 +174,5 @@ try {
 } finally {
  if($null -ne $appProcess -and !$appProcess.HasExited){[void]$appProcess.CloseMainWindow();[void]$appProcess.WaitForExit(15000)}
  if($null -ne $testListener){$testListener.Stop()}
- foreach($client in $testClients){$client.Dispose()}
 }
 

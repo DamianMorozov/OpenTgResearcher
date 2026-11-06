@@ -2,6 +2,45 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
 internal static partial class Program
 {
+    // Текущий запрос виден до получения ответа, переводится и сохраняется при отмене без раскрытия названия чата
+    private static async Task NetworkParsingMessageIdsAsync()
+    {
+        using var state = new LoadStateService();
+        var vm = new TgNetworkActivityViewModel(state, new(), new(), null!);
+        var uid = Guid.NewGuid();
+        state.NetworkActivity.Start(uid, TgNetworkOperationKind.Parsing);
+        state.NetworkActivity.ReportParsing(uid, "Тестовый чат", 100, 1000);
+        await vm.OnNavigatedToAsync(null);
+        Assert(!vm.Active.Single().Caption.Contains("Чтение ID"), "До первого запроса показан выдуманный ID");
+        var report = typeof(TgNetworkActivityService).GetMethod("ReportParsingRequest");
+        Assert(report is not null, "Сетевая активность не принимает ID текущего запроса сообщений");
+        report!.Invoke(state.NetworkActivity, [uid, 101L, 1000L]); vm.Refresh();
+        Assert(vm.Active.Single().Caption.Contains("Чтение ID 101 из 1000"), "Нет текущего ID и последнего ID чата");
+        Assert(vm.Active.Single().Progress == 10, "Начало запроса изменило процент уже прочитанных сообщений");
+        state.NetworkActivity.ReportParsing(uid, "Тестовый чат", 150, 1000);
+        vm.Refresh();
+        Assert(vm.Active.Single().Caption.Contains("Чтение ID 101 из 1000") && vm.Active.Single().Progress == 15,
+            "Ответ на порцию подменил запрашиваемый ID процентом или потерял продвижение");
+        report.Invoke(state.NetworkActivity, [uid, 151L, 1200L]);
+        state.SetIsDisplaySensitiveData(isDisplaySensitiveData: false); vm.Refresh();
+        Assert(vm.Active.Single().Caption.Contains("Чтение ID 151 из 1200") && !vm.Active.Single().Caption.Contains("Тестовый чат"),
+            "Обновление ID потерялось или раскрыло название чата");
+        Localizer.Language = "en-US"; vm.Refresh();
+        Assert(vm.Active.Single().Caption.Contains("Reading ID 151 of 1200"), "Текущий ID не переведён на английский");
+        state.NetworkActivity.Finish(uid, TgNetworkOperationState.Canceled);
+        report.Invoke(state.NetworkActivity, [uid, 999L, 1200L]); vm.Refresh();
+        Assert(vm.History.Single().Caption.Contains("Reading ID 151 of 1200"), "Поздний отчёт изменил отменённую операцию");
+        var unknown = Guid.NewGuid(); state.NetworkActivity.Start(unknown, TgNetworkOperationKind.Parsing);
+        report.Invoke(state.NetworkActivity, [unknown, 15L, 0L]); vm.Refresh();
+        Assert(vm.Active.Single().Caption.Contains("Reading ID 15") && !vm.Active.Single().Caption.Contains(" of 0"),
+            "Неизвестная граница чата показана как ноль");
+        var download = Guid.NewGuid(); state.NetworkActivity.Start(download, TgNetworkOperationKind.Download);
+        state.NetworkActivity.ReportTransfer(download, "clip.mp4", 25, 100);
+        report.Invoke(state.NetworkActivity, [download, 2L, 10L]); vm.Refresh();
+        var file = vm.Active.Single(x => x.Title == "File download");
+        Assert(!file.Caption.Contains("Reading ID") && file.Progress == 25, "ID сообщений попал в строку скачивания файла");
+    }
+
     // Процент файла, название и скрытие конфиденциальных данных должны работать на исходной модели
     private static async Task NetworkFileDetailsAsync()
     {
@@ -84,10 +123,13 @@ internal static partial class Program
         state.NetworkActivity.Start(download, TgNetworkOperationKind.Download);
         state.NetworkActivity.Finish(connection, TgNetworkOperationState.Completed);
         state.NetworkActivity.Finish(download, TgNetworkOperationState.Failed);
+        var canceled = Guid.NewGuid(); state.NetworkActivity.Start(canceled, TgNetworkOperationKind.Request);
+        state.NetworkActivity.Finish(canceled, TgNetworkOperationState.Canceled);
         await vm.OnNavigatedToAsync(null);
         Assert(vm.Active.Count == 1 && vm.Active[0].Title == "Парсинг чата", "Активный парсинг потерялся во VM");
-        Assert(vm.History.Count == 2 && vm.History.Any(x => x.State.Contains("Ошибка")), "Завершение и ошибка не отражены в истории");
-        Assert(!vm.IsActiveEmpty && !vm.IsHistoryEmpty, "Списки скрыты пустым состоянием");
+        Assert(GroupRows(ChatGroups(vm).Single()).Any(x => x.State.Contains("Ошибка")), "Ошибка потерялась из группы");
+        Assert(vm.History.Count == 3 && vm.History.Any(x => x.State == "Отменено"), "Завершения и отмена потерялись в истории");
+        Assert(!vm.IsActiveEmpty && !vm.IsActivityEmpty, "Списки скрыты пустым состоянием");
         var historyRow = vm.History[0];
         vm.Refresh();
         Assert(ReferenceEquals(historyRow, vm.History[0]), "Опрос таймера пересоздаёт неизменную историю и сбрасывает элементы интерфейса");
@@ -95,7 +137,7 @@ internal static partial class Program
         Localizer.Language = "en-US"; vm.Refresh();
         Assert(vm.Active[0].Title == "Chat parsing" && vm.ConnectionStatus == "Telegram connected", "Динамические строки не переведены");
         vm.ClearHistoryCommand.Execute(null);
-        Assert(vm.Active.Count == 1 && vm.History.Count == 0 && vm.IsHistoryEmpty, "Очистка потеряла парсинг или сохранила историю");
+        Assert(vm.Active.Count == 1 && vm.History.Count == 0 && !vm.IsActivityEmpty, "Очистка потеряла парсинг или сохранила историю");
         state.NetworkActivity.Finish(parsing, TgNetworkOperationState.Canceled); vm.Refresh();
         Assert(vm.IsActiveEmpty && vm.History.Single().State == "Canceled", "Отмена не появилась на странице");
     }

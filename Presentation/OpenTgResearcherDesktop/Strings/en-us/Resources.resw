@@ -318,6 +318,12 @@
   <data name="ActionResetToDefault.Text" xml:space="preserve">
     <value>Reset to default</value>
   </data>
+  <data name="ActionResetChatSettings.Text" xml:space="preserve">
+    <value>Reset settings</value>
+  </data>
+  <data name="ActionOpenNetworkActivity.Text" xml:space="preserve">
+    <value>Network activity</value>
+  </data>
   <data name="ActionSave.Text" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -1932,19 +1938,13 @@ API credentials, phone number, and the selected proxy will be removed from the p
     <value>Telegram disconnected</value>
   </data>
   <data name="NetworkEmpty.Text" xml:space="preserve">
-    <value>No active operations. Connect to Telegram, parse a chat or start a download to see activity here automatically.</value>
+    <value>No operations yet. Connect to Telegram, start parsing a chat or download files — actions will appear here automatically.</value>
   </data>
   <data name="NetworkHistoryCount" xml:space="preserve">
-    <value>In history: {0} of 100</value>
-  </data>
-  <data name="NetworkHistoryEmpty.Text" xml:space="preserve">
-    <value>No completed operations in this session yet.</value>
+    <value>Finished operations: {0} of 100</value>
   </data>
   <data name="NetworkHistoryNote.Text" xml:space="preserve">
-    <value>The last 100 finished operations are kept in memory only. Clearing history does not interrupt downloads. Completed means the action has ended, not that Telegram authorization is complete.</value>
-  </data>
-  <data name="NetworkHistoryTitle.Text" xml:space="preserve">
-    <value>Recent operations</value>
+    <value>All operations are grouped here, including completed, canceled and failed actions. The last 100 finished operations are kept in memory only. Clearing history keeps running actions.</value>
   </data>
   <data name="NetworkKindConnection" xml:space="preserve">
     <value>Connecting to Telegram</value>
@@ -2012,6 +2012,12 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="NetworkParsingProgress" xml:space="preserve">
     <value>Message processing: {0:0.00} %</value>
   </data>
+  <data name="NetworkParsingMessageIds" xml:space="preserve">
+    <value>Reading ID {0} of {1}</value>
+  </data>
+  <data name="NetworkParsingMessageId" xml:space="preserve">
+    <value>Reading ID {0}</value>
+  </data>
   <data name="NetworkPause" xml:space="preserve">
     <value>Pause</value>
   </data>
@@ -2026,5 +2032,17 @@ API credentials, phone number, and the selected proxy will be removed from the p
   </data>
   <data name="NetworkPauseParsing.ToolTipService.ToolTip" xml:space="preserve">
     <value>Pause new requests and files. Transfers already in progress may finish.</value>
+  </data>
+  <data name="NetworkGroupsTitle.Text" xml:space="preserve">
+    <value>Activity</value>
+  </data>
+  <data name="NetworkGeneralGroup" xml:space="preserve">
+    <value>General operations</value>
+  </data>
+  <data name="NetworkChatGroupFallback" xml:space="preserve">
+    <value>Chat {0}</value>
+  </data>
+  <data name="NetworkChatGroupSummary" xml:space="preserve">
+    <value>Running: {0} · Finished: {1}</value>
   </data>
 </root>

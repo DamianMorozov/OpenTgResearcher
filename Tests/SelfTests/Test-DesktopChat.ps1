@@ -8,6 +8,7 @@ param(
     [string]$ChatDirectory = '',
     [switch]$CheckMediaPreview,
     [int]$WindowWidth = 0,
+    [int]$WindowHeight = 1000,
     [ValidateSet('Russian', 'English')]
     [string]$Language = 'Russian'
 )
@@ -18,6 +19,14 @@ $caseDirectory = Join-Path $PSScriptRoot ('bin/ChatPage/' + [Guid]::NewGuid().To
 $appProcess = $null
 $appLog = Join-Path $env:LOCALAPPDATA ('OpenTgResearcherDesktop/current/Log-{0:yyyy-MM-dd}.txt' -f (Get-Date))
 $originalLength = if (Test-Path -LiteralPath $appLog) { (Get-Item -LiteralPath $appLog).Length } else { 0 }
+Add-Type @'
+public static class ChatPageTestNative {
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern bool SetForegroundWindow(System.IntPtr window);
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern System.IntPtr GetForegroundWindow();
+}
+'@
 
 # Читаем только журнал проверяемого запуска
 function Get-NewAppLog {
@@ -69,7 +78,11 @@ function Invoke-AppElement($element) {
 # Сохраняем только окно проверяемого приложения
 function Save-AppSnapshot([string]$name) {
     Add-Type -AssemblyName System.Drawing
+    [void][ChatPageTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
     Start-Sleep -Milliseconds 400
+    if ([ChatPageTestNative]::GetForegroundWindow() -ne $appProcess.MainWindowHandle) {
+        throw 'Кадр не сохранён: проверяемое окно перекрыто другим приложением'
+    }
     $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
     $rect = $window.Current.BoundingRectangle
     $bitmap = [Drawing.Bitmap]::new([int]$rect.Width,[int]$rect.Height)
@@ -100,7 +113,7 @@ try {
         AppTheme = 'Default'
     }
     if ($WindowWidth -gt 0) {
-        $settings.WindowWidth = "$WindowWidth"; $settings.WindowHeight = '900'
+        $settings.WindowWidth = "$WindowWidth"; $settings.WindowHeight = "$WindowHeight"
         $settings.WindowX = '50'; $settings.WindowY = '50'
     }
     $settings | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $caseDirectory 'Settings.json') -Encoding utf8
@@ -197,6 +210,20 @@ try {
             Save-AppSnapshot 'Settings'
         }
         if ($models[$index] -eq 'Download') {
+            $toggleIds = @('ChatParseMessages', 'ChatDownloadFiles', 'ChatParseComments', 'ChatJoinMessageId',
+                'ChatDownloadThumbnail', 'ChatCreateSubdirectories', 'ChatAutoUpdate')
+            foreach ($toggleId in $toggleIds) {
+                $option = (Wait-AppElement '.*' '' $toggleId).GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+                if ($option.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On) { $option.Toggle() }
+            }
+            $reset = Wait-AppElement '^(Сброс настроек|Reset settings)$' '' 'ChatResetSettings'
+            Invoke-AppElement $reset
+            foreach ($toggleId in $toggleIds) {
+                $option = (Wait-AppElement '.*' '' $toggleId).GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+                if ($option.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::On) { throw "Сброс не включил опцию $toggleId" }
+            }
+            [void](Wait-AppElement '^(Сетевая активность|Network activity)$' '' 'ChatOpenNetworkActivity')
+            Write-Output 'PASS: сброс настроек включил семь переключателей без отдельного диалога; доступна кнопка сетевой активности'
             $percent = Wait-AppElement '.*' '' 'ChatDownloadPercent'
             if ($percent.Current.BoundingRectangle.Width -lt 80) { throw 'Поле процента сжато до нечитаемой ширины' }
             if (-not $percent.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.IsReadOnly) {
@@ -295,6 +322,11 @@ try {
             Write-Output 'PASS: скрытие содержимого и подсказка пустого списка после очистки'
         }
     }
+    Invoke-AppElement (Wait-AppElement '^(Скачать|Download)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+    Invoke-AppElement (Wait-AppElement '^(Сетевая активность|Network activity)$' '' 'ChatOpenNetworkActivity')
+    [void](Wait-AppElement '^(Операции OpenTgResearcher|OpenTgResearcher operations)$')
+    Save-AppSnapshot 'NetworkActivity'
+    Write-Output 'PASS: кнопка вкладки загрузки открыла страницу сетевой активности'
     if ($appProcess.WaitForExit(2000)) { throw "Desktop вылетел после проверки вкладок: код $($appProcess.ExitCode)" }
     $log = Get-NewAppLog
     $log | Set-Content -LiteralPath (Join-Path $caseDirectory 'page.log') -Encoding utf8

@@ -29,6 +29,13 @@ internal static partial class Program
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("ChatFormsInitialized", ChatFormsInitializedAsync),
+            ("ChatResetOptions", ChatResetOptionsAsync),
+            ("EmptyChatOptionsResetOnOpen", EmptyChatOptionsResetOnOpenAsync),
+            ("SelectedChatOptionsPreserved", SelectedChatOptionsPreservedAsync),
+            ("StartSavesBeforeConnectionCheck", StartSavesBeforeConnectionCheckAsync),
+            ("StartDoesNotParseAfterSaveFailure", StartDoesNotParseAfterSaveFailureAsync),
+            ("DownloadNetworkNavigation", DownloadNetworkNavigationAsync),
+            ("ChatActionsMarkup", ChatActionsMarkupAsync),
             ("SettingsLoadsSource", SettingsLoadsSourceAsync),
             ("DownloadLoadsBeforeProgress", DownloadLoadsBeforeProgressAsync),
             ("SettingsSharesUnsavedChanges", SettingsSharesUnsavedChangesAsync),
@@ -84,6 +91,8 @@ internal static partial class Program
             App.BusinessLogicManager.ConnectClient.Ready = false;
             App.BusinessLogicManager.ConnectClient.UserId = 10;
             App.BusinessLogicManager.ConnectClient.Participants.Clear();
+            App.BusinessLogicManager.ConnectClient.CheckConnection = null;
+            App.BusinessLogicManager.ConnectClient.Parse = null;
             DelayedQueryInterceptor.Enabled = false;
             try
             {

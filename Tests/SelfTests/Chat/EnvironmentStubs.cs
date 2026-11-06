@@ -30,8 +30,9 @@ public interface IAppNotificationService;
 public sealed class INavigationService
 {
     public object? Parameter { get; private set; }
+    public string? PageKey { get; private set; }
     /// <summary> Запоминает параметр перехода для проверки </summary>
-    public bool NavigateTo(string key, object? parameter = null) { Parameter = parameter; return true; }
+    public bool NavigateTo(string key, object? parameter = null) { PageKey = key; Parameter = parameter; return true; }
 }
 public sealed class NavigationEventArgs { public object? Parameter { get; set; } }
 public sealed class RoutedEventArgs;
@@ -153,10 +154,12 @@ public sealed class TestClient
     public long UserId { get; set; } = 10;
     public bool Ready { get; set; }
     public List<TgParticipantDto> Participants { get; } = [];
+    public Func<Task<bool>>? CheckConnection { get; set; }
+    public Func<TgDownloadSettingsViewModel, Task>? Parse { get; set; }
     /// <summary> Возвращает заданную готовность тестового клиента </summary>
-    public Task<bool> CheckClientConnectionReadyAsync() => Task.FromResult(Ready);
+    public Task<bool> CheckClientConnectionReadyAsync() => CheckConnection?.Invoke() ?? Task.FromResult(Ready);
     /// <summary> Заменяет сетевую загрузку без обращения к Telegram </summary>
-    public Task ParseChatAsync(TgDownloadSettingsViewModel settings) => Task.CompletedTask;
+    public Task ParseChatAsync(TgDownloadSettingsViewModel settings) => Parse?.Invoke(settings) ?? Task.CompletedTask;
     /// <summary> Возвращает тестовые сведения о чате </summary>
     public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid) => Task.FromResult(new TgChatDetailsDto { Title = "Online" });
     /// <summary> Возвращает заданный список участников </summary>

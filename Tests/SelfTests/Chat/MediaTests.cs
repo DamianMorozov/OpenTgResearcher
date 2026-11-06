@@ -41,14 +41,36 @@ internal static class MediaTests
         ("PartialFileRewriteSetting", PartialFileRewriteSettingAsync),
         ("DisconnectedParseReleasesState", DisconnectedParseReleasesStateAsync),
         ("NetworkFileProgress", NetworkFileProgressAsync),
+        ("MediaHandlersPassChat", MediaHandlersPassChatAsync),
         ("NetworkFileStop", NetworkFileStopAsync), ("ParsingStopUsesOwnToken", ParsingStopUsesOwnTokenAsync),
         ("NetworkProgressCallbackFailure", NetworkProgressCallbackFailureAsync),
         ("NetworkAsyncProgressFailure", NetworkAsyncProgressFailureAsync), ("PausedMediaWaitsForResume", PausedMediaWaitsForResumeAsync),
         ("CancelledChunkKeepsPendingTasks", CancelledChunkKeepsPendingTasksAsync),
+        ("ParsingRequestIdsBeforeResponse", ParsingRequestIdsBeforeResponseAsync),
         ("CancelledParseKeepsPosition", CancelledParseKeepsPositionAsync),
         ("RepeatedPassDownloadsOnlyMissing", RepeatedPassDownloadsOnlyMissingAsync),
         ("FloodWaitHonorsStop", FloodWaitHonorsStopAsync),
     ];
+
+    // Документ, обложка и фотография получают чат из настроек своей загрузки
+    private static async Task MediaHandlersPassChatAsync()
+    {
+        using var files = new MediaFixture();
+        files.Settings.SourceVm.Dto.Id = 101; files.Settings.SourceVm.Dto.Title = "Первый чат";
+        var document = new TL.Document { id = 1, size = 4, thumbs = [new TL.PhotoCachedSize { type = "m", bytes = [1, 2, 3], w = 1, h = 1 }] };
+        await files.CallAsync("DownloadMediaThumbnailFromMessageAsync", files.Settings, new TL.MessageMediaDocument { document = document },
+            files.Media, CancellationToken.None);
+        await files.CallAsync("DownloadMediaFileFromMessageAsync", files.Settings, new TgParseHelper(), new TL.Message(),
+            new TL.MessageMediaDocument { document = document }, new TgMessageSettings(), files.Media, CancellationToken.None);
+        File.Delete(files.Media.LocalPathWithNumber);
+        files.Settings.SourceVm.Dto.Id = 202; files.Settings.SourceVm.Dto.Title = "Второй чат";
+        var photo = new TL.Photo { id = 2, sizes = [new TL.PhotoCachedSize { type = "m", bytes = [1, 2, 3, 4], w = 1, h = 1 }] };
+        await files.CallAsync("DownloadMediaFileFromMessageAsync", files.Settings, new TgParseHelper(), new TL.Message(),
+            new TL.MessageMediaPhoto { photo = photo }, new TgMessageSettings(), files.Media, CancellationToken.None);
+        Assert(files.Connection.DownloadChats.SequenceEqual(new (long, string)[] { (101, "Первый чат"), (101, "Первый чат"), (202, "Второй чат") }),
+            "Обложка, документ или фото потеряли принадлежность своему чату");
+        Assert(files.NetworkCalls == 0, "Проверка принадлежности файлов обратилась к Telegram");
+    }
 
     // Настоящий обработчик прогресса сохраняет байты и продолжает обновлять прежнюю страницу скачивания
     private static Task NetworkFileProgressAsync()
@@ -161,6 +183,7 @@ internal static class MediaTests
     private static async Task DisconnectedParseReleasesStateAsync()
     {
         using var files = new MediaFixture();
+        files.Settings.SourceVm.Dto.Id = 101; files.Settings.SourceVm.Dto.Title = "Первый чат";
         files.Connection.Client = null;
         await files.Connection.ParseChatAsync(files.Settings);
         Assert(!files.State.IsDownloadProcessing, "После раннего выхода парсинг остался активным");
@@ -169,6 +192,38 @@ internal static class MediaTests
         Assert(files.NetworkCalls == 0, "Отключённый клиент попытался обратиться к Telegram");
         var parsing = files.State.NetworkActivity.Operations.Single(x => x.Kind == TgBusinessLogic.Models.TgNetworkOperationKind.Parsing);
         Assert(parsing.State == TgBusinessLogic.Models.TgNetworkOperationState.Failed, "Отказ парсинга без подключения отображается как завершение");
+        Assert(parsing.ChatId == 101 && parsing.ChatTitle == "Первый чат", "Настоящий парсинг не передал свой чат сетевой операции");
+    }
+
+    // Настоящий парсер публикует начало порции до чтения ответа из кеша и сохраняет ID при паузе
+    private static async Task ParsingRequestIdsBeforeResponseAsync()
+    {
+        using var files = new MediaFixture();
+        var uid = Guid.NewGuid();
+        await files.State.PrepareDownloadTokenAsync(uid);
+        files.State.NetworkActivity.SetKind(uid, TgNetworkOperationKind.Parsing);
+        files.State.NetworkActivity.RegisterCancellation(uid, () => { });
+        var helper = new TgParseHelper { NetworkOperationId = uid, SourceFirstId = 101, SourceLastId = 1000,
+            Channel = new TL.Channel { id = 321 }, AppDto = new() { UseClient = true } };
+        var key = TgBusinessLogic.Helpers.TgCacheUtils.GetCacheKeyMessages(321, 101, 150);
+        await files.Cache.SetAsync<TL.Messages_MessagesBase>(key, new TL.Messages_Messages { messages = [new TL.MessageEmpty { id = 101 }] });
+        TgNetworkOperation? beforeResponse = null;
+        files.Cache.Events.Hit += (_, args) =>
+        {
+            if (args.Key == key) beforeResponse = files.State.NetworkActivity.Operations.Single(x => x.Id == uid);
+        };
+        files.State.NetworkActivity.ToggleParsingPause();
+        var pending = files.CallAsync("DownloadMessagesWithClientAsync", files.Settings, helper, 50, files.State.DownloadToken);
+        Assert(!pending.IsCompleted && beforeResponse is null && helper.SourceFirstId == 101, "Пауза не остановила запрос порции");
+        files.State.NetworkActivity.ToggleParsingPause();
+        await pending;
+        Assert(beforeResponse is not null, "Парсер не запросил подготовленный ответ с сообщениями");
+        Assert((long?)beforeResponse!.GetType().GetProperty("CurrentMessageId")?.GetValue(beforeResponse) == 101
+            && (long?)beforeResponse.GetType().GetProperty("LastMessageId")?.GetValue(beforeResponse) == 1000,
+            "До получения ответа парсер не сообщил запрашиваемый ID 101 из 1000");
+        var afterResponse = files.State.NetworkActivity.Operations.Single(x => x.Id == uid);
+        Assert(afterResponse.Progress == 15 && helper.SourceFirstId == 151, "Запрос потерял процент или продвижение порции");
+        Assert(files.NetworkCalls == 0, "Изолированная проверка попыталась обратиться к Telegram");
     }
 
     // При отмене очередь должна остаться доступной завершающему ожиданию задач
@@ -442,7 +497,8 @@ internal static class MediaTests
 
 internal sealed class MediaFixture : IDisposable
 {
-    private readonly FusionCache _cache = new(new FusionCacheOptions());
+    private readonly FusionCache _cache = new(new FusionCacheOptions { EnableSyncEventHandlersExecution = true });
+    public FusionCache Cache => _cache;
     private readonly LoadStateService _state = new();
     public LoadStateService State => _state;
     private readonly MemoryStream _session = new();
@@ -493,20 +549,23 @@ internal sealed class MediaTestConnection(FusionCache cache, LoadStateService st
     : TgConnectClientBase(null!, new TgFloodControlService(), cache, state)
 {
     public int Downloads { get; private set; }
+    public List<(long ChatId, string Title)> DownloadChats { get; } = [];
     public bool FailNext { get; set; }
 
     /// <summary> Записывает тестовые байты документа или обложки без сети </summary>
     protected override async Task DownloadDocumentMediaAsync(TL.Document document, Stream output, TL.PhotoSizeBase? thumbSize,
-        WTelegram.Client.ProgressCallback? progress, CancellationToken ct = default)
+        WTelegram.Client.ProgressCallback? progress, long chatId, string chatTitle, CancellationToken ct = default)
     {
         Downloads++;
+        DownloadChats.Add((chatId, chatTitle));
         await output.WriteAsync(thumbSize is null ? new byte[] { 1, 2, 3, 4 } : new byte[] { 1, 2, 3 }, ct);
     }
 
     /// <summary> Записывает тестовые байты фотографии без сети </summary>
-    protected override async Task DownloadPhotoMediaAsync(TL.Photo photo, Stream output, TL.PhotoSizeBase size, CancellationToken ct = default)
+    protected override async Task DownloadPhotoMediaAsync(TL.Photo photo, Stream output, TL.PhotoSizeBase size, long chatId, string chatTitle, CancellationToken ct = default)
     {
         Downloads++;
+        DownloadChats.Add((chatId, chatTitle));
         if (FailNext) { FailNext = false; throw new IOException("Тестовый обрыв передачи"); }
         await output.WriteAsync(new byte[] { 1, 2, 3, 4 }, ct);
     }

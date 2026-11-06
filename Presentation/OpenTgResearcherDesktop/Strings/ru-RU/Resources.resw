@@ -377,6 +377,12 @@
   <data name="ActionResetToDefault.Text" xml:space="preserve">
     <value>Сбросить по-умолчанию</value>
   </data>
+  <data name="ActionResetChatSettings.Text" xml:space="preserve">
+    <value>Сброс настроек</value>
+  </data>
+  <data name="ActionOpenNetworkActivity.Text" xml:space="preserve">
+    <value>Сетевая активность</value>
+  </data>
   <data name="ActionSave.Text" xml:space="preserve">
     <value>Сохранить</value>
   </data>
@@ -1996,19 +2002,13 @@ API-параметры, телефон и выбранный прокси буд
     <value>Telegram не подключён</value>
   </data>
   <data name="NetworkEmpty.Text" xml:space="preserve">
-    <value>Активных операций нет. Начните подключение, парсинг чата или скачивание — действия появятся здесь автоматически.</value>
+    <value>Операций пока нет. Подключитесь к Telegram, начните парсинг чата или скачивание — действия появятся здесь автоматически.</value>
   </data>
   <data name="NetworkHistoryCount" xml:space="preserve">
-    <value>В истории: {0} из 100</value>
-  </data>
-  <data name="NetworkHistoryEmpty.Text" xml:space="preserve">
-    <value>В этом запуске ещё нет завершённых операций.</value>
+    <value>Завершённых операций: {0} из 100</value>
   </data>
   <data name="NetworkHistoryNote.Text" xml:space="preserve">
-    <value>Последние 100 завершённых операций хранятся только в памяти. Очистка истории не прерывает загрузки. «Завершено» означает окончание действия, а не полную авторизацию в Telegram.</value>
-  </data>
-  <data name="NetworkHistoryTitle.Text" xml:space="preserve">
-    <value>Последние операции</value>
+    <value>Все операции собраны в группах, включая завершённые, отменённые и с ошибками. Последние 100 завершённых операций хранятся только в памяти. Очистка истории сохраняет выполняющиеся действия.</value>
   </data>
   <data name="NetworkKindConnection" xml:space="preserve">
     <value>Подключение к Telegram</value>
@@ -2076,6 +2076,12 @@ API-параметры, телефон и выбранный прокси буд
   <data name="NetworkParsingProgress" xml:space="preserve">
     <value>Обработка сообщений: {0:0.00} %</value>
   </data>
+  <data name="NetworkParsingMessageIds" xml:space="preserve">
+    <value>Чтение ID {0} из {1}</value>
+  </data>
+  <data name="NetworkParsingMessageId" xml:space="preserve">
+    <value>Чтение ID {0}</value>
+  </data>
   <data name="NetworkPause" xml:space="preserve">
     <value>Пауза</value>
   </data>
@@ -2090,5 +2096,17 @@ API-параметры, телефон и выбранный прокси буд
   </data>
   <data name="NetworkPauseParsing.ToolTipService.ToolTip" xml:space="preserve">
     <value>Приостановить новые запросы и файлы. Уже начатые передачи могут завершиться.</value>
+  </data>
+  <data name="NetworkGroupsTitle.Text" xml:space="preserve">
+    <value>Активность</value>
+  </data>
+  <data name="NetworkGeneralGroup" xml:space="preserve">
+    <value>Общие операции</value>
+  </data>
+  <data name="NetworkChatGroupFallback" xml:space="preserve">
+    <value>Чат {0}</value>
+  </data>
+  <data name="NetworkChatGroupSummary" xml:space="preserve">
+    <value>Выполняется: {0} · Завершено: {1}</value>
   </data>
 </root>

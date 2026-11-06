@@ -100,7 +100,7 @@ internal sealed class LiveMediaConnection(FusionCache cache, LoadStateService st
 
     /// <summary> Запрещает скачивание: проверяем только пропуск уже готовых файлов </summary>
     protected override Task DownloadDocumentMediaAsync(TL.Document document, Stream output, TL.PhotoSizeBase? thumbSize,
-        WTelegram.Client.ProgressCallback? progress, CancellationToken ct = default)
+        WTelegram.Client.ProgressCallback? progress, long chatId, string chatTitle, CancellationToken ct = default)
     {
         Downloads++;
         throw new InvalidOperationException("Готовый файл ошибочно отправлен на повторную загрузку");

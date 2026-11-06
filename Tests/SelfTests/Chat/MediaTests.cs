@@ -530,10 +530,10 @@ internal sealed class MediaFixture : IDisposable
     public TgDownloadSettingsViewModel Settings { get; } = new();
     public int NetworkCalls { get; private set; }
 
-    public MediaFixture()
+    public MediaFixture(Func<FusionCache, LoadStateService, MediaTestConnection>? createConnection = null)
     {
         System.IO.Directory.CreateDirectory(Directory);
-        Connection = new(_cache, _state);
+        Connection = createConnection?.Invoke(_cache, _state) ?? new(_cache, _state);
         GC.SuppressFinalize(Connection);
         _client = new(Config, _session);
         _client.TcpHandler = (_, _) => { NetworkCalls++; throw new InvalidOperationException("Сеть запрещена в проверке медиафайлов"); };
@@ -566,10 +566,11 @@ internal sealed class MediaFixture : IDisposable
 }
 
 // Подменяем только запись байтов из Telegram, сохраняя настоящую логику проверки файлов
-internal sealed class MediaTestConnection(FusionCache cache, LoadStateService state)
+internal class MediaTestConnection(FusionCache cache, LoadStateService state)
     : TgConnectClientBase(null!, new TgFloodControlService(), cache, state)
 {
-    public int Downloads { get; private set; }
+    private int _downloads;
+    public int Downloads => Volatile.Read(ref _downloads);
     public List<(long ChatId, string Title)> DownloadChats { get; } = [];
     public bool FailNext { get; set; }
 
@@ -587,16 +588,16 @@ internal sealed class MediaTestConnection(FusionCache cache, LoadStateService st
     protected override async Task DownloadDocumentMediaAsync(TL.Document document, Stream output, TL.PhotoSizeBase? thumbSize,
         WTelegram.Client.ProgressCallback? progress, long chatId, string chatTitle, CancellationToken ct = default)
     {
-        Downloads++;
-        DownloadChats.Add((chatId, chatTitle));
+        Interlocked.Increment(ref _downloads);
+        lock (DownloadChats) DownloadChats.Add((chatId, chatTitle));
         await output.WriteAsync(thumbSize is null ? new byte[] { 1, 2, 3, 4 } : new byte[] { 1, 2, 3 }, ct);
     }
 
     /// <summary> Записывает тестовые байты фотографии без сети </summary>
     protected override async Task DownloadPhotoMediaAsync(TL.Photo photo, Stream output, TL.PhotoSizeBase size, long chatId, string chatTitle, CancellationToken ct = default)
     {
-        Downloads++;
-        DownloadChats.Add((chatId, chatTitle));
+        Interlocked.Increment(ref _downloads);
+        lock (DownloadChats) DownloadChats.Add((chatId, chatTitle));
         if (FailNext) { FailNext = false; throw new IOException("Тестовый обрыв передачи"); }
         await output.WriteAsync(new byte[] { 1, 2, 3, 4 }, ct);
     }

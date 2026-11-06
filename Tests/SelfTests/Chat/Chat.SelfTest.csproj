@@ -13,6 +13,8 @@
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgChat*Page.xaml" LogicalName="%(Filename)%(Extension)" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Styles/TgChatResources.xaml" LogicalName="TgChatResources.xaml" />
     <EmbeddedResource Include="Fixtures/cover.jpg" LogicalName="cover.jpg" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherConsole/Helpers/TgMenuHelperClientConDownload.cs"
+        LogicalName="ConsoleDownload.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgChatActivityRow.cs" Link="TgChatActivityRow.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgChatRegistryRow.cs" Link="TgChatRegistryRow.cs" />
   </ItemGroup>

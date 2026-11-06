@@ -79,8 +79,8 @@ internal static partial class Program
             App.BusinessLogicManager.ConnectClient.Parse = settings =>
             {
                 parsed = true;
-                Assert(settings.SourceVm.Dto.Directory == directory && ReferenceEquals(settings.SourceVm.Dto, Chat.Dto),
-                    "Парсинг получил старые настройки вместо сохранённого черновика");
+                Assert(settings.SourceVm.Dto.Directory == directory && !ReferenceEquals(settings.SourceVm.Dto, Chat.Dto),
+                    "Парсинг получил старые настройки или общий изменяемый черновик");
                 return Task.CompletedTask;
             };
             await Chat.StartUpdateOnlineCommand.ExecuteAsync(null);

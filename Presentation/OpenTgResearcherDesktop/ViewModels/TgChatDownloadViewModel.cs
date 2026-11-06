@@ -100,7 +100,7 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
         var operations = LoadStateService.NetworkActivity.Operations.Where(x => x.ChatId == DownloadDto.Id).ToArray();
         var parsing = operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing);
         HasRunningParsing = parsing?.State == TgNetworkOperationState.Running;
-        CanStartParsing = DownloadDto.Id > 0 && IsOnlineReady && !IsOnlineProcessing && !HasRunningParsing;
+        CanStartParsing = DownloadDto.Id > 0 && IsOnlineReady && !HasRunningParsing;
         CanControlParsing = HasRunningParsing && parsing!.CanCancel;
         ParsingProgress = parsing?.Progress ?? TgDataUtils.CalcSourceProgress(DownloadDto.Count, DownloadDto.FirstId);
         ChatProgressMessage = $"{ParsingProgress:00.00} %";

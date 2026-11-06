@@ -45,7 +45,7 @@ internal static partial class Program
             "В пульте не показана причина недоступных сведений");
     }
 
-    // Новый пульт сохраняет запрет повторного запуска во время общей сетевой операции
+    // Пульт разрешает запуск другого чата и блокирует повторный запуск текущего
     private static async Task DashboardStartAvailabilityAsync()
     {
         await Download.OnNavigatedToAsync(new() { Parameter = _source });
@@ -56,7 +56,12 @@ internal static partial class Program
         Assert((bool)available!.GetValue(Download)!, "Подключённый чат не разрешает запуск");
         _state.IsOnlineProcessing = true;
         Download.RefreshActivity();
-        Assert(!(bool)available.GetValue(Download)!, "Пульт разрешил повторный запуск во время сетевой операции");
+        Assert((bool)available.GetValue(Download)!, "Сетевая операция другого чата заблокировала запуск");
+        var uid = Guid.NewGuid();
+        _state.NetworkActivity.Start(uid, TgNetworkOperationKind.Parsing);
+        _state.NetworkActivity.SetChat(uid, _source.Id, _source.Title);
+        Download.RefreshActivity();
+        Assert(!(bool)available.GetValue(Download)!, "Пульт разрешил повторный парсинг текущего чата");
         _state.IsOnlineProcessing = false; _state.IsOnlineReady = false;
         Download.RefreshActivity();
         Assert(!(bool)available.GetValue(Download)!, "Отключённый Telegram разрешил запуск");

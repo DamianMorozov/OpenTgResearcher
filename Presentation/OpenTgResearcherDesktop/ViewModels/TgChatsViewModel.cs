@@ -3,7 +3,7 @@
 public sealed partial class TgChatsViewModel : TgSectionViewModel
 {
     private List<OpenTgResearcherDesktop.Models.TgChatRegistryRow> _pageRows = [];
-    private long? _parsingChatId;
+    private readonly HashSet<long> _parsingChatIds = [];
     public string ChatTitleHeader => "RegistryChat".GetLocalizedResource();
     public string ChatCountHeader => "RegistryMessages".GetLocalizedResource();
     public string ChatFilesHeader => "RegistryFiles".GetLocalizedResource();
@@ -121,8 +121,8 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         var selected = operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == SelectedRow?.Source.Id);
         CanPauseSelected = selected?.State == TgNetworkOperationState.Running && selected.CanCancel && !selected.IsCancellationRequested;
         var isRunning = selected?.State == TgNetworkOperationState.Running;
-        CanToggleSelectedParsing = isRunning ? CanPauseSelected : SelectedRow?.Source.Id > 0 && IsOnlineReady && !IsOnlineProcessing
-            && _parsingChatId is null && !operations.Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running);
+        CanToggleSelectedParsing = isRunning ? CanPauseSelected : SelectedRow?.Source.Id > 0 && IsOnlineReady
+            && !_parsingChatIds.Contains(SelectedRow.Source.Id);
         ParsingCaption = (isRunning ? selected!.IsCancellationRequested ? "NetworkStateStopping" : "RegistryStop" : "RegistryStart").GetLocalizedResource();
         ParsingGlyph = isRunning ? "\uE71A" : "\uE768";
         ToggleSelectedParsingCommand.NotifyCanExecuteChanged();
@@ -183,9 +183,9 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     // Загружаем сохранённые настройки в отдельный снимок, не меняя черновик открытого чата
     private async Task StartSelectedParsingAsync(Guid uid, long chatId)
     {
-        if (_parsingChatId is not null || IsOnlineProcessing || LoadStateService.NetworkActivity.Operations
-            .Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running)) return;
-        _parsingChatId = chatId;
+        if (LoadStateService.NetworkActivity.Operations
+            .Any(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == chatId && x.State == TgNetworkOperationState.Running)
+            || !_parsingChatIds.Add(chatId)) return;
         RefreshActivity();
         try
         {
@@ -207,7 +207,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         catch (Exception ex) { LogError(ex); }
         finally
         {
-            _parsingChatId = null;
+            _parsingChatIds.Remove(chatId);
             await RefreshRegistryCommand.ExecuteAsync(null);
             RefreshActivity();
         }

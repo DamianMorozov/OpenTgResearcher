@@ -23,7 +23,53 @@ internal static partial class Program
         ("RegistryStartsSelectedAndStopsWhileRunning", RegistryStartsSelectedAndStopsWhileRunningAsync),
         ("RegistryStopsOnlySelectedChat", RegistryStopsOnlySelectedChatAsync),
         ("RegistryParsingErrors", RegistryParsingErrorsAsync),
+        ("RegistryStartsTwoChats", RegistryStartsTwoChatsAsync),
     ];
+
+    // Одна команда реестра запускает второй чат до завершения первого и останавливает только выбранный
+    private static async Task RegistryStartsTwoChatsAsync()
+    {
+        var other = new TgEfSourceDto { Id = 200, Uid = Guid.NewGuid(), Title = "Other", Directory = "second-media" };
+        await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(other);
+        _state.IsOnlineReady = true; _state.IsOnlineProcessing = true;
+        App.BusinessLogicManager.ConnectClient.Ready = true;
+        var vm = new TgChatsViewModel(_state, _settings, _navigation, null!);
+        await vm.OnNavigatedToAsync(null);
+        var entered = new Dictionary<long, TaskCompletionSource> { [100] = new(), [200] = new() };
+        var settingsByChat = new Dictionary<long, TgDownloadSettingsViewModel>();
+        using var firstStop = new CancellationTokenSource(); using var secondStop = new CancellationTokenSource();
+        App.BusinessLogicManager.ConnectClient.Parse = async settings =>
+        {
+            var id = settings.SourceVm.Dto.Id; var operation = Guid.NewGuid();
+            var stop = id == 100 ? firstStop : secondStop;
+            settingsByChat[id] = settings;
+            _state.NetworkActivity.Start(operation, TgNetworkOperationKind.Parsing);
+            _state.NetworkActivity.SetChat(operation, id, settings.SourceVm.Dto.Title);
+            _state.NetworkActivity.RegisterCancellation(operation, stop.Cancel);
+            entered[id].TrySetResult();
+            try { await Task.Delay(Timeout.Infinite, stop.Token); }
+            finally { _state.NetworkActivity.Finish(operation, TgNetworkOperationState.Canceled); }
+        };
+        vm.SelectedRow = vm.RegistryRows.Single(x => x.Source.Id == 100);
+        var first = vm.ToggleSelectedParsingCommand.ExecuteAsync(null);
+        Task second = Task.CompletedTask;
+        try
+        {
+            await entered[100].Task.WaitAsync(TimeSpan.FromSeconds(3));
+            vm.SelectedRow = vm.RegistryRows.Single(x => x.Source.Id == 200);
+            Assert(vm.ToggleSelectedParsingCommand.CanExecute(null), "Второй чат заблокирован выполняющимся первым");
+            second = vm.ToggleSelectedParsingCommand.ExecuteAsync(null);
+            await entered[200].Task.WaitAsync(TimeSpan.FromSeconds(3));
+            Assert(!first.IsCompleted && !second.IsCompleted && settingsByChat[100].SourceVm.Dto.Id == 100
+                && settingsByChat[200].SourceVm.Dto.Directory == "second-media", "Один запуск подменил настройки или завершил другой");
+            await vm.ToggleSelectedParsingCommand.ExecuteAsync(null);
+            await second.WaitAsync(TimeSpan.FromSeconds(3));
+            Assert(!first.IsCompleted && !firstStop.IsCancellationRequested && secondStop.IsCancellationRequested,
+                "Прерывание второго чата остановило первый");
+        }
+        finally { firstStop.Cancel(); secondStop.Cancel(); await Task.WhenAll(first, second); }
+        Assert(vm.Errors.Count == 0, "Штатная отмена параллельного запуска отображается ошибкой");
+    }
 
     // Кнопка открытия сразу переходит к выбранному чату без диалога
     private static async Task RegistryOpensWithoutConfirmationAsync()
@@ -82,7 +128,7 @@ internal static partial class Program
             Assert(settings.SourceVm.Dto.Id == _source.Id && settings.SourceVm.Dto.Directory == "saved-media"
                 && settings.SourceVm.Dto.IsSaveMessages && settings.SourceVm.Dto.FirstId == 37, "Запуск потерял сохранённые настройки");
             vm.SelectedRow = new(new() { Uid = Guid.NewGuid(), Id = 200 }, "other", 0, 0, default);
-            Assert(!command.CanExecute(null) && settings.SourceVm.Dto.Id == _source.Id, "Смена выбора разрешила второй запуск или изменила первый");
+            Assert(command.CanExecute(null) && settings.SourceVm.Dto.Id == _source.Id, "Другой чат недоступен для параллельного запуска или изменил первый");
             vm.SelectedRow = vm.RegistryRows.Single();
             vm.RefreshActivity();
             Assert(command.CanExecute(null), "Выполняющаяся команда заблокировала собственное прерывание");

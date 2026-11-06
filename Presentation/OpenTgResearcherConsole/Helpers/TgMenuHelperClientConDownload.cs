@@ -293,6 +293,9 @@ internal partial class TgMenuHelper
         try
         {
             await BusinessLogicManager.ConnectClient.ParseChatAsync(tgDownloadSettings);
+            // Перечитываем результат отдельного парсера, не перезаписывая его позицию исходными настройками
+            var uid = tgDownloadSettings.SourceVm.Dto.Uid;
+            tgDownloadSettings.SourceVm.Dto = await BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == uid);
         }
         catch (Exception ex)
         {
@@ -303,7 +306,6 @@ internal partial class TgMenuHelper
             // Repeat request after waiting
             await DownloadManualAsync(tgDownloadSettings);
         }
-        await DownloadSettingsSaveAsync(tgDownloadSettings);
     }
 
     private async Task MarkHistoryReadCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings)

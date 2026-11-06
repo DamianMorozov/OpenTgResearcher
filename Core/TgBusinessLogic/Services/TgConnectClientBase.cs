@@ -25,7 +25,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public TL.User? Me { get; protected set; } = default!;
     public SqliteConnection? BotSqlConnection { get; private set; } = default!;
 
-    protected ITgStorageService StorageManager { get; set; } = default!;
+    private ITgStorageService _storageManager = default!;
+    protected ITgStorageService StorageManager { get => _parsingSession.Value?.Storage ?? _storageManager; set => _storageManager = value; }
     protected ITgFloodControlService FloodControlService { get; set; } = default!;
     protected ILoadStateService LoadStateService { get; set; } = default!;
 
@@ -56,7 +57,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return false;
     }
 
-    private IEnumerable<TgEfFilterDto> Filters { get; set; } = [];
+    private IEnumerable<TgEfFilterDto> _filters = [];
+    private IEnumerable<TgEfFilterDto> Filters
+    {
+        get => _parsingSession.Value?.Filters ?? _filters;
+        set { if (_parsingSession.Value is { } session) session.Filters = value; else _filters = value; }
+    }
     public Func<string, Task> UpdateTitleAsync { get; private set; } = default!;
     public Func<string, Task> UpdateStateProxyAsync { get; private set; } = default!;
     public Func<long, int, int, string, Task> UpdateChatViewModelAsync { get; private set; } = default!;
@@ -84,7 +90,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         LoadStateService = loadStateService;
         // FusionCache
         ArgumentNullException.ThrowIfNull(cache);
-        Cache = cache;
+        _cache = cache;
         _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
         _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), dto => $"{dto.SourceId}:{dto.Id}");
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
@@ -111,7 +117,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         FloodControlService = floodControlService;
         LoadStateService = loadStateService;
         // FusionCache
-        Cache = cache;
+        _cache = cache;
         _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
         _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), dto => $"{dto.SourceId}:{dto.Id}");
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
@@ -171,8 +177,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             if (!FloodControlService.IsFlood(message)) return;
 
             await UpdateShellViewModelAsync(true, FloodControlService.TryExtractFloodWaitSeconds(message), message);
-            if (_downloadSettings is not null)
-                await FlushChatBufferAsync(_downloadSettings.SourceVm.Dto.IsSaveMessages, _downloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
+            if (DownloadSettings is not null)
+                await FlushChatBufferAsync(DownloadSettings.SourceVm.Dto.IsSaveMessages, DownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
             await FloodControlService.WaitIfFloodAsync(message, ct);
             await UpdateShellViewModelAsync(false, 0, string.Empty);
         }
@@ -1834,7 +1840,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         if (fullChannel?.full_chat is TL.ChannelFull channelFull)
                         {
                             var chatDto = await BuildChatEntityAsync(channel, channelFull.about, messagesCount: 0, isUserAccess: true);
-                            _chatBuffer.Add(chatDto);
+                            ChatBuffer.Add(chatDto);
                             await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent,
                                 tgDownloadSettings.SourceScanCount, $"{channel} | {TgDataFormatUtils.TrimStringEnd(channelFull.about, 40)}");
                         }
@@ -1842,7 +1848,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     else
                     {
                         var chatDto = await BuildChatEntityAsync(channel, string.Empty, messagesCount: 0, isUserAccess: true);
-                        _chatBuffer.Add(chatDto);
+                        ChatBuffer.Add(chatDto);
                         await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceScanCurrent, tgDownloadSettings.SourceScanCount, $"{channel}");
                     }
                 }, async () =>
@@ -1882,7 +1888,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 else
                     chatDto = await BuildChatEntityAsync(group, string.Empty, messagesCount: 0, isUserAccess: true);
 
-                _chatBuffer.Add(chatDto);
+                ChatBuffer.Add(chatDto);
 
                 if (tgDownloadSettings is TgDownloadSettingsViewModel tgDownloadSettings2)
                     await UpdateChatViewModelAsync(tgDownloadSettings2.SourceVm.Dto.Id, 0, 0, $"{group}");
@@ -1960,11 +1966,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     }
 
     /// <summary> Разбирает чат Telegram и дожидается завершения задач перед освобождением состояния </summary>
-    public async Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings)
-    {
-        if (tgDownloadSettings is not TgDownloadSettingsViewModel settings) return;
-        _downloadSettings = settings;
+    public Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings) => tgDownloadSettings is TgDownloadSettingsViewModel settings
+        ? RunParsingSessionAsync(settings) : Task.CompletedTask;
 
+    // Выполняем разбор внутри отдельного контекста выбранного чата
+    private async Task ParseChatCoreAsync(TgDownloadSettingsViewModel settings)
+    {
         var uid = Guid.NewGuid();
         await LoadStateService.PrepareDownloadTokenAsync(uid);
         LoadStateService.NetworkActivity.SetKind(uid, TgNetworkOperationKind.Parsing);
@@ -2120,26 +2127,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
     }
 
-    /// <summary> Prepare chat for downloading </summary>
-    private async Task PrepareChatAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
+    /// <summary> Подготавливает чат в кеше и хранилище текущего запуска </summary>
+    protected virtual async Task PrepareChatAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
     {
-        // Clear cache
+        // Очищаем только кеш текущего парсинга
         await Cache.ClearAllAsync(ct);
 
         if (CheckShouldStop(ct)) return;
 
-        // Prepare chat
+        // Подготавливаем выбранный чат
         await CreateChatAsync(settings, isSilent: false, ct);
     }
 
-    /// <summary> Check access to messages in chat </summary>
-    private async Task<TgParseHelper> CheckAccessToMessagesAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
+    /// <summary> Проверяет доступ и границы сообщений выбранного чата </summary>
+    protected virtual async Task<TgParseHelper> CheckAccessToMessagesAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
     {
         var parseHelper = new TgParseHelper();
 
         try
         {
-            // Filters
+            // Загружаем фильтры в отдельный снимок текущего запуска
             Filters = await StorageManager.FilterRepository.GetListDtosAsync(0, 0, x => x.IsEnabled, ct);
 
             await LoginUserAsync(isProxyUpdate: false);
@@ -2234,12 +2241,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             {
                 await FlushMessageBufferAsync(parseHelper, tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true,
                     ct);
-                await UpdateTitleAsync(string.Empty);
+                if (_parsingChats.Count <= 1) await UpdateTitleAsync(string.Empty);
             }
         }
         finally
         {
-            _downloadSettings = null;
+            if (_parsingSession.Value is null) _downloadSettings = null;
             LoadStateService.StopSoftDownloadProcessing(uid);
         }
     }
@@ -3243,9 +3250,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 // Save message entity
                 {
                     // Check if the message is not already in the batch
-                    if (_messageBuffer.FirstOrDefault(x => x.Id == messageDto.Id && x.SourceId == messageDto.SourceId && x.UserId == messageDto.UserId) is null)
+                    if (MessageBuffer.FirstOrDefault(x => x.Id == messageDto.Id && x.SourceId == messageDto.SourceId && x.UserId == messageDto.UserId) is null)
                     {
-                        _messageBuffer.Add(messageDto);
+                        MessageBuffer.Add(messageDto);
                     }
                 }
             }
@@ -3260,10 +3267,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     ChildSourceId = messageSettings.CurrentChatId,
                     ChildMessageId = messageSettings.CurrentMessageId
                 };
-                if (_messageRelationBuffer.FirstOrDefault(x => x.ParentSourceId == messageSettings.ParentChatId && x.ParentMessageId == messageSettings.ParentMessageId &&
+                if (MessageRelationBuffer.FirstOrDefault(x => x.ParentSourceId == messageSettings.ParentChatId && x.ParentMessageId == messageSettings.ParentMessageId &&
                     x.ChildSourceId == messageSettings.CurrentChatId && x.ChildMessageId == messageSettings.CurrentMessageId) is null)
                 {
-                    _messageRelationBuffer.Add(relationDto);
+                    MessageRelationBuffer.Add(relationDto);
                 }
             }
 
@@ -3719,7 +3726,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             // Optimization: check cache
-            if (_tlUserBuffer.FirstOrDefault(x => x.Id == peerUser.user_id)?.User is TL.User user)
+            if (TlUserBuffer.FirstOrDefault(x => x.Id == peerUser.user_id)?.User is TL.User user)
                 return TgStringUtils.FormatUserLink(user.username, user.id, string.Join(" ", user.first_name, user.last_name));
 
             // Retrieving data through a chat participant
@@ -3728,7 +3735,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 return GetChatUserLink(chatId);
 
             // Optimization: update cache
-            _tlUserBuffer.Add(participantDto);
+            TlUserBuffer.Add(participantDto);
             return TgStringUtils.FormatUserLink(participantDto.User.username, participantDto.Id, string.Join(" ", participantDto.User.first_name, participantDto.User.last_name));
         }
         catch (Exception ex)
@@ -3823,7 +3830,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         // Optimization: check cache
         if (userId is not null)
         {
-            var participantDto = _tlUserBuffer.FirstOrDefault(x => x.Id == userId);
+            var participantDto = TlUserBuffer.FirstOrDefault(x => x.Id == userId);
             if (participantDto is not null)
                 return participantDto;
             // Get one participant: need access hash
@@ -3839,7 +3846,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     if (userData is not null)
                     {
                         participantDto = new(userData);
-                        _tlUserBuffer.Add(participantDto);
+                        TlUserBuffer.Add(participantDto);
                         return participantDto;
                     }
                 }
@@ -3872,7 +3879,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         {
                             // Optimization: update cache
                             var participantDto = new TgParticipantDto(userItem.Value, participants.participants.FirstOrDefault(x => x.UserId == userId)?.IsAdmin ?? false);
-                            _tlUserBuffer.Add(participantDto);
+                            TlUserBuffer.Add(participantDto);
                             return participantDto;
                         }
                     }
@@ -3880,7 +3887,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     {
                         // Optimization: update cache
                         var participantDto = new TgParticipantDto(userItem.Value, participants.participants.FirstOrDefault(x => x.UserId == userItem.Key)?.IsAdmin ?? false);
-                        _tlUserBuffer.Add(participantDto);
+                        TlUserBuffer.Add(participantDto);
                     }
                 }
 
@@ -3901,11 +3908,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         var chatDetailsDto = await GetChatDetailsByClientAsync(chatId, ct);
 
-        _tlUserBuffer.Clear();
+        TlUserBuffer.Clear();
         await GetParticipantsAsync(chatId, null, accessHash: 0, ct);
 
         // Sort participants
-        var userList = _tlUserBuffer.GetList()
+        var userList = TlUserBuffer.GetList()
             .OrderByDescending(x => x.Id == Client?.UserId)
             .ThenBy(x => x.User.LastSeenAgo)
             .Select(x => x)
@@ -3996,7 +4003,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         InputChannelCache.Clear();
         ChatCache.Clear();
-        _tlUserBuffer.Clear();
+        TlUserBuffer.Clear();
     }
 
     /// <inheritdoc />

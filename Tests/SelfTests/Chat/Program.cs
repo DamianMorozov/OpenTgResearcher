@@ -72,24 +72,31 @@ internal static partial class Program
             ("ContentTemplateUsesPageContext", ContentTemplateUsesPageContextAsync),
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
-        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests()).ToArray();
+        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
+            .Concat(GetParallelParsingTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
         {
-            var isolatedReaders = test.Name.StartsWith("Registry", StringComparison.Ordinal);
-            var connection = isolatedReaders ? $"Data Source=registry-{Guid.NewGuid():N};Mode=Memory;Cache=Shared" : "Data Source=:memory:";
+            var connection = $"Data Source=chat-{Guid.NewGuid():N};Mode=Memory;Cache=Shared";
             var options = new DbContextOptionsBuilder().UseSqlite(connection).AddInterceptors(new DelayedQueryInterceptor()).Options;
             await using var context = new TestContext(options);
             await context.Database.OpenConnectionAsync();
             await context.Database.EnsureCreatedAsync();
             var builder = new ContainerBuilder();
-            if (isolatedReaders) builder.Register(_ => new TestContext(options)).As<ITgEfContext>().InstancePerLifetimeScope();
-            else builder.RegisterInstance(context).As<ITgEfContext>().ExternallyOwned();
+            builder.Register(_ => new TestContext(options)).As<ITgEfContext>().InstancePerLifetimeScope();
             builder.RegisterType<TgEfSourceRepository>().As<ITgEfSourceRepository>();
             builder.RegisterType<TgEfUserRepository>().As<ITgEfUserRepository>();
             builder.RegisterType<TgEfStoryRepository>().As<ITgEfStoryRepository>();
             builder.RegisterType<TgEfVersionRepository>().As<ITgEfVersionRepository>();
+            builder.RegisterType<TgEfAppRepository>().As<ITgEfAppRepository>();
+            builder.RegisterType<TgEfChatUserRepository>().As<ITgEfChatUserRepository>();
+            builder.RegisterType<TgEfDocumentRepository>().As<ITgEfDocumentRepository>();
+            builder.RegisterType<TgEfFilterRepository>().As<ITgEfFilterRepository>();
+            builder.RegisterType<TgEfLicenseRepository>().As<ITgEfLicenseRepository>();
+            builder.RegisterType<TgEfMessageRepository>().As<ITgEfMessageRepository>();
+            builder.RegisterType<TgEfMessageRelationRepository>().As<ITgEfMessageRelationRepository>();
+            builder.RegisterType<TgEfProxyRepository>().As<ITgEfProxyRepository>();
             using var container = builder.Build();
             TgGlobalTools.Container = container;
             using var sources = new TgEfSourceRepository();

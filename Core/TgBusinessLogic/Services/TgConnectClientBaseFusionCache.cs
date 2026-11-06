@@ -1,4 +1,4 @@
-﻿using TL;
+using TL;
 
 namespace TgBusinessLogic.Services;
 
@@ -6,23 +6,30 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 {
     #region FusionCache
 
-    private readonly IFusionCache Cache = default!;
+    private readonly IFusionCache _cache = default!;
+    private IFusionCache Cache => _parsingSession.Value?.Cache ?? _cache;
     private readonly TgBufferCacheHelper<TgEfMessageDto> _messageBuffer = default!;
+    private TgBufferCacheHelper<TgEfMessageDto> MessageBuffer => _parsingSession.Value?.Messages ?? _messageBuffer;
     private readonly TgBufferCacheHelper<TgEfMessageRelationDto> _messageRelationBuffer = default!;
+    private TgBufferCacheHelper<TgEfMessageRelationDto> MessageRelationBuffer => _parsingSession.Value?.Relations ?? _messageRelationBuffer;
     private readonly TgBufferCacheHelper<TgEfSourceDto> _chatBuffer = default!;
+    private TgBufferCacheHelper<TgEfSourceDto> ChatBuffer => _parsingSession.Value?.Chats ?? _chatBuffer;
     private readonly TgBufferCacheHelper<TgEfStoryDto> _storyBuffer = default!;
+    private TgBufferCacheHelper<TgEfStoryDto> StoryBuffer => _parsingSession.Value?.Stories ?? _storyBuffer;
     private readonly TgBufferCacheHelper<TgEfUserDto> _userBuffer = default!;
+    private TgBufferCacheHelper<TgEfUserDto> UserBuffer => _parsingSession.Value?.Users ?? _userBuffer;
     private readonly TgBufferCacheHelper<TgParticipantDto> _tlUserBuffer = default!;
+    private TgBufferCacheHelper<TgParticipantDto> TlUserBuffer => _parsingSession.Value?.Participants ?? _tlUserBuffer;
 
     /// <summary> Release all buffers and cache </summary>
     public async Task ReleaseBuffersAsync()
     {
-        _messageBuffer.Dispose();
-        _messageRelationBuffer.Dispose();
-        _chatBuffer.Dispose();
-        _storyBuffer.Dispose();
-        _userBuffer.Dispose();
-        _tlUserBuffer.Dispose();
+        MessageBuffer.Dispose();
+        MessageRelationBuffer.Dispose();
+        ChatBuffer.Dispose();
+        StoryBuffer.Dispose();
+        UserBuffer.Dispose();
+        TlUserBuffer.Dispose();
         Cache.Dispose();
         await Task.CompletedTask;
     }
@@ -84,7 +91,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <summary> Flush chat buffer to database </summary>
     private async Task FlushChatBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
-        await _chatBuffer.FlushAsync(isSaveMessages, isForce,
+        await ChatBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
@@ -98,7 +105,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <summary> Flush story buffer to database </summary>
     private async Task FlushStoryBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
-        await _storyBuffer.FlushAsync(isSaveMessages, isForce,
+        await StoryBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
@@ -112,7 +119,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     /// <summary> Flush user buffer to database </summary>
     private async Task FlushUserBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
-        await _userBuffer.FlushAsync(isSaveMessages, isForce,
+        await UserBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
@@ -128,7 +135,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task FlushMessageBufferAsync(TgParseHelper parseHelper, bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default)
     {
         // Flush message buffer to database
-        await _messageBuffer.FlushAsync(isSaveMessages, isForce,
+        await MessageBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 if (CheckShouldStop(ct)) return;
@@ -140,18 +147,18 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 await UpdateTasksViewModelAsync(parseHelper);
 
                 if (CheckShouldStop(ct)) return;
-                if (_downloadSettings is not null && list.Count > 0)
+                if (DownloadSettings is not null && list.Count > 0)
                 {
-                    var ownMessages = list.Where(x => x.SourceId == _downloadSettings.SourceVm.Dto.Id);
+                    var ownMessages = list.Where(x => x.SourceId == DownloadSettings.SourceVm.Dto.Id);
                     var maxId = ownMessages.Select(x => x.Id).DefaultIfEmpty(0).Max();
                     if (maxId > 0)
                     {
-                        var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, maxId);
-                        if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
+                        var newFirstId = Math.Max(DownloadSettings.SourceVm.Dto.FirstId, maxId);
+                        if (newFirstId > DownloadSettings.SourceVm.Dto.FirstId)
                         {
-                            _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
+                            DownloadSettings.SourceVm.Dto.FirstId = newFirstId;
                             // Save updated FirstId to database
-                            await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto, ct: ct);
+                            await StorageManager.SourceRepository.SaveAsync(DownloadSettings.SourceVm.Dto, ct: ct);
                         }
                     }
                 }
@@ -165,21 +172,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 }
 
                 if (CheckShouldStop(ct)) return;
-                if (_downloadSettings is not null && isForce)
+                if (DownloadSettings is not null && isForce)
                 {
-                    var newFirstId = Math.Max(_downloadSettings.SourceVm.Dto.FirstId, _downloadSettings.SourceVm.Dto.Count);
-                    if (newFirstId > _downloadSettings.SourceVm.Dto.FirstId)
+                    var newFirstId = Math.Max(DownloadSettings.SourceVm.Dto.FirstId, DownloadSettings.SourceVm.Dto.Count);
+                    if (newFirstId > DownloadSettings.SourceVm.Dto.FirstId)
                     {
-                        _downloadSettings.SourceVm.Dto.FirstId = newFirstId;
+                        DownloadSettings.SourceVm.Dto.FirstId = newFirstId;
                         // Save updated FirstId to database
-                        await StorageManager.SourceRepository.SaveAsync(_downloadSettings.SourceVm.Dto, ct: ct);
+                        await StorageManager.SourceRepository.SaveAsync(DownloadSettings.SourceVm.Dto, ct: ct);
                     }
                 }
 
             });
 
         // Flush message relation buffer to database
-        await _messageRelationBuffer.FlushAsync(isSaveMessages, isForce,
+        await MessageRelationBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
                 await WaitTransactionCompleteAsync();
@@ -216,8 +223,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     // Switch media type
                     TgEfStoryEntityByMediaType(storyDto, story.media);
                     // Save at memory
-                    if (_storyBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
-                        _storyBuffer.Add(storyDto);
+                    if (StoryBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
+                        StoryBuffer.Add(storyDto);
                 }
             }
             else
@@ -225,8 +232,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 storyDto = await StorageManager.CreateOrGetStoryAsync(peerId, story);
                 await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), storyDto, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
                 // Save at memory
-                if (_storyBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
-                    _storyBuffer.Add(storyDto);
+                if (StoryBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
+                    StoryBuffer.Add(storyDto);
             }
             return storyDto;
         }, ct: ct);
@@ -241,8 +248,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             await Cache.SetAsync(TgCacheUtils.GetCacheKeyUser(user.id), userDto, TgCacheUtils.CacheOptionsChannelMessages, ct);
 
             // Save to in-memory buffer if not already present
-            if (_userBuffer.FirstOrDefault(x => x.Id == user.id) is null)
-                _userBuffer.Add(userDto);
+            if (UserBuffer.FirstOrDefault(x => x.Id == user.id) is null)
+                UserBuffer.Add(userDto);
             return userDto;
         }, ct: ct);
 

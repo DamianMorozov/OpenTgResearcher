@@ -38,5 +38,14 @@ public sealed partial class TgDownloadSettingsViewModel : ObservableRecipient, I
 
     public string ToDebugString() => $"{SourceVm.ToDebugString()}";
 
+    /// <summary> Создаёт независимые настройки запуска, не привязанные к редактируемой странице чата </summary>
+    public TgDownloadSettingsViewModel CreateParsingSnapshot()
+    {
+        var snapshot = new TgDownloadSettingsViewModel { SourceScanCount = SourceScanCount, SourceScanCurrent = SourceScanCurrent };
+        snapshot.SourceVm.Dto = (TgEfSourceDto)TgEfDomainUtils.CreateNewDto(SourceVm.Dto, isUidCopy: true);
+        snapshot.Chat.Base = Chat.Base;
+        return snapshot;
+    }
+
     #endregion
 }

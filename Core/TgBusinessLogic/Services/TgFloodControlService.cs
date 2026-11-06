@@ -7,8 +7,8 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 {
     #region Fields, properties, constructor
 
-    /// <summary> Semaphore to control concurrent access to Telegram API calls </summary>
-    public static readonly SemaphoreSlim _locker = new(initialCount: 1, maxCount: 1);
+    private readonly Lock _gate = new();
+    private DateTime _blockedUntilUtc;
     /// <inheritdoc />
     public int MaxRetryCount { get; } = 5;
     /// <inheritdoc />
@@ -26,7 +26,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     private int _currentChunk = DefaultChunk;
     private int _floodHits = 0;
     private int _successHits = 0;
-    public int CurrentChunkSize => _currentChunk;
+    public int CurrentChunkSize => Volatile.Read(ref _currentChunk);
 
     #endregion
 
@@ -35,7 +35,7 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     /// <summary> Release managed resources </summary>
     public override void ReleaseManagedResources()
     {
-        _locker.Dispose();
+        // Защитная пауза не владеет соединениями и токенами парсеров
     }
 
     /// <summary> Release unmanaged resources </summary>
@@ -54,22 +54,15 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
         var waitSeconds = TryExtractFloodWaitSeconds(message);
         if (waitSeconds <= 0) return;
 
-        await _locker.WaitAsync(ct);
+        ExtendFloodWait(waitSeconds);
         try
         {
-#if DEBUG
-            Debug.WriteLine($"[FloodControl] Detected FLOOD_WAIT_{waitSeconds}. Waiting...");
-#endif
-            await Task.Delay(TimeSpan.FromSeconds(waitSeconds), ct);
+            await WaitForFloodCooldownAsync(ct);
         }
         catch (OperationCanceledException)
         {
-            // Return default immediately when cancellation requested
+            // Ожидание этого чата завершается, общая защитная пауза сохраняется
             return;
-        }
-        finally
-        {
-            _locker.Release();
         }
     }
 
@@ -78,18 +71,16 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     {
         for (int attempt = 0; attempt < MaxRetryCount; attempt++)
         {
-            // Check cancellation before acquiring semaphore
-            if (ct.IsCancellationRequested)
-                return await Task.FromCanceled<T>(ct);
-
-            await _locker.WaitAsync(ct);
+            // Ожидаем только ограничение Telegram, не удерживая другие запросы на время передачи файла
+            await WaitForFloodCooldownAsync(ct);
+            ct.ThrowIfCancellationRequested();
             try
             {
                 return await telegramCall(ct);
             }
             catch (Exception ex)
             {
-                // Check cancellation after exception
+                // Отмена текущего парсинга не затрагивает запросы соседних чатов
                 if (ct.IsCancellationRequested)
                     return await Task.FromCanceled<T>(ct);
 
@@ -99,23 +90,42 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
 #if DEBUG
                     Debug.WriteLine($"[FloodControl] FLOOD_WAIT_{floodWaitSeconds} on attempt {attempt + 1}");
 #endif
-                    // Прерываем защитную паузу при остановке парсинга
-                    await Task.Delay(TimeSpan.FromSeconds(floodWaitSeconds + 1), ct);
+                    ExtendFloodWait(floodWaitSeconds + 1);
+                    await WaitForFloodCooldownAsync(ct);
                     continue; // Повторяем запрос после паузы
                 }
 
                 throw;
             }
-            finally
-            {
-                _locker.Release();
-            }
         }
 
         if (isThrow)
-            throw new TimeoutException($"Exceeded max retry count ({MaxRetryCount}) for Telegram call");
+            throw new TimeoutException($"Превышено число повторных запросов Telegram: {MaxRetryCount}");
 
         return default!;
+    }
+
+    // Продлеваем общую защитную паузу, сохраняя наиболее поздний срок из ответов Telegram
+    private void ExtendFloodWait(int seconds)
+    {
+        using (_gate.EnterScope())
+        {
+            var until = DateTime.UtcNow.AddSeconds(seconds);
+            if (until > _blockedUntilUtc) _blockedUntilUtc = until;
+        }
+    }
+
+    // Перепроверяем срок после ожидания, если другой запрос продлил FLOOD_WAIT
+    private async Task WaitForFloodCooldownAsync(CancellationToken ct = default)
+    {
+        while (true)
+        {
+            ct.ThrowIfCancellationRequested();
+            TimeSpan remaining;
+            using (_gate.EnterScope()) remaining = _blockedUntilUtc - DateTime.UtcNow;
+            if (remaining <= TimeSpan.Zero) return;
+            await Task.Delay(remaining, ct);
+        }
     }
 
     /// <inheritdoc />
@@ -166,23 +176,31 @@ public sealed partial class TgFloodControlService : TgDisposable, ITgFloodContro
     /// <inheritdoc />
     public void RegisterFloodHit()
     {
-        _floodHits++;
-        _successHits = 0;
-        if (_floodHits >= 2) // Two floods in a row → shrink
+        using (_gate.EnterScope())
         {
-            _currentChunk = Math.Max(MinChunk, _currentChunk / 2);
-            _floodHits = 0;
+            _floodHits++;
+            _successHits = 0;
+            // Уменьшаем порцию после двух ограничений подряд
+            if (_floodHits >= 2)
+            {
+                _currentChunk = Math.Max(MinChunk, _currentChunk / 2);
+                _floodHits = 0;
+            }
         }
     }
 
     /// <inheritdoc />
     public void RegisterSuccess()
     {
-        _successHits++;
-        if (_successHits >= 5) // Five stable calls → grow
+        using (_gate.EnterScope())
         {
-            _currentChunk = Math.Min(MaxChunk, _currentChunk + 20);
-            _successHits = 0;
+            _successHits++;
+            // Увеличиваем порцию после пяти успешных обращений
+            if (_successHits >= 5)
+            {
+                _currentChunk = Math.Min(MaxChunk, _currentChunk + 20);
+                _successHits = 0;
+            }
         }
     }
 

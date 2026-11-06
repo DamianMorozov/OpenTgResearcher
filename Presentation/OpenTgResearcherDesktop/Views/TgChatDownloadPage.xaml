@@ -24,29 +24,23 @@
         </Style>
     </common:TgPageBase.Resources>
     <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="NarrowChat">
-                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="0" /></VisualState.StateTriggers>
-                </VisualState>
-                <VisualState x:Name="WideChat">
-                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="1050" /></VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="OptionsColumn.Width" Value="*" />
-                        <Setter Target="OptionsCard.(Grid.Row)" Value="0" />
-                        <Setter Target="OptionsCard.(Grid.Column)" Value="1" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <!-- Прокрутка принадлежит только обзору, таблицы других вкладок измеряются отдельно -->
-        <ScrollViewer AutomationProperties.AutomationId="ChatOverviewScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled">
+        <!--  Прокрутка принадлежит только обзору, таблицы других вкладок измеряются отдельно  -->
+        <ScrollViewer
+            AutomationProperties.AutomationId="ChatOverviewScroll"
+            HorizontalScrollMode="Disabled"
+            VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="12,0,16,20" Spacing="16">
-                <Grid RowSpacing="16" ColumnSpacing="16">
-                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="1.15*" /><ColumnDefinition x:Name="OptionsColumn" Width="0" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16" RowSpacing="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.15*" />
+                        <ColumnDefinition x:Name="OptionsColumn" Width="0" />
+                    </Grid.ColumnDefinitions>
                     <StackPanel Spacing="16">
-                        <!-- Состояние и прогресс читаются из настоящих сетевых операций выбранного чата -->
+                        <!--  Состояние и прогресс читаются из настоящих сетевых операций выбранного чата  -->
                         <Border Style="{StaticResource ChatCard}">
                             <StackPanel Spacing="14">
                                 <StackPanel Spacing="6">
@@ -55,132 +49,258 @@
                                         <TextBlock l:Uids.Uid="ChatParsingTitle" Style="{StaticResource ChatHeading}" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock AutomationProperties.AutomationId="ChatConnectionStatus"
-                                            Text="{x:Bind ViewModel.ConnectionStatus, Mode=OneWay}" Style="{StaticResource ChatCaption}" />
-                                        <TextBlock Text="·" Style="{StaticResource ChatCaption}" />
-                                        <TextBlock Text="{x:Bind ViewModel.ParsingStatus, Mode=OneWay}" Style="{StaticResource ChatCaption}" />
+                                        <TextBlock
+                                            AutomationProperties.AutomationId="ChatConnectionStatus"
+                                            Style="{StaticResource ChatCaption}"
+                                            Text="{x:Bind ViewModel.ConnectionStatus, Mode=OneWay}" />
+                                        <TextBlock Style="{StaticResource ChatCaption}" Text="·" />
+                                        <TextBlock Style="{StaticResource ChatCaption}" Text="{x:Bind ViewModel.ParsingStatus, Mode=OneWay}" />
                                     </StackPanel>
                                 </StackPanel>
                                 <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                    <TextBox AutomationProperties.AutomationId="ChatDownloadPercent" MinWidth="130" Padding="0" BorderThickness="0"
-                                        FontSize="32" FontWeight="SemiBold" Background="Transparent" IsReadOnly="True"
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox
+                                        MinWidth="130"
+                                        Padding="0"
+                                        AutomationProperties.AutomationId="ChatDownloadPercent"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="32"
+                                        FontWeight="SemiBold"
+                                        IsReadOnly="True"
                                         Text="{x:Bind ViewModel.ChatProgressMessage, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap"
-                                        Text="{x:Bind ViewModel.ChatProgressInfo, Mode=OneWay}" Style="{StaticResource ChatCaption}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource ChatCaption}"
+                                        Text="{x:Bind ViewModel.ChatProgressInfo, Mode=OneWay}"
+                                        TextWrapping="Wrap" />
                                 </Grid>
-                                <ProgressBar Minimum="0" Maximum="100" Value="{x:Bind ViewModel.ParsingProgress, Mode=OneWay}" />
+                                <ProgressBar
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Value="{x:Bind ViewModel.ParsingProgress, Mode=OneWay}" />
                                 <Grid ColumnSpacing="8">
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                    <Button HorizontalAlignment="Stretch" Padding="10,10" Style="{StaticResource AccentButtonStyle}"
-                                        AutomationProperties.AutomationId="ChatStartParsing" AutomationProperties.LabeledBy="{x:Bind StartParsingLabel}"
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button
+                                        Padding="10,10"
+                                        HorizontalAlignment="Stretch"
+                                        AutomationProperties.AutomationId="ChatStartParsing"
+                                        AutomationProperties.LabeledBy="{x:Bind StartParsingLabel}"
                                         Command="{x:Bind ViewModel.Chat.StartUpdateOnlineCommand}"
                                         IsEnabled="{x:Bind ViewModel.CanStartParsing, Mode=OneWay}"
+                                        Style="{StaticResource AccentButtonStyle}"
                                         Visibility="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                         <Grid ColumnSpacing="8">
-                                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                                            <FontIcon Glyph="&#xE768;" FontSize="16" />
-                                            <TextBlock x:Name="StartParsingLabel" Grid.Column="1" l:Uids.Uid="ChatStart" TextWrapping="Wrap" />
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon FontSize="16" Glyph="&#xE768;" />
+                                            <TextBlock
+                                                x:Name="StartParsingLabel"
+                                                Grid.Column="1"
+                                                l:Uids.Uid="ChatStart"
+                                                TextWrapping="Wrap" />
                                         </Grid>
                                     </Button>
-                                    <Button HorizontalAlignment="Stretch" Padding="10,10" Command="{x:Bind ViewModel.PauseParsingCommand}"
+                                    <Button
+                                        Padding="10,10"
+                                        HorizontalAlignment="Stretch"
                                         AutomationProperties.AutomationId="ChatPauseParsing"
+                                        Command="{x:Bind ViewModel.PauseParsingCommand}"
                                         Visibility="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <TextBlock Text="{x:Bind ViewModel.PauseCaption, Mode=OneWay}" TextWrapping="Wrap" />
                                     </Button>
-                                    <Button Grid.Column="1" HorizontalAlignment="Stretch" Padding="10,10" Command="{x:Bind ViewModel.StopParsingCommand}"
-                                        AutomationProperties.AutomationId="ChatStopParsing">
+                                    <Button
+                                        Grid.Column="1"
+                                        Padding="10,10"
+                                        HorizontalAlignment="Stretch"
+                                        AutomationProperties.AutomationId="ChatStopParsing"
+                                        Command="{x:Bind ViewModel.StopParsingCommand}">
                                         <TextBlock l:Uids.Uid="ChatStop" TextWrapping="Wrap" />
                                     </Button>
                                 </Grid>
-                                <TextBlock l:Uids.Uid="ChatSaveBeforeStart" Style="{StaticResource ChatCaption}" FontSize="12" />
-                                <StackPanel Spacing="6"
-                                    Visibility="{x:Bind ViewModel.HasCurrentFile, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock l:Uids.Uid="ChatCurrentFile" Style="{StaticResource ChatCaption}" FontSize="12" />
-                                    <TextBlock Text="{x:Bind ViewModel.CurrentFile, Mode=OneWay}" TextTrimming="CharacterEllipsis"
+                                <TextBlock
+                                    l:Uids.Uid="ChatSaveBeforeStart"
+                                    FontSize="12"
+                                    Style="{StaticResource ChatCaption}" />
+                                <StackPanel Spacing="6" Visibility="{x:Bind ViewModel.HasCurrentFile, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock
+                                        l:Uids.Uid="ChatCurrentFile"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                    <TextBlock
+                                        Text="{x:Bind ViewModel.CurrentFile, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
                                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentFile, Mode=OneWay}" />
                                     <ProgressBar Value="{x:Bind ViewModel.FileProgress, Mode=OneWay}" />
-                                    <TextBlock Text="{x:Bind ViewModel.CurrentTransfer, Mode=OneWay}" Style="{StaticResource ChatCaption}" />
+                                    <TextBlock Style="{StaticResource ChatCaption}" Text="{x:Bind ViewModel.CurrentTransfer, Mode=OneWay}" />
                                 </StackPanel>
-                                <!-- Переход к сетевой активности доступен во время парсинга -->
-                                <Button HorizontalAlignment="Stretch" Padding="12,8" Command="{x:Bind ViewModel.OpenNetworkActivityCommand}"
-                                    AutomationProperties.AutomationId="ChatOpenNetworkActivity" AutomationProperties.LabeledBy="{x:Bind OpenNetworkActivityLabel}">
+                                <!--  Переход к сетевой активности доступен во время парсинга  -->
+                                <Button
+                                    Padding="12,8"
+                                    HorizontalAlignment="Stretch"
+                                    AutomationProperties.AutomationId="ChatOpenNetworkActivity"
+                                    AutomationProperties.LabeledBy="{x:Bind OpenNetworkActivityLabel}"
+                                    Command="{x:Bind ViewModel.OpenNetworkActivityCommand}">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <styles:TgOutlineIcon Kind="network" Width="16" Height="16" />
-                                        <TextBlock x:Name="OpenNetworkActivityLabel" l:Uids.Uid="ActionOpenNetworkActivity" TextWrapping="Wrap" />
+                                        <styles:TgOutlineIcon
+                                            Width="16"
+                                            Height="16"
+                                            Kind="network" />
+                                        <TextBlock
+                                            x:Name="OpenNetworkActivityLabel"
+                                            l:Uids.Uid="ActionOpenNetworkActivity"
+                                            TextWrapping="Wrap" />
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
                         </Border>
-                        <!-- Каталог и позиция остаются частью общего несохранённого черновика -->
+                        <!--  Каталог и позиция остаются частью общего несохранённого черновика  -->
                         <Border Style="{StaticResource ChatCard}">
                             <StackPanel Spacing="14">
                                 <TextBlock l:Uids.Uid="ChatDownloadSettings" Style="{StaticResource ChatHeading}" />
                                 <StackPanel Spacing="6">
                                     <TextBlock l:Uids.Uid="FieldDirectory" Style="{StaticResource ChatCaption}" />
                                     <Grid ColumnSpacing="6">
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                        <TextBox Text="{x:Bind ViewModel.DownloadDto.Directory, Mode=TwoWay}" IsReadOnly="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay}"
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox
                                             AutomationProperties.AutomationId="ChatDirectory"
+                                            IsReadOnly="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay}"
+                                            Text="{x:Bind ViewModel.DownloadDto.Directory, Mode=TwoWay}"
                                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                                             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                        <styles:TgAnimatedClipboardButton Grid.Column="1" Click="OnClipboardSilentWriteClick"
-                                            Style="{StaticResource ClipboardAnimatedButtonStyle}" Tag="{x:Bind ViewModel.DownloadDto.Directory, Mode=OneWay}" />
+                                        <styles:TgAnimatedClipboardButton
+                                            Grid.Column="1"
+                                            Click="OnClipboardSilentWriteClick"
+                                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
+                                            Tag="{x:Bind ViewModel.DownloadDto.Directory, Mode=OneWay}" />
                                     </Grid>
                                 </StackPanel>
                                 <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
                                     <StackPanel Spacing="6">
                                         <TextBlock l:Uids.Uid="FieldFirstId" Style="{StaticResource ChatCaption}" />
-                                        <NumberBox Minimum="1" SpinButtonPlacementMode="Compact" Value="{x:Bind ViewModel.DownloadDto.FirstId, Mode=TwoWay}"
-                                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
+                                        <NumberBox
+                                            IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                            Minimum="1"
+                                            SpinButtonPlacementMode="Compact"
+                                            Value="{x:Bind ViewModel.DownloadDto.FirstId, Mode=TwoWay}" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Spacing="6">
                                         <TextBlock l:Uids.Uid="FieldCountThreads" Style="{StaticResource ChatCaption}" />
-                                        <NumberBox Minimum="1" Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=OneWay}"
-                                            SpinButtonPlacementMode="Compact" Value="{x:Bind ViewModel.DownloadDto.CountThreads, Mode=TwoWay}"
-                                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
+                                        <NumberBox
+                                            IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                            Maximum="{x:Bind ViewModel.DownloadSettings.LimitThreads, Mode=OneWay}"
+                                            Minimum="1"
+                                            SpinButtonPlacementMode="Compact"
+                                            Value="{x:Bind ViewModel.DownloadDto.CountThreads, Mode=TwoWay}" />
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" AutomationProperties.AutomationId="ChatAdvanced">
-                            <Expander.Header><TextBlock l:Uids.Uid="ChatAdvancedTitle" TextWrapping="Wrap" /></Expander.Header>
+                        <Expander
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            AutomationProperties.AutomationId="ChatAdvanced">
+                            <Expander.Header>
+                                <TextBlock l:Uids.Uid="ChatAdvancedTitle" TextWrapping="Wrap" />
+                            </Expander.Header>
                             <StackPanel Spacing="6">
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatRewriteMessagesLabel" l:Uids.Uid="FieldIsRewriteMessages" TextWrapping="Wrap" />
+                                <Grid
+                                    Padding="0,10"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                                        <TextBlock
+                                            x:Name="ChatRewriteMessagesLabel"
+                                            l:Uids.Uid="FieldIsRewriteMessages"
+                                            TextWrapping="Wrap" />
 
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatRewriteMessages" AutomationProperties.LabeledBy="{x:Bind ChatRewriteMessagesLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteMessages, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatRewriteFilesLabel" l:Uids.Uid="FieldIsRewriteFiles" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <ToggleSwitch
+                                        Grid.Column="1"
+                                        MinWidth="44"
+                                        AutomationProperties.AutomationId="ChatRewriteMessages"
+                                        AutomationProperties.LabeledBy="{x:Bind ChatRewriteMessagesLabel}"
+                                        IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                        IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteMessages, Mode=TwoWay}"
+                                        OffContent=""
+                                        OnContent="" />
+                                </Grid>
+                                <Grid
+                                    Padding="0,10"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                                        <TextBlock
+                                            x:Name="ChatRewriteFilesLabel"
+                                            l:Uids.Uid="FieldIsRewriteFiles"
+                                            TextWrapping="Wrap" />
 
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatRewriteFiles" AutomationProperties.LabeledBy="{x:Bind ChatRewriteFilesLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteFiles, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatFileNameByMessageLabel" l:Uids.Uid="FieldIsFileNameByMessage" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <ToggleSwitch
+                                        Grid.Column="1"
+                                        MinWidth="44"
+                                        AutomationProperties.AutomationId="ChatRewriteFiles"
+                                        AutomationProperties.LabeledBy="{x:Bind ChatRewriteFilesLabel}"
+                                        IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                        IsOn="{x:Bind ViewModel.DownloadDto.IsRewriteFiles, Mode=TwoWay}"
+                                        OffContent=""
+                                        OnContent="" />
+                                </Grid>
+                                <Grid
+                                    Padding="0,10"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                                        <TextBlock
+                                            x:Name="ChatFileNameByMessageLabel"
+                                            l:Uids.Uid="FieldIsFileNameByMessage"
+                                            TextWrapping="Wrap" />
 
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatFileNameByMessage" AutomationProperties.LabeledBy="{x:Bind ChatFileNameByMessageLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsFileNamingByMessage, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
+                                    </StackPanel>
+                                    <ToggleSwitch
+                                        Grid.Column="1"
+                                        MinWidth="44"
+                                        AutomationProperties.AutomationId="ChatFileNameByMessage"
+                                        AutomationProperties.LabeledBy="{x:Bind ChatFileNameByMessageLabel}"
+                                        IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                        IsOn="{x:Bind ViewModel.DownloadDto.IsFileNamingByMessage, Mode=TwoWay}"
+                                        OffContent=""
+                                        OnContent="" />
+                                </Grid>
                                 <TextBlock l:Uids.Uid="FieldMessageParsingStreams" Style="{StaticResource ChatCaption}" />
                                 <TextBlock Text="{x:Bind ViewModel.StateMessageParsingStreams, Mode=OneWay}" TextWrapping="Wrap" />
                                 <TextBlock l:Uids.Uid="FieldMediaParsingStreams" Style="{StaticResource ChatCaption}" />
@@ -188,174 +308,355 @@
                             </StackPanel>
                         </Expander>
                     </StackPanel>
-                    <!-- Семь основных опций с короткими пояснениями и компактными переключателями -->
-                    <Border x:Name="OptionsCard" Grid.Row="1" VerticalAlignment="Top" Style="{StaticResource ChatCard}">
+                    <!--  Семь основных опций с короткими пояснениями и компактными переключателями  -->
+                    <Border
+                        x:Name="OptionsCard"
+                        Grid.Row="1"
+                        VerticalAlignment="Top"
+                        Style="{StaticResource ChatCard}">
                         <StackPanel Spacing="4">
-                            <TextBlock l:Uids.Uid="ChatCollectTitle" Style="{StaticResource ChatHeading}" Margin="0,0,0,4" />
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatParseMessagesLabel" l:Uids.Uid="FieldIsParseMessages" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatMessagesHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatParseMessages" AutomationProperties.LabeledBy="{x:Bind ChatParseMessagesLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsSaveMessages, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatDownloadFilesLabel" l:Uids.Uid="FieldIsDownloadFiles" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatFilesHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatDownloadFiles" AutomationProperties.LabeledBy="{x:Bind ChatDownloadFilesLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsSaveFiles, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatParseCommentsLabel" l:Uids.Uid="FieldIsParseComments" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatCommentsHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatParseComments" AutomationProperties.LabeledBy="{x:Bind ChatParseCommentsLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsParsingComments, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatJoinMessageIdLabel" l:Uids.Uid="ChatJoinIdLabel" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatJoinIdHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatJoinMessageId" AutomationProperties.LabeledBy="{x:Bind ChatJoinMessageIdLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsJoinFileNameWithMessageId, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatDownloadThumbnailLabel" l:Uids.Uid="FieldIsDownloadThumbnail" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatThumbnailsHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatDownloadThumbnail" AutomationProperties.LabeledBy="{x:Bind ChatDownloadThumbnailLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsDownloadThumbnail, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatCreateSubdirectoriesLabel" l:Uids.Uid="FieldIsCreateSubdirectories" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatFoldersHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatCreateSubdirectories" AutomationProperties.LabeledBy="{x:Bind ChatCreateSubdirectoriesLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsCreatingSubdirectories, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                <Grid ColumnSpacing="12" Padding="0,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock x:Name="ChatAutoUpdateLabel" l:Uids.Uid="FieldIsAutoUpdate" TextWrapping="Wrap" />
-                        <TextBlock l:Uids.Uid="ChatAutoUpdateHint" Style="{StaticResource ChatCaption}" FontSize="12" />
-                    </StackPanel>
-                    <ToggleSwitch Grid.Column="1" MinWidth="44" OnContent="" OffContent=""
-                        AutomationProperties.AutomationId="ChatAutoUpdate" AutomationProperties.LabeledBy="{x:Bind ChatAutoUpdateLabel}"
-                        IsOn="{x:Bind ViewModel.DownloadDto.IsAutoUpdate, Mode=TwoWay}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                </Grid>
-                            <Button Margin="0,16,0,0" HorizontalAlignment="Stretch" Padding="12,10"
-                                AutomationProperties.AutomationId="ChatSaveSettings" AutomationProperties.LabeledBy="{x:Bind SaveChatSettingsLabel}"
+                            <TextBlock
+                                Margin="0,0,0,4"
+                                l:Uids.Uid="ChatCollectTitle"
+                                Style="{StaticResource ChatHeading}" />
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatParseMessagesLabel"
+                                        l:Uids.Uid="FieldIsParseMessages"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatMessagesHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatParseMessages"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatParseMessagesLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsSaveMessages, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatDownloadFilesLabel"
+                                        l:Uids.Uid="FieldIsDownloadFiles"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatFilesHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatDownloadFiles"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatDownloadFilesLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsSaveFiles, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatParseCommentsLabel"
+                                        l:Uids.Uid="FieldIsParseComments"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatCommentsHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatParseComments"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatParseCommentsLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsParsingComments, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatJoinMessageIdLabel"
+                                        l:Uids.Uid="ChatJoinIdLabel"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatJoinIdHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatJoinMessageId"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatJoinMessageIdLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsJoinFileNameWithMessageId, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatDownloadThumbnailLabel"
+                                        l:Uids.Uid="FieldIsDownloadThumbnail"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatThumbnailsHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatDownloadThumbnail"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatDownloadThumbnailLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsDownloadThumbnail, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatCreateSubdirectoriesLabel"
+                                        l:Uids.Uid="FieldIsCreateSubdirectories"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatFoldersHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatCreateSubdirectories"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatCreateSubdirectoriesLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsCreatingSubdirectories, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Grid
+                                Padding="0,10"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1"
+                                ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center" Spacing="3">
+                                    <TextBlock
+                                        x:Name="ChatAutoUpdateLabel"
+                                        l:Uids.Uid="FieldIsAutoUpdate"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        l:Uids.Uid="ChatAutoUpdateHint"
+                                        FontSize="12"
+                                        Style="{StaticResource ChatCaption}" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    MinWidth="44"
+                                    AutomationProperties.AutomationId="ChatAutoUpdate"
+                                    AutomationProperties.LabeledBy="{x:Bind ChatAutoUpdateLabel}"
+                                    IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                    IsOn="{x:Bind ViewModel.DownloadDto.IsAutoUpdate, Mode=TwoWay}"
+                                    OffContent=""
+                                    OnContent="" />
+                            </Grid>
+                            <Button
+                                Margin="0,16,0,0"
+                                Padding="12,10"
+                                HorizontalAlignment="Stretch"
+                                AutomationProperties.AutomationId="ChatSaveSettings"
+                                AutomationProperties.LabeledBy="{x:Bind SaveChatSettingsLabel}"
                                 Command="{x:Bind ViewModel.Chat.SaveChatSettingsCommand}"
-                                IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                                <TextBlock x:Name="SaveChatSettingsLabel" l:Uids.Uid="TextBlockSaveChatSettings" TextWrapping="Wrap" />
+                                IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                                <TextBlock
+                                    x:Name="SaveChatSettingsLabel"
+                                    l:Uids.Uid="TextBlockSaveChatSettings"
+                                    TextWrapping="Wrap" />
                             </Button>
-                            <Button HorizontalAlignment="Stretch" Padding="12,8" Background="Transparent" BorderThickness="0"
-                                AutomationProperties.AutomationId="ChatResetSettings" AutomationProperties.LabeledBy="{x:Bind ResetChatSettingsLabel}"
+                            <Button
+                                Padding="12,8"
+                                HorizontalAlignment="Stretch"
+                                AutomationProperties.AutomationId="ChatResetSettings"
+                                AutomationProperties.LabeledBy="{x:Bind ResetChatSettingsLabel}"
+                                Background="Transparent"
+                                BorderThickness="0"
                                 Command="{x:Bind ViewModel.Chat.ResetChatSettingsCommand}"
-                                IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                                <TextBlock x:Name="ResetChatSettingsLabel" l:Uids.Uid="ActionResetChatSettings" TextWrapping="Wrap" />
+                                IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                                <TextBlock
+                                    x:Name="ResetChatSettingsLabel"
+                                    l:Uids.Uid="ActionResetChatSettings"
+                                    TextWrapping="Wrap" />
                             </Button>
                         </StackPanel>
                     </Border>
                 </Grid>
-                <!-- Сведения из хранилища доступны без сети, расширенные сведения запрашиваются при раскрытии -->
-                <Expander AutomationProperties.AutomationId="ChatDetails" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                <!--  Сведения из хранилища доступны без сети, расширенные сведения запрашиваются при раскрытии  -->
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    AutomationProperties.AutomationId="ChatDetails"
                     Expanding="OnDetailsExpanding">
-                    <Expander.Header><TextBlock l:Uids.Uid="ChatDetailsTitle" TextWrapping="Wrap" /></Expander.Header>
+                    <Expander.Header>
+                        <TextBlock l:Uids.Uid="ChatDetailsTitle" TextWrapping="Wrap" />
+                    </Expander.Header>
                     <StackPanel Spacing="14">
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldTitle" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.Title, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldAbout" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.About, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldUid" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.Uid, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldId" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.Id, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldDtChanged" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.DtChangedString, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldUserName" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.UserName, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldLink" Style="{StaticResource ChatCaption}" />
-                        <HyperlinkButton HorizontalAlignment="Left" Click="OnOpenHyperlink"
-                            Content="{x:Bind ViewModel.DownloadDto.Link, Mode=OneWay}" Tag="{x:Bind ViewModel.DownloadDto.Link, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldCount" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.DownloadDto.Count, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                        <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.DownloadDto.IsSourceActive, Mode=OneWay}">
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldTitle" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.Title, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldAbout" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.About, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldUid" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.Uid, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldId" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.Id, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldDtChanged" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.DtChangedString, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldUserName" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.UserName, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldLink" Style="{StaticResource ChatCaption}" />
+                            <HyperlinkButton
+                                HorizontalAlignment="Left"
+                                Click="OnOpenHyperlink"
+                                Content="{x:Bind ViewModel.DownloadDto.Link, Mode=OneWay}"
+                                Tag="{x:Bind ViewModel.DownloadDto.Link, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock l:Uids.Uid="FieldCount" Style="{StaticResource ChatCaption}" />
+                            <TextBox
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.DownloadDto.Count, Mode=OneWay}"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                        </StackPanel>
+                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.DownloadDto.IsSourceActive, Mode=OneWay}"
+                            IsHitTestVisible="False"
+                            IsTabStop="False">
                             <TextBlock l:Uids.Uid="FieldIsActive" TextWrapping="Wrap" />
                         </CheckBox>
-                        <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.DownloadDto.IsSubscribe, Mode=OneWay}">
+                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.DownloadDto.IsSubscribe, Mode=OneWay}"
+                            IsHitTestVisible="False"
+                            IsTabStop="False">
                             <TextBlock l:Uids.Uid="FieldIsSubscribe" TextWrapping="Wrap" />
                         </CheckBox>
-                        <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.DownloadDto.IsRestrictSavingContent, Mode=OneWay}">
+                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.DownloadDto.IsRestrictSavingContent, Mode=OneWay}"
+                            IsHitTestVisible="False"
+                            IsTabStop="False">
                             <TextBlock l:Uids.Uid="FieldIsRestrictSavingContent" TextWrapping="Wrap" />
                         </CheckBox>
-                        <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.DownloadDto.IsUserAccess, Mode=OneWay}">
+                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.DownloadDto.IsUserAccess, Mode=OneWay}"
+                            IsHitTestVisible="False"
+                            IsTabStop="False">
                             <TextBlock l:Uids.Uid="FieldIsAccess" TextWrapping="Wrap" />
                         </CheckBox>
                         <Button Command="{x:Bind ViewModel.OpenDiscussionCommand}" IsEnabled="{x:Bind ViewModel.HasDiscussion, Mode=OneWay}">
@@ -364,126 +665,189 @@
                         <Button Command="{x:Bind ViewModel.LoadDetailsCommand}" IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
                             <TextBlock l:Uids.Uid="TextBlockUpdateChatDetails" TextWrapping="Wrap" />
                         </Button>
-                        <TextBlock l:Uids.Uid="ChatOnlineHint" Style="{StaticResource ChatCaption}"
+                        <TextBlock
+                            l:Uids.Uid="ChatOnlineHint"
+                            Style="{StaticResource ChatCaption}"
                             Visibility="{x:Bind ViewModel.HasOnlineDetails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <InfoBar Severity="Warning" IsClosable="False" IsOpen="{x:Bind ViewModel.HasDetailsError, Mode=OneWay}"
-                            Message="{x:Bind ViewModel.DetailsError, Mode=OneWay}" />
-                        <StackPanel Spacing="14"
-                            Visibility="{x:Bind ViewModel.HasOnlineDetails, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldTitle" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldType" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldId" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldUserName" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldInviteLink" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldDescription" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldPermissions" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldAbout" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldParticipantsCount" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldOnlineCount" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldSlowMode" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldAvailableReactions" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                    <StackPanel Spacing="4">
-                        <TextBlock l:Uids.Uid="FieldTtlPeriod" Style="{StaticResource ChatCaption}" />
-                        <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    </StackPanel>
-                            <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsActiveChat, Mode=OneWay}">
+                        <InfoBar
+                            IsClosable="False"
+                            IsOpen="{x:Bind ViewModel.HasDetailsError, Mode=OneWay}"
+                            Message="{x:Bind ViewModel.DetailsError, Mode=OneWay}"
+                            Severity="Warning" />
+                        <StackPanel Spacing="14" Visibility="{x:Bind ViewModel.HasOnlineDetails, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldTitle" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.Title, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldType" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.Type, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldId" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.Id, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldUserName" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.UserName, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldInviteLink" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.InviteLink, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldDescription" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.Description, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldPermissions" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.Permissions, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldAbout" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.About, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldParticipantsCount" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.ParticipantsCount, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldOnlineCount" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.OnlineCount, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldSlowMode" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.SlowMode, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldAvailableReactions" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.AvailableReactions, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="4">
+                                <TextBlock l:Uids.Uid="FieldTtlPeriod" Style="{StaticResource ChatCaption}" />
+                                <TextBox
+                                    IsReadOnly="True"
+                                    Text="{x:Bind ViewModel.ChatDetailsDto.TtlPeriod, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <CheckBox
+                                IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsActiveChat, Mode=OneWay}"
+                                IsHitTestVisible="False"
+                                IsTabStop="False">
                                 <TextBlock l:Uids.Uid="FieldIsActive" TextWrapping="Wrap" />
                             </CheckBox>
-                            <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsBanned, Mode=OneWay}">
+                            <CheckBox
+                                IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsBanned, Mode=OneWay}"
+                                IsHitTestVisible="False"
+                                IsTabStop="False">
                                 <TextBlock l:Uids.Uid="FieldIsBanned" TextWrapping="Wrap" />
                             </CheckBox>
-                            <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsChannel, Mode=OneWay}">
+                            <CheckBox
+                                IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsChannel, Mode=OneWay}"
+                                IsHitTestVisible="False"
+                                IsTabStop="False">
                                 <TextBlock l:Uids.Uid="FieldIsChannel" TextWrapping="Wrap" />
                             </CheckBox>
-                            <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsGroup, Mode=OneWay}">
+                            <CheckBox
+                                IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsGroup, Mode=OneWay}"
+                                IsHitTestVisible="False"
+                                IsTabStop="False">
                                 <TextBlock l:Uids.Uid="FieldIsGroup" TextWrapping="Wrap" />
                             </CheckBox>
-                            <CheckBox IsHitTestVisible="False" IsTabStop="False" IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsForum, Mode=OneWay}">
+                            <CheckBox
+                                IsChecked="{x:Bind ViewModel.ChatDetailsDto.IsForum, Mode=OneWay}"
+                                IsHitTestVisible="False"
+                                IsTabStop="False">
                                 <TextBlock l:Uids.Uid="FieldIsForum" TextWrapping="Wrap" />
                             </CheckBox>
                         </StackPanel>
-                        <Button Command="{x:Bind ViewModel.Chat.ClearViewCommand}"
-                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                        <Button Command="{x:Bind ViewModel.Chat.ClearViewCommand}" IsEnabled="{x:Bind ViewModel.HasRunningParsing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                             <TextBlock l:Uids.Uid="ActionClearView" TextWrapping="Wrap" />
                         </Button>
                     </StackPanel>
                 </Expander>
             </StackPanel>
         </ScrollViewer>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowChat">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="WideChat">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1050" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="OptionsColumn.Width" Value="*" />
+                        <Setter Target="OptionsCard.(Grid.Row)" Value="0" />
+                        <Setter Target="OptionsCard.(Grid.Column)" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </common:TgPageBase>

@@ -2,6 +2,7 @@ namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatViewModel : TgPageViewModelBase
 {
+    private readonly HashSet<long> _startingChatIds = [];
     #region Fields, properties, constructor
 
     [ObservableProperty]
@@ -28,7 +29,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     {
         // Команды страницы чата
         LoadDataStorageCommand = new AsyncRelayCommand(LoadDataStorageCoreAsync);
-        StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync);
+        StartUpdateOnlineCommand = new AsyncRelayCommand(StartUpdateOnlineAsync, AsyncRelayCommandOptions.AllowConcurrentExecutions);
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
         SaveChatSettingsCommand = new AsyncRelayCommand(SaveChatSettingsAsync);
         StopUpdateOnlineCommand = new AsyncRelayCommand(StopUpdateOnlineAsync);
@@ -121,26 +122,41 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     private async Task StartUpdateOnlineAsync() => 
         await ContentDialogAsync(StartUpdateOnlineCoreAsync, TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Online);
 
-    private async Task StartUpdateOnlineCoreAsync() => 
-        await LoadOnlineDataAsync(async () =>
+    private async Task StartUpdateOnlineCoreAsync()
+    {
+        var source = Dto;
+        if (LoadStateService.NetworkActivity.Operations.Any(x => x.Kind == TgNetworkOperationKind.Parsing
+            && x.ChatId == source.Id && x.State == TgNetworkOperationState.Running) || !_startingChatIds.Add(source.Id)) return;
+        try
         {
-            // Сохраняем общий черновик до обращения к Telegram без повторного диалога подтверждения
-            await SaveChatSettingsCoreAsync(isLoadDataStorage: false);
-            try
+            // Фиксируем выбранный чат до первого ожидания, чтобы навигация не перенаправила запуск
+            var settings = new TgDownloadSettingsViewModel();
+            settings.SourceVm.Dto = TgEfDomainUtils.CreateNewDto(source, isUidCopy: true);
+            await LoadOnlineDataAsync(async () =>
             {
-                if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
-
-                await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
-            }
-            catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
-            {
-                // Прерывание пользователем завершает команду без сообщения об ошибке
-            }
-            finally
-            {
-                await LoadDataStorageCoreAsync();
-            }
-        });
+                // Сохраняем снимок до обращения к Telegram без повторного диалога подтверждения
+                if (source.Uid == Guid.Empty || source.Id <= 0)
+                    throw new InvalidOperationException("Выберите чат в списке «Чаты» перед сохранением настроек");
+                settings.SourceVm.Dto.DtChanged = DateTime.UtcNow;
+                using var writer = new TgEfSourceRepository();
+                await writer.SaveAsync(settings.SourceVm.Dto);
+                try
+                {
+                    if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
+                    await App.BusinessLogicManager.ConnectClient.ParseChatAsync(settings);
+                }
+                catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+                {
+                    // Прерывание пользователем завершает команду без сообщения об ошибке
+                }
+            });
+        }
+        finally
+        {
+            _startingChatIds.Remove(source.Id);
+            if (Uid == source.Uid) await LoadDataStorageCoreAsync();
+        }
+    }
 
     public async Task SaveChatSettingsAsync() => 
         await ContentDialogAsync(() => SaveChatSettingsCoreAsync(isLoadDataStorage: true), TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
@@ -155,7 +171,9 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
             // Сохраняем общий черновик настроек текущего чата
             Dto.DtChanged = DateTime.UtcNow;
             DownloadSettings.SourceVm.Dto = Dto;
-            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(Dto);
+            // Сохраняем настройки независимо от контекстов выполняющихся парсингов и сетевых операций
+            using var writer = new TgEfSourceRepository();
+            await writer.SaveAsync(Dto);
         }
         finally
         {
@@ -169,8 +187,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
     private async Task StopUpdateOnlineCoreAsync()
     {
-        LoadStateService.StopHardOnlineProcessing();
-        LoadStateService.StopHardDownloadProcessing();
+        LoadStateService.NetworkActivity.CancelParsing(Dto.Id);
         await Task.CompletedTask;
     }
 

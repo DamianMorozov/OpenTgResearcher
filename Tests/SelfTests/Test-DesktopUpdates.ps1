@@ -156,7 +156,7 @@ function Test-ToolbarBounds {
     if ($null -ne $label -and -not $label.Current.IsOffscreen) {
         $toggleRect = (Get-ToolbarButton 'ToggleSwitchShowSensitiveData').Current.BoundingRectangle
         $gap = $label.Current.BoundingRectangle.Left - $toggleRect.Right
-        if ($gap -lt 0 -or $gap -gt $toggleRect.Height / 4) { throw "Слишком большой отступ подписи переключателя: $gap" }
+        if ($gap -gt 0 -or $gap -lt -$toggleRect.Width) { throw "Слишком большой отступ подписи переключателя: $gap" }
     }
 }
 
@@ -171,7 +171,7 @@ function Assert-SensitiveDataState([bool]$shown) {
         Start-Sleep -Milliseconds 100
     } while ([DateTime]::UtcNow -lt $deadline)
     if ($actual -ne $shown) { throw "Переключатель данных сбросил состояние: ожидалось $shown" }
-    if ($control.Current.Name -notmatch '^(Показывать конфиденциальные данные на всех страницах|Show sensitive data on all pages)$') {
+    if ($control.Current.Name -notmatch '^(Показать конфиденциальные данные|Скрыть конфиденциальные данные|Show sensitive data|Hide sensitive data)$') {
         throw "Переключатель данных не локализован: $($control.Current.Name)"
     }
 }

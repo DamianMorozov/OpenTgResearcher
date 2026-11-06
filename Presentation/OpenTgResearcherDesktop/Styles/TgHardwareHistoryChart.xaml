@@ -1,0 +1,12 @@
+<UserControl
+    x:Class="OpenTgResearcherDesktop.Styles.TgHardwareHistoryChart"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <!--  Кисти получают тему самого графика, а не глобальную тему Windows  -->
+        <Border x:Name="ForegroundProbe" Width="0" Height="0" Background="{ThemeResource TextFillColorSecondaryBrush}" IsHitTestVisible="False" />
+        <Border x:Name="GridProbe" Width="0" Height="0" Background="{ThemeResource DividerStrokeColorDefaultBrush}" IsHitTestVisible="False" />
+        <Border x:Name="AccentProbe" Width="0" Height="0" Background="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" />
+        <Canvas x:Name="ChartCanvas" />
+    </Grid>
+</UserControl>

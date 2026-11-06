@@ -1916,4 +1916,68 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ToolbarDarkTheme.Text" xml:space="preserve">
     <value>Тёмная</value>
   </data>
+  <data name="HardwareOverview.Text" xml:space="preserve">
+    <value>Обзор ресурсов</value>
+  </data>
+  <data name="HardwareHistory.Text" xml:space="preserve">
+    <value>Динамика нагрузки</value>
+  </data>
+  <data name="HardwareSubtitle.Text" xml:space="preserve">
+    <value>Использование ресурсов компьютера</value>
+  </data>
+  <data name="HardwareCpu.Text" xml:space="preserve">
+    <value>Процессор</value>
+  </data>
+  <data name="HardwareMemory.Text" xml:space="preserve">
+    <value>Оперативная память</value>
+  </data>
+  <data name="HardwareApplication.Text" xml:space="preserve">
+    <value>OpenTgResearcher</value>
+  </data>
+  <data name="HardwareSystem.Text" xml:space="preserve">
+    <value>Вся система, включая приложение</value>
+  </data>
+  <data name="HardwareSystemShort.Text" xml:space="preserve">
+    <value>Вся система</value>
+  </data>
+  <data name="HardwareNote.Text" xml:space="preserve">
+    <value>Общая нагрузка уже включает OpenTgResearcher. Значения приложения и системы не нужно складывать.</value>
+  </data>
+  <data name="HardwareHistoryNote.Text" xml:space="preserve">
+    <value>Линии показывают долю ресурсов компьютера, %. Значения сверху — текущие. История за последнюю минуту.</value>
+  </data>
+  <data name="HardwarePause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
+  <data name="HardwareResume" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="HardwareWaiting" xml:space="preserve">
+    <value>Ожидание первого измерения</value>
+  </data>
+  <data name="HardwareActive" xml:space="preserve">
+    <value>Мониторинг активен</value>
+  </data>
+  <data name="HardwarePaused" xml:space="preserve">
+    <value>На паузе · последние данные</value>
+  </data>
+  <data name="HardwareUnavailable" xml:space="preserve">
+    <value>Часть датчиков недоступна</value>
+  </data>
+  <data name="HardwareNoSensors" xml:space="preserve">
+    <value>Нет данных от датчиков</value>
+  </data>
+  <data name="HardwareMinuteAgo" xml:space="preserve">
+    <value>−60 с</value>
+  </data>
+  <data name="HardwareNow" xml:space="preserve">
+    <value>Сейчас</value>
+  </data>
+  <data name="ToolbarSensitiveDataShow" xml:space="preserve">
+    <value>Показать конфиденциальные данные</value>
+  </data>
+  <data name="ToolbarSensitiveDataHide" xml:space="preserve">
+    <value>Скрыть конфиденциальные данные</value>
+  </data>
+  <data name="HardwareLastReading.Text" xml:space="preserve"><value>Обновлено:</value></data>
 </root>

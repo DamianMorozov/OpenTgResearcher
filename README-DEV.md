@@ -12,6 +12,7 @@
 - [Локализация при отладке Desktop](#локализация-при-отладке-desktop)
 - [Проверка прокси и подключения Desktop](#проверка-прокси-и-подключения-desktop)
 - [Проверка страницы чата](#проверка-страницы-чата)
+- [Проверка страницы оборудования Desktop](#проверка-страницы-оборудования-desktop)
 - [Проверка страницы обновлений Desktop](#проверка-страницы-обновлений-desktop)
 - [Проверка после обновления пакетов](#проверка-после-обновления-пакетов)
 - [Проверка запуска Velopack](#проверка-запуска-velopack)
@@ -45,6 +46,25 @@ dotnet test Tests/TgStorageTests/TgStorageTests.csproj -c Debug -p:Platform=x64
 ```powershell
 dotnet test Tests/TgBusinessLogicTests/TgBusinessLogicTests.csproj -c Debug -p:Platform=x64
 ```
+
+## Проверка страницы оборудования Desktop
+
+Селфтесты проверяют исходную модель страницы: начальный обзор, минутную историю, пропуски и недоступные показания, паузу и продолжение, сохранность измерений при смене представления. Дополнительно проверяются привязки разметки, начальное состояние меню и русские и английские ресурсы.
+
+```powershell
+dotnet run --project Tests/SelfTests/Hardware/Hardware.SelfTest.csproj -c Debug -p:Platform=x64
+dotnet test Tests/TgBusinessLogicTests/TgBusinessLogicTests.csproj -c Debug -p:Platform=x64
+```
+
+Для проверки настоящего окна закройте Desktop и укажите путь к опубликованному unpackaged-приложению. Пример публикации и двух вариантов запуска:
+
+```powershell
+dotnet publish Presentation/OpenTgResearcherDesktop/OpenTgResearcherDesktop.csproj -c Release -r win-x64 --self-contained true -o Tests/SelfTests/bin/HardwareApp -p:Platform=x64 -p:WindowsPackageType=None -p:WindowsAppSDKSelfContained=true -p:AppxPackageSigningEnabled=false
+./Tests/SelfTests/Test-DesktopHardware.ps1 -ExecutablePath Tests/SelfTests/bin/HardwareApp/OpenTgResearcherDesktop.exe -Language Russian -Theme Dark
+./Tests/SelfTests/Test-DesktopHardware.ps1 -ExecutablePath Tests/SelfTests/bin/HardwareApp/OpenTgResearcherDesktop.exe -Language English -Theme Light
+```
+
+Проверка создаёт отдельные настройки и БД, получает настоящие измерения, проверяет стартовый обзор, переключение графиков, паузу и продолжение, сохранение состояния кнопки глаза при навигации, доступность управления при ширине 800 и штатное закрытие без исключений. По пикселям настоящего кадра проверяются единый фон меню и страницы и контраст подписи шкалы графика. Снимки окна 1200×1000 и 800×900 и журнал сохраняются в `Tests/SelfTests/bin/HardwarePage/<идентификатор>/`. Подключение к Telegram не выполняется; установку и обновление через Velopack эта проверка не охватывает.
 
 ## Скриншоты Desktop
 

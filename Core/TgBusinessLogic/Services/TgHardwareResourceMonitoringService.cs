@@ -231,13 +231,14 @@ public sealed class TgHardwareResourceMonitoringService : ITgHardwareResourceMon
 
     private double GetCpuAndMemoryUsageCore()
     {
-        double cpuTotal = 0;
+        // Отсутствие системного датчика нельзя выдавать за нулевую загрузку
+        double cpuTotal = double.NaN;
         foreach (var hw in _computer.Hardware)
         {
             switch (hw.HardwareType)
             {
                 case HardwareType.Cpu:
-                    cpuTotal = _cpuSensor?.Value ?? 0;
+                    cpuTotal = _cpuSensor?.Value ?? double.NaN;
                     break;
                 case HardwareType.Memory:
                     _lastMetrics.MemoryUsedGb = _memUsedSensor?.Value ?? 0;

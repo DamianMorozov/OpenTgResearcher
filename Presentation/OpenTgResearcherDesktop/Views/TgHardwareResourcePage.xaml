@@ -3,143 +3,246 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:l="using:WinUI3Localizer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
-    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgHardwareResourceViewModel}"
-    mc:Ignorable="d">
-
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles">
+    <common:TgPageBase.Resources>
+        <Style x:Key="HardwareCard" TargetType="Border">
+            <Setter Property="Padding" Value="24" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style x:Key="HardwareCaption" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="HardwareValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="32" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </common:TgPageBase.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-        </Grid.RowDefinitions>
-        <!--  Действия  -->
-        <ContentControl
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-            <Grid Margin="5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <!--  Использование процессора  -->
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    l:Uids.Uid="TextBlockCpuUsage"
-                    FontWeight="Bold"
-                    Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  Использование процессора приложением  -->
-                <controls:RadialGauge
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="5"
-                    BorderThickness="2"
-                    IsInteractive="False"
-                    Maximum="100"
-                    Minimum="0"
-                    ScaleWidth="5"
-                    TickSpacing="10"
-                    Value="{x:Bind ViewModel.CpuApp, Mode=OneWay}" />
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    l:Uids.Uid="TextBlockCpuAppUsage"
-                    Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  Общее использование процессора  -->
-                <controls:RadialGauge
-                    Grid.Row="1"
-                    Grid.Column="3"
-                    Margin="5"
-                    BorderThickness="2"
-                    IsInteractive="False"
-                    Maximum="100"
-                    Minimum="0"
-                    ScaleWidth="5"
-                    TickSpacing="10"
-                    Value="{x:Bind ViewModel.CpuTotal, Mode=OneWay}" />
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="3"
-                    HorizontalAlignment="Center"
-                    l:Uids.Uid="TextBlockCpuTotalUsage"
-                    Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  Использование памяти  -->
-                <TextBlock
-                    Grid.Row="3"
-                    HorizontalAlignment="Center"
-                    l:Uids.Uid="TextBlockMemoryUsage"
-                    FontWeight="Bold"
-                    Style="{StaticResource SubtitleTextBlockStyle}" />
-                <!--  Использование памяти приложением  -->
-                <controls:RadialGauge
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    Margin="5"
-                    BorderThickness="2"
-                    IsInteractive="False"
-                    Maximum="100"
-                    Minimum="0"
-                    ScaleWidth="5"
-                    TickSpacing="10"
-                    Value="{x:Bind ViewModel.MemoryAppUsage, Mode=OneWay}" />
-                <TextBlock
-                    Grid.Row="5"
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    l:Uids.Uid="TextBlockMemoryAppUsage"
-                    Style="{StaticResource SubtitleTextBlockStyle}" />
-                <TextBlock
-                    Grid.Row="4"
-                    Grid.Column="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="{x:Bind ViewModel.MemoryAppUsageString, Mode=OneWay}" />
-                <!--  Общее использование памяти  -->
-                <controls:RadialGauge
-                    Grid.Row="4"
-                    Grid.Column="3"
-                    Margin="5"
-                    BorderThickness="2"
-                    IsInteractive="False"
-                    Maximum="100"
-                    Minimum="0"
-                    ScaleWidth="5"
-                    TickSpacing="10"
-                    Value="{x:Bind ViewModel.MemoryTotalUsage, Mode=OneWay}" />
-                <TextBlock
-                    Grid.Row="5"
-                    Grid.Column="3"
-                    HorizontalAlignment="Center"
-                    l:Uids.Uid="TextBlockMemoryTotalUsage"
-                    Style="{StaticResource SubtitleTextBlockStyle}" />
-                <TextBlock
-                    Grid.Row="4"
-                    Grid.Column="4"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="{x:Bind ViewModel.MemoryTotalUsageString, Mode=OneWay}" />
-            </Grid>
-        </ContentControl>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowResources">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState x:Name="WideResources">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="OverviewSecondColumn.Width" Value="*" />
+                        <Setter Target="MemoryCard.(Grid.Row)" Value="0" />
+                        <Setter Target="MemoryCard.(Grid.Column)" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,12,24,24" Spacing="20">
+                <!-- Статус и пауза обновления страницы не зависят от Telegram -->
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center" Spacing="4">
+                        <TextBlock l:Uids.Uid="HardwareSubtitle" Style="{StaticResource HardwareCaption}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock l:Uids.Uid="HardwareLastReading" Style="{StaticResource HardwareCaption}" />
+                            <TextBlock
+                                AutomationProperties.AutomationId="HardwareLastReading"
+                                Text="{x:Bind ViewModel.Dashboard.LastReadingText, Mode=OneWay}"
+                                Style="{StaticResource HardwareCaption}" />
+                        </StackPanel>
+                        <TextBlock
+                            AutomationProperties.AutomationId="HardwareStatus"
+                            Text="{x:Bind ViewModel.MonitorStatus, Mode=OneWay}"
+                            Style="{StaticResource HardwareCaption}" />
+                    </StackPanel>
+                    <Button
+                        Grid.Column="1"
+                        AutomationProperties.AutomationId="HardwarePause"
+                        Command="{x:Bind ViewModel.PauseCommand}"
+                        AutomationProperties.Name="{x:Bind ViewModel.PauseCaption, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <styles:TgOutlineIcon x:Name="PauseIcon" Kind="pause" Width="16" Height="16" />
+                            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.PauseCaption, Mode=OneWay}" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <!-- Обзор выбран при первом открытии, смена вида сохраняет показания -->
+                <SelectorBar x:Name="HardwareViewSelector" AutomationProperties.AutomationId="HardwareViewSelector" SelectionChanged="HardwareViewSelector_SelectionChanged">
+                    <SelectorBarItem x:Name="OverviewTab" IsSelected="True" l:Uids.Uid="HardwareOverview" />
+                    <SelectorBarItem x:Name="HistoryTab" l:Uids.Uid="HardwareHistory" />
+                </SelectorBar>
+                <Grid
+                    x:Name="OverviewGrid"
+                    AutomationProperties.AutomationId="HardwareOverview"
+                    RowSpacing="16"
+                    ColumnSpacing="16"
+                    Visibility="{x:Bind ViewModel.Dashboard.IsHistory, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition x:Name="OverviewSecondColumn" Width="0" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="CpuCard" Grid.Row="0" Style="{StaticResource HardwareCard}">
+                        <StackPanel Spacing="24">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <styles:TgOutlineIcon Kind="hardware" />
+                                <TextBlock l:Uids.Uid="HardwareCpu" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel Spacing="10">
+                                <TextBlock l:Uids.Uid="HardwareApplication" Style="{StaticResource HardwareCaption}" />
+                                <Grid>
+                                    <TextBlock Style="{StaticResource HardwareValue}" Text="{x:Bind ViewModel.Dashboard.CpuAppText, Mode=OneWay}" />
+                                </Grid>
+                                <ProgressBar
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Value="{x:Bind ViewModel.Dashboard.CpuAppValue, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.Dashboard.HasCpuApp, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="10">
+                                <TextBlock l:Uids.Uid="HardwareSystem" Style="{StaticResource HardwareCaption}" />
+                                <Grid>
+                                    <TextBlock Style="{StaticResource HardwareValue}" Text="{x:Bind ViewModel.Dashboard.CpuTotalText, Mode=OneWay}" />
+                                </Grid>
+                                <ProgressBar
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Value="{x:Bind ViewModel.Dashboard.CpuTotalValue, Mode=OneWay}"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Visibility="{x:Bind ViewModel.Dashboard.HasCpuTotal, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <Border x:Name="MemoryCard" Grid.Row="1" Style="{StaticResource HardwareCard}">
+                        <StackPanel Spacing="24">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <styles:TgOutlineIcon Kind="memory" />
+                                <TextBlock l:Uids.Uid="HardwareMemory" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel Spacing="10">
+                                <TextBlock l:Uids.Uid="HardwareApplication" Style="{StaticResource HardwareCaption}" />
+                                <Grid>
+                                    <TextBlock Style="{StaticResource HardwareValue}" Text="{x:Bind ViewModel.Dashboard.MemoryAppText, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource HardwareCaption}"
+                                        Text="{x:Bind ViewModel.Dashboard.MemoryAppPercentText, Mode=OneWay}" />
+                                </Grid>
+                                <ProgressBar
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Value="{x:Bind ViewModel.Dashboard.MemoryAppValue, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.Dashboard.HasMemoryApp, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
+                            <StackPanel Spacing="10">
+                                <TextBlock l:Uids.Uid="HardwareSystem" Style="{StaticResource HardwareCaption}" />
+                                <Grid>
+                                    <TextBlock Style="{StaticResource HardwareValue}" Text="{x:Bind ViewModel.Dashboard.MemoryTotalText, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource HardwareCaption}"
+                                        Text="{x:Bind ViewModel.Dashboard.MemoryTotalPercentText, Mode=OneWay}" />
+                                </Grid>
+                                <ProgressBar
+                                    Maximum="100"
+                                    Minimum="0"
+                                    Value="{x:Bind ViewModel.Dashboard.MemoryTotalValue, Mode=OneWay}"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Visibility="{x:Bind ViewModel.Dashboard.HasMemoryTotal, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                <StackPanel
+                    x:Name="HistoryPanel"
+                    AutomationProperties.AutomationId="HardwareHistory"
+                    Spacing="16"
+                    Visibility="{x:Bind ViewModel.Dashboard.IsHistory, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Border Style="{StaticResource HardwareCard}">
+                        <StackPanel Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <styles:TgOutlineIcon Kind="hardware" />
+                                <TextBlock l:Uids.Uid="HardwareCpu" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <Grid ColumnSpacing="24">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Width="16" Height="3" Background="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                        <TextBlock l:Uids.Uid="HardwareApplication" Style="{StaticResource HardwareCaption}" />
+                                    </StackPanel>
+                                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="{x:Bind ViewModel.Dashboard.CpuAppText, Mode=OneWay}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Width="16" Height="3" Background="{ThemeResource TextFillColorSecondaryBrush}" />
+                                        <TextBlock l:Uids.Uid="HardwareSystemShort" Style="{StaticResource HardwareCaption}" />
+                                    </StackPanel>
+                                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="{x:Bind ViewModel.Dashboard.CpuTotalText, Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+                            <styles:TgHardwareHistoryChart
+                                AutomationProperties.AutomationId="CpuHistory"
+                                IsMemory="False"
+                                Height="150"
+                                Samples="{x:Bind ViewModel.Dashboard.History, Mode=OneWay}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource HardwareCard}">
+                        <StackPanel Spacing="12">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <styles:TgOutlineIcon Kind="memory" />
+                                <TextBlock l:Uids.Uid="HardwareMemory" FontSize="18" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <Grid ColumnSpacing="24">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Width="16" Height="3" Background="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                        <TextBlock l:Uids.Uid="HardwareApplication" Style="{StaticResource HardwareCaption}" />
+                                    </StackPanel>
+                                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="{x:Bind ViewModel.Dashboard.MemoryAppText, Mode=OneWay}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Width="16" Height="3" Background="{ThemeResource TextFillColorSecondaryBrush}" />
+                                        <TextBlock l:Uids.Uid="HardwareSystemShort" Style="{StaticResource HardwareCaption}" />
+                                    </StackPanel>
+                                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="{x:Bind ViewModel.Dashboard.MemoryTotalText, Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+                            <styles:TgHardwareHistoryChart
+                                AutomationProperties.AutomationId="MemoryHistory"
+                                IsMemory="True"
+                                Height="150"
+                                Samples="{x:Bind ViewModel.Dashboard.History, Mode=OneWay}" />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock l:Uids.Uid="HardwareHistoryNote" Style="{StaticResource HardwareCaption}" />
+                </StackPanel>
+                <TextBlock l:Uids.Uid="HardwareNote" Style="{StaticResource HardwareCaption}" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </common:TgPageBase>

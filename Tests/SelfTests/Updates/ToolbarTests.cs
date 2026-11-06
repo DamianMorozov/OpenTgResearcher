@@ -113,7 +113,7 @@ internal static partial class Program
         Assert(!toggle.Ancestors().Any(element => element.Name.LocalName == "DataTemplate"), "Переключатель пересоздаётся при навигации");
         Assert(!toggle.Ancestors().Any(element => (string?)element.Attribute(x + "Name") == "TitleBarDragRegion"),
             "Переключатель попал в область перетаскивания окна");
-        Assert(toggle.Attribute("IsOn")?.Value.Contains("ViewModel.IsDisplaySensitiveData, Mode=OneWay") == true,
+        Assert(toggle.Attribute("IsChecked")?.Value.Contains("ViewModel.IsDisplaySensitiveData, Mode=OneWay") == true,
             "Начальное состояние переключателя не связано с общим состоянием приложения");
         Assert(toggle.Attribute("AutomationProperties.AutomationId")?.Value == "ToggleSwitchShowSensitiveData",
             "Потерян идентификатор существующей проверки скрытия обложек");

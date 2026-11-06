@@ -1852,4 +1852,68 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ToolbarDarkTheme.Text" xml:space="preserve">
     <value>Dark</value>
   </data>
+  <data name="HardwareOverview.Text" xml:space="preserve">
+    <value>Resource overview</value>
+  </data>
+  <data name="HardwareHistory.Text" xml:space="preserve">
+    <value>Load history</value>
+  </data>
+  <data name="HardwareSubtitle.Text" xml:space="preserve">
+    <value>Computer resource usage</value>
+  </data>
+  <data name="HardwareCpu.Text" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="HardwareMemory.Text" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+  <data name="HardwareApplication.Text" xml:space="preserve">
+    <value>OpenTgResearcher</value>
+  </data>
+  <data name="HardwareSystem.Text" xml:space="preserve">
+    <value>Entire system, including this app</value>
+  </data>
+  <data name="HardwareSystemShort.Text" xml:space="preserve">
+    <value>Entire system</value>
+  </data>
+  <data name="HardwareNote.Text" xml:space="preserve">
+    <value>System usage already includes OpenTgResearcher. Do not add app and system values together.</value>
+  </data>
+  <data name="HardwareHistoryNote.Text" xml:space="preserve">
+    <value>Lines show a percentage of computer resources. Values above are current readings. History covers the last minute.</value>
+  </data>
+  <data name="HardwarePause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="HardwareResume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="HardwareWaiting" xml:space="preserve">
+    <value>Waiting for the first reading</value>
+  </data>
+  <data name="HardwareActive" xml:space="preserve">
+    <value>Monitoring active</value>
+  </data>
+  <data name="HardwarePaused" xml:space="preserve">
+    <value>Paused · last readings</value>
+  </data>
+  <data name="HardwareUnavailable" xml:space="preserve">
+    <value>Some sensors are unavailable</value>
+  </data>
+  <data name="HardwareNoSensors" xml:space="preserve">
+    <value>No sensor data</value>
+  </data>
+  <data name="HardwareMinuteAgo" xml:space="preserve">
+    <value>−60 s</value>
+  </data>
+  <data name="HardwareNow" xml:space="preserve">
+    <value>Now</value>
+  </data>
+  <data name="ToolbarSensitiveDataShow" xml:space="preserve">
+    <value>Show sensitive data</value>
+  </data>
+  <data name="ToolbarSensitiveDataHide" xml:space="preserve">
+    <value>Hide sensitive data</value>
+  </data>
+  <data name="HardwareLastReading.Text" xml:space="preserve"><value>Updated:</value></data>
 </root>

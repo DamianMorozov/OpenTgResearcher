@@ -15,7 +15,7 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
-    <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!--  Заголовок и управление приложением  -->
         <Grid
             x:Name="AppTitleBar"
@@ -83,7 +83,10 @@
                     Padding="10,0"
                     AutomationProperties.AutomationId="ToolbarLanguage">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE774;" />
+                        <styles:TgOutlineIcon
+                            Width="16"
+                            Height="16"
+                            Kind="language" />
                         <TextBlock
                             x:Name="ToolbarLanguageLabel"
                             VerticalAlignment="Center"
@@ -121,7 +124,10 @@
                     Padding="10,0"
                     AutomationProperties.AutomationId="ToolbarTheme">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE790;" />
+                        <styles:TgOutlineIcon
+                            Width="16"
+                            Height="16"
+                            Kind="theme" />
                         <TextBlock
                             x:Name="ToolbarThemeLabel"
                             VerticalAlignment="Center"
@@ -152,27 +158,24 @@
                     </Button.Flyout>
                 </Button>
                 <!--  Общее отображение конфиденциальных данных на всех страницах  -->
-                <StackPanel
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <ToggleSwitch
-                        x:Name="ToggleSwitchShowSensitiveData"
-                        Width="40"
-                        Height="36"
-                        MinWidth="0"
-                        AutomationProperties.AutomationId="ToggleSwitchShowSensitiveData"
-                        IsOn="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                        OffContent=""
-                        OnContent=""
-                        Toggled="ToggleSwitchShowSecretFields_Toggled" />
-                    <TextBlock
-                        x:Name="ToolbarSensitiveDataLabel"
-                        VerticalAlignment="Center"
-                        l:Uids.Uid="ToolbarSensitiveData"
-                        AutomationProperties.AutomationId="ToolbarSensitiveDataLabel"
-                        Visibility="Collapsed" />
-                </StackPanel>
+                <ToggleButton
+                    x:Name="ToggleSwitchShowSensitiveData"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToggleSwitchShowSensitiveData"
+                    Click="SensitiveDataButton_Click"
+                    IsChecked="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <styles:TgOutlineIcon x:Name="SensitiveDataIcon" Kind="eye" />
+                        <TextBlock
+                            x:Name="ToolbarSensitiveDataLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ToolbarSensitiveData"
+                            AutomationProperties.AutomationId="ToolbarSensitiveDataLabel"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </ToggleButton>
                 <!--  Проверка стабильного выпуска с общим журналом и подтверждением  -->
                 <Button
                     x:Name="ToolbarUpdateButton"
@@ -183,7 +186,10 @@
                     Command="{x:Bind ViewModel.CheckForUpdatesCommand}"
                     IsEnabled="{x:Bind ViewModel.Updates.IsUpdating, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE895;" />
+                        <styles:TgOutlineIcon
+                            Width="16"
+                            Height="16"
+                            Kind="updates" />
                         <TextBlock
                             x:Name="ToolbarUpdateLabel"
                             VerticalAlignment="Center"
@@ -209,7 +215,10 @@
                         <x:Boolean>False</x:Boolean>
                     </Button.CommandParameter>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE930;" />
+                        <styles:TgOutlineIcon
+                            Width="16"
+                            Height="16"
+                            Kind="connect" />
                         <TextBlock
                             x:Name="ToolbarConnectLabel"
                             VerticalAlignment="Center"
@@ -230,7 +239,10 @@
                         <x:Boolean>False</x:Boolean>
                     </Button.CommandParameter>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xEA39;" />
+                        <styles:TgOutlineIcon
+                            Width="16"
+                            Height="16"
+                            Kind="disconnect" />
                         <TextBlock
                             x:Name="ToolbarDisconnectLabel"
                             VerticalAlignment="Center"
@@ -249,10 +261,20 @@
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}"
             IsBackButtonVisible="Visible"
             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
+            IsPaneOpen="False"
             IsSettingsVisible="True"
             ItemInvoked="NavigationViewControl_ItemInvoked"
             OpenPaneLength="270"
+            PaneDisplayMode="Left"
             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
+            <NavigationView.Resources>
+                <!--  Единый фон панели и содержимого в светлой и тёмной темах  -->
+                <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{ThemeResource SolidBackgroundFillColorBase}" />
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{ThemeResource SolidBackgroundFillColorBase}" />
+                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{ThemeResource SolidBackgroundFillColorBase}" />
+                <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
+                <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
+            </NavigationView.Resources>
             <!--  Шаблон заголовка навигации  -->
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
@@ -266,43 +288,43 @@
                 <!--  Главная страница  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgMainViewModel" l:Uids.Uid="Shell_Home">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/home-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Хранилище  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStorageViewModel" l:Uids.Uid="Shell_Storage">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEBC3;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/storage-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Подключение клиента  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgClientConnectionViewModel" l:Uids.Uid="Shell_ClientConnection">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED5C;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/connection-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Фильтры  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgFiltersViewModel" l:Uids.Uid="Shell_Filters">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71C;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/filters-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Прокси  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgProxiesViewModel" l:Uids.Uid="Shell_Proxies">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEDA3;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/proxies-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Истории  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgStoriesViewModel" l:Uids.Uid="Shell_Stories">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/stories-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Чаты  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgChatsViewModel" l:Uids.Uid="Shell_Chats">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/chats-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Сохранённые сообщения  -->
@@ -312,37 +334,37 @@
                     l:Uids.Uid="Shell_SavedMessages"
                     IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C1;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/saved-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Пользователи  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUsersViewModel" l:Uids.Uid="Shell_UsersAndContacts">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8D4;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/users-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Оборудование  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgHardwareResourceViewModel" l:Uids.Uid="Shell_Equipment">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE950;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/hardware-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Журналы  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel" l:Uids.Uid="Shell_Logs">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A5;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/logs-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Обновление  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUpdateViewModel" l:Uids.Uid="Shell_Update">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/updates-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Лицензия  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLicenseViewModel" l:Uids.Uid="Shell_License">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE719;" />
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/license-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

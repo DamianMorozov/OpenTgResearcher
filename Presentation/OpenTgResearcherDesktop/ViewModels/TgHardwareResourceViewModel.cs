@@ -1,127 +1,70 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
-public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase, IDisposable
+/// <summary> Обзор ресурсов и динамика нагрузки Desktop без зависимости от БД и Telegram </summary>
+public sealed partial class TgHardwareResourceViewModel : TgPageViewModelBase
 {
-    #region Fields, properties, constructor
+    private readonly ILifetimeScope _scope;
+    private readonly ITgHardwareResourceMonitoringService _monitoring;
+    private bool _released;
+
+    public TgHardwareDashboardModel Dashboard { get; } = new();
+    public IRelayCommand PauseCommand { get; }
 
     [ObservableProperty]
-    public partial int CpuApp { get; set; }
+    public partial string MonitorStatus { get; private set; } = string.Empty;
     [ObservableProperty]
-    public partial int CpuTotal { get; set; }
-    [ObservableProperty]
-    public partial int MemoryAppUsage { get; set; }
-    [ObservableProperty]
-    public partial string MemoryAppUsageString { get; set; } = "";
-    [ObservableProperty]
-    public partial int MemoryTotalUsage { get; set; }
-    [ObservableProperty]
-    public partial string MemoryTotalUsageString { get; set; } = "";
+    public partial string PauseCaption { get; private set; } = string.Empty;
 
-    private ILifetimeScope Scope { get; } = default!;
-
-    private ITgHardwareResourceMonitoringService HardwareResourceMonitoringService { get; }
-
-    public IAsyncRelayCommand StartMonitorCommand { get; }
-    public IAsyncRelayCommand StopMonitorCommand { get; }
-
-    public TgHardwareResourceViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+    /// <summary> Подписывает страницу на общий мониторинг и создаёт локальную историю </summary>
+    public TgHardwareResourceViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgHardwareResourceViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgHardwareResourceViewModel))
     {
-        Scope = TgGlobalTools.Container.BeginLifetimeScope();
-        HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();
-        HardwareResourceMonitoringService.MetricsUpdated += OnMetricsUpdated;
-        // Commands
-        StartMonitorCommand = new AsyncRelayCommand(StartMonitorAsync);
-        StopMonitorCommand = new AsyncRelayCommand(StopMonitorAsync);
+        _scope = TgGlobalTools.Container.BeginLifetimeScope();
+        _monitoring = _scope.Resolve<ITgHardwareResourceMonitoringService>();
+        _monitoring.MetricsUpdated += OnMetricsUpdated;
+        Dashboard.PropertyChanged += OnDashboardChanged;
+        PauseCommand = new RelayCommand(Dashboard.TogglePause);
     }
 
-    #endregion
-
-    #region IDisposable
-
-    /// <summary> Release managed resources </summary>
+    /// <summary> Освобождает подписку страницы, не останавливая общий мониторинг приложения </summary>
     public override void ReleaseManagedResources()
     {
+        _released = true;
+        _monitoring.MetricsUpdated -= OnMetricsUpdated;
+        Dashboard.PropertyChanged -= OnDashboardChanged;
+        _scope.Dispose();
         base.ReleaseManagedResources();
-
-        CheckIfDisposed();
-
-        HardwareResourceMonitoringService.MetricsUpdated -= OnMetricsUpdated;
-        HardwareResourceMonitoringService.Dispose();
-
-        Scope.Dispose();
     }
 
-    #endregion
-
-    #region Methods
-
-    private void OnMetricsUpdated(object? sender, TgHardwareMetrics e)
+    /// <summary> Открывает оборудование даже без хранилища и подключения Telegram </summary>
+    public override Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
-        try
-        {
-            CpuApp = (int)e.CpuAppPercent;
-            CpuTotal = (int)e.CpuTotalPercent;
-            MemoryAppUsage = (int)e.MemoryAppPercent;
-            MemoryAppUsageString = TgFileUtils.GetFileSizeAsString(e.MemoryAppGb * 1024 * 1024 * 1024);
-            MemoryTotalUsage = (int)e.MemoryTotalPercent;
-            MemoryTotalUsageString = TgFileUtils.GetFileSizeAsString(e.MemoryUsedGb * 1024 * 1024 * 1024);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(ex);
-        }
+        RefreshCaptions();
+        return Task.CompletedTask;
     }
 
-    public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(LoadDataStorageCoreAsync);
-
-    private async Task LoadDataStorageCoreAsync()
+    /// <summary> Обновляет динамические подписи после смены языка </summary>
+    public void RefreshCaptions()
     {
-        try
-        {
-            if (!SettingsService.IsExistsAppStorage) return;
-
-            IsEmptyData = false;
-        }
-        catch (Exception ex)
-        {
-            LogError(ex, "Error starting hardware monitoring");
-        }
-        finally
-        {
-            await ReloadUiAsync();
-        }
+        PauseCaption = (Dashboard.IsPaused ? "HardwareResume" : "HardwarePause").GetLocalizedResource();
+        MonitorStatus = (Dashboard.IsPaused ? "HardwarePaused" : !Dashboard.HasData ? "HardwareWaiting" :
+            !Dashboard.HasCpuTotal || !Dashboard.HasMemoryTotal ? "HardwareUnavailable" : "HardwareActive").GetLocalizedResource();
     }
 
-    private async Task StartMonitorAsync() => 
-        await ContentDialogAsync(StartMonitorCoreAsync, TgResourceExtensions.AskStartMonitoring(), TgEnumLoadDesktopType.Online);
-
-    private async Task StartMonitorCoreAsync() => await LoadOnlineDataAsync(() =>
+    // Измерения поступают из фоновой задачи, все привязки меняем только в очереди окна
+    private void OnMetricsUpdated(object? sender, TgHardwareMetrics metrics)
     {
-        try
+        App.MainWindow?.DispatcherQueue.TryEnqueue(() =>
         {
-            HardwareResourceMonitoringService.StartMonitoring();
-        }
-        catch (Exception ex)
-        {
-            LogError(ex, "Error starting hardware monitoring");
-        }
-    });
+            if (_released) return;
+            try { Dashboard.Apply(metrics); }
+            catch (Exception ex) { LogError(ex, "Не удалось обновить показания оборудования"); }
+        });
+    }
 
-    private async Task StopMonitorAsync() => 
-        await ContentDialogAsync(StopMonitorCoreAsync, TgResourceExtensions.AskStopMonitoring(), TgEnumLoadDesktopType.Online);
-
-    private async Task StopMonitorCoreAsync() => await LoadOnlineDataAsync(async () =>
+    // Подписи состояния пересчитываем вместе с измерениями и паузой
+    private void OnDashboardChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        try
-        {
-            await HardwareResourceMonitoringService.StopMonitoringAsync(isClose: false);
-        }
-        catch (Exception ex)
-        {
-            LogError(ex, "Error starting hardware monitoring");
-        }
-    });
-
-    #endregion
+        if (e.PropertyName is nameof(Dashboard.IsPaused) or nameof(Dashboard.History)) RefreshCaptions();
+    }
 }

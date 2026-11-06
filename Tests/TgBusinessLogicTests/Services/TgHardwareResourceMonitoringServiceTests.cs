@@ -66,7 +66,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
 
         var metrics = await tcs.Task;
         Assert.That(metrics.CpuAppPercent, Is.InRange(0, 100));
-        Assert.That(metrics.CpuTotalPercent, Is.InRange(0, 100));
+        Assert.That(double.IsNaN(metrics.CpuTotalPercent) || metrics.CpuTotalPercent is >= 0 and <= 100, Is.True);
         Assert.That(metrics.MemoryTotalPercent, Is.InRange(0, 100));
         Assert.That(metrics.MemoryAppPercent, Is.InRange(0, 100));
 

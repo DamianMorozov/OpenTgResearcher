@@ -126,6 +126,9 @@ public abstract class TgSectionViewModel : TgPageViewModelBase
         : base(state, settings, navigation, logger, name) { }
     // Заменяет базовую постраничную загрузку
     protected virtual Task LazyLoadCoreAsync(bool isSearch) => Task.CompletedTask;
+    // Сохраняем переопределяемые точки очистки и обновления списка
+    protected virtual void ItemsClearCore() { }
+    protected virtual Task AfterDataUpdateCoreAsync() => Task.CompletedTask;
 }
 public static class TgDesktopUtils
 {

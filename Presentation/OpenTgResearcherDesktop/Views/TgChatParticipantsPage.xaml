@@ -1,519 +1,105 @@
-<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgChatParticipantsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
-    xmlns:l="using:WinUI3Localizer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:messages="using:TgStorage.Domain.Messages"
-    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
-    xmlns:users="using:TgStorage.Domain.Users"
-    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatParticipantsViewModel}"
-    mc:Ignorable="d">
-
-    <common:TgPageBase.Resources>
-        <!--  Шаблон данных участников  -->
-        <DataTemplate x:Key="ParticipantsViewTemplate" x:DataType="users:TgEfUserDto">
-            <Button
-                Margin="-5,5,5,-5"
-                HorizontalAlignment="Stretch"
-                Click="OnUserClick"
-                CornerRadius="10"
-                Tag="{x:Bind Uid, Mode=OneWay}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal">
-                        <!--  Идентификатор  -->
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            l:Uids.Uid="TextBlockId"
-                            Style="{ThemeResource BodyTextBlockStyle}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="10,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind Id, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind Id, Mode=OneWay}" />
-                        <!--  Основное имя пользователя  -->
-                        <TextBlock
-                            Margin="20,5,7,2"
-                            l:Uids.Uid="FieldUserName"
-                            TextAlignment="Left" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind MainUserName, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind MainUserName, Mode=OneWay}" />
-                        <!--  Хеш доступа  -->
-                        <TextBlock
-                            Margin="20,5,7,2"
-                            l:Uids.Uid="FieldAccessHash"
-                            TextAlignment="Left" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind AccessHash, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind AccessHash, Mode=OneWay}" />
-                        <!--  Активность пользователя  -->
-                        <TextBlock
-                            Margin="5,5,7,2"
-                            l:Uids.Uid="FieldIsActive"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Margin="5,-2,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsEnabled="False"
-                            IsOn="{x:Bind IsUserActive, Mode=OneWay}" />
-                        <!--  Признак бота  -->
-                        <TextBlock
-                            Margin="-50,5,7,2"
-                            l:Uids.Uid="FieldIsBot"
-                            TextAlignment="Left" />
-                        <ToggleSwitch
-                            Margin="-15,-2,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
-                            IsEnabled="False"
-                            IsOn="{x:Bind IsBot, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <!--  Последнее посещение  -->
-                        <TextBlock
-                            Margin="-50,5,7,2"
-                            l:Uids.Uid="FieldLastSeenAgo"
-                            TextAlignment="Left" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind LastSeenAgoAsString, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind LastSeenAgoAsString, Mode=OneWay}" />
-                        <!--  Причина ограничения  -->
-                        <TextBlock
-                            Margin="20,5,7,2"
-                            l:Uids.Uid="FieldRestrictionReason"
-                            TextAlignment="Left" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind RestrictionReason, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind RestrictionReason, Mode=OneWay}" />
-                        <!--  Отображаемое имя  -->
-                        <TextBlock
-                            Margin="5,0,7,2"
-                            l:Uids.Uid="FieldFirstName"
-                            TextAlignment="Left" />
-                        <!--  Конфиденциальные данные  -->
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,0,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind DisplayName, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind DisplayName, Mode=OneWay}" />
-                        <!--  Телефон  -->
-                        <TextBlock
-                            Margin="5,0,7,2"
-                            l:Uids.Uid="FieldPhoneNumber"
-                            TextAlignment="Left" />
-                        <!--  Конфиденциальные данные  -->
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,0,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind PhoneNumber, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind PhoneNumber, Mode=OneWay}" />
-                        <!--  Статус  -->
-                        <TextBlock
-                            Margin="5,0,7,2"
-                            l:Uids.Uid="FieldStatus"
-                            TextAlignment="Left" />
-                        <!--  Конфиденциальные данные  -->
-                        <TextBlock
-                            Margin="5,5,5,0"
-                            Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                        <TextBlock
-                            Margin="5,0,5,0"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind Status, Mode=OneWay}"
-                            Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                        <styles:TgAnimatedClipboardButton
-                            Margin="0,-5,0,0"
-                            Click="OnClipboardSilentWriteClick"
-                            Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                            Tag="{x:Bind Status, Mode=OneWay}" />
-                        <!--  Признак удалённого пользователя  -->
-                        <TextBlock
-                            Margin="5,0,5,0"
-                            l:Uids.Uid="TextBlockMessageDeleted"
-                            Style="{ThemeResource BodyTextBlockStyle}"
-                            Visibility="{x:Bind IsDeleted, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    </StackPanel>
+<common:TgPageBase x:Class="OpenTgResearcherDesktop.Views.TgChatParticipantsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common" xmlns:l="using:WinUI3Localizer"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles" xmlns:users="using:TgStorage.Domain.Users">
+    <common:TgPageBase.Resources><ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="ms-appx:///Styles/TgChatResources.xaml" /></ResourceDictionary.MergedDictionaries>
+        <DataTemplate x:Key="ParticipantCatalogTemplate" x:DataType="users:TgEfUserDto">
+            <Grid Padding="10,12" ColumnSpacing="12">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <PersonPicture Width="38" Height="38" DisplayName="{x:Bind DisplayName, Mode=OneWay}" />
+                <StackPanel Grid.Column="1" Spacing="3">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneWay}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <TextBlock Text="{x:Bind MainUserName, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
+                    <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <TextBlock l:Uids.Uid="FieldMessagesCount" Style="{StaticResource ChatSecondary}" />
+                        <TextBlock Grid.Column="1" Text="{x:Bind MessagesCount, Mode=OneWay}" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </ResourceDictionary></common:TgPageBase.Resources>
+    <Grid Margin="12,0,16,12" RowSpacing="12">
+        <VisualStateManager.VisualStateGroups><VisualStateGroup>
+            <VisualState x:Name="ParticipantsNarrow"><VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="0" /></VisualState.StateTriggers></VisualState>
+            <VisualState x:Name="ParticipantsWide"><VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="1050" /></VisualState.StateTriggers>
+                <VisualState.Setters><Setter Target="DossierColumn.Width" Value="1.2*" /><Setter Target="DossierRow.Height" Value="0" />
+                    <Setter Target="DossierPane.(Grid.Row)" Value="0" /><Setter Target="DossierPane.(Grid.Column)" Value="1" /></VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup></VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+        <!-- Основные действия отделены от источников получения участников -->
+        <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.LoadParticipantsCommand}" AutomationProperties.AutomationId="ChatParticipantsLoad">
+                    <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <styles:TgOutlineIcon Kind="refresh" /><TextBlock Grid.Column="1" l:Uids.Uid="ChatParticipantsLoad" TextWrapping="Wrap" VerticalAlignment="Center" />
+                    </Grid>
+            </Button>
+            <Button Grid.Column="1" HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.StopParticipantsCommand}">
+                <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <styles:TgOutlineIcon Kind="pause" /><TextBlock Grid.Column="1" l:Uids.Uid="ChatParticipantsStop" TextWrapping="Wrap" />
                 </Grid>
             </Button>
-        </DataTemplate>
-    </common:TgPageBase.Resources>
-
-    <ContentControl
-        HorizontalAlignment="Stretch"
-        HorizontalContentAlignment="Stretch"
-        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-        Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-        <Border
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
-            CornerRadius="5">
-            <Grid Margin="0,0,10,5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="1*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <!--  Загрузка участников  -->
-                <Button
-                    Grid.Column="0"
-                    Margin="0,0,5,5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.LoadParticipantsCommand}">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockLoadParticipants"
-                            TextWrapping="Wrap" />
-                    </Grid>
+        </Grid>
+        <StackPanel Grid.Row="1" Spacing="8">
+            <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <TextBox AutomationProperties.AutomationId="ChatParticipantsSearch" l:Uids.Uid="ChatParticipantsFilter"
+                    Text="{x:Bind ViewModel.FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="1" Command="{x:Bind ViewModel.SearchCommand}" AutomationProperties.AutomationId="ChatParticipantsFind">
+                    <TextBlock l:Uids.Uid="ActionSearch" />
                 </Button>
-                <!--  Остановка загрузки  -->
-                <Button
-                    Grid.Column="1"
-                    Margin="0,0,5,5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.StopParticipantsCommand}">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockStopParticipants"
-                            TextWrapping="Wrap" />
-                    </Grid>
-                </Button>
-                <!--  Участники из сообщений  -->
-                <Button
-                    Grid.Column="2"
-                    Margin="0,0,5,5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.GetParticipantsFromMessagesCommand}">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockGetParticipantsFromMessages"
-                            TextWrapping="Wrap" />
-                    </Grid>
-                </Button>
-                <!--  Получение участников  -->
-                <Button
-                    Grid.Column="3"
-                    Margin="0,0,5,5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.GetParticipantsCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockGetParticipants"
-                            TextWrapping="Wrap" />
-                    </Grid>
-                </Button>
-                <!--  Очистка списка  -->
-                <Button
-                    Grid.Column="4"
-                    Margin="0,0,5,5"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.ClearParticipantsCommand}">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockClearParticipants"
-                            TextWrapping="Wrap" />
-                    </Grid>
-                </Button>
-                <!--  Данные в хранилище  -->
-                <ContentControl
-                    Grid.Row="1"
-                    Grid.ColumnSpan="5"
-                    Margin="20,0,0,0"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Expander
-                        Margin="{StaticResource ExpanderMargin}"
-                        Padding="{StaticResource ExpanderPadding}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch"
-                        l:Uids.Uid="ExpanderDataInStorage"
-                        IsExpanded="True">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <!--  Поиск по идентификатору  -->
-                            <TextBlock
-                                Grid.Column="2"
-                                Margin="5,5,5,5"
-                                l:Uids.Uid="FieldFilterById"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Column="3"
-                                Margin="5,-10,-65,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                IsOn="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
-                            <Grid />
-                            <!--  Поиск по имени  -->
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="5,5,5,5"
-                                l:Uids.Uid="FieldFilterByName"
-                                TextAlignment="Left" />
-                            <ToggleSwitch
-                                Grid.Column="1"
-                                Margin="5,-10,-65,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                IsOn="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
-                            <!--  Текст поиска  -->
-                            <TextBox
-                                Grid.Column="4"
-                                Margin="5,0,5,5"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                l:Uids.Uid="FieldFilter"
-                                Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
-                            <!--  Поиск  -->
-                            <Button
-                                Grid.Column="5"
-                                Margin="5,0,5,5"
-                                HorizontalAlignment="Stretch"
-                                Command="{x:Bind Path=ViewModel.SearchCommand}">
-                                <Grid HorizontalAlignment="Stretch">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon Glyph="&#xE721;" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        Margin="10,0,10,0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        l:Uids.Uid="ActionSearch"
-                                        TextWrapping="Wrap" />
-                                </Grid>
-                            </Button>
-                            <!--  Таблица  -->
-                            <Grid
-                                Grid.Row="1"
-                                Grid.ColumnSpan="7"
-                                Margin="0,0,15,0">
-                                <!--  Данные  -->
-                                <controls:DataGrid
-                                    x:Name="DataGridChats"
-                                    Margin="0,0,10,0"
-                                    VerticalAlignment="Top"
-                                    AutoGenerateColumns="False"
-                                    Background="Transparent"
-                                    CanUserSortColumns="False"
-                                    DoubleTapped="{x:Bind ViewModel.DataGrid_DoubleTapped, Mode=OneWay}"
-                                    HeadersVisibility="Column"
-                                    ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}">
-                                    <controls:DataGrid.Columns>
-                                        <!--  Идентификатор  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnIdTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="Auto"
-                                            Header="{x:Bind ViewModel.UserIdHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Активность пользователя  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnIsUserActiveTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="Auto"
-                                            Header="{x:Bind ViewModel.UserActiveHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Имя пользователя  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnUserNameTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="2*"
-                                            Header="{x:Bind ViewModel.UserNameHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Имя  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnFirstNameTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="2*"
-                                            Header="{x:Bind ViewModel.UserFirstNameHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Фамилия  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnLastNameTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="2*"
-                                            Header="{x:Bind ViewModel.UserLastNameHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Телефон  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnPhoneTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="Auto"
-                                            Header="{x:Bind ViewModel.UserPhoneHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Количество сообщений  -->
-                                        <styles:TgBindableDataGridTemplateColumn
-                                            ColumnSensitive="{StaticResource ColumnSensitiveTemplate}"
-                                            ColumnValue="{StaticResource ColumnMessagesCountTemplate}"
-                                            ColumnVisible="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay}"
-                                            ColumnWidth="Auto"
-                                            Header="{x:Bind ViewModel.UserMessagesHeader, Mode=OneWay}"
-                                            OwnerGrid="{x:Bind DataGridChats}" />
-                                        <!--  Конец списка  -->
-                                    </controls:DataGrid.Columns>
-                                </controls:DataGrid>
-                            </Grid>
-                        </Grid>
-                    </Expander>
-                </ContentControl>
             </Grid>
-        </Border>
-    </ContentControl>
+            <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <CheckBox l:Uids.Uid="ChatFilterId" IsChecked="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
+                    <CheckBox l:Uids.Uid="ChatFilterName" IsChecked="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
+                </StackPanel>
+                <DropDownButton Grid.Column="1" l:Uids.Uid="ChatParticipantsActions" AutomationProperties.AutomationId="ChatParticipantsActions">
+                    <DropDownButton.Flyout><MenuFlyout>
+                        <MenuFlyoutItem l:Uids.Uid="ChatParticipantsFromTelegram" Command="{x:Bind ViewModel.GetParticipantsCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}" />
+                        <MenuFlyoutItem l:Uids.Uid="ChatParticipantsFromMessages" AutomationProperties.AutomationId="ChatParticipantsFromMessages"
+                            Command="{x:Bind ViewModel.GetParticipantsFromMessagesCommand}" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem l:Uids.Uid="ChatParticipantsClear" Command="{x:Bind ViewModel.ClearParticipantsCommand}" />
+                    </MenuFlyout></DropDownButton.Flyout>
+                </DropDownButton>
+            </Grid>
+        </StackPanel>
+        <!-- Каталог и досье имеют независимую прокрутку, в узком окне располагаются друг под другом -->
+        <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="12">
+            <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition x:Name="DossierRow" Height="*" /></Grid.RowDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition x:Name="DossierColumn" Width="0" /></Grid.ColumnDefinitions>
+            <Grid Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock l:Uids.Uid="ChatParticipantsEmpty" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+            </Grid>
+            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+            <ListView x:Name="ParticipantsCatalog" AutomationProperties.AutomationId="ChatParticipantsCatalog"
+                ItemsSource="{x:Bind ViewModel.UserDtos, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay}"
+                SelectionMode="Single" ItemTemplate="{StaticResource ParticipantCatalogTemplate}"
+                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /></Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <ScrollViewer x:Name="DossierPane" AutomationProperties.AutomationId="ChatParticipantDossier" Grid.Row="1"
+                VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Disabled"
+                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Spacing="12">
+                    <TextBlock l:Uids.Uid="ChatParticipantsSelect" Style="{StaticResource ChatSecondary}"
+                        Visibility="{x:Bind ViewModel.HasSelectedUser, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <ContentControl HorizontalContentAlignment="Stretch" Content="{x:Bind ViewModel.SelectedUser, Mode=OneWay}"
+                        ContentTemplate="{StaticResource ChatUserDossierTemplate}"
+                        Visibility="{x:Bind ViewModel.HasSelectedUser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <Button HorizontalAlignment="Stretch" Click="OnUserClick" Tag="{x:Bind ViewModel.SelectedUser.Uid, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.HasSelectedUser, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock l:Uids.Uid="ChatOpenUser" TextWrapping="Wrap" />
+                    </Button>
+                    <TextBlock l:Uids.Uid="ChatProfileStorageHint" Style="{StaticResource ChatSecondary}" />
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </common:TgPageBase>

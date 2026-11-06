@@ -2052,6 +2052,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             {
                                 await Task.WhenAll(tasksToRun);
                             }
+                            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                            {
+                                // Штатное прерывание файлов не является ошибкой парсинга
+                            }
                             catch (Exception ex)
                             {
                                 hasErrors = true;
@@ -2088,6 +2092,10 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         try
                         {
                             await Task.WhenAll(tasks);
+                        }
+                        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                        {
+                            // Дожидаемся освобождения отменённых загрузок без записи исключения
                         }
                         catch (Exception ex)
                         {
@@ -3077,6 +3085,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     NetworkProgressForFile(uid, fileName, progress, ct)), isThrow: true, ct);
             }, ct);
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
     }
 
@@ -3094,6 +3103,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     NetworkProgressForFile(uid, fileName, progress: null, ct)), isThrow: true, ct);
             }, ct);
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
     }
 
@@ -3316,6 +3326,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     // Сохраняем настоящий прогресс в общем журнале и передаём его прежнему обработчику страницы
     private Client.ProgressCallback NetworkProgressForFile(Guid uid, string fileName, Client.ProgressCallback? progress, CancellationToken ct = default) => (received, total) =>
     {
+        // WTelegram прекращает передачу по исключению из прогресса; штатную отмену обрабатывает вызывающая команда
         ct.ThrowIfCancellationRequested();
         try
         {

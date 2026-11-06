@@ -108,7 +108,3 @@ Web-прокси пропускаются, остальные записи им�
 ### OpenTgResearcher Desktop
 
 <p align="center"><img src="Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif"></p>
-
-### OpenTgResearcher Console
-
-<p align="center"><img src="Assets/Animations/OpenTgResearcherConsole_SplashScreen.gif"></p>

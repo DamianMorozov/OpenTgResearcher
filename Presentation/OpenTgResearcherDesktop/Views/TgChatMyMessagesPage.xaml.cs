@@ -27,10 +27,8 @@ public sealed partial class TgChatMyMessagesPage
 
     private void ScrollRequested()
     {
-        // Scroll to the last item in the Participants ListView
-        if (ListViewMessages is null) return;
-        if (ListViewMessages.Items.Any())
-            ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
+        // Карточка текущего пользователя обновляется без прокрутки виртуального списка
+        Bindings.Update();
     }
 
     /// <summary> Click on user </summary>

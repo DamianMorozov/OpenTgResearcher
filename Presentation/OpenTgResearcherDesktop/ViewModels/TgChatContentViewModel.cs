@@ -41,7 +41,7 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
         : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatContentViewModel))
     {
         AppNotificationService = appNotificationService;
-        // Commands
+        // Команды
         CalcContentStatisticsCommand = new AsyncRelayCommand(CalcContentStatisticsAsync);
         LazyLoadMessagesCommand = new AsyncRelayCommand(LazyLoadMessagesAsync, () => HasMoreMessages && !IsLoading);
         ClearViewCommand = new AsyncRelayCommand(ClearViewAsync);
@@ -54,6 +54,7 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
+        IsImageViewerVisible = false;
         await LoadDataStorageCoreAsync();
     });
 
@@ -92,24 +93,26 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
             if (UserDtos.Count == 0)
                 UserDtos = [.. await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, where: x => x.Id > 0, order: x => x.Id)];
 
-            // Get total count of messages for current chat
+            // Получаем общее число сообщений выбранного чата
             var totalCount = await App.BusinessLogicManager.StorageManager.MessageRepository.GetCountAsync(x => x.SourceId == Dto.Id);
 
-            // Load newest messages first by ordering descending
+            // Читаем последнюю порцию сообщений в порядке убывания ID
             var newItems = await App.BusinessLogicManager.StorageManager.MessageRepository.GetListDtosAsync(take: PageSize, skip: PageSkip,
                 where: x => x.SourceId == Dto.Id, order: x => x.Id, isOrderDesc: true);
 
-            // Update skip counter for next portion
+            // Сдвигаем начало следующей порции
             PageSkip += newItems.Count;
 
-            // Check if there are more messages to load
+            // Определяем наличие следующих порций
             HasMoreMessages = PageSkip < totalCount;
 
-            // Insert new items at the beginning to keep newest at top
+            // Добавляем порцию в начало ленты, сохраняя порядок от старых сообщений к новым
             foreach (var item in newItems)
             {
                 item.Directory = Dto.Directory;
-                item.UserContact = UserDtos.FirstOrDefault(u => u.Id == item.UserId)?.DisplayName ?? string.Empty;
+                item.UserContact = item.UserId == 0
+                    ? (string.IsNullOrWhiteSpace(Dto.Title) ? Dto.Id.ToString() : Dto.Title)
+                    : UserDtos.FirstOrDefault(u => u.Id == item.UserId)?.DisplayName ?? item.UserId.ToString();
 
                 MessageDtos.Insert(0, item);
             }
@@ -132,6 +135,7 @@ public sealed partial class TgChatContentViewModel : TgPageViewModelBase
             PageSkip = 0;
             HasMoreMessages = true;
             MessageDtos.Clear();
+            IsImageViewerVisible = false;
         }
         finally
         {

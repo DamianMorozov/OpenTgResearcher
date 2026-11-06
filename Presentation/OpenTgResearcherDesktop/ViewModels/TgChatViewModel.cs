@@ -130,6 +130,10 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
 
                 await App.BusinessLogicManager.ConnectClient.ParseChatAsync(DownloadSettings);
             }
+            catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+            {
+                // Прерывание пользователем завершает команду без сообщения об ошибке
+            }
             finally
             {
                 await LoadDataStorageCoreAsync();

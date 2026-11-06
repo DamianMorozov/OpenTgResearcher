@@ -2117,4 +2117,103 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ChatDetailsFailed" xml:space="preserve">
     <value>Unable to update chat details. Check your connection and try again. Reason: {0}</value>
   </data>
+  <data name="ChatMessageDetails.Header" xml:space="preserve">
+    <value>Message details</value>
+  </data>
+  <data name="ChatMessageSize.Text" xml:space="preserve">
+    <value>Size, bytes</value>
+  </data>
+  <data name="ChatProfileStorageHint.Text" xml:space="preserve">
+    <value>Details from the local database; Telegram status may have changed</value>
+  </data>
+  <data name="ChatProfileReload.Text" xml:space="preserve">
+    <value>Reload profile</value>
+  </data>
+  <data name="ChatProfileContacts.Text" xml:space="preserve">
+    <value>Contact details</value>
+  </data>
+  <data name="ChatProfileInChat.Text" xml:space="preserve">
+    <value>In this chat</value>
+  </data>
+  <data name="ChatProfileTechnical.Header" xml:space="preserve">
+    <value>Status and technical details</value>
+  </data>
+  <data name="ChatAccountActive.Text" xml:space="preserve">
+    <value>Active account</value>
+  </data>
+  <data name="ChatYes.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ChatNo.Text" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ChatParticipantsLoad.Text" xml:space="preserve">
+    <value>Load more</value>
+  </data>
+  <data name="ChatParticipantsStop.Text" xml:space="preserve">
+    <value>Stop loading</value>
+  </data>
+  <data name="ChatParticipantsFilter.PlaceholderText" xml:space="preserve">
+    <value>Search by ID, name or @username</value>
+  </data>
+  <data name="ChatFilterId.Content" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="ChatFilterName.Content" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ChatParticipantsActions.Content" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ChatParticipantsFromTelegram.Text" xml:space="preserve">
+    <value>Get from Telegram</value>
+  </data>
+  <data name="ChatParticipantsFromMessages.Text" xml:space="preserve">
+    <value>Get from stored messages</value>
+  </data>
+  <data name="ChatParticipantsClear.Text" xml:space="preserve">
+    <value>Clear view</value>
+  </data>
+  <data name="ChatParticipantsEmpty.Text" xml:space="preserve">
+    <value>Select Load more to open participants from the database</value>
+  </data>
+  <data name="ChatParticipantsSelect.Text" xml:space="preserve">
+    <value>Select a participant from the list</value>
+  </data>
+  <data name="ChatOpenUser.Text" xml:space="preserve">
+    <value>Open profile</value>
+  </data>
+  <data name="ChatStatisticsTitle.Text" xml:space="preserve">
+    <value>Author activity</value>
+  </data>
+  <data name="ChatStatisticsCalculate.Text" xml:space="preserve">
+    <value>Calculate statistics</value>
+  </data>
+  <data name="ChatStatisticsHint.Text" xml:space="preserve">
+    <value>Messages are counted from the local database for the selected period. Author details are refreshed through Telegram; a connection is required.</value>
+  </data>
+  <data name="ChatStatisticsMessages.Text" xml:space="preserve">
+    <value>Messages counted</value>
+  </data>
+  <data name="ChatStatisticsAuthors.Text" xml:space="preserve">
+    <value>Active authors</value>
+  </data>
+  <data name="ChatStatisticsBots.Text" xml:space="preserve">
+    <value>Bots</value>
+  </data>
+  <data name="ChatStatisticsRanking.Text" xml:space="preserve">
+    <value>Messages by author</value>
+  </data>
+  <data name="ChatStatisticsEmpty.Text" xml:space="preserve">
+    <value>Select a period and calculate statistics</value>
+  </data>
+  <data name="ChatStatisticsNoResults.Text" xml:space="preserve">
+    <value>No messages in the selected period</value>
+  </data>
+  <data name="ChatStatisticsInvalidDates" xml:space="preserve">
+    <value>The start date must not be later than the end date. Check the selected dates.</value>
+  </data>
+  <data name="ChatStatisticsPeriod.Header" xml:space="preserve">
+    <value>Period and calculation</value>
+  </data>
 </root>

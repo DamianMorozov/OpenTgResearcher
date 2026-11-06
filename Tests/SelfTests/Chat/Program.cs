@@ -12,6 +12,8 @@ internal static partial class Program
     // Проверяем исходные модели с настоящими репозиториями и отдельной SQLite в памяти
     private static async Task<int> Main(string[] args)
     {
+        if (args is ["--inspect-content", var contentDatabase, var contentChat])
+            return await InspectContentAsync(contentDatabase, long.Parse(contentChat));
         if (args is ["--inspect-chat", var chatDatabase, var selectedChat])
             return await InspectChatAsync(chatDatabase, long.Parse(selectedChat));
         if (args is ["--live-chat", var sourceDatabase, var savedSession, var targetChat])
@@ -32,6 +34,8 @@ internal static partial class Program
             ("DashboardStartAvailability", DashboardStartAvailabilityAsync),
             ("DashboardDetailsAndDiscussion", DashboardDetailsAndDiscussionAsync),
             ("DashboardDetailsFailure", DashboardDetailsFailureAsync),
+            ("DashboardStopIsNotFailure", DashboardStopIsNotFailureAsync),
+            ("DashboardUnexpectedCancellationIsFailure", DashboardUnexpectedCancellationIsFailureAsync),
             ("DashboardContentNavigation", DashboardContentNavigationAsync),
             ("DashboardControlsSelectedChat", DashboardControlsSelectedChatAsync),
             ("DashboardOverview", DashboardOverviewAsync),
@@ -68,7 +72,7 @@ internal static partial class Program
             ("ContentTemplateUsesPageContext", ContentTemplateUsesPageContextAsync),
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
-        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).ToArray();
+        }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
@@ -139,7 +143,13 @@ internal static partial class Program
                 await cover.CopyToAsync(targetCover);
                 context.Sources.Add(new() { Uid = Guid.NewGuid(), Id = 100, UserName = "selftest_chat", Title = "SelfTest Chat",
                     IsSubscribe = true, Directory = mediaDirectory });
-                context.Messages.Add(new() { Uid = Guid.NewGuid(), SourceId = 100, Id = 1, Message = "sample.mp4", Size = 4,
+                context.Users.AddRange(
+                    new() { Uid = Guid.NewGuid(), Id = 10, FirstName = "Alex", LastName = "Researcher", UserName = "selftest_alex", PhoneNumber = "+0000000010" },
+                    new() { Uid = Guid.NewGuid(), Id = 20, FirstName = "Maria", LastName = "Reader", UserName = "selftest_maria" });
+                context.ChatUsers.AddRange(new() { Uid = Guid.NewGuid(), ChatId = 100, UserId = 10 },
+                    new() { Uid = Guid.NewGuid(), ChatId = 100, UserId = 20 });
+                context.Licenses.Add(new() { Uid = Guid.NewGuid(), LicenseKey = Guid.NewGuid(), UserId = 10 });
+                context.Messages.Add(new() { Uid = Guid.NewGuid(), SourceId = 100, UserId = 10, Id = 1, Message = "sample.mp4", Size = 4,
                     Type = TgEnumMessageType.Document, DtCreated = DateTime.UtcNow });
             }
             else
@@ -265,7 +275,8 @@ internal static partial class Program
         var vm = new TgChatParticipantsViewModel(_state, _settings, _navigation, null!, null!);
         vm.UserDtos.Add(new() { Id = 999 }); vm.PageSkip = 100; vm.HasMoreItems = false;
         await vm.OnNavigatedToAsync(new() { Parameter = _source.Uid });
-        Assert(vm.UserDtos.Count == 0 && vm.PageSkip == 0 && vm.HasMoreItems, "Сохранились участники или пагинация другого чата");
+        Assert(vm.UserDtos.Count == 0 && vm.PageSkip == 0 && !vm.HasMoreItems && vm.Dto.Id == _source.Id && vm.IsEmptyData
+            && vm.Errors.Count == 0, "Открытие пустого чата сохранило участников другого чата или не завершило загрузку");
     }
 
     // Первая непустая выборка должна убрать надпись об отсутствии участников
@@ -278,8 +289,8 @@ internal static partial class Program
         await context.SaveChangesAsync();
         var vm = new TgChatParticipantsViewModel(_state, _settings, _navigation, null!, null!);
         await vm.OnNavigatedToAsync(new() { Parameter = _source.Uid });
-        var users = await vm.GetListDtosAsync();
-        Assert(users.Single().Id == 20 && !vm.IsEmptyData, "Непустая первая страница помечена как пустая");
+        Assert(vm.UserDtos.Single().Id == 20 && vm.SelectedUser?.Id == 20 && !vm.IsEmptyData && vm.Errors.Count == 0,
+            "Открытие вкладки не показало первую страницу участников и досье");
     }
 
     // Постраничная загрузка должна показывать сообщения именно выбранного чата без пропусков и дублей

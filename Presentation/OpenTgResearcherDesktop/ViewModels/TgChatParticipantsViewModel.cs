@@ -13,6 +13,10 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
     public partial TgEfSourceDto Dto { get; set; } = new();
     [ObservableProperty]
     public partial ObservableCollection<TgEfUserDto> UserDtos { get; set; } = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSelectedUser))]
+    public partial TgEfUserDto? SelectedUser { get; set; }
+    public bool HasSelectedUser => SelectedUser is not null;
 
     public IAsyncRelayCommand LoadParticipantsCommand { get; }
     public IAsyncRelayCommand StopParticipantsCommand { get; }
@@ -44,19 +48,27 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
     #region Methods
 
-    /// <summary> Выбирает чат и сбрасывает список участников и пагинацию </summary>
+    /// <summary> Выбирает чат и автоматически заполняет пустой каталог участников </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
-        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-        UserDtos.Clear();
-        PageSkip = 0;
-        HasMoreItems = true;
-        IsEmptyData = true;
-        //await LoadParticipantsCoreAsync();
-        await Task.CompletedTask;
+        var uid = e?.Parameter is Guid value ? value : Guid.Empty;
+        if (Uid != uid)
+        {
+            Uid = uid;
+            ItemsClearCore();
+            PageSkip = 0;
+            HasMoreItems = true;
+        }
+        if (UserDtos.Count == 0 && Uid != Guid.Empty)
+        {
+            PageSkip = 0;
+            HasMoreItems = true;
+            await LazyLoadCoreAsync(isSearch: false);
+        }
     });
 
-    private async Task LoadParticipantsAsync() => 
+    // Читаем следующую страницу участников с подтверждением пользователя
+    private async Task LoadParticipantsAsync() =>
         await ContentDialogAsync(() => LazyLoadCoreAsync(isSearch: false), TgResourceExtensions.AskLoading(), TgEnumLoadDesktopType.Storage);
 
     protected override async Task LazyLoadCoreAsync(bool isSearch)
@@ -67,7 +79,10 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
         if (newItems.Count < PageTake)
             HasMoreItems = false;
 
+        var selectedId = SelectedUser?.Id;
         UserDtos = isSearch ? [.. newItems] : [.. UserDtos, .. newItems];
+        SelectedUser = UserDtos.FirstOrDefault(x => x.Id == selectedId) ?? UserDtos.FirstOrDefault();
+        IsEmptyData = UserDtos.Count == 0;
 
         PageSkip += newItems.Count;
     }
@@ -351,6 +366,7 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
 
             UserDtos.Clear();
 
+            SelectedUser = null;
             PageSkip = 0;
             HasMoreItems = true;
             IsEmptyData = true;
@@ -359,6 +375,21 @@ public sealed partial class TgChatParticipantsViewModel : TgSectionViewModel, ID
         {
             await ReloadUiAsync();
         }
+    }
+
+    // Сбрасываем результаты поиска вместе с досье выбранного участника
+    protected override void ItemsClearCore()
+    {
+        UserDtos.Clear();
+        SelectedUser = null;
+        IsEmptyData = true;
+    }
+
+    // Обновляем пустое состояние после поиска и постраничной загрузки
+    protected override Task AfterDataUpdateCoreAsync()
+    {
+        IsEmptyData = UserDtos.Count == 0;
+        return Task.CompletedTask;
     }
 
     /// <summary> Click on user </summary>

@@ -1,4 +1,4 @@
-﻿namespace TgStorage.Domain.Messages;
+namespace TgStorage.Domain.Messages;
 
 /// <summary> EF message DTO </summary>
 [DebuggerDisplay("{ToDebugString()}")]
@@ -24,11 +24,16 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
     [ObservableProperty]
     public partial string Directory { get; set; }
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SenderDisplay))]
     public partial long UserId { get; set; }
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SenderDisplay))]
     public partial string UserContact { get; set; }
     [ObservableProperty]
     public partial bool IsDeleted { get; set; }
+
+    /// <summary> Показывает название чата для сообщения без ID автора, иначе идентификатор отправителя </summary>
+    public string SenderDisplay => UserId == 0 ? (string.IsNullOrWhiteSpace(UserContact) ? SourceId.ToString() : UserContact) : UserId.ToString();
 
     public string MessageText
     {

@@ -27,6 +27,10 @@ public static class ChatPageTestNative {
     public static extern bool SetForegroundWindow(System.IntPtr window);
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     public static extern System.IntPtr GetForegroundWindow();
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern bool SetCursorPos(int x, int y);
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, System.UIntPtr extraInfo);
 }
 '@
 
@@ -96,6 +100,28 @@ function Invoke-AppElement($element) {
         $current = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($current)
     }
     throw "Элемент не поддерживает вызов или выбор: $($element.Current.Name)"
+}
+
+# Нажимаем внутри проверяемого окна, когда изображение не поддерживает InvokePattern
+function Invoke-AppPoint([double]$x, [double]$y) {
+    [void][ChatPageTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
+    Start-Sleep -Milliseconds 200
+    if ([ChatPageTestNative]::GetForegroundWindow() -ne $appProcess.MainWindowHandle) { throw 'Окно перекрыто перед нажатием' }
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    if (-not $window.Current.BoundingRectangle.Contains($x, $y)) { throw 'Координаты нажатия вышли за границы окна' }
+    [void][ChatPageTestNative]::SetCursorPos([int]$x, [int]$y)
+    [ChatPageTestNative]::mouse_event(2, 0, 0, 0, [UIntPtr]::Zero)
+    [ChatPageTestNative]::mouse_event(4, 0, 0, 0, [UIntPtr]::Zero)
+    Start-Sleep -Milliseconds 250
+}
+
+# Проверяем, что увеличенное изображение действительно скрыто, а не закрывает ленту пустой панелью
+function Assert-ImageViewerClosed {
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    $images = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatFullScreenImage'))
+    if (@($images | Where-Object { -not $_.Current.IsOffscreen }).Count -gt 0) { throw 'Просмотр изображения остался поверх ленты' }
+    [void](Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail')
 }
 
 # Сохраняем только окно проверяемого приложения
@@ -316,40 +342,89 @@ try {
             $scroll = $viewer.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
             if ($scroll.Current.VerticallyScrollable) { $scroll.SetScrollPercent(-1, 0) }
         }
+        if ($models[$index] -eq 'MyMessages') {
+            if (-not $SourceDatabase) {
+                [void](Wait-AppElement '^Alex Researcher$')
+                [void](Wait-AppElement '^(Контакты|Contact details)$')
+                [void](Wait-AppElement '^(В этом чате|In this chat)$')
+                Write-Output 'PASS: карточка моего профиля показывает пользователя, контакты и сведения чата из тестовой БД'
+            }
+            Save-AppSnapshot 'Profile'
+        }
+        if ($models[$index] -eq 'Statistics') {
+            [void](Wait-AppElement '^(Активность авторов|Author activity)$')
+            [void](Wait-AppElement '^(Выберите период и рассчитайте статистику|Select a period and calculate statistics)$')
+            $period = Wait-AppElement '.*' '' 'ChatStatisticsPeriod'
+            $expand = $period.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            $expand.Collapse()
+            Start-Sleep -Milliseconds 200
+            if ($expand.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Collapsed) {
+                throw 'Период статистики не сворачивается для просмотра результатов'
+            }
+            $expand.Expand()
+            [void](Wait-AppElement '^(Активность авторов|Author activity)$')
+            Save-AppSnapshot 'Statistics'
+            Write-Output 'PASS: статистика показывает период и объяснение до расчёта; подключение Telegram не используется'
+        }
         if ($models[$index] -eq 'Participants') {
-            $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
-            $participantHeaders = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
-                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
-                    [System.Windows.Automation.ControlType]::HeaderItem))
-            $resourceCulture = if ($Language -eq 'Russian') { 'ru-RU' } else { 'en-us' }
-            [xml]$resources = Get-Content (Join-Path $PSScriptRoot "../../Presentation/OpenTgResearcherDesktop/Strings/$resourceCulture/Resources.resw")
-            $expectedParticipantHeaders = foreach ($column in @('Id', 'IsActive', 'UserName', 'FirstName', 'LastName', 'Phone', 'Messages')) {
-                ($resources.root.data | Where-Object name -eq "UserColumn${column}").value
-            }
-            $participantNames = foreach ($header in $participantHeaders) {
-                $header.Current.Name
-                $header.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition) |
-                    ForEach-Object { $_.Current.Name }
-            }
-            if ($participantHeaders.Count -ne 7 -or @($expectedParticipantHeaders | Where-Object { $_ -notin $participantNames }).Count -gt 0) {
-                throw "Неверные заголовки участников: $($participantNames -join ', ')"
-            }
-            Write-Output 'PASS: семь локализованных заголовков участников'
             if ($SourceDatabase) {
-                Invoke-AppElement (Wait-AppElement '^(Получить участников из сообщений|Get participants from messages)$')
+                Invoke-AppElement (Wait-AppElement '.*' '' 'ChatParticipantsActions')
+                Invoke-AppElement (Wait-AppElement '.*' '' 'ChatParticipantsFromMessages')
                 Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
-                $deadline = [DateTime]::UtcNow.AddSeconds(15)
-                do {
-                    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
-                    $participantRows = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
-                        [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
-                            [System.Windows.Automation.ControlType]::DataItem))
-                    if ($participantRows.Count -eq 0) { Start-Sleep -Milliseconds 100 }
-                } until ($participantRows.Count -gt 0 -or [DateTime]::UtcNow -gt $deadline)
-                if ($participantRows.Count -eq 0) { throw 'Участники из сообщений не появились в таблице' }
-                Write-Output "PASS: участники из сообщений отображены настоящей таблицей; строк: $($participantRows.Count)"
             }
+            $catalog = Wait-AppElement '.*' '' 'ChatParticipantsCatalog'
+            $deadline = [DateTime]::UtcNow.AddSeconds(15)
+            do {
+                $participantRows = $catalog.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                    [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                        [System.Windows.Automation.ControlType]::ListItem))
+                if ($participantRows.Count -eq 0) { Start-Sleep -Milliseconds 100 }
+            } until ($participantRows.Count -gt 0 -or [DateTime]::UtcNow -gt $deadline)
+            if ($participantRows.Count -eq 0) { throw 'Участники не появились в каталоге' }
+            [void](Wait-AppElement '.*' '' 'ChatParticipantDossier')
+            if (-not $SourceDatabase) {
+                if ($participantRows.Count -ne 2) { throw 'Каталог потерял синтетического участника' }
+                foreach ($row in $participantRows) {
+                    Invoke-AppElement $row
+                    Start-Sleep -Milliseconds 200
+                    $dossier = Wait-AppElement '.*' '' 'ChatParticipantDossier'
+                    $texts = $dossier.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                        [System.Windows.Automation.Condition]::TrueCondition) | ForEach-Object { $_.Current.Name }
+                    $rowTexts = $row.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                        [System.Windows.Automation.Condition]::TrueCondition) | ForEach-Object { $_.Current.Name }
+                    $expected = if ('Maria Reader' -in $rowTexts) { 'Maria Reader' } else { 'Alex Researcher' }
+                    if ($expected -notin $texts) { throw "Выбор участника не обновил досье: $expected" }
+                }
+            }
+            if (-not $SourceDatabase) {
+                $search = Wait-AppElement '.*' '' 'ChatParticipantsSearch'
+                $search.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('selftest_maria')
+                Invoke-AppElement (Wait-AppElement '.*' '' 'ChatParticipantsFind')
+                $deadline = [DateTime]::UtcNow.AddSeconds(10)
+                do {
+                    $dossier = Wait-AppElement '.*' '' 'ChatParticipantDossier'
+                    $texts = $dossier.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                        [System.Windows.Automation.Condition]::TrueCondition) | ForEach-Object { $_.Current.Name }
+                    $found = 'Maria Reader' -in $texts -and 'Alex Researcher' -notin $texts
+                    if (-not $found) { Start-Sleep -Milliseconds 100 }
+                } until ($found -or [DateTime]::UtcNow -gt $deadline)
+                if (-not $found) { throw 'Поиск не отфильтровал каталог и досье' }
+                $search.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('')
+                Invoke-AppElement (Wait-AppElement '.*' '' 'ChatParticipantsFind')
+                [void](Wait-AppElement '^Alex Researcher$')
+                Write-Output 'PASS: настоящая команда поиска фильтрует каталог и обновляет досье без исключения'
+            }
+            Write-Output "PASS: открытие каталога участников и выбор досье; строк: $($participantRows.Count)"
             Save-AppSnapshot 'Participants'
+        }
+        if ($models[$index] -eq 'Content') {
+            $feed = Wait-AppElement '.*' '' 'ChatMessagesFeed'
+            $messageRows = $feed.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                    [System.Windows.Automation.ControlType]::ListItem))
+            if ($messageRows.Count -eq 0) { throw 'Содержимое не показало сообщения выбранного чата' }
+            Write-Output "PASS: непустая лента выбранного чата; видимых контейнеров: $($messageRows.Count)"
+            Save-AppSnapshot 'Content'
         }
         if ($CheckMediaPreview -and $models[$index] -eq 'Content') {
             Add-Type -AssemblyName System.Drawing
@@ -371,6 +446,28 @@ try {
             } until ($rendered -or [DateTime]::UtcNow -gt $deadline)
             if (-not $rendered) { throw 'Видимый элемент обложки не отрисовал тестовое изображение' }
             Write-Output 'PASS: обложка документа найдена, декодирована и отображена настоящим Image'
+            Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
+            $preview = Wait-AppElement '.*' '' 'ChatFullScreenImage'
+            $previewBounds = $preview.Current.BoundingRectangle
+            $feedBounds = $feed.Current.BoundingRectangle
+            $outsideX = $feedBounds.Left + 4
+            $outsideY = $feedBounds.Top + 4
+            if ($previewBounds.Contains($outsideX, $outsideY)) { throw 'Не найден фон вне изображения для проверки закрытия' }
+            Invoke-AppPoint $outsideX $outsideY
+            Assert-ImageViewerClosed
+            Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
+            $preview = Wait-AppElement '.*' '' 'ChatFullScreenImage'
+            $previewBounds = $preview.Current.BoundingRectangle
+            Invoke-AppPoint ($previewBounds.Left + $previewBounds.Width / 2) ($previewBounds.Top + $previewBounds.Height / 2)
+            Assert-ImageViewerClosed
+            Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
+            [void](Wait-AppElement '.*' '' 'ChatFullScreenImage')
+            Invoke-AppElement (Wait-AppElement '^(Мой профиль в чате|My chat profile)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+            [void](Wait-AppElement '^Alex Researcher$')
+            Invoke-AppElement (Wait-AppElement '^(Все сообщения|All messages)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+            [void](Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail')
+            Assert-ImageViewerClosed
+            Write-Output 'PASS: просмотр закрывается по фону и изображению; возврат к ленте сбрасывает незакрытый просмотр'
             # Проверяем скрытие всего содержимого, включая обложку, через настоящий переключатель
             $sensitive = Wait-AppElement '.*' '' 'ToggleSwitchShowSensitiveData'
             $toggle = $sensitive.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
@@ -384,6 +481,15 @@ try {
             Invoke-AppElement (Wait-AppElement '.*' '' 'ClearChatContent')
             Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
             [void](Wait-AppElement '^(Пустые данные|Empty data)$')
+            $toggle.Toggle()
+            Start-Sleep -Milliseconds 200
+            $emptyLabels = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                    [System.Windows.Automation.ControlType]::Text)) | Where-Object { $_.Current.Name -match '^(Пустые данные|Empty data)$' }
+            if (@($emptyLabels | Where-Object { -not $_.Current.IsOffscreen }).Count -gt 0) {
+                throw 'Пустое состояние перекрывает сообщение конфиденциальности'
+            }
+            $toggle.Toggle()
             Write-Output 'PASS: скрытие содержимого и подсказка пустого списка после очистки'
         }
     }

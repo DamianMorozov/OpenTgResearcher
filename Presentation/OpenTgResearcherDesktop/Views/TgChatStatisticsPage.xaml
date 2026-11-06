@@ -1,199 +1,104 @@
-﻿<common:TgPageBase
-    x:Class="OpenTgResearcherDesktop.Views.TgChatStatisticsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
-    xmlns:l="using:WinUI3Localizer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:messages="using:TgStorage.Domain.Messages"
-    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
-    xmlns:users="using:TgStorage.Domain.Users"
-    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatStatisticsViewModel}"
-    mc:Ignorable="d">
-
-    <common:TgPageBase.Resources>
-        <!--  Шаблон данных участников  -->
-        <DataTemplate x:Key="ParticipantsStatisticsViewTemplate" x:DataType="users:TgEfUserWithCountDto">
-            <Button
-                Margin="-5,10,5,-5"
-                Click="OnUserClick"
-                CornerRadius="10"
-                Tag="{x:Bind UserDto.Uid, Mode=OneWay}">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <!--  Идентификатор  -->
-                    <TextBlock Margin="0,5,0,0" l:Uids.Uid="FieldId" />
-                    <TextBlock
-                        Margin="0,5,0,0"
-                        Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    <TextBlock
-                        Width="Auto"
-                        Margin="0,5,0,0"
-                        Text="{x:Bind UserDto.Id}"
-                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <styles:TgAnimatedClipboardButton
-                        Click="OnClipboardSilentWriteClick"
-                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                        Tag="{x:Bind UserDto.Id, Mode=OneWay}" />
-                    <TextBlock
-                        Margin="5,0,5,0"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="·" />
-                    <!--  Отображаемое имя  -->
-                    <TextBlock
-                        Margin="0,5,0,0"
-                        Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    <TextBlock
-                        Margin="0,5,0,0"
-                        Text="{x:Bind UserDto.DisplayName}"
-                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <styles:TgAnimatedClipboardButton
-                        Click="OnClipboardSilentWriteClick"
-                        Style="{StaticResource ClipboardAnimatedButtonStyle}"
-                        Tag="{x:Bind UserDto.DisplayName, Mode=OneWay}" />
-                    <TextBlock
-                        Margin="5,0,5,0"
-                        Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="·" />
-                    <!--  Количество сообщений  -->
-                    <TextBlock Margin="0,5,0,0" l:Uids.Uid="FieldMessagesCount" />
-                    <TextBlock
-                        Margin="0,5,5,0"
-                        Text="{Binding LoadStateService.SensitiveData, Mode=OneWay}"
-                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                    <TextBlock
-                        Margin="0,5,0,0"
-                        FontWeight="SemiBold"
-                        Text="{x:Bind Count}"
-                        Visibility="{Binding ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                </StackPanel>
-            </Button>
-        </DataTemplate>
-    </common:TgPageBase.Resources>
-
-    <!--  Статистика чата  -->
-    <ScrollView VerticalScrollMode="Auto">
-        <ContentControl
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-            Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-            <Border
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToObjectConverter}}"
-                CornerRadius="5">
-                <Grid Margin="0,0,10,5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="1*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <!--  Кнопка расчёта статистики  -->
-                    <Button
-                        Margin="0,0,5,5"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Command="{x:Bind ViewModel.CalcChatStatisticsCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <FontIcon Margin="0,0,10,0" Glyph="&#xe777;" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                l:Uids.Uid="TextBlockCalcChatStatistics" />
+<common:TgPageBase x:Class="OpenTgResearcherDesktop.Views.TgChatStatisticsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common" xmlns:l="using:WinUI3Localizer"
+    xmlns:models="using:OpenTgResearcherDesktop.Models">
+    <common:TgPageBase.Resources><ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="ms-appx:///Styles/TgChatResources.xaml" /></ResourceDictionary.MergedDictionaries>
+        <DataTemplate x:Key="AuthorActivityTemplate" x:DataType="models:TgChatActivityRow">
+            <Border Style="{StaticResource ChatSurface}" Margin="0,0,0,10">
+                <StackPanel Spacing="8">
+                    <Grid ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <StackPanel Spacing="2"><TextBlock Text="{x:Bind User.DisplayName}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock Text="{x:Bind User.Id}" Style="{StaticResource ChatSecondary}" /></StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="2" HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Bind Messages}" FontWeight="SemiBold" HorizontalAlignment="Right" />
+                            <TextBlock Text="{x:Bind ShareText}" Style="{StaticResource ChatSecondary}" HorizontalAlignment="Right" />
                         </StackPanel>
-                    </Button>
-                    <!--  Данные статистики чата  -->
-                    <Grid Grid.Row="1" Margin="10,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <!--  Дата начала  -->
-                        <TextBlock VerticalAlignment="Center" l:Uids.Uid="TextBlockDtStart" />
-                        <DatePicker
-                            Grid.Column="1"
-                            Margin="10,0,0,0"
-                            HorizontalAlignment="Left"
-                            SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtStart, Mode=TwoWay}" />
-                        <!--  Дата завершения  -->
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="50,0,0,0"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockDtEnd" />
-                        <DatePicker
-                            Grid.Column="3"
-                            Margin="10,0,0,0"
-                            SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtEnd, Mode=TwoWay}" />
-                        <!--  Статистика пользователей и ботов  -->
-                        <TextBlock
-                            Grid.Column="4"
-                            Margin="50,0,0,0"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockUsers"
-                            Text="" />
-                        <TextBlock
-                            Grid.Column="5"
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            Text="{x:Bind ViewModel.ChatStatisticsDto.UsersCount, Mode=OneWay}" />
-                        <TextBlock
-                            Grid.Column="6"
-                            Margin="20,0,0,0"
-                            VerticalAlignment="Center"
-                            l:Uids.Uid="TextBlockBots" />
-                        <TextBlock
-                            Grid.Column="7"
-                            Margin="10,0,0,0"
-                            VerticalAlignment="Center"
-                            Text="{x:Bind ViewModel.ChatStatisticsDto.BotsCount, Mode=OneWay}" />
-                        <!--  Список участников  -->
-                        <ListView
-                            x:Name="ListViewParticipantsStatistics"
-                            Grid.Row="2"
-                            Grid.ColumnSpan="7"
-                            Margin="-15,-5,-15,0"
-                            ItemTemplate="{StaticResource ParticipantsStatisticsViewTemplate}"
-                            ItemsSource="{x:Bind ViewModel.ChatStatisticsDto.UserWithCountDtos, Mode=OneWay}">
-                            <!--  Параметры ItemsStackPanel определяют расположение загруженных элементов  -->
-                            <!--  Новые элементы добавляются с сохранением положения нижних элементов  -->
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <!--  Растягиваем содержимое элемента для правильного выравнивания в списке  -->
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                        </ListView>
                     </Grid>
-                </Grid>
+                    <ProgressBar Minimum="0" Maximum="100" Value="{x:Bind Relative}" />
+                    <Button Click="OnUserClick" Tag="{x:Bind User.Uid}" HorizontalAlignment="Left">
+                        <TextBlock l:Uids.Uid="ChatOpenUser" TextWrapping="Wrap" />
+                    </Button>
+                </StackPanel>
             </Border>
-        </ContentControl>
-    </ScrollView>
+        </DataTemplate>
+    </ResourceDictionary></common:TgPageBase.Resources>
+    <Grid Margin="12,0,16,12" RowSpacing="12">
+        <VisualStateManager.VisualStateGroups><VisualStateGroup>
+            <VisualState x:Name="StatisticsNarrow"><VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="0" /></VisualState.StateTriggers></VisualState>
+            <VisualState x:Name="StatisticsWide"><VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="1000" /></VisualState.StateTriggers>
+                <VisualState.Setters>
+                    <Setter Target="StartDateGroup.(Grid.ColumnSpan)" Value="1" /><Setter Target="EndDateGroup.(Grid.ColumnSpan)" Value="1" />
+                    <Setter Target="EndDateGroup.(Grid.Row)" Value="0" /><Setter Target="EndDateGroup.(Grid.Column)" Value="1" />
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup></VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+        <Expander l:Uids.Uid="ChatStatisticsPeriod" AutomationProperties.AutomationId="ChatStatisticsPeriod"
+            HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsExpanded="{x:Bind ViewModel.IsPeriodExpanded, Mode=TwoWay}">
+            <StackPanel Spacing="12">
+                <TextBlock l:Uids.Uid="ChatStatisticsTitle" Style="{StaticResource ChatTitle}" />
+                <Grid ColumnSpacing="12" RowSpacing="10">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <StackPanel Grid.ColumnSpan="2" Spacing="4" x:Name="StartDateGroup">
+                        <TextBlock l:Uids.Uid="TextBlockDtStart" Style="{StaticResource ChatSecondary}" />
+                        <DatePicker HorizontalAlignment="Left" SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtStart, Mode=TwoWay}" />
+                    </StackPanel>
+                    <StackPanel x:Name="EndDateGroup" Grid.Row="1" Grid.ColumnSpan="2" Spacing="4">
+                        <TextBlock l:Uids.Uid="TextBlockDtEnd" Style="{StaticResource ChatSecondary}" />
+                        <DatePicker HorizontalAlignment="Left" SelectedDate="{x:Bind ViewModel.ChatStatisticsDto.DtEnd, Mode=TwoWay}" />
+                    </StackPanel>
+                </Grid>
+                <Button AutomationProperties.AutomationId="ChatCalculateStatistics" Command="{x:Bind ViewModel.CalcChatStatisticsCommand}"
+                    Style="{StaticResource AccentButtonStyle}" IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}">
+                    <TextBlock l:Uids.Uid="ChatStatisticsCalculate" TextWrapping="Wrap" />
+                </Button>
+                <TextBlock l:Uids.Uid="ChatStatisticsHint" Style="{StaticResource ChatSecondary}" />
+                <InfoBar IsOpen="{x:Bind ViewModel.HasStatisticsError, Mode=OneWay}" IsClosable="False" Severity="Error"
+                    Message="{x:Bind ViewModel.StatisticsError, Mode=OneWay}" />
+            </StackPanel>
+        </Expander>
+        <!-- Итоги относятся к сохранённым сообщениям выбранного периода -->
+        <Grid Grid.Row="1" ColumnSpacing="8" RowSpacing="8"
+            Visibility="{x:Bind ViewModel.IsCalculated, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ChatSurface}">
+                <StackPanel Spacing="3"><TextBlock l:Uids.Uid="ChatStatisticsMessages" Style="{StaticResource ChatSecondary}" />
+                    <TextBlock Text="{x:Bind ViewModel.TotalMessages, Mode=OneWay}" FontSize="26" FontWeight="SemiBold" /></StackPanel>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ChatSurface}">
+                <StackPanel Spacing="3"><TextBlock l:Uids.Uid="ChatStatisticsAuthors" Style="{StaticResource ChatSecondary}" />
+                    <TextBlock Text="{x:Bind ViewModel.ActiveAuthorsCount, Mode=OneWay}" FontSize="26" FontWeight="SemiBold" /></StackPanel>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ChatSurface}">
+                <StackPanel Spacing="3"><TextBlock l:Uids.Uid="TextBlockUsers" Style="{StaticResource ChatSecondary}" />
+                    <TextBlock Text="{x:Bind ViewModel.ChatStatisticsDto.UsersCount, Mode=OneWay}" FontSize="26" FontWeight="SemiBold" /></StackPanel>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ChatSurface}">
+                <StackPanel Spacing="3"><TextBlock l:Uids.Uid="ChatStatisticsBots" Style="{StaticResource ChatSecondary}" />
+                    <TextBlock Text="{x:Bind ViewModel.ChatStatisticsDto.BotsCount, Mode=OneWay}" FontSize="26" FontWeight="SemiBold" /></StackPanel>
+            </Border>
+        </Grid>
+        <StackPanel Grid.Row="2" Spacing="4">
+            <TextBlock l:Uids.Uid="ChatStatisticsRanking" Style="{StaticResource ChatTitle}" />
+            <TextBlock l:Uids.Uid="ChatStatisticsNoResults" Style="{StaticResource ChatSecondary}"
+                Visibility="{x:Bind ViewModel.HasNoMessages, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </StackPanel>
+        <Grid Grid.Row="3">
+            <Grid Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock l:Uids.Uid="ChatStatisticsEmpty" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                Visibility="{x:Bind ViewModel.IsCalculated, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+            </Grid>
+            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+            <ListView x:Name="ListViewParticipantsStatistics" AutomationProperties.AutomationId="ChatStatisticsRanking"
+                SelectionMode="None" ItemsSource="{x:Bind ViewModel.ActivityRows, Mode=OneWay}" ItemTemplate="{StaticResource AuthorActivityTemplate}"
+                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ListView.ItemContainerStyle><Style TargetType="ListViewItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0" /></Style></ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+    </Grid>
 </common:TgPageBase>

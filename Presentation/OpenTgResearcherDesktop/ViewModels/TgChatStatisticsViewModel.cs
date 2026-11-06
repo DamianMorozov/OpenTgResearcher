@@ -17,6 +17,22 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
     public partial Action ScrollRequested { get; set; } = () => { };
     [ObservableProperty]
     public partial TgEfChatStatisticsDto ChatStatisticsDto { get; set; } = new();
+    [ObservableProperty]
+    public partial ObservableCollection<OpenTgResearcherDesktop.Models.TgChatActivityRow> ActivityRows { get; set; } = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNoMessages))]
+    public partial int TotalMessages { get; private set; }
+    [ObservableProperty]
+    public partial int ActiveAuthorsCount { get; private set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNoMessages))]
+    public partial bool IsCalculated { get; private set; }
+    [ObservableProperty]
+    public partial string StatisticsError { get; private set; } = string.Empty;
+    [ObservableProperty]
+    public partial bool IsPeriodExpanded { get; set; } = true;
+    public bool HasNoMessages => IsCalculated && TotalMessages == 0;
+    public bool HasStatisticsError => !string.IsNullOrEmpty(StatisticsError);
 
     public IAsyncRelayCommand CalcChatStatisticsCommand { get; }
 
@@ -25,7 +41,8 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatStatisticsViewModel))
     {
         AppNotificationService = appNotificationService;
-        // Commands
+        ChatStatisticsDto.PropertyChanged += OnStatisticsPeriodChanged;
+        // Команды
         CalcChatStatisticsCommand = new AsyncRelayCommand(CalcChatStatisticsAsync);
     }
 
@@ -33,13 +50,21 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
 
     #region Methods
 
-    /// <summary> Выбирает чат и сбрасывает ранее рассчитанную статистику </summary>
+    /// <summary> Выбирает чат и рассчитывает отсутствующую статистику при активном подключении </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e) => await LoadStorageDataAsync(async () =>
     {
-        Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
-        UserDtos.Clear();
-        ChatStatisticsDto.Default();
+        var uid = e?.Parameter is Guid value ? value : Guid.Empty;
+        if (Uid != uid)
+        {
+            Uid = uid;
+            UserDtos.Clear();
+            IsPeriodExpanded = true;
+            ChatStatisticsDto.Default();
+            ResetSummary();
+        }
         await LoadDataStorageCoreAsync();
+        if (!IsCalculated && IsOnlineReady && Dto.Id > 0)
+            await LoadOnlineDataAsync(CalcChatStatisticsCoreAsync);
     });
 
     private async Task LoadDataStorageCoreAsync()
@@ -64,6 +89,58 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
     
     // Подсчитываем уникальных участников и их сообщения последовательными запросами
     private async Task CalcChatStatisticsCoreAsync()
+    {
+        ResetSummary();
+        ChatStatisticsDto.Default();
+        if (ChatStatisticsDto.DtStart?.Date > ChatStatisticsDto.DtEnd?.Date)
+        {
+            StatisticsError = "ChatStatisticsInvalidDates".GetLocalizedResource();
+            OnPropertyChanged(nameof(HasStatisticsError));
+            return;
+        }
+        try
+        {
+            await CalculateStatisticsCoreAsync();
+        }
+        catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+        {
+            ResetSummary();
+        }
+        catch (Exception ex)
+        {
+            LogError(ex);
+            StatisticsError = ex.Message;
+            OnPropertyChanged(nameof(HasStatisticsError));
+        }
+    }
+
+    // Подписываемся на заменённый черновик периода и освобождаем прежнюю подписку
+    partial void OnChatStatisticsDtoChanged(TgEfChatStatisticsDto oldValue, TgEfChatStatisticsDto newValue)
+    {
+        if (oldValue is not null) oldValue.PropertyChanged -= OnStatisticsPeriodChanged;
+        newValue.PropertyChanged += OnStatisticsPeriodChanged;
+        ResetSummary();
+    }
+
+    // Изменение периода сбрасывает устаревшие итоги до следующего расчёта
+    private void OnStatisticsPeriodChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(TgEfChatStatisticsDto.DtStart) or nameof(TgEfChatStatisticsDto.DtEnd)) ResetSummary();
+    }
+
+    // Удаляем итоги прошлого расчёта, сохраняя выбранный период
+    private void ResetSummary()
+    {
+        ActivityRows.Clear();
+        TotalMessages = 0;
+        ActiveAuthorsCount = 0;
+        IsCalculated = false;
+        StatisticsError = string.Empty;
+        OnPropertyChanged(nameof(HasStatisticsError));
+    }
+
+    // Рассчитываем активность по выбранному периоду и строим строки ранжирования
+    private async Task CalculateStatisticsCoreAsync()
     {
         ChatStatisticsDto.Default();
         ChatStatisticsDto.UserWithCountDtos.Clear();
@@ -98,6 +175,14 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         {
             ChatStatisticsDto.UserWithCountDtos.Add(dto);
         }
+        TotalMessages = list.Sum(x => x.Count);
+        ActiveAuthorsCount = list.Count(x => x.Count > 0);
+        var maximum = list.Count == 0 ? 0 : list.Max(x => x.Count);
+        foreach (var item in ChatStatisticsDto.UserWithCountDtos)
+            ActivityRows.Add(new(item.UserDto, item.Count, TotalMessages == 0 ? 0 : item.Count * 100d / TotalMessages,
+                maximum == 0 ? 0 : item.Count * 100d / maximum));
+        IsCalculated = true;
+        IsPeriodExpanded = false;
     }
 
     private async Task MergeUsersWithPlaceholdersAsync()
@@ -106,11 +191,11 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         var userIds = await App.BusinessLogicManager.StorageManager.MessageRepository.GetUserIdsFromMessagesAsync(x => x.SourceId == Dto.Id);
         var usersDtos = await App.BusinessLogicManager.StorageManager.UserRepository.GetListDtosAsync(take: 0, skip: 0, x => userIds.Contains(x.Id));
 
-        // Collect all existing IDs
+        // Собираем все известные идентификаторы
         var existingIds = new HashSet<long>(participantDtos.Select(p => p.Id).Concat(usersDtos.Select(u => u.Id)));
-        // Find missing IDs
+        // Находим отсутствующие идентификаторы
         var missingIds = userIds.Where(id => !existingIds.Contains(id));
-        // Create placeholder users for missing IDs
+        // Создаём записи авторов, ещё не найденных в справочнике
         var placeholderUsers = missingIds.Select(id => new TgEfUserDto
         {
             Id = id,
@@ -119,7 +204,7 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
         }).ToList();
 
         UserDtos = [.. 
-            // Participants from Telegram
+            // Участники из Telegram
             participantDtos.Select(x => new TgEfUserDto()
             {
                 Id = x.User.id,
@@ -137,14 +222,14 @@ public sealed partial class TgChatStatisticsViewModel : TgPageViewModelBase
                 LangCode = x.User.lang_code,
                 IsContact = false,
             }), 
-            // Users from Users table
+            // Пользователи из таблицы пользователей
             ..usersDtos,
-            // Users from Messages table
+            // Авторы из таблицы сообщений
             ..placeholderUsers
             ];
     }
 
-    /// <summary> Click on user </summary>
+    /// <summary> Открывает профиль выбранного пользователя </summary>
     internal void OnUserClick(object sender, RoutedEventArgs e)
     {
         if (sender is not Button button) return;

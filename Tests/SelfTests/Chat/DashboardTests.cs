@@ -2,6 +2,36 @@ namespace OpenTgResearcherDesktop.ChatSelfTests;
 
 internal static partial class Program
 {
+    // Прерывание парсинга завершает команду без ошибки и перечитывает сохранённую позицию чата
+    private static async Task DashboardStopIsNotFailureAsync()
+    {
+        await Chat.OnNavigatedToAsync(new() { Parameter = _source.Uid });
+        App.BusinessLogicManager.ConnectClient.Ready = true;
+        using var stop = new CancellationTokenSource(); var calls = 0;
+        App.BusinessLogicManager.ConnectClient.Parse = async settings =>
+        {
+            calls++;
+            var saved = await App.BusinessLogicManager.StorageManager.SourceRepository.GetDtoAsync(x => x.Uid == settings.SourceVm.Dto.Uid);
+            saved.FirstId = 42;
+            await App.BusinessLogicManager.StorageManager.SourceRepository.SaveAsync(saved);
+            stop.Cancel();
+            await Task.FromCanceled(stop.Token);
+        };
+        await Chat.StartUpdateOnlineCommand.ExecuteAsync(null);
+        Assert(calls == 1 && Chat.Errors.Count == 0 && Chat.Dto.FirstId == 42,
+            "Прерывание показано как исключение или потеряло сохранённую позицию чата");
+    }
+
+    // Отмена без запроса пользователя остаётся диагностируемой ошибкой, а не успешной остановкой
+    private static async Task DashboardUnexpectedCancellationIsFailureAsync()
+    {
+        await Chat.OnNavigatedToAsync(new() { Parameter = _source.Uid });
+        App.BusinessLogicManager.ConnectClient.Ready = true;
+        App.BusinessLogicManager.ConnectClient.Parse = _ => Task.FromException(new OperationCanceledException("Тестовый сбой транспорта"));
+        await Chat.StartUpdateOnlineCommand.ExecuteAsync(null);
+        Assert(Chat.Errors.Count == 1 && Chat.Errors[0] is OperationCanceledException, "Незапрошенная отмена скрыта как штатное прерывание");
+    }
+
     // Ошибка ручного обновления должна попасть в журнал и интерфейс без аварийного завершения команды
     private static async Task DashboardDetailsFailureAsync()
     {

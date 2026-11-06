@@ -13,7 +13,7 @@ internal static partial class Program
         ("ParticipantsIncludeSilentMembers", ParticipantsIncludeSilentMembersAsync),
         ("ParticipantsClearAllowsReload", ParticipantsClearAllowsReloadAsync),
         ("ParticipantsSearchFiltersUsers", ParticipantsSearchFiltersUsersAsync),
-        ("ParticipantsHeadersBound", ParticipantsHeadersBoundAsync),
+        ("ParticipantsDossierBindings", ParticipantsDossierBindingsAsync),
         ("OnlineParticipantsPersistMembership", OnlineParticipantsPersistMembershipAsync),
         ("DisconnectedTransportDoesNotCancelWork", DisconnectedTransportDoesNotCancelWorkAsync),
         ("TelegramRequestRetriesTransportFailure", TelegramRequestRetriesTransportFailureAsync),
@@ -104,8 +104,8 @@ internal static partial class Program
         await context.SaveChangesAsync();
         var vm = new TgChatParticipantsViewModel(_state, _settings, _navigation, null!, null!);
         await vm.OnNavigatedToAsync(new() { Parameter = _source.Uid });
-        var users = await vm.GetListDtosAsync();
-        Assert(users.Count == 1 && users[0].Id == 20 && users[0].MessagesCount == 0, "Участник без сообщений отфильтрован");
+        Assert(vm.UserDtos.Count == 1 && vm.UserDtos[0].Id == 20 && vm.UserDtos[0].MessagesCount == 0,
+            "Участник без сообщений отфильтрован при открытии вкладки");
     }
 
     // Очистка должна вернуть пустое состояние и разрешить повторное чтение с первой страницы
@@ -132,16 +132,22 @@ internal static partial class Program
         var vm = new TgChatParticipantsViewModel(_state, _settings, _navigation, null!, null!);
         await vm.OnNavigatedToAsync(new() { Parameter = _source.Uid });
         vm.FilterText = "target";
+        vm.PageSkip = 0;
         var users = await vm.GetListDtosAsync();
         Assert(users.Count == 1 && users[0].Id == 22, "Поиск участников игнорируется или применяется после пагинации");
     }
 
-    // Заголовки таблицы участников должны получать локализованные строки, минуя обход колонок локализатором
-    private static Task ParticipantsHeadersBoundAsync()
+    // Выбор строки каталога показывает общее локализованное досье пользователя
+    private static Task ParticipantsDossierBindingsAsync()
     {
-        var columns = ReadMarkup("TgChatParticipantsPage.xaml").Descendants().Where(x => x.Name.LocalName == "TgBindableDataGridTemplateColumn").ToArray();
-        Assert(columns.Length == 7 && columns.All(x => ((string?)x.Attribute("Header"))?.StartsWith("{x:Bind ViewModel.") == true),
-            "Заголовки участников не привязаны к строкам модели");
+        var page = ReadMarkup("TgChatParticipantsPage.xaml");
+        Assert(page.Descendants().Any(x => x.Name.LocalName == "ListView"
+            && (string?)x.Attribute("SelectedItem") == "{x:Bind ViewModel.SelectedUser, Mode=TwoWay}"), "Каталог не передаёт выбранного участника");
+        Assert(page.Descendants().Any(x => x.Name.LocalName == "ContentControl"
+            && (string?)x.Attribute("ContentTemplate") == "{StaticResource ChatUserDossierTemplate}"), "Выбранному участнику не назначено досье");
+        var dossier = ReadMarkup("TgChatResources.xaml");
+        foreach (var field in new[] { "FieldId", "FieldDisplayName", "FieldUserName", "FieldPhoneNumber", "FieldMessagesCount" })
+            Assert(dossier.Descendants().Attributes().Any(x => x.Name.LocalName == "Uids.Uid" && x.Value == field), "Нет локализованного поля досье: " + field);
         return Task.CompletedTask;
     }
 
@@ -158,14 +164,17 @@ internal static partial class Program
         await Task.CompletedTask;
     }
 
-    // Проверяем перенос длинных подписей в пределах кнопок участников
+    // Основные кнопки переносят подписи, все действия участников сохранены в меню
     private static Task ParticipantsActionsWrapCaptionsAsync()
     {
-        var buttons = ReadMarkup("TgChatParticipantsPage.xaml").Descendants().Where(x => x.Name.LocalName == "Button"
+        var page = ReadMarkup("TgChatParticipantsPage.xaml");
+        var buttons = page.Descendants().Where(x => x.Name.LocalName == "Button"
             && ((string?)x.Attribute("Command"))?.Contains("ParticipantsCommand") == true).ToArray();
-        Assert(buttons.Length == 4 && buttons.All(x => x.Elements().Any(c => c.Name.LocalName == "Grid")
-            && x.Descendants().Any(t => t.Name.LocalName == "TextBlock" && (string?)t.Attribute("TextWrapping") == "Wrap")),
-            "Кнопки участников обрезают длинные подписи вместо переноса по ширине кнопки");
+        Assert(buttons.Length == 2 && buttons.All(x => x.Descendants().Any(t => t.Name.LocalName == "TextBlock"
+            && (string?)t.Attribute("TextWrapping") == "Wrap")), "Основные кнопки участников обрезают подписи");
+        foreach (var command in new[] { "GetParticipantsCommand", "GetParticipantsFromMessagesCommand", "ClearParticipantsCommand" })
+            Assert(page.Descendants().Any(x => x.Name.LocalName == "MenuFlyoutItem"
+                && ((string?)x.Attribute("Command"))?.Contains(command) == true), "В меню потеряно действие: " + command);
         return Task.CompletedTask;
     }
 

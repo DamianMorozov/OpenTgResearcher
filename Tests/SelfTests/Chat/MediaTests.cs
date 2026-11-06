@@ -43,6 +43,7 @@ internal static class MediaTests
         ("NetworkFileProgress", NetworkFileProgressAsync),
         ("MediaHandlersPassChat", MediaHandlersPassChatAsync),
         ("NetworkFileStop", NetworkFileStopAsync), ("ParsingStopUsesOwnToken", ParsingStopUsesOwnTokenAsync),
+        ("CancelledMediaIsNotLoggedAsFailure", CancelledMediaIsNotLoggedAsFailureAsync),
         ("NetworkProgressCallbackFailure", NetworkProgressCallbackFailureAsync),
         ("NetworkAsyncProgressFailure", NetworkAsyncProgressFailureAsync), ("PausedMediaWaitsForResume", PausedMediaWaitsForResumeAsync),
         ("CancelledChunkKeepsPendingTasks", CancelledChunkKeepsPendingTasksAsync),
@@ -177,6 +178,26 @@ internal static class MediaTests
         finally { release.TrySetResult(); await parsing; }
         Assert(!files.State.IsDownloadProcessing && files.State.NetworkActivity.Operations.Single().State == TgBusinessLogic.Models.TgNetworkOperationState.Canceled,
             "Остановленный парсинг не освободил состояние или потерял отмену");
+    }
+
+    // Настоящие загрузчики сохраняют отмену файлов, но не записывают её как сетевой сбой
+    private static async Task CancelledMediaIsNotLoggedAsFailureAsync()
+    {
+        using var files = new MediaFixture(); using var stop = new CancellationTokenSource();
+        stop.Cancel();
+        var logPath = Path.Combine(AppContext.BaseDirectory, "Chat.SelfTest.log");
+        var previousLog = ReadProgressLog(logPath);
+        foreach (var isPhoto in new[] { false, true })
+        {
+            var download = files.Connection.DownloadOriginalMediaAsync(isPhoto, stop.Token);
+            try { await download; }
+            catch (OperationCanceledException) when (stop.IsCancellationRequested) { }
+            Assert(download.IsCanceled, "Отмена принята за успешное скачивание файла");
+        }
+        Assert(files.State.NetworkActivity.Operations.Count == 2
+            && files.State.NetworkActivity.Operations.All(x => x.State == TgNetworkOperationState.Canceled), "Файлы не отмечены отменёнными");
+        Assert(ReadProgressLog(logPath) == previousLog, "Штатная отмена файла записана в журнал исключений");
+        Assert(files.NetworkCalls == 0, "Отменённая передача обратилась к Telegram");
     }
 
     // Отказ до обращения к Telegram не должен оставлять интерфейс в состоянии загрузки
@@ -551,6 +572,16 @@ internal sealed class MediaTestConnection(FusionCache cache, LoadStateService st
     public int Downloads { get; private set; }
     public List<(long ChatId, string Title)> DownloadChats { get; } = [];
     public bool FailNext { get; set; }
+
+    /// <summary> Вызывает исходные загрузчики для проверки отмены без подмены их обработки исключений </summary>
+    public async Task DownloadOriginalMediaAsync(bool isPhoto, CancellationToken ct = default)
+    {
+        using var output = new MemoryStream();
+        if (isPhoto)
+            await base.DownloadPhotoMediaAsync(new TL.Photo { id = 2 }, output, new TL.PhotoSize { size = 4 }, 100, "Тестовый чат", ct);
+        else
+            await base.DownloadDocumentMediaAsync(new TL.Document { id = 1, size = 4 }, output, thumbSize: null, progress: null, 100, "Тестовый чат", ct);
+    }
 
     /// <summary> Записывает тестовые байты документа или обложки без сети </summary>
     protected override async Task DownloadDocumentMediaAsync(TL.Document document, Stream output, TL.PhotoSizeBase? thumbSize,

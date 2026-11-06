@@ -2181,4 +2181,103 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ChatDetailsFailed" xml:space="preserve">
     <value>Не удалось обновить сведения о чате. Проверьте подключение и повторите запрос. Причина: {0}</value>
   </data>
+  <data name="ChatMessageDetails.Header" xml:space="preserve">
+    <value>Сведения о сообщении</value>
+  </data>
+  <data name="ChatMessageSize.Text" xml:space="preserve">
+    <value>Размер, байт</value>
+  </data>
+  <data name="ChatProfileStorageHint.Text" xml:space="preserve">
+    <value>Сведения из локальной БД; статус Telegram мог измениться</value>
+  </data>
+  <data name="ChatProfileReload.Text" xml:space="preserve">
+    <value>Обновить профиль</value>
+  </data>
+  <data name="ChatProfileContacts.Text" xml:space="preserve">
+    <value>Контакты</value>
+  </data>
+  <data name="ChatProfileInChat.Text" xml:space="preserve">
+    <value>В этом чате</value>
+  </data>
+  <data name="ChatProfileTechnical.Header" xml:space="preserve">
+    <value>Статус и технические сведения</value>
+  </data>
+  <data name="ChatAccountActive.Text" xml:space="preserve">
+    <value>Активный аккаунт</value>
+  </data>
+  <data name="ChatYes.Text" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="ChatNo.Text" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="ChatParticipantsLoad.Text" xml:space="preserve">
+    <value>Загрузить ещё</value>
+  </data>
+  <data name="ChatParticipantsStop.Text" xml:space="preserve">
+    <value>Прервать загрузку</value>
+  </data>
+  <data name="ChatParticipantsFilter.PlaceholderText" xml:space="preserve">
+    <value>Поиск по ID, имени или @username</value>
+  </data>
+  <data name="ChatFilterId.Content" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="ChatFilterName.Content" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="ChatParticipantsActions.Content" xml:space="preserve">
+    <value>Действия</value>
+  </data>
+  <data name="ChatParticipantsFromTelegram.Text" xml:space="preserve">
+    <value>Получить из Telegram</value>
+  </data>
+  <data name="ChatParticipantsFromMessages.Text" xml:space="preserve">
+    <value>Получить из сообщений БД</value>
+  </data>
+  <data name="ChatParticipantsClear.Text" xml:space="preserve">
+    <value>Очистить просмотр</value>
+  </data>
+  <data name="ChatParticipantsEmpty.Text" xml:space="preserve">
+    <value>Нажмите «Загрузить ещё», чтобы открыть участников из БД</value>
+  </data>
+  <data name="ChatParticipantsSelect.Text" xml:space="preserve">
+    <value>Выберите участника в списке</value>
+  </data>
+  <data name="ChatOpenUser.Text" xml:space="preserve">
+    <value>Открыть профиль</value>
+  </data>
+  <data name="ChatStatisticsTitle.Text" xml:space="preserve">
+    <value>Активность авторов</value>
+  </data>
+  <data name="ChatStatisticsCalculate.Text" xml:space="preserve">
+    <value>Рассчитать статистику</value>
+  </data>
+  <data name="ChatStatisticsHint.Text" xml:space="preserve">
+    <value>Сообщения считаются по локальной БД за выбранный период. Сведения об авторах обновляются через Telegram; требуется подключение.</value>
+  </data>
+  <data name="ChatStatisticsMessages.Text" xml:space="preserve">
+    <value>Учтено сообщений</value>
+  </data>
+  <data name="ChatStatisticsAuthors.Text" xml:space="preserve">
+    <value>Писали в периоде</value>
+  </data>
+  <data name="ChatStatisticsBots.Text" xml:space="preserve">
+    <value>Ботов</value>
+  </data>
+  <data name="ChatStatisticsRanking.Text" xml:space="preserve">
+    <value>Сообщения по авторам</value>
+  </data>
+  <data name="ChatStatisticsEmpty.Text" xml:space="preserve">
+    <value>Выберите период и рассчитайте статистику</value>
+  </data>
+  <data name="ChatStatisticsNoResults.Text" xml:space="preserve">
+    <value>За выбранный период сообщений нет</value>
+  </data>
+  <data name="ChatStatisticsInvalidDates" xml:space="preserve">
+    <value>Начало периода не может быть позже его окончания. Проверьте выбранные даты.</value>
+  </data>
+  <data name="ChatStatisticsPeriod.Header" xml:space="preserve">
+    <value>Период и расчёт</value>
+  </data>
 </root>

@@ -7,7 +7,10 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("NetworkFileDetails", NetworkFileDetailsAsync), ("NetworkStopParsing", NetworkStopParsingAsync),
+            ("NetworkStopConfirmation", NetworkStopConfirmationAsync), ("NetworkPauseCommand", NetworkPauseCommandAsync),
             ("UpdateNetworkActivity", UpdateNetworkActivityAsync),
+            ("NetworkPageViewModel", NetworkPageViewModelAsync),
             ("SettingsRussian", () => SettingsLocalizedAsync("ru-RU", "Настройки")),
             ("SettingsEnglish", () => SettingsLocalizedAsync("en-US", "Settings")),
             ("WindowAndSplashTitleRussian", () => WindowAndSplashTitleAsync("ru-RU")),

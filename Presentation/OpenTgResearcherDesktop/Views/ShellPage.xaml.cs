@@ -69,7 +69,8 @@ public sealed partial class ShellPage
         SetToolbarCaption(ToolbarLanguageButton, "ToolbarLanguage");
         SetToolbarCaption(ToolbarThemeButton, "ToolbarTheme");
         UpdateSensitiveDataButton();
-        SetToolbarCaption(ToolbarUpdateButton, "ToolbarUpdate");
+        SetToolbarCaption(ToolbarUpdateButton, "ToolbarUpdateApplication");
+        SetToolbarCaption(ToolbarRefreshButton, "ToolbarRefresh");
         SetToolbarCaption(ToolbarConnectButton, "ClientConnect");
         SetToolbarCaption(ToolbarDisconnectButton, "ClientDisconnect");
     }

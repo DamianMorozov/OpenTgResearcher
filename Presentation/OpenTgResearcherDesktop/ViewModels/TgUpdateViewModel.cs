@@ -88,6 +88,7 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
         try
         {
             await LoadStateService.PrepareDownloadTokenAsync(uid);
+            LoadStateService.NetworkActivity.SetKind(uid, TgNetworkOperationKind.Updates);
             ct.ThrowIfCancellationRequested();
             AppendUpdateLog("UpdateStarted", manager.CurrentVersion);
             AppendUpdateLog(isPreview ? "UpdateCheckingPreview" : "UpdateCheckingRelease");
@@ -107,6 +108,8 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
             // Ранний вызов Velopack в Main применит подготовленный пакет при следующем запуске
             AppendUpdateLog("UpdateDownloaded", update.TargetFullRelease.Version);
         }
+        catch (OperationCanceledException) { LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Canceled); throw; }
+        catch { LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Failed); throw; }
         finally { LoadStateService.StopSoftDownloadProcessing(uid); }
     }
 

@@ -380,7 +380,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 #endif
     }
 
-    public async Task ConnectSessionAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop)
+    /// <summary> Подключает Telegram и отражает реальную операцию в общем сетевом журнале </summary>
+    public Task ConnectSessionAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop) =>
+        LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Connection, () => ConnectSessionCoreAsync(config, proxyDto, isDesktop: isDesktop));
+
+    // Сохраняем существующую последовательность подготовки и авторизации клиента
+    private async Task ConnectSessionCoreAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop)
     {
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
         if (appDto.UseBot)
@@ -1698,6 +1703,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         await TryCatchAsync(async () =>
         {
             await LoadStateService.PrepareDownloadTokenAsync(uid);
+            LoadStateService.NetworkActivity.SetKind(uid, TgNetworkOperationKind.Request);
             await UpdateChatsViewModelAsync(0, 0, TgEnumChatsMessageType.StartScan);
             await LoginUserAsync(isProxyUpdate: false);
             switch (sourceType)
@@ -1961,16 +1967,25 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         var uid = Guid.NewGuid();
         await LoadStateService.PrepareDownloadTokenAsync(uid);
-        var ct = LoadStateService.DownloadToken;
+        LoadStateService.NetworkActivity.SetKind(uid, TgNetworkOperationKind.Parsing);
+        using var parsingCts = CancellationTokenSource.CreateLinkedTokenSource(LoadStateService.DownloadToken);
+        var ct = parsingCts.Token;
+        LoadStateService.NetworkActivity.RegisterCancellation(uid, parsingCts.Cancel);
+        LoadStateService.NetworkActivity.ReportParsing(uid, settings.SourceVm.Dto.Title, settings.SourceVm.Dto.FirstId, settings.SourceVm.Dto.Count);
         var parseHelper = new TgParseHelper();
+        var hasErrors = false;
 
         try
         {
-            if (CheckShouldStop(ct)) return;
+            if (CheckShouldStop(ct)) { hasErrors = !ct.IsCancellationRequested; return; }
 
+            await LoadStateService.NetworkActivity.WaitIfPausedAsync(uid, ct);
             await PrepareChatAsync(settings, ct);
 
+            await LoadStateService.NetworkActivity.WaitIfPausedAsync(uid, ct);
             parseHelper = await CheckAccessToMessagesAsync(settings, ct);
+            parseHelper.NetworkOperationId = uid;
+            hasErrors = !parseHelper.IsAccess && !ct.IsCancellationRequested;
 
             await TryCatchAsync(async () =>
             {
@@ -2008,6 +2023,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         catch (Exception ex)
                         {
                             // Журналируем ошибку обработки порции
+                            hasErrors = true;
                             TgLogUtils.WriteException(ex);
                             await SetClientExceptionAsync(ex, ct);
                         }
@@ -2037,6 +2053,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             }
                             catch (Exception ex)
                             {
+                                hasErrors = true;
                                 TgLogUtils.WriteException(ex);
                             }
 
@@ -2047,6 +2064,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 }
             }, ct: ct);
         }
+        catch (OperationCanceledException) { LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Canceled); throw; }
+        catch (Exception ex) { hasErrors = true; TgLogUtils.WriteException(ex); throw; }
         finally
         {
             try
@@ -2071,6 +2090,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         }
                         catch (Exception ex)
                         {
+                            hasErrors = true;
                             TgLogUtils.WriteException(ex);
                         }
                     }
@@ -2084,6 +2104,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             }
             finally
             {
+                if (ct.IsCancellationRequested) LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Canceled);
+                else if (hasErrors) LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Failed);
                 await FinalizeDownloadSessionAsync(settings, parseHelper, uid, ct);
             }
         }
@@ -2226,6 +2248,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             return;
         }
 
+        await LoadStateService.NetworkActivity.WaitIfPausedAsync(parseHelper.NetworkOperationId, ct);
         await TryCatchAsync(async () =>
         {
             if (Client is null) return;
@@ -2275,7 +2298,8 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 messages = await TelegramCallAsync(apiCt => Client.GetMessages(settings.Chat.Base, startId), isThrow: false, ct);
             }
 
-            // Update progress per chunk
+            // Отражаем продвижение по сообщениям отдельно от процентов скачивания файлов
+            LoadStateService.NetworkActivity.ReportParsing(parseHelper.NetworkOperationId, settings.SourceVm.Dto.Title, endId, parseHelper.SourceLastId);
             await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(parseHelper.SourceLastId, endId):#00.00} %");
             if (settings.SourceVm.Dto.Id == Me?.id)
             {
@@ -2297,6 +2321,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 foreach (var message in messages.Messages)
                 {
                     if (CheckShouldStop(ct)) break;
+                    await LoadStateService.NetworkActivity.WaitIfPausedAsync(parseHelper.NetworkOperationId, ct);
                     if (message.ID < startId || message.ID > endId) continue;
 
                     if (message is MessageBase messageBase && messageBase.Date > DateTime.MinValue)
@@ -2515,6 +2540,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task ParseChatMessageCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgParseHelper parseHelper, MessageBase messageBase, TgChatCache chatCache,
         TgForumTopicSettings forumTopicSettings, Message message, TgMessageSettings messageSettings, CancellationToken ct)
     {
+        await LoadStateService.NetworkActivity.WaitIfPausedAsync(parseHelper.NetworkOperationId, ct);
         // Early exit if cancellation requested
         if (CheckShouldStop(ct)) return;
 
@@ -2993,6 +3019,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task DownloadMediaFileFromMessageAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgParseHelper parseHelper, MessageBase messageBase,
         MessageMedia messageMedia, TgMessageSettings messageSettings, TgMediaInfoModel mediaInfo, CancellationToken ct)
     {
+        await LoadStateService.NetworkActivity.WaitIfPausedAsync(parseHelper.NetworkOperationId, ct);
         if (Directory.Exists(mediaInfo.LocalPathOnly) && !File.Exists(mediaInfo.LocalPathWithNumber))
         {
             if (Client is not null)
@@ -3037,7 +3064,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         try
         {
-            await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(document, output, thumbSize, progress), isThrow: true, ct);
+            await LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Download, async uid =>
+            {
+                var fileName = output is FileStream file ? Path.GetFileName(file.Name) : document.ID.ToString();
+                LoadStateService.NetworkActivity.ReportTransfer(uid, fileName, 0, thumbSize?.FileSize ?? document.size);
+                await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(document, output, thumbSize,
+                    NetworkProgressForFile(uid, fileName, progress, ct)), isThrow: true, ct);
+            }, ct);
         }
         catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
     }
@@ -3047,7 +3080,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     {
         try
         {
-            await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(photo, output, size), isThrow: true, ct);
+            await LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Download, async uid =>
+            {
+                var fileName = output is FileStream file ? Path.GetFileName(file.Name) : photo.ID.ToString();
+                LoadStateService.NetworkActivity.ReportTransfer(uid, fileName, 0, size.FileSize);
+                await TelegramCallAsync(apiCt => Client!.DownloadFileAsync(photo, output, size,
+                    NetworkProgressForFile(uid, fileName, progress: null, ct)), isThrow: true, ct);
+            }, ct);
         }
         catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
     }
@@ -3268,12 +3307,26 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return isLocked;
     }
 
+    // Сохраняем настоящий прогресс в общем журнале и передаём его прежнему обработчику страницы
+    private Client.ProgressCallback NetworkProgressForFile(Guid uid, string fileName, Client.ProgressCallback? progress, CancellationToken ct = default) => (received, total) =>
+    {
+        ct.ThrowIfCancellationRequested();
+        try
+        {
+            LoadStateService.NetworkActivity.ReportTransfer(uid, fileName, received, total);
+            progress?.Invoke(received, total);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); }
+    };
+
+    // Обновляем прежнюю страницу скачивания и перехватываем ошибки асинхронного обратного вызова
     private Client.ProgressCallback ClientProgressForFile(TgMessageSettings messageSettings, string fileName)
     {
-        // Start stopwatch for measuring transfer speed
+        // Измеряем скорость передачи
         var stopwatch = Stopwatch.StartNew();
 
-        // Capture required values to avoid closure over mutable object
+        // Сохраняем значения до изменения настроек сообщения
         var chatId = messageSettings.CurrentChatId;
         var messageId = messageSettings.CurrentMessageId;
         var threadNumber = messageSettings.ThreadNumber;
@@ -3281,17 +3334,21 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
         return async (transmitted, totalSize) =>
         {
-            // Skip if file name is not provided
-            if (string.IsNullOrEmpty(shortName)) return;
+            try
+            {
+                // Пропускаем обновление без имени файла
+                if (string.IsNullOrEmpty(shortName)) return;
 
-            // Calculate elapsed time in seconds
-            var elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+                // Вычисляем прошедшее время в секундах
+                var elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
 
-            // Calculate speed in bytes per second
-            long speed = elapsedSeconds > 0 ? (long)(transmitted / elapsedSeconds) : 0;
+                // Вычисляем скорость в байтах в секунду
+                long speed = elapsedSeconds > 0 ? (long)(transmitted / elapsedSeconds) : 0;
 
-            // Update file transfer state
-            await UpdateStateFileAsync(chatId, messageId, shortName, totalSize > 0 ? totalSize : 0, transmitted, speed, true, threadNumber);
+                // Передаём состояние загрузки на страницу
+                await UpdateStateFileAsync(chatId, messageId, shortName, totalSize > 0 ? totalSize : 0, transmitted, speed, true, threadNumber);
+            }
+            catch (Exception ex) { TgLogUtils.WriteException(ex); }
         };
     }
 
@@ -3303,8 +3360,11 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     public virtual async Task LoginUserAsync(bool isProxyUpdate) => await UseOverrideMethodAsync();
 
+    /// <summary> Освобождает клиент и отражает завершение отключения в сетевом журнале </summary>
     public async Task DisconnectClientAsync(bool isAfterClientConnect = true)
     {
+        var networkUid = Guid.NewGuid();
+        LoadStateService.NetworkActivity.Start(networkUid, TgNetworkOperationKind.Disconnection);
         try
         {
             IsProxyUsage = false;
@@ -3325,11 +3385,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         }
         catch (Exception ex)
         {
+            LoadStateService.NetworkActivity.Finish(networkUid, TgNetworkOperationState.Failed);
             TgLogUtils.WriteException(ex);
             await SetClientExceptionAsync(ex);
         }
         finally
         {
+            LoadStateService.NetworkActivity.Finish(networkUid, TgNetworkOperationState.Completed);
             LoadStateService.StopHardFloodLogProcessing();
         }
     }

@@ -5,6 +5,8 @@ namespace TgBusinessLogic.Contracts;
 /// <summary> Load state service to track loading states in the application </summary>
 public interface ILoadStateService : INotifyPropertyChanged, IDisposable
 {
+    /// <summary> Общий учёт сетевых операций текущего запуска </summary>
+    TgBusinessLogic.Services.TgNetworkActivityService NetworkActivity { get; }
     /// <summary> Is memory processing </summary>
     public bool IsMemoryProcessing { get; }
     /// <summary> Is storage processing </summary>

@@ -140,7 +140,10 @@ function Test-ToolbarBounds {
     $logoRect = (Get-ToolbarButton 'ToolbarLogo').Current.BoundingRectangle
     if ($logoRect.Width -lt 28 -or [Math]::Abs($logoRect.Width - $logoRect.Height) -gt 1 -or
         $logoRect.Right -gt (Get-ToolbarButton 'ToolbarLanguage').Current.BoundingRectangle.Left) { throw 'Круглый знак OTR обрезан или перекрывает кнопки' }
-    foreach ($id in @('ToolbarLanguage', 'ToolbarTheme', 'ToggleSwitchShowSensitiveData', 'ToolbarUpdate', 'ToolbarConnect', 'ToolbarDisconnect')) {
+    $refreshRect = (Get-ToolbarButton 'ToolbarRefresh').Current.BoundingRectangle
+    $languageRect = (Get-ToolbarButton 'ToolbarLanguage').Current.BoundingRectangle
+    if ($refreshRect.Right -gt $languageRect.Left -or $languageRect.Left - $refreshRect.Right -gt 12) { throw 'Обновление страницы не находится перед выбором языка' }
+    foreach ($id in @('ToolbarRefresh', 'ToolbarLanguage', 'ToolbarTheme', 'ToggleSwitchShowSensitiveData', 'ToolbarUpdate', 'ToolbarConnect', 'ToolbarDisconnect')) {
         $button = Get-ToolbarButton $id
         $rect = $button.Current.BoundingRectangle
         if ($rect.Width -lt 32 -or $rect.Height -lt 32 -or $rect.Left -lt $previousRight -or $rect.Right -gt $windowRect.Right - 100 -or
@@ -436,10 +439,10 @@ public static class ToolbarTestNative
         $deadline = [DateTime]::UtcNow.AddSeconds(5)
         do {
             $name = (Get-ToolbarButton 'ToolbarUpdate').Current.Name
-            if ($name -eq 'Check for updates') { break }
+            if ($name -eq 'Check for application updates') { break }
             Start-Sleep -Milliseconds 50
         } while ([DateTime]::UtcNow -lt $deadline)
-        if ($name -ne 'Check for updates') { throw 'Подпись верхней панели не переключилась на английский' }
+        if ($name -ne 'Check for application updates') { throw 'Подпись верхней панели не переключилась на английский' }
         Assert-SensitiveDataState $false
         Invoke-ToolbarButton 'ToolbarTheme'
         Save-AppSnapshot 'toolbar-theme-menu'
@@ -457,12 +460,12 @@ public static class ToolbarTestNative
         Save-AppSnapshot 'toolbar-language-menu'
         Invoke-AppElement (Wait-AppElement '^Русский$')
         Assert-ToolbarSetting 'AppLanguage' 'Russian'
-        [void](Wait-AppElement '^Проверить обновления$')
+        [void](Wait-AppElement '^Проверить обновления программы$')
         if ($Language -eq 'English') {
             Invoke-ToolbarButton 'ToolbarLanguage'
             Invoke-AppElement (Wait-AppElement '^English$')
             Assert-ToolbarSetting 'AppLanguage' 'English'
-            [void](Wait-AppElement '^Check for updates$')
+            [void](Wait-AppElement '^Check for application updates$')
         }
         Invoke-ToolbarButton 'ToolbarUpdate'
         Invoke-AppElement (Wait-AppElement '^(Отмена|Cancel)$')

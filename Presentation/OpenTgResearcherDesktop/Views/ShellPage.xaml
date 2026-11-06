@@ -75,6 +75,26 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="4">
+                <!--  Обновление текущей страницы расположено перед выбором языка  -->
+                <Button
+                    x:Name="ToolbarRefreshButton"
+                    Height="36"
+                    MinWidth="40"
+                    Padding="10,0"
+                    AutomationProperties.AutomationId="ToolbarRefresh"
+                    Command="{x:Bind ViewModel.UpdatePageCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <styles:TgOutlineIcon
+                            Width="16"
+                            Height="16"
+                            Kind="refresh" />
+                        <TextBlock
+                            x:Name="ToolbarRefreshLabel"
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="ToolbarRefreshShort"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+                </Button>
                 <!--  Выбор языка с немедленным сохранением  -->
                 <Button
                     x:Name="ToolbarLanguageButton"
@@ -189,11 +209,11 @@
                         <styles:TgOutlineIcon
                             Width="16"
                             Height="16"
-                            Kind="updates" />
+                            Kind="app-update" />
                         <TextBlock
                             x:Name="ToolbarUpdateLabel"
                             VerticalAlignment="Center"
-                            l:Uids.Uid="ToolbarUpdate"
+                            l:Uids.Uid="ToolbarProgramShort"
                             Visibility="Collapsed" />
                     </StackPanel>
                 </Button>
@@ -349,6 +369,12 @@
                         <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/hardware-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--  Сетевые операции приложения  -->
+                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgNetworkActivityViewModel" l:Uids.Uid="Shell_Network">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/network-light.png" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <!--  Журналы  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel" l:Uids.Uid="Shell_Logs">
                     <NavigationViewItem.Icon>
@@ -373,25 +399,9 @@
                 <behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
                     <behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                         <DataTemplate>
-                            <Grid Margin="-60,-10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <!--  Обновление страницы  -->
-                                <Button
-                                    Grid.Column="0"
-                                    Width="45"
-                                    Height="45"
-                                    Margin="10,0,10,0"
-                                    HorizontalAlignment="Left"
-                                    HorizontalContentAlignment="Left"
-                                    Command="{Binding DataContext.UpdatePageCommand, ElementName=ShellPageRoot}">
-                                    <FontIcon Glyph="&#xE72C;" />
-                                </Button>
+                            <Grid Margin="0,-10,0,0">
                                 <!--  Заголовок страницы  -->
                                 <TextBlock
-                                    Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource TitleTextBlockStyle}"
                                     Text="{Binding}"
@@ -601,6 +611,7 @@
                         <Setter Target="ToolbarThemeLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarSensitiveDataLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarUpdateLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarRefreshLabel.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ExtraWideToolbar">
@@ -612,6 +623,7 @@
                         <Setter Target="ToolbarThemeLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarSensitiveDataLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarUpdateLabel.Visibility" Value="Visible" />
+                        <Setter Target="ToolbarRefreshLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarConnectLabel.Visibility" Value="Visible" />
                         <Setter Target="ToolbarDisconnectLabel.Visibility" Value="Visible" />
                     </VisualState.Setters>

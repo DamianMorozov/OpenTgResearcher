@@ -247,7 +247,8 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
         {
             await LoadStateService.PrepareOnlineTokenAsync(uid);
 
-            await TgDesktopUtils.InvokeOnUIThreadAsync(task, LoadStateService.OnlineToken);
+            await LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Request,
+                () => TgDesktopUtils.InvokeOnUIThreadAsync(task, LoadStateService.OnlineToken), LoadStateService.OnlineToken);
             
             // Run the provided task on the thread pool; UI updates inside task must call InvokeOnUIThreadAsync explicitly.
             //await Task.Run(() => task(), OnlineToken);

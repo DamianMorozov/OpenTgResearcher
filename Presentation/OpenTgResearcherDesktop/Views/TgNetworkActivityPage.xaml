@@ -1,0 +1,176 @@
+<common:TgPageBase
+    x:Class="OpenTgResearcherDesktop.Views.TgNetworkActivityPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:l="using:WinUI3Localizer"
+    xmlns:models="using:OpenTgResearcherDesktop.Models"
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles">
+    <common:TgPageBase.Resources>
+        <Style x:Key="NetworkCard" TargetType="Border">
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        </Style>
+        <DataTemplate x:Key="OperationRow" x:DataType="models:TgNetworkOperationModel">
+            <Grid
+                MinHeight="32"
+                Padding="4,6"
+                ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="2*" MaxWidth="210" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <styles:TgOutlineIcon VerticalAlignment="Center" Kind="{x:Bind Icon}" />
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    AutomationProperties.AutomationId="NetworkOperationDetail"
+                    Text="{x:Bind Caption}"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTipService.ToolTip="{x:Bind Caption}" />
+                <TextBlock
+                    Grid.Column="2"
+                    MaxWidth="110"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind State}"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTipService.ToolTip="{x:Bind State}" />
+                <TextBlock
+                    Grid.Column="3"
+                    VerticalAlignment="Center"
+                    AutomationProperties.AutomationId="NetworkOperationProgress"
+                    FontSize="12"
+                    Text="{x:Bind ProgressCompact}"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTipService.ToolTip="{x:Bind ProgressText}" />
+                <TextBlock
+                    Grid.Column="4"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind Started}" />
+                <TextBlock
+                    Grid.Column="5"
+                    VerticalAlignment="Center"
+                    FontFamily="Consolas"
+                    FontSize="12"
+                    Text="{x:Bind Duration}" />
+            </Grid>
+        </DataTemplate>
+    </common:TgPageBase.Resources>
+    <ScrollViewer HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,12,24,24" Spacing="20">
+            <!--  Страница наблюдает операции и не запускает подключение при открытии  -->
+            <TextBlock
+                l:Uids.Uid="NetworkScope"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap" />
+            <Border Style="{StaticResource NetworkCard}">
+                <StackPanel Spacing="12">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <styles:TgOutlineIcon Kind="network" />
+                        <TextBlock
+                            l:Uids.Uid="NetworkTitle"
+                            FontSize="20"
+                            FontWeight="SemiBold" />
+                    </StackPanel>
+                    <TextBlock
+                        AutomationProperties.AutomationId="NetworkConnection"
+                        Text="{x:Bind ViewModel.ConnectionStatus, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        AutomationProperties.AutomationId="NetworkSummary"
+                        Text="{x:Bind ViewModel.ActivitySummary, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource NetworkCard}">
+                <StackPanel Spacing="12">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            l:Uids.Uid="NetworkActiveTitle"
+                            FontSize="18"
+                            FontWeight="SemiBold"
+                            TextWrapping="Wrap" />
+                        <Button
+                            Grid.Column="1"
+                            l:Uids.Uid="NetworkPauseParsing"
+                            AutomationProperties.AutomationId="NetworkPauseParsing"
+                            Command="{x:Bind ViewModel.PauseParsingCommand}"
+                            Content="{x:Bind ViewModel.PauseButtonText, Mode=OneWay}" />
+                        <Button
+                            Grid.Column="2"
+                            l:Uids.Uid="NetworkStopParsing"
+                            AutomationProperties.AutomationId="NetworkStopParsing"
+                            Command="{x:Bind ViewModel.StopParsingCommand}" />
+                    </Grid>
+                    <ProgressBar IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsActiveEmpty, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBlock
+                        l:Uids.Uid="NetworkEmpty"
+                        AutomationProperties.AutomationId="NetworkEmpty"
+                        TextWrapping="Wrap"
+                        Visibility="{x:Bind ViewModel.IsActiveEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <ItemsControl
+                        AutomationProperties.AutomationId="NetworkActive"
+                        ItemTemplate="{StaticResource OperationRow}"
+                        ItemsSource="{x:Bind ViewModel.Active}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource NetworkCard}">
+                <StackPanel Spacing="12">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center" Spacing="4">
+                            <TextBlock
+                                l:Uids.Uid="NetworkHistoryTitle"
+                                FontSize="18"
+                                FontWeight="SemiBold" />
+                            <TextBlock
+                                AutomationProperties.AutomationId="NetworkHistoryCount"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="{x:Bind ViewModel.CompletedSummary, Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            l:Uids.Uid="NetworkClear"
+                            AutomationProperties.AutomationId="NetworkClear"
+                            Command="{x:Bind ViewModel.ClearHistoryCommand}" />
+                    </Grid>
+                    <TextBlock
+                        l:Uids.Uid="NetworkHistoryEmpty"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        TextWrapping="Wrap"
+                        Visibility="{x:Bind ViewModel.IsHistoryEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <ItemsControl
+                        AutomationProperties.AutomationId="NetworkHistory"
+                        ItemTemplate="{StaticResource OperationRow}"
+                        ItemsSource="{x:Bind ViewModel.History}" />
+                    <TextBlock
+                        l:Uids.Uid="NetworkHistoryNote"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</common:TgPageBase>

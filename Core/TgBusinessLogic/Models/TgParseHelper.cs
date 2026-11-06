@@ -5,6 +5,7 @@ public sealed class TgParseHelper
     #region Fields, properties, constructor
 
     public bool IsAccess { get; set; }
+    public Guid NetworkOperationId { get; set; }
     public TL.Channel? Channel { get; set; }
     public TgEfAppDto? AppDto { get; set; }
     public WTelegram.Types.ChatFullInfo? BotChatFullInfo { get; set; }

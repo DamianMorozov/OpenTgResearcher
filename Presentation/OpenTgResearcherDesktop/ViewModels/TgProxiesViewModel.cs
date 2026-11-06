@@ -82,6 +82,7 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
         {
             IsCheckingProxies = true;
             await LoadStateService.PrepareDownloadTokenAsync(networkUid);
+            LoadStateService.NetworkActivity.SetKind(networkUid, TgNetworkOperationKind.Proxies);
             Exception.Default();
             var proxies = Dtos.ToArray();
             foreach (var proxy in proxies)
@@ -98,9 +99,14 @@ public sealed partial class TgProxiesViewModel : TgProxyPageViewModelBase
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
+            LoadStateService.NetworkActivity.Finish(networkUid, TgNetworkOperationState.Canceled);
             if (current is not null) current.AvailabilityStatus = TgResourceExtensions.GetProxyAvailabilityStatus("NotChecked");
         }
-        catch (Exception ex) { LogError(ex); Exception.Set(ex); }
+        catch (Exception ex)
+        {
+            LoadStateService.NetworkActivity.Finish(networkUid, TgNetworkOperationState.Failed);
+            LogError(ex); Exception.Set(ex);
+        }
         finally
         {
             LoadStateService.StopSoftDownloadProcessing(networkUid);

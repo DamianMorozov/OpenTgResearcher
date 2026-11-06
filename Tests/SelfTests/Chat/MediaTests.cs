@@ -40,11 +40,122 @@ internal static class MediaTests
         ("CompleteFileAdoptsLegacyThumbnail", CompleteFileAdoptsLegacyThumbnailAsync),
         ("PartialFileRewriteSetting", PartialFileRewriteSettingAsync),
         ("DisconnectedParseReleasesState", DisconnectedParseReleasesStateAsync),
+        ("NetworkFileProgress", NetworkFileProgressAsync),
+        ("NetworkFileStop", NetworkFileStopAsync), ("ParsingStopUsesOwnToken", ParsingStopUsesOwnTokenAsync),
+        ("NetworkProgressCallbackFailure", NetworkProgressCallbackFailureAsync),
+        ("NetworkAsyncProgressFailure", NetworkAsyncProgressFailureAsync), ("PausedMediaWaitsForResume", PausedMediaWaitsForResumeAsync),
         ("CancelledChunkKeepsPendingTasks", CancelledChunkKeepsPendingTasksAsync),
         ("CancelledParseKeepsPosition", CancelledParseKeepsPositionAsync),
         ("RepeatedPassDownloadsOnlyMissing", RepeatedPassDownloadsOnlyMissingAsync),
         ("FloodWaitHonorsStop", FloodWaitHonorsStopAsync),
     ];
+
+    // Настоящий обработчик прогресса сохраняет байты и продолжает обновлять прежнюю страницу скачивания
+    private static Task NetworkFileProgressAsync()
+    {
+        using var files = new MediaFixture(); var uid = Guid.NewGuid(); long forwarded = 0;
+        files.State.NetworkActivity.Start(uid, TgBusinessLogic.Models.TgNetworkOperationKind.Download);
+        var factory = typeof(TgConnectClientBase).GetMethod("NetworkProgressForFile", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Нет сетевого обработчика прогресса файла");
+        WTelegram.Client.ProgressCallback existing = (received, total) => forwarded = received;
+        var progress = (WTelegram.Client.ProgressCallback)factory.Invoke(files.Connection, [uid, "clip.mp4", existing, CancellationToken.None])!;
+        progress(25, 100);
+        var operation = files.State.NetworkActivity.Operations.Single();
+        Assert(operation.Detail == "clip.mp4" && operation.Progress == 25 && operation.TransferredBytes == 25 && forwarded == 25,
+            "Настоящий обработчик потерял сетевые сведения или прежний прогресс");
+        return Task.CompletedTask;
+    }
+
+    // Ошибка отображения не должна прерывать передачу файла
+    private static Task NetworkProgressCallbackFailureAsync()
+    {
+        using var files = new MediaFixture(); var uid = Guid.NewGuid();
+        files.State.NetworkActivity.Start(uid, TgBusinessLogic.Models.TgNetworkOperationKind.Download);
+        WTelegram.Client.ProgressCallback failed = (_, _) => throw new InvalidOperationException("Тестовая ошибка отображения прогресса");
+        var factory = typeof(TgConnectClientBase).GetMethod("NetworkProgressForFile", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var progress = (WTelegram.Client.ProgressCallback)factory.Invoke(files.Connection, [uid, "clip.mp4", failed, CancellationToken.None])!;
+        progress(25, 100);
+        Assert(files.State.NetworkActivity.Operations.Single().Progress == 25, "Ошибка отображения потеряла фактический прогресс");
+        return Task.CompletedTask;
+    }
+
+    // Асинхронный обработчик страницы также обязан перехватить и записать свою ошибку
+    private static async Task NetworkAsyncProgressFailureAsync()
+    {
+        using var files = new MediaFixture();
+        var marker = "Тестовая асинхронная ошибка прогресса " + Guid.NewGuid().ToString("N"); var calls = 0;
+        files.Connection.SetupUpdateStateFile(async (_, _, _, _, _, _, _, _) =>
+        {
+            calls++; await Task.Yield(); throw new InvalidOperationException(marker);
+        });
+        var factory = typeof(TgConnectClientBase).GetMethod("ClientProgressForFile", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var progress = (WTelegram.Client.ProgressCallback)factory.Invoke(files.Connection, [new TgMessageSettings(), "clip.mp4"])!;
+        progress(25, 100);
+        var logPath = Path.Combine(AppContext.BaseDirectory, "Chat.SelfTest.log");
+        for (var attempt = 0; attempt < 30; attempt++)
+        {
+            if (ReadProgressLog(logPath).Contains(marker)) break;
+            await Task.Delay(25);
+        }
+        Assert(calls == 1 && ReadProgressLog(logPath).Contains(marker), "Асинхронная ошибка не записана в журнал");
+    }
+
+    // Согласуем чтение журнала с настоящим логгером, который пишет из фонового обработчика
+    private static string ReadProgressLog(string path)
+    {
+        var gate = typeof(TgLogUtils).GetField("_logLock", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null)!;
+        lock (gate) return File.Exists(path) ? File.ReadAllText(path) : string.Empty;
+    }
+
+    // Настоящий обработчик не создаёт файл на паузе, а после продолжения сохраняет его байты
+    private static async Task PausedMediaWaitsForResumeAsync()
+    {
+        using var files = new MediaFixture(); var uid = Guid.NewGuid(); using var cancel = new CancellationTokenSource();
+        files.State.NetworkActivity.Start(uid, TgBusinessLogic.Models.TgNetworkOperationKind.Parsing);
+        files.State.NetworkActivity.RegisterCancellation(uid, cancel.Cancel);
+        files.State.NetworkActivity.ToggleParsingPause();
+        var helper = new TgParseHelper { NetworkOperationId = uid };
+        var photo = new TL.MessageMediaPhoto { photo = new TL.Photo { id = 1, sizes = [new TL.PhotoSize { type = "m", size = 4 }] } };
+        var pending = files.CallAsync("DownloadMediaFileFromMessageAsync", files.Settings, helper, new TL.Message(), photo,
+            new TgMessageSettings(), files.Media, cancel.Token);
+        Assert(!pending.IsCompleted && !File.Exists(files.Media.LocalPathWithNumber) && files.Connection.Downloads == 0,
+            "Пауза не остановила запуск файла");
+        files.State.NetworkActivity.ToggleParsingPause(); await pending;
+        Assert(files.Connection.Downloads == 1 && File.ReadAllBytes(files.Media.LocalPathWithNumber).Length == 4, "Продолжение не скачало файл");
+    }
+
+    // Запрос отмены парсинга должен прерывать передачу на следующем обратном вызове WTelegram
+    private static Task NetworkFileStopAsync()
+    {
+        using var files = new MediaFixture(); using var stop = new CancellationTokenSource(); var uid = Guid.NewGuid();
+        files.State.NetworkActivity.Start(uid, TgBusinessLogic.Models.TgNetworkOperationKind.Download);
+        var factory = typeof(TgConnectClientBase).GetMethod("NetworkProgressForFile", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var parameters = factory.GetParameters().Length == 4 ? new object?[] { uid, "clip.mp4", null, stop.Token } : [uid, "clip.mp4", null];
+        var progress = (WTelegram.Client.ProgressCallback)factory.Invoke(files.Connection, parameters)!;
+        stop.Cancel();
+        try { progress(25, 100); throw new InvalidOperationException("Передача файла проигнорировала отмену парсинга"); }
+        catch (OperationCanceledException) { }
+        return Task.CompletedTask;
+    }
+
+    // Настоящий ParseChatAsync регистрирует собственную отмену и дожидается завершающих действий
+    private static async Task ParsingStopUsesOwnTokenAsync()
+    {
+        using var files = new MediaFixture(); files.Connection.Client = null;
+        var entered = new TaskCompletionSource(); var release = new TaskCompletionSource();
+        files.Connection.SetupUpdateTasksViewModel(_ => { entered.TrySetResult(); return release.Task; });
+        var parsing = files.Connection.ParseChatAsync(files.Settings);
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            files.State.NetworkActivity.CancelParsing();
+            Assert(!files.State.DownloadToken.IsCancellationRequested, "Отмена парсинга изменила общий токен загрузок");
+            Assert(files.State.NetworkActivity.Operations.Single().IsCancellationRequested, "Настоящий парсинг не получил запрос остановки");
+        }
+        finally { release.TrySetResult(); await parsing; }
+        Assert(!files.State.IsDownloadProcessing && files.State.NetworkActivity.Operations.Single().State == TgBusinessLogic.Models.TgNetworkOperationState.Canceled,
+            "Остановленный парсинг не освободил состояние или потерял отмену");
+    }
 
     // Отказ до обращения к Telegram не должен оставлять интерфейс в состоянии загрузки
     private static async Task DisconnectedParseReleasesStateAsync()
@@ -56,6 +167,8 @@ internal static class MediaTests
         var field = typeof(TgConnectClientBase).GetField("_downloadSettings", BindingFlags.Instance | BindingFlags.NonPublic)!;
         Assert(field.GetValue(files.Connection) is null, "После раннего выхода остались настройки завершённого парсинга");
         Assert(files.NetworkCalls == 0, "Отключённый клиент попытался обратиться к Telegram");
+        var parsing = files.State.NetworkActivity.Operations.Single(x => x.Kind == TgBusinessLogic.Models.TgNetworkOperationKind.Parsing);
+        Assert(parsing.State == TgBusinessLogic.Models.TgNetworkOperationState.Failed, "Отказ парсинга без подключения отображается как завершение");
     }
 
     // При отмене очередь должна остаться доступной завершающему ожиданию задач

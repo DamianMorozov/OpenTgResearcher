@@ -166,7 +166,7 @@ try {
  Save-Snapshot 'history-narrow'
  Invoke-Element (Find-Element '^(Обзор ресурсов|Resource overview)$' '' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
  Save-Snapshot 'overview-narrow'
- foreach($id in @('HardwarePause','OverviewTab','HistoryTab','ToggleSwitchShowSensitiveData','ToolbarLanguage','ToolbarTheme','ToolbarUpdate')){
+ foreach($id in @('HardwarePause','OverviewTab','HistoryTab','ToggleSwitchShowSensitiveData','ToolbarLanguage','ToolbarTheme','ToolbarUpdate','ToolbarRefresh')){
   $element=Find-Element '.*' $id;$rect=$element.Current.BoundingRectangle;$windowRect=(Get-Window).Current.BoundingRectangle
   if($rect.Left -lt $windowRect.Left -or $rect.Right -gt $windowRect.Right){throw "Элемент обрезан при ширине 800: $id"}
  }

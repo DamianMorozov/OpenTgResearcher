@@ -1916,4 +1916,115 @@ API credentials, phone number, and the selected proxy will be removed from the p
     <value>Hide sensitive data</value>
   </data>
   <data name="HardwareLastReading.Text" xml:space="preserve"><value>Updated:</value></data>
+  <data name="NetworkActiveCount" xml:space="preserve">
+    <value>Active operations: {0}</value>
+  </data>
+  <data name="NetworkActiveTitle.Text" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="NetworkClear.Content" xml:space="preserve">
+    <value>Clear history</value>
+  </data>
+  <data name="NetworkConnected" xml:space="preserve">
+    <value>Telegram connected</value>
+  </data>
+  <data name="NetworkDisconnected" xml:space="preserve">
+    <value>Telegram disconnected</value>
+  </data>
+  <data name="NetworkEmpty.Text" xml:space="preserve">
+    <value>No active operations. Connect to Telegram, parse a chat or start a download to see activity here automatically.</value>
+  </data>
+  <data name="NetworkHistoryCount" xml:space="preserve">
+    <value>In history: {0} of 100</value>
+  </data>
+  <data name="NetworkHistoryEmpty.Text" xml:space="preserve">
+    <value>No completed operations in this session yet.</value>
+  </data>
+  <data name="NetworkHistoryNote.Text" xml:space="preserve">
+    <value>The last 100 finished operations are kept in memory only. Clearing history does not interrupt downloads. Completed means the action has ended, not that Telegram authorization is complete.</value>
+  </data>
+  <data name="NetworkHistoryTitle.Text" xml:space="preserve">
+    <value>Recent operations</value>
+  </data>
+  <data name="NetworkKindConnection" xml:space="preserve">
+    <value>Connecting to Telegram</value>
+  </data>
+  <data name="NetworkKindDisconnection" xml:space="preserve">
+    <value>Disconnecting Telegram</value>
+  </data>
+  <data name="NetworkKindDownload" xml:space="preserve">
+    <value>File download</value>
+  </data>
+  <data name="NetworkKindParsing" xml:space="preserve">
+    <value>Chat parsing</value>
+  </data>
+  <data name="NetworkKindProxies" xml:space="preserve">
+    <value>Proxy check</value>
+  </data>
+  <data name="NetworkKindRequest" xml:space="preserve">
+    <value>Network request</value>
+  </data>
+  <data name="NetworkKindUpdates" xml:space="preserve">
+    <value>Checking and downloading updates</value>
+  </data>
+  <data name="NetworkScope.Text" xml:space="preserve">
+    <value>Telegram connection, chat parsing and file downloads in this session.</value>
+  </data>
+  <data name="NetworkStateCanceled" xml:space="preserve">
+    <value>Canceled</value>
+  </data>
+  <data name="NetworkStateCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="NetworkStateFailed" xml:space="preserve">
+    <value>Failed — see the application log</value>
+  </data>
+  <data name="NetworkStateRunning" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="NetworkTitle.Text" xml:space="preserve">
+    <value>OpenTgResearcher operations</value>
+  </data>
+  <data name="Shell_Network.Content" xml:space="preserve">
+    <value>Network activity</value>
+  </data>
+  <data name="ToolbarProgramShort.Text" xml:space="preserve">
+    <value>App updates</value>
+  </data>
+  <data name="ToolbarRefresh" xml:space="preserve">
+    <value>Refresh current page</value>
+  </data>
+  <data name="ToolbarRefreshShort.Text" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="ToolbarUpdateApplication" xml:space="preserve">
+    <value>Check for application updates</value>
+  </data>
+  <data name="NetworkStopParsing.Content" xml:space="preserve">
+    <value>Stop parsing</value>
+  </data>
+  <data name="NetworkStateStopping" xml:space="preserve">
+    <value>Stopping…</value>
+  </data>
+  <data name="NetworkDownloadProgress" xml:space="preserve">
+    <value>Downloaded: {0:0.00} % · {1} / {2}</value>
+  </data>
+  <data name="NetworkParsingProgress" xml:space="preserve">
+    <value>Message processing: {0:0.00} %</value>
+  </data>
+  <data name="NetworkPause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="NetworkResume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="NetworkStatePaused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="NetworkStopQuestion" xml:space="preserve">
+    <value>Stop chat parsing?</value>
+  </data>
+  <data name="NetworkPauseParsing.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pause new requests and files. Transfers already in progress may finish.</value>
+  </data>
 </root>

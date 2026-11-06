@@ -3,6 +3,8 @@
 /// <summary> Load state service to track loading states in the application </summary>
 public sealed partial class LoadStateService : ObservableObject, ILoadStateService, IDisposable
 {
+    /// <summary> Общая история доступна независимо от открытой страницы </summary>
+    public TgNetworkActivityService NetworkActivity { get; } = new();
     #region Fields, properties, constructor
 
     /// <inheritdoc />
@@ -265,6 +267,7 @@ public sealed partial class LoadStateService : ObservableObject, ILoadStateServi
     {
         try
         {
+            NetworkActivity.Start(uid, TgNetworkOperationKind.Download);
             IsDownloadProcessing = true;
             using (_locker.EnterScope())
             {
@@ -473,6 +476,7 @@ public sealed partial class LoadStateService : ObservableObject, ILoadStateServi
         {
             using (_locker.EnterScope())
             {
+                foreach (var uid in _downloadUids) NetworkActivity.Finish(uid, TgNetworkOperationState.Canceled);
                 _downloadUids.Clear();
                 IsDownloadProcessing = false;
             }
@@ -564,6 +568,7 @@ public sealed partial class LoadStateService : ObservableObject, ILoadStateServi
     {
         using (_locker.EnterScope())
         {
+            NetworkActivity.Finish(uid, DownloadToken.IsCancellationRequested ? TgNetworkOperationState.Canceled : TgNetworkOperationState.Completed);
             _downloadUids.Remove(uid);
             if (_downloadUids.Count == 0)
             {

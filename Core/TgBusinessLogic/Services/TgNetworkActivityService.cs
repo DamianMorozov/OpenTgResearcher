@@ -49,12 +49,13 @@ public sealed class TgNetworkActivityService
         }
     }
 
-    /// <summary> Запрашивает отмену только активного парсинга, сохраняя другие сетевые операции </summary>
-    public void CancelParsing()
+    /// <summary> Отменяет активный парсинг указанного чата или всех чатов, сохраняя остальные сетевые операции </summary>
+    public void CancelParsing(long? chatId = null)
     {
         using (_gate.EnterScope())
         {
-            var active = _operations.Values.Where(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running && x.CanCancel).ToArray();
+            var active = _operations.Values.Where(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running
+                && x.CanCancel && (!chatId.HasValue || x.ChatId == chatId)).ToArray();
             foreach (var item in active)
             {
                 if (!_cancellations.TryGetValue(item.Id, out var cancel)) continue;
@@ -65,12 +66,13 @@ public sealed class TgNetworkActivityService
         }
     }
 
-    /// <summary> Приостанавливает новые действия парсинга или разрешает продолжение без отмены токена </summary>
-    public void ToggleParsingPause()
+    /// <summary> Переключает паузу парсинга указанного чата или всех чатов без отмены токена </summary>
+    public void ToggleParsingPause(long? chatId = null)
     {
         using (_gate.EnterScope())
         {
-            var active = _operations.Values.Where(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running && x.CanCancel).ToArray();
+            var active = _operations.Values.Where(x => x.Kind == TgNetworkOperationKind.Parsing && x.State == TgNetworkOperationState.Running
+                && x.CanCancel && (!chatId.HasValue || x.ChatId == chatId)).ToArray();
             var pause = !active.Any(x => x.IsPaused);
             foreach (var item in active)
             {

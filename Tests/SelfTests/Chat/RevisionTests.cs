@@ -54,8 +54,7 @@ internal static partial class Program
     private static Task DownloadPercentMatchesLabelAsync()
     {
         var page = ReadMarkup("TgChatDownloadPage.xaml");
-        var field = page.Descendants().Single(x => x.Name.LocalName == "TextBox" && (string?)x.Attribute("Grid.Row") == "6"
-            && (string?)x.Attribute("Grid.Column") == "1");
+        var field = page.Descendants().Single(x => (string?)x.Attribute("AutomationProperties.AutomationId") == "ChatDownloadPercent");
         Assert(((string?)field.Attribute("Text"))?.Contains("ChatProgressMessage") == true,
             "Под подписью процента показывается счётчик сообщений");
         Assert((string?)field.Attribute("IsReadOnly") == "True" && (string?)field.Attribute("IsEnabled") != "False",

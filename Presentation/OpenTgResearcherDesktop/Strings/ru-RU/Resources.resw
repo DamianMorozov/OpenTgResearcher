@@ -2109,4 +2109,76 @@ API-параметры, телефон и выбранный прокси буд
   <data name="NetworkChatGroupSummary" xml:space="preserve">
     <value>Выполняется: {0} · Завершено: {1}</value>
   </data>
+  <data name="ChatDashboardTitle.Text" xml:space="preserve">
+    <value>Пульт чата</value>
+  </data>
+  <data name="ChatOverviewTab.Text" xml:space="preserve">
+    <value>Обзор</value>
+  </data>
+  <data name="ChatAllContentTab.Text" xml:space="preserve">
+    <value>Все сообщения</value>
+  </data>
+  <data name="ChatMyProfileTab.Text" xml:space="preserve">
+    <value>Мой профиль в чате</value>
+  </data>
+  <data name="ChatParsingTitle.Text" xml:space="preserve">
+    <value>Парсинг и загрузка</value>
+  </data>
+  <data name="ChatDownloadSettings.Text" xml:space="preserve">
+    <value>Параметры загрузки</value>
+  </data>
+  <data name="ChatAdvancedTitle.Text" xml:space="preserve">
+    <value>Дополнительные параметры</value>
+  </data>
+  <data name="ChatCollectTitle.Text" xml:space="preserve">
+    <value>Что собирать</value>
+  </data>
+  <data name="ChatMessagesHint.Text" xml:space="preserve">
+    <value>Текст и сведения о сообщениях</value>
+  </data>
+  <data name="ChatFilesHint.Text" xml:space="preserve">
+    <value>Медиа и документы в каталог чата</value>
+  </data>
+  <data name="ChatCommentsHint.Text" xml:space="preserve">
+    <value>Ветки обсуждений</value>
+  </data>
+  <data name="ChatJoinIdLabel.Text" xml:space="preserve">
+    <value>ID в имени файла</value>
+  </data>
+  <data name="ChatJoinIdHint.Text" xml:space="preserve">
+    <value>Сопоставление файла с сообщением</value>
+  </data>
+  <data name="ChatThumbnailsHint.Text" xml:space="preserve">
+    <value>Обложки фото и видео</value>
+  </data>
+  <data name="ChatFoldersHint.Text" xml:space="preserve">
+    <value>Отдельный каталог для каждого топика</value>
+  </data>
+  <data name="ChatAutoUpdateHint.Text" xml:space="preserve">
+    <value>Продолжать сбор новых сообщений</value>
+  </data>
+  <data name="ChatSaveBeforeStart.Text" xml:space="preserve">
+    <value>Настройки сохраняются перед запуском парсинга</value>
+  </data>
+  <data name="ChatStart.Text" xml:space="preserve">
+    <value>Запустить парсинг</value>
+  </data>
+  <data name="ChatStop.Text" xml:space="preserve">
+    <value>Прервать</value>
+  </data>
+  <data name="ChatCurrentFile.Text" xml:space="preserve">
+    <value>Скачивается сейчас</value>
+  </data>
+  <data name="ChatDetailsTitle.Text" xml:space="preserve">
+    <value>Информация о чате и обсуждении</value>
+  </data>
+  <data name="ChatOnlineHint.Text" xml:space="preserve">
+    <value>Подключитесь к Telegram, чтобы получить расширенные сведения о чате</value>
+  </data>
+  <data name="ChatReady" xml:space="preserve">
+    <value>Готов к запуску</value>
+  </data>
+  <data name="ChatDetailsFailed" xml:space="preserve">
+    <value>Не удалось обновить сведения о чате. Проверьте подключение и повторите запрос. Причина: {0}</value>
+  </data>
 </root>

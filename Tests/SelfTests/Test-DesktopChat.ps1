@@ -9,6 +9,8 @@ param(
     [switch]$CheckMediaPreview,
     [int]$WindowWidth = 0,
     [int]$WindowHeight = 1000,
+    [ValidateSet('Default', 'Light', 'Dark')]
+    [string]$Theme = 'Default',
     [ValidateSet('Russian', 'English')]
     [string]$Language = 'Russian'
 )
@@ -49,11 +51,32 @@ function Wait-AppElement([string]$namePattern, [string]$className = '', [string]
         $appProcess.Refresh()
         if ($appProcess.MainWindowHandle -ne [IntPtr]::Zero) {
             $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
-            $elements = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition)
+            try {
+                $elements = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition)
+            }
+            catch {
+                # Дерево перестраивается при навигации; повторяем только временную ошибку UI Automation живого процесса
+                $failure = $_.Exception.GetBaseException()
+                if ($appProcess.HasExited -or ($failure -isnot [Runtime.InteropServices.COMException] -and
+                    $failure -isnot [System.Windows.Automation.ElementNotAvailableException])) { throw }
+                Start-Sleep -Milliseconds 100
+                continue
+            }
             foreach ($element in $elements) {
                 if ($element.Current.Name -match $namePattern -and ($className -eq '' -or $element.Current.ClassName -eq $className) -and
                     ($automationId -eq '' -or $element.Current.AutomationId -eq $automationId) -and
                     $element.Current.IsEnabled -and -not $element.Current.IsOffscreen) { return $element }
+            }
+        }
+        # Прокручиваем обзор к запрошенному действию в одноколоночном представлении
+        if ($automationId -like 'Chat*' -and $null -ne $window) {
+            $viewer = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatOverviewScroll'))
+            $scroll = $null
+            if ($null -ne $viewer -and $viewer.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern, [ref]$scroll) -and
+                $scroll.Current.VerticallyScrollable) {
+                if ($scroll.Current.VerticalScrollPercent -ge 99) { $scroll.SetScrollPercent(-1, 0) }
+                else { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount, [System.Windows.Automation.ScrollAmount]::LargeIncrement) }
             }
         }
         Start-Sleep -Milliseconds 100
@@ -110,7 +133,7 @@ try {
         AppStorage = Join-Path $caseDirectory 'TgStorage.db'
         AppSession = Join-Path $caseDirectory 'OpenTgResearcher.session'
         AppLanguage = $Language
-        AppTheme = 'Default'
+        AppTheme = $Theme
     }
     if ($WindowWidth -gt 0) {
         $settings.WindowWidth = "$WindowWidth"; $settings.WindowHeight = "$WindowHeight"
@@ -175,15 +198,15 @@ try {
     if (-not $selected) { throw 'В таблице не найден тестовый чат' }
     Invoke-AppElement (Wait-AppElement '^(Открыть/редактировать|Open/edit)$')
     Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
-    [void](Wait-AppElement '^(Настройки|Settings)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+    [void](Wait-AppElement '^(Обзор|Overview)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
     $chatsMenu = Wait-AppElement '^(Чаты|Chats)$' 'Microsoft.UI.Xaml.Controls.NavigationViewItem'
     if (-not $chatsMenu.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Current.IsSelected) {
         throw 'Обычный чат ошибочно открыт в разделе сохранённых сообщений'
     }
     $captions = if ($Language -eq 'Russian') {
-        @('Настройки', 'Скачать', 'Инфо', 'Мои сообщения', 'Участники', 'Статистика', 'Содержимое', 'Настройки')
-    } else { @('Settings', 'Download', 'Info', 'My messages', 'Participants', 'Statistics', 'Content', 'Settings') }
-    $models = @('Settings', 'Download', 'Info', 'MyMessages', 'Participants', 'Statistics', 'Content', 'Settings')
+        @('Обзор', 'Содержимое', 'Мой профиль в чате', 'Все сообщения', 'Участники', 'Статистика', 'Обзор')
+    } else { @('Overview', 'Content', 'My chat profile', 'All messages', 'Participants', 'Statistics', 'Overview') }
+    $models = @('Download', 'Content', 'MyMessages', 'Content', 'Participants', 'Statistics', 'Download')
     for ($index = 0; $index -lt $captions.Count; $index++) {
         $loadedPattern = 'TgChat' + $models[$index] + 'ViewModel.*Page loaded'
         $previousCount = [regex]::Matches((Get-NewAppLog), $loadedPattern).Count
@@ -210,6 +233,7 @@ try {
             Save-AppSnapshot 'Settings'
         }
         if ($models[$index] -eq 'Download') {
+            Save-AppSnapshot ('Overview-' + $index)
             $toggleIds = @('ChatParseMessages', 'ChatDownloadFiles', 'ChatParseComments', 'ChatJoinMessageId',
                 'ChatDownloadThumbnail', 'ChatCreateSubdirectories', 'ChatAutoUpdate')
             foreach ($toggleId in $toggleIds) {
@@ -237,7 +261,7 @@ try {
             foreach ($attempt in 1..2) {
                 $toggle.Toggle()
                 $enabled = $toggle.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On
-                Invoke-AppElement (Wait-AppElement '^(Сохранить настройки чата|Save chat settings)$')
+                Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSaveSettings')
                 Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
                 $deadline = [DateTime]::UtcNow.AddSeconds(10)
                 do {
@@ -250,6 +274,47 @@ try {
             if ($toggle.Current.ToggleState -ne $originalState) { throw 'Переключатель не вернулся в исходное состояние' }
             Write-Output 'PASS: поле процента доступно только для чтения; оба состояния автообновления сохранены настоящим интерфейсом'
             Save-AppSnapshot 'Download'
+            $details = Wait-AppElement '.*' '' 'ChatDetails'
+            $expand = $details.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            if ($expand.Current.ExpandCollapseState -eq [System.Windows.Automation.ExpandCollapseState]::Collapsed) { $expand.Expand() }
+            Start-Sleep -Milliseconds 700
+            $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+            $viewer = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatOverviewScroll'))
+            $scroll = $viewer.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+            if ($scroll.Current.VerticallyScrollable) { $scroll.SetScrollPercent(-1, 50) }
+            Start-Sleep -Milliseconds 150
+            $edits = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                    [System.Windows.Automation.ControlType]::Edit))
+            $titleEdit = $null
+            $values = foreach ($edit in $edits) {
+                $value = $null
+                if ($edit.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern, [ref]$value)) {
+                    if ($value.Current.Value -eq $expectedTitle) { $titleEdit = $edit }
+                    $value.Current.Value
+                }
+            }
+            if ($expectedTitle -notin $values) { throw "Обзор не отобразил сведения выбранного чата: $expectedTitle" }
+            # Фокус удерживает сведения в кадре при активации окна вместо возврата к прежнему полю процента
+            $titleEdit.SetFocus()
+            Start-Sleep -Milliseconds 200
+            if ($titleEdit.Current.IsOffscreen) { throw 'Поле названия чата недоступно в раскрытой секции' }
+            Save-AppSnapshot 'Details'
+            $expand.Collapse()
+            Write-Output 'PASS: сведения выбранного чата доступны внутри обзора без Telegram'
+            $advanced = Wait-AppElement '.*' '' 'ChatAdvanced'
+            $expand = $advanced.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            $expand.Expand()
+            foreach ($optionId in @('ChatRewriteMessages', 'ChatRewriteFiles', 'ChatFileNameByMessage')) {
+                [void](Wait-AppElement '.*' '' $optionId)
+            }
+            Save-AppSnapshot 'Advanced'
+            $expand.Collapse()
+            $viewer = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatOverviewScroll'))
+            $scroll = $viewer.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+            if ($scroll.Current.VerticallyScrollable) { $scroll.SetScrollPercent(-1, 0) }
         }
         if ($models[$index] -eq 'Participants') {
             $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
@@ -322,7 +387,7 @@ try {
             Write-Output 'PASS: скрытие содержимого и подсказка пустого списка после очистки'
         }
     }
-    Invoke-AppElement (Wait-AppElement '^(Скачать|Download)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
+    Invoke-AppElement (Wait-AppElement '^(Обзор|Overview)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
     Invoke-AppElement (Wait-AppElement '^(Сетевая активность|Network activity)$' '' 'ChatOpenNetworkActivity')
     [void](Wait-AppElement '^(Операции OpenTgResearcher|OpenTgResearcher operations)$')
     Save-AppSnapshot 'NetworkActivity'
@@ -334,7 +399,7 @@ try {
     if ($log -match 'Content does not support UIElement|App_UnhandledException|Unhandled exception in|Object reference not set') { throw 'В журнале найдено необработанное исключение' }
     if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000)) { throw 'Desktop не завершил закрытие окна' }
     if ($appProcess.ExitCode -ne 0) { throw "Desktop закрылся с ошибкой: код $($appProcess.ExitCode)" }
-    Write-Output "PASS: страница чата ($Language), все 7 вкладок, без исключений, закрытие с кодом 0; $caseDirectory"
+    Write-Output "PASS: пульт чата ($Language, $Theme), четыре вкладки, локальная навигация содержимого, секции настроек, без исключений; $caseDirectory"
 }
 finally {
     if (Test-Path -LiteralPath $caseDirectory) {

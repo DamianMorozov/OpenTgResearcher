@@ -2,6 +2,7 @@
 
 public sealed partial class TgChatPage
 {
+    private bool _isSelectingContent;
     #region Fields, properties, constructor
 
     public override TgChatViewModel ViewModel { get; }
@@ -44,6 +45,7 @@ public sealed partial class TgChatPage
     {
         var selectedItem = sender.SelectedItem;
         if (selectedItem is null) return;
+        ViewModel.IsContentTab = Equals(selectedItem.Tag, nameof(TgChatContentPage));
         switch (selectedItem.Tag)
         {
             case nameof(TgChatSettingsPage):
@@ -65,9 +67,20 @@ public sealed partial class TgChatPage
                 ChatDetailsFrame.Navigate(typeof(TgChatStatisticsPage), ViewModel.Uid);
                 break;
             case nameof(TgChatContentPage):
+                _isSelectingContent = true;
+                ContentViewSelector.SelectedItem = ContentViewSelector.Items[0];
+                _isSelectingContent = false;
                 ChatDetailsFrame.Navigate(typeof(TgChatContentPage), ViewModel.Uid);
                 break;
         }
+    }
+
+    // Сохраняем прежнюю страницу текущего пользователя внутри раздела содержимого
+    private void ContentViewSelector_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs? args)
+    {
+        if (_isSelectingContent || !ViewModel.IsContentTab || sender.SelectedItem is not { } item) return;
+        var type = Equals(item.Tag, nameof(TgChatMyMessagesPage)) ? typeof(TgChatMyMessagesPage) : typeof(TgChatContentPage);
+        ChatDetailsFrame.Navigate(type, ViewModel.Uid);
     }
 
     #endregion

@@ -12,6 +12,8 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     public partial TgEfSourceDto DiscussionDto { get; set; } = new();
     [ObservableProperty]
     public partial Frame ChatDetailsFrame { get; set; } = default!;
+    [ObservableProperty]
+    public partial bool IsContentTab { get; set; }
 
     public IAsyncRelayCommand LoadDataStorageCommand { get; }
     public IAsyncRelayCommand StartUpdateOnlineCommand { get; }

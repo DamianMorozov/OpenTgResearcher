@@ -2,6 +2,11 @@ namespace OpenTgResearcherDesktop.ChatSelfTests;
 
 public sealed class ILoadStateService
 {
+    public TgNetworkActivityService NetworkActivity { get; set; } = new();
+    public bool IsOnlineReady { get; set; }
+    public bool IsOnlineProcessing { get; set; }
+    public bool IsDisplaySensitiveData { get; set; } = true;
+    public string SensitiveData => "**********";
     public CancellationToken OnlineToken => default;
     public CancellationToken MemoryToken => default;
     public CancellationToken StorageToken => default;
@@ -42,8 +47,14 @@ public sealed class DataGrid { public object? SelectedItem { get; set; } }
 public sealed class SelectorBarItem { public object? Tag { get; set; } }
 public sealed class SelectorBar
 {
-    public List<SelectorBarItem> Items { get; } = [new() { Tag = nameof(TgChatSettingsPage) }];
-    public SelectorBarItem SelectedItem { get; set; } = null!;
+    private SelectorBarItem _selectedItem = null!;
+    public Action? SelectionChanged { get; set; }
+    public List<SelectorBarItem> Items { get; } = [new() { Tag = nameof(TgChatDownloadPage) }];
+    public SelectorBarItem SelectedItem
+    {
+        get => _selectedItem;
+        set { if (ReferenceEquals(_selectedItem, value)) return; _selectedItem = value; SelectionChanged?.Invoke(); }
+    }
 }
 public sealed class SelectorBarSelectionChangedEventArgs;
 public sealed class Frame
@@ -70,6 +81,10 @@ public abstract class TgPageBase
 }
 public abstract class TgPageViewModelBase : ObservableObject, IDisposable
 {
+    public bool IsOnlineReady => LoadStateService.IsOnlineReady;
+    public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
+    public bool IsDisplaySensitiveData => LoadStateService.IsDisplaySensitiveData;
+    public string SensitiveData => LoadStateService.SensitiveData;
     protected ILoadStateService LoadStateService { get; }
     protected ITgSettingsService SettingsService { get; }
     public INavigationService NavigationService { get; }
@@ -89,7 +104,7 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
     /// <summary> Выполняет действие и сохраняет исключение для проверки </summary>
     public Task LoadStorageDataAsync(Action action) => LoadStorageDataAsync(() => { action(); return Task.CompletedTask; });
     // Выполняет действие с подменённым сетевым клиентом
-    protected Task LoadOnlineDataAsync(Func<Task> action) { OnlineLoads++; return LoadStorageDataAsync(action); }
+    protected Task LoadOnlineDataAsync(Func<Task> action) { OnlineLoads++; return action(); }
     // Заменяет подтверждение действия без настоящего диалога
     protected Task ContentDialogAsync(Func<Task> action, string title, TgEnumLoadDesktopType type) => LoadStorageDataAsync(action);
     // Заменяет подтверждение действия без настоящего диалога
@@ -156,12 +171,14 @@ public sealed class TestClient
     public List<TgParticipantDto> Participants { get; } = [];
     public Func<Task<bool>>? CheckConnection { get; set; }
     public Func<TgDownloadSettingsViewModel, Task>? Parse { get; set; }
+    public Func<Task<TgChatDetailsDto>>? ReadDetails { get; set; }
     /// <summary> Возвращает заданную готовность тестового клиента </summary>
     public Task<bool> CheckClientConnectionReadyAsync() => CheckConnection?.Invoke() ?? Task.FromResult(Ready);
     /// <summary> Заменяет сетевую загрузку без обращения к Telegram </summary>
     public Task ParseChatAsync(TgDownloadSettingsViewModel settings) => Parse?.Invoke(settings) ?? Task.CompletedTask;
     /// <summary> Возвращает тестовые сведения о чате </summary>
-    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid) => Task.FromResult(new TgChatDetailsDto { Title = "Online" });
+    public Task<TgChatDetailsDto> GetChatDetailsByClientAsync(Guid uid, CancellationToken ct = default) =>
+        ReadDetails?.Invoke() ?? Task.FromResult(new TgChatDetailsDto { Title = "Online" });
     /// <summary> Возвращает заданный список участников </summary>
     public Task<List<TgParticipantDto>> GetParticipantsAsync(long id) => Task.FromResult(Participants);
     /// <summary> Заменяет обновление пользователей в Telegram </summary>
@@ -175,6 +192,14 @@ public sealed class TestContext(DbContextOptions options) : TgEfContextBase(opti
 public sealed class TgUserDetailsViewModel;
 public static class TgResourceExtensions
 {
+    /// <summary> Возвращает формат локализованной строки для проверки живого снимка </summary>
+    public static string GetLocalizedResource(this string key) => key switch
+    {
+        "NetworkParsingMessageIds" => "Чтение ID {0} из {1}",
+        "NetworkParsingMessageId" => "Чтение ID {0}",
+        "ChatDetailsFailed" => "Не удалось обновить сведения о чате: {0}",
+        _ => key,
+    };
     /// <summary> Возвращает ключ заголовка участника для проверки модели </summary>
     public static string GetUserColumnHeader(string column) => column;
     /// <summary> Возвращает подпись тестового интерфейса </summary>

@@ -28,6 +28,14 @@ internal static partial class Program
             .SetValue(null, Path.Combine(AppContext.BaseDirectory, "Chat.SelfTest.log"));
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("DashboardTabs", DashboardTabsAsync),
+            ("DashboardStartAvailability", DashboardStartAvailabilityAsync),
+            ("DashboardDetailsAndDiscussion", DashboardDetailsAndDiscussionAsync),
+            ("DashboardDetailsFailure", DashboardDetailsFailureAsync),
+            ("DashboardContentNavigation", DashboardContentNavigationAsync),
+            ("DashboardControlsSelectedChat", DashboardControlsSelectedChatAsync),
+            ("DashboardOverview", DashboardOverviewAsync),
+            ("DashboardRestoresActivity", DashboardRestoresActivityAsync),
             ("ChatFormsInitialized", ChatFormsInitializedAsync),
             ("ChatResetOptions", ChatResetOptionsAsync),
             ("EmptyChatOptionsResetOnOpen", EmptyChatOptionsResetOnOpenAsync),
@@ -87,12 +95,17 @@ internal static partial class Program
             storage.LicenseRepository = licenses; storage.ChatUserRepository = chatUsers;
             Chat = new(_state, _settings, _navigation, null!);
             Download = new(_state, _settings, _navigation, null!);
+            _state.NetworkActivity = new();
+            _state.IsOnlineReady = false;
+            _state.IsOnlineProcessing = false;
+            _state.IsDisplaySensitiveData = true;
             _source = new() { Uid = Guid.NewGuid(), Id = 100, UserName = "chat_one", Title = "First", FirstId = 15, Directory = "data" };
             App.BusinessLogicManager.ConnectClient.Ready = false;
             App.BusinessLogicManager.ConnectClient.UserId = 10;
             App.BusinessLogicManager.ConnectClient.Participants.Clear();
             App.BusinessLogicManager.ConnectClient.CheckConnection = null;
             App.BusinessLogicManager.ConnectClient.Parse = null;
+            App.BusinessLogicManager.ConnectClient.ReadDetails = null;
             DelayedQueryInterceptor.Enabled = false;
             try
             {

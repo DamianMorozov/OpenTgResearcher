@@ -4,8 +4,9 @@ public sealed partial class TgChatPage : TgPageBase
 {
     public Frame ChatDetailsFrame { get; } = new();
     public SelectorBar ChatDetailsSelectorBar { get; } = new();
+    public SelectorBar ContentViewSelector { get; } = new();
     // Заменяем генерацию элементов XAML тестовыми элементами
-    private void InitializeComponent() { }
+    private void InitializeComponent() => ContentViewSelector.SelectionChanged = () => ContentViewSelector_SelectionChanged(ContentViewSelector, null);
     /// <summary> Вызывает исходный обработчик выбора вкладки </summary>
     public void Select(SelectorBarItem? item)
     {

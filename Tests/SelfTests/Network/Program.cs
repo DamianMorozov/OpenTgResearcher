@@ -54,11 +54,11 @@ internal static class Program
         tracker.RegisterCancellation(uid, cancel.Cancel);
         var toggle = tracker.GetType().GetMethod("ToggleParsingPause") ?? throw new InvalidOperationException("Нет паузы парсинга");
         var wait = tracker.GetType().GetMethod("WaitIfPausedAsync") ?? throw new InvalidOperationException("Нет ожидания продолжения парсинга");
-        toggle.Invoke(tracker, null);
+        toggle.Invoke(tracker, [null]);
         var blocked = (Task)wait.Invoke(tracker, [uid, cancel.Token])!;
         Assert(!blocked.IsCompleted, "Пауза не приостановила работу");
-        toggle.Invoke(tracker, null); await blocked.WaitAsync(TimeSpan.FromSeconds(2));
-        toggle.Invoke(tracker, null);
+        toggle.Invoke(tracker, [null]); await blocked.WaitAsync(TimeSpan.FromSeconds(2));
+        toggle.Invoke(tracker, [null]);
         var stopped = (Task)wait.Invoke(tracker, [uid, cancel.Token])!;
         tracker.CancelParsing();
         try { await stopped.WaitAsync(TimeSpan.FromSeconds(2)); throw new InvalidOperationException("Остановка паузы не отменила ожидание"); }
@@ -213,13 +213,13 @@ internal static class Program
         register.Invoke(tracker, [uid, (Action)parsing.Cancel]);
         var cancel = tracker.GetType().GetMethod("CancelParsing") ?? throw new InvalidOperationException("Нет команды отмены парсинга");
         var running = Task.Delay(Timeout.Infinite, parsing.Token);
-        cancel.Invoke(tracker, null);
+        cancel.Invoke(tracker, [null]);
         try { await running.WaitAsync(TimeSpan.FromSeconds(2)); throw new InvalidOperationException("Парсинг не остановлен"); }
         catch (OperationCanceledException) { }
         Assert(tracker.Operations.Single(x => x.Id == update).State == TgBusinessLogic.Models.TgNetworkOperationState.Running,
             "Прерывание парсинга остановило обновление программы");
         tracker.Finish(uid, TgBusinessLogic.Models.TgNetworkOperationState.Canceled);
-        cancel.Invoke(tracker, null);
+        cancel.Invoke(tracker, [null]);
         Assert(tracker.Operations.Single(x => x.Id == uid).State == TgBusinessLogic.Models.TgNetworkOperationState.Canceled, "Отмена потеряла состояние");
     }
 

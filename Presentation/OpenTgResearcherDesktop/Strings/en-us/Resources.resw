@@ -2045,4 +2045,76 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="NetworkChatGroupSummary" xml:space="preserve">
     <value>Running: {0} · Finished: {1}</value>
   </data>
+  <data name="ChatDashboardTitle.Text" xml:space="preserve">
+    <value>Chat dashboard</value>
+  </data>
+  <data name="ChatOverviewTab.Text" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="ChatAllContentTab.Text" xml:space="preserve">
+    <value>All messages</value>
+  </data>
+  <data name="ChatMyProfileTab.Text" xml:space="preserve">
+    <value>My chat profile</value>
+  </data>
+  <data name="ChatParsingTitle.Text" xml:space="preserve">
+    <value>Parsing and downloads</value>
+  </data>
+  <data name="ChatDownloadSettings.Text" xml:space="preserve">
+    <value>Download settings</value>
+  </data>
+  <data name="ChatAdvancedTitle.Text" xml:space="preserve">
+    <value>Advanced options</value>
+  </data>
+  <data name="ChatCollectTitle.Text" xml:space="preserve">
+    <value>What to collect</value>
+  </data>
+  <data name="ChatMessagesHint.Text" xml:space="preserve">
+    <value>Message text and metadata</value>
+  </data>
+  <data name="ChatFilesHint.Text" xml:space="preserve">
+    <value>Media and documents in the chat folder</value>
+  </data>
+  <data name="ChatCommentsHint.Text" xml:space="preserve">
+    <value>Discussion threads</value>
+  </data>
+  <data name="ChatJoinIdLabel.Text" xml:space="preserve">
+    <value>Message ID in filename</value>
+  </data>
+  <data name="ChatJoinIdHint.Text" xml:space="preserve">
+    <value>Match a file to its message</value>
+  </data>
+  <data name="ChatThumbnailsHint.Text" xml:space="preserve">
+    <value>Photo and video previews</value>
+  </data>
+  <data name="ChatFoldersHint.Text" xml:space="preserve">
+    <value>Separate folder for each topic</value>
+  </data>
+  <data name="ChatAutoUpdateHint.Text" xml:space="preserve">
+    <value>Keep collecting new messages</value>
+  </data>
+  <data name="ChatSaveBeforeStart.Text" xml:space="preserve">
+    <value>Settings are saved before parsing starts</value>
+  </data>
+  <data name="ChatStart.Text" xml:space="preserve">
+    <value>Start parsing</value>
+  </data>
+  <data name="ChatStop.Text" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="ChatCurrentFile.Text" xml:space="preserve">
+    <value>Downloading now</value>
+  </data>
+  <data name="ChatDetailsTitle.Text" xml:space="preserve">
+    <value>Chat and discussion details</value>
+  </data>
+  <data name="ChatOnlineHint.Text" xml:space="preserve">
+    <value>Connect to Telegram to load additional chat details</value>
+  </data>
+  <data name="ChatReady" xml:space="preserve">
+    <value>Ready to start</value>
+  </data>
+  <data name="ChatDetailsFailed" xml:space="preserve">
+    <value>Unable to update chat details. Check your connection and try again. Reason: {0}</value>
+  </data>
 </root>

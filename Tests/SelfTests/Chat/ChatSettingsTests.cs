@@ -124,9 +124,9 @@ internal static partial class Program
         Assert(button is not null && button.Descendants().Any(x => x.Attributes().Any(a => a.Value == "ActionOpenNetworkActivity")),
             "Нет локализованной кнопки сетевой активности");
         Assert((string?)button!.Attribute("IsEnabled") is null, "Переход к активности блокируется на время парсинга");
-        var chat = ReadMarkup("TgChatPage.xaml");
+        var chat = download;
         Assert(chat.Descendants().Any(x => x.Name.LocalName == "Button"
-            && ((string?)x.Attribute("Command"))?.Contains("ResetChatSettingsCommand") == true), "Сброс недоступен из общей панели чата");
+            && ((string?)x.Attribute("Command"))?.Contains("ResetChatSettingsCommand") == true), "Сброс недоступен из пульта чата");
         return Task.CompletedTask;
     }
 

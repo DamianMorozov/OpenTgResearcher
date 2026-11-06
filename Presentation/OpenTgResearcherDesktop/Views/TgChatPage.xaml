@@ -1,161 +1,59 @@
-﻿<common:TgPageBase
+<common:TgPageBase
     x:Class="OpenTgResearcherDesktop.Views.TgChatPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:l="using:WinUI3Localizer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:messages="using:TgStorage.Domain.Messages"
-    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
-    xmlns:users="using:TgStorage.Domain.Users"
-    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgChatViewModel}"
-    mc:Ignorable="d">
-
-    <Grid Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <!--  Запуск парсинга Telegram  -->
-                <Button
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    AutomationProperties.AutomationId="ChatStartParsing"
-                    Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xe777;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            TextWrapping="Wrap"
-                            l:Uids.Uid="TextBlockStartParseTelegram" />
-                    </Grid>
-                </Button>
-                <!--  Остановка парсинга Telegram  -->
-                <Button
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.StopUpdateOnlineCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineReady, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE71A;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            TextWrapping="Wrap"
-                            l:Uids.Uid="TextBlockStopParseTelegram" />
-                    </Grid>
-                </Button>
-                <!--  Очистка просмотра  -->
-                <Button
-                    Grid.Column="1"
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.ClearViewCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xe894;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            TextWrapping="Wrap"
-                            l:Uids.Uid="ActionClearView" />
-                    </Grid>
-                </Button>
-                <!--  Сброс основных опций общего черновика чата  -->
-                <Button
-                    Grid.Column="2"
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    AutomationProperties.AutomationId="ChatResetSettings"
-                    AutomationProperties.LabeledBy="{x:Bind ResetChatSettingsLabel}"
-                    Command="{x:Bind ViewModel.ResetChatSettingsCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE72C;" />
-                        <TextBlock x:Name="ResetChatSettingsLabel" Grid.Column="1" VerticalAlignment="Center"
-                            l:Uids.Uid="ActionResetChatSettings" TextWrapping="Wrap" />
-                    </Grid>
-                </Button>
-                <!--  Сохранение настроек  -->
-                <Button
-                    Grid.Column="3"
-                    Margin="0,0,5,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Command="{x:Bind ViewModel.SaveChatSettingsCommand}"
-                    IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE74E;" />
-                        <TextBlock
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            TextWrapping="Wrap"
-                            l:Uids.Uid="TextBlockSaveChatSettings" />
-                    </Grid>
-                </Button>
-                <!--  Панель выбора раздела  -->
-                <SelectorBar
-                    x:Name="ChatDetailsSelectorBar"
-                    Grid.Row="1"
-                    Grid.ColumnSpan="4"
-                    Margin="0,-10,0,0"
-                    SelectionChanged="ChatDetailsSelectorBar_SelectionChanged">
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemChatSettingsPage" Tag="TgChatSettingsPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemChatInfoPage" Tag="TgChatInfoPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemChatDownloadPage" Tag="TgChatDownloadPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemChatMyMessagesPage" Tag="TgChatMyMessagesPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemChatParticipantsPage" Tag="TgChatParticipantsPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemChatStatisticsPage" Tag="TgChatStatisticsPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemContentPage" Tag="TgChatContentPage" />
-                </SelectorBar>
-                <!--  Область отображения страницы  -->
-                <Frame
-                    x:Name="ChatDetailsFrame"
-                    Grid.Row="2"
-                    Grid.ColumnSpan="4"
-                    IsNavigationStackEnabled="False" />
-            </Grid>
-        </ContentControl>
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles">
+    <Grid RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!-- Общий заголовок выбранного чата, без изменения меню приложения -->
+        <Grid Margin="12,8,12,0" ColumnSpacing="14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Width="48" Height="48" Background="{ThemeResource AccentFillColorSecondaryBrush}" CornerRadius="14">
+                <styles:TgOutlineIcon Kind="chats" Width="24" Height="24" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="2">
+                <TextBlock FontSize="22" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
+                    Text="{x:Bind ViewModel.Dto.Title, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <TextBlock FontSize="22" FontWeight="SemiBold" Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="ID" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <TextBlock Text="{x:Bind ViewModel.Dto.Id, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                    <TextBlock Text="·" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <TextBlock l:Uids.Uid="ChatDashboardTitle" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <!-- Четыре основных раздела вместо семи разрозненных вкладок -->
+        <SelectorBar x:Name="ChatDetailsSelectorBar" Grid.Row="1" Margin="0,-6,0,0"
+            SelectionChanged="ChatDetailsSelectorBar_SelectionChanged">
+            <SelectorBarItem l:Uids.Uid="ChatOverviewTab" Tag="TgChatDownloadPage" />
+            <SelectorBarItem l:Uids.Uid="SelectorBarItemContentPage" Tag="TgChatContentPage" />
+            <SelectorBarItem l:Uids.Uid="SelectorBarItemChatParticipantsPage" Tag="TgChatParticipantsPage" />
+            <SelectorBarItem l:Uids.Uid="SelectorBarItemChatStatisticsPage" Tag="TgChatStatisticsPage" />
+        </SelectorBar>
+        <!-- Прежняя страница текущего пользователя остаётся внутри содержимого -->
+        <SelectorBar x:Name="ContentViewSelector" Grid.Row="2" Margin="4,-12,0,0"
+            SelectionChanged="ContentViewSelector_SelectionChanged"
+            Visibility="{x:Bind ViewModel.IsContentTab, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <SelectorBarItem l:Uids.Uid="ChatAllContentTab" Tag="TgChatContentPage" />
+            <SelectorBarItem l:Uids.Uid="ChatMyProfileTab" Tag="TgChatMyMessagesPage" />
+        </SelectorBar>
+        <!-- Списки содержимого и участников используют собственную прокрутку -->
+        <Frame x:Name="ChatDetailsFrame" Grid.Row="3" IsNavigationStackEnabled="False" />
     </Grid>
 </common:TgPageBase>

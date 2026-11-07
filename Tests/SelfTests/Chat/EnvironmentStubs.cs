@@ -197,6 +197,21 @@ public sealed class TestStorage
 }
 public sealed class TestClient
 {
+    public Func<long, CancellationToken, Task<TgPublicChatProfile>>? PublicProfile { get; set; }
+    public Func<long, CancellationToken, Task<byte[]>>? PublicPhoto { get; set; }
+    public Func<long, CancellationToken, Task<List<TgPublicChatMediaCount>>>? PublicMedia { get; set; }
+    /// <summary> Возвращает изолированные сведения публичного источника </summary>
+    public Task<TgPublicChatProfile> GetPublicChatProfileAsync(long id, CancellationToken ct = default) =>
+        PublicProfile?.Invoke(id, ct) ?? Task.FromResult(new TgPublicChatProfile(string.Empty, null, [], null));
+    /// <summary> Возвращает заданную фотографию без сети </summary>
+    public Task<byte[]> GetPublicChatPhotoAsync(long id, CancellationToken ct = default) => PublicPhoto?.Invoke(id, ct) ?? Task.FromResult<byte[]>([]);
+    /// <summary> Возвращает заданные счётчики медиа без сети </summary>
+    public Task<List<TgPublicChatMediaCount>> GetPublicChatMediaCountsAsync(long id, CancellationToken ct = default) =>
+        PublicMedia?.Invoke(id, ct) ?? Task.FromResult(new List<TgPublicChatMediaCount>());
+    public Func<string, CancellationToken, Task<List<TgPublicChatSearchResult>>>? SearchPublicChats { get; set; }
+    /// <summary> Подменяет выдачу Telegram без сети </summary>
+    public Task<List<TgPublicChatSearchResult>> SearchPublicChatsAsync(string query, CancellationToken ct = default) =>
+        SearchPublicChats?.Invoke(query, ct) ?? Task.FromResult(new List<TgPublicChatSearchResult>());
     public Func<string, Task<TgEfSourceDto>>? AddPublicChat { get; set; }
     /// <summary> Подменяет обращение к Telegram при добавлении публичного источника </summary>
     public Task<TgEfSourceDto> AddPublicChatAsync(string reference, CancellationToken ct = default) =>

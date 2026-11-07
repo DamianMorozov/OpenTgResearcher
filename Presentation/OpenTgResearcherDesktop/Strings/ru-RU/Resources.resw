@@ -2505,4 +2505,41 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ChatOpenMediaLabel.Text" xml:space="preserve"><value>Открыть файл</value></data>
   <data name="ChatOpenMedia.ToolTipService.ToolTip" xml:space="preserve"><value>Открыть оригинал в системном приложении</value></data>
   <data name="ChatOpenMediaFailed" xml:space="preserve"><value>Не удалось открыть файл. Проверьте, что он существует и в Windows выбрано приложение для этого типа файлов.</value></data>
+  <data name="GlobalSearchLocal.Text" xml:space="preserve"><value>Мои чаты</value></data>
+  <data name="GlobalSearchTelegram.Text" xml:space="preserve"><value>В Telegram</value></data>
+  <data name="GlobalSearchField.PlaceholderText" xml:space="preserve"><value>Название, @имя или ссылка t.me</value></data>
+  <data name="GlobalSearchField.AutomationProperties.Name" xml:space="preserve"><value>Поиск чатов в выбранной области</value></data>
+  <data name="GlobalSearchChannels.Text" xml:space="preserve"><value>Каналы</value></data>
+  <data name="GlobalSearchGroups.Text" xml:space="preserve"><value>Группы</value></data>
+  <data name="GlobalSearchHintLabel.Text" xml:space="preserve"><value>Публичные каналы и группы · вступать не требуется · до 30 результатов Telegram</value></data>
+  <data name="GlobalSearchHint" xml:space="preserve"><value>Введите название, @имя или ссылку и нажмите «Найти»</value></data>
+  <data name="GlobalSearchCount" xml:space="preserve"><value>Найдено: {0}</value></data>
+  <data name="GlobalSearchEmpty" xml:space="preserve"><value>Публичные источники не найдены. Измените запрос или фильтр; попробуйте точное @имя или ссылку t.me</value></data>
+  <data name="GlobalSearchChannel" xml:space="preserve"><value>Публичный канал</value></data>
+  <data name="GlobalSearchGroup" xml:space="preserve"><value>Публичная группа</value></data>
+  <data name="GlobalSearchSaved.Text" xml:space="preserve"><value>В моих чатах</value></data>
+  <data name="GlobalSearchAdd" xml:space="preserve"><value>Добавить в мои чаты</value></data>
+  <data name="GlobalSearchPreviewHint.Text" xml:space="preserve"><value>Добавление сохраняет источник в вашей БД без подписки. Затем откройте чат, настройте каталог и запустите парсинг доступной истории</value></data>
+  <data name="GlobalProfileTitle.Text" xml:space="preserve"><value>Информация о чате</value></data>
+  <data name="GlobalProfileClose.AutomationProperties.Name" xml:space="preserve"><value>Закрыть информацию о чате</value></data>
+  <data name="GlobalProfileClose.ToolTipService.ToolTip" xml:space="preserve"><value>Закрыть</value></data>
+  <data name="GlobalProfileInformation.Header" xml:space="preserve"><value>Информация</value></data>
+  <data name="GlobalProfileMembers" xml:space="preserve"><value>{0:N0} участников</value></data>
+  <data name="GlobalProfileSubscribers" xml:space="preserve"><value>{0:N0} подписчиков</value></data>
+  <data name="GlobalProfileCountUnknown" xml:space="preserve"><value>Число участников не указано</value></data>
+  <data name="GlobalProfileVerified.Text" xml:space="preserve"><value>Подтверждено Telegram</value></data>
+  <data name="GlobalProfileOpenTelegram.Content" xml:space="preserve"><value>Открыть в Telegram</value></data>
+  <data name="GlobalProfileDiscussion.Content" xml:space="preserve"><value>Обсуждение</value></data>
+  <data name="GlobalProfileReload.Content" xml:space="preserve"><value>Обновить информацию</value></data>
+  <data name="GlobalProfileMedia.Header" xml:space="preserve"><value>Медиа и ссылки</value></data>
+  <data name="GlobalProfileMediaHint.Text" xml:space="preserve"><value>Счётчики доступной истории из Telegram; ≈ означает приблизительное значение</value></data>
+  <data name="GlobalProfileReloadMedia.Content" xml:space="preserve"><value>Обновить счётчики</value></data>
+  <data name="GlobalProfilePhotos" xml:space="preserve"><value>Фотографии</value></data>
+  <data name="GlobalProfileVideos" xml:space="preserve"><value>Видео</value></data>
+  <data name="GlobalProfileDocuments" xml:space="preserve"><value>Файлы</value></data>
+  <data name="GlobalProfileLinks" xml:space="preserve"><value>Ссылки</value></data>
+  <data name="GlobalProfileMusic" xml:space="preserve"><value>Музыка</value></data>
+  <data name="GlobalProfileVoice" xml:space="preserve"><value>Голосовые сообщения</value></data>
+  <data name="GlobalProfileGifs" xml:space="preserve"><value>GIF</value></data>
+  <data name="GlobalProfilePolls" xml:space="preserve"><value>Опросы</value></data>
 </root>

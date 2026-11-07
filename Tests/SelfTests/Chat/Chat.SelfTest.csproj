@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgChat*ViewModel.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgChatsViewModelGlobalSearch.cs" Link="TgChatsViewModelGlobalSearch.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgChatsViewModelPublicProfile.cs" Link="TgChatsViewModelPublicProfile.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgStorageTablesViewModel.cs" Link="TgStorageTablesViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgUsersViewModel.cs" Link="TgUsersViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgFiltersViewModel.cs" Link="TgFiltersViewModel.cs" />
@@ -26,6 +28,7 @@
         LogicalName="ConsoleDownload.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgChatActivityRow.cs" Link="TgChatActivityRow.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgChatRegistryRow.cs" Link="TgChatRegistryRow.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgPublicChatSearchRow.cs" Link="TgPublicChatSearchRow.cs" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/ru-RU/Resources.resw" LogicalName="ChatResources.ru-RU.resw" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/en-us/Resources.resw" LogicalName="ChatResources.en-US.resw" />
   </ItemGroup>

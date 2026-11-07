@@ -202,25 +202,24 @@ try {
     Invoke-AppElement (Wait-AppElement 'Продолжить|Continue')
     Invoke-AppElement (Wait-AppElement '^(Чаты|Chats)$')
     if ($CheckPublicChat) {
-        $expander = Wait-AppElement '.*' '' 'PublicChatExpander'
-        $expand = $expander.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
-        $expand.Expand()
-        $reference = Wait-AppElement '.*' '' 'PublicChatReference'
+        Invoke-AppElement (Wait-AppElement '^(В Telegram|In Telegram)$')
+        $reference = Wait-AppElement '.*' '' 'ChatFilter'
         $reference.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('@durov')
-        $add = Wait-AppElement '^(Добавить / открыть|Add / open)$' '' 'PublicChatAdd'
+        $search = Wait-AppElement '.*' '' 'ChatSearch'
         $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
-        foreach ($control in @($reference, $add)) {
+        foreach ($control in @($reference, $search)) {
             if (-not $window.Current.BoundingRectangle.Contains($control.Current.BoundingRectangle)) {
-                throw 'Поле или кнопка добавления публичного источника вышли за границы окна'
+                throw 'Поле или кнопка глобального поиска вышли за границы окна'
             }
         }
-        if ($reference.Current.BoundingRectangle.IntersectsWith($add.Current.BoundingRectangle)) {
-            throw 'Поле публичного имени перекрывается кнопкой добавления'
+        if ($reference.Current.BoundingRectangle.IntersectsWith($search.Current.BoundingRectangle)) {
+            throw 'Поле поиска перекрывается кнопкой поиска'
         }
-        [void](Wait-AppElement '^(Будет проверена доступность истории|History access will be checked)')
+        [void](Wait-AppElement '^(Публичные каналы и группы|Public channels and groups)')
         Save-AppSnapshot 'Chats-PublicSource'
-        $expand.Collapse()
-        Write-Output 'PASS: публичный источник, поле ввода, отдельная кнопка, пояснение без вступления и раскрытие без перекрытий'
+        Invoke-AppElement (Wait-AppElement '^(Мои чаты|My chats)$')
+        $reference.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('')
+        Write-Output 'PASS: единая строка, переключение области, поле ввода, кнопка и пояснение без вступления; элементы без перекрытий'
     }
     if ($CheckRegistryPagination) {
         $registryStatistics = Wait-AppElement '^(Показано 100 из 943 чатов|Showing 100 of 943 chats)$'

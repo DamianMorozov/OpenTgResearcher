@@ -80,7 +80,7 @@ internal static partial class Program
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
         }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
             .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests())
-            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).Concat(GetMessageContentTests()).ToArray();
+            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).Concat(GetMessageContentTests()).Concat(GetGlobalSearchTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
@@ -133,6 +133,10 @@ internal static partial class Program
             App.BusinessLogicManager.ConnectClient.SearchSources = null;
             App.BusinessLogicManager.ConnectClient.ReadParticipants = null;
             App.BusinessLogicManager.ConnectClient.AddPublicChat = null;
+            App.BusinessLogicManager.ConnectClient.SearchPublicChats = null;
+            App.BusinessLogicManager.ConnectClient.PublicProfile = null;
+            App.BusinessLogicManager.ConnectClient.PublicPhoto = null;
+            App.BusinessLogicManager.ConnectClient.PublicMedia = null;
             DelayedQueryInterceptor.Enabled = false;
             try
             {

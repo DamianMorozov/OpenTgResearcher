@@ -168,15 +168,20 @@ internal static partial class Program
     private static async Task PublicChatRegistryOpensResolvedSourceAsync()
     {
         var navigation = new INavigationService();
-        var vm = new TgChatsViewModel(_state, _settings, navigation, null!) { PublicChatReference = "@durov" };
+        var vm = new TgChatsViewModel(_state, _settings, navigation, null!)
+        {
+            SelectedPublicChat = new(new TgPublicChatSearchResult(1002003004, "Public channel", "durov", false, null))
+        };
         var calls = 0;
         App.BusinessLogicManager.ConnectClient.Ready = true;
         App.BusinessLogicManager.ConnectClient.AddPublicChat = reference =>
         {
-            Assert(reference == vm.PublicChatReference, "Потерян введённый источник");
+            Assert(reference == "@durov", "Потерян выбранный источник");
             calls++;
             return Task.FromResult(_source);
         };
+        await vm.AddPublicChatCommand.ExecuteAsync(null);
+        Assert(navigation.PageKey is null && vm.SelectedPublicChat.IsSaved, "Добавление не сохранило результат или сразу открыло пульт");
         await vm.AddPublicChatCommand.ExecuteAsync(null);
         Assert(calls == 1 && navigation.Parameter is Guid uid && uid == _source.Uid
             && navigation.PageKey == typeof(TgChatViewModel).FullName && vm.PublicChatError.Length == 0,
@@ -187,7 +192,10 @@ internal static partial class Program
     private static async Task PublicChatRegistryDisplaysFailureAsync()
     {
         var navigation = new INavigationService();
-        var vm = new TgChatsViewModel(_state, _settings, navigation, null!);
+        var vm = new TgChatsViewModel(_state, _settings, navigation, null!)
+        {
+            SelectedPublicChat = new(new TgPublicChatSearchResult(1002003004, "Public channel", "durov", false, null))
+        };
         App.BusinessLogicManager.ConnectClient.Ready = true;
         App.BusinessLogicManager.ConnectClient.AddPublicChat = _ => throw new InvalidOperationException("История недоступна");
         await vm.AddPublicChatCommand.ExecuteAsync(null);
@@ -204,7 +212,7 @@ internal static partial class Program
         {
             using var stream = typeof(Program).Assembly.GetManifestResourceStream($"ChatResources.{language}.resw")!;
             var data = XDocument.Load(stream).Descendants("data");
-            foreach (var key in new[] { "PublicChatExpander.Header", "PublicChatReference.Header", "PublicChatAdd.Content", "PublicChatHint.Text" })
+            foreach (var key in new[] { "GlobalSearchLocal.Text", "GlobalSearchTelegram.Text", "GlobalSearchAdd", "GlobalSearchPreviewHint.Text" })
                 Assert(data.Any(x => (string?)x.Attribute("name") == key && x.Element("value")!.Value.Length > 0), $"Нет перевода {key}: {language}");
         }
         return Task.CompletedTask;
@@ -323,11 +331,47 @@ internal sealed class PublicChatConnection(FusionCache cache, LoadStateService s
     public Exception? HistoryError { get; set; }
     public bool ResolveUser { get; set; }
     public bool SeedParsingData { get; set; }
+    public TL.Contacts_Found? SearchReply { get; set; }
+    public string? SearchQuery { get; private set; }
+    public TL.Messages_ChatFull? ProfileReply { get; set; }
+    public TL.Channel? ProfileChannel { get; private set; }
+    public byte[] PhotoReply { get; set; } = [];
+    public int PhotoCalls { get; private set; }
+    public TL.Messages_SearchCounter[] MediaReply { get; set; } = [];
+    public int MediaCalls { get; private set; }
     public TaskCompletionSource HistoryStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public TaskCompletionSource? HoldHistory { get; set; }
 
     /// <summary> Сохраняет изолированный клиент без авторизации и чтения пользовательской сессии </summary>
     public override Task LoginUserAsync(bool isProxyUpdate) => Task.CompletedTask;
+
+    /// <summary> Возвращает заданную выдачу поиска без вызова Telegram </summary>
+    protected override Task<TL.Contacts_Found> SearchPublicChatPeersAsync(string query, CancellationToken ct = default)
+    {
+        SearchQuery = query;
+        return Task.FromResult(SearchReply ?? throw new InvalidOperationException("Не задана выдача поиска"));
+    }
+
+    /// <summary> Подменяет только сетевое получение информации канала </summary>
+    protected override Task<TL.Messages_ChatFull> ReadPublicChatProfileAsync(TL.Channel channel, CancellationToken ct = default)
+    {
+        ProfileChannel = channel;
+        return Task.FromResult(ProfileReply ?? throw new InvalidOperationException("Не заданы сведения канала"));
+    }
+
+    /// <summary> Записывает содержимое фотографии в настоящий поток загрузки </summary>
+    protected override async Task DownloadPublicChatPhotoAsync(TL.Channel channel, Stream output, CancellationToken ct = default)
+    {
+        PhotoCalls++;
+        await output.WriteAsync(PhotoReply, ct);
+    }
+
+    /// <summary> Подменяет только сетевые счётчики медиа </summary>
+    protected override Task<TL.Messages_SearchCounter[]> ReadPublicChatMediaCountsAsync(TL.Channel channel, CancellationToken ct = default)
+    {
+        MediaCalls++;
+        return Task.FromResult(MediaReply);
+    }
 
     /// <summary> Возвращает полный объект источника с его собственным адресом </summary>
     protected override Task<TL.Contacts_ResolvedPeer> ResolveChatUsernameAsync(string username, CancellationToken ct = default)

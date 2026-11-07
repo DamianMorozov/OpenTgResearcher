@@ -2441,4 +2441,41 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ChatOpenMediaLabel.Text" xml:space="preserve"><value>Open file</value></data>
   <data name="ChatOpenMedia.ToolTipService.ToolTip" xml:space="preserve"><value>Open the original in the default app</value></data>
   <data name="ChatOpenMediaFailed" xml:space="preserve"><value>Could not open the file. Check that it exists and Windows has a default app for this file type.</value></data>
+  <data name="GlobalSearchLocal.Text" xml:space="preserve"><value>My chats</value></data>
+  <data name="GlobalSearchTelegram.Text" xml:space="preserve"><value>In Telegram</value></data>
+  <data name="GlobalSearchField.PlaceholderText" xml:space="preserve"><value>Title, @username or t.me link</value></data>
+  <data name="GlobalSearchField.AutomationProperties.Name" xml:space="preserve"><value>Search chats in the selected scope</value></data>
+  <data name="GlobalSearchChannels.Text" xml:space="preserve"><value>Channels</value></data>
+  <data name="GlobalSearchGroups.Text" xml:space="preserve"><value>Groups</value></data>
+  <data name="GlobalSearchHintLabel.Text" xml:space="preserve"><value>Public channels and groups · no need to join · up to 30 Telegram results</value></data>
+  <data name="GlobalSearchHint" xml:space="preserve"><value>Enter a title, @username or link and select Search</value></data>
+  <data name="GlobalSearchCount" xml:space="preserve"><value>Found: {0}</value></data>
+  <data name="GlobalSearchEmpty" xml:space="preserve"><value>No public sources found. Change the query or filter; try an exact @username or t.me link</value></data>
+  <data name="GlobalSearchChannel" xml:space="preserve"><value>Public channel</value></data>
+  <data name="GlobalSearchGroup" xml:space="preserve"><value>Public group</value></data>
+  <data name="GlobalSearchSaved.Text" xml:space="preserve"><value>In my chats</value></data>
+  <data name="GlobalSearchAdd" xml:space="preserve"><value>Add to my chats</value></data>
+  <data name="GlobalSearchPreviewHint.Text" xml:space="preserve"><value>Adding saves the source to your database without joining it. Then open the chat, choose a folder and start parsing the available history</value></data>
+  <data name="GlobalProfileTitle.Text" xml:space="preserve"><value>Chat information</value></data>
+  <data name="GlobalProfileClose.AutomationProperties.Name" xml:space="preserve"><value>Close chat information</value></data>
+  <data name="GlobalProfileClose.ToolTipService.ToolTip" xml:space="preserve"><value>Close</value></data>
+  <data name="GlobalProfileInformation.Header" xml:space="preserve"><value>Information</value></data>
+  <data name="GlobalProfileMembers" xml:space="preserve"><value>{0:N0} members</value></data>
+  <data name="GlobalProfileSubscribers" xml:space="preserve"><value>{0:N0} subscribers</value></data>
+  <data name="GlobalProfileCountUnknown" xml:space="preserve"><value>Member count unavailable</value></data>
+  <data name="GlobalProfileVerified.Text" xml:space="preserve"><value>Verified by Telegram</value></data>
+  <data name="GlobalProfileOpenTelegram.Content" xml:space="preserve"><value>Open in Telegram</value></data>
+  <data name="GlobalProfileDiscussion.Content" xml:space="preserve"><value>Discussion</value></data>
+  <data name="GlobalProfileReload.Content" xml:space="preserve"><value>Refresh information</value></data>
+  <data name="GlobalProfileMedia.Header" xml:space="preserve"><value>Media and links</value></data>
+  <data name="GlobalProfileMediaHint.Text" xml:space="preserve"><value>Counts from the available Telegram history; ≈ indicates an approximate value</value></data>
+  <data name="GlobalProfileReloadMedia.Content" xml:space="preserve"><value>Refresh counts</value></data>
+  <data name="GlobalProfilePhotos" xml:space="preserve"><value>Photos</value></data>
+  <data name="GlobalProfileVideos" xml:space="preserve"><value>Videos</value></data>
+  <data name="GlobalProfileDocuments" xml:space="preserve"><value>Files</value></data>
+  <data name="GlobalProfileLinks" xml:space="preserve"><value>Links</value></data>
+  <data name="GlobalProfileMusic" xml:space="preserve"><value>Music</value></data>
+  <data name="GlobalProfileVoice" xml:space="preserve"><value>Voice messages</value></data>
+  <data name="GlobalProfileGifs" xml:space="preserve"><value>GIFs</value></data>
+  <data name="GlobalProfilePolls" xml:space="preserve"><value>Polls</value></data>
 </root>

@@ -49,6 +49,14 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default);
     /// <summary> Добавляет доступный публичный канал или группу без вступления </summary>
     public Task<TgEfSourceDto> AddPublicChatAsync(string reference, CancellationToken ct = default);
+    /// <summary> Ищет публичные каналы и группы без вступления и сохранения в БД </summary>
+    public Task<List<TgPublicChatSearchResult>> SearchPublicChatsAsync(string query, CancellationToken ct = default);
+    /// <summary> Получает описание и ссылки найденного публичного источника без вступления </summary>
+    public Task<TgPublicChatProfile> GetPublicChatProfileAsync(long chatId, CancellationToken ct = default);
+    /// <summary> Загружает фотографию найденного публичного источника в память </summary>
+    public Task<byte[]> GetPublicChatPhotoAsync(long chatId, CancellationToken ct = default);
+    /// <summary> Получает счётчики медиа доступной истории без скачивания сообщений </summary>
+    public Task<List<TgPublicChatMediaCount>> GetPublicChatMediaCountsAsync(long chatId, CancellationToken ct = default);
 
     public Task SetChannelMessageIdFirstAsync(ITgDownloadViewModel tgDownloadSettings, CancellationToken ct = default);
 	public Task ParseChatAsync(ITgDownloadViewModel tgDownloadSettings);

@@ -9,6 +9,7 @@
     <converters:TgEnumToColumnConverter x:Key="EnumToColumnConverter" />
     <converters:TgEnumToColumnSpanConverter x:Key="EnumToColumnSpanConverter" />
     <converters:TgSafeImagePathConverter x:Key="SafeImagePathConverter" />
+    <converters:TgPhotoBytesConverter x:Key="PhotoBytesConverter" />
     <converters:TgIdFormatConverter x:Key="IdFormatConverter" />
 
     <convertersWinUI:BoolNegationConverter x:Key="BoolNegationConverter" />

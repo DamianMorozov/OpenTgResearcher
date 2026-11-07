@@ -4,6 +4,53 @@ public abstract partial class TgConnectClientBase
 {
     private readonly ConcurrentDictionary<long, TL.ChatBase> _resolvedChats = new();
 
+    /// <summary> Ищет публичные источники по названию, точному имени или ссылке без чтения истории </summary>
+    public async Task<List<TgPublicChatSearchResult>> SearchPublicChatsAsync(string query, CancellationToken ct = default)
+    {
+        try
+        {
+            if (Client is null || Bot is not null)
+                throw new InvalidOperationException("Подключите пользовательский аккаунт Telegram на странице «Подключение клиента»");
+            var text = (query ?? string.Empty).Trim();
+            if (text.Length < 3) throw new InvalidOperationException("Введите не менее трёх символов названия, публичное имя или ссылку t.me");
+            IEnumerable<TL.ChatBase> chats;
+            if (text.StartsWith('@') || text.Contains("t.me/", StringComparison.OrdinalIgnoreCase) || text.Contains("://"))
+            {
+                var resolved = await ResolveChatUsernameAsync(NormalizePublicChatUsername(text), ct);
+                chats = resolved.peer is TL.PeerChannel peer && resolved.chats.TryGetValue(peer.channel_id, out var chat) ? [chat] : [];
+            }
+            else
+            {
+                var found = await SearchPublicChatPeersAsync(text, ct);
+                var ids = found.my_results.Concat(found.results).OfType<TL.PeerChannel>().Select(x => x.channel_id).ToHashSet();
+                chats = found.chats.Values.Where(x => ids.Contains(x.ID));
+            }
+            using var repository = new TgStorage.Repositories.TgEfSourceRepository();
+            var results = new List<TgPublicChatSearchResult>();
+            foreach (var channel in chats.OfType<TL.Channel>().Where(x => !string.IsNullOrWhiteSpace(x.MainUsername)).DistinctBy(x => x.id))
+            {
+                ct.ThrowIfCancellationRequested();
+                var saved = await repository.GetDtoAsync(x => x.Id == channel.id, ct: ct);
+                _resolvedChats[channel.id] = channel;
+                results.Add(new(channel.id, channel.Title, channel.MainUsername, channel.flags.HasFlag(TL.Channel.Flags.megagroup),
+                    saved.Id == 0 ? null : saved.Uid,
+                    channel.flags.HasFlag(TL.Channel.Flags.has_participants_count) ? channel.participants_count : null,
+                    channel.flags.HasFlag(TL.Channel.Flags.verified)));
+            }
+            return results;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); throw DescribeChatAccessException(ex); }
+    }
+
+    /// <summary> Запрашивает ограниченную выдачу Telegram без загрузки личных контактов в реестр </summary>
+    protected virtual async Task<TL.Contacts_Found> SearchPublicChatPeersAsync(string query, CancellationToken ct = default)
+    {
+        try { return await TelegramCallAsync(apiCt => TL.SchemaExtensions.Contacts_Search(Client!, query, limit: 30), isThrow: true, ct); }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
+    }
+
     /// <summary> Добавляет доступный публичный источник по имени или ссылке без вступления в него </summary>
     public async Task<TgEfSourceDto> AddPublicChatAsync(string reference, CancellationToken ct = default)
     {

@@ -192,53 +192,6 @@ public abstract partial class TgPageViewModelBase : TgSensitiveModel, ITgPageVie
         }
     }
 
-    /// <summary> Load storage data with async task </summary>
-    public async Task LoadStorageDataAsync(Func<Task> task)
-    {
-        var uid = Guid.NewGuid();
-        try
-        {
-            await LoadStateService.PrepareStorageTokenAsync(uid);
-
-            await TgDesktopUtils.InvokeOnUIThreadAsync(task, LoadStateService.StorageToken);
-            
-            // Run the provided task on the thread pool; UI updates inside task must call InvokeOnUIThreadAsync explicitly.
-            //await Task.Run(() => task(), StorageToken);
-            
-            //await task().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            LogError(ex, $"Unhandled exception in {nameof(LoadStorageDataAsync)}");
-        }
-        finally
-        {
-            LoadStateService.StopSoftStorageProcessing(uid);
-            RefreshLicenseInfo();
-        }
-    }
-
-    /// <summary> Load storage data with action </summary>
-    public async Task LoadStorageDataAsync(Action action)
-    {
-        var uid = Guid.NewGuid();
-        try
-        {
-            await LoadStateService.PrepareStorageTokenAsync(uid);
-
-            TgDesktopUtils.InvokeOnUIThread(action);
-        }
-        catch (Exception ex)
-        {
-            LogError(ex, $"Unhandled exception in {nameof(LoadStorageDataAsync)}");
-        }
-        finally
-        {
-            LoadStateService.StopSoftStorageProcessing(uid);
-            RefreshLicenseInfo();
-        }
-    }
-
     /// <summary> Load online data with async task </summary>
     protected async Task LoadOnlineDataAsync(Func<Task> task)
     {

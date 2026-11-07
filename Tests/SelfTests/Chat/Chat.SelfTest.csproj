@@ -9,6 +9,15 @@
   <ItemGroup>
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgChat*ViewModel.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgStorageTablesViewModel.cs" Link="TgStorageTablesViewModel.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgUsersViewModel.cs" Link="TgUsersViewModel.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgFiltersViewModel.cs" Link="TgFiltersViewModel.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgStoriesViewModel.cs" Link="TgStoriesViewModel.cs" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgStorage*Page.xaml" LogicalName="%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgClientConnectionPage.xaml" LogicalName="TgClientConnectionPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgFiltersPage.xaml" LogicalName="TgFiltersPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgStoriesPage.xaml" LogicalName="TgStoriesPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgUsersPage.xaml" LogicalName="TgUsersPage.xaml" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgChatPage.xaml.cs" Link="TgChatPage.xaml.cs" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgChat*Page.xaml" LogicalName="%(Filename)%(Extension)" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Styles/TgChatResources.xaml" LogicalName="TgChatResources.xaml" />

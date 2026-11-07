@@ -25,22 +25,24 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
     private Expression<Func<TgEfUserEntity, TgEfUserDto>> SelectDto() => item => TgEfDomainUtils.CreateNewDto(item, isUidCopy: true);
 
+    // Читаем пользователей отдельным контекстом при активном парсинге
     private async Task<List<TgEfUserDto>> GetListDtosAsync()
     {
-        var query = App.BusinessLogicManager.StorageManager.UserRepository.GetQuery(isReadOnly: true);
+        using var reader = IsOnlineProcessing ? new TgEfUserRepository() : null;
+        var query = (reader ?? App.BusinessLogicManager.StorageManager.UserRepository).GetQuery(isReadOnly: true);
 
-        // Apply filter
+        // Применяем фильтр контактов
         if (IsFilterByContacts)
             query = query.Where(x => x.IsContact);
 
-        // Apply text search
+        // Применяем текстовый поиск
         if (!string.IsNullOrWhiteSpace(FilterText))
         {
             var trimmed = FilterText.Trim();
             var searchText = trimmed;
             var searchTextWithoutAt = trimmed.StartsWith('@') ? trimmed[1..] : trimmed;
 
-            // Build predicate
+            // Строим условие поиска
             var predicates = new List<Expression<Func<TgEfUserEntity, bool>>>();
 
             if (IsFilterById)
@@ -74,13 +76,13 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
             }
         }
 
-        // Order & pagination
+        // Сортируем и ограничиваем порцию данных
         query = query.OrderByDescending(x => x.IsContact).ThenBy(x => x.FirstName).ThenBy(x => x.LastName).ThenBy(x => x.UserName);
 
         if (PageSkip > 0) query = query.Skip(PageSkip);
         if (PageTake > 0) query = query.Take(PageTake);
 
-        // Projection
+        // Преобразуем записи в модели данных
         return await query.Select(SelectDto()).ToListAsync();
     }
 
@@ -113,11 +115,13 @@ public sealed partial class TgUsersViewModel : TgSectionViewModel
 
     protected override async Task AfterDataUpdateCoreAsync()
     {
-        // Update loaded data statistics
-        var countAll = await App.BusinessLogicManager.StorageManager.UserRepository.GetCountAsync();
+        // Обновляем статистику загруженных данных
+        using var reader = IsOnlineProcessing ? new TgEfUserRepository() : null;
+        var repository = reader ?? App.BusinessLogicManager.StorageManager.UserRepository;
+        var countAll = await repository.GetCountAsync();
         var countFiltered = IsFilterByContacts
-            ? await App.BusinessLogicManager.StorageManager.UserRepository.GetCountAsync(x => x.IsContact)
-            : await App.BusinessLogicManager.StorageManager.UserRepository.GetCountAsync();
+            ? await repository.GetCountAsync(x => x.IsContact)
+            : countAll;
         LoadedDataStatistics =
             $"{TgResourceExtensions.GetTextBlockLoaded()} {Dtos.Count} | " +
             $"{TgResourceExtensions.GetTextBlockFiltered()} {countFiltered} | " +

@@ -1,139 +1,317 @@
-﻿<common:TgPageBase x:Class="OpenTgResearcherDesktop.Views.TgChatsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:common="using:OpenTgResearcherDesktop.Common" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:l="using:WinUI3Localizer" xmlns:models="using:OpenTgResearcherDesktop.Models"
+﻿<common:TgPageBase
+    x:Class="OpenTgResearcherDesktop.Views.TgChatsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:l="using:WinUI3Localizer"
+    xmlns:models="using:OpenTgResearcherDesktop.Models"
     xmlns:primitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives">
-    <common:TgPageBase.Resources><ResourceDictionary>
-        <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="ms-appx:///Styles/TgChatResources.xaml" /></ResourceDictionary.MergedDictionaries>
-        <Style x:Key="RegistryHeader" TargetType="primitives:DataGridColumnHeader">
-            <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
-            <Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Padding" Value="12,8" />
-        </Style>
-        <DataTemplate x:Key="RegistryIdentity" x:DataType="models:TgChatRegistryRow">
-            <Grid Padding="8,10" ColumnSpacing="10">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                <PersonPicture Width="34" Height="34" DisplayName="{x:Bind Title}" />
-                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" ToolTipService.ToolTip="{x:Bind Title}" />
-                    <TextBlock Text="{x:Bind Identity}" Style="{StaticResource ChatSecondary}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-        <DataTemplate x:Key="RegistryProgress" x:DataType="models:TgChatRegistryRow">
-            <StackPanel Margin="8,10" Spacing="5" VerticalAlignment="Center">
-                <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <TextBlock Text="{x:Bind Status, Mode=OneWay}" Style="{StaticResource ChatSecondary}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
-                        ToolTipService.ToolTip="{x:Bind Status, Mode=OneWay}" />
-                    <TextBlock Grid.Column="1" Text="{x:Bind ProgressText, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
+    <common:TgPageBase.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Styles/TgChatResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="RegistryHeader" TargetType="primitives:DataGridColumnHeader">
+                <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Padding" Value="12,8" />
+            </Style>
+            <DataTemplate x:Key="RegistryIdentity" x:DataType="models:TgChatRegistryRow">
+                <Grid Padding="8,10" ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <PersonPicture
+                        Width="34"
+                        Height="34"
+                        DisplayName="{x:Bind Title}" />
+                    <StackPanel
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Spacing="3">
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="{x:Bind Title}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap"
+                            ToolTipService.ToolTip="{x:Bind Title}" />
+                        <TextBlock
+                            Style="{StaticResource ChatSecondary}"
+                            Text="{x:Bind Identity}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap" />
+                    </StackPanel>
                 </Grid>
-                <ProgressBar Value="{x:Bind Progress, Mode=OneWay}" Maximum="100" Height="4" />
-            </StackPanel>
-        </DataTemplate>
-    </ResourceDictionary></common:TgPageBase.Resources>
+            </DataTemplate>
+            <DataTemplate x:Key="RegistryProgress" x:DataType="models:TgChatRegistryRow">
+                <StackPanel
+                    Margin="8,10"
+                    VerticalAlignment="Center"
+                    Spacing="5">
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Style="{StaticResource ChatSecondary}"
+                            Text="{x:Bind Status, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap"
+                            ToolTipService.ToolTip="{x:Bind Status, Mode=OneWay}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Style="{StaticResource ChatSecondary}"
+                            Text="{x:Bind ProgressText, Mode=OneWay}" />
+                    </Grid>
+                    <ProgressBar
+                        Height="4"
+                        Maximum="100"
+                        Value="{x:Bind Progress, Mode=OneWay}" />
+                </StackPanel>
+            </DataTemplate>
+        </ResourceDictionary>
+    </common:TgPageBase.Resources>
     <Grid Margin="12,0,16,12" RowSpacing="12">
-        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" />
-            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-        <!-- Поиск и сортировка остаются доступными во время парсинга любого чата -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  Поиск и сортировка остаются доступными во время парсинга любого чата  -->
         <Grid ColumnSpacing="8" RowSpacing="8">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-            <TextBox AutomationProperties.AutomationId="ChatFilter" l:Uids.Uid="RegistrySearch" MinWidth="120"
-                Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" KeyDown="FieldFilter_KeyDown" />
-            <Button Grid.Column="1" Command="{x:Bind ViewModel.RefreshRegistryCommand}" AutomationProperties.AutomationId="ChatSearch">
-                <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE721;" /><TextBlock l:Uids.Uid="ActionSearch" /></StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                MinWidth="120"
+                l:Uids.Uid="RegistrySearch"
+                AutomationProperties.AutomationId="ChatFilter"
+                KeyDown="FieldFilter_KeyDown"
+                Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
+            <Button
+                Grid.Column="1"
+                AutomationProperties.AutomationId="ChatSearch"
+                Command="{x:Bind ViewModel.RefreshRegistryCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph="&#xE721;" />
+                    <TextBlock l:Uids.Uid="ActionSearch" />
+                </StackPanel>
             </Button>
-            <Button Grid.Column="2" l:Uids.Uid="RegistryActions" AutomationProperties.AutomationId="ChatsActions">
+            <Button
+                Grid.Column="2"
+                l:Uids.Uid="RegistryActions"
+                AutomationProperties.AutomationId="ChatsActions">
                 <FontIcon Glyph="&#xE712;" />
-                <Button.Flyout><MenuFlyout>
-                    <MenuFlyoutItem Command="{x:Bind ViewModel.StartUpdateOnlineCommand}" l:Uids.Uid="RegistrySync"
-                        IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
-                    <MenuFlyoutItem Command="{x:Bind ViewModel.ClearViewCommand}" l:Uids.Uid="RegistryClear" />
-                    <MenuFlyoutSeparator />
-                    <ToggleMenuFlyoutItem l:Uids.Uid="RegistryFilterId" IsChecked="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
-                    <ToggleMenuFlyoutItem l:Uids.Uid="RegistryFilterName" IsChecked="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
-                    <ToggleMenuFlyoutItem l:Uids.Uid="RegistryFilterTitle" IsChecked="{x:Bind ViewModel.IsFilterByTitle, Mode=TwoWay}" />
-                </MenuFlyout></Button.Flyout>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            l:Uids.Uid="RegistrySync"
+                            Command="{x:Bind ViewModel.StartUpdateOnlineCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
+                        <MenuFlyoutItem l:Uids.Uid="RegistryClear" Command="{x:Bind ViewModel.ClearViewCommand}" />
+                        <MenuFlyoutSeparator />
+                        <ToggleMenuFlyoutItem l:Uids.Uid="RegistryFilterId" IsChecked="{x:Bind ViewModel.IsFilterById, Mode=TwoWay}" />
+                        <ToggleMenuFlyoutItem l:Uids.Uid="RegistryFilterName" IsChecked="{x:Bind ViewModel.IsFilterByName, Mode=TwoWay}" />
+                        <ToggleMenuFlyoutItem l:Uids.Uid="RegistryFilterTitle" IsChecked="{x:Bind ViewModel.IsFilterByTitle, Mode=TwoWay}" />
+                    </MenuFlyout>
+                </Button.Flyout>
             </Button>
         </Grid>
-        <Grid Grid.Row="1" ColumnSpacing="8" RowSpacing="6">
-            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-            <SelectorBar x:Name="RegistryFilters" SelectionChanged="OnRegistryFilterChanged" AutomationProperties.AutomationId="ChatsStatusFilter">
-                <SelectorBarItem l:Uids.Uid="RegistryAll" Tag="0" IsSelected="True" />
+        <Grid
+            Grid.Row="1"
+            ColumnSpacing="8"
+            RowSpacing="6">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <SelectorBar
+                x:Name="RegistryFilters"
+                AutomationProperties.AutomationId="ChatsStatusFilter"
+                SelectionChanged="OnRegistryFilterChanged">
+                <SelectorBarItem
+                    l:Uids.Uid="RegistryAll"
+                    IsSelected="True"
+                    Tag="0" />
                 <SelectorBarItem l:Uids.Uid="RegistryWorking" Tag="1" />
                 <SelectorBarItem l:Uids.Uid="RegistrySubscriptions" Tag="2" />
             </SelectorBar>
-            <ComboBox Grid.Column="1" SelectedIndex="{x:Bind ViewModel.RegistrySort, Mode=TwoWay}" SelectionChanged="OnRegistrySortChanged"
-                AutomationProperties.AutomationId="ChatsSort" MinWidth="150">
-                <ComboBoxItem l:Uids.Uid="RegistrySortActivity" /><ComboBoxItem l:Uids.Uid="RegistrySortName" /><ComboBoxItem l:Uids.Uid="RegistrySortMessages" />
+            <ComboBox
+                Grid.Column="1"
+                MinWidth="150"
+                AutomationProperties.AutomationId="ChatsSort"
+                SelectedIndex="{x:Bind ViewModel.RegistrySort, Mode=TwoWay}"
+                SelectionChanged="OnRegistrySortChanged">
+                <ComboBoxItem l:Uids.Uid="RegistrySortActivity" />
+                <ComboBoxItem l:Uids.Uid="RegistrySortName" />
+                <ComboBoxItem l:Uids.Uid="RegistrySortMessages" />
             </ComboBox>
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Style="{StaticResource ChatSecondary}"
+                Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}" />
         </Grid>
-        <!-- Таблица владеет прокруткой и не блокируется глобальными флагами сетевой операции -->
+        <!--  Таблица владеет прокруткой и не блокируется глобальными флагами сетевой операции  -->
         <Grid Grid.Row="2">
-            <TextBlock Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="{x:Bind ViewModel.SensitiveData, Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
             <Grid Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                <controls:DataGrid x:Name="DataGridChats" AutomationProperties.AutomationId="ChatsRegistry"
-                    AutoGenerateColumns="False" CanUserSortColumns="False" IsReadOnly="True" HeadersVisibility="Column" RowHeight="64"
-                    GridLinesVisibility="Horizontal" Background="Transparent" BorderThickness="0" ColumnHeaderStyle="{StaticResource RegistryHeader}"
-                    ItemsSource="{x:Bind ViewModel.RegistryRows, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedRow, Mode=TwoWay}"
-                    DoubleTapped="{x:Bind ViewModel.DataGrid_DoubleTapped}">
+                <controls:DataGrid
+                    x:Name="DataGridChats"
+                    AutoGenerateColumns="False"
+                    AutomationProperties.AutomationId="ChatsRegistry"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    CanUserSortColumns="False"
+                    ColumnHeaderStyle="{StaticResource RegistryHeader}"
+                    DoubleTapped="{x:Bind ViewModel.DataGrid_DoubleTapped}"
+                    GridLinesVisibility="Horizontal"
+                    HeadersVisibility="Column"
+                    IsReadOnly="True"
+                    ItemsSource="{x:Bind ViewModel.RegistryRows, Mode=OneWay}"
+                    RowHeight="64"
+                    SelectedItem="{x:Bind ViewModel.SelectedRow, Mode=TwoWay}">
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTemplateColumn Header="{x:Bind ViewModel.ChatTitleHeader, Mode=OneWay}" Width="3*" MinWidth="180"
-                            CellTemplate="{StaticResource RegistryIdentity}" />
-                        <controls:DataGridTextColumn Header="{x:Bind ViewModel.ChatCountHeader, Mode=OneWay}" Width="Auto" MinWidth="100"
-                            Binding="{Binding MessagesText}" />
-                        <controls:DataGridTextColumn Header="{x:Bind ViewModel.ChatFilesHeader, Mode=OneWay}" Width="Auto" MinWidth="75"
-                            Binding="{Binding FilesText}" />
-                        <controls:DataGridTemplateColumn Header="{x:Bind ViewModel.ChatProgressHeader, Mode=OneWay}" Width="2*" MinWidth="190"
-                            CellTemplate="{StaticResource RegistryProgress}" />
-                        <controls:DataGridTextColumn x:Name="UpdatedColumn" Header="{x:Bind ViewModel.ChatUpdatedHeader, Mode=OneWay}" Width="150"
-                            Binding="{Binding Updated}" />
+                        <controls:DataGridTemplateColumn
+                            Width="3*"
+                            MinWidth="180"
+                            CellTemplate="{StaticResource RegistryIdentity}"
+                            Header="{x:Bind ViewModel.ChatTitleHeader, Mode=OneWay}" />
+                        <controls:DataGridTextColumn
+                            Width="Auto"
+                            MinWidth="100"
+                            Binding="{Binding MessagesText}"
+                            Header="{x:Bind ViewModel.ChatCountHeader, Mode=OneWay}" />
+                        <controls:DataGridTextColumn
+                            Width="Auto"
+                            MinWidth="75"
+                            Binding="{Binding FilesText}"
+                            Header="{x:Bind ViewModel.ChatFilesHeader, Mode=OneWay}" />
+                        <controls:DataGridTemplateColumn
+                            Width="2*"
+                            MinWidth="190"
+                            CellTemplate="{StaticResource RegistryProgress}"
+                            Header="{x:Bind ViewModel.ChatProgressHeader, Mode=OneWay}" />
+                        <controls:DataGridTextColumn
+                            x:Name="UpdatedColumn"
+                            Width="160"
+                            Binding="{Binding Updated}"
+                            Header="{x:Bind ViewModel.ChatUpdatedHeader, Mode=OneWay}" />
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
-                <TextBlock l:Uids.Uid="RegistryEmpty" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap"
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    l:Uids.Uid="RegistryEmpty"
+                    TextWrapping="Wrap"
                     Visibility="{x:Bind ViewModel.IsEmptyData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </Grid>
         </Grid>
-        <Grid Grid.Row="3" ColumnSpacing="12"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-            <TextBlock l:Uids.Uid="RegistryHint" Style="{StaticResource ChatSecondary}" VerticalAlignment="Center" />
-            <Button Grid.Column="1" Command="{x:Bind ViewModel.LazyLoadCommand}" IsEnabled="{x:Bind ViewModel.HasMoreItems, Mode=OneWay}">
-                <Button.CommandParameter><x:Boolean>False</x:Boolean></Button.CommandParameter><TextBlock l:Uids.Uid="TextBlockLoadMore" />
+        <Grid Grid.Row="3" ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                VerticalAlignment="Center"
+                l:Uids.Uid="RegistryHint"
+                Style="{StaticResource ChatSecondary}" />
+            <Button
+                Grid.Column="1"
+                Command="{x:Bind ViewModel.LazyLoadCommand}"
+                IsEnabled="{x:Bind ViewModel.HasMoreItems, Mode=OneWay}">
+                <Button.CommandParameter>
+                    <x:Boolean>False</x:Boolean>
+                </Button.CommandParameter>
+                <TextBlock l:Uids.Uid="TextBlockLoadMore" />
             </Button>
         </Grid>
-        <!-- Действия и сведения относятся только к выбранной строке -->
-        <Border Grid.Row="4" Style="{StaticResource ChatSurface}" AutomationProperties.AutomationId="ChatSelectionActions"
+        <!--  Действия и сведения относятся только к выбранной строке  -->
+        <Border
+            Grid.Row="4"
+            AutomationProperties.AutomationId="ChatSelectionActions"
+            Style="{StaticResource ChatSurface}"
             Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
             <StackPanel Spacing="10">
-                <TextBlock Text="{x:Bind ViewModel.SelectedRow.Title, Mode=OneWay}" Style="{StaticResource ChatTitle}" TextWrapping="Wrap" MaxLines="2" />
-                <TextBlock Text="{x:Bind ViewModel.SelectionDetails, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
-                <Grid ColumnSpacing="8"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                    <Button l:Uids.Uid="RegistryDelete" Command="{x:Bind ViewModel.DeleteChatCommand}"
+                <TextBlock
+                    MaxLines="2"
+                    Style="{StaticResource ChatTitle}"
+                    Text="{x:Bind ViewModel.SelectedRow.Title, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+                <TextBlock Style="{StaticResource ChatSecondary}" Text="{x:Bind ViewModel.SelectionDetails, Mode=OneWay}" />
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        l:Uids.Uid="RegistryDelete"
+                        Command="{x:Bind ViewModel.DeleteChatCommand}"
                         CommandParameter="{x:Bind ViewModel.SelectedRow.Source, Mode=OneWay}"
                         IsEnabled="{x:Bind ViewModel.IsOnlineProcessing, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
                         <FontIcon Glyph="&#xE74D;" />
                     </Button>
-                    <Button Grid.Column="1" Command="{x:Bind ViewModel.ToggleSelectedParsingCommand}" AutomationProperties.AutomationId="ChatRegistryParsing">
-                        <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="{x:Bind ViewModel.ParsingGlyph, Mode=OneWay}" />
-                            <TextBlock Text="{x:Bind ViewModel.ParsingCaption, Mode=OneWay}" /></StackPanel>
+                    <Button
+                        Grid.Column="1"
+                        AutomationProperties.AutomationId="ChatRegistryParsing"
+                        Command="{x:Bind ViewModel.ToggleSelectedParsingCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="{x:Bind ViewModel.ParsingGlyph, Mode=OneWay}" />
+                            <TextBlock Text="{x:Bind ViewModel.ParsingCaption, Mode=OneWay}" />
+                        </StackPanel>
                     </Button>
-                    <Button Grid.Column="2" Command="{x:Bind ViewModel.PauseSelectedCommand}" IsEnabled="{x:Bind ViewModel.CanPauseSelected, Mode=OneWay}"
-                        AutomationProperties.AutomationId="ChatRegistryPause">
-                        <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xE769;" /><TextBlock Text="{x:Bind ViewModel.PauseCaption, Mode=OneWay}" /></StackPanel>
+                    <Button
+                        Grid.Column="2"
+                        AutomationProperties.AutomationId="ChatRegistryPause"
+                        Command="{x:Bind ViewModel.PauseSelectedCommand}"
+                        IsEnabled="{x:Bind ViewModel.CanPauseSelected, Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE769;" />
+                            <TextBlock Text="{x:Bind ViewModel.PauseCaption, Mode=OneWay}" />
+                        </StackPanel>
                     </Button>
-                    <Button Grid.Column="3" Style="{StaticResource AccentButtonStyle}" Command="{x:Bind ViewModel.OpenSelectedChatCommand}"
+                    <Button
+                        Grid.Column="3"
                         AutomationProperties.AutomationId="ChatOpenChat"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedChat, Mode=OneWay}">
-                        <StackPanel Orientation="Horizontal" Spacing="8"><FontIcon Glyph="&#xEA5B;" /><TextBlock l:Uids.Uid="RegistryOpenChat" /></StackPanel>
+                        Command="{x:Bind ViewModel.OpenSelectedChatCommand}"
+                        IsEnabled="{x:Bind ViewModel.HasSelectedChat, Mode=OneWay}"
+                        Style="{StaticResource AccentButtonStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xEA5B;" />
+                            <TextBlock l:Uids.Uid="RegistryOpenChat" />
+                        </StackPanel>
                     </Button>
                 </Grid>
-                <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" l:Uids.Uid="RegistryDetails">
-                    <StackPanel Spacing="8"><TextBlock Text="{x:Bind ViewModel.SelectedRow.Identity, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
-                        <TextBlock Text="{x:Bind ViewModel.SelectedRow.Directory, Mode=OneWay}" Style="{StaticResource ChatSecondary}" TextWrapping="Wrap" />
-                        <TextBlock Text="{x:Bind ViewModel.SelectedRow.Updated, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="RegistryDetails">
+                    <StackPanel Spacing="8">
+                        <TextBlock Style="{StaticResource ChatSecondary}" Text="{x:Bind ViewModel.SelectedRow.Identity, Mode=OneWay}" />
+                        <TextBlock
+                            Style="{StaticResource ChatSecondary}"
+                            Text="{x:Bind ViewModel.SelectedRow.Directory, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                        <TextBlock Style="{StaticResource ChatSecondary}" Text="{x:Bind ViewModel.SelectedRow.Updated, Mode=OneWay}" />
                     </StackPanel>
                 </Expander>
             </StackPanel>

@@ -20,7 +20,7 @@
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Grid Margin="10,10,10,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

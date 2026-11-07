@@ -342,7 +342,9 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	{
         if (!SettingsService.IsExistsAppStorage) return;
 
-        AppDto = await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None);
+        using var reader = IsOnlineProcessing ? new TgEfAppRepository() : null;
+        AppDto = reader is null ? await App.BusinessLogicManager.StorageManager.AppRepository.GetCurrentDtoAsync(CancellationToken.None)
+            : await reader.GetCurrentDtoAsync(CancellationToken.None);
         await ReloadProxyAsync();
 	}
 
@@ -373,11 +375,13 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 	private async Task ReloadProxyAsync()
 	{
 		ProxiesVms.Clear();
-		var storageResult = await App.BusinessLogicManager.StorageManager
-            .ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false);
-		if (storageResult.IsExists)
+        using var reader = IsOnlineProcessing ? new TgEfProxyRepository() : null;
+        var proxies = reader is null
+            ? (await App.BusinessLogicManager.StorageManager.ProxyRepository.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: false)).Items
+            : (await reader.GetListAsync(TgEnumTableTopRecords.All, 0, isReadOnly: true)).Items;
+		if (proxies.Any())
 		{
-			foreach (TgEfProxyEntity proxy in storageResult.Items)
+			foreach (TgEfProxyEntity proxy in proxies)
 			{
 				ProxiesVms.Add(new(TgGlobalTools.Container, proxy));
 			}

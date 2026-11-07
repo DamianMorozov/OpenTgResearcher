@@ -49,7 +49,8 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		SetOrderData([.. await App.BusinessLogicManager.StorageManager.StoryRepository.GetListDtosAsync()]);
+        using var reader = IsOnlineProcessing ? new TgEfStoryRepository() : null;
+        SetOrderData([.. await (reader ?? App.BusinessLogicManager.StorageManager.StoryRepository).GetListDtosAsync()]);
 	}
 
 	private async Task DefaultSortAsync()

@@ -23,12 +23,13 @@ public sealed partial class TgStorageTablesViewModel : TgPageViewModelBase
         await ReloadUiAsync();
     });
 
-    /// <summary> Load storage table dtos </summary>
+    // Читаем таблицы отдельной службой, не занимая контексты парсера
     private async Task LoadStorageTableDtosAsync()
     {
         if (!SettingsService.IsExistsAppStorage) return;
 
-        StorageTableDtos = await App.BusinessLogicManager.StorageManager.LoadStorageTableDtosAsync(
+        using var reader = new TgStorageService();
+        StorageTableDtos = await reader.LoadStorageTableDtosAsync(
             TgResourceExtensions.GetTableNameApps(),
             TgResourceExtensions.GetTableNameChats(),
             TgResourceExtensions.GetTableNameUsers(),

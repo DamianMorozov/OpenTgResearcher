@@ -51,7 +51,8 @@ public sealed partial class TgFiltersViewModel : TgPageViewModelBase
 	private async Task LoadDataStorageCoreAsync()
 	{
 		if (!SettingsService.IsExistsAppStorage) return;
-		var dtos = await App.BusinessLogicManager.StorageManager.FilterRepository.GetListDtosAsync();
+        using var reader = IsOnlineProcessing ? new TgEfFilterRepository() : null;
+        var dtos = await (reader ?? App.BusinessLogicManager.StorageManager.FilterRepository).GetListDtosAsync();
 		SetOrderData([.. dtos]);
 	}
 

@@ -111,6 +111,8 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
     { ConfirmationCount++; return LoadStorageDataAsync(action); }
     // Заменяет подтверждение действия без настоящего диалога
     protected Task ContentDialogAsync(string title, string content) => Task.CompletedTask;
+    protected Task ContentDialogAsync(Action action, string title, TgEnumLoadDesktopType type)
+    { ConfirmationCount++; return LoadStorageDataAsync(action); }
     /// <summary> Сохраняет исключение для проверки результата </summary>
     public void LogError(Exception ex) => Errors.Add(ex);
     /// <summary> Завершает работу тестовой модели </summary>
@@ -127,12 +129,20 @@ public abstract class TgSectionViewModel : TgPageViewModelBase
     public bool HasMoreItems { get; set; } = true;
     protected TgSectionViewModel(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
         : base(state, settings, navigation, logger, name) { }
+    /// <summary> Повторяет локальную загрузку раздела при открытии </summary>
+    public override Task OnNavigatedToAsync(NavigationEventArgs? e) => LoadStorageDataAsync(async () =>
+    {
+        ItemsClearCore(); PageSkip = 0; HasMoreItems = true;
+        await LazyLoadAsync(isNewQuery: false, isSearch: false);
+        await ReloadUiAsync();
+    });
     // Заменяет базовую постраничную загрузку
     protected virtual Task LazyLoadCoreAsync(bool isSearch) => Task.CompletedTask;
     // Сохраняем переопределяемые точки очистки и обновления списка
     protected virtual void ItemsClearCore() { }
     protected virtual Task AfterDataUpdateCoreAsync() => Task.CompletedTask;
     protected virtual Task StartUpdateOnlineCoreAsync() => Task.CompletedTask;
+    protected virtual Task StopUpdateOnlineCoreAsync() => Task.CompletedTask;
     // Выполняем последовательную загрузку настоящего запроса модели реестра
     protected async Task LazyLoadAsync(bool isNewQuery, bool isSearch)
     {
@@ -171,16 +181,21 @@ public sealed class TestManager
 }
 public sealed class TestStorage
 {
+    /// <summary> Повторяет чтение таблиц через исходный занятый репозиторий </summary>
+    public async Task<ObservableCollection<TgStorageTableDto>> LoadStorageTableDtosAsync(params string[] names) =>
+        [new(names[1], await SourceRepository.GetListCountAsync())];
     public ITgEfSourceRepository SourceRepository { get; set; } = null!;
     public ITgEfMessageRepository MessageRepository { get; set; } = null!;
     public ITgEfUserRepository UserRepository { get; set; } = null!;
     public ITgEfLicenseRepository LicenseRepository { get; set; } = null!;
     public ITgEfChatUserRepository ChatUserRepository { get; set; } = null!;
+    public ITgEfFilterRepository FilterRepository { get; set; } = null!;
+    public ITgEfStoryRepository StoryRepository { get; set; } = null!;
 }
 public sealed class TestClient
 {
     /// <summary> Заменяет обновление списка чатов без сети </summary>
-    public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids) => Task.CompletedTask;
+    public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids = null) => Task.CompletedTask;
     public TestClient? Client => this;
     public long UserId { get; set; } = 10;
     public bool Ready { get; set; }
@@ -209,6 +224,27 @@ public sealed class TestContext(DbContextOptions options) : TgEfContextBase(opti
 public sealed class TgUserDetailsViewModel;
 public static class TgResourceExtensions
 {
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameApps() => "Apps";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameChats() => "Chats";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameUsers() => "Users";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameChatUsers() => "ChatUsers";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameDocuments() => "Documents";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameFilters() => "Filters";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameMessages() => "Messages";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameProxies() => "Proxies";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameStories() => "Stories";
+    /// <summary> Возвращает имя таблицы тестового хранилища </summary>
+    public static string GetTableNameVersions() => "Versions";
+    public static string AskUpdateOnline() => "Обновить из Telegram?";
     /// <summary> Возвращает заголовок реестра чатов </summary>
     public static string GetChatColumnHeader(string column) => column;
     /// <summary> Возвращает подпись числа загруженных строк </summary>

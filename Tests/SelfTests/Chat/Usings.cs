@@ -23,6 +23,8 @@ global using TgStorage.Contracts;
 global using TgStorage.Domain.Sources;
 global using TgStorage.Domain.Messages;
 global using TgStorage.Domain.Users;
+global using TgStorage.Domain.Filters;
+global using TgStorage.Domain.Stories;
 global using TgStorage.Domain.Licenses;
 global using TgStorage.Repositories;
 global using TgStorage.Utils;

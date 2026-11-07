@@ -3,12 +3,14 @@ namespace OpenTgResearcherDesktop.ConnectionSelfTests;
 // Подменяем службы страницы без подключения к Telegram и без доступа к пользовательскому хранилищу
 public interface ILoadStateService
 {
+    bool IsOnlineProcessing { get; }
     CancellationToken OnlineToken { get; }
     Task PrepareOnlineTokenAsync(Guid uid);
     void StopSoftOnlineProcessing(Guid uid);
 }
 public sealed class TestLoadStateService : ILoadStateService
 {
+    public bool IsOnlineProcessing { get; set; }
     public CancellationToken OnlineToken => CancellationToken.None;
     /// <summary> Заменяет подготовку операции без запуска фоновых служб </summary>
     public Task PrepareOnlineTokenAsync(Guid uid) => Task.CompletedTask;
@@ -68,6 +70,7 @@ public abstract class TgPageViewModelBase : ObservableObject
     public string ConnectionDt { get; set; } = string.Empty;
     public string ConnectionMsg { get; set; } = string.Empty;
     public bool IsOnlineReady => App.BusinessLogicManager.ConnectClient.Ready;
+    public bool IsOnlineProcessing => LoadStateService.IsOnlineProcessing;
     public List<Exception> Errors { get; } = [];
     public int DialogRequests { get; private set; }
     public object? XamlRootVm { get; set; } = new();
@@ -114,12 +117,13 @@ public sealed class TestStorage
 public sealed class TestAppRepository
 {
     public TgEfAppDto Current { get; set; } = new();
+    public Func<CancellationToken, Task<TgEfAppDto>>? ReadCurrent { get; set; }
     public Guid? SavedProxyUid { get; private set; }
     public int SaveCalls { get; private set; }
     public int DeleteCalls { get; private set; }
     public bool FailSave { get; set; }
     /// <summary> Возвращает настройки из памяти </summary>
-    public Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => Task.FromResult(Current);
+    public Task<TgEfAppDto> GetCurrentDtoAsync(CancellationToken ct = default) => ReadCurrent?.Invoke(ct) ?? Task.FromResult(Current);
     /// <summary> Проверяет сохранение изменённых настроек </summary>
     public Task SaveAsync(TgEfAppDto dto, CancellationToken ct = default)
     {

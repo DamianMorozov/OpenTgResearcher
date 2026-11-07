@@ -73,7 +73,7 @@ internal static partial class Program
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
         }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
-            .Concat(GetParallelParsingTests()).ToArray();
+            .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
@@ -104,9 +104,12 @@ internal static partial class Program
             using var users = new TgEfUserRepository();
             using var licenses = new TgEfLicenseRepository();
             using var chatUsers = new TgEfChatUserRepository();
+            using var filters = new TgEfFilterRepository();
+            using var stories = new TgEfStoryRepository();
             var storage = App.BusinessLogicManager.StorageManager;
             storage.SourceRepository = sources; storage.MessageRepository = messages; storage.UserRepository = users;
             storage.LicenseRepository = licenses; storage.ChatUserRepository = chatUsers;
+            storage.FilterRepository = filters; storage.StoryRepository = stories;
             Chat = new(_state, _settings, _navigation, null!);
             Download = new(_state, _settings, _navigation, null!);
             _state.NetworkActivity = new();
@@ -397,7 +400,7 @@ internal static partial class Program
     // Проверяем наличие всех вкладок и отсутствие прямых UIElement-заголовков во вложенных таблицах
     private static Task ChatTabsMarkupAsync()
     {
-        var names = typeof(Program).Assembly.GetManifestResourceNames().Where(x => x.EndsWith("Page.xaml")).ToArray();
+        var names = typeof(Program).Assembly.GetManifestResourceNames().Where(x => x.StartsWith("TgChat") && x.EndsWith("Page.xaml")).ToArray();
         Assert(names.Length == 9, "Не включены все страницы чата и список чатов");
         foreach (var name in names)
         {

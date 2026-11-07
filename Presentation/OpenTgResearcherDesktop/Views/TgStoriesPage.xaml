@@ -24,7 +24,7 @@
             <ContentControl
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     Grid.Row="2"
                     Margin="{StaticResource ExpanderMargin}"
@@ -110,7 +110,7 @@
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Visibility="{x:Bind ViewModel.IsStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                Visibility="{x:Bind ViewModel.IsPageStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                 <Expander
                     Grid.Row="0"
                     Margin="{StaticResource ExpanderMargin}"

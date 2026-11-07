@@ -119,8 +119,13 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         }
     }
 
-    private async Task StartUpdateOnlineAsync() => 
-        await ContentDialogAsync(StartUpdateOnlineCoreAsync, TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Online);
+    // Запускаем чат напрямую, сохраняя обработку ошибок без диалога подтверждения
+    private async Task StartUpdateOnlineAsync()
+    {
+        try { await StartUpdateOnlineCoreAsync(); }
+        catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested) { }
+        catch (Exception ex) { LogError(ex); }
+    }
 
     private async Task StartUpdateOnlineCoreAsync()
     {
@@ -183,7 +188,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
     }
 
     private async Task StopUpdateOnlineAsync() => 
-        await ContentDialogAsync(StopUpdateOnlineCoreAsync, TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Online);
+        await ContentDialogAsync(StopUpdateOnlineCoreAsync, "AskStopChatParsing".GetLocalizedResource(), TgEnumLoadDesktopType.Online);
 
     private async Task StopUpdateOnlineCoreAsync()
     {

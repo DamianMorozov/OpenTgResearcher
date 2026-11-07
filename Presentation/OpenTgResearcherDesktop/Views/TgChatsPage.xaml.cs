@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.Views;
+namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class TgChatsPage
 {
@@ -53,14 +53,24 @@ public sealed partial class TgChatsPage
     // Обновляем перевод заголовков и динамических подписей
     private void OnLanguageChanged(object? sender, LanguageChangedEventArgs e) => DispatcherQueue.TryEnqueue(ViewModel.RefreshActivity);
 
-    // Выполняем локальный поиск по Enter
-    private void FieldFilter_KeyDown(object sender, KeyRoutedEventArgs e)
+    // Меню относится к строке под указателем, на пустом месте действия недоступны
+    private void OnChatRightTapped(object sender, RightTappedRoutedEventArgs e)
     {
-        if (e.Key == VirtualKey.Enter && ViewModel.RefreshRegistryCommand.CanExecute(null))
-        {
-            ViewModel.RefreshRegistryCommand.Execute(null);
-            e.Handled = true;
-        }
+        var element = e.OriginalSource as DependencyObject;
+        while (element is not null && element is not DataGridRow) element = VisualTreeHelper.GetParent(element);
+        ViewModel.SelectedRow = (element as DataGridRow)?.DataContext as OpenTgResearcherDesktop.Models.TgChatRegistryRow;
+    }
+
+    // Выполняем локальный поиск по Enter
+    private async void FieldFilter_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key != VirtualKey.Enter || sender is not TextBox field) return;
+        e.Handled = true;
+        // Привязка Text обновляет модель при потере фокуса, а Enter оставляет фокус в поле
+        ViewModel.FilterText = field.Text;
+        if (!ViewModel.RefreshRegistryCommand.CanExecute(null)) return;
+        try { await ViewModel.RefreshRegistryCommand.ExecuteAsync(null); }
+        catch (Exception ex) { ViewModel.LogError(ex); }
     }
 
     // Фильтруем сохранённые строки независимо от занятости Telegram

@@ -195,7 +195,9 @@ public sealed class TestStorage
 public sealed class TestClient
 {
     /// <summary> Заменяет обновление списка чатов без сети </summary>
-    public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids = null) => Task.CompletedTask;
+    public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids = null) =>
+        SearchSources?.Invoke(settings, type, ids) ?? Task.CompletedTask;
+    public Func<TgDownloadSettingsViewModel, TgEnumSourceType, List<long>?, Task>? SearchSources { get; set; }
     public TestClient? Client => this;
     public long UserId { get; set; } = 10;
     public bool Ready { get; set; }
@@ -252,6 +254,10 @@ public static class TgResourceExtensions
     /// <summary> Возвращает формат локализованной строки для проверки живого снимка </summary>
     public static string GetLocalizedResource(this string key) => key switch
     {
+        "RegistryBytes" => "Б",
+        "RegistryKilobytes" => "КБ",
+        "RegistryMegabytes" => "МБ",
+        "RegistryGigabytes" => "ГБ",
         "NetworkParsingMessageIds" => "Чтение ID {0} из {1}",
         "NetworkParsingMessageId" => "Чтение ID {0}",
         "ChatDetailsFailed" => "Не удалось обновить сведения о чате: {0}",

@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.ViewModels;
+namespace OpenTgResearcherDesktop.ViewModels;
 
 public sealed partial class TgChatsViewModel : TgSectionViewModel
 {
@@ -6,7 +6,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     private readonly HashSet<long> _parsingChatIds = [];
     public string ChatTitleHeader => "RegistryChat".GetLocalizedResource();
     public string ChatCountHeader => "RegistryMessages".GetLocalizedResource();
-    public string ChatFilesHeader => "RegistryFiles".GetLocalizedResource();
+    public string ChatSizeHeader => "RegistryDirectorySize".GetLocalizedResource();
     public string ChatProgressHeader => "RegistryParsing".GetLocalizedResource();
     public string ChatUpdatedHeader => "RegistryUpdated".GetLocalizedResource();
     [ObservableProperty]
@@ -24,7 +24,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     [ObservableProperty]
     public partial int RegistryFilter { get; set; }
     [ObservableProperty]
-    public partial int RegistrySort { get; set; }
+    public partial int RegistrySort { get; set; } = 1;
     [ObservableProperty]
     public partial bool CanPauseSelected { get; private set; }
     [ObservableProperty]
@@ -46,7 +46,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         ILogger<TgChatsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatsViewModel))
     {
         RefreshRegistryCommand = new AsyncRelayCommand(() => LazyLoadAsync(isNewQuery: true, isSearch: true));
-        PauseSelectedCommand = new RelayCommand(PauseSelected);
+        PauseSelectedCommand = new RelayCommand(PauseSelected, () => CanPauseSelected);
         OpenSelectedChatCommand = new RelayCommand(OpenSelectedChat, () => HasSelectedChat);
         // Повторный вызов нужен для прерывания ещё выполняющейся команды запуска
         ToggleSelectedParsingCommand = new AsyncRelayCommand(ToggleSelectedParsingAsync, () => CanToggleSelectedParsing,
@@ -120,6 +120,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
             row.Refresh(operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == row.Source.Id));
         var selected = operations.FirstOrDefault(x => x.Kind == TgNetworkOperationKind.Parsing && x.ChatId == SelectedRow?.Source.Id);
         CanPauseSelected = selected?.State == TgNetworkOperationState.Running && selected.CanCancel && !selected.IsCancellationRequested;
+        PauseSelectedCommand.NotifyCanExecuteChanged();
         var isRunning = selected?.State == TgNetworkOperationState.Running;
         CanToggleSelectedParsing = isRunning ? CanPauseSelected : SelectedRow?.Source.Id > 0 && IsOnlineReady
             && !_parsingChatIds.Contains(SelectedRow.Source.Id);
@@ -133,7 +134,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
                 SelectedRow.Source.IsUserAccess ? "RegistryHasAccess".GetLocalizedResource() : "RegistryNoAccess".GetLocalizedResource());
         OnPropertyChanged(nameof(ChatTitleHeader));
         OnPropertyChanged(nameof(ChatCountHeader));
-        OnPropertyChanged(nameof(ChatFilesHeader));
+        OnPropertyChanged(nameof(ChatSizeHeader));
         OnPropertyChanged(nameof(ChatProgressHeader));
         OnPropertyChanged(nameof(ChatUpdatedHeader));
     }
@@ -151,7 +152,7 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         if (SelectedRow is { } row) NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, row.Source.Uid);
     }
 
-    // Сохраняем цель до подтверждения и управляем только выбранным чатом
+    // Фиксируем выбранный чат до ожидания и подтверждаем только его прерывание
     private async Task ToggleSelectedParsingAsync()
     {
         RefreshActivity();
@@ -166,11 +167,10 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
                     LoadStateService.NetworkActivity.CancelParsing(chatId);
                     RefreshActivity();
                     return Task.CompletedTask;
-                }, TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Storage);
+                }, "AskStopChatParsing".GetLocalizedResource(), TgEnumLoadDesktopType.Storage);
             }
             else
-                await ContentDialogAsync(() => StartSelectedParsingAsync(row.Source.Uid, chatId),
-                    TgResourceExtensions.AskStartParseTelegram(), TgEnumLoadDesktopType.Storage);
+                await StartSelectedParsingAsync(row.Source.Uid, chatId);
         }
         catch (OperationCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
         {
@@ -249,6 +249,8 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         IsEmptyData = RegistryRows.Count == 0;
         PageSkip += newItems.Count;
         RefreshActivity();
+        // Строки уже доступны, файловая система читается в фоне только для новой порции
+        foreach (var row in _pageRows.ToArray()) await row.UpdateDirectorySizeAsync();
     }
 
     // Статистика снимка уже рассчитана тем же запросом и не занимает контекст парсера
@@ -257,8 +259,9 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     // Обновляем список из Telegram отдельной командой, локальный реестр остаётся доступным
     protected override async Task StartUpdateOnlineCoreAsync() => await LoadOnlineDataAsync(async () =>
     {
-        var listIds = !string.IsNullOrEmpty(FilterText) ? Dtos.Select(x => x.Id).ToList() : null;
-        await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(DownloadSettings, TgEnumSourceType.Chat, listIds);
+        // Поиск и пагинация относятся к локальному просмотру, обновляем весь список аккаунта
+        var settings = new TgDownloadSettingsViewModel();
+        await App.BusinessLogicManager.ConnectClient.SearchSourcesTgAsync(settings, TgEnumSourceType.Chat);
         await RefreshRegistryCommand.ExecuteAsync(null);
     });
 }

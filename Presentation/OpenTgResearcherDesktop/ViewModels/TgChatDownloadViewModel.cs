@@ -134,7 +134,7 @@ public sealed partial class TgChatDownloadViewModel : TgPageViewModelBase
         LoadStateService.NetworkActivity.CancelParsing(DownloadDto.Id);
         RefreshActivity();
         return Task.CompletedTask;
-    }, TgResourceExtensions.AskStopParseTelegram(), TgEnumLoadDesktopType.Storage);
+    }, "AskStopChatParsing".GetLocalizedResource(), TgEnumLoadDesktopType.Storage);
 
     // Запрашиваем расширенные сведения при раскрытии секции или явном обновлении
     private async Task LoadDetailsAsync(CancellationToken ct = default)

@@ -7,6 +7,7 @@ param(
     [long]$ChatId = 100,
     [string]$ChatDirectory = '',
     [switch]$CheckMediaPreview,
+    [switch]$CheckRegistryMenu,
     [int]$WindowWidth = 0,
     [int]$WindowHeight = 1000,
     [ValidateSet('Default', 'Light', 'Dark')]
@@ -152,6 +153,11 @@ try {
     if ($SourceDatabase) { $seedArgs += @('--source', (Resolve-Path -LiteralPath $SourceDatabase).Path, '--chat', "$ChatId", '--directory', $ChatDirectory) }
     & dotnet @seedArgs
     if ($LASTEXITCODE -ne 0) { throw 'Не удалось создать тестовую БД чата' }
+    if ($CheckRegistryMenu) {
+        if ($SourceDatabase) { throw 'Меню проверяется только на синтетической БД' }
+        & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --seed-registry-menu (Join-Path $caseDirectory 'TgStorage.db')
+        if ($LASTEXITCODE -ne 0) { throw 'Не удалось добавить вторую строку для проверки меню' }
+    }
     $sourceInfo = & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --inspect-chat (Join-Path $caseDirectory 'TgStorage.db') $ChatId
     if ($LASTEXITCODE -ne 0) { throw 'Не удалось прочитать выбранный чат тестовой БД' }
     $expectedTitle = [regex]::Match(($sourceInfo -join "`n"), 'Title=(.*?); Directory=').Groups[1].Value
@@ -172,13 +178,48 @@ try {
     $start.Environment['LocalSettingsOptions__ApplicationDataFolder'] = $caseDirectory
     $start.Environment['LocalSettingsOptions__LocalSettingsFile'] = 'Settings.json'
     $start.Environment['DOTNET_ENVIRONMENT'] = 'Production'
+    $start.Environment['Logging__LogLevel__Default'] = 'Warning'
     $appProcess = [Diagnostics.Process]::Start($start)
     Invoke-AppElement (Wait-AppElement 'Продолжить|Continue')
     Invoke-AppElement (Wait-AppElement '^(Чаты|Chats)$')
+    if ($CheckRegistryMenu) {
+        $sortControl = Wait-AppElement '.*' '' 'ChatsSort'
+        $selection = $sortControl.GetCurrentPattern([System.Windows.Automation.SelectionPattern]::Pattern).Current.GetSelection()
+        if ($selection.Count -ne 1 -or $selection[0].Current.Name -notmatch '^(По названию|By title)$') {
+            throw 'Начальная сортировка не по названию'
+        }
+        $registry = Wait-AppElement '.*' '' 'ChatsRegistry'
+        $rows = $registry.FindAll([System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                [System.Windows.Automation.ControlType]::DataItem))
+        if ($rows.Count -ne 2) { throw "Не получены две строки реестра: $($rows.Count)" }
+        $firstTexts = $rows[0].FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+        if ($expectedTitle -notin @($firstTexts | ForEach-Object { $_.Current.Name })) { throw 'Первая строка не соответствует сортировке по названию' }
+        # Щелчок по второй строке должен заменить исходный выбор первой
+        $target = $rows[1].Current.BoundingRectangle
+        [void][ChatPageTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
+        [void][ChatPageTestNative]::SetCursorPos([int]($target.Left+80),[int]($target.Top+$target.Height/2))
+        [ChatPageTestNative]::mouse_event(0x0008,0,0,0,[UIntPtr]::Zero)
+        [ChatPageTestNative]::mouse_event(0x0010,0,0,0,[UIntPtr]::Zero)
+        Start-Sleep -Milliseconds 350
+        $selected = $registry.GetCurrentPattern([System.Windows.Automation.SelectionPattern]::Pattern).Current.GetSelection()
+        $selectedTexts = $selected[0].FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+        if ('ZZ Context menu chat' -notin @($selectedTexts | ForEach-Object { $_.Current.Name })) { throw 'Меню открылось для другого чата' }
+        $elements = ([System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)).FindAll(
+            [System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+        foreach ($menuId in @('ChatRowParsing','ChatRowPause')) {
+            $item = @($elements | Where-Object { $_.Current.AutomationId -eq $menuId -and -not $_.Current.IsOffscreen })
+            if ($item.Count -ne 1 -or $item[0].Current.IsEnabled) { throw "Меню $menuId не показано или разрешает действие без подключения" }
+        }
+        Save-AppSnapshot 'Chats-RowMenu'
+        [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+        $rows[0].GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
+        Write-Output 'PASS: сортировка по названию; меню выбрало вторую строку; парсинг и пауза без подключения недоступны'
+    }
     # Проверяем настоящие заголовки: колонки не входят в обычный обход локализатора
     $expectedHeaders = if ($Language -eq 'Russian') {
-        @('Чат', 'Сообщения', 'Медиа', 'Парсинг', 'Обновление')
-    } else { @('Chat', 'Messages', 'Media', 'Parsing', 'Updated') }
+        @('Чат', 'Сообщения', 'Размер', 'Парсинг', 'Обновление')
+    } else { @('Chat', 'Messages', 'Size', 'Parsing', 'Updated') }
     if ($WindowWidth -gt 0 -and $WindowWidth -lt 1000) { $expectedHeaders = $expectedHeaders[0..3] }
     $deadline = [DateTime]::UtcNow.AddSeconds(15)
     do {
@@ -202,6 +243,14 @@ try {
     }
     $headerNames | Set-Content -LiteralPath (Join-Path $caseDirectory 'headers.txt') -Encoding utf8
     Write-Output "PASS: $($expectedHeaders.Count) локализованных заголовков реестра чатов"
+    if (-not $SourceDatabase) {
+        $bytes = (Get-ChildItem -LiteralPath (Join-Path $caseDirectory 'Media') -File -Recurse | Measure-Object Length -Sum).Sum
+        $unit = if ($bytes -lt 1024) { 0 } elseif ($bytes -lt 1048576) { 1 } elseif ($bytes -lt 1073741824) { 2 } else { 3 }
+        $units = if ($Language -eq 'Russian') { @('Б','КБ','МБ','ГБ') } else { @('B','KB','MB','GB') }
+        $expectedSize = ($bytes / [Math]::Pow(1024, $unit)).ToString('0.##') + ' ' + $units[$unit]
+        [void](Wait-AppElement ('^' + [regex]::Escape($expectedSize) + '$'))
+        Write-Output "PASS: колонка размера показывает объём настоящего каталога: $expectedSize"
+    }
     Save-AppSnapshot 'Chats'
     $open = Wait-AppElement '.*' '' 'ChatOpenChat'
     $rect = $window.Current.BoundingRectangle
@@ -211,11 +260,17 @@ try {
     if ($filter.Current.BoundingRectangle.Width -lt 120) { throw 'Поле фильтра чатов сжалось до недоступной ширины' }
     # Проверяем поиск и фильтр без подключения к Telegram
     $filterValue = $filter.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+    $filter.SetFocus()
+    # UI Automation вводит текст независимо от русской или английской раскладки Windows
     $filterValue.SetValue('registry_missing_483291')
-    Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSearch')
+    if ($filterValue.Current.Value -ne 'registry_missing_483291') { throw 'Тест не ввёл поисковую строку' }
+    [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
     [void](Wait-AppElement '^(Чаты не найдены|No chats found)')
+    if ($filterValue.Current.Value -ne 'registry_missing_483291') { throw 'Enter изменил текст поиска' }
+    $filter.SetFocus()
     $filterValue.SetValue('')
-    Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSearch')
+    [System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
+    Write-Output 'PASS: Enter применил поиск без потери фокуса; очистка и Enter вернули список'
     [void](Wait-AppElement '.*' '' 'ChatOpenChat')
     Invoke-AppElement (Wait-AppElement '^(В работе|In progress)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
     [void](Wait-AppElement '^(Чаты не найдены|No chats found)')

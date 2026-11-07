@@ -1715,16 +1715,25 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             switch (sourceType)
             {
                 case TgEnumSourceType.Chat:
-                    await SetUserAccessForAllChatsAsync(listIds, isUserAccess: false);
-                    await SetSubscribeForAllChatsAsync(listIds, isSubscribe: false);
-                    await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, tgDownloadSettings.SourceVm.Dto.Count, TgLocale.CollectChats);
-                    listIds = [.. await CollectAllChatsAsync()];
-                    await SetUserAccessForAllChatsAsync(listIds, isUserAccess: true);
-                    await SetSubscribeForAllChatsAsync(listIds, isSubscribe: true);
-                    tgDownloadSettings.SourceScanCount = DicChats.Count;
+                {
+                    if (!IsReady) return;
+                    await UpdateChatViewModelAsync(tgDownloadSettings.SourceVm.Dto.Id, 0, 0, TgLocale.CollectChats);
+                    // Сначала получаем список: ошибка Telegram не должна сбрасывать подписки в БД
+                    var requestedIds = listIds;
+                    var receivedIds = (await CollectAllChatsAsync(LoadStateService.DownloadToken)).ToList();
+                    LoadStateService.DownloadToken.ThrowIfCancellationRequested();
+                    var chatIds = requestedIds is null ? receivedIds : receivedIds.Intersect(requestedIds).ToList();
+                    tgDownloadSettings.SourceScanCount = chatIds.Count;
                     tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchChatsAsync(tgDownloadSettings, listIds, LoadStateService.DownloadToken);
+                    await SearchChatsAsync(tgDownloadSettings, chatIds, LoadStateService.DownloadToken);
+                    LoadStateService.DownloadToken.ThrowIfCancellationRequested();
+                    // Новые чаты уже сохранены, поэтому признаки обновятся и для них
+                    await SetUserAccessForAllChatsAsync(requestedIds, isUserAccess: false);
+                    await SetSubscribeForAllChatsAsync(requestedIds, isSubscribe: false);
+                    await SetUserAccessForAllChatsAsync(chatIds, isUserAccess: true);
+                    await SetSubscribeForAllChatsAsync(chatIds, isSubscribe: true);
                     break;
+                }
                 case TgEnumSourceType.Dialog:
                     await SetUserAccessForAllChatsAsync(listIds, isUserAccess: false);
                     await SetSubscribeForAllChatsAsync(listIds, isSubscribe: false);
@@ -1805,17 +1814,17 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         try
         {
             var counter = 0;
-            var channels = listIds is not null && listIds.Count != 0 ? EnumerableChannels.Where(x => listIds.Contains(x.ID)) : EnumerableChannels;
-            var groups = (listIds is not null && listIds.Count != 0) ? EnumerableGroups.Where(x => listIds.Contains(x.ID)) : EnumerableGroups;
-            var smallGroups = (listIds is not null && listIds.Count != 0) ? EnumerableSmallGroups.Where(x => listIds.Contains(x.ID)) : EnumerableSmallGroups;
-            var dialogs = (listIds is not null && listIds.Count != 0) ? EnumerableDialogs.Where(x => listIds.Contains(x.Peer.ID)) : EnumerableDialogs;
+            var channels = listIds is not null ? EnumerableChannels.Where(x => listIds.Contains(x.ID)) : EnumerableChannels;
+            var groups = (listIds is not null) ? EnumerableGroups.Where(x => listIds.Contains(x.ID)) : EnumerableGroups;
+            var smallGroups = (listIds is not null) ? EnumerableSmallGroups.Where(x => listIds.Contains(x.ID)) : EnumerableSmallGroups;
+            var dialogs = (listIds is not null) ? EnumerableDialogs.Where(x => listIds.Contains(x.Peer.ID)) : EnumerableDialogs;
             var countAll = channels.Count() + groups.Count() + smallGroups.Count() + dialogs.Count();
 
-            // First groups (small + groups)
+            // Сначала обрабатываем группы
             counter = await SearchGroupsAsync(tgDownloadSettings, smallGroups, counter, countAll, ct);
             counter = await SearchGroupsAsync(tgDownloadSettings, groups, counter, countAll, ct);
 
-            // Then the channels
+            // Затем обрабатываем каналы
             foreach (var channel in channels)
             {
                 if (ct.IsCancellationRequested) return;
@@ -1857,12 +1866,12 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                         tgDownloadSettings.SourceScanCurrent):#00.00} %");
                 }, ct: ct);
 
-                await FlushChatBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
+                await FlushChatBufferAsync(isSaveMessages: true, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }
         }
         finally
         {
-            await FlushChatBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
+            await FlushChatBufferAsync(isSaveMessages: true, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
         }
     }
 

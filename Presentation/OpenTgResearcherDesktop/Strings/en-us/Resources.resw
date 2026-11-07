@@ -1090,13 +1090,13 @@
     <value>Stop downloading</value>
   </data>
   <data name="TextBlockStartParseTelegram.Text" xml:space="preserve">
-    <value>Start parsing Telegram</value>
+    <value>Start chat parsing</value>
   </data>
   <data name="AskStartParseTelegram" xml:space="preserve">
     <value>Start parsing Telegram</value>
   </data>
   <data name="TextBlockStopParseTelegram.Text" xml:space="preserve">
-    <value>Stop parsing Telegram</value>
+    <value>Stop chat parsing</value>
   </data>
   <data name="AskStopParseTelegram" xml:space="preserve">
     <value>Stop parsing Telegram</value>
@@ -2097,10 +2097,10 @@ API credentials, phone number, and the selected proxy will be removed from the p
     <value>Settings are saved before parsing starts</value>
   </data>
   <data name="ChatStart.Text" xml:space="preserve">
-    <value>Start parsing</value>
+    <value>Start chat parsing</value>
   </data>
   <data name="ChatStop.Text" xml:space="preserve">
-    <value>Stop</value>
+    <value>Stop chat parsing</value>
   </data>
   <data name="ChatCurrentFile.Text" xml:space="preserve">
     <value>Downloading now</value>
@@ -2404,5 +2404,23 @@ API credentials, phone number, and the selected proxy will be removed from the p
   </data>
   <data name="StatusOperationCount" xml:space="preserve">
     <value>Operations: {0}</value>
+  </data>
+  <data name="AskStopChatParsing" xml:space="preserve">
+    <value>Stop chat parsing</value>
+  </data>
+  <data name="RegistryDirectorySize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="RegistryBytes" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="RegistryKilobytes" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="RegistryMegabytes" xml:space="preserve">
+    <value>MB</value>
+  </data>
+  <data name="RegistryGigabytes" xml:space="preserve">
+    <value>GB</value>
   </data>
 </root>

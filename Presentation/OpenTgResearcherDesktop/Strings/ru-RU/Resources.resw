@@ -1152,13 +1152,13 @@
     <value>Остановить загрузку</value>
   </data>
   <data name="TextBlockStartParseTelegram.Text" xml:space="preserve">
-    <value>Запустить парсинг Telegram</value>
+    <value>Запустить парсинг чата</value>
   </data>
   <data name="AskStartParseTelegram" xml:space="preserve">
     <value>Запустить парсинг Telegram</value>
   </data>
   <data name="TextBlockStopParseTelegram.Text" xml:space="preserve">
-    <value>Остановить парсинг Telegram</value>
+    <value>Остановить парсинг чата</value>
   </data>
   <data name="AskStopParseTelegram" xml:space="preserve">
     <value>Остановить парсинг Telegram</value>
@@ -2161,10 +2161,10 @@ API-параметры, телефон и выбранный прокси буд
     <value>Настройки сохраняются перед запуском парсинга</value>
   </data>
   <data name="ChatStart.Text" xml:space="preserve">
-    <value>Запустить парсинг</value>
+    <value>Запустить парсинг чата</value>
   </data>
   <data name="ChatStop.Text" xml:space="preserve">
-    <value>Прервать</value>
+    <value>Остановить парсинг чата</value>
   </data>
   <data name="ChatCurrentFile.Text" xml:space="preserve">
     <value>Скачивается сейчас</value>
@@ -2468,5 +2468,23 @@ API-параметры, телефон и выбранный прокси буд
   </data>
   <data name="StatusOperationCount" xml:space="preserve">
     <value>Операции: {0}</value>
+  </data>
+  <data name="AskStopChatParsing" xml:space="preserve">
+    <value>Остановить парсинг чата</value>
+  </data>
+  <data name="RegistryDirectorySize" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="RegistryBytes" xml:space="preserve">
+    <value>Б</value>
+  </data>
+  <data name="RegistryKilobytes" xml:space="preserve">
+    <value>КБ</value>
+  </data>
+  <data name="RegistryMegabytes" xml:space="preserve">
+    <value>МБ</value>
+  </data>
+  <data name="RegistryGigabytes" xml:space="preserve">
+    <value>ГБ</value>
   </data>
 </root>

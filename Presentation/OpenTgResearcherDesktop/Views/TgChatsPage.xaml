@@ -1,4 +1,4 @@
-﻿<common:TgPageBase
+<common:TgPageBase
     x:Class="OpenTgResearcherDesktop.Views.TgChatsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -186,8 +186,29 @@
                     HeadersVisibility="Column"
                     IsReadOnly="True"
                     ItemsSource="{x:Bind ViewModel.RegistryRows, Mode=OneWay}"
+                    RightTapped="OnChatRightTapped"
                     RowHeight="64"
                     SelectedItem="{x:Bind ViewModel.SelectedRow, Mode=TwoWay}">
+                    <controls:DataGrid.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem
+                                AutomationProperties.AutomationId="ChatRowParsing"
+                                Command="{x:Bind ViewModel.ToggleSelectedParsingCommand}"
+                                Text="{x:Bind ViewModel.ParsingCaption, Mode=OneWay}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="{x:Bind ViewModel.ParsingGlyph, Mode=OneWay}" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem
+                                AutomationProperties.AutomationId="ChatRowPause"
+                                Command="{x:Bind ViewModel.PauseSelectedCommand}"
+                                Text="{x:Bind ViewModel.PauseCaption, Mode=OneWay}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE769;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </controls:DataGrid.ContextFlyout>
                     <controls:DataGrid.Columns>
                         <controls:DataGridTemplateColumn
                             Width="3*"
@@ -202,8 +223,8 @@
                         <controls:DataGridTextColumn
                             Width="Auto"
                             MinWidth="75"
-                            Binding="{Binding FilesText}"
-                            Header="{x:Bind ViewModel.ChatFilesHeader, Mode=OneWay}" />
+                            Binding="{Binding DirectorySizeText}"
+                            Header="{x:Bind ViewModel.ChatSizeHeader, Mode=OneWay}" />
                         <controls:DataGridTemplateColumn
                             Width="2*"
                             MinWidth="190"

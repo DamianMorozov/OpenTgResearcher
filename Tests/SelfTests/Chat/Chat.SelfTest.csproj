@@ -26,5 +26,7 @@
         LogicalName="ConsoleDownload.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgChatActivityRow.cs" Link="TgChatActivityRow.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgChatRegistryRow.cs" Link="TgChatRegistryRow.cs" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/ru-RU/Resources.resw" LogicalName="ChatResources.ru-RU.resw" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/en-us/Resources.resw" LogicalName="ChatResources.en-US.resw" />
   </ItemGroup>
 </Project>

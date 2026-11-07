@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
+    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:l="using:WinUI3Localizer"
     xmlns:messages="using:TgStorage.Domain.Messages">
     <common:TgPageBase.Resources>
@@ -22,16 +23,25 @@
                                 <TextBlock Text="{x:Bind DtChangedString, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
                             </StackPanel>
                         </Grid>
-                        <TextBlock Text="{x:Bind MessageText, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                        <RichTextBlock helpers:TgMessageTextHelper.Content="{x:Bind Content, Mode=OneWay}"
+                            TextWrapping="Wrap" IsTextSelectionEnabled="True" />
                         <!-- Медиа занимают отдельную строку и не сжимают текст сообщения -->
                         <Image AutomationProperties.AutomationId="MessageImage" AutomationProperties.Name="{x:Bind FileName, Mode=OneWay}"
                             MaxWidth="480" MaxHeight="280" HorizontalAlignment="Left" Stretch="Uniform" Tapped="OnImagePreviewClick"
                             Source="{x:Bind ImageFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
                             Visibility="{x:Bind IsImageExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                         <Image AutomationProperties.AutomationId="MessageThumbnail" AutomationProperties.Name="{x:Bind FileName, Mode=OneWay}"
-                            MaxWidth="480" MaxHeight="280" HorizontalAlignment="Left" Stretch="Uniform" Tapped="OnImagePreviewClick"
+                            MaxWidth="480" MaxHeight="280" HorizontalAlignment="Left" Stretch="Uniform" Tapped="OnMediaPreviewClick"
+                            Tag="{x:Bind MediaFullPath, Mode=OneWay}"
                             Source="{x:Bind ThumbFullPath, Mode=OneWay, Converter={StaticResource SafeImagePathConverter}}"
                             Visibility="{x:Bind IsThumbExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <Button Click="OnOpenMediaClick" Tag="{x:Bind MediaFullPath, Mode=OneWay}" l:Uids.Uid="ChatOpenMedia"
+                            AutomationProperties.AutomationId="ChatOpenMedia"
+                            Visibility="{x:Bind IsMediaExists, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE768;" FontSize="14" /><TextBlock l:Uids.Uid="ChatOpenMediaLabel" />
+                            </StackPanel>
+                        </Button>
                         <TextBlock Text="{x:Bind FileName, Mode=OneWay}" Style="{StaticResource ChatSecondary}" />
                         <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" l:Uids.Uid="ChatMessageDetails">
                             <StackPanel Spacing="8">
@@ -94,5 +104,6 @@
                 </Border>
             </Grid>
         </Grid>
+        <InfoBar x:Name="MediaError" Grid.Row="1" VerticalAlignment="Top" Severity="Warning" IsOpen="False" IsClosable="True" />
     </Grid>
 </common:TgPageBase>

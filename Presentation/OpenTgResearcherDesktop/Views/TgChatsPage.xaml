@@ -169,10 +169,10 @@
             <Expander
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
-                AutomationProperties.AutomationId="PublicChatExpander"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                l:Uids.Uid="PublicChatExpander">
+                l:Uids.Uid="PublicChatExpander"
+                AutomationProperties.AutomationId="PublicChatExpander">
                 <Grid ColumnSpacing="8" RowSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />

@@ -35,31 +35,30 @@ public sealed partial class TgEfMessageDto : TgDtoBase, ITgEfMessageDto
     /// <summary> Показывает название чата для сообщения без ID автора, иначе идентификатор отправителя </summary>
     public string SenderDisplay => UserId == 0 ? (string.IsNullOrWhiteSpace(UserContact) ? SourceId.ToString() : UserContact) : UserId.ToString();
 
-    public string MessageText
+    /// <summary> Текст сообщения или подпись без имени файла </summary>
+    public string MessageText => Content.Text;
+
+    /// <summary> Имя файла независимо от подписи и разметки </summary>
+    public string FileName => Content.FileName;
+
+    /// <summary> Разобранное содержимое с поддержкой исторического формата </summary>
+    public TgMessageContent Content => TgMessageContent.Read(Message ?? string.Empty, Type);
+
+    /// <summary> Фрагменты текста с вложенными стилями Telegram </summary>
+    public IReadOnlyList<TgMessageTextRun> TextRuns => Content.GetRuns();
+
+    /// <summary> Существующий оригинал медиафайла, включая имена с ID и без него </summary>
+    public string MediaFullPath
     {
         get
         {
-            if (string.IsNullOrEmpty(Message))
-                return string.Empty;
-            var idx = Message.LastIndexOf('|');
-            if (idx < 0)
-                return Message.Trim();
-            return Message[..idx].Trim();
+            try { return FindMediaFile(isThumbnail: false); }
+            catch (Exception ex) { TgLogUtils.WriteException(ex); return string.Empty; }
         }
     }
 
-    public string FileName
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(Message))
-                return string.Empty;
-            var idx = Message.LastIndexOf('|');
-            if (idx < 0)
-                return Type == TgEnumMessageType.Document ? Message.Trim() : string.Empty;
-            return Message[(idx + 1)..].Trim();
-        }
-    }
+    /// <summary> Доступность открытия файла во внешнем приложении </summary>
+    public bool IsMediaExists => !string.IsNullOrEmpty(MediaFullPath);
 
     public string ImageFullPath
     {

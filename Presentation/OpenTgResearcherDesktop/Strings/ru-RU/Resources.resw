@@ -2502,4 +2502,7 @@ API-параметры, телефон и выбранный прокси буд
   <data name="PublicChatHint.Text" xml:space="preserve">
     <value>Будет проверена доступность истории. Подписка не оформляется. После открытия выберите каталог и параметры парсинга. Для неизвестного источника одного ID недостаточно.</value>
   </data>
+  <data name="ChatOpenMediaLabel.Text" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="ChatOpenMedia.ToolTipService.ToolTip" xml:space="preserve"><value>Открыть оригинал в системном приложении</value></data>
+  <data name="ChatOpenMediaFailed" xml:space="preserve"><value>Не удалось открыть файл. Проверьте, что он существует и в Windows выбрано приложение для этого типа файлов.</value></data>
 </root>

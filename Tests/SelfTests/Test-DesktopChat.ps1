@@ -7,6 +7,8 @@ param(
     [long]$ChatId = 100,
     [string]$ChatDirectory = '',
     [switch]$CheckMediaPreview,
+    [switch]$ContentOnly,
+    [string]$VideoFileName = '',
     [switch]$CheckRegistryMenu,
     [switch]$CheckPublicChat,
     [switch]$CheckRegistryPagination,
@@ -133,7 +135,7 @@ function Assert-ImageViewerClosed {
     $images = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
         [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty, 'ChatFullScreenImage'))
     if (@($images | Where-Object { -not $_.Current.IsOffscreen }).Count -gt 0) { throw 'Просмотр изображения остался поверх ленты' }
-    [void](Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail')
+    [void](Wait-AppElement '^preview.png$' '' 'MessageImage')
 }
 
 # Сохраняем только окно проверяемого приложения
@@ -456,6 +458,10 @@ try {
         @('Обзор', 'Содержимое', 'Мой профиль в чате', 'Все сообщения', 'Участники', 'Статистика', 'Обзор')
     } else { @('Overview', 'Content', 'My chat profile', 'All messages', 'Participants', 'Statistics', 'Overview') }
     $models = @('Download', 'Content', 'MyMessages', 'Content', 'Participants', 'Statistics', 'Download')
+    if ($ContentOnly) {
+        $captions = @(if ($Language -eq 'Russian') { 'Содержимое' } else { 'Content' })
+        $models = @('Content')
+    }
     for ($index = 0; $index -lt $captions.Count; $index++) {
         $loadedPattern = 'TgChat' + $models[$index] + 'ViewModel.*Page loaded'
         $previousCount = [regex]::Matches((Get-NewAppLog), $loadedPattern).Count
@@ -648,9 +654,39 @@ try {
             if ($messageRows.Count -eq 0) { throw 'Содержимое не показало сообщения выбранного чата' }
             Write-Output "PASS: непустая лента выбранного чата; видимых контейнеров: $($messageRows.Count)"
             Save-AppSnapshot 'Content'
+            if ($VideoFileName) {
+                $feed.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern).SetScrollPercent(-1, 100)
+                Start-Sleep -Milliseconds 300
+                $image = Wait-AppElement ('(^|[\\/ ])' + [regex]::Escape($VideoFileName) + '$') '' 'MessageThumbnail'
+                Save-AppSnapshot 'VideoCaption'
+                $beforePlayers = @(Get-Process | Where-Object { $_.MainWindowTitle -like ('*' + $VideoFileName + '*') } | Select-Object -ExpandProperty Id)
+                $bounds = $image.Current.BoundingRectangle
+                Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
+                $deadline = [DateTime]::UtcNow.AddSeconds(15)
+                do {
+                    $player = Get-Process | Where-Object { $_.MainWindowTitle -like ('*' + $VideoFileName + '*') } | Select-Object -First 1
+                    if ($null -eq $player) { Start-Sleep -Milliseconds 100 }
+                } until ($null -ne $player -or [DateTime]::UtcNow -gt $deadline)
+                if ($null -eq $player) { throw 'Нажатие обложки не открыло оригинал в системном проигрывателе' }
+                try {
+                    Start-Sleep -Milliseconds 1200
+                    $playerWindow = [System.Windows.Automation.AutomationElement]::FromHandle($player.MainWindowHandle)
+                    $playerWindow.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition) |
+                        ForEach-Object { "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name)" } |
+                        Set-Content -LiteralPath (Join-Path $caseDirectory 'player.txt') -Encoding utf8
+                    Write-Output "PASS: обложка открыла настоящий оригинал в системном проигрывателе: $($player.MainWindowTitle)"
+                }
+                finally {
+                    if ($player.Id -notin $beforePlayers) { [void]$player.CloseMainWindow(); [void]$player.WaitForExit(5000) }
+                    $player.Dispose()
+                }
+            }
         }
         if ($CheckMediaPreview -and $models[$index] -eq 'Content') {
             Add-Type -AssemblyName System.Drawing
+            $scroll = $feed.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+            if ($scroll.Current.VerticallyScrollable) { $scroll.SetScrollPercent(-1, 0) }
+            Start-Sleep -Milliseconds 200
             $image = Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail'
             $bounds = $image.Current.BoundingRectangle
             if ($bounds.Width -lt 100 -or $bounds.Height -lt 50) { throw 'Обложка не получила размер для отображения' }
@@ -669,14 +705,21 @@ try {
             } until ($rendered -or [DateTime]::UtcNow -gt $deadline)
             if (-not $rendered) { throw 'Видимый элемент обложки не отрисовал тестовое изображение' }
             Write-Output 'PASS: обложка документа найдена, декодирована и отображена настоящим Image'
+            # Фото открывается внутри ленты; обложка видео теперь запускает оригинал во внешнем проигрывателе
+            if ($scroll.Current.VerticallyScrollable) { $scroll.SetScrollPercent(-1, 100) }
+            Start-Sleep -Milliseconds 200
+            $image = Wait-AppElement '^preview.png$' '' 'MessageImage'
+            $bounds = $image.Current.BoundingRectangle
             Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
             $preview = Wait-AppElement '.*' '' 'ChatFullScreenImage'
             $previewBounds = $preview.Current.BoundingRectangle
             $feedBounds = $feed.Current.BoundingRectangle
-            $outsideX = $feedBounds.Left + 4
-            $outsideY = $feedBounds.Top + 4
-            if ($previewBounds.Contains($outsideX, $outsideY)) { throw 'Не найден фон вне изображения для проверки закрытия' }
-            Invoke-AppPoint $outsideX $outsideY
+            $outside = @(
+                @(($feedBounds.Left + 4), ($feedBounds.Top + 4)), @(($feedBounds.Right - 4), ($feedBounds.Top + 4)),
+                @(($feedBounds.Left + 4), ($feedBounds.Bottom - 4)), @(($feedBounds.Right - 4), ($feedBounds.Bottom - 4))
+            ) | Where-Object { -not $previewBounds.Contains($_[0], $_[1]) } | Select-Object -First 1
+            if ($null -eq $outside) { throw "Не найден фон вне изображения: preview=$previewBounds; feed=$feedBounds" }
+            Invoke-AppPoint $outside[0] $outside[1]
             Assert-ImageViewerClosed
             Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
             $preview = Wait-AppElement '.*' '' 'ChatFullScreenImage'
@@ -688,7 +731,7 @@ try {
             Invoke-AppElement (Wait-AppElement '^(Мой профиль в чате|My chat profile)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
             [void](Wait-AppElement '^Alex Researcher$')
             Invoke-AppElement (Wait-AppElement '^(Все сообщения|All messages)$' 'Microsoft.UI.Xaml.Controls.SelectorBarItem')
-            [void](Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail')
+            [void](Wait-AppElement '^preview.png$' '' 'MessageImage')
             Assert-ImageViewerClosed
             Write-Output 'PASS: просмотр закрывается по фону и изображению; возврат к ленте сбрасывает незакрытый просмотр'
             # Проверяем скрытие всего содержимого, включая обложку, через настоящий переключатель
@@ -697,10 +740,10 @@ try {
             $toggle.Toggle()
             Start-Sleep -Milliseconds 200
             $hiddenImages = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants,
-                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty,'MessageThumbnail'))
+                [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::AutomationIdProperty,'MessageImage'))
             if (@($hiddenImages | Where-Object { -not $_.Current.IsOffscreen }).Count -gt 0) { throw 'Обложка не скрылась вместе с конфиденциальными данными' }
             $toggle.Toggle()
-            [void](Wait-AppElement '^sample.mp4$' '' 'MessageThumbnail')
+            [void](Wait-AppElement '^preview.png$' '' 'MessageImage')
             Invoke-AppElement (Wait-AppElement '.*' '' 'ClearChatContent')
             Invoke-AppElement (Wait-AppElement '^(Да|Yes)$')
             [void](Wait-AppElement '^(Пустые данные|Empty data)$')
@@ -728,7 +771,8 @@ try {
     if ($log -match 'Content does not support UIElement|App_UnhandledException|Unhandled exception in|Object reference not set') { throw 'В журнале найдено необработанное исключение' }
     if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000)) { throw 'Desktop не завершил закрытие окна' }
     if ($appProcess.ExitCode -ne 0) { throw "Desktop закрылся с ошибкой: код $($appProcess.ExitCode)" }
-    Write-Output "PASS: пульт чата ($Language, $Theme), четыре вкладки, локальная навигация содержимого, секции настроек, без исключений; $caseDirectory"
+    if ($ContentOnly) { Write-Output "PASS: содержимое выбранного чата ($Language, $Theme), без исключений; $caseDirectory" }
+    else { Write-Output "PASS: пульт чата ($Language, $Theme), четыре вкладки, локальная навигация содержимого, секции настроек, без исключений; $caseDirectory" }
 }
 finally {
     if (Test-Path -LiteralPath $caseDirectory) {

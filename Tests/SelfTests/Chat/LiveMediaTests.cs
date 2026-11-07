@@ -3,7 +3,7 @@ namespace OpenTgResearcherDesktop.ChatSelfTests;
 internal static class LiveMediaTests
 {
     // Проверяем готовые файлы по настоящим метаданным Telegram, не запуская загрузку архива
-    internal static async Task<int> RunAsync(string database, string sessionPath, long chatId, string directory)
+    internal static async Task<int> RunAsync(string database, string sessionPath, long chatId, string directory, string? contentOutput = null)
     {
         TgGlobalTools.SetAppType(TgEnumAppType.Test);
         var copiedSession = Path.Combine(Path.GetTempPath(), "OpenTgResearcher-LiveMedia-" + Guid.NewGuid().ToString("N") + ".session");
@@ -28,6 +28,7 @@ internal static class LiveMediaTests
             var ids = await context.Messages.AsNoTracking().Where(x => x.SourceId == chatId && x.Type == TgEnumMessageType.Document)
                 .OrderByDescending(x => x.Id).Take(20).Select(x => x.Id).ToArrayAsync();
             if (ids.Length == 0) throw new InvalidOperationException("В выбранном чате нет документов для проверки");
+            if (contentOutput is not null) ids = Enumerable.Range(Math.Max(1, ids.Max() - 20), Math.Min(21, ids.Max())).ToArray();
             using var session = new MemoryStream();
             await using (var original = new FileStream(sessionPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 await original.CopyToAsync(session);
@@ -52,6 +53,27 @@ internal static class LiveMediaTests
             await client.LoginUserIfNeeded().WaitAsync(TimeSpan.FromSeconds(40));
             var messages = await TL.SchemaExtensions.Channels_GetMessages(client, new TL.InputChannel(source.Id, source.AccessHash),
                 ids.Select(x => (TL.InputMessage)x).ToArray()).WaitAsync(TimeSpan.FromSeconds(30));
+            if (contentOutput is not null)
+            {
+                var records = new List<object>();
+                foreach (var message in messages.Messages.OfType<TL.Message>().OrderBy(x => x.ID))
+                {
+                    var document = (message.media as TL.MessageMediaDocument)?.document as TL.Document;
+                    var type = document is null ? TgEnumMessageType.Message : TgEnumMessageType.Document;
+                    var value = TgBusinessLogic.Helpers.TgMessageContentFactory.Serialize(message, document?.Filename ?? string.Empty);
+                    var dto = new TgEfMessageDto { Id = message.ID, SourceId = source.Id, Type = type, Message = value, Directory = directory };
+                    if (dto.MessageText != message.message || dto.Content.Entities.Length != (message.entities?.Length ?? 0))
+                        throw new InvalidOperationException("Потерян текст или разметка настоящего сообщения Telegram");
+                    if (document is not null && File.Exists(dto.MediaFullPath) && new FileInfo(dto.MediaFullPath).Length != document.size)
+                        throw new InvalidOperationException("Размер оригинала отличается от Telegram");
+                    Console.WriteLine($"PASS: ID={message.ID}; caption={message.message.Length}; entities={dto.Content.Entities.Length}; " +
+                        $"runs={dto.TextRuns.Count}; media={dto.IsMediaExists}; grouped={message.grouped_id}");
+                    records.Add(new { dto.Id, dto.SourceId, dto.Type, dto.Message, DtCreated = message.Date, Size = document?.size ?? 0 });
+                }
+                await File.WriteAllTextAsync(contentOutput, System.Text.Json.JsonSerializer.Serialize(records));
+                Console.WriteLine("PASS: исходные БД, сессия и файлы не изменялись; результат сохранён отдельно для проверки интерфейса");
+                return 0;
+            }
             var settings = new TgDownloadSettingsViewModel();
             settings.SourceVm.Dto.IsSaveMessages = false;
             settings.SourceVm.Dto.IsRewriteFiles = false;

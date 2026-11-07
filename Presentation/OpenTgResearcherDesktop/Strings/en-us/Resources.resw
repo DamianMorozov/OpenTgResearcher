@@ -2438,4 +2438,7 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="PublicChatHint.Text" xml:space="preserve">
     <value>History access will be checked without joining. Once opened, choose the folder and parsing options. An ID alone is insufficient for an unknown source.</value>
   </data>
+  <data name="ChatOpenMediaLabel.Text" xml:space="preserve"><value>Open file</value></data>
+  <data name="ChatOpenMedia.ToolTipService.ToolTip" xml:space="preserve"><value>Open the original in the default app</value></data>
+  <data name="ChatOpenMediaFailed" xml:space="preserve"><value>Could not open the file. Check that it exists and Windows has a default app for this file type.</value></data>
 </root>

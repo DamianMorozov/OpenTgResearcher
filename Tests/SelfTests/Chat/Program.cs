@@ -24,6 +24,8 @@ internal static partial class Program
             return await MediaTests.InspectAsync(database, long.Parse(chatId), mediaDirectory);
         if (args is ["--live-media", var liveDatabase, var session, var liveChat, var liveDirectory])
             return await LiveMediaTests.RunAsync(liveDatabase, session, long.Parse(liveChat), liveDirectory);
+        if (args is ["--live-message-content", var contentDb, var contentSession, var contentSource, var contentDirectory, var contentOutput])
+            return await LiveMediaTests.RunAsync(contentDb, contentSession, long.Parse(contentSource), contentDirectory, contentOutput);
         if (args is ["--seed-registry-menu", var menuDatabase]) return await SeedRegistryMenuAsync(menuDatabase);
         if (args is ["--seed-registry-pages", var pagingDatabase]) return await SeedRegistryPagesAsync(pagingDatabase);
         if (args is ["--seed", var path]) return await SeedDatabaseAsync(path);
@@ -78,7 +80,7 @@ internal static partial class Program
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
         }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
             .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests())
-            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).ToArray();
+            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).Concat(GetMessageContentTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
@@ -162,6 +164,10 @@ internal static partial class Program
                 await using var cover = typeof(Program).Assembly.GetManifestResourceStream("cover.jpg")!;
                 await using var targetCover = File.Create(Path.Combine(mediaDirectory, "0001 sample.thumb.jpg"));
                 await cover.CopyToAsync(targetCover);
+                targetCover.Close();
+                // Вертикальный PNG оставляет фон вокруг увеличенного изображения при эталонном размере окна
+                await File.WriteAllBytesAsync(Path.Combine(mediaDirectory, "preview.png"), Convert.FromBase64String(
+                    "iVBORw0KGgoAAAANSUhEUgAAAAIAAAAECAIAAAArjXluAAAAEklEQVR4nGO4I6d7R06XARsFAIakCTlMAQ7tAAAAAElFTkSuQmCC"));
                 context.Sources.Add(new() { Uid = Guid.NewGuid(), Id = 100, UserName = "selftest_chat", Title = "SelfTest Chat",
                     IsSubscribe = true, Directory = mediaDirectory });
                 context.Users.AddRange(
@@ -172,6 +178,8 @@ internal static partial class Program
                 context.Licenses.Add(new() { Uid = Guid.NewGuid(), LicenseKey = Guid.NewGuid(), UserId = 10 });
                 context.Messages.Add(new() { Uid = Guid.NewGuid(), SourceId = 100, UserId = 10, Id = 1, Message = "sample.mp4", Size = 4,
                     Type = TgEnumMessageType.Document, DtCreated = DateTime.UtcNow });
+                context.Messages.Add(new() { Uid = Guid.NewGuid(), SourceId = 100, UserId = 10, Id = 2, Message = "Photo caption | preview.png",
+                    Type = TgEnumMessageType.Photo, DtCreated = DateTime.UtcNow });
             }
             else
             {

@@ -27,13 +27,13 @@ public sealed partial class TgChatContentPage
 
     private void ScrollRequested()
     {
-        // Scroll to the last item in the Messages ListView
+        // Прокручиваем ленту до последнего сообщения
         if (ListViewMessages is null) return;
         if (ListViewMessages.Items.Any())
             ListViewMessages.ScrollIntoView(ListViewMessages.Items.Last());
     }
 
-    /// <summary> View preview click - open image </summary>
+    // Открываем изображение поверх ленты
     private void OnImagePreviewClick(object sender, RoutedEventArgs e)
     {
         if (sender is Image img && img.Source is BitmapImage bitmap)
@@ -44,27 +44,40 @@ public sealed partial class TgChatContentPage
         }
     }
 
-    /// <summary> Media preview click - open media player </summary>
-    private void OnMediaPreviewClick(object sender, TappedRoutedEventArgs e)
+    // Открываем оригинал медиафайла вместо просмотра его обложки
+    private async void OnMediaPreviewClick(object sender, TappedRoutedEventArgs e)
     {
         if (sender is Image img && img.Tag is string mediaPath)
+            await OpenMediaPlayerAsync(mediaPath);
+    }
+
+    // Позволяем открыть файл также с клавиатуры и при отсутствии обложки
+    private async void OnOpenMediaClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: string mediaPath }) await OpenMediaPlayerAsync(mediaPath);
+    }
+
+    // Ожидаем результат открытия в системном приложении и показываем понятную ошибку
+    private async Task OpenMediaPlayerAsync(string mediaPath, CancellationToken ct = default)
+    {
+        try
         {
-            OpenMediaPlayer(mediaPath);
+            ct.ThrowIfCancellationRequested();
+            MediaError.IsOpen = false;
+            if (string.IsNullOrWhiteSpace(mediaPath) || !File.Exists(mediaPath))
+                throw new FileNotFoundException("Медиафайл не найден", mediaPath);
+            var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(mediaPath);
+            if (!await Windows.System.Launcher.LaunchFileAsync(file)) throw new InvalidOperationException("Не удалось открыть медиафайл в системном приложении");
+        }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            MediaError.Message = "ChatOpenMediaFailed".GetLocalizedResource();
+            MediaError.IsOpen = true;
         }
     }
 
-    // Opens a media file in the system's default player
-    private void OpenMediaPlayer(string mediaPath)
-    {
-        if (string.IsNullOrWhiteSpace(mediaPath) || !File.Exists(mediaPath)) return;
-
-        // Launch default app for this file type
-        Task.Run((Func<Task?>)(async () => {
-            _ = Windows.System.Launcher.LaunchFileAsync(await Windows.Storage.StorageFile.GetFileFromPathAsync(mediaPath));
-        }));
-    }
-
-    /// <summary> Exit from full screen image view </summary>
+    // Закрываем увеличенное изображение
     private void OnFullScreenImageTapped(object sender, RoutedEventArgs e)
     {
         ViewModel.IsImageViewerVisible = false;

@@ -2546,28 +2546,28 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     private async Task HandleMessageContentAsync(TgDownloadSettingsViewModel tgDownloadSettings, TgParseHelper parseHelper, MessageBase messageBase, TgChatCache chatCache,
         TgForumTopicSettings forumTopicSettings, Message message, TgMessageSettings messageSettings, CancellationToken ct)
     {
-        // Early exit if cancellation requested
+        // Проверяем отмену до обработки содержимого
         if (CheckShouldStop(ct)) return;
 
-        // Parse documents and photos
-        if ((message.flags & Message.Flags.has_media) != 0)
+        // Медиафайлы сохраняются вместе с подписью; предпросмотр ссылки остаётся текстовым сообщением
+        if (message.media is MessageMediaDocument or MessageMediaPhoto)
         {
             await DownloadMediaFromMessageAsync(tgDownloadSettings, parseHelper, messageBase, message.media, chatCache, messageSettings, forumTopicSettings, ct);
 
-            // Check cancellation after media download
+            // Проверяем отмену после загрузки медиа
             if (CheckShouldStop(ct)) return;
         }
-        // Save plain text message
+        // Сохраняем текст вместе с исходной разметкой Telegram
         else
         {
-            // Check cancellation before saving
+            // Проверяем отмену перед сохранением
             if (CheckShouldStop(ct)) return;
 
             var authorId = message.From?.ID ?? 0;
             await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings,
-                message.Date, size: 0, message.message, TgEnumMessageType.Message, isRetry: false, authorId, ct);
+                message.Date, size: 0, TgMessageContentFactory.Serialize(message), TgEnumMessageType.Message, isRetry: false, authorId, ct);
 
-            // Check cancellation after saving
+            // Проверяем отмену после сохранения
             if (CheckShouldStop(ct)) return;
         }
     }
@@ -2937,16 +2937,14 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 }
                 parseHelper.SetTaskType(messageBase.ID, TgTaskType.Media);
                 await UpdateTasksViewModelAsync(parseHelper);
-                await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
+                await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize,
+                    TgMessageContentFactory.Serialize(messageBase, Path.GetRelativePath(tgDownloadSettings.SourceVm.Dto.Directory, mediaInfo.LocalPathWithNumber)),
                     TgEnumMessageType.Document, isRetry: false, authorId, ct);
                 break;
             case MessageMediaPhoto { photo: Photo photo }:
                 parseHelper.SetTaskType(messageBase.ID, TgTaskType.Media);
-                var messageStr = string.Empty;
-                if (messageBase is TL.Message message)
-                    messageStr = message.message;
                 await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize,
-                    $"{messageStr} | {mediaInfo.LocalPathWithNumber.Replace(tgDownloadSettings.SourceVm.Dto.Directory, string.Empty)}",
+                    TgMessageContentFactory.Serialize(messageBase, Path.GetRelativePath(tgDownloadSettings.SourceVm.Dto.Directory, mediaInfo.LocalPathWithNumber)),
                     TgEnumMessageType.Photo, isRetry: false, authorId, ct);
                 break;
         }
@@ -3005,9 +3003,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                             await DownloadDocumentMediaAsync(doc, localFileStream, thumbSize: null,
                                 progress: ClientProgressForFile(messageSettings, mediaInfo.LocalNameWithNumber),
                                 tgDownloadSettings.SourceVm.Dto.Id, tgDownloadSettings.SourceVm.Dto.Title, ct);
-                            var authorId = messageBase.From?.ID ?? 0;
-                            await SaveMessagesAsync(tgDownloadSettings, parseHelper, messageSettings, mediaInfo.DtCreate, mediaInfo.RemoteSize, mediaInfo.RemoteName,
-                                TgEnumMessageType.Document, isRetry: false, authorId, ct);
+                            // Запись сообщения выполняется после загрузки вместе с подписью и разметкой
                             localFileStream.Close();
                         }
                         break;
@@ -3257,7 +3253,9 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
             if (!CheckShouldStop(ct))
             {
-                await UpdateStateMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId, message, false, messageSettings.ThreadNumber);
+                var content = TgMessageContent.Read(message, messageType);
+                await UpdateStateMessageThreadAsync(messageSettings.CurrentChatId, messageSettings.CurrentMessageId,
+                    string.IsNullOrEmpty(content.Text) ? content.FileName : content.Text, false, messageSettings.ThreadNumber);
 
                 await FlushMessageBufferAsync(parseHelper, tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
             }

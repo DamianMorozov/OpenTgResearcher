@@ -13,6 +13,9 @@ public abstract partial class TgConnectClientBase
     private async Task RunParsingSessionAsync(TgDownloadSettingsViewModel settings)
     {
         if (Volatile.Read(ref _isStoppingParsing) != 0) return;
+        // При запуске по имени резервируем настоящий ID до создания отдельного контекста парсинга
+        if (settings.SourceVm.Dto.Id <= 0 && Client is not null && !string.IsNullOrWhiteSpace(settings.SourceVm.Dto.UserName))
+            await CreateChatBaseCoreAsync(settings);
         var chatId = settings.SourceVm.Dto.Id;
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         if (!_parsingChats.TryAdd(chatId, completion)) return;

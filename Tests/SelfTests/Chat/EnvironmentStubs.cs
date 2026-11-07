@@ -197,6 +197,10 @@ public sealed class TestStorage
 }
 public sealed class TestClient
 {
+    public Func<string, Task<TgEfSourceDto>>? AddPublicChat { get; set; }
+    /// <summary> Подменяет обращение к Telegram при добавлении публичного источника </summary>
+    public Task<TgEfSourceDto> AddPublicChatAsync(string reference, CancellationToken ct = default) =>
+        AddPublicChat?.Invoke(reference) ?? throw new InvalidOperationException("Не задан публичный источник");
     /// <summary> Заменяет обновление списка чатов без сети </summary>
     public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids = null) =>
         SearchSources?.Invoke(settings, type, ids) ?? Task.CompletedTask;

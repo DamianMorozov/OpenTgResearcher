@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2486,5 +2486,20 @@ API-параметры, телефон и выбранный прокси буд
   </data>
   <data name="RegistryGigabytes" xml:space="preserve">
     <value>ГБ</value>
+  </data>
+  <data name="PublicChatExpander.Header" xml:space="preserve">
+    <value>Добавить публичный чат без вступления</value>
+  </data>
+  <data name="PublicChatReference.Header" xml:space="preserve">
+    <value>Публичное имя или ссылка</value>
+  </data>
+  <data name="PublicChatReference.PlaceholderText" xml:space="preserve">
+    <value>@durov или https://t.me/durov</value>
+  </data>
+  <data name="PublicChatAdd.Content" xml:space="preserve">
+    <value>Добавить / открыть</value>
+  </data>
+  <data name="PublicChatHint.Text" xml:space="preserve">
+    <value>Будет проверена доступность истории. Подписка не оформляется. После открытия выберите каталог и параметры парсинга. Для неизвестного источника одного ID недостаточно.</value>
   </data>
 </root>

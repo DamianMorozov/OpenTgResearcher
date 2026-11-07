@@ -44,11 +44,17 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     public IRelayCommand PauseSelectedCommand { get; }
     public IRelayCommand OpenSelectedChatCommand { get; }
     public IAsyncRelayCommand ToggleSelectedParsingCommand { get; }
+    [ObservableProperty]
+    public partial string PublicChatReference { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial string PublicChatError { get; private set; } = string.Empty;
+    public IAsyncRelayCommand AddPublicChatCommand { get; }
 
     public TgChatsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgChatsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgChatsViewModel))
     {
         RefreshRegistryCommand = new AsyncRelayCommand(() => LazyLoadAsync(isNewQuery: true, isSearch: true));
+        AddPublicChatCommand = new AsyncRelayCommand(AddPublicChatAsync);
         PauseSelectedCommand = new RelayCommand(PauseSelected, () => CanPauseSelected);
         OpenSelectedChatCommand = new RelayCommand(OpenSelectedChat, () => HasSelectedChat);
         // Повторный вызов нужен для прерывания ещё выполняющейся команды запуска
@@ -58,6 +64,30 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 
     /// <summary> Открывает реестр без остановки выполняющегося парсинга </summary>
     public override Task OnNavigatedToAsync(NavigationEventArgs? e) => RefreshRegistryCommand.ExecuteAsync(null);
+
+    // Добавляем источник без вступления и открываем его настройки до запуска парсинга
+    private async Task AddPublicChatAsync()
+    {
+        PublicChatError = string.Empty;
+        try
+        {
+            await LoadOnlineDataAsync(async () =>
+            {
+                if (!SettingsService.IsExistsAppStorage)
+                    throw new InvalidOperationException("Сначала подключите базу данных в настройках хранилища");
+                if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync())
+                    throw new InvalidOperationException("Подключитесь к Telegram на странице «Подключение клиента»");
+                var source = await App.BusinessLogicManager.ConnectClient.AddPublicChatAsync(PublicChatReference, LoadStateService.OnlineToken);
+                NavigationService.NavigateTo(typeof(TgChatViewModel).FullName!, source.Uid);
+            });
+        }
+        catch (OperationCanceledException) when (LoadStateService.OnlineToken.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            PublicChatError = ex.Message;
+            LogError(ex);
+        }
+    }
 
     /// <summary> Читает независимый снимок чатов и фактические количества из локального хранилища </summary>
     public async Task<List<TgEfSourceLiteDto>> GetListDtosAsync()

@@ -8,6 +8,7 @@ param(
     [string]$ChatDirectory = '',
     [switch]$CheckMediaPreview,
     [switch]$CheckRegistryMenu,
+    [switch]$CheckPublicChat,
     [switch]$CheckRegistryPagination,
     [switch]$RegistryPaginationOnly,
     [switch]$SkipSnapshots,
@@ -198,6 +199,27 @@ try {
     $appProcess = [Diagnostics.Process]::Start($start)
     Invoke-AppElement (Wait-AppElement 'Продолжить|Continue')
     Invoke-AppElement (Wait-AppElement '^(Чаты|Chats)$')
+    if ($CheckPublicChat) {
+        $expander = Wait-AppElement '.*' '' 'PublicChatExpander'
+        $expand = $expander.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        $expand.Expand()
+        $reference = Wait-AppElement '.*' '' 'PublicChatReference'
+        $reference.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('@durov')
+        $add = Wait-AppElement '^(Добавить / открыть|Add / open)$' '' 'PublicChatAdd'
+        $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+        foreach ($control in @($reference, $add)) {
+            if (-not $window.Current.BoundingRectangle.Contains($control.Current.BoundingRectangle)) {
+                throw 'Поле или кнопка добавления публичного источника вышли за границы окна'
+            }
+        }
+        if ($reference.Current.BoundingRectangle.IntersectsWith($add.Current.BoundingRectangle)) {
+            throw 'Поле публичного имени перекрывается кнопкой добавления'
+        }
+        [void](Wait-AppElement '^(Будет проверена доступность истории|History access will be checked)')
+        Save-AppSnapshot 'Chats-PublicSource'
+        $expand.Collapse()
+        Write-Output 'PASS: публичный источник, поле ввода, отдельная кнопка, пояснение без вступления и раскрытие без перекрытий'
+    }
     if ($CheckRegistryPagination) {
         $registryStatistics = Wait-AppElement '^(Показано 100 из 943 чатов|Showing 100 of 943 chats)$'
         $registry = Wait-AppElement '.*' '' 'ChatsRegistry'

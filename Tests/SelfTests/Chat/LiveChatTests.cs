@@ -3,7 +3,7 @@ namespace OpenTgResearcherDesktop.ChatSelfTests;
 internal static class LiveChatTests
 {
     // Проверяем последние сообщения, переподключение и настоящую передачу файлов в каталоге из БД
-    internal static async Task<int> RunAsync(string database, string sessionPath, long chatId)
+    internal static async Task<int> RunAsync(string database, string sessionPath, long chatId, string? publicReference = null)
     {
         TgGlobalTools.SetAppType(TgEnumAppType.Test);
         var caseDirectory = Path.Combine(AppContext.BaseDirectory, "live", Guid.NewGuid().ToString("N"));
@@ -19,7 +19,8 @@ internal static class LiveChatTests
             var readOnly = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder
                 { DataSource = database, Mode = Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly };
             await using var original = new TestContext(new DbContextOptionsBuilder().UseSqlite(readOnly.ToString()).Options);
-            var source = await original.Sources.AsNoTracking().SingleAsync(x => x.Id == chatId);
+            var source = publicReference is null ? await original.Sources.AsNoTracking().SingleAsync(x => x.Id == chatId)
+                : new TgEfSourceEntity { Uid = Guid.NewGuid(), Directory = caseDirectory };
             var profileEntity = await original.Apps.AsNoTracking().FirstAsync(x => x.Uid != Guid.Empty);
             var profile = TgEfDomainUtils.CreateNewDto(profileEntity, isUidCopy: true);
             var proxyEntity = await original.Proxies.AsNoTracking().FirstOrDefaultAsync(x => x.Uid == profile.ProxyUid);
@@ -28,16 +29,17 @@ internal static class LiveChatTests
             sourceDirectory = Path.GetFullPath(source.Directory).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
             downloadDirectory = Path.Combine(sourceDirectory, ".OpenTgResearcher-SelfTest-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(downloadDirectory);
-            await using var context = new TestContext(new DbContextOptionsBuilder().UseSqlite("Data Source=:memory:").Options);
+            var options = new DbContextOptionsBuilder().UseSqlite($"Data Source=live-{Guid.NewGuid():N};Mode=Memory;Cache=Shared").Options;
+            await using var context = new TestContext(options);
             await context.Database.OpenConnectionAsync();
             await context.Database.EnsureCreatedAsync();
             if (proxyEntity is not null) context.Proxies.Add(proxyEntity);
             context.Apps.Add(profileEntity);
-            context.Sources.Add(source);
+            if (publicReference is null) context.Sources.Add(source);
             await context.SaveChangesAsync();
             context.ChangeTracker.Clear();
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(context).As<ITgEfContext>().ExternallyOwned();
+            builder.Register(_ => new TestContext(options)).As<ITgEfContext>().InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(typeof(TgEfSourceRepository).Assembly).Where(x => x.Name.EndsWith("Repository")).AsImplementedInterfaces();
             using var container = builder.Build();
             TgGlobalTools.Container = container;
@@ -53,11 +55,17 @@ internal static class LiveChatTests
             await connection.ConnectSessionAsync(name => GetConfiguration(name, profile, copiedSession), proxy, isDesktop: true)
                 .WaitAsync(TimeSpan.FromSeconds(60));
             if (!await connection.CheckClientConnectionReadyAsync()) throw new InvalidOperationException("Не восстановлена авторизация Telegram");
+            if (publicReference is not null)
+            {
+                var added = await connection.AddPublicChatAsync(publicReference).WaitAsync(TimeSpan.FromSeconds(30));
+                source = await context.Sources.AsNoTracking().SingleAsync(x => x.Id == added.Id);
+                Console.WriteLine($"PASS: публичный источник разрешён; Id={added.Id}; IsSubscribe={added.IsSubscribe}; IsUserAccess={added.IsUserAccess}");
+            }
             var client = connection.Client!;
             var chats = await TL.SchemaExtensions.Channels_GetChannels(client, [new TL.InputChannel(source.Id, source.AccessHash)])
                 .WaitAsync(TimeSpan.FromSeconds(30));
             var channel = chats.chats.Values.OfType<TL.Channel>().Single(x => x.ID == source.Id);
-            connection.DicChats[source.Id] = channel;
+            if (publicReference is null) connection.DicChats[source.Id] = channel;
             var history = await TL.SchemaExtensions.Messages_GetHistory(client, new TL.InputPeerChannel(source.Id, source.AccessHash), limit: 100)
                 .WaitAsync(TimeSpan.FromSeconds(30));
             var messages = history.Messages.OfType<TL.Message>().ToArray();
@@ -78,6 +86,15 @@ internal static class LiveChatTests
             var count = await context.Messages.CountAsync(x => x.SourceId == source.Id);
             if (count == 0 || count > 10) throw new InvalidOperationException("Ограниченный парсинг не сохранил ожидаемую выборку сообщений");
             Console.WriteLine($"PASS: настоящий ParseChatAsync сохранил {count} сообщений в изолированной БД");
+            if (publicReference is not null)
+            {
+                var saved = await storage.SourceRepository.GetDtoAsync(x => x.Id == source.Id);
+                if (saved.IsSubscribe != source.IsSubscribe || !saved.IsUserAccess)
+                    throw new InvalidOperationException("Парсинг изменил участие в канале или потерял доступ к истории");
+                await connection.DisconnectClientAsync(isAfterClientConnect: false);
+                connection = null;
+                return 0;
+            }
             // Закрываем только транспорт тестового клиента, не меняя сетевые настройки компьютера
             var transport = (System.Net.Sockets.TcpClient?)typeof(WTelegram.Client)
                 .GetField("_tcpClient", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(client);

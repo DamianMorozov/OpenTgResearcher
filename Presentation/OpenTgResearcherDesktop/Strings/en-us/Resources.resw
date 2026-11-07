@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -2422,5 +2422,20 @@ API credentials, phone number, and the selected proxy will be removed from the p
   </data>
   <data name="RegistryGigabytes" xml:space="preserve">
     <value>GB</value>
+  </data>
+  <data name="PublicChatExpander.Header" xml:space="preserve">
+    <value>Add a public chat without joining</value>
+  </data>
+  <data name="PublicChatReference.Header" xml:space="preserve">
+    <value>Public username or link</value>
+  </data>
+  <data name="PublicChatReference.PlaceholderText" xml:space="preserve">
+    <value>@durov or https://t.me/durov</value>
+  </data>
+  <data name="PublicChatAdd.Content" xml:space="preserve">
+    <value>Add / open</value>
+  </data>
+  <data name="PublicChatHint.Text" xml:space="preserve">
+    <value>History access will be checked without joining. Once opened, choose the folder and parsing options. An ID alone is insufficient for an unknown source.</value>
   </data>
 </root>

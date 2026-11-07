@@ -133,6 +133,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -164,6 +165,50 @@
                 Grid.ColumnSpan="2"
                 Style="{StaticResource ChatSecondary}"
                 Text="{x:Bind ViewModel.LoadedDataStatistics, Mode=OneWay}" />
+            <!--  Публичный источник можно добавить без подписки, затем настроить каталог и парсинг  -->
+            <Expander
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                AutomationProperties.AutomationId="PublicChatExpander"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                l:Uids.Uid="PublicChatExpander">
+                <Grid ColumnSpacing="8" RowSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBox
+                        MinWidth="120"
+                        l:Uids.Uid="PublicChatReference"
+                        AutomationProperties.AutomationId="PublicChatReference"
+                        Text="{x:Bind ViewModel.PublicChatReference, Mode=TwoWay}" />
+                    <Button
+                        Grid.Column="1"
+                        VerticalAlignment="Bottom"
+                        l:Uids.Uid="PublicChatAdd"
+                        AutomationProperties.AutomationId="PublicChatAdd"
+                        Command="{x:Bind ViewModel.AddPublicChatCommand}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        l:Uids.Uid="PublicChatHint"
+                        Style="{StaticResource ChatSecondary}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind ViewModel.PublicChatError, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </Grid>
+            </Expander>
         </Grid>
         <!--  Таблица владеет прокруткой и не блокируется глобальными флагами сетевой операции  -->
         <Grid Grid.Row="2">

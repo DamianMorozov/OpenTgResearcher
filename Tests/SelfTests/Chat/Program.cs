@@ -18,6 +18,8 @@ internal static partial class Program
             return await InspectChatAsync(chatDatabase, long.Parse(selectedChat));
         if (args is ["--live-chat", var sourceDatabase, var savedSession, var targetChat])
             return await LiveChatTests.RunAsync(sourceDatabase, savedSession, long.Parse(targetChat));
+        if (args is ["--live-public-chat", var publicDatabase, var publicSession, var publicReference])
+            return await LiveChatTests.RunAsync(publicDatabase, publicSession, 0, publicReference);
         if (args is ["--inspect-media", var database, var chatId, var mediaDirectory])
             return await MediaTests.InspectAsync(database, long.Parse(chatId), mediaDirectory);
         if (args is ["--live-media", var liveDatabase, var session, var liveChat, var liveDirectory])
@@ -75,7 +77,8 @@ internal static partial class Program
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
         }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
-            .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests()).Concat(GetRegistryPagingTests()).ToArray();
+            .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests())
+            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)
@@ -127,6 +130,7 @@ internal static partial class Program
             App.BusinessLogicManager.ConnectClient.ReadDetails = null;
             App.BusinessLogicManager.ConnectClient.SearchSources = null;
             App.BusinessLogicManager.ConnectClient.ReadParticipants = null;
+            App.BusinessLogicManager.ConnectClient.AddPublicChat = null;
             DelayedQueryInterceptor.Enabled = false;
             try
             {
@@ -463,7 +467,8 @@ internal static partial class Program
     {
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgChatsPage.xaml")!;
         var page = XDocument.Load(stream);
-        var filter = page.Descendants().Single(x => x.Name.LocalName == "TextBox");
+        var filter = page.Descendants().Single(x => x.Name.LocalName == "TextBox" && (string?)x.Attribute("Text")
+            == "{x:Bind ViewModel.FilterText, Mode=TwoWay}");
         Assert(filter.Parent?.Name.LocalName == "Grid" && !filter.Parent.Descendants().Any(x => x.Name.LocalName == "ToggleSwitch")
             && filter.Parent.Elements().Any(x => x.Name.LocalName == "Grid.ColumnDefinitions"
                 && x.Elements().First().Attribute("Width")?.Value == "*"), "Поле поиска сжимается переключателями или не занимает свободную ширину");

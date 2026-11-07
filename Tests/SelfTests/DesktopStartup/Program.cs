@@ -44,11 +44,15 @@ internal static partial class Program
             ("ToolbarSavesOnlyTheme", ToolbarSavesOnlyThemeAsync),
             ("HardwareDisposalWaitsForWorker", HardwareDisposalWaitsForWorkerAsync),
             ("CloseWaitsForTelegram", CloseWaitsForTelegramAsync),
+            ("CloseWaitsForParsing", CloseWaitsForParsingAsync),
             ("FailedDisconnectKeepsWindowOpen", FailedDisconnectKeepsWindowOpenAsync),
             ("CloseReleasesSessionFile", () => CloseReleasesSessionFileAsync(isAlreadyDisconnected: false)),
             ("CloseAfterSessionDisconnected", () => CloseReleasesSessionFileAsync(isAlreadyDisconnected: true)),
         };
         var outputDirectory = Path.Combine(AppContext.BaseDirectory, "cases", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outputDirectory);
+        typeof(TgInfrastructure.Helpers.TgLogUtils).GetField("_startupLog", BindingFlags.NonPublic | BindingFlags.Static)!
+            .SetValue(null, Path.Combine(outputDirectory, "startup.log"));
         var failures = 0;
         foreach (var test in tests)
         {

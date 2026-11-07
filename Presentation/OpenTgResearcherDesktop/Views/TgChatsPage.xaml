@@ -186,6 +186,7 @@
                     HeadersVisibility="Column"
                     IsReadOnly="True"
                     ItemsSource="{x:Bind ViewModel.RegistryRows, Mode=OneWay}"
+                    LoadingRow="OnRegistryRowLoading"
                     RightTapped="OnChatRightTapped"
                     RowHeight="64"
                     SelectedItem="{x:Bind ViewModel.SelectedRow, Mode=TwoWay}">
@@ -254,15 +255,6 @@
                 VerticalAlignment="Center"
                 l:Uids.Uid="RegistryHint"
                 Style="{StaticResource ChatSecondary}" />
-            <Button
-                Grid.Column="1"
-                Command="{x:Bind ViewModel.LazyLoadCommand}"
-                IsEnabled="{x:Bind ViewModel.HasMoreItems, Mode=OneWay}">
-                <Button.CommandParameter>
-                    <x:Boolean>False</x:Boolean>
-                </Button.CommandParameter>
-                <TextBlock l:Uids.Uid="TextBlockLoadMore" />
-            </Button>
         </Grid>
         <!--  Действия и сведения относятся только к выбранной строке  -->
         <Border

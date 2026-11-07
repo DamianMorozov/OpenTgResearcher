@@ -127,6 +127,7 @@ public abstract class TgSectionViewModel : TgPageViewModelBase
     public int PageSkip { get; set; }
     public int PageTake { get; set; } = 2;
     public bool HasMoreItems { get; set; } = true;
+    public bool IsLoading { get; set; }
     protected TgSectionViewModel(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
         : base(state, settings, navigation, logger, name) { }
     /// <summary> Повторяет локальную загрузку раздела при открытии </summary>
@@ -147,8 +148,10 @@ public abstract class TgSectionViewModel : TgPageViewModelBase
     protected async Task LazyLoadAsync(bool isNewQuery, bool isSearch)
     {
         if (isNewQuery || isSearch) { ItemsClearCore(); PageSkip = 0; HasMoreItems = true; }
-        await LazyLoadCoreAsync(isSearch);
-        await AfterDataUpdateCoreAsync();
+        if (IsLoading || !HasMoreItems) return;
+        IsLoading = true;
+        try { await LazyLoadCoreAsync(isSearch); }
+        finally { IsLoading = false; await AfterDataUpdateCoreAsync(); }
     }
 }
 public static class TgDesktopUtils

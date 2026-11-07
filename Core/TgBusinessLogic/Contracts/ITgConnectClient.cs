@@ -19,6 +19,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Func<long, int, int, string, Task> UpdateChatViewModelAsync { get; }
     public Func<int, int, TgEnumChatsMessageType, Task> UpdateChatsViewModelAsync { get; }
 
+    /// <summary> Останавливает все парсинги и ожидает освобождения их контекстов </summary>
+    public Task StopParsingAsync(CancellationToken ct = default);
     public Task LoginUserAsync(bool isProxyUpdate);
 	public Task DisconnectClientAsync(bool isAfterClientConnect = true);
     public Task DisconnectBotAsync(bool isAfterClientConnect = true);

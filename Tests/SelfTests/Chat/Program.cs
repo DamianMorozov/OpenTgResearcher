@@ -23,6 +23,7 @@ internal static partial class Program
         if (args is ["--live-media", var liveDatabase, var session, var liveChat, var liveDirectory])
             return await LiveMediaTests.RunAsync(liveDatabase, session, long.Parse(liveChat), liveDirectory);
         if (args is ["--seed-registry-menu", var menuDatabase]) return await SeedRegistryMenuAsync(menuDatabase);
+        if (args is ["--seed-registry-pages", var pagingDatabase]) return await SeedRegistryPagesAsync(pagingDatabase);
         if (args is ["--seed", var path]) return await SeedDatabaseAsync(path);
         if (args is ["--seed", var target, "--source", var sourcePath, "--chat", var id, "--directory", var directory])
             return await SeedDatabaseAsync(target, sourcePath, long.Parse(id), directory);
@@ -74,7 +75,7 @@ internal static partial class Program
             ("ChatsHeadersHaveBindings", ChatsHeadersHaveBindingsAsync),
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
         }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
-            .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests()).ToArray();
+            .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests()).Concat(GetRegistryPagingTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)

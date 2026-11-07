@@ -1,79 +1,183 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:l="using:WinUI3Localizer">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l="using:WinUI3Localizer">
     <Style x:Key="ChatSurface" TargetType="Border">
-        <Setter Property="Padding" Value="18" /><Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="18" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" /><Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
     </Style>
     <Style x:Key="ChatSecondary" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" /><Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
     <Style x:Key="ChatValue" TargetType="TextBlock">
-        <Setter Property="TextWrapping" Value="Wrap" /><Setter Property="IsTextSelectionEnabled" Value="True" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="IsTextSelectionEnabled" Value="True" />
     </Style>
     <Style x:Key="ChatTitle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="18" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
-    <!-- Шаблон получает DTO пользователя через Content, конфиденциальность контролирует страница -->
+    <!--  Шаблон получает DTO пользователя через Content, конфиденциальность контролирует страница  -->
     <DataTemplate x:Key="ChatUserDossierTemplate">
-        <Border Style="{StaticResource ChatSurface}" AutomationProperties.AutomationId="ChatUserDossier">
+        <Border AutomationProperties.AutomationId="ChatUserDossier" Style="{StaticResource ChatSurface}">
             <StackPanel Spacing="14">
-                <Grid ColumnSpacing="14"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                    <PersonPicture Width="64" Height="64" DisplayName="{Binding DisplayName}" />
-                    <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding DisplayName}" Style="{StaticResource ChatTitle}" />
-                        <TextBlock Text="{Binding MainUserName}" Style="{StaticResource ChatSecondary}" />
+                <Grid ColumnSpacing="14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <PersonPicture
+                        Width="64"
+                        Height="64"
+                        DisplayName="{Binding DisplayName}" />
+                    <StackPanel
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Spacing="4">
+                        <TextBlock Style="{StaticResource ChatTitle}" Text="{Binding DisplayName}" />
+                        <TextBlock Style="{StaticResource ChatSecondary}" Text="{Binding MainUserName}" />
                     </StackPanel>
                 </Grid>
                 <TextBlock l:Uids.Uid="ChatProfileContacts" Style="{StaticResource ChatTitle}" />
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldId" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding Id}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding Id}" />
                 </Grid>
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldDisplayName" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding DisplayName}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding DisplayName}" />
                 </Grid>
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldUserName" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding MainUserName}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding MainUserName}" />
                 </Grid>
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldPhoneNumber" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding PhoneNumber}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding PhoneNumber}" />
                 </Grid>
                 <TextBlock l:Uids.Uid="ChatProfileInChat" Style="{StaticResource ChatTitle}" />
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldMessagesCount" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding MessagesCount}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding MessagesCount}" />
                 </Grid>
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldLastSeenAgo" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding LastSeenAgoAsString}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding LastSeenAgoAsString}" />
                 </Grid>
-                <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.3*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock l:Uids.Uid="FieldStatus" Style="{StaticResource ChatSecondary}" />
-                    <TextBlock Grid.Column="1" Text="{Binding Status}" Style="{StaticResource ChatValue}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Style="{StaticResource ChatValue}"
+                        Text="{Binding Status}" />
                 </Grid>
-                <Expander l:Uids.Uid="ChatProfileTechnical" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <Expander
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    l:Uids.Uid="ChatProfileTechnical">
                     <StackPanel Spacing="12">
-                        <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.3*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock l:Uids.Uid="ChatAccountActive" Style="{StaticResource ChatSecondary}" />
-                            <TextBlock Grid.Column="1" l:Uids.Uid="ChatYes" Visibility="{Binding IsUserActive, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock Grid.Column="1" l:Uids.Uid="ChatNo" Visibility="{Binding IsUserActive, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                l:Uids.Uid="ChatYes"
+                                Visibility="{Binding IsUserActive, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                l:Uids.Uid="ChatNo"
+                                Visibility="{Binding IsUserActive, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         </Grid>
-                        <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.3*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock l:Uids.Uid="FieldIsBot" Style="{StaticResource ChatSecondary}" />
-                            <TextBlock Grid.Column="1" l:Uids.Uid="ChatYes" Visibility="{Binding IsBot, Converter={StaticResource BoolToVisibilityConverter}}" />
-                            <TextBlock Grid.Column="1" l:Uids.Uid="ChatNo" Visibility="{Binding IsBot, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                l:Uids.Uid="ChatYes"
+                                Visibility="{Binding IsBot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                l:Uids.Uid="ChatNo"
+                                Visibility="{Binding IsBot, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                         </Grid>
-                        <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.3*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock l:Uids.Uid="FieldRestrictionReason" Style="{StaticResource ChatSecondary}" />
-                            <TextBlock Grid.Column="1" Text="{Binding RestrictionReason}" Style="{StaticResource ChatValue}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Style="{StaticResource ChatValue}"
+                                Text="{Binding RestrictionReason}" />
                         </Grid>
-                        <Grid ColumnSpacing="16"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="1.3*" /></Grid.ColumnDefinitions>
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="1.3*" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock l:Uids.Uid="FieldAccessHash" Style="{StaticResource ChatSecondary}" />
-                            <TextBlock Grid.Column="1" Text="{Binding AccessHash}" Style="{StaticResource ChatValue}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Style="{StaticResource ChatValue}"
+                                Text="{Binding AccessHash}" />
                         </Grid>
                     </StackPanel>
                 </Expander>

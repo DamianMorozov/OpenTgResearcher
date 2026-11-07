@@ -8,6 +8,11 @@ param(
     [string]$ChatDirectory = '',
     [switch]$CheckMediaPreview,
     [switch]$CheckRegistryMenu,
+    [switch]$CheckRegistryPagination,
+    [switch]$RegistryPaginationOnly,
+    [switch]$SkipSnapshots,
+    [ValidateSet('Percent', 'Steps', 'Wheel', 'VisibleTail')]
+    [string]$RegistryScrollMode = 'VisibleTail',
     [int]$WindowWidth = 0,
     [int]$WindowHeight = 1000,
     [ValidateSet('Default', 'Light', 'Dark')]
@@ -17,6 +22,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ($RegistryPaginationOnly) { $CheckRegistryPagination = $true }
 $executable = (Resolve-Path -LiteralPath $ExecutablePath).Path
 $caseDirectory = Join-Path $PSScriptRoot ('bin/ChatPage/' + [Guid]::NewGuid().ToString('N'))
 $appProcess = $null
@@ -24,6 +30,10 @@ $appLog = Join-Path $env:LOCALAPPDATA ('OpenTgResearcherDesktop/current/Log-{0:y
 $originalLength = if (Test-Path -LiteralPath $appLog) { (Get-Item -LiteralPath $appLog).Length } else { 0 }
 Add-Type @'
 public static class ChatPageTestNative {
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern bool PostMessage(System.IntPtr window, uint message, System.IntPtr wParam, System.IntPtr lParam);
+    [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    public static extern System.IntPtr FindWindowEx(System.IntPtr parent, System.IntPtr after, string className, string title);
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(System.IntPtr window);
     [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -127,6 +137,7 @@ function Assert-ImageViewerClosed {
 
 # Сохраняем только окно проверяемого приложения
 function Save-AppSnapshot([string]$name) {
+    if ($SkipSnapshots) { return }
     Add-Type -AssemblyName System.Drawing
     [void][ChatPageTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
     Start-Sleep -Milliseconds 400
@@ -158,6 +169,11 @@ try {
         & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --seed-registry-menu (Join-Path $caseDirectory 'TgStorage.db')
         if ($LASTEXITCODE -ne 0) { throw 'Не удалось добавить вторую строку для проверки меню' }
     }
+    if ($CheckRegistryPagination) {
+        if ($SourceDatabase -or $CheckRegistryMenu) { throw 'Пагинация использует отдельную синтетическую БД без проверки меню' }
+        & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --seed-registry-pages (Join-Path $caseDirectory 'TgStorage.db')
+        if ($LASTEXITCODE -ne 0) { throw 'Не удалось подготовить страницы чатов' }
+    }
     $sourceInfo = & dotnet (Resolve-Path -LiteralPath $SelfTestAssembly).Path --inspect-chat (Join-Path $caseDirectory 'TgStorage.db') $ChatId
     if ($LASTEXITCODE -ne 0) { throw 'Не удалось прочитать выбранный чат тестовой БД' }
     $expectedTitle = [regex]::Match(($sourceInfo -join "`n"), 'Title=(.*?); Directory=').Groups[1].Value
@@ -182,6 +198,76 @@ try {
     $appProcess = [Diagnostics.Process]::Start($start)
     Invoke-AppElement (Wait-AppElement 'Продолжить|Continue')
     Invoke-AppElement (Wait-AppElement '^(Чаты|Chats)$')
+    if ($CheckRegistryPagination) {
+        $registryStatistics = Wait-AppElement '^(Показано 100 из 943 чатов|Showing 100 of 943 chats)$'
+        $registry = Wait-AppElement '.*' '' 'ChatsRegistry'
+        $scroll = $registry.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+        if (-not $scroll.Current.VerticallyScrollable) { throw 'У реестра нет вертикальной прокрутки' }
+        # Следующая прокрутка выполняется сразу после появления порции, пока ещё считаются размеры каталогов
+        foreach ($expectedCount in @(200,300,400,500,600,700,800,900,943)) {
+            if ($RegistryScrollMode -eq 'VisibleTail') {
+                $scroll.SetScrollPercent(-1, $(if ($expectedCount -le 300) { 100 } else { 99.9 }))
+                if ($expectedCount -gt 300) {
+                    $previousCount = if ($expectedCount -eq 943) { 900 } else { $expectedCount - 100 }
+                    [void](Wait-AppElement ('^ZZ Page {0:000}$' -f ($previousCount - 2)))
+                    Write-Output "SCROLL: последняя строка порции $previousCount видна до математического конца полосы"
+                }
+            }
+            elseif ($RegistryScrollMode -eq 'Percent') { $scroll.SetScrollPercent(-1, 100) }
+            else {
+                # Прокручиваем обычными порциями, не присваивая полосе точный математический максимум
+                $unchangedSteps = 0
+                for ($step = 0; $step -lt 500; $step++) {
+                    $before = $scroll.Current.VerticalScrollPercent
+                    if ($RegistryScrollMode -eq 'Wheel') {
+                        $bounds = $registry.Current.BoundingRectangle
+                        $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2)
+                        $targetWindow = [ChatPageTestNative]::FindWindowEx($appProcess.MainWindowHandle, [IntPtr]::Zero,
+                            'Microsoft.UI.Content.DesktopChildSiteBridge', $null)
+                        if ($targetWindow -eq [IntPtr]::Zero) { throw 'Не найдено дочернее окно содержимого тестового Desktop' }
+                        $inputWindow = [ChatPageTestNative]::FindWindowEx($targetWindow, [IntPtr]::Zero, 'InputSiteWindowClass', $null)
+                        if ($inputWindow -eq [IntPtr]::Zero) { throw 'Не найдено дочернее окно ввода тестового Desktop' }
+                        if (-not [ChatPageTestNative]::PostMessage($inputWindow, 0x020A, [IntPtr](-120 -shl 16), [IntPtr](($y -shl 16) -bor $x))) {
+                            throw 'Не удалось отправить событие колеса тестовому Desktop'
+                        }
+                    }
+                    else { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount, [System.Windows.Automation.ScrollAmount]::LargeIncrement) }
+                    Start-Sleep -Milliseconds 30
+                    $after = $scroll.Current.VerticalScrollPercent
+                    if ($registryStatistics.Current.Name -match "^(Показано $expectedCount из|Showing $expectedCount of)") { break }
+                    if ($after -ge 99.999) { break }
+                    $unchangedSteps = if ([Math]::Abs($after - $before) -lt 0.000001) { $unchangedSteps + 1 } else { 0 }
+                    if ($unchangedSteps -ge 10) { break }
+                }
+                Write-Output "SCROLL: ожидается $expectedCount; процент=$($scroll.Current.VerticalScrollPercent); $($registryStatistics.Current.Name)"
+            }
+            [void](Wait-AppElement "^(Показано $expectedCount из 943 чатов|Showing $expectedCount of 943 chats)$")
+            if ($scroll.Current.VerticalScrollPercent -le 0) { throw "Дозагрузка $expectedCount сбросила прокрутку к первым строкам" }
+            Write-Output "PASS: автоматическая дозагрузка $expectedCount / 943"
+        }
+        $scroll.SetScrollPercent(-1, 100)
+        [void](Wait-AppElement '^ZZ Page 941$')
+        Write-Output 'PASS: последняя строка списка действительно видна, прокрутка не сбрасывается'
+        Save-AppSnapshot 'Chats-Pagination'
+        $scroll.SetScrollPercent(-1, 0)
+        $filter = Wait-AppElement '.*' '' 'ChatFilter'
+        $filter.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('ZZ Page 941')
+        Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSearch')
+        [void](Wait-AppElement '^(Показано 1 из 1 чатов|Showing 1 of 1 chats)$')
+        $filter.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('')
+        Invoke-AppElement (Wait-AppElement '.*' '' 'ChatSearch')
+        [void](Wait-AppElement '^(Показано 100 из 943 чатов|Showing 100 of 943 chats)$')
+        Write-Output 'PASS: прокрутка автоматически загрузила 100 → 200 → 300 → … → 943 чата; поиск и очистка сбросили пагинацию'
+        if ($RegistryPaginationOnly) {
+            if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000)) { throw 'Desktop не завершил закрытие окна' }
+            if ($appProcess.ExitCode -ne 0) { throw "Desktop закрылся с ошибкой: код $($appProcess.ExitCode)" }
+            if ((Get-NewAppLog) -match 'App_UnhandledException|Unhandled exception|Exception:|Failed to enqueue callback') {
+                throw 'В журнале пагинации найдено исключение'
+            }
+            Write-Output "PASS: пагинация, размеры, поиск и штатное закрытие без исключений; $caseDirectory"
+            return
+        }
+    }
     if ($CheckRegistryMenu) {
         $sortControl = Wait-AppElement '.*' '' 'ChatsSort'
         $selection = $sortControl.GetCurrentPattern([System.Windows.Automation.SelectionPattern]::Pattern).Current.GetSelection()

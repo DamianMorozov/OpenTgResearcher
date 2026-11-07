@@ -22,6 +22,23 @@ internal static partial class Program
         Assert(client.IsDisposed && App.MainWindow.CloseCalls == 1, "Клиент не отключён или окно не закрыто после отключения");
     }
 
+    // Исходный обработчик обязан ждать парсеры до вызова Dispose и закрытия окна
+    private static async Task CloseWaitsForParsingAsync()
+    {
+        var client = new ParsingStopConnection();
+        App.BusinessLogicManager = new() { ConnectClient = client };
+        App.MainWindow = new();
+        var close = CloseMainWindowAsync(new App());
+        try
+        {
+            await client.Started.Task.WaitAsync(TimeSpan.FromSeconds(2));
+            Assert(!close.IsCompleted && client.DisposeCalls == 0 && App.MainWindow.CloseCalls == 0,
+                "Отключение клиента началось до завершения парсинга");
+        }
+        finally { client.Finished.TrySetResult(); await close; }
+        Assert(client.DisposeCalls == 1 && App.MainWindow.CloseCalls == 1, "После завершения парсинга окно не закрылось");
+    }
+
     // Ошибка завершения должна оставаться видимой и не приводить к уничтожению окна
     private static async Task FailedDisconnectKeepsWindowOpenAsync()
     {
@@ -64,4 +81,13 @@ internal sealed class FailingConnection : IDisposable
 {
     /// <summary> Воспроизводит ошибку завершения клиента </summary>
     public void Dispose() => throw new InvalidOperationException("Тестовая ошибка отключения");
+}
+
+internal sealed class ParsingStopConnection : IDisposable
+{
+    public TaskCompletionSource Started { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    public TaskCompletionSource Finished { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    public int DisposeCalls { get; private set; }
+    /// <summary> Регистрирует вызов отключения транспорта </summary>
+    public void Dispose() => DisposeCalls++;
 }

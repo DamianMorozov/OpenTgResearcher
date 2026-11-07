@@ -12,6 +12,7 @@ internal static partial class Program
         ("ParallelTelegramCallsOverlap", ParallelTelegramCallsOverlapAsync),
         ("ParallelFloodWaitSurvivesOneCancellation", ParallelFloodWaitSurvivesOneCancellationAsync),
         ("ParallelParsingGlobalStopCompletesAll", ParallelParsingGlobalStopCompletesAllAsync),
+        ("ParallelParsingShutdownWaitsForCleanup", ParallelParsingShutdownWaitsForCleanupAsync),
         ("ParallelDashboardKeepsSelectedChat", ParallelDashboardKeepsSelectedChatAsync),
         ("ParallelParsingConcurrentWrites", ParallelParsingConcurrentWritesAsync),
         ("ConsoleParsingDoesNotSaveStaleDraft", ConsoleParsingDoesNotSaveStaleDraftAsync),
@@ -153,6 +154,40 @@ internal static partial class Program
         }
     }
 
+    // Закрытие должно дождаться завершающей обработки обоих чатов, включая приостановленный
+    private static async Task ParallelParsingShutdownWaitsForCleanupAsync()
+    {
+        using var files = new MediaFixture((cache, state) => new ShutdownParsingConnection(cache, state));
+        var client = (ShutdownParsingConnection)files.Connection;
+        var first = client.ParseChatAsync(CreateParallelSettings(101, files.Directory));
+        var second = client.ParseChatAsync(CreateParallelSettings(202, files.Directory));
+        Task closing = Task.CompletedTask;
+        try
+        {
+            await Task.WhenAll(client.Entered[101].Task, client.Entered[202].Task).WaitAsync(TimeSpan.FromSeconds(5));
+            files.State.NetworkActivity.ToggleParsingPause(202);
+            var method = client.GetType().GetMethod("StopParsingAsync");
+            closing = method is null ? Task.Run(client.Dispose) : (Task)method.Invoke(client, [CancellationToken.None])!;
+            await Task.WhenAll(client.Cancelled[101].Task, client.Cancelled[202].Task).WaitAsync(TimeSpan.FromSeconds(5));
+            await Task.Delay(100);
+            Assert(!closing.IsCompleted, "Завершение приложения не дожидается завершающей обработки всех чатов");
+            client.Finish.TrySetResult();
+            await closing.WaitAsync(TimeSpan.FromSeconds(5));
+            try { await Task.WhenAll(first, second); } catch (OperationCanceledException) { }
+            Assert(first.IsCanceled && second.IsCanceled && !files.State.IsDownloadProcessing
+                && files.State.NetworkActivity.Operations.All(x => x.State == TgNetworkOperationState.Canceled),
+                "Закрытие оставило незавершённый чат");
+            var newParse = client.ParseChatAsync(CreateParallelSettings(303, files.Directory));
+            await newParse.WaitAsync(TimeSpan.FromSeconds(2));
+            Assert(client.PreparedCount == 2, "После начала закрытия запущен ещё один чат");
+        }
+        finally
+        {
+            client.Finish.TrySetResult(); files.State.StopHardDownloadProcessing();
+            try { await Task.WhenAll(first, second, closing); } catch (OperationCanceledException) { }
+        }
+    }
+
     // Завершение старого запуска не меняет открытый пульт нового чата и его черновик
     private static async Task ParallelDashboardKeepsSelectedChatAsync()
     {
@@ -290,7 +325,8 @@ internal static partial class Program
     private static TgDownloadSettingsViewModel CreateParallelSettings(long chatId, string directory)
     {
         var settings = new TgDownloadSettingsViewModel();
-        settings.SourceVm.Dto = new() { Id = chatId, Uid = Guid.NewGuid(), Title = $"Chat {chatId}", Directory = Path.Combine(directory, $"{chatId}"),
+        settings.SourceVm.Dto = new() { Id = chatId, Uid = Guid.NewGuid(), Title = $"Chat {chatId}", UserName = $"chat_{chatId}",
+            Directory = Path.Combine(directory, $"{chatId}"),
             FirstId = 1, Count = 2, IsSaveMessages = true, IsSaveFiles = true, IsDownloadThumbnail = false, IsJoinFileNameWithMessageId = false };
         Directory.CreateDirectory(settings.SourceVm.Dto.Directory);
         settings.Chat.Base = new TL.Channel { id = chatId, access_hash = 123 };
@@ -394,4 +430,23 @@ internal sealed class ParallelParsingConnection(FusionCache cache, LoadStateServ
     protected override Task<TgParseHelper> CheckAccessToMessagesAsync(TgDownloadSettingsViewModel settings, CancellationToken ct) =>
         Task.FromResult(new TgParseHelper { IsAccess = true, SourceFirstId = 1, SourceLastId = 2,
             Channel = settings.Chat.Base as TL.Channel, AppDto = new() { UseClient = true } });
+}
+
+// Удерживаем настоящие задачи парсинга после отмены, имитируя завершающую запись или освобождение файла
+internal sealed class ShutdownParsingConnection(FusionCache cache, LoadStateService state) : MediaTestConnection(cache, state)
+{
+    public Dictionary<long, TaskCompletionSource> Entered { get; } = new() { [101] = new(), [202] = new() };
+    public Dictionary<long, TaskCompletionSource> Cancelled { get; } = new() { [101] = new(), [202] = new() };
+    public TaskCompletionSource Finish { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private int _preparedCount;
+    public int PreparedCount => Volatile.Read(ref _preparedCount);
+
+    /// <summary> Воспроизводит медленное завершение работы после отмены токена </summary>
+    protected override async Task PrepareChatAsync(TgDownloadSettingsViewModel settings, CancellationToken ct)
+    {
+        Interlocked.Increment(ref _preparedCount);
+        Entered[settings.SourceVm.Dto.Id].TrySetResult();
+        try { await Task.Delay(Timeout.Infinite, ct); }
+        finally { Cancelled[settings.SourceVm.Dto.Id].TrySetResult(); await Finish.Task; }
+    }
 }

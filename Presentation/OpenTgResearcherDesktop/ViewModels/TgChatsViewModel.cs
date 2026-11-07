@@ -4,6 +4,9 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
 {
     private List<OpenTgResearcherDesktop.Models.TgChatRegistryRow> _pageRows = [];
     private readonly HashSet<long> _parsingChatIds = [];
+    private bool _isLoadingNextPage;
+    private CancellationTokenSource _directorySizesCancellation = new();
+    internal Task DirectorySizesTask { get; private set; } = Task.CompletedTask;
     public string ChatTitleHeader => "RegistryChat".GetLocalizedResource();
     public string ChatCountHeader => "RegistryMessages".GetLocalizedResource();
     public string ChatSizeHeader => "RegistryDirectorySize".GetLocalizedResource();
@@ -232,6 +235,9 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
     // Очищаем только локальный просмотр, сохраняя выбранный чат для восстановления после поиска
     protected override void ItemsClearCore()
     {
+        _directorySizesCancellation.Cancel();
+        _directorySizesCancellation.Dispose();
+        _directorySizesCancellation = new();
         Dtos.Clear();
         RegistryRows.Clear();
     }
@@ -243,14 +249,52 @@ public sealed partial class TgChatsViewModel : TgSectionViewModel
         var selectedId = SelectedRow?.Source.Id;
         var newItems = await GetListDtosAsync();
         HasMoreItems = newItems.Count == PageTake;
-        Dtos = isSearch ? [.. newItems] : [.. Dtos, .. newItems];
-        RegistryRows = isSearch ? [.. _pageRows] : [.. RegistryRows, .. _pageRows];
+        if (isSearch)
+        {
+            Dtos = [.. newItems];
+            RegistryRows = [.. _pageRows];
+        }
+        else
+        {
+            // Сохраняем коллекцию таблицы и её позицию прокрутки при добавлении порции
+            foreach (var item in newItems) Dtos.Add(item);
+            foreach (var row in _pageRows) RegistryRows.Add(row);
+        }
         SelectedRow = RegistryRows.FirstOrDefault(x => x.Source.Id == selectedId) ?? RegistryRows.FirstOrDefault();
         IsEmptyData = RegistryRows.Count == 0;
         PageSkip += newItems.Count;
         RefreshActivity();
-        // Строки уже доступны, файловая система читается в фоне только для новой порции
-        foreach (var row in _pageRows.ToArray()) await row.UpdateDirectorySizeAsync();
+        // Подсчёт размеров не удерживает команду загрузки и не блокирует следующую порцию
+        DirectorySizesTask = UpdateDirectorySizesAsync(DirectorySizesTask, _pageRows.ToArray(), _directorySizesCancellation.Token);
+    }
+
+    // Обрабатываем порции последовательно, отменяя устаревшие строки после поиска и обновления
+    private async Task UpdateDirectorySizesAsync(Task previous, OpenTgResearcherDesktop.Models.TgChatRegistryRow[] rows, CancellationToken ct)
+    {
+        try
+        {
+            await previous.ConfigureAwait(false);
+            foreach (var row in rows)
+            {
+                ct.ThrowIfCancellationRequested();
+                await row.UpdateDirectorySizeAsync(ct).ConfigureAwait(false);
+            }
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); }
+    }
+
+    /// <summary> Отменяет подсчёт размеров при уходе со страницы или закрытии окна </summary>
+    public void CancelDirectorySizeUpdates() => _directorySizesCancellation.Cancel();
+
+    /// <summary> Догружает следующую порцию по запросу прокрутки без повторных параллельных запросов </summary>
+    public async Task LoadNextRegistryPageAsync()
+    {
+        if (_isLoadingNextPage || IsLoading || !HasMoreItems || RefreshRegistryCommand.IsRunning) return;
+        _isLoadingNextPage = true;
+        try { await LazyLoadAsync(isNewQuery: false, isSearch: false); }
+        catch (Exception ex) { LogError(ex); }
+        finally { _isLoadingNextPage = false; }
     }
 
     // Статистика снимка уже рассчитана тем же запросом и не занимает контекст парсера

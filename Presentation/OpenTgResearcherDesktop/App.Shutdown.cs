@@ -20,6 +20,8 @@ public partial class App
         IsClosing = true;
         try
         {
+            TgLogUtils.WriteLog("Завершение приложения: остановка парсинга всех чатов");
+            await BusinessLogicManager.ConnectClient.StopParsingAsync();
             TgLogUtils.WriteLog("Завершение приложения: отключение Telegram");
             await Task.Run(() => BusinessLogicManager.ConnectClient.Dispose());
             TgLogUtils.WriteLog("Завершение приложения: Telegram отключён, сессия освобождена");

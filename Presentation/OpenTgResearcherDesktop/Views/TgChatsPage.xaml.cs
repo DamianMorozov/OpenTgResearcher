@@ -3,6 +3,8 @@ namespace OpenTgResearcherDesktop.Views;
 public sealed partial class TgChatsPage
 {
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
+    private bool _isLoadingFromScroll;
+    private bool _isRegistryLoadQueued;
 	#region Fields, properties, constructor
 
 	public override TgChatsViewModel ViewModel { get; }
@@ -38,11 +40,66 @@ public sealed partial class TgChatsPage
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
         _timer.Stop();
+        ViewModel.CancelDirectorySizeUpdates();
         Localizer.Get().LanguageChanged -= OnLanguageChanged;
     }
 
-    // Отображаем состояние парсера без чтения хранилища каждую секунду
-    private void OnTick(object? sender, object e) => ViewModel.RefreshActivity();
+    // Не меняем коллекцию внутри подготовки строк и пересчёта прокрутки DataGrid
+    private void OnRegistryRowLoading(object sender, DataGridRowEventArgs e) => QueueRegistryLoad();
+
+    // Несколько событий подготовки строк объединяются в одну проверку после текущей разметки
+    private void QueueRegistryLoad()
+    {
+        if (_isRegistryLoadQueued || _isLoadingFromScroll || !IsLoaded) return;
+        _isRegistryLoadQueued = true;
+        if (!DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, async () =>
+        {
+            _isRegistryLoadQueued = false;
+            await LoadRegistryAtEndAsync();
+        })) _isRegistryLoadQueued = false;
+    }
+
+    // Конец определяется видимыми строками, а не точным совпадением значения и максимума полосы
+    private bool IsRegistryEndVisible() => IsRegistryEndVisible(DataGridChats, ViewModel.RegistryRows.TakeLast(3).ToArray());
+
+    // Ищем только отображённые контейнеры последних строк загруженной порции
+    private bool IsRegistryEndVisible(DependencyObject parent, TgChatRegistryRow[] tail)
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            if (child is DataGridRow { Visibility: Visibility.Visible } row && row.DataContext is TgChatRegistryRow item && tail.Contains(item))
+            {
+                var top = row.TransformToVisual(DataGridChats).TransformPoint(default).Y;
+                if (row.ActualHeight > 0 && top < DataGridChats.ActualHeight && top + row.ActualHeight > 0) return true;
+            }
+            if (IsRegistryEndVisible(child, tail)) return true;
+        }
+        return false;
+    }
+
+    // Повторяем запрос после занятой загрузки, если пользователь уже достиг конца новой порции
+    private async Task LoadRegistryAtEndAsync()
+    {
+        if (_isLoadingFromScroll || !IsLoaded || !ViewModel.IsDisplaySensitiveData || !ViewModel.HasMoreItems
+            || ViewModel.RegistryRows.Count == 0) return;
+        _isLoadingFromScroll = true;
+        try
+        {
+            if (!IsRegistryEndVisible()) return;
+            if (ViewModel.RefreshRegistryCommand.ExecutionTask is { IsCompleted: false } refresh) await refresh;
+            if (IsLoaded && IsRegistryEndVisible()) await ViewModel.LoadNextRegistryPageAsync();
+        }
+        catch (Exception ex) { ViewModel.LogError(ex); }
+        finally { _isLoadingFromScroll = false; }
+    }
+
+    // Проверяем конец списка повторно: событие могло прийти во время запроса предыдущей порции
+    private void OnTick(object? sender, object e)
+    {
+        ViewModel.RefreshActivity();
+        QueueRegistryLoad();
+    }
 
     // Учитываем доступную ширину страницы, включая развёрнутое боковое меню
     private void OnPageSizeChanged(object sender, SizeChangedEventArgs e) => UpdateColumns();

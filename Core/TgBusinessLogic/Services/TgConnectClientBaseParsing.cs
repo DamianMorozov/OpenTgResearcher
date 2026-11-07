@@ -4,18 +4,22 @@ public abstract partial class TgConnectClientBase
 {
     // Контекст наследуется задачами одного парсинга, но не соседними вызовами клиента
     private readonly AsyncLocal<ParsingSession?> _parsingSession = new();
-    private readonly ConcurrentDictionary<long, byte> _parsingChats = new();
+    private readonly ConcurrentDictionary<long, TaskCompletionSource> _parsingChats = new();
+    private int _isStoppingParsing;
 
     private TgDownloadSettingsViewModel? DownloadSettings => _parsingSession.Value?.Settings ?? _downloadSettings;
 
     // Резервируем чат до первого ожидания и освобождаем только после завершения всех его задач
     private async Task RunParsingSessionAsync(TgDownloadSettingsViewModel settings)
     {
+        if (Volatile.Read(ref _isStoppingParsing) != 0) return;
         var chatId = settings.SourceVm.Dto.Id;
-        if (!_parsingChats.TryAdd(chatId, 0)) return;
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!_parsingChats.TryAdd(chatId, completion)) return;
         var previous = _parsingSession.Value;
         try
         {
+            if (Volatile.Read(ref _isStoppingParsing) != 0) return;
             using var session = new ParsingSession(settings);
             _parsingSession.Value = session;
             await ParseChatCoreAsync(session.Settings);
@@ -26,7 +30,23 @@ public abstract partial class TgConnectClientBase
         {
             _parsingSession.Value = previous;
             _parsingChats.TryRemove(chatId, out _);
+            completion.TrySetResult();
         }
+    }
+
+    /// <summary> Останавливает все чаты и ожидает завершения их задач перед освобождением клиента </summary>
+    public async Task StopParsingAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            Interlocked.Exchange(ref _isStoppingParsing, 1);
+            var completions = _parsingChats.Values.Select(x => x.Task).ToArray();
+            TgLogUtils.WriteLog($"Завершение парсинга: ожидание чатов — {completions.Length}");
+            LoadStateService.StopHardDownloadProcessing();
+            await Task.WhenAll(completions).WaitAsync(ct);
+            TgLogUtils.WriteLog("Завершение парсинга: все чаты остановлены");
+        }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); throw; }
     }
 
     // Каждый чат владеет настройками, кешем и репозиториями; подключение Telegram и FLOOD_WAIT остаются общими

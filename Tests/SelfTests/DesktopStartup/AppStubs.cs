@@ -12,3 +12,18 @@ public partial class App
 }
 
 public sealed class TestBusinessLogicManager { public IDisposable ConnectClient { get; set; } = null!; }
+
+// Подменяем только контракт ожидания для прежних тестовых IDisposable и вызываем настоящий метод клиента
+internal static class ShutdownClientExtensions
+{
+    public static Task StopParsingAsync(this IDisposable client, CancellationToken ct = default)
+    {
+        if (client is ParsingStopConnection controlled)
+        {
+            controlled.Started.TrySetResult();
+            return controlled.Finished.Task.WaitAsync(ct);
+        }
+        var method = client.GetType().GetMethod("StopParsingAsync");
+        return method is null ? Task.CompletedTask : (Task)method.Invoke(client, [ct])!;
+    }
+}

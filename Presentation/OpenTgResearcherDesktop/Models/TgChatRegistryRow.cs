@@ -35,23 +35,52 @@ public sealed partial class TgChatRegistryRow(TgEfSourceLiteDto source, string d
     /// <summary> Считает объём файлов каталога и подкаталогов вне потока интерфейса </summary>
     public async Task UpdateDirectorySizeAsync(CancellationToken ct = default)
     {
-        try { DirectorySizeBytes = await Task.Run(() => ReadDirectorySize(ct), ct); }
+        try
+        {
+            var bytes = await Task.Run(() => ReadDirectorySize(ct), ct).ConfigureAwait(false);
+            await SetDirectorySizeAsync(bytes, ct).ConfigureAwait(false);
+        }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
-        catch (Exception ex) { DirectorySizeBytes = null; TgLogUtils.WriteException(ex); }
+        catch (Exception ex)
+        {
+            TgLogUtils.WriteException(ex);
+            await SetDirectorySizeAsync(null, ct).ConfigureAwait(false);
+        }
     }
+
+    // Публикуем результат через диспетчер без продолжений в уже закрытом контексте окна
+    private Task SetDirectorySizeAsync(long? bytes, CancellationToken ct) => TgDesktopUtils.InvokeOnUIThreadAsync(() =>
+    {
+        if (!ct.IsCancellationRequested) DirectorySizeBytes = bytes;
+        return Task.CompletedTask;
+    }, ct);
 
     // Не следуем по ссылкам на каталоги, чтобы не учитывать посторонние файлы и циклы
     private long? ReadDirectorySize(CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(Directory) || !System.IO.Directory.Exists(Directory)) return null;
-        var options = new EnumerationOptions { RecurseSubdirectories = true, IgnoreInaccessible = false, AttributesToSkip = System.IO.FileAttributes.ReparsePoint };
-        long bytes = 0;
-        foreach (var file in new DirectoryInfo(Directory).EnumerateFiles("*", options))
+        try
         {
-            ct.ThrowIfCancellationRequested();
-            bytes += file.Length;
+            if (string.IsNullOrWhiteSpace(Directory) || !System.IO.Directory.Exists(Directory)) return null;
+            var options = new EnumerationOptions
+                { RecurseSubdirectories = true, IgnoreInaccessible = false, AttributesToSkip = System.IO.FileAttributes.ReparsePoint };
+            long bytes = 0;
+            foreach (var file in new DirectoryInfo(Directory).EnumerateFiles("*", options))
+            {
+                ct.ThrowIfCancellationRequested();
+                bytes += file.Length;
+            }
+            return bytes;
         }
-        return bytes;
+        catch (UnauthorizedAccessException)
+        {
+            TgLogUtils.WriteLog($"Размер каталога чата {Source.Id} недоступен: нет прав чтения. Проверьте каталог в настройках чата: {Directory}");
+            return null;
+        }
+        catch (IOException ex)
+        {
+            TgLogUtils.WriteLog($"Не удалось прочитать размер каталога чата {Source.Id}: {Directory}. {ex.Message}");
+            return null;
+        }
     }
 
     /// <summary> Обновляет статус из реальной операции без сетевых запросов и записи в БД </summary>

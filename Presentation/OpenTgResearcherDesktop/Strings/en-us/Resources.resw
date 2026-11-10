@@ -574,7 +574,7 @@
     <value>Read-only settings</value>
   </data>
   <data name="SettingRecording.Header" xml:space="preserve">
-    <value>Recording settings</value>
+    <value>Profile</value>
   </data>
   <data name="ExpanderActions.Header" xml:space="preserve">
     <value>Actions</value>
@@ -991,7 +991,7 @@
     <value>After updating the program to a new version, the files in the application directory will be automatically deleted by the installer!</value>
   </data>
   <data name="FieldSettingsFileWarning3.Text" xml:space="preserve">
-    <value>After changing the storage line, restart the software manually!</value>
+    <value>Applying a different database or session stops current operations and restarts the application automatically.</value>
   </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Storage</value>
@@ -1707,12 +1707,12 @@
   <data name="ClientApiSettingsHelp" xml:space="preserve">
     <value>Cannot connect to Telegram: API ID or API hash is missing or was rejected by Telegram.
 Open Client connection and enter API ID (a positive integer), API hash (32 hexadecimal characters), and Phone number (including the country code). Get your matching api_id and api_hash from https://my.telegram.org under API development tools. Then click Connect; the profile will be saved after a successful login.
-If you connected before, open Settings → Files → Storage, select your previous database containing the profile, save the settings, and restart the application.</value>
+If you connected before, open Settings → Profile, select a profile or click Edit and enter the previous database in Storage. Click Apply profile: changing files restarts the application.</value>
   </data>
   <data name="ClientSessionReadHelp" xml:space="preserve">
     <value>Cannot read the saved Telegram session: {0}
 The file may have been created with a different API ID / API hash pair or may be damaged. This error occurs before contacting Telegram.
-Check API ID and API hash on Client connection. Under Settings → Files → Session, enter the previous session file for that API ID / API hash pair and save the settings.
+Check API ID and API hash on Client connection. Under Settings → Profile, click Edit, enter the previous session file for that API ID / API hash pair in Session, and click Apply profile.
 For a new login, click Reset session on this page and confirm deletion of the specified file. API credentials, phone number, and proxy are preserved. Click Connect, enter the code received from Telegram in Verification code and your two-step verification Password if required, connecting again when prompted.
 To keep the previous file, enter a new file path that does not exist yet under Session and save the settings instead of resetting. Delete removes both the profile and session file.</value>
   </data>
@@ -2373,7 +2373,7 @@ API credentials, phone number, and the selected proxy will be removed from the p
     <value>No database</value>
   </data>
   <data name="StatusStorageMissingDetail" xml:space="preserve">
-    <value>The database is unavailable. Select an existing database or create a new one in Settings → Files.</value>
+    <value>The database is unavailable. Select or create a profile in Settings → Profile, specify the storage file and click Apply profile.</value>
   </data>
   <data name="StatusStorageReady" xml:space="preserve">
     <value>Database ready</value>
@@ -2571,4 +2571,27 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="SettingsFileWarning.Header" xml:space="preserve">
     <value>About settings files</value>
   </data>
+  <data name="ProfileLabel.Text" xml:space="preserve"><value>Profile</value></data>
+  <data name="ProfileDefaultName" xml:space="preserve"><value>Default profile</value></data>
+  <data name="ProfileStartupHint.Text" xml:space="preserve"><value>The profile contains connection strings for storage and session</value></data>
+  <data name="ProfileNewName" xml:space="preserve"><value>Profile {0}</value></data>
+  <data name="ProfileCreate.Content" xml:space="preserve"><value>Create</value></data>
+  <data name="ProfileEdit.Content" xml:space="preserve"><value>Edit</value></data>
+  <data name="ProfileDelete.Content" xml:space="preserve"><value>Delete</value></data>
+  <data name="ProfileApply.Content" xml:space="preserve"><value>Apply profile</value></data>
+  <data name="ProfileName.Header" xml:space="preserve"><value>Profile name</value></data>
+  <data name="ProfileUsageHint.Text" xml:space="preserve"><value>Saving an inactive profile keeps the current account and does not restart the app. Apply profile switches accounts with a restart. Changing the active profile's paths also requires a restart. Removing a profile keeps its files.</value></data>
+  <data name="ProfileViewMode.Text" xml:space="preserve"><value>View mode · fields are protected</value></data>
+  <data name="ProfileViewHint.Text" xml:space="preserve"><value>Click Edit to change the name, storage or session of the selected profile.</value></data>
+  <data name="ProfileEditMode.Text" xml:space="preserve"><value>Editing profile</value></data>
+  <data name="ProfileEditHint.Text" xml:space="preserve"><value>Save changes writes the profile. Inactive profiles are saved without restarting; click Apply profile afterwards to switch accounts. Cancel changes restores the previous values.</value></data>
+  <data name="ProfileSensitiveEditHint.Text" xml:space="preserve"><value>To edit paths, enable sensitive data using the eye button in the top toolbar.</value></data>
+  <data name="ProfileCancelEdit.Content" xml:space="preserve"><value>Cancel changes</value></data>
+  <data name="ProfileSave.Content" xml:space="preserve"><value>Save changes</value></data>
+  <data name="ProfileRestartHint" xml:space="preserve"><value>Apply the selected profile? The application will stop parsing all chats, disconnect from Telegram, release the session and restart with the selected database and session. Connect to Telegram after startup.</value></data>
+  <data name="ProfileSaveHint" xml:space="preserve"><value>Save settings and profile changes? The current database and session will stay the same.</value></data>
+  <data name="ProfileDeleteTitle" xml:space="preserve"><value>Delete profile</value></data>
+  <data name="ProfileDeleteHint" xml:space="preserve"><value>Remove profile “{0}” from the list? Its database and session file will remain on disk. Click Save or Apply profile to save the change.</value></data>
+  <data name="ProfileDeletedDraft" xml:space="preserve"><value>Profile removed from the list. Save the changes or load settings to undo the deletion.</value></data>
+  <data name="ProfileSaved" xml:space="preserve"><value>Profile saved</value></data>
 </root>

@@ -9,7 +9,8 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     public IAsyncRelayCommand SettingsSaveCommand { get; }
     public TgUpdateViewModel Updates { get; }
 
-    public TgSettingsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
+    /// <summary> Создаёт общие настройки приложения и каталог аккаунтов Telegram </summary>
+    public TgSettingsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgSettingsViewModel> logger, TgUpdateViewModel updates)
         : base(loadStateService, settingsService, navigationService, logger, nameof(TgSettingsViewModel))
     {
@@ -17,9 +18,10 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
         Preferences = new TgProgramPreferences(settingsService);
         Preferences.Load();
         // Команды
-        SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync);
-        SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync);
-        SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync);
+        SettingsLoadCommand = new AsyncRelayCommand(SettingsLoadAsync, () => !IsProfileBusy);
+        SettingsDefaultCommand = new AsyncRelayCommand(SettingsDefaultAsync, () => !IsProfileBusy);
+        SettingsSaveCommand = new AsyncRelayCommand(SettingsSaveAsync, () => !IsProfileBusy);
+        InitializeProfiles();
     }
 
 
@@ -55,6 +57,7 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     {
         SettingsService.Load();
         LoadProgramSettings();
+        LoadProfiles();
     }
 
     // Запрашиваем подтверждение сброса настроек
@@ -64,22 +67,15 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     // Сбрасываем общие параметры и черновик оформления без записи в настройки
     private async Task SettingsDefaultCoreAsync()
     {
-        SettingsService.Default();
+        SettingsService.AppLanguage = TgEnumLanguage.Default;
+        SettingsService.AppTheme = TgEnumTheme.Default;
+        LoadProfiles();
         ResetProgramAppearance();
         await Task.CompletedTask;
     }
 
     // Запрашиваем подтверждение сохранения единой страницы настроек
-    private async Task SettingsSaveAsync() =>
-        await ContentDialogAsync(SettingsSaveCore, TgResourceExtensions.AskSettingsSave(), TgEnumLoadDesktopType.Storage);
-
-    // Сохраняем оформление вместе с существующими настройками файлов
-    private void SettingsSaveCore()
-    {
-        SaveProgramPreferences();
-        SettingsService.Save();
-        SettingsService.Load();
-    }
+    private Task SettingsSaveAsync() => SaveSettingsWithProfileAsync();
 
     #endregion
 }

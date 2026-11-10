@@ -237,10 +237,11 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     /// <inheritdoc />
     public void LoadStorage()
     {
-        // Attempt to read the path from settings
-        var savedPath = ReadSetting<string>(SettingsKeyAppStorage);
+        // Профиль задаёт точную пару файлов, недоступную базу нельзя заменять базой другого аккаунта
+        var profile = TgAccountProfiles.ReadActive(this);
+        var savedPath = profile?.StoragePath ?? ReadSetting<string>(SettingsKeyAppStorage);
 
-        if (!string.IsNullOrEmpty(savedPath) && Directory.Exists(Path.GetDirectoryName(savedPath)))
+        if (!string.IsNullOrEmpty(savedPath) && (profile is not null || Directory.Exists(Path.GetDirectoryName(savedPath))))
         {
             TgGlobalTools.AppStorage = AppStorage = savedPath;
             var length = (File.Exists(AppStorage)) ? new FileInfo(AppStorage).Length : 0;
@@ -264,7 +265,8 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
         AppStorageFileSize = TgFileUtils.GetFileSizeAsString(AppStorage);
     }
 
-    private string LoadAppSession() => ReadSetting<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
+    private string LoadAppSession() => TgAccountProfiles.ReadActive(this)?.SessionPath
+        ?? ReadSetting<string>(SettingsKeyAppSession) ?? TgFileUtils.FileTgSession;
 
     private TgEnumLanguage LoadAppLanguage()
     {
@@ -518,7 +520,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
             if (_settings == null || !_settings.TryGetValue(key, out var obj))
                 return default;
 
-            // If T is a string or a value of the required type, we try to return it directly
+            // Строковые настройки возвращаем без повторной десериализации
             if (typeof(T) == typeof(string))
             {
                 if (obj is string s)
@@ -533,7 +535,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                 return default;
             }
 
-            // If T is an enum and obj is a string, we try to parse the enum from the string “Dark”, “Default”, etc.
+            // Восстанавливаем перечисление из сохранённого названия
             if (typeof(T).IsEnum)
             {
                 if (obj is string enumStr)
@@ -543,7 +545,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                     else
                         return default;
                 }
-                // If obj is a JsonElement with the string
+                // После чтения файла название перечисления представлено строковым элементом JSON
                 if (obj is JsonElement jeEnum && jeEnum.ValueKind == JsonValueKind.String)
                 {
                     var enumStr2 = jeEnum.GetString();
@@ -554,16 +556,16 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                 }
             }
 
-            // If obj is JsonElement and T is not string/enum - deserialize by raw text
+            // Сложные настройки записываются как строки с JSON, также поддерживаем вложенные объекты
             if (obj is JsonElement je)
             {
-                var raw = je.GetRawText();
+                var raw = je.ValueKind == JsonValueKind.String ? je.GetString() : je.GetRawText();
                 if (string.IsNullOrWhiteSpace(raw))
                     return default;
                 return JsonSerializer.Deserialize<T>(raw, TgJsonSerializerUtils.GetJsonOptions());
             }
 
-            // If obj is string (json), deserialize it
+            // До повторного открытия файла значение остаётся обычной строкой с JSON
             if (obj is string jsonString)
             {
                 if (string.IsNullOrWhiteSpace(jsonString))
@@ -572,7 +574,7 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
                 return JsonSerializer.Deserialize<T>(jsonString, TgJsonSerializerUtils.GetJsonOptions());
             }
 
-            // For other cases we try to cast to string and deserialize (if possible)
+            // Для остальных значений пробуем десериализацию строкового представления
             var strVal = obj?.ToString();
             if (string.IsNullOrWhiteSpace(strVal))
                 return default;
@@ -615,6 +617,25 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
             TgLogUtils.WriteException(ex);
         }
         return default;
+    }
+
+    /// <summary> Сохраняет профили и восстанавливает прежний снимок при ошибке записи </summary>
+    public void SaveProfileState(TgAccountProfiles.State state)
+    {
+        Initialize();
+        var existed = _settings.TryGetValue(TgAccountProfiles.SettingsKey, out var previous);
+        try
+        {
+            _settings[TgAccountProfiles.SettingsKey] = JsonUtils.Stringify(state);
+            _fileService.Save(_applicationDataFolder, _localSettingsFile, _settings);
+        }
+        catch (Exception ex)
+        {
+            if (existed) _settings[TgAccountProfiles.SettingsKey] = previous!;
+            else _settings.Remove(TgAccountProfiles.SettingsKey);
+            TgLogUtils.WriteException(ex);
+            throw;
+        }
     }
 
     public void SaveSetting<T>(string key, T value)

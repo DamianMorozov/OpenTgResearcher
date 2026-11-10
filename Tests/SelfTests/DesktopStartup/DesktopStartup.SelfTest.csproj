@@ -7,8 +7,11 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../Core/OpenTgResearcherDesktopCore/OpenTgResearcherDesktopCore.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgAppearanceViewModel.cs" Link="TgAppearanceViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgProgramPreferences.cs" Link="TgProgramPreferences.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgAccountProfile.cs" Link="TgAccountProfile.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/App.Profiles.cs" Link="App.Profiles.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgNetworkAnimationHelper.cs" Link="TgNetworkAnimationHelper.cs" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />

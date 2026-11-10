@@ -1,4 +1,5 @@
 global using Autofac;
+global using Windows.ApplicationModel.Core;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using Microsoft.Extensions.Options;

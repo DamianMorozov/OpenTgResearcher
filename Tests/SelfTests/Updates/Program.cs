@@ -8,6 +8,16 @@ internal static partial class Program
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("ProgramNavigationIcon", ProgramNavigationIconAsync),
+            ("AccountProfilesLifecycle", AccountProfilesLifecycleAsync),
+            ("AccountProfilesLayout", AccountProfilesLayoutAsync),
+            ("ProfileEditModeLayout", ProfileEditModeLayoutAsync),
+            ("ProfileEditModeLifecycle", ProfileEditModeLifecycleAsync),
+            ("SplashProfileLayout", SplashProfileLayoutAsync),
+            ("SettingsProfileSwitch", SettingsProfileSwitchAsync),
+            ("InactiveProfileSaveKeepsAccount", InactiveProfileSaveKeepsAccountAsync),
+            ("ActiveProfilePathSaveRestarts", ActiveProfilePathSaveRestartsAsync),
+            ("DeletedActiveProfileNeedsExplicitApply", DeletedActiveProfileNeedsExplicitApplyAsync),
+            ("SplashProfilesMigrationAndSelection", SplashProfilesMigrationAndSelectionAsync),
             ("AppearanceMovedToSettings", AppearanceMovedToSettingsAsync),
             ("SettingsInlineAppearance", SettingsInlineAppearanceAsync),
             ("SettingsThemeChoices", SettingsThemeChoicesAsync),
@@ -86,6 +96,7 @@ internal static partial class Program
             ContentDialog.Contents.Clear();
             App.Restarts = 0;
             App.RestartObserver = null;
+            App.ProfileRestartError = null;
             Localizer.Language = "ru-RU";
             try { await test.Run(); Console.WriteLine($"PASS: {test.Name}"); }
             catch (Exception ex) { failed++; Console.WriteLine($"FAIL: {test.Name}: {ex.GetBaseException().Message}"); }

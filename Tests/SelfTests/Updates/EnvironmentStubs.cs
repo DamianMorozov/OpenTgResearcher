@@ -8,7 +8,12 @@ public sealed class ITgSettingsService
     private TgEnumTheme _savedTheme;
     public T? ReadSetting<T>(string key) => _settings.TryGetValue(key, out var value) ? (T?)value : default;
     public void SaveSetting<T>(string key, T value) => _settings[key] = value;
+    /// <summary> Сохраняет снимок профилей отдельно от открытых файлов </summary>
+    public void SaveProfileState(TgAccountProfiles.State state) => SaveSetting(TgAccountProfiles.SettingsKey, state);
     public bool IsExistsAppStorage { get; set; } = true;
+    public string AppStorage { get; set; } = Path.Combine(AppContext.BaseDirectory, "test-existing.db");
+    public string AppSession { get; set; } = Path.Combine(AppContext.BaseDirectory, "test-existing.session");
+    public string SettingFile => Path.Combine(AppContext.BaseDirectory, "test-local-settings.json");
     public TgEnumLanguage AppLanguage { get; set; }
     public TgEnumTheme AppTheme { get; set; }
     public int LanguageWrites { get; private set; }
@@ -161,6 +166,15 @@ public static class App
     public static bool IsClosing { get; set; }
     public static int Restarts { get; set; }
     public static Action? RestartObserver { get; set; }
+    public static Exception? ProfileRestartError { get; set; }
+    public static Task RestartForProfileAsync(Action save, Action restore)
+    {
+        RestartObserver?.Invoke();
+        if (ProfileRestartError is not null) throw ProfileRestartError;
+        try { save(); Restarts++; }
+        catch { restore(); throw; }
+        return Task.CompletedTask;
+    }
     public static Task RestartForUpdateAsync(UpdateManager manager, TestAsset target)
     {
         RestartObserver?.Invoke();

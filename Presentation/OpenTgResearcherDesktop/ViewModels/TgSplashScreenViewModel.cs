@@ -4,7 +4,10 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
 {
     #region Fields, properties, constructor
 
-    [ObservableProperty] public partial bool IsLoadComplete { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanChooseProfile))]
+    [NotifyCanExecuteChangedFor(nameof(ContinueCommand))]
+    public partial bool IsLoadComplete { get; set; }
     [ObservableProperty] public partial bool IsLoadHardwareResourceMonitoring { get; set; }
     [ObservableProperty] public partial bool IsLoadLicense { get; set; }
     [ObservableProperty] public partial bool IsLoadLogging { get; set; }
@@ -25,12 +28,13 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
         ILogger<TgSplashScreenViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
     {
         Appearance = new(settingsService);
+        InitializeSplashProfiles();
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();
         // App version + Storage version + License
         AppVersion = TgResourceExtensions.GetAppDisplayName() + $" v{TgDataUtils.GetTrimVersion(Assembly.GetExecutingAssembly().GetName().Version)}";
         // Commands
-        ContinueCommand = new AsyncRelayCommand(ContinueAsync);
+        ContinueCommand = new AsyncRelayCommand(ContinueAsync, () => CanChooseProfile);
     }
 
     #endregion
@@ -51,13 +55,6 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
     #endregion
 
     #region Methods
-
-    private async Task ContinueAsync()
-    {
-        BackToMainWindow.Invoke();
-        // Loading settings
-        await LoadingSettingsAsync();
-    }
 
     /// <summary> Loading logging </summary>
     internal async Task LoadingLoggingAsync()

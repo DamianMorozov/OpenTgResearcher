@@ -633,7 +633,7 @@
     <value>Настройки только для чтения</value>
   </data>
   <data name="SettingRecording.Header" xml:space="preserve">
-    <value>Настройки для записи</value>
+    <value>Профиль</value>
   </data>
   <data name="ExpanderActions.Header" xml:space="preserve">
     <value>Действия</value>
@@ -1053,7 +1053,7 @@
     <value>После обновления программы на новую версию, файлы в каталоге приложения будут автоматически удалены инсталлятором!</value>
   </data>
   <data name="FieldSettingsFileWarning3.Text" xml:space="preserve">
-    <value>После изменения строки хранилища, перезапустите ПО вручную!</value>
+    <value>При применении другой базы или сессии программа остановит текущие операции и перезапустится автоматически.</value>
   </data>
   <data name="DataStorage.Text" xml:space="preserve">
     <value>Хранилище</value>
@@ -1769,12 +1769,12 @@
   <data name="ClientApiSettingsHelp" xml:space="preserve">
     <value>Не удалось подключиться к Telegram: API ID или API hash не заполнены либо отклонены Telegram.
 Откройте «Подключение клиента» и заполните «АПИ ИД» (API ID, положительное целое число), «АПИ хеш» (API hash, 32 шестнадцатеричных символа) и «Номер телефона» (с кодом страны, например +7…). Свою пару api_id и api_hash возьмите на https://my.telegram.org в разделе API development tools. Если поля скрыты, включите отображение конфиденциальных данных. Затем нажмите «Подключить Telegram»; после успешного входа профиль сохранится.
-Если вы уже подключались, откройте «Настройки» → «Файлы» → «Хранилище», укажите прежний файл БД с профилем, сохраните настройки и перезапустите программу.</value>
+Если вы уже подключались, откройте «Настройки» → «Профиль», выберите профиль или нажмите «Редактировать» и укажите прежний файл БД в поле «Хранилище». Нажмите «Применить профиль»: программа перезапустится при смене файлов.</value>
   </data>
   <data name="ClientSessionReadHelp" xml:space="preserve">
     <value>Не удалось прочитать сохранённую сессию Telegram: {0}
 Файл мог быть создан с другой парой API ID / API hash или повреждён. Эта ошибка возникает до обращения к Telegram.
-Проверьте «АПИ ИД» и «АПИ хеш» на странице «Подключение клиента». В «Настройки» → «Файлы» → «Сессия» укажите прежний файл сессии для этой пары API ID / API hash и сохраните настройки.
+Проверьте «АПИ ИД» и «АПИ хеш» на странице «Подключение клиента». В «Настройки» → «Профиль» нажмите «Редактировать», укажите прежний файл сессии для этой пары API ID / API hash в поле «Сессия» и нажмите «Применить профиль».
 Для нового входа нажмите «Сбросить сессию» на этой странице и подтвердите удаление указанного файла. API-параметры, телефон и прокси сохранятся. Затем нажмите «Подключить Telegram», введите полученный от Telegram код в поле «Проверочный код» и при необходимости пароль двухэтапной проверки в поле «Пароль», повторяя подключение по запросу.
 Чтобы сохранить прежний файл, вместо сброса укажите в поле «Сессия» новый, ещё не существующий путь в отдельном каталоге данных и сохраните настройки. Кнопка «Удалить» удаляет и профиль, и файл сессии.</value>
   </data>
@@ -2437,7 +2437,7 @@ API-параметры, телефон и выбранный прокси буд
     <value>База не выбрана</value>
   </data>
   <data name="StatusStorageMissingDetail" xml:space="preserve">
-    <value>База данных недоступна. Выберите существующую базу или создайте новую в «Настройки» → «Файлы».</value>
+    <value>База данных недоступна. Выберите или создайте профиль в «Настройки» → «Профиль», укажите файл хранилища и нажмите «Применить профиль».</value>
   </data>
   <data name="StatusStorageReady" xml:space="preserve">
     <value>База готова</value>
@@ -2635,4 +2635,27 @@ API-параметры, телефон и выбранный прокси буд
   <data name="SettingsFileWarning.Header" xml:space="preserve">
     <value>О файлах настроек</value>
   </data>
+  <data name="ProfileLabel.Text" xml:space="preserve"><value>Профиль</value></data>
+  <data name="ProfileDefaultName" xml:space="preserve"><value>Профиль по умолчанию</value></data>
+  <data name="ProfileStartupHint.Text" xml:space="preserve"><value>Профиль содержит строки подключения к хранилищу и сессии</value></data>
+  <data name="ProfileNewName" xml:space="preserve"><value>Профиль {0}</value></data>
+  <data name="ProfileCreate.Content" xml:space="preserve"><value>Создать</value></data>
+  <data name="ProfileEdit.Content" xml:space="preserve"><value>Редактировать</value></data>
+  <data name="ProfileDelete.Content" xml:space="preserve"><value>Удалить</value></data>
+  <data name="ProfileApply.Content" xml:space="preserve"><value>Применить профиль</value></data>
+  <data name="ProfileName.Header" xml:space="preserve"><value>Название профиля</value></data>
+  <data name="ProfileUsageHint.Text" xml:space="preserve"><value>Неактивный профиль сохраняется без смены аккаунта и перезапуска. «Применить профиль» переключает аккаунт с перезапуском. Изменение путей активного профиля также требует перезапуска. Удаление записи не затрагивает её файлы.</value></data>
+  <data name="ProfileViewMode.Text" xml:space="preserve"><value>Просмотр · поля защищены от изменений</value></data>
+  <data name="ProfileViewHint.Text" xml:space="preserve"><value>Нажмите «Редактировать», чтобы изменить название, хранилище или сессию выбранного профиля.</value></data>
+  <data name="ProfileEditMode.Text" xml:space="preserve"><value>Редактирование профиля</value></data>
+  <data name="ProfileEditHint.Text" xml:space="preserve"><value>«Сохранить изменения» записывает профиль. Неактивный профиль сохраняется без перезапуска; для смены аккаунта затем нажмите «Применить профиль». «Отменить изменения» возвращает прежние значения.</value></data>
+  <data name="ProfileSensitiveEditHint.Text" xml:space="preserve"><value>Для изменения путей включите отображение конфиденциальных данных кнопкой с глазом в верхней панели.</value></data>
+  <data name="ProfileCancelEdit.Content" xml:space="preserve"><value>Отменить изменения</value></data>
+  <data name="ProfileSave.Content" xml:space="preserve"><value>Сохранить изменения</value></data>
+  <data name="ProfileRestartHint" xml:space="preserve"><value>Применить выбранный профиль? Программа остановит парсинг всех чатов, отключится от Telegram, освободит сессию и перезапустится с выбранной базой и сессией. После запуска подключитесь к Telegram.</value></data>
+  <data name="ProfileSaveHint" xml:space="preserve"><value>Сохранить настройки и изменения профилей? Используемая база и сессия остаются прежними.</value></data>
+  <data name="ProfileDeleteTitle" xml:space="preserve"><value>Удаление профиля</value></data>
+  <data name="ProfileDeleteHint" xml:space="preserve"><value>Убрать профиль «{0}» из списка? База и файл сессии останутся на диске. Для сохранения изменения нажмите «Сохранить» или «Применить профиль».</value></data>
+  <data name="ProfileDeletedDraft" xml:space="preserve"><value>Профиль убран из списка. Сохраните изменения или загрузите настройки, чтобы отменить удаление.</value></data>
+  <data name="ProfileSaved" xml:space="preserve"><value>Профиль сохранён</value></data>
 </root>

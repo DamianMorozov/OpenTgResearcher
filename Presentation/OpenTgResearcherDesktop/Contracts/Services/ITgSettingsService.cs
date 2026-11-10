@@ -35,6 +35,8 @@ public interface ITgSettingsService : INotifyPropertyChanged
     public void SaveTheme(TgEnumTheme theme);
     public T? ReadSetting<T>(string key);
 	public void SaveSetting<T>(string key, T value);
+    /// <summary> Сохраняет каталог профилей, возвращая ошибку записи вызывающей команде </summary>
+    public void SaveProfileState(TgAccountProfiles.State state);
     /// <summary> Load storage path </summary>
     public void LoadStorage();
     /// <summary> Initialize application language </summary>

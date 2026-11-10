@@ -440,6 +440,46 @@
                     Style="{StaticResource SplashTrailStarStyle}" />
             </Canvas>
         </Grid>
+        <!--  Выбор профиля не сдвигает строки загрузки, применяется кнопкой продолжения  -->
+        <StackPanel
+            Grid.RowSpan="7"
+            Grid.ColumnSpan="3"
+            Width="320"
+            Margin="16,48,16,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Spacing="4">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    x:Name="SplashProfileLabel"
+                    VerticalAlignment="Center"
+                    l:Uids.Uid="ProfileLabel" />
+                <ComboBox
+                    x:Name="SplashProfileSelector"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    AutomationProperties.AutomationId="SplashProfileSelector"
+                    AutomationProperties.LabeledBy="{x:Bind SplashProfileLabel}"
+                    DisplayMemberPath="Name"
+                    IsEnabled="{x:Bind ViewModel.CanChooseProfile, Mode=OneWay}"
+                    ItemsSource="{x:Bind ViewModel.Profiles}"
+                    SelectedItem="{x:Bind ViewModel.SelectedProfile, Mode=TwoWay}" />
+            </Grid>
+            <TextBlock
+                l:Uids.Uid="ProfileStartupHint"
+                FontSize="12"
+                Opacity="0.7"
+                TextWrapping="Wrap" />
+            <TextBlock
+                FontSize="12"
+                IsTextSelectionEnabled="True"
+                Text="{x:Bind ViewModel.ProfileMessage, Mode=OneWay}"
+                TextWrapping="Wrap" />
+        </StackPanel>
         <!--  Выбор оформления доступен независимо от этапа загрузки и не сдвигает содержимое заставки  -->
         <StackPanel
             x:Name="SplashAppearanceToolbar"

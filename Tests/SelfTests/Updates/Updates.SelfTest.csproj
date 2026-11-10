@@ -10,6 +10,9 @@
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgAppearanceViewModel.cs" Link="TgAppearanceViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgGithubUpdateSource.cs" Link="TgGithubUpdateSource.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgProgramPreferences.cs" Link="TgProgramPreferences.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgAccountProfile.cs" Link="TgAccountProfile.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSettingsViewModel.Profiles.cs" Link="TgSettingsViewModel.Profiles.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSplashScreenViewModel.Profiles.cs" Link="TgSplashScreenViewModel.Profiles.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSettingsViewModel.cs" Link="TgSettingsViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSettingsViewModel.Preferences.cs" Link="TgSettingsViewModel.Preferences.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSettingsViewModel.Updates.cs" Link="TgSettingsViewModel.Updates.cs" />
@@ -24,6 +27,7 @@
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgResourceExtensions.cs" Link="TgResourceExtensions.cs" />
     <Content Include="../../../Presentation/OpenTgResearcherDesktop/Strings/**/Resources.resw" Link="Strings/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgSettingsPage.xaml" LogicalName="TgSettingsPage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgSplashScreenPage.xaml" LogicalName="TgSplashScreenPage.xaml" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/ShellPage.xaml" LogicalName="ShellPage.xaml" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgStatusBar.xaml" LogicalName="TgStatusBar.xaml" />
   </ItemGroup>

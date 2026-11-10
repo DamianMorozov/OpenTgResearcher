@@ -9,6 +9,12 @@ internal static partial class Program
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("ToolbarNetworkLayoutAndIcon", ToolbarNetworkLayoutAndIconAsync),
+            ("ProfilesRestoreStorageAndSession", ProfilesRestoreStorageAndSessionAsync),
+            ("ProfilesSurviveSettingsFileRoundTrip", ProfilesSurviveSettingsFileRoundTripAsync),
+            ("MissingProfileDirectoryKeepsAccountPaths", MissingProfileDirectoryKeepsAccountPathsAsync),
+            ("ProfileSaveFailureDoesNotActivate", ProfileSaveFailureDoesNotActivateAsync),
+            ("ProfileRestartWaitsForSession", ProfileRestartWaitsForSessionAsync),
+            ("ProfileRestartFailureRestoresSelection", ProfileRestartFailureRestoresSelectionAsync),
             ("NetworkScanTracksOverlappingLoads", NetworkScanTracksOverlappingLoadsAsync),
             ("NetworkScanDetachAndReducedMotion", NetworkScanDetachAndReducedMotionAsync),
             ("MsixCreatesMissingResources", MsixCreatesMissingResourcesAsync),

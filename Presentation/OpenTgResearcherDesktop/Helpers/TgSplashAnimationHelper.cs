@@ -3,6 +3,8 @@ namespace OpenTgResearcherDesktop.Helpers;
 /// <summary> Анимация заставки без ожидания инициализации приложения на потоке интерфейса </summary>
 internal sealed class TgSplashAnimationHelper
 {
+    private const int _introDurationMilliseconds = 2000;
+    private const int _scanDurationMilliseconds = 840;
     private readonly Visual _content;
     private readonly Visual _orbit;
     private readonly Visual _scanner;
@@ -29,7 +31,7 @@ internal sealed class TgSplashAnimationHelper
         _rows = ElementCompositionPreview.GetElementVisual(rows);
     }
 
-    /// <summary> Выполняет появление и орбиту параллельно за пять секунд, затем запускает сканирование </summary>
+    /// <summary> Выполняет появление и орбиту параллельно за две секунды, затем запускает сканирование </summary>
     internal void Start(bool isLoading, bool animationsEnabled)
     {
         StopAnimations();
@@ -41,16 +43,16 @@ internal sealed class TgSplashAnimationHelper
         _appearanceBatch.Completed += OnAppearanceCompleted;
         // До первого кадра размер Composition может быть нулевым, поэтому используем уже измеренную разметку
         _content.CenterPoint = new((float)_contentElement.ActualWidth / 2, (float)_contentElement.ActualHeight / 2, 0);
-        StartFade(_content, 5000);
+        StartFade(_content, _introDurationMilliseconds);
         var scale = compositor.CreateVector3KeyFrameAnimation();
-        scale.Duration = TimeSpan.FromSeconds(5);
+        scale.Duration = TimeSpan.FromMilliseconds(_introDurationMilliseconds);
         scale.InsertKeyFrame(0, new(0.97f, 0.97f, 1));
         scale.InsertKeyFrame(1, System.Numerics.Vector3.One, CreateEaseOut(compositor));
         _content.StartAnimation("Scale", scale);
 
         // Ожидаем фактического окончания появления строк, не задерживая параллельную инициализацию приложения
         var rowsFade = compositor.CreateScalarKeyFrameAnimation();
-        rowsFade.Duration = TimeSpan.FromSeconds(5);
+        rowsFade.Duration = TimeSpan.FromMilliseconds(_introDurationMilliseconds);
         rowsFade.InsertKeyFrame(0, 0);
         rowsFade.InsertKeyFrame(1, 1, compositor.CreateLinearEasingFunction());
         _rows.StartAnimation("Opacity", rowsFade);
@@ -58,7 +60,7 @@ internal sealed class TgSplashAnimationHelper
         _orbit.Opacity = 1;
         _orbit.CenterPoint = new((float)_orbitElement.ActualWidth / 2, (float)_orbitElement.ActualHeight / 2, 0);
         var rotation = compositor.CreateScalarKeyFrameAnimation();
-        rotation.Duration = TimeSpan.FromSeconds(5);
+        rotation.Duration = TimeSpan.FromMilliseconds(_introDurationMilliseconds);
         rotation.InsertKeyFrame(0, 0);
         rotation.InsertKeyFrame(1, 360, compositor.CreateLinearEasingFunction());
         _orbit.StartAnimation("RotationAngleInDegrees", rotation);
@@ -73,7 +75,7 @@ internal sealed class TgSplashAnimationHelper
         _scanBatch.Completed += OnScanCompleted;
         // Полоса проходит квадратную область логотипа и возвращается только за её границами
         var scan = compositor.CreateScalarKeyFrameAnimation();
-        scan.Duration = TimeSpan.FromSeconds(2.1);
+        scan.Duration = TimeSpan.FromMilliseconds(_scanDurationMilliseconds);
         scan.InsertKeyFrame(0, -(float)_scannerElement.ActualHeight);
         scan.InsertKeyFrame(0.75f, (float)_scannerElement.ActualWidth);
         scan.InsertKeyFrame(1, (float)_scannerElement.ActualWidth);

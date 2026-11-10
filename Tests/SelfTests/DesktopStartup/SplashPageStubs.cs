@@ -45,6 +45,7 @@ public sealed class TgSplashScreenViewModel
 }
 public sealed class SplashBindings
 {
+    public List<long> Updates { get; } = [];
     /// <summary> Заменяет сформированное XAML-компилятором обновление привязок </summary>
-    public void Update() { }
+    public void Update() => Updates.Add(System.Diagnostics.Stopwatch.GetTimestamp());
 }

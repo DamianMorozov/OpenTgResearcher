@@ -2,6 +2,25 @@ namespace OpenTgResearcherDesktop.StartupSelfTests;
 
 internal static partial class Program
 {
+    // Настоящая последовательность этапов оставляет короткую паузу между обновлениями строк
+    private static async Task SplashRowsHaveBriefPauseAsync()
+    {
+        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17763)) return;
+        SplashPageState.ViewModel = new();
+        var page = new TgSplashScreenPage();
+        page.RaiseLoaded();
+        page.MainContent.Visual.Compositor.Batches.Single().Complete();
+        page.ViewModel.StorageGate.TrySetResult();
+        await page.LoadSplashScreenAsync(() => { });
+        Assert(page.Bindings.Updates.Count == 8 && page.ViewModel.IsLoadComplete, "Не все семь этапов и завершение загрузки обновили строки");
+        for (var index = 1; index < 7; index++)
+        {
+            var elapsed = System.Diagnostics.Stopwatch.GetElapsedTime(page.Bindings.Updates[index - 1], page.Bindings.Updates[index]);
+            Assert(elapsed.TotalMilliseconds >= 140, "Последовательные строки загрузки отображаются без короткой паузы");
+        }
+        page.RaiseUnloaded();
+    }
+
     // Орбита и сканирующая полоса должны существовать в настоящей разметке и не перехватывать ввод
     private static Task SplashAnimationLayoutAsync()
     {
@@ -19,11 +38,8 @@ internal static partial class Program
             "Сканирующая полоса не находится внутри общего рисунка логотипа");
         Assert(controls.ContainsKey("SplashContinueButton"), "Нет кнопки продолжения для завершения заставки");
         Assert(controls.ContainsKey("SplashLoadingRows"), "Строки загрузки не выделены для медленного появления");
-        foreach (var name in new[] { "ContinueOrbitHead", "ContinueOrbitTailNear", "ContinueOrbitTailMiddle", "ContinueOrbitTailFar" })
-        {
-            Assert(controls.TryGetValue(name, out var particle), $"У кнопки продолжения отсутствует частица {name}");
-            Assert(particle!.Ancestors().Any(element => element.Attribute("IsHitTestVisible")?.Value == "False"), "Частицы перехватывают нажатия кнопки");
-        }
+        Assert(controls.TryGetValue("ContinueOrbitArrow", out var icon), "У кнопки продолжения отсутствует стрелка");
+        Assert(icon!.Ancestors().Any(element => element.Attribute("IsHitTestVisible")?.Value == "False"), "Значок перехватывает нажатия кнопки");
         return Task.CompletedTask;
     }
 
@@ -45,7 +61,7 @@ internal static partial class Program
         return Task.CompletedTask;
     }
 
-    // Мягкое появление всей заставки занимает пять секунд и сохраняет центр страницы
+    // Мягкое появление всей заставки занимает две секунды и сохраняет центр страницы
     private static Task SplashSoftAppearanceAsync()
     {
         var content = new FrameworkElement { ActualWidth = 800, ActualHeight = 600 };
@@ -57,11 +73,11 @@ internal static partial class Program
         Assert(fade.Frames.First().Value == 0 && fade.Frames.Last().Value == 1, "Заставка не проявляется полностью");
         Assert(scale.Frames.First().Value.X < 1 && scale.Frames.Last().Value == System.Numerics.Vector3.One, "Нет мягкого увеличения логотипа");
         Assert(content.Visual.CenterPoint == new System.Numerics.Vector3(400, 300, 0), "Появление смещает центр страницы");
-        Assert(fade.Duration.TotalSeconds == 5 && scale.Duration == fade.Duration, "Мягкое появление не длится пять секунд");
+        Assert(fade.Duration.TotalSeconds == 2 && scale.Duration == fade.Duration, "Мягкое появление не сокращено до двух секунд");
         return Task.CompletedTask;
     }
 
-    // Орбита завершается за пять секунд, после чего начинается единственный проход сканирования
+    // Орбита завершается за две секунды, после чего начинается единственный проход сканирования
     private static Task SplashOrbitAndScanAsync()
     {
         var orbit = new FrameworkElement { ActualWidth = 112, ActualHeight = 112 };
@@ -70,8 +86,8 @@ internal static partial class Program
         var content = new FrameworkElement();
         new TgSplashAnimationHelper(content, orbit, scan, new(), new()).Start(isLoading: true, animationsEnabled: true);
         var rotation = (ScalarKeyFrameAnimation)orbit.Visual.Animations["RotationAngleInDegrees"];
-        Assert(rotation.Duration.TotalSeconds == 5 && rotation.IterationBehavior != AnimationIterationBehavior.Forever,
-            "Орбита не завершается одновременно с пятисекундным появлением");
+        Assert(rotation.Duration.TotalSeconds == 2 && rotation.IterationBehavior != AnimationIterationBehavior.Forever,
+            "Орбита не завершается одновременно с двухсекундным появлением");
         Assert(scan.Visual.Animations.Count == 0, "Сканирование включилось до завершения появления и орбиты");
         Assert(rotation.Frames.First().Value == 0 && rotation.Frames.Last().Value == 360 && orbit.Visual.Opacity == 1, "Орбита не вращается или скрыта");
         Assert(orbit.Visual.CenterPoint == new System.Numerics.Vector3(56, 56, 0), "Орбита вращается не вокруг логотипа");
@@ -79,6 +95,7 @@ internal static partial class Program
         Assert(orbit.Visual.Animations.Count == 0 && orbit.Visual.Opacity == 0, "Орбита не остановлена перед сканированием");
         var movement = (ScalarKeyFrameAnimation)scan.Visual.Animations["Offset.Y"];
         var glow = (ScalarKeyFrameAnimation)scan.Visual.Animations["Opacity"];
+        Assert(movement.Duration.TotalMilliseconds == 840 && glow.Duration == movement.Duration, "Сканирование не ускорено в 2,5 раза");
         Assert(movement.Frames.First().Value <= -scan.ActualHeight && movement.Frames.Last().Value >= scan.ActualWidth,
             "Сканирование не проходит изображение целиком");
         Assert(glow.Frames.First().Value == 0 && glow.Frames.Last().Value == 0 && glow.Frames.Any(frame => frame.Value > 0), "Полоса не появляется или не гаснет");
@@ -160,14 +177,18 @@ internal static partial class Program
             page.MainContent.Visual.Compositor.Batches.Single().Complete();
             Assert(!loading.IsCompleted && !page.ViewModel.IsLoadComplete, "Окончание анимации подменило незавершённую загрузку БД");
             Assert(page.SplashOrbit.Visual.Animations.Count == 0 && page.SplashScanBand.Visual.Animations.Count > 0,
-                "Сканирование не сменило пятисекундное вращение орбиты");
+                "Сканирование не сменило двухсекундное вращение орбиты");
         }
         finally { page.ViewModel.StorageGate.TrySetResult(); await loading; }
-        Assert(page.ViewModel.IsLoadComplete && page.ContinueOrbitHead.Visual.Animations.Count > 0, "Готовая кнопка не получила точку со шлейфом");
+        Assert(page.ViewModel.IsLoadComplete && page.ContinueOrbitArrow.Visual.Animations.Count > 0, "Готовая кнопка не получила стрелку");
+        var stars = new[] { page.ContinueOrbitStar1, page.ContinueOrbitStar2, page.ContinueOrbitStar3, page.ContinueOrbitStar4, page.ContinueOrbitStar5 };
+        Assert(stars.All(star => star.Visual.Animations.ContainsKey("Offset") && star.Visual.Animations.ContainsKey("Opacity")),
+            "Настоящая страница не подключила движение и затухание каждой звёздочки");
         page.SplashScanBand.Visual.Compositor.Batches.Single().Complete();
         Assert(page.SplashScanBand.Visual.Animations.Count == 0, "Проход сканирования не остановился");
         page.RaiseUnloaded();
-        Assert(page.ContinueOrbitHead.Visual.Animations.Count == 0, "Точка у кнопки не остановилась при переходе");
+        Assert(page.ContinueOrbitArrow.Visual.Animations.Count == 0 && stars.All(star => star.Visual.Animations.Count == 0),
+            "Стрелка или звёзды не остановились при переходе");
     }
 
     // Закрытие во время ожидания не оставляет зацикленных эффектов и не проявляет кнопку после закрытия
@@ -187,16 +208,16 @@ internal static partial class Program
         Assert(page.MainContent.Visual.Compositor.Batches.Single().IsDisposed, "Закрытая заставка сохранила пакет анимации строк");
     }
 
-    // Пять секунд относятся к настоящей анимации строк, а окончание кадров освобождает ожидающую загрузку
-    private static async Task SplashRowsAppearForFiveSecondsAsync()
+    // Две секунды относятся к настоящей анимации строк, а окончание кадров освобождает ожидающую загрузку
+    private static async Task SplashRowsAppearForTwoSecondsAsync()
     {
         var content = new FrameworkElement();
         var rows = new FrameworkElement();
         var animation = new TgSplashAnimationHelper(content, new(), new(), new(), rows);
         animation.Start(isLoading: true, animationsEnabled: true);
         var fade = (ScalarKeyFrameAnimation)rows.Visual.Animations["Opacity"];
-        Assert(fade.Duration.TotalSeconds >= 5 && fade.Frames.First().Value == 0 && fade.Frames.Last().Value == 1,
-            "Строки загрузки не появляются в течение пяти секунд");
+        Assert(fade.Duration.TotalSeconds == 2 && fade.Frames.First().Value == 0 && fade.Frames.Last().Value == 1,
+            "Строки загрузки не появляются в течение двух секунд");
         var completion = animation.WaitForAppearanceAsync();
         var batch = content.Visual.Compositor.Batches.Single();
         Assert(batch.IsEnded && !completion.IsCompleted, "Подготовка заставки завершилась до появления строк");

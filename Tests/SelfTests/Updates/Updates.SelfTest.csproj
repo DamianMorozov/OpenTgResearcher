@@ -7,6 +7,9 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgGithubUpdateSource.cs" Link="TgGithubUpdateSource.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgProgramPreferences.cs" Link="TgProgramPreferences.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgUpdateViewModel.Preferences.cs" Link="TgUpdateViewModel.Preferences.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgNetworkActivityViewModel.cs" Link="TgNetworkActivityViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgNetworkOperationModel.cs" Link="TgNetworkOperationModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgNetworkChatGroupModel.cs" Link="TgNetworkChatGroupModel.cs" />

@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.Services;
+namespace OpenTgResearcherDesktop.Services;
 
 public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers,
 	ITgSettingsService settingsService) : IActivationService
@@ -9,21 +9,22 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
     {
         try
         {
-            // Execute tasks before activation
+            // Загружаем параметры до активации окна
             settingsService.Load();
-            // Set the MainWindow Content
+            TgProgramIntegration.InitializeAppearance(settingsService);
+            // Создаём содержимое главного окна
             if (App.MainWindow.Content == null)
             {
-                // ShellPage loading
+                // Загружаем оболочку приложения
                 App.MainWindow.Content = App.GetService<ShellPage>();
             }
-            // Handle activation via ActivationHandlers
+            // Передаём запуск обработчикам активации
             await HandleActivationAsync(activationArgs);
             if (App.IsClosing) return;
-            // Activate the MainWindow
+            // Активируем главное окно
             App.MainWindow.Activate();
 
-            // Loading SplashScreen
+            // Показываем заставку
             await LoadingSplashScreen();
         }
         catch (Exception ex)
@@ -32,7 +33,7 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
         }
     }
 
-    /// <summary> Loading SplashScreen </summary>
+    // Показываем заставку на время подготовки приложения
     private async Task LoadingSplashScreen()
     {
         _content = App.MainWindow.Content;
@@ -44,11 +45,18 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
         }
     }
 
-    /// <summary> Back to ShellPage </summary>
+    // Возвращаем оболочку и открываем параметры новой установленной версии
     private void BackToMainWindow()
     {
         if (_content is null) return;
         App.MainWindow.Content = _content;
+        try
+        {
+            var preferences = new TgProgramPreferences(settingsService);
+            if (preferences.NeedsSetup(TgProgramIntegration.CurrentVersion, TgProgramIntegration.IsInstalled))
+                App.GetService<INavigationService>().NavigateTo(typeof(TgUpdateViewModel).FullName!);
+        }
+        catch (Exception ex) { TgLogUtils.WriteException(ex); }
     }
 
     private async Task HandleActivationAsync(object activationArgs)

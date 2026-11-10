@@ -1,6 +1,6 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
-/// <summary> Проверка и скачивание обновлений Desktop </summary>
+/// <summary> Параметры программы, проверка и скачивание обновлений Desktop </summary>
 public partial class TgUpdateViewModel : TgPageViewModelBase
 {
     [ObservableProperty]
@@ -21,13 +21,19 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
     public TgUpdateViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgUpdateViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgUpdateViewModel))
     {
+        Preferences = new TgProgramPreferences(settingsService);
+        Preferences.Load();
         UpdateReleaseCommand = new AsyncRelayCommand(UpdateReleaseAsync, () => !IsUpdating);
         UpdatePreviewCommand = new AsyncRelayCommand(UpdatePreviewAsync, () => !IsUpdating);
         CancelUpdateCommand = new RelayCommand(CancelUpdate, () => IsUpdating);
     }
 
     /// <summary> Открывает страницу без обращения к Telegram и хранилищу </summary>
-    public override Task OnNavigatedToAsync(NavigationEventArgs? e) => Task.CompletedTask;
+    public override Task OnNavigatedToAsync(NavigationEventArgs? e)
+    {
+        LoadProgramSettings();
+        return Task.CompletedTask;
+    }
 
     /// <summary> Сохраняет журнал и текущую загрузку при обновлении страницы </summary>
     public override Task ReloadUiAsync() => Task.CompletedTask;
@@ -78,13 +84,15 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
     // Проверяем установку Velopack до сети и скачиваем пакет с прогрессом и отменой
     private async Task VelopackUpdateAsync(bool isPreview, CancellationToken ct = default)
     {
-        var manager = new UpdateManager(new GithubSource(TgConstants.LinkGitHub, string.Empty, prerelease: isPreview));
+        var source = new TgGithubUpdateSource(prerelease: isPreview);
+        var manager = new UpdateManager(source);
         if (!manager.IsInstalled)
         {
             AppendUpdateLog("UpdateNotInstalled");
             return;
         }
         var uid = Guid.NewGuid();
+        UpdateInfo? downloadedUpdate = null;
         try
         {
             await LoadStateService.PrepareDownloadTokenAsync(uid);
@@ -100,17 +108,38 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
                 AppendUpdateLog("UpdateAlreadyLatest");
                 return;
             }
+            if (source.IsPreviewRelease(update.TargetFullRelease))
+            {
+                var dialog = new ContentDialog
+                {
+                    XamlRoot = XamlRootVm,
+                    Title = string.Format(CultureInfo.CurrentCulture, "ProgramPreviewTitle".GetLocalizedResource(), update.TargetFullRelease.Version),
+                    Content = string.Format(CultureInfo.CurrentCulture, "ProgramPreviewWarning".GetLocalizedResource(), update.TargetFullRelease.Version),
+                    PrimaryButtonText = TgResourceExtensions.GetYesButton(),
+                    CloseButtonText = TgResourceExtensions.GetCancelButton(),
+                    DefaultButton = ContentDialogButton.Close,
+                };
+                if (await dialog.ShowAsync() != ContentDialogResult.Primary)
+                {
+                    AppendUpdateLog("UpdateCancelled");
+                    return;
+                }
+            }
+            ct.ThrowIfCancellationRequested();
             AppendUpdateLog("UpdateDownloading", update.TargetFullRelease.Version);
             IsDownloading = true;
             await manager.DownloadUpdatesAsync(update, progress => SetDownloadProgress(progress, ct), cancelToken: ct);
             ct.ThrowIfCancellationRequested();
             DownloadProgress = 100;
-            // Ранний вызов Velopack в Main применит подготовленный пакет при следующем запуске
+            // Освобождаем сетевую операцию до штатного завершения приложения
             AppendUpdateLog("UpdateDownloaded", update.TargetFullRelease.Version);
+            IsDownloading = false;
+            downloadedUpdate = update;
         }
         catch (OperationCanceledException) { LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Canceled); throw; }
         catch { LoadStateService.NetworkActivity.Finish(uid, TgNetworkOperationState.Failed); throw; }
         finally { LoadStateService.StopSoftDownloadProcessing(uid); }
+        if (downloadedUpdate is not null) await App.RestartForUpdateAsync(manager, downloadedUpdate.TargetFullRelease);
     }
 
     // Переносим уведомления загрузчика в поток интерфейса

@@ -1,4 +1,4 @@
-﻿namespace OpenTgResearcherDesktop.Views;
+namespace OpenTgResearcherDesktop.Views;
 
 public sealed partial class ShellPage
 {
@@ -153,6 +153,12 @@ public sealed partial class ShellPage
                 var name = Path.GetFileNameWithoutExtension(bitmap.UriSource.AbsolutePath);
                 name = name[..name.LastIndexOf('-')];
                 icon.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Icons/Lucide/{name}-{theme}.png"));
+            }
+            else if (item.Icon is ImageIcon vectorIcon && vectorIcon.Source is SvgImageSource svg)
+            {
+                var name = Path.GetFileNameWithoutExtension(svg.UriSource.AbsolutePath);
+                name = name[..name.LastIndexOf('-')];
+                vectorIcon.Source = new SvgImageSource(new Uri($"ms-appx:///Assets/Icons/Lucide/{name}-{theme}.svg"));
             }
         }
         if (NavigationViewControl.SettingsItem is NavigationViewItem settings)

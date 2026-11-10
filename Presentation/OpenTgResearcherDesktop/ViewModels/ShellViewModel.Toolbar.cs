@@ -24,7 +24,9 @@ public partial class ShellViewModel
         NavigationService.NavigateTo(typeof(TgUpdateViewModel).FullName!);
         if (Updates.IsUpdating) return;
         Updates.XamlRootVm = root;
-        await Updates.UpdateReleaseCommand.ExecuteAsync(null);
+        if (SettingsService.ReadSetting<TgProgramPreferences.Values>(TgProgramPreferences.PreferencesKey)?.IncludePreview == true)
+            await Updates.UpdatePreviewCommand.ExecuteAsync(null);
+        else await Updates.UpdateReleaseCommand.ExecuteAsync(null);
     }
 
     /// <summary> Отмечает выбранный язык при изменении настроек из любой страницы </summary>

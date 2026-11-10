@@ -2,6 +2,37 @@ namespace OpenTgResearcherDesktop.StartupSelfTests;
 
 internal static partial class Program
 {
+    // Обновлятор получает управление после остановки парсинга и освобождения сессии, пока окно ещё существует
+    private static async Task UpdateWaitsForSessionReleaseAsync()
+    {
+        var client = new ParsingStopConnection();
+        App.BusinessLogicManager = new() { ConnectClient = client };
+        App.MainWindow = new();
+        var schedules = 0;
+        var close = new App().CloseForUpdateAsync(() =>
+        {
+            Assert(client.DisposeCalls == 1 && App.MainWindow.CloseCalls == 0, "Обновлятор запущен до освобождения сессии или после закрытия окна");
+            schedules++;
+        });
+        await client.Started.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        Assert(schedules == 0 && !close.IsCompleted, "Перезапуск не ожидает остановки парсинга");
+        client.Finished.TrySetResult();
+        await close.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert(schedules == 1 && App.MainWindow.CloseCalls == 1, "Перезапуск не запланирован или окно не закрыто");
+    }
+
+    // Ошибка запуска обновлятора оставляет окно открытым и возвращается вызывающей команде
+    private static async Task UpdateFailureKeepsWindowOpenAsync()
+    {
+        var client = new ParsingStopConnection();
+        client.Finished.TrySetResult();
+        App.BusinessLogicManager = new() { ConnectClient = client };
+        var failed = false;
+        try { await new App().CloseForUpdateAsync(() => throw new IOException("Нет доступа к обновлению")); }
+        catch (IOException) { failed = true; }
+        Assert(failed && App.MainWindow.CloseCalls == 0 && !App.IsClosing, "Ошибка запуска обновлятора скрыта или окно закрыто");
+    }
+
     // Проверяем порядок на исходном обработчике завершения приложения
     private static async Task CloseWaitsForTelegramAsync()
     {

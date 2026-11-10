@@ -382,10 +382,14 @@
                         <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/logs-light.png" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <!--  Обновление  -->
+                <!--  Параметры программы и обновления  -->
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUpdateViewModel" l:Uids.Uid="Shell_Update">
                     <NavigationViewItem.Icon>
-                        <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/updates-light.png" />
+                        <ImageIcon>
+                            <ImageIcon.Source>
+                                <SvgImageSource UriSource="ms-appx:///Assets/Icons/Lucide/app-update-light.svg" />
+                            </ImageIcon.Source>
+                        </ImageIcon>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Лицензия  -->

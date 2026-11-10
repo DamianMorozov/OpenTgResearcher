@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -172,7 +172,7 @@
     <value>Чаты</value>
   </data>
   <data name="Shell_Update.Content" xml:space="preserve">
-    <value>Обновление</value>
+    <value>Программа</value>
   </data>
   <data name="Shell_Bots.Content" xml:space="preserve">
     <value>Боты</value>
@@ -1887,7 +1887,7 @@ API-параметры, телефон и выбранный прокси буд
     <value>Скачиваем обновление {0}…</value>
   </data>
   <data name="UpdateDownloaded" xml:space="preserve">
-    <value>Обновление {0} скачано и подготовлено. Закройте приложение штатно и перезапустите его, чтобы применить новую версию.</value>
+    <value>Обновление {0} скачано. Остановка парсинга и отключение Telegram перед автоматическим перезапуском.</value>
   </data>
   <data name="UpdateCancelled" xml:space="preserve">
     <value>Загрузка обновления отменена. Проверку можно запустить снова.</value>
@@ -2542,4 +2542,70 @@ API-параметры, телефон и выбранный прокси буд
   <data name="GlobalProfileVoice" xml:space="preserve"><value>Голосовые сообщения</value></data>
   <data name="GlobalProfileGifs" xml:space="preserve"><value>GIF</value></data>
   <data name="GlobalProfilePolls" xml:space="preserve"><value>Опросы</value></data>
+  <data name="ProgramTitle.Text" xml:space="preserve">
+    <value>Программа</value>
+  </data>
+  <data name="ProgramAppearance.Text" xml:space="preserve">
+    <value>Оформление и запуск</value>
+  </data>
+  <data name="ProgramLanguage.Header" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="ProgramSystemLanguage.Content" xml:space="preserve">
+    <value>Как в системе</value>
+  </data>
+  <data name="ProgramAutoStart.Content" xml:space="preserve">
+    <value>Запускать при входе в Windows</value>
+  </data>
+  <data name="ProgramAutoStartHint.Text" xml:space="preserve">
+    <value>Автозапуск установленной программы отображается в Диспетчере задач → Автозагрузка приложений.</value>
+  </data>
+  <data name="ProgramSystemTheme.Content" xml:space="preserve">
+    <value>Использовать системную тему</value>
+  </data>
+  <data name="ProgramTheme.Header" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="ProgramLightTheme.Content" xml:space="preserve">
+    <value>Светлая</value>
+  </data>
+  <data name="ProgramDarkTheme.Content" xml:space="preserve">
+    <value>Тёмная</value>
+  </data>
+  <data name="ProgramSystemAccent.Content" xml:space="preserve">
+    <value>Использовать системный цвет акцента</value>
+  </data>
+  <data name="ProgramAccent.Header" xml:space="preserve">
+    <value>Цвет акцента</value>
+  </data>
+  <data name="ProgramPickAccent.Content" xml:space="preserve">
+    <value>Выбрать цвет</value>
+  </data>
+  <data name="ProgramSave.Content" xml:space="preserve">
+    <value>Сохранить настройки</value>
+  </data>
+  <data name="ProgramUpdates.Text" xml:space="preserve">
+    <value>Обновления</value>
+  </data>
+  <data name="ProgramIncludePreview.Content" xml:space="preserve">
+    <value>Включать предварительные выпуски в проверку обновлений</value>
+  </data>
+  <data name="ProgramUpdateHint.Text" xml:space="preserve">
+    <value>После скачивания обновления программа остановит парсинг, освободит сессию Telegram и автоматически перезапустится. Перед загрузкой предварительного выпуска потребуется отдельное подтверждение. Параметр предварительных выпусков применяется к кнопке проверки в верхней панели после сохранения настроек.</value>
+  </data>
+  <data name="ProgramSettingsSaved" xml:space="preserve">
+    <value>Настройки программы сохранены.</value>
+  </data>
+  <data name="ProgramSetupWelcome" xml:space="preserve">
+    <value>Вы установили новую версию OpenTgResearcher. Проверьте параметры программы и нажмите «Сохранить настройки». Прежние настройки сохранены.</value>
+  </data>
+  <data name="ProgramPreviewWarning" xml:space="preserve">
+    <value>Найдена предварительная версия {0}. Это не релизный выпуск, он может содержать ошибки. Скачать обновление и автоматически перезапустить программу?</value>
+  </data>
+  <data name="ProgramPreviewTitle" xml:space="preserve">
+    <value>Предварительная версия {0}</value>
+  </data>
+  <data name="ProgramSettingsFailed" xml:space="preserve">
+    <value>Не удалось сохранить настройки программы: {0}</value>
+  </data>
 </root>

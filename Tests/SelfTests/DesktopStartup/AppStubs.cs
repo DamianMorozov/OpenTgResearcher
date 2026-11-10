@@ -2,6 +2,7 @@ namespace OpenTgResearcherDesktop;
 
 public partial class App
 {
+    public static App Current { get; } = new();
     public static bool IsClosing { get; set; }
     public static TestWindow MainWindow { get; set; } = new();
     public static ITgSettingsService? Settings { get; set; }

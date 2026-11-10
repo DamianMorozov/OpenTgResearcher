@@ -3,6 +3,9 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 // Подменяем только среду WinUI и источник пакетов, исходные VM, службу навигации и чтение строк компилируем без изменений
 public sealed class ITgSettingsService
 {
+    private readonly Dictionary<string, object?> _settings = [];
+    public T? ReadSetting<T>(string key) => _settings.TryGetValue(key, out var value) ? (T?)value : default;
+    public void SaveSetting<T>(string key, T value) => _settings[key] = value;
     public bool IsExistsAppStorage { get; set; } = true;
     public TgEnumLanguage AppLanguage { get; set; }
     public TgEnumTheme AppTheme { get; set; }
@@ -74,12 +77,16 @@ public enum ContentDialogResult { None, Primary }
 public enum ContentDialogButton { Close }
 public sealed class ContentDialog
 {
+    public static Queue<bool> Answers { get; } = new();
+    public static List<string> Titles { get; } = [];
+    public static List<string> Contents { get; } = [];
     public static bool Confirm { get; set; } = true;
     public static bool IsOpen { get; private set; }
     public static Task? LastAction { get; private set; }
     public static TaskCompletionSource? Gate { get; set; }
     public object? XamlRoot { get; set; }
     public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
     public string PrimaryButtonText { get; set; } = string.Empty;
     public string CloseButtonText { get; set; } = string.Empty;
     public ContentDialogButton DefaultButton { get; set; }
@@ -88,15 +95,18 @@ public sealed class ContentDialog
     public async Task<ContentDialogResult> ShowAsync()
     {
         IsOpen = true;
+        Titles.Add(Title);
+        Contents.Add(Content);
+        var confirm = Answers.Count > 0 ? Answers.Dequeue() : Confirm;
         LastAction = null;
         if (Gate is not null) await Gate.Task;
-        if (Confirm && PrimaryButtonCommand is not null)
+        if (confirm && PrimaryButtonCommand is not null)
         {
             PrimaryButtonCommand.Execute(null);
             LastAction = PrimaryButtonCommand.ExecutionTask;
         }
         IsOpen = false;
-        return Confirm ? ContentDialogResult.Primary : ContentDialogResult.None;
+        return confirm ? ContentDialogResult.Primary : ContentDialogResult.None;
     }
 }
 public abstract class TgPageViewModelBase : ObservableObject
@@ -124,13 +134,32 @@ public abstract class TgPageViewModelBase : ObservableObject
     /// <summary> Сохраняет оригинальное исключение для проверки журнала </summary>
     public void LogError(Exception ex) => Errors.Add(ex);
 }
-public static class App { public static bool IsClosing { get; set; } }
+public static class App
+{
+    public static bool IsClosing { get; set; }
+    public static int Restarts { get; set; }
+    public static Action? RestartObserver { get; set; }
+    public static Task RestartForUpdateAsync(UpdateManager manager, TestAsset target)
+    {
+        RestartObserver?.Invoke();
+        Restarts++;
+        return Task.CompletedTask;
+    }
+}
 public static class TgDesktopUtils
 {
     /// <summary> Выполняет действие без диспетчера WinUI </summary>
     public static Task InvokeOnUIThreadAsync(Func<Task> action, CancellationToken ct = default) => action();
     /// <summary> Выполняет изменение прогресса без диспетчера WinUI </summary>
     public static void InvokeOnUIThread(Action action) => action();
+}
+public static class TgProgramIntegration
+{
+    public static string CurrentVersion => "0.8.80";
+    public static bool IsInstalled => UpdateManager.State.Installed;
+    public static bool ReadAutoStart() => false;
+    public static void SetAutoStart(bool enabled) { }
+    public static void ApplyAccent(bool system, string hex) { }
 }
 public sealed class LanguageChangedEventArgs : EventArgs;
 public interface ILocalizer
@@ -163,7 +192,7 @@ public static class TestConstants
 {
     public const string LinkGitHub = "https://github.com/test/application";
 }
-public sealed class GithubSource(string url, string token, bool prerelease)
+public class GithubSource(string url, string token, bool prerelease) : GitBase<GithubRelease>
 {
     public bool Prerelease { get; } = prerelease;
     public string Url { get; } = url;
@@ -171,9 +200,19 @@ public sealed class GithubSource(string url, string token, bool prerelease)
 }
 public sealed class UpdateInfo
 {
-    public TestAsset TargetFullRelease { get; } = new();
+    public TestAsset TargetFullRelease { get; set; } = new();
 }
-public sealed class TestAsset { public Version Version { get; } = new(0, 8, 81); }
+public class TestAsset { public TestVersion Version { get; } = new(); }
+public sealed class TestVersion
+{
+    public bool IsPrerelease { get; set; }
+    public override string ToString() => IsPrerelease ? "0.8.81-beta.1" : "0.8.81";
+}
+public sealed class GithubRelease { public bool Prerelease { get; set; } }
+public class GitBase<T>
+{
+    public sealed class GitBaseAsset : TestAsset { public T Release { get; set; } = default!; }
+}
 public sealed class TestUpdateState
 {
     public bool Installed { get; set; } = true;

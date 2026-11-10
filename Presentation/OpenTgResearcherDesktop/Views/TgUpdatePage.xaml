@@ -3,94 +3,95 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:l="using:WinUI3Localizer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgUpdateViewModel}"
-    mc:Ignorable="d">
-    <Grid Padding="5,10,5,5" RowSpacing="10">
+    xmlns:l="using:WinUI3Localizer">
+    <Grid RowSpacing="16">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <!--  Проверка стабильной версии  -->
-        <Button
-            MinHeight="50"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            AutomationProperties.AutomationId="UpdateRelease"
-            Command="{x:Bind ViewModel.UpdateReleaseCommand}">
-            <Grid ColumnSpacing="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <FontIcon Glyph="&#xE72C;" />
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    l:Uids.Uid="ActionUpdateReleaseApp"
-                    TextWrapping="Wrap" />
-            </Grid>
-        </Button>
-        <!--  Проверка предварительной версии  -->
-        <Button
-            Grid.Row="1"
-            MinHeight="50"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            AutomationProperties.AutomationId="UpdatePreview"
-            Command="{x:Bind ViewModel.UpdatePreviewCommand}">
-            <Grid ColumnSpacing="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <FontIcon Glyph="&#xE72C;" />
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    l:Uids.Uid="ActionUpdatePreviewApp"
-                    TextWrapping="Wrap" />
-            </Grid>
-        </Button>
-        <!--  Прогресс проверки и скачивания  -->
-        <Grid
-            Grid.Row="2"
-            ColumnSpacing="10"
-            Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+        <!--  Сохранение остаётся доступным при прокрутке параметров  -->
+        <Grid MaxWidth="960" Margin="16,16,16,0" ColumnSpacing="16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ProgressBar
-                VerticalAlignment="Center"
-                IsIndeterminate="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                Maximum="100"
-                Minimum="0"
-                Value="{x:Bind ViewModel.DownloadProgress, Mode=OneWay}" />
-            <Button
-                Grid.Column="1"
-                l:Uids.Uid="ActionCancelUpdate"
-                Command="{x:Bind ViewModel.CancelUpdateCommand}" />
+            <TextBlock l:Uids.Uid="ProgramTitle" VerticalAlignment="Center" Style="{ThemeResource TitleTextBlockStyle}" />
+            <Button Grid.Column="1" l:Uids.Uid="ProgramSave" Style="{StaticResource AccentButtonStyle}"
+                    Command="{x:Bind ViewModel.SaveProgramSettingsCommand}" />
         </Grid>
-        <TextBlock
-            Grid.Row="3"
-            l:Uids.Uid="UpdateLogCaption"
-            Style="{ThemeResource BodyStrongTextBlockStyle}" />
-        <!--  Журнал доступен для чтения, выделения и копирования  -->
-        <TextBox
-            Grid.Row="4"
-            VerticalAlignment="Stretch"
-            AcceptsReturn="True"
-            AutomationProperties.AutomationId="UpdateLog"
-            IsReadOnly="True"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            Text="{x:Bind ViewModel.UpdateLog, Mode=OneWay}"
-            TextWrapping="Wrap" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel MaxWidth="960" Margin="16" HorizontalAlignment="Stretch" Spacing="16">
+                <TextBlock Text="{x:Bind ViewModel.PreferencesMessage, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
+                <!--  Оформление и запуск программы  -->
+                <Border Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
+                    <StackPanel Spacing="16">
+                        <TextBlock l:Uids.Uid="ProgramAppearance" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        <ComboBox l:Uids.Uid="ProgramLanguage" HorizontalAlignment="Stretch"
+                                  SelectedIndex="{x:Bind ViewModel.Preferences.LanguageIndex, Mode=TwoWay}">
+                            <ComboBoxItem l:Uids.Uid="ProgramSystemLanguage" />
+                            <ComboBoxItem Content="English" />
+                            <ComboBoxItem Content="Русский" />
+                        </ComboBox>
+                        <CheckBox l:Uids.Uid="ProgramAutoStart" IsEnabled="{x:Bind ViewModel.CanConfigureAutoStart}"
+                                  IsChecked="{x:Bind ViewModel.Preferences.AutoStart, Mode=TwoWay}" />
+                        <TextBlock l:Uids.Uid="ProgramAutoStartHint" Opacity="0.7" TextWrapping="Wrap" />
+                        <CheckBox l:Uids.Uid="ProgramSystemTheme" IsChecked="{x:Bind ViewModel.Preferences.UseSystemTheme, Mode=TwoWay}" />
+                        <ComboBox l:Uids.Uid="ProgramTheme" HorizontalAlignment="Stretch"
+                                  IsEnabled="{x:Bind ViewModel.Preferences.UseSystemTheme, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                  SelectedIndex="{x:Bind ViewModel.Preferences.ThemeIndex, Mode=TwoWay}">
+                            <ComboBoxItem l:Uids.Uid="ProgramLightTheme" />
+                            <ComboBoxItem l:Uids.Uid="ProgramDarkTheme" />
+                        </ComboBox>
+                        <CheckBox l:Uids.Uid="ProgramSystemAccent" IsChecked="{x:Bind ViewModel.Preferences.UseSystemAccent, Mode=TwoWay}" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBox Width="160" MaxLength="7" l:Uids.Uid="ProgramAccent"
+                                     IsEnabled="{x:Bind ViewModel.Preferences.UseSystemAccent, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                     Text="{x:Bind ViewModel.Preferences.AccentHex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button l:Uids.Uid="ProgramPickAccent" VerticalAlignment="Bottom"
+                                    IsEnabled="{x:Bind ViewModel.Preferences.UseSystemAccent, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
+                                <Button.Flyout>
+                                    <Flyout Opening="AccentFlyout_Opening">
+                                        <ColorPicker x:Name="AccentPicker" IsAlphaEnabled="False" IsAlphaSliderVisible="False"
+                                                     IsAlphaTextInputVisible="False" ColorChanged="AccentPicker_ColorChanged" />
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <!--  Проверка выпусков и журнал загрузки  -->
+                <Border Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
+                    <StackPanel Spacing="12">
+                        <TextBlock l:Uids.Uid="ProgramUpdates" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        <CheckBox l:Uids.Uid="ProgramIncludePreview" IsChecked="{x:Bind ViewModel.Preferences.IncludePreview, Mode=TwoWay}" />
+                        <TextBlock l:Uids.Uid="ProgramUpdateHint" TextWrapping="Wrap" Opacity="0.7" />
+                        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="44"
+                                AutomationProperties.AutomationId="UpdateRelease" Command="{x:Bind ViewModel.UpdateReleaseCommand}">
+                            <TextBlock l:Uids.Uid="ActionUpdateReleaseApp" TextWrapping="Wrap" />
+                        </Button>
+                        <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="44"
+                                AutomationProperties.AutomationId="UpdatePreview" Command="{x:Bind ViewModel.UpdatePreviewCommand}">
+                            <TextBlock l:Uids.Uid="ActionUpdatePreviewApp" TextWrapping="Wrap" />
+                        </Button>
+                        <Grid ColumnSpacing="12" Visibility="{x:Bind ViewModel.IsUpdating, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar VerticalAlignment="Center" Minimum="0" Maximum="100"
+                                         Value="{x:Bind ViewModel.DownloadProgress, Mode=OneWay}"
+                                         IsIndeterminate="{x:Bind ViewModel.IsDownloading, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}" />
+                            <Button Grid.Column="1" l:Uids.Uid="ActionCancelUpdate" Command="{x:Bind ViewModel.CancelUpdateCommand}" />
+                        </Grid>
+                        <TextBlock l:Uids.Uid="UpdateLogCaption" Style="{ThemeResource BodyStrongTextBlockStyle}" />
+                        <TextBox MinHeight="140" MaxHeight="300" IsReadOnly="True" AcceptsReturn="True"
+                                 AutomationProperties.AutomationId="UpdateLog" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 Text="{x:Bind ViewModel.UpdateLog, Mode=OneWay}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </common:TgPageBase>

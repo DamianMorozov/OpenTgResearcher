@@ -7,6 +7,16 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("ProgramNavigationIcon", ProgramNavigationIconAsync),
+            ("ProgramPreferencesLifecycle", ProgramPreferencesLifecycleAsync),
+            ("ProgramPreferencesFailedApply", ProgramPreferencesFailedApplyAsync),
+            ("RestartAfterDownload", RestartAfterDownloadAsync),
+            ("PreviewRejectedAfterDiscovery", PreviewRejectedAfterDiscoveryAsync),
+            ("StableCandidateInPreviewSearch", StableCandidateInPreviewSearchAsync),
+            ("SemanticPreviewNeedsConfirmation", SemanticPreviewNeedsConfirmationAsync),
+            ("ToolbarUsesPreviewPreference", ToolbarUsesPreviewPreferenceAsync),
+            ("GithubPreviewFlagNeedsConfirmation", GithubPreviewFlagNeedsConfirmationAsync),
+            ("ProgramSettingsLocalization", ProgramSettingsLocalizationAsync),
             ("StatusBarLayout", StatusBarLayoutAsync), ("StatusBarActivity", StatusBarActivityAsync),
             ("StatusBarStates", StatusBarStatesAsync), ("StatusBarPrivacyAndLanguage", StatusBarPrivacyAndLanguageAsync),
             ("StatusBarNavigation", StatusBarNavigationAsync),
@@ -59,6 +69,11 @@ internal static partial class Program
             UpdateManager.State = new();
             ContentDialog.Confirm = true;
             ContentDialog.Gate = null;
+            ContentDialog.Answers.Clear();
+            ContentDialog.Titles.Clear();
+            ContentDialog.Contents.Clear();
+            App.Restarts = 0;
+            App.RestartObserver = null;
             Localizer.Language = "ru-RU";
             try { await test.Run(); Console.WriteLine($"PASS: {test.Name}"); }
             catch (Exception ex) { failed++; Console.WriteLine($"FAIL: {test.Name}: {ex.GetBaseException().Message}"); }
@@ -238,7 +253,7 @@ internal static partial class Program
         await action;
         Assert(waiting && progress == 37, "Прогресс не поступает во время загрузки");
         Assert(Read<int>(vm, "DownloadProgress") == 100 && !Read<bool>(vm, "IsUpdating"), "Загрузка не завершена в модели");
-        Assert(vm.UpdateLog.Contains("0.8.81") && vm.UpdateLog.Contains("перезапустите", StringComparison.OrdinalIgnoreCase), "Нет результата и инструкции перезапуска");
+        Assert(vm.UpdateLog.Contains("0.8.81") && App.Restarts == 1, "Нет результата и автоматического перезапуска");
     }
 
     // Отмена проходит до загрузчика и позволяет повторить команду

@@ -7,6 +7,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgRecentChats.cs" Link="TgRecentChats.cs" />
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgChat*ViewModel.cs" Link="%(Filename)%(Extension)" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgChatsViewModelGlobalSearch.cs" Link="TgChatsViewModelGlobalSearch.cs" />

@@ -29,7 +29,16 @@ public sealed class ILoadStateService
     /// <summary> Завершает тестовую операцию без обращения к клиенту </summary>
     public void StopHardAllProcessing() { }
 }
-public sealed class ITgSettingsService { public bool IsExistsAppStorage { get; set; } = true; }
+public sealed class ITgSettingsService
+{
+    private readonly Dictionary<string, object?> _settings = [];
+    public bool IsExistsAppStorage { get; set; } = true;
+    public string AppStorage { get; set; } = "test.db";
+    /// <summary> Читает локальные настройки без файлов пользователя </summary>
+    public T? ReadSetting<T>(string key) => _settings.TryGetValue(key, out var value) ? (T?)value : default;
+    /// <summary> Сохраняет историю открытых чатов в памяти </summary>
+    public void SaveSetting<T>(string key, T value) => _settings[key] = value;
+}
 public interface ILogger<out T>;
 public interface IAppNotificationService;
 public sealed class INavigationService

@@ -313,10 +313,10 @@
     <value>"https://my.telegram.org/auth?to=apps"</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Content" xml:space="preserve">
-    <value>opentgresearcher.online</value>
+    <value>github.com</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
-    <value>"https://opentgresearcher.online"</value>
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Релизы</value>
@@ -2658,4 +2658,32 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ProfileDeleteHint" xml:space="preserve"><value>Убрать профиль «{0}» из списка? База и файл сессии останутся на диске. Для сохранения изменения нажмите «Сохранить» или «Применить профиль».</value></data>
   <data name="ProfileDeletedDraft" xml:space="preserve"><value>Профиль убран из списка. Сохраните изменения или загрузите настройки, чтобы отменить удаление.</value></data>
   <data name="ProfileSaved" xml:space="preserve"><value>Профиль сохранён</value></data>
+  <data name="HomeEyebrow.Text" xml:space="preserve"><value>Ваш локальный архив Telegram</value></data>
+  <data name="HomeDescription.Text" xml:space="preserve"><value>Сохраняйте переписку и медиа, изучайте чаты и возвращайтесь к нужным сообщениям.</value></data>
+  <data name="HomeConnected" xml:space="preserve"><value>Telegram подключён</value></data>
+  <data name="HomeDisconnected" xml:space="preserve"><value>Telegram не подключён · локальный архив доступен без сети</value></data>
+  <data name="HomeOpenChats" xml:space="preserve"><value>Открыть чаты</value></data>
+  <data name="HomeConnectTelegram" xml:space="preserve"><value>Подключить Telegram</value></data>
+  <data name="HomeHowToStart.Content" xml:space="preserve"><value>Как начать</value></data>
+  <data name="HomeChatsTitle.Text" xml:space="preserve"><value>Чаты и сообщения</value></data>
+  <data name="HomeChatsDetail.Text" xml:space="preserve"><value>Архив, поиск и парсинг</value></data>
+  <data name="HomeNetworkTitle.Text" xml:space="preserve"><value>Сетевая активность</value></data>
+  <data name="HomeNetworkDetail.Text" xml:space="preserve"><value>Загрузки и их состояние</value></data>
+  <data name="HomeSettingsTitle.Text" xml:space="preserve"><value>Настройки</value></data>
+  <data name="HomeSettingsDetail.Text" xml:space="preserve"><value>Профиль и оформление</value></data>
+  <data name="HomeRecentTitle.Text" xml:space="preserve"><value>Продолжить работу</value></data>
+  <data name="HomeAllChats.Content" xml:space="preserve"><value>Все чаты</value></data>
+  <data name="HomeRecentEmpty.Text" xml:space="preserve"><value>Откройте чат в разделе «Чаты» — он появится здесь для быстрого доступа.</value></data>
+  <data name="HomeLastOpened" xml:space="preserve"><value>Последний открытый чат</value></data>
+  <data name="HomeLocalArchive" xml:space="preserve"><value>Локальный архив</value></data>
+  <data name="HomeChatFallback" xml:space="preserve"><value>Чат {0}</value></data>
+  <data name="HomeGuideTitle.Text" xml:space="preserve"><value>Всё для первого запуска</value></data>
+  <data name="HomeGuideDescription.Text" xml:space="preserve"><value>API ID и API hash, подключение Telegram и первая загрузка.</value></data>
+  <data name="HomeGuideAction.Content" xml:space="preserve"><value>Руководство</value></data>
+  <data name="HomeConnectAction.Content" xml:space="preserve"><value>Перейти к подключению</value></data>
+  <data name="HomeGuideSteps.Text" xml:space="preserve"><value>В «Настройки» выберите хранилище и файл сессии для профиля.
+На странице «Подключение клиента» укажите API ID и API hash с my.telegram.org/apps, свой телефон и подключитесь. Код входа возьмите из авторизованного приложения Telegram.
+Откройте раздел «Чаты», выберите чат, укажите каталог для файлов и запустите парсинг.</value></data>
+  <data name="HomeAbout.Content" xml:space="preserve"><value>О приложении</value></data>
+  <data name="HomeSupport.Content" xml:space="preserve"><value>Поддержка и сообщество</value></data>
 </root>

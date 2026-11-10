@@ -36,6 +36,7 @@ internal static partial class Program
             .SetValue(null, Path.Combine(AppContext.BaseDirectory, "Chat.SelfTest.log"));
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("OpenedChatIsRemembered", OpenedChatIsRememberedAsync),
             ("DashboardTabs", DashboardTabsAsync),
             ("DashboardStartAvailability", DashboardStartAvailabilityAsync),
             ("DashboardDetailsAndDiscussion", DashboardDetailsAndDiscussionAsync),

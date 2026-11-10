@@ -12,8 +12,19 @@ public sealed partial class TgMainPage
 		
         InitializeComponent();
         DataContext = ViewModel;
-        Loaded += PageLoaded;
+        Loaded += OnHomeLoaded;
+        Unloaded += OnHomeUnloaded;
 	}
 
 	#endregion
+
+    // Подключаем обновление состояния только для видимой главной страницы
+    private void OnHomeLoaded(object sender, RoutedEventArgs e)
+    {
+        PageLoaded(sender, e);
+        ViewModel.Activate();
+    }
+
+    // Освобождаем подписки при переходе в другой раздел
+    private void OnHomeUnloaded(object sender, RoutedEventArgs e) => ViewModel.Deactivate();
 }

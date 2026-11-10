@@ -7,6 +7,9 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgMainViewModel.cs" Link="TgMainViewModel.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgRecentChats.cs" Link="TgRecentChats.cs" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgMainPage.xaml" LogicalName="TgMainPage.xaml" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgAppearanceViewModel.cs" Link="TgAppearanceViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgGithubUpdateSource.cs" Link="TgGithubUpdateSource.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgProgramPreferences.cs" Link="TgProgramPreferences.cs" />

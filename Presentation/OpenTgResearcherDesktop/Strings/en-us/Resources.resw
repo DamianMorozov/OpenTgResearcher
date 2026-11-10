@@ -254,10 +254,10 @@
     <value>"https://my.telegram.org/auth?to=apps"</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Content" xml:space="preserve">
-    <value>opentgresearcher.online</value>
+    <value>github.com</value>
   </data>
   <data name="SettingsPage_OfficialSite_OpenTgResearcher.Tag" xml:space="preserve">
-    <value>"https://opentgresearcher.online"</value>
+    <value>"https://github.com/DamianMorozov/OpenTgResearcher"</value>
   </data>
   <data name="SettingsPage_Releases_Latest.Content" xml:space="preserve">
     <value>Releases</value>
@@ -2594,4 +2594,32 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ProfileDeleteHint" xml:space="preserve"><value>Remove profile “{0}” from the list? Its database and session file will remain on disk. Click Save or Apply profile to save the change.</value></data>
   <data name="ProfileDeletedDraft" xml:space="preserve"><value>Profile removed from the list. Save the changes or load settings to undo the deletion.</value></data>
   <data name="ProfileSaved" xml:space="preserve"><value>Profile saved</value></data>
+  <data name="HomeEyebrow.Text" xml:space="preserve"><value>Your local Telegram archive</value></data>
+  <data name="HomeDescription.Text" xml:space="preserve"><value>Save conversations and media, explore chats and return to the messages you need.</value></data>
+  <data name="HomeConnected" xml:space="preserve"><value>Telegram connected</value></data>
+  <data name="HomeDisconnected" xml:space="preserve"><value>Telegram disconnected · your local archive is available offline</value></data>
+  <data name="HomeOpenChats" xml:space="preserve"><value>Open chats</value></data>
+  <data name="HomeConnectTelegram" xml:space="preserve"><value>Connect Telegram</value></data>
+  <data name="HomeHowToStart.Content" xml:space="preserve"><value>Get started</value></data>
+  <data name="HomeChatsTitle.Text" xml:space="preserve"><value>Chats and messages</value></data>
+  <data name="HomeChatsDetail.Text" xml:space="preserve"><value>Archive, search and parsing</value></data>
+  <data name="HomeNetworkTitle.Text" xml:space="preserve"><value>Network activity</value></data>
+  <data name="HomeNetworkDetail.Text" xml:space="preserve"><value>Downloads and their status</value></data>
+  <data name="HomeSettingsTitle.Text" xml:space="preserve"><value>Settings</value></data>
+  <data name="HomeSettingsDetail.Text" xml:space="preserve"><value>Profile and appearance</value></data>
+  <data name="HomeRecentTitle.Text" xml:space="preserve"><value>Continue working</value></data>
+  <data name="HomeAllChats.Content" xml:space="preserve"><value>All chats</value></data>
+  <data name="HomeRecentEmpty.Text" xml:space="preserve"><value>Open a chat from Chats and it will appear here for quick access.</value></data>
+  <data name="HomeLastOpened" xml:space="preserve"><value>Last opened chat</value></data>
+  <data name="HomeLocalArchive" xml:space="preserve"><value>Local archive</value></data>
+  <data name="HomeChatFallback" xml:space="preserve"><value>Chat {0}</value></data>
+  <data name="HomeGuideTitle.Text" xml:space="preserve"><value>Everything for your first launch</value></data>
+  <data name="HomeGuideDescription.Text" xml:space="preserve"><value>API ID and API hash, connecting Telegram and your first download.</value></data>
+  <data name="HomeGuideAction.Content" xml:space="preserve"><value>Guide</value></data>
+  <data name="HomeConnectAction.Content" xml:space="preserve"><value>Open connection settings</value></data>
+  <data name="HomeGuideSteps.Text" xml:space="preserve"><value>In Settings, select the storage and session file for your profile.
+On Client connection, enter your API ID and API hash from my.telegram.org/apps, enter your phone number and connect. Get the login code from an authorized Telegram app.
+Open Chats, select a chat, choose a download folder and start parsing.</value></data>
+  <data name="HomeAbout.Content" xml:space="preserve"><value>About</value></data>
+  <data name="HomeSupport.Content" xml:space="preserve"><value>Support and community</value></data>
 </root>

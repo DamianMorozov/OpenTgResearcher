@@ -11,6 +11,7 @@ internal static partial class Program
             ("ToolbarNetworkLayoutAndIcon", ToolbarNetworkLayoutAndIconAsync),
             ("ProfilesRestoreStorageAndSession", ProfilesRestoreStorageAndSessionAsync),
             ("ProfilesSurviveSettingsFileRoundTrip", ProfilesSurviveSettingsFileRoundTripAsync),
+            ("RecentChatsSurviveSettingsFileRoundTrip", RecentChatsSurviveSettingsFileRoundTripAsync),
             ("MissingProfileDirectoryKeepsAccountPaths", MissingProfileDirectoryKeepsAccountPathsAsync),
             ("ProfileSaveFailureDoesNotActivate", ProfileSaveFailureDoesNotActivateAsync),
             ("ProfileRestartWaitsForSession", ProfileRestartWaitsForSessionAsync),

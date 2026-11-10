@@ -46,6 +46,7 @@ public sealed partial class TgChatViewModel : TgPageViewModelBase
         Uid = e?.Parameter is Guid uid ? uid : Guid.Empty;
         await LoadDataStorageCoreAsync();
         if (Dto.Id > 0 && !HasSelectedChatOptions()) ResetChatSettingsCommand.Execute(null);
+        TgRecentChats.Remember(SettingsService, Dto.Uid, Dto.Id, string.IsNullOrWhiteSpace(Dto.Title) ? Dto.UserName : Dto.Title);
     });
 
     // Проверяем все переключатели загрузки, сохраняя любую выбранную пользователем комбинацию

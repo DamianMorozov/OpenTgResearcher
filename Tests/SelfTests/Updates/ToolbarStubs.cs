@@ -21,3 +21,5 @@ public partial class ShellViewModel : ObservableObject
 
 public sealed class XamlRoot;
 public sealed class TgClientConnectionViewModel;
+public sealed class TgChatsViewModel;
+public sealed class TgChatViewModel;

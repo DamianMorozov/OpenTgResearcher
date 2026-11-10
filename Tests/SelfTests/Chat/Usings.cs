@@ -6,6 +6,7 @@ global using Microsoft.EntityFrameworkCore.Diagnostics;
 global using System.Data.Common;
 global using OpenTgResearcherDesktop.ChatSelfTests;
 global using OpenTgResearcherDesktop.ViewModels;
+global using OpenTgResearcherDesktop.Models;
 global using OpenTgResearcherDesktop.Views;
 global using System.Collections.ObjectModel;
 global using System.Reflection;

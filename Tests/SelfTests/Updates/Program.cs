@@ -7,6 +7,12 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("HomeOpensWithoutTelegramProbe", HomeOpensWithoutTelegramProbeAsync),
+            ("HomeLaunchLayout", HomeLaunchLayoutAsync),
+            ("HomeNavigationAndConnection", HomeNavigationAndConnectionAsync),
+            ("HomeRecentHistoryIsolation", HomeRecentHistoryIsolationAsync),
+            ("HomePrivacyLanguageAndLifetime", HomePrivacyLanguageAndLifetimeAsync),
+            ("HomeLocalizationAndLinks", HomeLocalizationAndLinksAsync),
             ("ProgramNavigationIcon", ProgramNavigationIconAsync),
             ("AccountProfilesLifecycle", AccountProfilesLifecycleAsync),
             ("AccountProfilesLayout", AccountProfilesLayoutAsync),

@@ -35,9 +35,10 @@ public interface ILogger<out T>;
 public sealed class INavigationService
 {
     public string? LastPage { get; private set; }
+    public object? LastParameter { get; private set; }
     public int Navigations { get; private set; }
     /// <summary> Запоминает переход для проверки команды настроек </summary>
-    public bool NavigateTo(string pageKey) { LastPage = pageKey; Navigations++; return true; }
+    public bool NavigateTo(string pageKey, object? parameter = null) { LastPage = pageKey; LastParameter = parameter; Navigations++; return true; }
     /// <summary> Заменяет возврат на предыдущую страницу </summary>
     public bool GoBack() => true;
 }

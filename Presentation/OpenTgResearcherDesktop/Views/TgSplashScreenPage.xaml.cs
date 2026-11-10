@@ -107,7 +107,7 @@ public sealed partial class TgSplashScreenPage
     private async Task ShowLoadingRowAsync(CancellationToken ct = default)
     {
         Bindings.Update();
-        await Task.Delay(150, ct);
+        await Task.Delay(350, ct);
     }
 
     #endregion

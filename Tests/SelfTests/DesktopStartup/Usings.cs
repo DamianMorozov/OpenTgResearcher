@@ -1,5 +1,6 @@
 global using Autofac;
 global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
 global using Microsoft.Extensions.Options;
 global using Microsoft.UI.Composition;
 global using Microsoft.UI.Xaml.Hosting;

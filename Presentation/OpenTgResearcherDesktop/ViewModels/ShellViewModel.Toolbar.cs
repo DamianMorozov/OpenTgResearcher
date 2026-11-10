@@ -2,18 +2,21 @@ namespace OpenTgResearcherDesktop.ViewModels;
 
 public partial class ShellViewModel
 {
+    private TgAppearanceViewModel? _appearance;
+    public TgAppearanceViewModel Appearance => _appearance ??= new(SettingsService);
+
     // Применяем язык из меню верхней панели
     [RelayCommand]
     private void ChangeLanguage(string? value)
     {
-        if (Enum.TryParse<TgEnumLanguage>(value, out var language) && Enum.IsDefined(language)) SettingsService.SaveLanguage(language);
+        Appearance.ChangeLanguageCommand.Execute(value);
     }
 
     // Применяем тему из меню верхней панели
     [RelayCommand]
     private void ChangeTheme(string? value)
     {
-        if (Enum.TryParse<TgEnumTheme>(value, out var theme) && Enum.IsDefined(theme)) SettingsService.SaveTheme(theme);
+        Appearance.ChangeThemeCommand.Execute(value);
     }
 
     // Открываем общий журнал и ожидаем штатную проверку стабильного выпуска
@@ -30,8 +33,8 @@ public partial class ShellViewModel
     }
 
     /// <summary> Отмечает выбранный язык при изменении настроек из любой страницы </summary>
-    public bool IsLanguageSelected(TgEnumLanguage language, string value) => language.ToString() == value;
+    public bool IsLanguageSelected(TgEnumLanguage language, string value) => Appearance.IsLanguageSelected(language, value);
 
     /// <summary> Отмечает выбранную тему при изменении настроек из любой страницы </summary>
-    public bool IsThemeSelected(TgEnumTheme theme, string value) => theme.ToString() == value;
+    public bool IsThemeSelected(TgEnumTheme theme, string value) => Appearance.IsThemeSelected(theme, value);
 }

@@ -19,10 +19,12 @@ public partial class TgSplashScreenViewModel : TgPageViewModelBase
 
     public Action BackToMainWindow { get; internal set; } = () => { };
     public IAsyncRelayCommand ContinueCommand { get; }
+    public TgAppearanceViewModel Appearance { get; }
 
     public TgSplashScreenViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
         ILogger<TgSplashScreenViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgSplashScreenViewModel))
     {
+        Appearance = new(settingsService);
         Scope = TgGlobalTools.Container.BeginLifetimeScope();
         HardwareResourceMonitoringService = Scope.Resolve<ITgHardwareResourceMonitoringService>();
         // App version + Storage version + License

@@ -407,18 +407,121 @@
                         <Path
                             Data="M 3,7 L 11,7 M 7,3 L 11,7 L 7,11"
                             Stroke="{ThemeResource SystemControlForegroundAccentBrush}"
-                            StrokeLineJoin="Round"
                             StrokeEndLineCap="Round"
+                            StrokeLineJoin="Round"
                             StrokeStartLineCap="Round"
                             StrokeThickness="1.75" />
                     </Grid>
                 </Viewbox>
-                <Path x:Name="ContinueOrbitStar1" Width="10" Height="10" Style="{StaticResource SplashTrailStarStyle}" />
-                <Path x:Name="ContinueOrbitStar2" Width="8" Height="8" Style="{StaticResource SplashTrailStarStyle}" />
-                <Path x:Name="ContinueOrbitStar3" Width="6" Height="6" Style="{StaticResource SplashTrailStarStyle}" />
-                <Path x:Name="ContinueOrbitStar4" Width="5" Height="5" Style="{StaticResource SplashTrailStarStyle}" />
-                <Path x:Name="ContinueOrbitStar5" Width="4" Height="4" Style="{StaticResource SplashTrailStarStyle}" />
+                <Path
+                    x:Name="ContinueOrbitStar1"
+                    Width="10"
+                    Height="10"
+                    Style="{StaticResource SplashTrailStarStyle}" />
+                <Path
+                    x:Name="ContinueOrbitStar2"
+                    Width="8"
+                    Height="8"
+                    Style="{StaticResource SplashTrailStarStyle}" />
+                <Path
+                    x:Name="ContinueOrbitStar3"
+                    Width="6"
+                    Height="6"
+                    Style="{StaticResource SplashTrailStarStyle}" />
+                <Path
+                    x:Name="ContinueOrbitStar4"
+                    Width="5"
+                    Height="5"
+                    Style="{StaticResource SplashTrailStarStyle}" />
+                <Path
+                    x:Name="ContinueOrbitStar5"
+                    Width="4"
+                    Height="4"
+                    Style="{StaticResource SplashTrailStarStyle}" />
             </Canvas>
         </Grid>
+        <!--  Выбор оформления доступен независимо от этапа загрузки и не сдвигает содержимое заставки  -->
+        <StackPanel
+            x:Name="SplashAppearanceToolbar"
+            Grid.RowSpan="7"
+            Grid.ColumnSpan="3"
+            Margin="16,48,16,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Button
+                x:Name="SplashLanguageButton"
+                Height="36"
+                Padding="10,0"
+                l:Uids.Uid="SplashLanguage"
+                AutomationProperties.AutomationId="SplashLanguage">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <styles:TgOutlineIcon
+                        Width="18"
+                        Height="18"
+                        Kind="language" />
+                    <TextBlock VerticalAlignment="Center" l:Uids.Uid="ToolbarLanguage" />
+                </StackPanel>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <RadioMenuFlyoutItem
+                            l:Uids.Uid="ToolbarSystemLanguage"
+                            Command="{x:Bind ViewModel.Appearance.ChangeLanguageCommand}"
+                            CommandParameter="Default"
+                            GroupName="SplashLanguages"
+                            IsChecked="{x:Bind ViewModel.Appearance.IsLanguageSelected(ViewModel.SettingsService.AppLanguage, 'Default'), Mode=OneWay}" />
+                        <RadioMenuFlyoutItem
+                            Command="{x:Bind ViewModel.Appearance.ChangeLanguageCommand}"
+                            CommandParameter="English"
+                            GroupName="SplashLanguages"
+                            IsChecked="{x:Bind ViewModel.Appearance.IsLanguageSelected(ViewModel.SettingsService.AppLanguage, 'English'), Mode=OneWay}"
+                            Text="English" />
+                        <RadioMenuFlyoutItem
+                            Command="{x:Bind ViewModel.Appearance.ChangeLanguageCommand}"
+                            CommandParameter="Russian"
+                            GroupName="SplashLanguages"
+                            IsChecked="{x:Bind ViewModel.Appearance.IsLanguageSelected(ViewModel.SettingsService.AppLanguage, 'Russian'), Mode=OneWay}"
+                            Text="Русский" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <Button
+                x:Name="SplashThemeButton"
+                Height="36"
+                Padding="10,0"
+                l:Uids.Uid="SplashTheme"
+                AutomationProperties.AutomationId="SplashTheme">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <styles:TgOutlineIcon
+                        Width="18"
+                        Height="18"
+                        Kind="theme" />
+                    <TextBlock VerticalAlignment="Center" l:Uids.Uid="ToolbarTheme" />
+                </StackPanel>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <RadioMenuFlyoutItem
+                            l:Uids.Uid="ToolbarSystemTheme"
+                            Command="{x:Bind ViewModel.Appearance.ChangeThemeCommand}"
+                            CommandParameter="Default"
+                            GroupName="SplashThemes"
+                            IsChecked="{x:Bind ViewModel.Appearance.IsThemeSelected(ViewModel.SettingsService.AppTheme, 'Default'), Mode=OneWay}" />
+                        <RadioMenuFlyoutItem
+                            l:Uids.Uid="ToolbarLightTheme"
+                            Command="{x:Bind ViewModel.Appearance.ChangeThemeCommand}"
+                            CommandParameter="Light"
+                            GroupName="SplashThemes"
+                            IsChecked="{x:Bind ViewModel.Appearance.IsThemeSelected(ViewModel.SettingsService.AppTheme, 'Light'), Mode=OneWay}" />
+                        <RadioMenuFlyoutItem
+                            l:Uids.Uid="ToolbarDarkTheme"
+                            Command="{x:Bind ViewModel.Appearance.ChangeThemeCommand}"
+                            CommandParameter="Dark"
+                            GroupName="SplashThemes"
+                            IsChecked="{x:Bind ViewModel.Appearance.IsThemeSelected(ViewModel.SettingsService.AppTheme, 'Dark'), Mode=OneWay}" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
     </Grid>
 </common:TgPageBase>

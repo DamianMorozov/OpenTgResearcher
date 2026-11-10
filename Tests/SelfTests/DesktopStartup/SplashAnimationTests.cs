@@ -16,7 +16,7 @@ internal static partial class Program
         for (var index = 1; index < 7; index++)
         {
             var elapsed = System.Diagnostics.Stopwatch.GetElapsedTime(page.Bindings.Updates[index - 1], page.Bindings.Updates[index]);
-            Assert(elapsed.TotalMilliseconds >= 140, "Последовательные строки загрузки отображаются без короткой паузы");
+            Assert(elapsed.TotalMilliseconds >= 340, "Пауза между строками загрузки короче 350 мс");
         }
         page.RaiseUnloaded();
     }

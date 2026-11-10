@@ -2544,4 +2544,16 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ProgramSettingsFailed" xml:space="preserve">
     <value>Could not save program settings: {0}</value>
   </data>
+  <data name="SplashLanguage.AutomationProperties.Name" xml:space="preserve">
+    <value>Choose language</value>
+  </data>
+  <data name="SplashLanguage.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Choose language</value>
+  </data>
+  <data name="SplashTheme.AutomationProperties.Name" xml:space="preserve">
+    <value>Choose theme</value>
+  </data>
+  <data name="SplashTheme.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Choose theme</value>
+  </data>
 </root>

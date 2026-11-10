@@ -2608,4 +2608,16 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ProgramSettingsFailed" xml:space="preserve">
     <value>Не удалось сохранить настройки программы: {0}</value>
   </data>
+  <data name="SplashLanguage.AutomationProperties.Name" xml:space="preserve">
+    <value>Выбрать язык</value>
+  </data>
+  <data name="SplashLanguage.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Выбрать язык</value>
+  </data>
+  <data name="SplashTheme.AutomationProperties.Name" xml:space="preserve">
+    <value>Выбрать тему</value>
+  </data>
+  <data name="SplashTheme.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Выбрать тему</value>
+  </data>
 </root>

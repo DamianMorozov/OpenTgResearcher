@@ -12,10 +12,33 @@ public sealed partial class TgSettingsPage
 		
         InitializeComponent();
         DataContext = ViewModel;
-		Loaded += PageLoaded;
+        Loaded += OnSettingsLoaded;
+        Unloaded += OnSettingsUnloaded;
 	}
 
 	#endregion
+
+    // Подключаем общий журнал обновлений к корню окна и восстанавливаем раскрытую секцию
+    private void OnSettingsLoaded(object sender, RoutedEventArgs e)
+    {
+        PageLoaded(sender, e);
+        ViewModel.Updates.XamlRootVm = XamlRoot;
+        ViewModel.UpdatesRequested += OnUpdatesRequested;
+        if (ViewModel.IsUpdatesExpanded) ShowUpdatesSection();
+    }
+
+    // Освобождаем обработчик перехода при уходе со страницы, сохраняя текущую загрузку
+    private void OnSettingsUnloaded(object sender, RoutedEventArgs e) => ViewModel.UpdatesRequested -= OnUpdatesRequested;
+
+    // Прокручиваем к обновлениям даже при повторном нажатии кнопки верхней панели
+    private void OnUpdatesRequested(object? sender, EventArgs e) => ShowUpdatesSection();
+
+    // После раскрытия секции учитываем её новый размер и показываем начало блока
+    private void ShowUpdatesSection()
+    {
+        UpdatesSection.UpdateLayout();
+        UpdatesSection.StartBringIntoView(new BringIntoViewOptions { AnimationDesired = true, VerticalAlignmentRatio = 0 });
+    }
 
     // Синхронизируем палитру с введённым значением при открытии выбора цвета
     private void AccentFlyout_Opening(object sender, object e)

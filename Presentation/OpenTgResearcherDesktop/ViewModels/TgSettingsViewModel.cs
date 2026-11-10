@@ -7,10 +7,13 @@ public partial class TgSettingsViewModel : TgPageViewModelBase, IDisposable
     public IAsyncRelayCommand SettingsLoadCommand { get; }
     public IAsyncRelayCommand SettingsDefaultCommand { get; }
     public IAsyncRelayCommand SettingsSaveCommand { get; }
+    public TgUpdateViewModel Updates { get; }
 
     public TgSettingsViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService, 
-        ILogger<TgSettingsViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgSettingsViewModel))
+        ILogger<TgSettingsViewModel> logger, TgUpdateViewModel updates)
+        : base(loadStateService, settingsService, navigationService, logger, nameof(TgSettingsViewModel))
     {
+        Updates = updates;
         Preferences = new TgProgramPreferences(settingsService);
         Preferences.Load();
         // Команды

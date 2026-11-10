@@ -19,15 +19,14 @@ internal static partial class Program
     // Проверяем подписи реальных контролов формы на обоих языках
     private static Task ProgramSettingsLocalizationAsync()
     {
-        using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgUpdatePage.xaml")!;
         using var settingsStream = typeof(Program).Assembly.GetManifestResourceStream("TgSettingsPage.xaml")!;
-        var pages = new[] { XDocument.Load(stream), XDocument.Load(settingsStream) };
+        var page = XDocument.Load(settingsStream);
         foreach (var language in new[] { "ru-RU", "en-US" })
         {
             var resources = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "Strings", language, "Resources.resw"))
                 .Root!.Elements("data").Where(x => ((string)x.Attribute("name")!).StartsWith("Program", StringComparison.Ordinal))
                 .ToDictionary(x => (string)x.Attribute("name")!, x => x.Element("value")!.Value);
-            foreach (var control in pages.SelectMany(page => page.Descendants()))
+            foreach (var control in page.Descendants())
             {
                 var uid = control.Attributes().FirstOrDefault(x => x.Name.LocalName.EndsWith("Uid"))?.Value;
                 if (uid?.StartsWith("Program", StringComparison.Ordinal) != true) continue;
@@ -36,7 +35,7 @@ internal static partial class Program
                     $"Отсутствует {language}: {uid}.{property}");
             }
             Localizer.Language = language;
-            Assert("Shell_Update".GetLocalizedResource() == (language == "ru-RU" ? "Программа" : "Program"), "Пункт программы не переименован");
+            Assert("ToolbarUpdatesShort".GetLocalizedResource() == (language == "ru-RU" ? "Обновление" : "Update"), "Кнопка обновления не переименована");
             foreach (var key in new[] { "ProgramPreviewWarning", "ProgramPreviewTitle", "ProgramSetupWelcome", "ProgramSettingsSaved" })
                 Assert(!string.IsNullOrWhiteSpace(key.GetLocalizedResource()), $"Отсутствует {language}: {key}");
         }
@@ -133,15 +132,15 @@ internal static partial class Program
             "Предупреждение не объясняет статус найденной версии");
     }
 
-    // Программа в боковом меню должна использовать такой же значок, как верхняя кнопка
+    // Обновления открываются общей кнопкой, отдельная страница программы не дублирует настройки
     private static Task ProgramNavigationIconAsync()
     {
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("ShellPage.xaml")!;
         var document = XDocument.Load(stream);
-        var item = document.Descendants().Single(x => x.Name.LocalName == "NavigationViewItem"
-            && x.Attributes().Any(a => a.Name.LocalName.EndsWith("Uid") && a.Value == "Shell_Update"));
-        Assert(item.Descendants().Any(x => ((string?)x.Attribute("UriSource"))?.EndsWith("app-update-light.svg") == true),
-            "В боковом меню остался другой значок программы");
+        Assert(!document.Descendants().Any(x => x.Name.LocalName == "NavigationViewItem"
+            && x.Attributes().Any(a => a.Name.LocalName.EndsWith("Uid") && a.Value == "Shell_Update")), "Остался пункт отдельной страницы программы");
+        Assert(document.Descendants().Any(x => x.Name.LocalName == "TgOutlineIcon" && x.Attribute("Kind")?.Value == "app-update"),
+            "В верхней панели отсутствует значок обновления");
         return Task.CompletedTask;
     }
 }

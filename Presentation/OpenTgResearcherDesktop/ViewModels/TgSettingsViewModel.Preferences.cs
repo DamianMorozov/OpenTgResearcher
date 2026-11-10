@@ -36,8 +36,7 @@ public partial class TgSettingsViewModel
     private void ResetProgramAppearance()
     {
         Preferences.LanguageIndex = (int)SettingsService.AppLanguage;
-        Preferences.UseSystemTheme = true;
-        Preferences.ThemeIndex = 1;
+        Preferences.ThemeIndex = (int)TgEnumTheme.Default;
         Preferences.UseSystemAccent = true;
         Preferences.AccentHex = TgProgramPreferences.DefaultAccentHex;
         Preferences.AutoStart = false;

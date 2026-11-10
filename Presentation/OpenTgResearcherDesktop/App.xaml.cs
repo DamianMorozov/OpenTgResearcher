@@ -145,7 +145,6 @@ public partial class App : Application
                 services.AddSingleton<TgStorageViewModel>();
                 services.AddSingleton<TgStoriesPage>();
                 services.AddSingleton<TgStoriesViewModel>();
-                services.AddSingleton<TgUpdatePage>();
                 services.AddSingleton<TgUpdateViewModel>();
                 services.AddSingleton<TgUserDetailsPage>();
                 services.AddSingleton<TgUserDetailsViewModel>();

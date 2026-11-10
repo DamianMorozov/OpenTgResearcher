@@ -61,7 +61,8 @@ internal static partial class Program
         var action = Read<IAsyncRelayCommand>(vm, "CheckForUpdatesCommand").ExecuteAsync(root);
         await WaitAsync(() => UpdateManager.State.Checks == 1);
         Assert(!action.IsCompleted && vm.Updates.IsUpdating, "Команда панели завершилась до результата проверки");
-        Assert(vm.NavigationService.LastPage == typeof(TgUpdateViewModel).FullName, "Не открыта страница результата обновления");
+        Assert(vm.NavigationService.LastPage == typeof(TgSettingsViewModel).FullName, "Не открыта страница настроек с результатом обновления");
+        Assert(vm.Settings.IsUpdatesExpanded && ReferenceEquals(vm.Updates, vm.Settings.Updates), "Верхняя панель не раскрыла общий блок обновлений");
         Assert(ReferenceEquals(vm.Updates.XamlRootVm, root), "Не передано окно для подтверждения");
         Assert(!vm.Updates.UpdatePreviewCommand.CanExecute(null), "Предварительная проверка доступна во время проверки панели");
         UpdateManager.State.CheckGate.SetResult();

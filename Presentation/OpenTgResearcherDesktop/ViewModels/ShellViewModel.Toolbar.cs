@@ -24,7 +24,8 @@ public partial class ShellViewModel
     private async Task CheckForUpdatesAsync(XamlRoot? root, CancellationToken ct = default)
     {
         if (root is null || ct.IsCancellationRequested) return;
-        NavigationService.NavigateTo(typeof(TgUpdateViewModel).FullName!);
+        NavigationService.NavigateTo(typeof(TgSettingsViewModel).FullName!);
+        Settings.ShowUpdates();
         if (Updates.IsUpdating) return;
         Updates.XamlRootVm = root;
         if (SettingsService.ReadSetting<TgProgramPreferences.Values>(TgProgramPreferences.PreferencesKey)?.IncludePreview == true)

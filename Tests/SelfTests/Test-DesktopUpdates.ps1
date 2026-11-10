@@ -86,6 +86,17 @@ function Invoke-AppElement($element) {
     throw "Элемент не поддерживает вызов или выбор: $($element.Current.Name)"
 }
 
+# Меняем состояние секции настроек независимо от текущей позиции прокрутки
+function Set-SettingsSection([string]$id, [bool]$expanded) {
+    $window = [System.Windows.Automation.AutomationElement]::FromHandle($appProcess.MainWindowHandle)
+    $condition = [System.Windows.Automation.PropertyCondition]::new(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty, $id)
+    $section = $window.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+    if ($null -eq $section) { throw "Не найдена секция настроек: $id" }
+    $pattern = $section.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+    if ($expanded) { $pattern.Expand() } else { $pattern.Collapse() }
+}
+
 # Нажимаем кнопки панели мышью, проверяя доступность поверх области перетаскивания
 function Invoke-ToolbarButton([string]$id) {
     $deadline = [DateTime]::UtcNow.AddSeconds(5)
@@ -491,6 +502,8 @@ public static class ToolbarTestNative
     Save-AppSnapshot 'home'
     Invoke-AppElement $settings
     [void](Wait-AppElement '^(Язык|Language)$')
+    Set-SettingsSection 'UpdatesSection' $false
+    Set-SettingsSection 'SettingsFilesSection' $true
     if ($Toolbar) {
         Assert-SensitiveDataState $false
         Invoke-ToolbarButton 'ToggleSwitchShowSensitiveData'
@@ -502,10 +515,11 @@ public static class ToolbarTestNative
         Assert-SettingsStorageShown $false
         Save-AppSnapshot 'settings-data-hidden'
     }
-    Invoke-AppElement (Wait-AppElement '^(Обновление|Update)$')
+    Set-SettingsSection 'SettingsFilesSection' $false
+    Set-SettingsSection 'UpdatesSection' $true
     if ($Toolbar) { Assert-SensitiveDataState $false }
-    $releaseCaption = if ($Language -eq 'Russian') { 'Проверка наличия обновлений релиза' } else { 'Checking for release updates' }
-    $previewCaption = if ($Language -eq 'Russian') { 'Проверка обновлений предварительного просмотра' } else { 'Checking for preview updates' }
+    $releaseCaption = if ($Language -eq 'Russian') { 'Проверка обновления' } else { 'Check for updates' }
+    $previewCaption = if ($Language -eq 'Russian') { 'Проверка предварительного выпуска' } else { 'Check preview release' }
     $release = Wait-AppElement ('^' + [regex]::Escape($releaseCaption) + '$')
     [void](Wait-AppElement ('^' + [regex]::Escape($previewCaption) + '$'))
     [void](Get-UpdateLogElement)
@@ -527,7 +541,7 @@ public static class ToolbarTestNative
     Save-AppSnapshot 'updates'
     $log | Set-Content -LiteralPath (Join-Path $caseDirectory 'update-log.txt') -Encoding utf8
     $newLog = Get-NewAppLog
-    if ($newLog -notmatch 'TgUpdateViewModel.*Page loaded') { throw 'Нет подтверждения загрузки страницы обновлений' }
+    if ($newLog -notmatch 'TgSettingsViewModel.*Page loaded') { throw 'Нет подтверждения загрузки страницы настроек' }
     if ($newLog -match 'App_UnhandledException|COMException|System.InvalidOperationException') { throw 'В журнале найдено исключение' }
     if (-not $appProcess.CloseMainWindow() -or -not $appProcess.WaitForExit(15000)) { throw 'Desktop не завершил закрытие окна' }
     if ($appProcess.ExitCode -ne 0) { throw "Desktop завершился с кодом $($appProcess.ExitCode)" }

@@ -2,19 +2,73 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
 internal static partial class Program
 {
+    // Подписи и списки находятся в одной строке, все элементы выбора акцента расположены рядом
+    private static Task SettingsInlineAppearanceAsync()
+    {
+        using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgSettingsPage.xaml")!;
+        var page = XDocument.Load(stream);
+        XNamespace l = "using:WinUI3Localizer";
+        foreach (var uid in new[] { "ProgramLanguage", "ProgramTheme" })
+        {
+            var label = page.Descendants().SingleOrDefault(x => x.Name.LocalName == "TextBlock" && x.Attribute(l + "Uids.Uid")?.Value == uid);
+            Assert(label is not null, $"Подпись {uid} расположена над списком вместо одной строки");
+            var row = label!.Parent!;
+            Assert(row.Elements().Any(x => x.Name.LocalName == "TgOutlineIcon" && x.Attribute("Grid.Column") is null)
+                && label.Attribute("Grid.Column")?.Value == "1"
+                && row.Elements().Any(x => x.Name.LocalName == "ComboBox" && x.Attribute("Grid.Column")?.Value == "2"),
+                $"Нарушен порядок значок, подпись, список для {uid}");
+        }
+        Assert(!page.Descendants().Any(x => x.Name.LocalName == "CheckBox" && x.Attribute(l + "Uids.Uid")?.Value == "ProgramSystemTheme"),
+            "Остался отдельный флажок системной темы");
+        var themeList = page.Descendants().Single(x => x.Name.LocalName == "ComboBox"
+            && x.Attribute("SelectedIndex")?.Value.Contains("Preferences.ThemeIndex") == true);
+        Assert(themeList.Attribute("IsEnabled") is null && themeList.Elements().Count(x => x.Name.LocalName == "ComboBoxItem") == 3
+            && themeList.Elements().First().Attribute(l + "Uids.Uid")?.Value == "ProgramDefaultTheme",
+            "В списке недоступен выбор системной, светлой и тёмной темы");
+        var accent = page.Descendants().Single(x => x.Attribute(l + "Uids.Uid")?.Value == "ProgramSystemAccent");
+        var accentLabel = page.Descendants().SingleOrDefault(x => x.Name.LocalName == "TextBlock" && x.Attribute(l + "Uids.Uid")?.Value == "ProgramAccent");
+        var accentInput = page.Descendants().Single(x => x.Name.LocalName == "TextBox"
+            && x.Attribute("Text")?.Value.Contains("Preferences.AccentHex") == true);
+        var accentButton = page.Descendants().Single(x => x.Attribute(l + "Uids.Uid")?.Value == "ProgramPickAccent");
+        Assert(accentLabel is not null && accent.Parent == accentLabel.Parent && accent.Parent == accentInput.Parent
+            && accent.Parent == accentButton.Parent, "Системный акцент, подпись, поле ввода и выбор цвета не размещены в одной строке");
+        Assert(accent.Attribute("Grid.Row") is null && accent.Attribute("Grid.Column") is null
+            && accentLabel!.Attribute("Grid.Column")?.Value == "1" && accentInput.Attribute("Grid.Column")?.Value == "2"
+            && accentButton.Attribute("Grid.Column")?.Value == "3", "Нарушен порядок элементов строки цвета акцента");
+        Assert(accentInput.Attribute("IsEnabled")?.Value.Contains("Preferences.UseSystemAccent") == true
+            && accentInput.Attribute("IsEnabled")?.Value == accentButton.Attribute("IsEnabled")?.Value,
+            "Ручной ввод и палитра не отключаются вместе при выборе системного акцента");
+        return Task.CompletedTask;
+    }
+
+    // Каждый пункт списка сохраняет свою тему и восстанавливается при повторной загрузке
+    private static Task SettingsThemeChoicesAsync()
+    {
+        var settings = new ITgSettingsService();
+        var preferences = new TgProgramPreferences(settings);
+        foreach (var theme in new[] { TgEnumTheme.Light, TgEnumTheme.Dark, TgEnumTheme.Default })
+        {
+            preferences.Load();
+            preferences.ThemeIndex = (int)theme;
+            preferences.Save("1.0.0", _ => { }, (_, _) => { });
+            Assert(settings.AppTheme == theme, $"Выбор {theme} сохранил другую тему");
+            var restored = new TgProgramPreferences(settings);
+            restored.Load();
+            Assert(restored.ThemeIndex == (int)theme, $"Выбор {theme} не восстановлен в списке");
+        }
+        return Task.CompletedTask;
+    }
+
     // Настройки содержат одну общую карточку приложения со всеми перенесёнными полями и значками
     private static Task AppearanceMovedToSettingsAsync()
     {
         using var settingsStream = typeof(Program).Assembly.GetManifestResourceStream("TgSettingsPage.xaml")!;
-        using var programStream = typeof(Program).Assembly.GetManifestResourceStream("TgUpdatePage.xaml")!;
         var settings = XDocument.Load(settingsStream);
-        var program = XDocument.Load(programStream);
         XNamespace l = "using:WinUI3Localizer";
         var card = settings.Descendants().Single(x => x.Attribute(l + "Uids.Uid")?.Value == "ExpanderSettingApp");
-        foreach (var uid in new[] { "ProgramLanguage", "ProgramTheme", "ProgramAutoStart", "ProgramSystemTheme", "ProgramSystemAccent", "ProgramAccent" })
+        foreach (var uid in new[] { "ProgramLanguage", "ProgramTheme", "ProgramAutoStart", "ProgramDefaultTheme", "ProgramSystemAccent", "ProgramAccent" })
         {
             Assert(card.Descendants().Count(x => x.Attribute(l + "Uids.Uid")?.Value == uid) == 1, $"В общей карточке отсутствует или дублируется {uid}");
-            Assert(!program.Descendants().Any(x => x.Attribute(l + "Uids.Uid")?.Value == uid), $"На странице программы осталось поле {uid}");
         }
         foreach (var kind in new[] { "language", "theme" })
             Assert(card.Descendants().Any(x => x.Name.LocalName == "TgOutlineIcon" && x.Attribute("Kind")?.Value == kind),
@@ -22,35 +76,31 @@ internal static partial class Program
         Assert(!card.Descendants().Attributes().Any(x => x.Name.LocalName == "SelectedItem" && x.Value.Contains("SettingsService.App")),
             "Старые поля оформления не объединены с перенесёнными");
         Assert(card.Descendants().Any(x => x.Name.LocalName == "ColorPicker"), "Палитра цвета не перенесена");
-        Assert(!program.Descendants().Any(x => x.Name.LocalName == "ColorPicker"), "На странице программы осталась палитра");
         return Task.CompletedTask;
     }
 
-    // Сохранение проверки предварительных выпусков не применяет скрытый черновик оформления
-    private static Task UpdateSavePreservesAppearanceAsync()
+    // Общая команда настроек сохраняет предварительные выпуски вместе с текущим оформлением
+    private static async Task SettingsSavesUpdatePreferenceAsync()
     {
-        var settings = new ITgSettingsService { AppLanguage = TgEnumLanguage.Russian, AppTheme = TgEnumTheme.Dark };
-        var original = new TgProgramPreferences.Values(false, "#123456", true, false);
+        var settings = new ITgSettingsService();
+        settings.SaveLanguage(TgEnumLanguage.Russian);
+        settings.SaveTheme(TgEnumTheme.Dark);
+        var original = new TgProgramPreferences.Values(false, "#123456", false, false);
         settings.SaveSetting(TgProgramPreferences.PreferencesKey, original);
-        var vm = new TgUpdateViewModel(new LoadStateService(), settings, new(), null!);
+        using var vm = CreateSettingsViewModel(settings);
+        await vm.OnNavigatedToAsync(null);
         vm.Preferences.IncludePreview = true;
-        vm.Preferences.LanguageIndex = (int)TgEnumLanguage.English;
-        vm.Preferences.ThemeIndex = 0;
-        vm.Preferences.AccentHex = "invalid";
-        Read<IRelayCommand>(vm, "SaveProgramSettingsCommand").Execute(null);
+        await vm.SettingsSaveCommand.ExecuteAsync(null);
         Assert(settings.ReadSetting<TgProgramPreferences.Values>(TgProgramPreferences.PreferencesKey) == original with { IncludePreview = true },
-            "Страница программы не сохранила выбор выпусков отдельно от оформления");
-        Assert(settings.LanguageWrites == 0 && settings.ThemeWrites == 0 && vm.Errors.Count == 0,
-            "Сохранение обновлений применило скрытое оформление или зарегистрировало ошибку");
-        Assert(settings.ReadSetting<string>(TgProgramPreferences.ConfiguredVersionKey) is null,
-            "Сохранение обновлений ошибочно завершило настройку оформления новой версии");
-        return Task.CompletedTask;
+            "Общие настройки не сохранили выбор предварительных выпусков");
+        Assert(settings.AppLanguage == TgEnumLanguage.Russian && settings.AppTheme == TgEnumTheme.Dark && vm.Errors.Count == 0,
+            "Сохранение выбора обновлений потеряло текущее оформление");
     }
 
     // При отсутствии сохранённой карточки загрузка убирает черновик и возвращает системное оформление
     private static async Task SettingsLoadsAppearanceDefaultsAsync()
     {
-        using var vm = new TgSettingsViewModel(new LoadStateService(), new(), new(), null!);
+        using var vm = CreateSettingsViewModel();
         await vm.OnNavigatedToAsync(null);
         vm.Preferences.UseSystemAccent = false;
         vm.Preferences.AccentHex = "#123456";
@@ -66,7 +116,7 @@ internal static partial class Program
         settings.SaveSetting(TgProgramPreferences.PreferencesKey, saved);
         settings.SaveLanguage(TgEnumLanguage.Russian);
         settings.SaveTheme(TgEnumTheme.Dark);
-        using var vm = new TgSettingsViewModel(new LoadStateService(), settings, new(), null!);
+        using var vm = CreateSettingsViewModel(settings);
         await vm.OnNavigatedToAsync(null);
         vm.Preferences.AccentHex = "#ABCDEF";
         vm.Preferences.LanguageIndex = (int)TgEnumLanguage.English;
@@ -74,7 +124,7 @@ internal static partial class Program
         Assert(vm.Preferences.AccentHex == "#123456" && vm.Preferences.LanguageIndex == (int)TgEnumLanguage.Russian,
             "Загрузка не восстановила перенесённые настройки");
         await vm.SettingsDefaultCommand.ExecuteAsync(null);
-        Assert(vm.Preferences.UseSystemTheme && vm.Preferences.UseSystemAccent && !vm.Preferences.AutoStart
+        Assert(vm.Preferences.ThemeIndex == (int)TgEnumTheme.Default && vm.Preferences.UseSystemAccent && !vm.Preferences.AutoStart
             && vm.Preferences.AccentHex == "#0078D4" && vm.Preferences.LanguageIndex == (int)TgEnumLanguage.Default,
             "Сброс оставил прежнее оформление в перенесённых полях");
         Assert(settings.ReadSetting<TgProgramPreferences.Values>(TgProgramPreferences.PreferencesKey) == saved && settings.SaveCalls == 0,
@@ -90,12 +140,11 @@ internal static partial class Program
     private static async Task SettingsSavesMovedPreferencesAsync()
     {
         var settings = new ITgSettingsService();
-        using var vm = new TgSettingsViewModel(new LoadStateService(), settings, new(), null!);
+        using var vm = CreateSettingsViewModel(settings);
         await vm.OnNavigatedToAsync(null);
         var preferences = vm.Preferences;
         preferences.LanguageIndex = (int)TgEnumLanguage.Russian;
-        preferences.UseSystemTheme = false;
-        preferences.ThemeIndex = 1;
+        preferences.ThemeIndex = (int)TgEnumTheme.Dark;
         preferences.AutoStart = true;
         preferences.UseSystemAccent = false;
         preferences.AccentHex = "#123456";

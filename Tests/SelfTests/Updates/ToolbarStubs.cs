@@ -8,7 +8,15 @@ public partial class ShellViewModel : ObservableObject
     public bool IsFloodVisible { get; set; }
     public int FloodWaitSeconds { get; set; }
     public INavigationService NavigationService { get; } = new();
-    public TgUpdateViewModel Updates { get; } = new(new LoadStateService(), new(), new(), null!);
+    public TgSettingsViewModel Settings { get; }
+    public TgUpdateViewModel Updates => Settings.Updates;
+
+    /// <summary> Связывает верхнюю панель и настройки с одной моделью обновлений </summary>
+    public ShellViewModel()
+    {
+        var updates = new TgUpdateViewModel(LoadStateService, SettingsService, NavigationService, null!);
+        Settings = new TgSettingsViewModel(LoadStateService, SettingsService, NavigationService, null!, updates);
+    }
 }
 
 public sealed class XamlRoot;

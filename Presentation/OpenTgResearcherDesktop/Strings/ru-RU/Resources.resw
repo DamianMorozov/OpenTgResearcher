@@ -435,10 +435,10 @@
     <value>Открыть/редактировать</value>
   </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
-    <value>Проверка наличия обновлений релиза</value>
+    <value>Проверка обновления</value>
   </data>
   <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
-    <value>Проверка обновлений предварительного просмотра</value>
+    <value>Проверка предварительного выпуска</value>
   </data>
   <data name="ActionLicenseClear.Text" xml:space="preserve">
     <value>Очистить текущую лицензию</value>
@@ -2052,8 +2052,8 @@ API-параметры, телефон и выбранный прокси буд
   <data name="Shell_Network.Content" xml:space="preserve">
     <value>Сетевая активность</value>
   </data>
-  <data name="ToolbarProgramShort.Text" xml:space="preserve">
-    <value>Программа</value>
+  <data name="ToolbarUpdatesShort.Text" xml:space="preserve">
+    <value>Обновление</value>
   </data>
   <data name="ToolbarRefresh" xml:space="preserve">
     <value>Обновить текущую страницу</value>
@@ -2548,7 +2548,7 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ProgramAppearance.Text" xml:space="preserve">
     <value>Оформление и запуск</value>
   </data>
-  <data name="ProgramLanguage.Header" xml:space="preserve">
+  <data name="ProgramLanguage.Text" xml:space="preserve">
     <value>Язык</value>
   </data>
   <data name="ProgramSystemLanguage.Content" xml:space="preserve">
@@ -2557,13 +2557,16 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ProgramAutoStart.Content" xml:space="preserve">
     <value>Запускать при входе в Windows</value>
   </data>
-  <data name="ProgramAutoStartHint.Text" xml:space="preserve">
+  <data name="ProgramAutoStart.ToolTipService.ToolTip" xml:space="preserve">
     <value>Автозапуск установленной программы отображается в Диспетчере задач → Автозагрузка приложений.</value>
   </data>
   <data name="ProgramSystemTheme.Content" xml:space="preserve">
     <value>Использовать системную тему</value>
   </data>
-  <data name="ProgramTheme.Header" xml:space="preserve">
+  <data name="ProgramDefaultTheme.Content" xml:space="preserve">
+    <value>Как в системе</value>
+  </data>
+  <data name="ProgramTheme.Text" xml:space="preserve">
     <value>Тема</value>
   </data>
   <data name="ProgramLightTheme.Content" xml:space="preserve">
@@ -2575,7 +2578,7 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ProgramSystemAccent.Content" xml:space="preserve">
     <value>Использовать системный цвет акцента</value>
   </data>
-  <data name="ProgramAccent.Header" xml:space="preserve">
+  <data name="ProgramAccent.Text" xml:space="preserve">
     <value>Цвет акцента</value>
   </data>
   <data name="ProgramPickAccent.Content" xml:space="preserve">
@@ -2586,9 +2589,6 @@ API-параметры, телефон и выбранный прокси буд
   </data>
   <data name="ProgramUpdates.Text" xml:space="preserve">
     <value>Обновления</value>
-  </data>
-  <data name="ProgramIncludePreview.Content" xml:space="preserve">
-    <value>Включать предварительные выпуски в проверку обновлений</value>
   </data>
   <data name="ProgramUpdateHint.Text" xml:space="preserve">
     <value>После скачивания обновления программа остановит парсинг, освободит сессию Telegram и автоматически перезапустится. Перед загрузкой предварительного выпуска потребуется отдельное подтверждение. Параметр предварительных выпусков применяется к кнопке проверки в верхней панели после сохранения настроек.</value>
@@ -2619,5 +2619,20 @@ API-параметры, телефон и выбранный прокси буд
   </data>
   <data name="SplashTheme.ToolTipService.ToolTip" xml:space="preserve">
     <value>Выбрать тему</value>
+  </data>
+  <data name="SettingsTitle.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SettingsReset.Content" xml:space="preserve">
+    <value>Сбросить</value>
+  </data>
+  <data name="SettingsUpdates.Header" xml:space="preserve">
+    <value>Обновления</value>
+  </data>
+  <data name="SettingsDetails.Header" xml:space="preserve">
+    <value>Сведения о приложении</value>
+  </data>
+  <data name="SettingsFileWarning.Header" xml:space="preserve">
+    <value>О файлах настроек</value>
   </data>
 </root>

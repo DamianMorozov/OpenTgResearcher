@@ -1,6 +1,6 @@
 namespace OpenTgResearcherDesktop.ViewModels;
 
-/// <summary> Параметры программы, проверка и скачивание обновлений Desktop </summary>
+/// <summary> Общая модель проверки и скачивания обновлений Desktop </summary>
 public partial class TgUpdateViewModel : TgPageViewModelBase
 {
     [ObservableProperty]
@@ -21,19 +21,13 @@ public partial class TgUpdateViewModel : TgPageViewModelBase
     public TgUpdateViewModel(ILoadStateService loadStateService, ITgSettingsService settingsService, INavigationService navigationService,
         ILogger<TgUpdateViewModel> logger) : base(loadStateService, settingsService, navigationService, logger, nameof(TgUpdateViewModel))
     {
-        Preferences = new TgProgramPreferences(settingsService);
-        Preferences.Load();
         UpdateReleaseCommand = new AsyncRelayCommand(UpdateReleaseAsync, () => !IsUpdating);
         UpdatePreviewCommand = new AsyncRelayCommand(UpdatePreviewAsync, () => !IsUpdating);
         CancelUpdateCommand = new RelayCommand(CancelUpdate, () => IsUpdating);
     }
 
     /// <summary> Открывает страницу без обращения к Telegram и хранилищу </summary>
-    public override Task OnNavigatedToAsync(NavigationEventArgs? e)
-    {
-        LoadProgramSettings();
-        return Task.CompletedTask;
-    }
+    public override Task OnNavigatedToAsync(NavigationEventArgs? e) => Task.CompletedTask;
 
     /// <summary> Сохраняет журнал и текущую загрузку при обновлении страницы </summary>
     public override Task ReloadUiAsync() => Task.CompletedTask;

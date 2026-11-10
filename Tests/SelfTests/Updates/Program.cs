@@ -9,7 +9,14 @@ internal static partial class Program
         {
             ("ProgramNavigationIcon", ProgramNavigationIconAsync),
             ("AppearanceMovedToSettings", AppearanceMovedToSettingsAsync),
-            ("UpdateSavePreservesAppearance", UpdateSavePreservesAppearanceAsync),
+            ("SettingsInlineAppearance", SettingsInlineAppearanceAsync),
+            ("SettingsThemeChoices", SettingsThemeChoicesAsync),
+            ("SettingsContainsUpdates", SettingsContainsUpdatesAsync),
+            ("SettingsHasCompactSections", SettingsHasCompactSectionsAsync),
+            ("ToolbarUpdateCaption", ToolbarUpdateCaptionAsync),
+            ("SettingsSavesUpdatePreference", SettingsSavesUpdatePreferenceAsync),
+            ("SettingsSharesUpdateOperation", SettingsSharesUpdateOperationAsync),
+            ("RepeatedUpdateRequestKeepsDraft", RepeatedUpdateRequestKeepsDraftAsync),
             ("SettingsSavesMovedPreferences", SettingsSavesMovedPreferencesAsync),
             ("SettingsReloadsAndResetsAppearance", SettingsReloadsAndResetsAppearanceAsync),
             ("SettingsLoadsAppearanceDefaults", SettingsLoadsAppearanceDefaultsAsync),
@@ -382,9 +389,9 @@ internal static partial class Program
     private static Task UpdateLogLayoutAsync()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream("TgUpdatePage.xaml")!;
+        using var stream = assembly.GetManifestResourceStream("TgSettingsPage.xaml")!;
         var xaml = XDocument.Load(stream);
-        var log = xaml.Descendants().Single(item => ((string?)item.Attribute("Text"))?.Contains("ViewModel.UpdateLog") == true);
+        var log = xaml.Descendants().Single(item => ((string?)item.Attribute("Text"))?.Contains("ViewModel.Updates.UpdateLog") == true);
         Assert(log.Name.LocalName == "TextBox" && (string?)log.Attribute("IsReadOnly") == "True", "Журнал нельзя выделить и скопировать");
         Assert((string?)log.Attribute("ScrollViewer.VerticalScrollBarVisibility") == "Auto", "Длинный журнал не прокручивается");
         Assert((string?)log.Attribute("TextWrapping") == "Wrap", "Длинная строка журнала обрезается");

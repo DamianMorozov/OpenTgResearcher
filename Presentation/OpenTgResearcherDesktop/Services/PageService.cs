@@ -32,7 +32,6 @@ public sealed class PageService : IPageService
 		Configure<TgStorageTablesViewModel, TgStorageTablesPage>();
 		Configure<TgStorageViewModel, TgStoragePage>();
 		Configure<TgStoriesViewModel, TgStoriesPage>();
-		Configure<TgUpdateViewModel, TgUpdatePage>();
 		Configure<TgUserDetailsViewModel, TgUserDetailsPage>();
 		Configure<TgUsersViewModel, TgUsersPage>();
 	}

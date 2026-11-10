@@ -214,7 +214,7 @@
                         <TextBlock
                             x:Name="ToolbarUpdateLabel"
                             VerticalAlignment="Center"
-                            l:Uids.Uid="ToolbarProgramShort"
+                            l:Uids.Uid="ToolbarUpdatesShort"
                             Visibility="Collapsed" />
                     </StackPanel>
                 </Button>
@@ -380,16 +380,6 @@
                 <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgLogsViewModel" l:Uids.Uid="Shell_Logs">
                     <NavigationViewItem.Icon>
                         <ImageIcon Source="ms-appx:///Assets/Icons/Lucide/logs-light.png" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <!--  Параметры программы и обновления  -->
-                <NavigationViewItem helpers:TgNavigationHelper.NavigateTo="OpenTgResearcherDesktop.ViewModels.TgUpdateViewModel" l:Uids.Uid="Shell_Update">
-                    <NavigationViewItem.Icon>
-                        <ImageIcon>
-                            <ImageIcon.Source>
-                                <SvgImageSource UriSource="ms-appx:///Assets/Icons/Lucide/app-update-light.svg" />
-                            </ImageIcon.Source>
-                        </ImageIcon>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!--  Лицензия  -->

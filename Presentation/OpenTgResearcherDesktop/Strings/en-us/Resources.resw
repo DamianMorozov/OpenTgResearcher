@@ -376,10 +376,10 @@
     <value>Open/edit</value>
   </data>
   <data name="ActionUpdateReleaseApp.Text" xml:space="preserve">
-    <value>Checking for release updates</value>
+    <value>Check for updates</value>
   </data>
   <data name="ActionUpdatePreviewApp.Text" xml:space="preserve">
-    <value>Checking for preview updates</value>
+    <value>Check preview release</value>
   </data>
   <data name="ActionLicenseClear.Text" xml:space="preserve">
     <value>Clear current license</value>
@@ -1988,8 +1988,8 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="Shell_Network.Content" xml:space="preserve">
     <value>Network activity</value>
   </data>
-  <data name="ToolbarProgramShort.Text" xml:space="preserve">
-    <value>App updates</value>
+  <data name="ToolbarUpdatesShort.Text" xml:space="preserve">
+    <value>Update</value>
   </data>
   <data name="ToolbarRefresh" xml:space="preserve">
     <value>Refresh current page</value>
@@ -2484,7 +2484,7 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ProgramAppearance.Text" xml:space="preserve">
     <value>Appearance and startup</value>
   </data>
-  <data name="ProgramLanguage.Header" xml:space="preserve">
+  <data name="ProgramLanguage.Text" xml:space="preserve">
     <value>Language</value>
   </data>
   <data name="ProgramSystemLanguage.Content" xml:space="preserve">
@@ -2493,13 +2493,16 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ProgramAutoStart.Content" xml:space="preserve">
     <value>Start when I sign in to Windows</value>
   </data>
-  <data name="ProgramAutoStartHint.Text" xml:space="preserve">
+  <data name="ProgramAutoStart.ToolTipService.ToolTip" xml:space="preserve">
     <value>Startup for the installed application appears in Task Manager → Startup apps.</value>
   </data>
   <data name="ProgramSystemTheme.Content" xml:space="preserve">
     <value>Use system theme</value>
   </data>
-  <data name="ProgramTheme.Header" xml:space="preserve">
+  <data name="ProgramDefaultTheme.Content" xml:space="preserve">
+    <value>System theme</value>
+  </data>
+  <data name="ProgramTheme.Text" xml:space="preserve">
     <value>Theme</value>
   </data>
   <data name="ProgramLightTheme.Content" xml:space="preserve">
@@ -2511,7 +2514,7 @@ API credentials, phone number, and the selected proxy will be removed from the p
   <data name="ProgramSystemAccent.Content" xml:space="preserve">
     <value>Use system accent color</value>
   </data>
-  <data name="ProgramAccent.Header" xml:space="preserve">
+  <data name="ProgramAccent.Text" xml:space="preserve">
     <value>Accent color</value>
   </data>
   <data name="ProgramPickAccent.Content" xml:space="preserve">
@@ -2522,9 +2525,6 @@ API credentials, phone number, and the selected proxy will be removed from the p
   </data>
   <data name="ProgramUpdates.Text" xml:space="preserve">
     <value>Updates</value>
-  </data>
-  <data name="ProgramIncludePreview.Content" xml:space="preserve">
-    <value>Include preview versions when checking for updates</value>
   </data>
   <data name="ProgramUpdateHint.Text" xml:space="preserve">
     <value>After downloading an update, the application stops parsing, releases the Telegram session and restarts automatically. Preview downloads require a separate confirmation. After saving settings, the preview preference applies to the check button in the top toolbar.</value>
@@ -2555,5 +2555,20 @@ API credentials, phone number, and the selected proxy will be removed from the p
   </data>
   <data name="SplashTheme.ToolTipService.ToolTip" xml:space="preserve">
     <value>Choose theme</value>
+  </data>
+  <data name="SettingsTitle.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsReset.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsUpdates.Header" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="SettingsDetails.Header" xml:space="preserve">
+    <value>Application details</value>
+  </data>
+  <data name="SettingsFileWarning.Header" xml:space="preserve">
+    <value>About settings files</value>
   </data>
 </root>

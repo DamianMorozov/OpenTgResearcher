@@ -20,13 +20,14 @@ internal static partial class Program
     private static Task ProgramSettingsLocalizationAsync()
     {
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgUpdatePage.xaml")!;
-        var page = XDocument.Load(stream);
+        using var settingsStream = typeof(Program).Assembly.GetManifestResourceStream("TgSettingsPage.xaml")!;
+        var pages = new[] { XDocument.Load(stream), XDocument.Load(settingsStream) };
         foreach (var language in new[] { "ru-RU", "en-US" })
         {
             var resources = XDocument.Load(Path.Combine(AppContext.BaseDirectory, "Strings", language, "Resources.resw"))
                 .Root!.Elements("data").Where(x => ((string)x.Attribute("name")!).StartsWith("Program", StringComparison.Ordinal))
                 .ToDictionary(x => (string)x.Attribute("name")!, x => x.Element("value")!.Value);
-            foreach (var control in page.Descendants())
+            foreach (var control in pages.SelectMany(page => page.Descendants()))
             {
                 var uid = control.Attributes().FirstOrDefault(x => x.Name.LocalName.EndsWith("Uid"))?.Value;
                 if (uid?.StartsWith("Program", StringComparison.Ordinal) != true) continue;

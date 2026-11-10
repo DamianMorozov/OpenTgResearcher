@@ -4,6 +4,8 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 public sealed class ITgSettingsService
 {
     private readonly Dictionary<string, object?> _settings = [];
+    private TgEnumLanguage _savedLanguage;
+    private TgEnumTheme _savedTheme;
     public T? ReadSetting<T>(string key) => _settings.TryGetValue(key, out var value) ? (T?)value : default;
     public void SaveSetting<T>(string key, T value) => _settings[key] = value;
     public bool IsExistsAppStorage { get; set; } = true;
@@ -11,10 +13,18 @@ public sealed class ITgSettingsService
     public TgEnumTheme AppTheme { get; set; }
     public int LanguageWrites { get; private set; }
     public int ThemeWrites { get; private set; }
+    public int SaveCalls { get; private set; }
+    public int LoadCalls { get; private set; }
+    /// <summary> Восстанавливает сохранённые язык и тему без пользовательских файлов </summary>
+    public void Load() { LoadCalls++; AppLanguage = _savedLanguage; AppTheme = _savedTheme; }
+    /// <summary> Учитывает сохранение существующего блока настроек файлов </summary>
+    public void Save() { SaveCalls++; _savedLanguage = AppLanguage; _savedTheme = AppTheme; }
+    /// <summary> Возвращает исходные язык и тему без сохранения </summary>
+    public void Default() { AppLanguage = TgEnumLanguage.Default; AppTheme = TgEnumTheme.Default; }
     /// <summary> Учитывает сохранение выбранного языка </summary>
-    public void SaveLanguage(TgEnumLanguage language) { AppLanguage = language; LanguageWrites++; }
+    public void SaveLanguage(TgEnumLanguage language) { AppLanguage = _savedLanguage = language; LanguageWrites++; }
     /// <summary> Учитывает сохранение выбранной темы </summary>
-    public void SaveTheme(TgEnumTheme theme) { AppTheme = theme; ThemeWrites++; }
+    public void SaveTheme(TgEnumTheme theme) { AppTheme = _savedTheme = theme; ThemeWrites++; }
 }
 public interface ILogger<out T>;
 public sealed class INavigationService
@@ -32,7 +42,6 @@ public sealed class IPageService
     /// <summary> Возвращает тип тестовой страницы </summary>
     public Type GetPageType(string pageKey) => typeof(TgSettingsViewModel);
 }
-public sealed class TgSettingsViewModel;
 public sealed class NavigationEventArgs;
 public sealed class RoutedEventArgs;
 public sealed class NavigationViewBackRequestedEventArgs;
@@ -109,15 +118,25 @@ public sealed class ContentDialog
         return confirm ? ContentDialogResult.Primary : ContentDialogResult.None;
     }
 }
-public abstract class TgPageViewModelBase : ObservableObject
+public abstract class TgPageViewModelBase : ObservableObject, IDisposable
 {
     public ILoadStateService LoadStateService { get; }
+    public ITgSettingsService SettingsService { get; }
     public object? XamlRootVm { get; set; } = new();
     public List<Exception> Errors { get; } = [];
     public int StorageCalls { get; private set; }
     public int TelegramChecks { get; private set; }
     protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
-        => LoadStateService = state;
+    {
+        LoadStateService = state;
+        SettingsService = settings;
+    }
+    /// <summary> Заменяет освобождение ресурсов базовой страницы </summary>
+    public virtual void ReleaseManagedResources() { }
+    /// <summary> Заменяет проверку срока жизни модели </summary>
+    protected void CheckIfDisposed() { }
+    /// <summary> Освобождает проверяемую модель без платформенных ресурсов </summary>
+    public void Dispose() => ReleaseManagedResources();
     /// <summary> Заменяет навигацию без сети </summary>
     public virtual Task OnNavigatedToAsync(NavigationEventArgs? e) => Task.CompletedTask;
     /// <summary> Учитывает ненужную проверку Telegram из базовой перезагрузки страницы </summary>
@@ -131,6 +150,9 @@ public abstract class TgPageViewModelBase : ObservableObject
         var dialog = new ContentDialog { PrimaryButtonCommand = new AsyncRelayCommand(action) };
         _ = await dialog.ShowAsync();
     }
+    // Адаптируем синхронные команды настроек к той же проверке подтверждения
+    protected Task ContentDialogAsync(Action action, string title, TgEnumLoadDesktopType loadType) =>
+        ContentDialogAsync(() => { action(); return Task.CompletedTask; }, title, loadType);
     /// <summary> Сохраняет оригинальное исключение для проверки журнала </summary>
     public void LogError(Exception ex) => Errors.Add(ex);
 }
@@ -155,11 +177,13 @@ public static class TgDesktopUtils
 }
 public static class TgProgramIntegration
 {
+    public static Action<bool>? AutoStartObserver { get; set; }
+    public static Action<bool, string>? AccentObserver { get; set; }
     public static string CurrentVersion => "0.8.80";
     public static bool IsInstalled => UpdateManager.State.Installed;
     public static bool ReadAutoStart() => false;
-    public static void SetAutoStart(bool enabled) { }
-    public static void ApplyAccent(bool system, string hex) { }
+    public static void SetAutoStart(bool enabled) => AutoStartObserver?.Invoke(enabled);
+    public static void ApplyAccent(bool system, string hex) => AccentObserver?.Invoke(system, hex);
 }
 public sealed class LanguageChangedEventArgs : EventArgs;
 public interface ILocalizer

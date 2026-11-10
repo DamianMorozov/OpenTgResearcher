@@ -2533,7 +2533,7 @@ API credentials, phone number, and the selected proxy will be removed from the p
     <value>Program settings saved.</value>
   </data>
   <data name="ProgramSetupWelcome" xml:space="preserve">
-    <value>You have installed a new version of OpenTgResearcher. Review your preferences and select Save settings. Your previous settings have been retained.</value>
+    <value>You have installed a new version of OpenTgResearcher. Review the Application settings and select Save. Your previous settings have been retained.</value>
   </data>
   <data name="ProgramPreviewWarning" xml:space="preserve">
     <value>Preview version {0} is available. This is not a stable release and may contain bugs. Download the update and restart the application automatically?</value>

@@ -54,7 +54,7 @@ public sealed class ActivationService(ActivationHandler<LaunchActivatedEventArgs
         {
             var preferences = new TgProgramPreferences(settingsService);
             if (preferences.NeedsSetup(TgProgramIntegration.CurrentVersion, TgProgramIntegration.IsInstalled))
-                App.GetService<INavigationService>().NavigateTo(typeof(TgUpdateViewModel).FullName!);
+                App.GetService<INavigationService>().NavigateTo(typeof(TgSettingsViewModel).FullName!);
         }
         catch (Exception ex) { TgLogUtils.WriteException(ex); }
     }

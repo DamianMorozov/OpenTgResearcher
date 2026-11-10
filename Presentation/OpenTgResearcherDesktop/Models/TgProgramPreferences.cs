@@ -5,6 +5,7 @@ public sealed partial class TgProgramPreferences(ITgSettingsService settings) : 
 {
     public const string PreferencesKey = "ProgramPreferences";
     public const string ConfiguredVersionKey = "ProgramConfiguredVersion";
+    public const string DefaultAccentHex = "#0078D4";
 
     [ObservableProperty]
     public partial int LanguageIndex { get; set; }
@@ -15,7 +16,7 @@ public sealed partial class TgProgramPreferences(ITgSettingsService settings) : 
     [ObservableProperty]
     public partial bool UseSystemAccent { get; set; } = true;
     [ObservableProperty]
-    public partial string AccentHex { get; set; } = "#0078D4";
+    public partial string AccentHex { get; set; } = DefaultAccentHex;
     [ObservableProperty]
     public partial bool AutoStart { get; set; }
     [ObservableProperty]
@@ -30,8 +31,8 @@ public sealed partial class TgProgramPreferences(ITgSettingsService settings) : 
         LanguageIndex = (int)settings.AppLanguage;
         UseSystemTheme = settings.AppTheme == TgEnumTheme.Default;
         ThemeIndex = settings.AppTheme == TgEnumTheme.Dark ? 1 : 0;
-        var saved = settings.ReadSetting<Values>(PreferencesKey);
-        if (saved is null) return;
+        var saved = settings.ReadSetting<Values>(PreferencesKey)
+            ?? new Values(UseSystemAccent: true, AccentHex: DefaultAccentHex, AutoStart: false, IncludePreview: false);
         UseSystemAccent = saved.UseSystemAccent;
         AccentHex = saved.AccentHex;
         AutoStart = saved.AutoStart;
@@ -51,6 +52,14 @@ public sealed partial class TgProgramPreferences(ITgSettingsService settings) : 
         settings.SaveTheme(UseSystemTheme ? TgEnumTheme.Default : ThemeIndex == 1 ? TgEnumTheme.Dark : TgEnumTheme.Light);
         settings.SaveLanguage((TgEnumLanguage)LanguageIndex);
         settings.SaveSetting(ConfiguredVersionKey, version);
+    }
+
+    /// <summary> Сохраняет выбор предварительных выпусков без изменения оформления и отметки настройки версии </summary>
+    public void SaveUpdatePreferences()
+    {
+        var saved = settings.ReadSetting<Values>(PreferencesKey)
+            ?? new Values(UseSystemAccent: true, AccentHex: DefaultAccentHex, AutoStart: false, IncludePreview: false);
+        settings.SaveSetting(PreferencesKey, saved with { IncludePreview = IncludePreview });
     }
 
     /// <summary> Сохраняемые параметры, общие для всех версий приложения </summary>

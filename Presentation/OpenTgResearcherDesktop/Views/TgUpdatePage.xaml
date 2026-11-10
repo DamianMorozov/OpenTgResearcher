@@ -22,44 +22,6 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel MaxWidth="960" Margin="16" HorizontalAlignment="Stretch" Spacing="16">
                 <TextBlock Text="{x:Bind ViewModel.PreferencesMessage, Mode=OneWay}" TextWrapping="Wrap" IsTextSelectionEnabled="True" />
-                <!--  Оформление и запуск программы  -->
-                <Border Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
-                    <StackPanel Spacing="16">
-                        <TextBlock l:Uids.Uid="ProgramAppearance" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                        <ComboBox l:Uids.Uid="ProgramLanguage" HorizontalAlignment="Stretch"
-                                  SelectedIndex="{x:Bind ViewModel.Preferences.LanguageIndex, Mode=TwoWay}">
-                            <ComboBoxItem l:Uids.Uid="ProgramSystemLanguage" />
-                            <ComboBoxItem Content="English" />
-                            <ComboBoxItem Content="Русский" />
-                        </ComboBox>
-                        <CheckBox l:Uids.Uid="ProgramAutoStart" IsEnabled="{x:Bind ViewModel.CanConfigureAutoStart}"
-                                  IsChecked="{x:Bind ViewModel.Preferences.AutoStart, Mode=TwoWay}" />
-                        <TextBlock l:Uids.Uid="ProgramAutoStartHint" Opacity="0.7" TextWrapping="Wrap" />
-                        <CheckBox l:Uids.Uid="ProgramSystemTheme" IsChecked="{x:Bind ViewModel.Preferences.UseSystemTheme, Mode=TwoWay}" />
-                        <ComboBox l:Uids.Uid="ProgramTheme" HorizontalAlignment="Stretch"
-                                  IsEnabled="{x:Bind ViewModel.Preferences.UseSystemTheme, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                  SelectedIndex="{x:Bind ViewModel.Preferences.ThemeIndex, Mode=TwoWay}">
-                            <ComboBoxItem l:Uids.Uid="ProgramLightTheme" />
-                            <ComboBoxItem l:Uids.Uid="ProgramDarkTheme" />
-                        </ComboBox>
-                        <CheckBox l:Uids.Uid="ProgramSystemAccent" IsChecked="{x:Bind ViewModel.Preferences.UseSystemAccent, Mode=TwoWay}" />
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBox Width="160" MaxLength="7" l:Uids.Uid="ProgramAccent"
-                                     IsEnabled="{x:Bind ViewModel.Preferences.UseSystemAccent, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                     Text="{x:Bind ViewModel.Preferences.AccentHex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button l:Uids.Uid="ProgramPickAccent" VerticalAlignment="Bottom"
-                                    IsEnabled="{x:Bind ViewModel.Preferences.UseSystemAccent, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}">
-                                <Button.Flyout>
-                                    <Flyout Opening="AccentFlyout_Opening">
-                                        <ColorPicker x:Name="AccentPicker" IsAlphaEnabled="False" IsAlphaSliderVisible="False"
-                                                     IsAlphaTextInputVisible="False" ColorChanged="AccentPicker_ColorChanged" />
-                                    </Flyout>
-                                </Button.Flyout>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
                 <!--  Проверка выпусков и журнал загрузки  -->
                 <Border Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">

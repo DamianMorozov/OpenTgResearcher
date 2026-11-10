@@ -3,7 +3,6 @@ namespace OpenTgResearcherDesktop.ViewModels;
 public partial class TgUpdateViewModel
 {
     public TgProgramPreferences Preferences { get; private set; } = null!;
-    public bool CanConfigureAutoStart => TgProgramIntegration.IsInstalled;
 
     [ObservableProperty]
     public partial string PreferencesMessage { get; private set; } = string.Empty;
@@ -14,7 +13,7 @@ public partial class TgUpdateViewModel
     {
         try
         {
-            Preferences.Save(TgProgramIntegration.CurrentVersion, SetProgramAutoStart, TgProgramIntegration.ApplyAccent);
+            Preferences.SaveUpdatePreferences();
             PreferencesMessage = "ProgramSettingsSaved".GetLocalizedResource();
         }
         catch (Exception ex)
@@ -24,18 +23,10 @@ public partial class TgUpdateViewModel
         }
     }
 
-    // Обновляем черновик при переходе, учитывая смену языка и темы из верхней панели
+    // Обновляем параметры проверки выпусков при переходе на страницу программы
     private void LoadProgramSettings()
     {
         Preferences.Load();
-        Preferences.AutoStart = CanConfigureAutoStart && TgProgramIntegration.ReadAutoStart();
-        PreferencesMessage = Preferences.NeedsSetup(TgProgramIntegration.CurrentVersion, TgProgramIntegration.IsInstalled)
-            ? "ProgramSetupWelcome".GetLocalizedResource() : string.Empty;
-    }
-
-    // Не меняем автозапуск установленной программы при запуске из среды разработки или переносимого архива
-    private void SetProgramAutoStart(bool enabled)
-    {
-        if (CanConfigureAutoStart) TgProgramIntegration.SetAutoStart(enabled);
+        PreferencesMessage = string.Empty;
     }
 }

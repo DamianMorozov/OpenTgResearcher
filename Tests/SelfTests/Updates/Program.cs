@@ -8,6 +8,11 @@ internal static partial class Program
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("ProgramNavigationIcon", ProgramNavigationIconAsync),
+            ("AppearanceMovedToSettings", AppearanceMovedToSettingsAsync),
+            ("UpdateSavePreservesAppearance", UpdateSavePreservesAppearanceAsync),
+            ("SettingsSavesMovedPreferences", SettingsSavesMovedPreferencesAsync),
+            ("SettingsReloadsAndResetsAppearance", SettingsReloadsAndResetsAppearanceAsync),
+            ("SettingsLoadsAppearanceDefaults", SettingsLoadsAppearanceDefaultsAsync),
             ("ProgramPreferencesLifecycle", ProgramPreferencesLifecycleAsync),
             ("ProgramPreferencesFailedApply", ProgramPreferencesFailedApplyAsync),
             ("RestartAfterDownload", RestartAfterDownloadAsync),

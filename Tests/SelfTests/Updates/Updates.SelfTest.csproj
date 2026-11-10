@@ -11,6 +11,8 @@
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgGithubUpdateSource.cs" Link="TgGithubUpdateSource.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgProgramPreferences.cs" Link="TgProgramPreferences.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgUpdateViewModel.Preferences.cs" Link="TgUpdateViewModel.Preferences.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSettingsViewModel.cs" Link="TgSettingsViewModel.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgSettingsViewModel.Preferences.cs" Link="TgSettingsViewModel.Preferences.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgNetworkActivityViewModel.cs" Link="TgNetworkActivityViewModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgNetworkOperationModel.cs" Link="TgNetworkOperationModel.cs" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgNetworkChatGroupModel.cs" Link="TgNetworkChatGroupModel.cs" />
@@ -22,6 +24,7 @@
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Helpers/TgResourceExtensions.cs" Link="TgResourceExtensions.cs" />
     <Content Include="../../../Presentation/OpenTgResearcherDesktop/Strings/**/Resources.resw" Link="Strings/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgUpdatePage.xaml" LogicalName="TgUpdatePage.xaml" />
+    <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgSettingsPage.xaml" LogicalName="TgSettingsPage.xaml" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/ShellPage.xaml" LogicalName="ShellPage.xaml" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgStatusBar.xaml" LogicalName="TgStatusBar.xaml" />
   </ItemGroup>

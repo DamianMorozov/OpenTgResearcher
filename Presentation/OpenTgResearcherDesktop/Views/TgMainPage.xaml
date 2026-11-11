@@ -32,13 +32,364 @@
     </Page.Resources>
 
     <Grid>
+        <ScrollViewer
+            HorizontalContentAlignment="Stretch"
+            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollMode="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <!--  Контейнер занимает всю область прокрутки и центрирует ограниченную по ширине колонку  -->
+            <Grid Padding="16,8,16,24">
+                <StackPanel
+                    MaxWidth="1180"
+                    HorizontalAlignment="Stretch"
+                    Spacing="24">
+                    <!--  Текущий профиль и готовность Telegram без дополнительного сетевого запроса  -->
+                    <StackPanel
+                        x:Name="HomeContext"
+                        Orientation="Vertical"
+                        Spacing="12">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <styles:TgOutlineIcon
+                                Width="16"
+                                Height="16"
+                                Kind="users" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource HomeSecondaryTextStyle}" Text="{x:Bind ViewModel.ConnectionCaption, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <!--  Название программы, версия и основной сценарий запуска  -->
+                    <Border
+                        Padding="28"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="16">
+                        <Grid ColumnSpacing="28">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="14">
+                                <TextBlock
+                                    l:Uids.Uid="HomeEyebrow"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                    TextWrapping="Wrap" />
+                                <StackPanel Spacing="4">
+                                    <TextBlock
+                                        FontSize="32"
+                                        FontWeight="SemiBold"
+                                        Text="OpenTgResearcher"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionText}" />
+                                </StackPanel>
+                                <TextBlock
+                                    MaxWidth="600"
+                                    HorizontalAlignment="Left"
+                                    l:Uids.Uid="HomeDescription"
+                                    Style="{StaticResource HomeSecondaryTextStyle}" />
+                                <StackPanel
+                                    x:Name="HeroActions"
+                                    HorizontalAlignment="Left"
+                                    Spacing="8">
+                                    <Button
+                                        AutomationProperties.AutomationId="HomePrimaryAction"
+                                        Command="{x:Bind ViewModel.PrimaryActionCommand}"
+                                        Content="{x:Bind ViewModel.PrimaryActionCaption, Mode=OneWay}"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                                    <Button l:Uids.Uid="HomeHowToStart" Style="{StaticResource SubtleButtonStyle}">
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel MaxWidth="380" Spacing="14">
+                                                    <TextBlock
+                                                        l:Uids.Uid="HomeGuideTitle"
+                                                        Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                        TextWrapping="Wrap" />
+                                                    <TextBlock l:Uids.Uid="HomeGuideSteps" TextWrapping="Wrap" />
+                                                    <Button l:Uids.Uid="HomeConnectAction" Command="{x:Bind ViewModel.OpenConnectionCommand}" />
+                                                    <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram" Click="{x:Bind OnOpenHyperlink}" />
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                            <Border
+                                x:Name="HeroLogo"
+                                Grid.Column="1"
+                                Width="116"
+                                Height="116"
+                                VerticalAlignment="Center"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="58"
+                                Visibility="Collapsed">
+                                <ContentControl
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource TgAppLogoStyle}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!--  Быстрые переходы к рабочим разделам  -->
+                    <Grid x:Name="LaunchTileGrid" RowSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition x:Name="TileColumnMiddle" Width="0" />
+                            <ColumnDefinition x:Name="TileColumnRight" Width="0" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition x:Name="TileRowMiddle" Height="Auto" />
+                            <RowDefinition x:Name="TileRowBottom" Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Button
+                            AutomationProperties.AutomationId="HomeChats"
+                            Command="{x:Bind ViewModel.OpenChatsCommand}"
+                            Style="{StaticResource HomeTileStyle}">
+                            <StackPanel Spacing="10">
+                                <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="chats" />
+                                <TextBlock
+                                    l:Uids.Uid="HomeChatsTitle"
+                                    FontWeight="SemiBold"
+                                    TextWrapping="Wrap" />
+                                <TextBlock l:Uids.Uid="HomeChatsDetail" Style="{StaticResource HomeSecondaryTextStyle}" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            x:Name="NetworkTile"
+                            Grid.Row="1"
+                            AutomationProperties.AutomationId="HomeNetwork"
+                            Command="{x:Bind ViewModel.OpenNetworkCommand}"
+                            Style="{StaticResource HomeTileStyle}">
+                            <StackPanel Spacing="10">
+                                <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="network" />
+                                <TextBlock
+                                    l:Uids.Uid="HomeNetworkTitle"
+                                    FontWeight="SemiBold"
+                                    TextWrapping="Wrap" />
+                                <TextBlock l:Uids.Uid="HomeNetworkDetail" Style="{StaticResource HomeSecondaryTextStyle}" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            x:Name="SettingsTile"
+                            Grid.Row="2"
+                            AutomationProperties.AutomationId="HomeSettings"
+                            Command="{x:Bind ViewModel.OpenSettingsCommand}"
+                            Style="{StaticResource HomeTileStyle}">
+                            <StackPanel Spacing="10">
+                                <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="settings" />
+                                <TextBlock
+                                    l:Uids.Uid="HomeSettingsTitle"
+                                    FontWeight="SemiBold"
+                                    TextWrapping="Wrap" />
+                                <TextBlock l:Uids.Uid="HomeSettingsDetail" Style="{StaticResource HomeSecondaryTextStyle}" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!--  Последние открытые чаты выбранного хранилища  -->
+                    <StackPanel Spacing="12">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                l:Uids.Uid="HomeRecentTitle"
+                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                TextWrapping="Wrap" />
+                            <Button
+                                Grid.Column="1"
+                                l:Uids.Uid="HomeAllChats"
+                                Command="{x:Bind ViewModel.OpenChatsCommand}"
+                                Style="{StaticResource SubtleButtonStyle}" />
+                        </Grid>
+                        <TextBlock
+                            l:Uids.Uid="HomeRecentEmpty"
+                            Style="{StaticResource HomeSecondaryTextStyle}"
+                            Visibility="{x:Bind ViewModel.IsRecentEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <ItemsControl AutomationProperties.AutomationId="HomeRecentChats" ItemsSource="{x:Bind ViewModel.RecentChats}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:TgHomeRecentChat">
+                                    <Button
+                                        Margin="0,0,0,6"
+                                        Padding="12"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Command="{x:Bind OpenCommand}"
+                                        CommandParameter="{x:Bind}">
+                                        <Grid ColumnSpacing="14">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="36" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                Width="36"
+                                                Height="36"
+                                                Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                                                CornerRadius="10">
+                                                <styles:TgOutlineIcon
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Kind="chats" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock
+                                                    FontWeight="SemiBold"
+                                                    Text="{x:Bind Title}"
+                                                    TextWrapping="Wrap" />
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="{x:Bind Detail}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <FontIcon
+                                                Grid.Column="2"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                Glyph="&#xE76C;" />
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!--  Требования к установке и понятный порядок первого подключения  -->
+                    <Border
+                        Padding="20"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="12">
+                        <Grid ColumnSpacing="16" RowSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition x:Name="GuideActionColumn" Width="0" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition x:Name="GuideActionRow" Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Spacing="4">
+                                <TextBlock
+                                    l:Uids.Uid="HomeGuideTitle"
+                                    FontWeight="SemiBold"
+                                    TextWrapping="Wrap" />
+                                <TextBlock l:Uids.Uid="HomeGuideDescription" Style="{StaticResource HomeSecondaryTextStyle}" />
+                            </StackPanel>
+                            <Button
+                                x:Name="GuideAction"
+                                Grid.Row="1"
+                                HorizontalAlignment="Left"
+                                l:Uids.Uid="HomeGuideAction">
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <StackPanel MaxWidth="380" Spacing="14">
+                                            <TextBlock l:Uids.Uid="HomeGuideSteps" TextWrapping="Wrap" />
+                                            <Button l:Uids.Uid="HomeConnectAction" Command="{x:Bind ViewModel.OpenConnectionCommand}" />
+                                            <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram" Click="{x:Bind OnOpenHyperlink}" />
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!--  Официальный сайт и компактные справочные разделы  -->
+                    <StackPanel x:Name="HomeLinks" Spacing="8">
+                        <HyperlinkButton
+                            HorizontalAlignment="Left"
+                            l:Uids.Uid="SettingsPage_OfficialSite_OpenTgResearcher"
+                            Click="{x:Bind OnOpenHyperlink}" />
+                        <Button
+                            HorizontalAlignment="Left"
+                            l:Uids.Uid="HomeAbout"
+                            Style="{StaticResource SubtleButtonStyle}">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <ScrollViewer MaxHeight="520" HorizontalScrollBarVisibility="Disabled">
+                                        <StackPanel MaxWidth="420" Spacing="12">
+                                            <!--  О приложении  -->
+                                            <TextBlock
+                                                l:Uids.Uid="ProductAssignment"
+                                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                                TextWrapping="Wrap" />
+                                            <TextBlock l:Uids.Uid="ProductAssignmentDescription" TextWrapping="Wrap" />
+                                            <!--  Скачивание  -->
+                                            <HyperlinkButton
+                                                l:Uids.Uid="SettingsPage_Releases_Latest"
+                                                Click="{x:Bind OnOpenHyperlink}"
+                                                Style="{StaticResource HomeLinkStyle}" />
+                                            <HyperlinkButton
+                                                l:Uids.Uid="SettingsPage_DownloadStatistics"
+                                                Click="{x:Bind OnOpenHyperlink}"
+                                                Style="{StaticResource HomeLinkStyle}" />
+                                            <!--  Контейнер Docker  -->
+                                            <HyperlinkButton
+                                                l:Uids.Uid="SettingsPage_GitHub_DockerConsole"
+                                                Click="{x:Bind OnOpenHyperlink}"
+                                                Style="{StaticResource HomeLinkStyle}" />
+                                            <TextBlock l:Uids.Uid="SettingsPage_GitHub_InstallRequirementsSaveValues" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Button
+                            HorizontalAlignment="Left"
+                            l:Uids.Uid="HomeSupport"
+                            Style="{StaticResource SubtleButtonStyle}">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <StackPanel MaxWidth="420" Spacing="8">
+                                        <!--  Сообщество GitHub  -->
+                                        <HyperlinkButton
+                                            l:Uids.Uid="SettingsPage_GitHub_Link"
+                                            Click="{x:Bind OnOpenHyperlink}"
+                                            Style="{StaticResource HomeLinkStyle}" />
+                                        <HyperlinkButton
+                                            l:Uids.Uid="SettingsPage_GitHub_ReportBug"
+                                            Click="{x:Bind OnOpenHyperlink}"
+                                            Style="{StaticResource HomeLinkStyle}" />
+                                        <HyperlinkButton
+                                            l:Uids.Uid="SettingsPage_GitHub_Discussions"
+                                            Click="{x:Bind OnOpenHyperlink}"
+                                            Style="{StaticResource HomeLinkStyle}" />
+                                        <!--  Поддержка пользователей  -->
+                                        <HyperlinkButton
+                                            l:Uids.Uid="SettingsPage_GitHub_OpenTgResearcher"
+                                            Click="{x:Bind OnOpenHyperlink}"
+                                            Style="{StaticResource HomeLinkStyle}" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="CompactHome">
-                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="0" /></VisualState.StateTriggers>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
                 </VisualState>
                 <VisualState x:Name="WideHome">
-                    <VisualState.StateTriggers><AdaptiveTrigger MinWindowWidth="960" /></VisualState.StateTriggers>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="960" />
+                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HeroLogo.Visibility" Value="Visible" />
                         <Setter Target="HeroActions.Orientation" Value="Horizontal" />
@@ -64,180 +415,5 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled" VerticalScrollBarVisibility="Auto">
-            <StackPanel MaxWidth="1180" Margin="0,8,8,24" HorizontalAlignment="Stretch" Spacing="24">
-                <!--  Текущий профиль и готовность Telegram без дополнительного сетевого запроса  -->
-                <StackPanel x:Name="HomeContext" Orientation="Vertical" Spacing="12">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <styles:TgOutlineIcon Width="16" Height="16" Kind="users" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}" TextWrapping="Wrap" />
-                    </StackPanel>
-                    <TextBlock Style="{StaticResource HomeSecondaryTextStyle}" Text="{x:Bind ViewModel.ConnectionCaption, Mode=OneWay}" />
-                </StackPanel>
-
-                <!--  Название программы, версия и основной сценарий запуска  -->
-                <Border Padding="28" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="16">
-                    <Grid ColumnSpacing="28">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                        <StackPanel Spacing="14">
-                            <TextBlock l:Uids.Uid="HomeEyebrow" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" TextWrapping="Wrap" />
-                            <StackPanel Spacing="4">
-                                <TextBlock FontSize="32" FontWeight="SemiBold" Text="OpenTgResearcher" TextWrapping="Wrap" />
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ViewModel.VersionText}" />
-                            </StackPanel>
-                            <TextBlock MaxWidth="600" HorizontalAlignment="Left" l:Uids.Uid="HomeDescription" Style="{StaticResource HomeSecondaryTextStyle}" />
-                            <StackPanel x:Name="HeroActions" HorizontalAlignment="Left" Spacing="8">
-                                <Button AutomationProperties.AutomationId="HomePrimaryAction" Command="{x:Bind ViewModel.PrimaryActionCommand}"
-                                    Content="{x:Bind ViewModel.PrimaryActionCaption, Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" />
-                                <Button l:Uids.Uid="HomeHowToStart" Style="{StaticResource SubtleButtonStyle}">
-                                    <Button.Flyout>
-                                        <Flyout>
-                                            <StackPanel MaxWidth="380" Spacing="14">
-                                                <TextBlock l:Uids.Uid="HomeGuideTitle" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
-                                                <TextBlock l:Uids.Uid="HomeGuideSteps" TextWrapping="Wrap" />
-                                                <Button l:Uids.Uid="HomeConnectAction" Command="{x:Bind ViewModel.OpenConnectionCommand}" />
-                                                <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram" Click="{x:Bind OnOpenHyperlink}" />
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
-                        <Border x:Name="HeroLogo" Grid.Column="1" Width="116" Height="116" VerticalAlignment="Center"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="58" Visibility="Collapsed">
-                            <ContentControl HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TgAppLogoStyle}" />
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <!--  Быстрые переходы к рабочим разделам  -->
-                <Grid x:Name="LaunchTileGrid" RowSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" /><ColumnDefinition x:Name="TileColumnMiddle" Width="0" /><ColumnDefinition x:Name="TileColumnRight" Width="0" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /><RowDefinition x:Name="TileRowMiddle" Height="Auto" /><RowDefinition x:Name="TileRowBottom" Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Button Command="{x:Bind ViewModel.OpenChatsCommand}" Style="{StaticResource HomeTileStyle}" AutomationProperties.AutomationId="HomeChats">
-                        <StackPanel Spacing="10">
-                            <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="chats" />
-                            <TextBlock l:Uids.Uid="HomeChatsTitle" FontWeight="SemiBold" TextWrapping="Wrap" />
-                            <TextBlock l:Uids.Uid="HomeChatsDetail" Style="{StaticResource HomeSecondaryTextStyle}" />
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="NetworkTile" Grid.Row="1" Command="{x:Bind ViewModel.OpenNetworkCommand}"
-                        Style="{StaticResource HomeTileStyle}" AutomationProperties.AutomationId="HomeNetwork">
-                        <StackPanel Spacing="10">
-                            <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="network" />
-                            <TextBlock l:Uids.Uid="HomeNetworkTitle" FontWeight="SemiBold" TextWrapping="Wrap" />
-                            <TextBlock l:Uids.Uid="HomeNetworkDetail" Style="{StaticResource HomeSecondaryTextStyle}" />
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="SettingsTile" Grid.Row="2" Command="{x:Bind ViewModel.OpenSettingsCommand}"
-                        Style="{StaticResource HomeTileStyle}" AutomationProperties.AutomationId="HomeSettings">
-                        <StackPanel Spacing="10">
-                            <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="settings" />
-                            <TextBlock l:Uids.Uid="HomeSettingsTitle" FontWeight="SemiBold" TextWrapping="Wrap" />
-                            <TextBlock l:Uids.Uid="HomeSettingsDetail" Style="{StaticResource HomeSecondaryTextStyle}" />
-                        </StackPanel>
-                    </Button>
-                </Grid>
-
-                <!--  Последние открытые чаты выбранного хранилища  -->
-                <StackPanel Spacing="12">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center" l:Uids.Uid="HomeRecentTitle" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
-                        <Button Grid.Column="1" l:Uids.Uid="HomeAllChats" Command="{x:Bind ViewModel.OpenChatsCommand}" Style="{StaticResource SubtleButtonStyle}" />
-                    </Grid>
-                    <TextBlock l:Uids.Uid="HomeRecentEmpty" Style="{StaticResource HomeSecondaryTextStyle}"
-                        Visibility="{x:Bind ViewModel.IsRecentEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.RecentChats}" AutomationProperties.AutomationId="HomeRecentChats">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="models:TgHomeRecentChat">
-                                <Button Margin="0,0,0,6" Padding="12" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                    Background="Transparent" BorderThickness="0" CommandParameter="{x:Bind}"
-                                    Command="{x:Bind OpenCommand}">
-                                    <Grid ColumnSpacing="14">
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="36" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                        <Border Width="36" Height="36" Background="{ThemeResource ControlFillColorSecondaryBrush}" CornerRadius="10">
-                                            <styles:TgOutlineIcon HorizontalAlignment="Center" VerticalAlignment="Center" Kind="chats" />
-                                        </Border>
-                                        <StackPanel Grid.Column="1" Spacing="2">
-                                            <TextBlock FontWeight="SemiBold" Text="{x:Bind Title}" TextWrapping="Wrap" />
-                                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind Detail}" TextWrapping="Wrap" />
-                                        </StackPanel>
-                                        <FontIcon Grid.Column="2" VerticalAlignment="Center" FontSize="12" Glyph="&#xE76C;" />
-                                    </Grid>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-
-                <!--  Требования к установке и понятный порядок первого подключения  -->
-                <Border Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12">
-                    <Grid ColumnSpacing="16" RowSpacing="12">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition x:Name="GuideActionColumn" Width="0" /></Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition x:Name="GuideActionRow" Height="Auto" /></Grid.RowDefinitions>
-                        <StackPanel Spacing="4">
-                            <TextBlock l:Uids.Uid="HomeGuideTitle" FontWeight="SemiBold" TextWrapping="Wrap" />
-                            <TextBlock l:Uids.Uid="HomeGuideDescription" Style="{StaticResource HomeSecondaryTextStyle}" />
-                        </StackPanel>
-                        <Button x:Name="GuideAction" Grid.Row="1" HorizontalAlignment="Left" l:Uids.Uid="HomeGuideAction">
-                            <Button.Flyout>
-                                <Flyout>
-                                    <StackPanel MaxWidth="380" Spacing="14">
-                                        <TextBlock l:Uids.Uid="HomeGuideSteps" TextWrapping="Wrap" />
-                                        <Button l:Uids.Uid="HomeConnectAction" Command="{x:Bind ViewModel.OpenConnectionCommand}" />
-                                        <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_InstallRequirementsRegisterTelegram" Click="{x:Bind OnOpenHyperlink}" />
-                                    </StackPanel>
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                    </Grid>
-                </Border>
-
-                <!--  Официальный сайт и компактные справочные разделы  -->
-                <StackPanel x:Name="HomeLinks" Spacing="8">
-                    <HyperlinkButton HorizontalAlignment="Left" l:Uids.Uid="SettingsPage_OfficialSite_OpenTgResearcher" Click="{x:Bind OnOpenHyperlink}" />
-                    <Button HorizontalAlignment="Left" l:Uids.Uid="HomeAbout" Style="{StaticResource SubtleButtonStyle}">
-                        <Button.Flyout>
-                            <Flyout>
-                                <ScrollViewer MaxHeight="520" HorizontalScrollBarVisibility="Disabled">
-                                    <StackPanel MaxWidth="420" Spacing="12">
-                                        <!--  О приложении  -->
-                                        <TextBlock l:Uids.Uid="ProductAssignment" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="Wrap" />
-                                        <TextBlock l:Uids.Uid="ProductAssignmentDescription" TextWrapping="Wrap" />
-                                        <!--  Скачивание  -->
-                                        <HyperlinkButton l:Uids.Uid="SettingsPage_Releases_Latest" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                        <HyperlinkButton l:Uids.Uid="SettingsPage_DownloadStatistics" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                        <!--  Контейнер Docker  -->
-                                        <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_DockerConsole" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                        <TextBlock l:Uids.Uid="SettingsPage_GitHub_InstallRequirementsSaveValues" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </ScrollViewer>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                    <Button HorizontalAlignment="Left" l:Uids.Uid="HomeSupport" Style="{StaticResource SubtleButtonStyle}">
-                        <Button.Flyout>
-                            <Flyout>
-                                <StackPanel MaxWidth="420" Spacing="8">
-                                    <!--  Сообщество GitHub  -->
-                                    <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_Link" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                    <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_ReportBug" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                    <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_Discussions" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                    <!--  Поддержка пользователей  -->
-                                    <HyperlinkButton l:Uids.Uid="SettingsPage_GitHub_OpenTgResearcher" Style="{StaticResource HomeLinkStyle}" Click="{x:Bind OnOpenHyperlink}" />
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
     </Grid>
 </common:TgPageBase>

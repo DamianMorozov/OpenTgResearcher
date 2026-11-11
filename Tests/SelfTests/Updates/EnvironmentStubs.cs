@@ -126,6 +126,10 @@ public sealed class ContentDialog
 }
 public abstract class TgPageViewModelBase : ObservableObject, IDisposable
 {
+    public bool IsDisplaySensitiveData => LoadStateService.IsDisplaySensitiveData;
+    public string SensitiveData => LoadStateService.SensitiveData;
+    /// <summary> Повторяет уведомление базовой страницы при смене приватности </summary>
+    public void NotifyPrivacyChanged() => OnPropertyChanged(nameof(IsDisplaySensitiveData));
     public ILoadStateService LoadStateService { get; }
     public ITgSettingsService SettingsService { get; }
     public object? XamlRootVm { get; set; } = new();
@@ -164,6 +168,8 @@ public abstract class TgPageViewModelBase : ObservableObject, IDisposable
 }
 public static class App
 {
+    /// <summary> Предоставляет журнал независимому читателю SQLite </summary>
+    public static T GetService<T>() where T : class => (T)(object)Microsoft.Extensions.Logging.Abstractions.NullLogger<TgStorageInspector>.Instance;
     public static bool IsClosing { get; set; }
     public static int Restarts { get; set; }
     public static Action? RestartObserver { get; set; }

@@ -2,6 +2,51 @@ namespace OpenTgResearcherDesktop.UpdateSelfTests;
 
 internal static partial class Program
 {
+    // Карточка читает фактический размер файла, обновляется и открывает паспорт без запросов к базе или Telegram
+    private static async Task HomeStorageCardAsync()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), "otr-home-storage-" + Guid.NewGuid());
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var path = Path.Combine(directory, "storage.db");
+            await File.WriteAllBytesAsync(path, new byte[2048]);
+            using var state = new LoadStateService();
+            state.SetIsDisplaySensitiveData(isDisplaySensitiveData: true);
+            var settings = new ITgSettingsService { AppStorage = path };
+            var navigation = new INavigationService();
+            using var vm = new TgMainViewModel(state, settings, navigation, null!);
+            await vm.OnNavigatedToAsync(null);
+            Assert(vm.StorageSize == TgFileUtils.GetFileSizeAsString(2048), "Карточка не прочитала реальный размер файла");
+            vm.OpenStorageCommand.Execute(null);
+            Assert(navigation.LastPage == typeof(TgStorageViewModel).FullName, "Карточка открывает другую страницу");
+            await File.WriteAllBytesAsync(path, new byte[4096]);
+            await vm.ReloadUiAsync();
+            Assert(vm.StorageSize == TgFileUtils.GetFileSizeAsString(4096), "Обновление главной оставило прежний размер");
+            vm.Activate();
+            state.SetIsDisplaySensitiveData(isDisplaySensitiveData: false);
+            Assert(vm.StorageSize == state.SensitiveData, "Общий переключатель не скрывает размер базы");
+            state.SetIsDisplaySensitiveData(isDisplaySensitiveData: true);
+            File.Delete(path);
+            await vm.ReloadUiAsync();
+            Assert(vm.StorageSize == "Файл не найден", "Отсутствующая база отображается с прежним размером");
+            Localizer.Language = "en-US";
+            Assert(vm.StorageSize == "File not found", "Статус размера не переведён при смене языка");
+            Localizer.Language = "ru-RU";
+            settings.AppStorage = "invalid\0path";
+            await vm.ReloadUiAsync();
+            Assert(vm.StorageSize == "Размер недоступен" && vm.Errors.Count == 1, "Ошибка чтения размера скрыта или вызвала сбой");
+            Assert(vm.TelegramChecks == 0 && vm.StorageCalls == 0, "Карточка подключается к Telegram или читает SQLite");
+            using var markup = Assembly.GetExecutingAssembly().GetManifestResourceStream("TgMainPage.xaml")!;
+            var page = XDocument.Load(markup);
+            var card = page.Descendants().SingleOrDefault(x => x.Name.LocalName == "Button"
+                && (string?)x.Attribute("Command") == "{x:Bind ViewModel.OpenStorageCommand}");
+            Assert(card is not null && card.Descendants().Any(x => (string?)x.Attribute("Text") == "{x:Bind ViewModel.StorageSize, Mode=OneWay}"),
+                "Карточка не привязана к размеру и переходу");
+        }
+        finally { Directory.Delete(directory, recursive: true); }
+    }
+
     // Основное действие зависит от готовности клиента, остальные переходы работают и без Telegram
     private static async Task HomeNavigationAndConnectionAsync()
     {
@@ -122,7 +167,8 @@ internal static partial class Program
     {
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("TgMainPage.xaml")!;
         var page = XDocument.Load(stream);
-        foreach (var command in new[] { "PrimaryActionCommand", "OpenChatsCommand", "OpenNetworkCommand", "OpenSettingsCommand", "OpenCommand" })
+        foreach (var command in new[] { "PrimaryActionCommand", "OpenChatsCommand", "OpenNetworkCommand", "OpenSettingsCommand",
+            "OpenStorageCommand", "OpenCommand" })
             Assert(page.Descendants().Any(x => x.Attribute("Command")?.Value.Contains(command) == true), $"Главная не содержит переход {command}");
         Assert(page.Descendants().Any(x => x.Attribute("ItemsSource")?.Value.Contains("RecentChats") == true), "Нет списка недавних чатов");
         Assert(page.Descendants().Any(x => x.Name.LocalName == "AdaptiveTrigger"), "Главная не адаптируется к ширине окна");

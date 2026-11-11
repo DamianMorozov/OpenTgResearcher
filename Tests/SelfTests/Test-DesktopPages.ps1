@@ -110,7 +110,7 @@ try {
 
  # Проверяем настоящее окно без авторизации и пользовательской БД
  foreach($case in @(
-  @('^(Хранилище|Storage)$','^(Таблицы хранилища|Storage tables)$','storage'),
+  @('^(Хранилище|Storage)$','^(Паспорт хранилища|Storage passport)$','storage'),
   @('^(Подключение клиента|Client connection)$','^(АПИ ИД|API ID)$','connection'),
   @('^(Фильтры|Filters)$','^(Загрузка хранилища|Loading storage)$','filters'),
   @('^(Сторис|Stories)$','^(Загрузка хранилища|Loading storage)$','stories'),
@@ -120,13 +120,28 @@ try {
   [void](Find-Element $case[1])
   if($case[2] -eq 'storage') {
    $tabs=@(
-    @('^(Таблицы хранилища|Storage tables)$','.*','DataGridStorage'),
-    @('^(Настройка хранилища|Storage configuration)$','^(Создать бэкап|Backup storage)$',''),
-    @('^(Расширенные настройки хранения|Advanced storage settings)$','^(Сброс поля автоматического обновления|Reset auto update field)$','')
+    @('^(Обзор|Overview)$','^(Состав хранилища|Storage contents)$',''),
+    @('^(Данные|Data)$','^(Просмотр только для чтения|Read-only view).*',''),
+    @('^(Резервные копии|Backups)$','^(Копии сохраняются рядом|Backups are stored next).*',''),
+    @('^(Обслуживание|Maintenance)$','^(Проверить целостность|Check integrity)$','')
    )
    for($index=0;$index -lt $tabs.Count;$index++) {
     Invoke-Element (Find-Element $tabs[$index][0])
     [void](Find-Element $tabs[$index][1] $tabs[$index][2])
+    if($index -eq 2) {
+     $delete=Find-Element '^(Удалить копию|Delete backup)$' -AllowDisabled
+     if($delete.Current.IsEnabled){throw 'Удаление доступно без выбранной копии'}
+     Invoke-Element (Find-Element '^(Создать копию|Create backup)$')
+     Invoke-Element (Find-Element '^(Удалить копию|Delete backup)$')
+     Invoke-Element (Find-Element '^(Отмена|Cancel)$')
+     if(@(Get-ChildItem -LiteralPath $caseDirectory -Filter '*.bak').Count -ne 1){throw 'Отмена удалила резервную копию'}
+     Invoke-Element (Find-Element '^(Удалить копию|Delete backup)$')
+     Invoke-Element (Find-Element '^(Да|Yes)$')
+     [void](Find-Element '^(Резервных копий пока нет|No backups yet).*')
+     if(@(Get-ChildItem -LiteralPath $caseDirectory -Filter '*.bak').Count -ne 0){throw 'Подтверждённая копия осталась на диске'}
+     if(!(Test-Path -LiteralPath (Join-Path $caseDirectory 'TgStorage.db'))){throw 'Удаление копии затронуло базу'}
+     Write-Output 'PASS: создание копии, отмена удаления и удаление с подтверждением в настоящем окне'
+    }
     Save-Snapshot ('storage-'+$index)
    }
   }
@@ -141,7 +156,7 @@ try {
  $newLog|Set-Content (Join-Path $caseDirectory 'app.log') -Encoding utf8
  if($newLog -match 'App_UnhandledException|Exception:|Unhandled exception'){throw 'В журнале есть исключения'}
  if(!$newLog.Contains('App closed')){throw 'Нет записи штатного завершения'}
- Write-Output "PASS: пять разделов и три вкладки хранилища, закрытие с кодом 0, журнал без исключений; $caseDirectory"
+ Write-Output "PASS: пять разделов и четыре вкладки хранилища, закрытие с кодом 0, журнал без исключений; $caseDirectory"
  Write-Output 'Граница проверки: Telegram не подключён; занятые контексты и состояние парсинга проверяются селфтестами моделей'
 }
 finally {

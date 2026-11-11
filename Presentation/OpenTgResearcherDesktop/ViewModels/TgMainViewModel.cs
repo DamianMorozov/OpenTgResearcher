@@ -5,14 +5,19 @@ public sealed partial class TgMainViewModel : TgPageViewModelBase
 {
     private readonly INavigationService _navigation;
     private bool _isActive;
+    private long? _storageBytes;
+    private string _storageStatusKey = "HomeStorageUnavailable";
     public ObservableCollection<TgHomeRecentChat> RecentChats { get; } = [];
     public IRelayCommand PrimaryActionCommand { get; }
     public IRelayCommand OpenChatsCommand { get; }
     public IRelayCommand OpenConnectionCommand { get; }
     public IRelayCommand OpenNetworkCommand { get; }
     public IRelayCommand OpenSettingsCommand { get; }
+    public IRelayCommand OpenStorageCommand { get; }
     public IRelayCommand<TgHomeRecentChat> OpenRecentChatCommand { get; }
     public string VersionText => TgProgramIntegration.CurrentVersion;
+    public string StorageSize => !LoadStateService.IsDisplaySensitiveData ? LoadStateService.SensitiveData
+        : _storageBytes is long bytes ? TgFileUtils.GetFileSizeAsString(bytes) : _storageStatusKey.GetLocalizedResource();
 
     [ObservableProperty]
     public partial string ProfileName { get; private set; } = string.Empty;
@@ -33,6 +38,7 @@ public sealed partial class TgMainViewModel : TgPageViewModelBase
         OpenConnectionCommand = new RelayCommand(() => Navigate(typeof(TgClientConnectionViewModel)));
         OpenNetworkCommand = new RelayCommand(() => Navigate(typeof(TgNetworkActivityViewModel)));
         OpenSettingsCommand = new RelayCommand(() => Navigate(typeof(TgSettingsViewModel)));
+        OpenStorageCommand = new RelayCommand(() => Navigate(typeof(TgStorageViewModel)));
         OpenRecentChatCommand = new RelayCommand<TgHomeRecentChat>(OpenRecentChat);
     }
 
@@ -40,10 +46,10 @@ public sealed partial class TgMainViewModel : TgPageViewModelBase
     public override Task OnNavigatedToAsync(NavigationEventArgs? e) => ReloadUiAsync();
 
     /// <summary> Обновляет локальное представление вместо проверки соединения через API Telegram </summary>
-    public override Task ReloadUiAsync()
+    public override async Task ReloadUiAsync()
     {
         Refresh();
-        return Task.CompletedTask;
+        await UpdateStorageSizeAsync();
     }
 
     /// <summary> Подписывается на изменения только на время показа страницы </summary>
@@ -90,8 +96,31 @@ public sealed partial class TgMainViewModel : TgPageViewModelBase
                 RecentChats.Add(new(entry.Uid, title, detail, OpenRecentChatCommand));
             }
             IsRecentEmpty = RecentChats.Count == 0;
+            OnPropertyChanged(nameof(StorageSize));
         }
         catch (Exception ex) { LogError(ex); }
+    }
+
+    // Читаем только размер файла текущей базы вне потока интерфейса, без открытия SQLite и подключения к Telegram
+    private async Task UpdateStorageSizeAsync(CancellationToken ct = default)
+    {
+        var path = SettingsService.AppStorage;
+        try
+        {
+            _storageBytes = await Task.Run(() => new FileInfo(path).Length, ct);
+        }
+        catch (IOException ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+            _storageBytes = null;
+            _storageStatusKey = "HomeStorageMissing";
+        }
+        catch (Exception ex)
+        {
+            _storageBytes = null;
+            _storageStatusKey = "HomeStorageUnavailable";
+            LogError(ex);
+        }
+        finally { OnPropertyChanged(nameof(StorageSize)); }
     }
 
     // Отражаем смену готовности соединения и общего режима конфиденциальности

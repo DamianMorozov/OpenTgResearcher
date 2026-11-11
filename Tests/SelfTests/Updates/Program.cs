@@ -7,7 +7,12 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("StoragePassportCommands", StoragePassportCommandsAsync),
+            ("StorageBackupDeletion", StorageBackupDeletionAsync),
+            ("StorageMaintenanceAndRestore", StorageMaintenanceAndRestoreAsync),
+            ("StoragePrivacyAndLocalization", StoragePrivacyAndLocalizationAsync),
             ("HomeOpensWithoutTelegramProbe", HomeOpensWithoutTelegramProbeAsync),
+            ("HomeStorageCard", HomeStorageCardAsync),
             ("HomeLaunchLayout", HomeLaunchLayoutAsync),
             ("HomeNavigationAndConnection", HomeNavigationAndConnectionAsync),
             ("HomeRecentHistoryIsolation", HomeRecentHistoryIsolationAsync),

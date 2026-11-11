@@ -1,45 +1,343 @@
-﻿<common:TgPageBase
+<common:TgPageBase
     x:Class="OpenTgResearcherDesktop.Views.TgStoragePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:OpenTgResearcherDesktop.Common"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:OpenTgResearcherDesktop.Helpers"
     xmlns:l="using:WinUI3Localizer"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:styles="using:OpenTgResearcherDesktop.Styles"
-    xmlns:viewmodels="using:OpenTgResearcherDesktop.ViewModels"
-    xmlns:views="using:OpenTgResearcherDesktop.Views"
-    d:DataContext="{d:DesignInstance Type=viewmodels:TgStorageViewModel}"
-    mc:Ignorable="d">
-
-    <ScrollView VerticalScrollMode="Auto">
-        <!--  Панель выбора раздела  -->
-        <ContentControl
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
-            Visibility="{x:Bind ViewModel.IsPageStorageProcessing, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-            <Grid Grid.Row="1" Margin="0,0,0,5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+    xmlns:styles="using:OpenTgResearcherDesktop.Styles">
+    <Page.Resources>
+        <Style x:Key="StorageCard" TargetType="Border">
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style x:Key="StorageSecondary" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </Page.Resources>
+    <ScrollViewer HorizontalContentAlignment="Stretch" HorizontalScrollBarVisibility="Disabled">
+        <Grid Padding="16,8,16,24">
+            <StackPanel MaxWidth="1180" Spacing="20">
+                <!--  Паспорт выбранного профиля остаётся над всеми разделами  -->
+                <Border Style="{StaticResource StorageCard}">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="8">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <styles:TgOutlineIcon
+                                    Width="26"
+                                    Height="26"
+                                    Kind="storage" />
+                                <TextBlock
+                                    l:Uids.Uid="StoragePassport"
+                                    FontSize="26"
+                                    FontWeight="SemiBold" />
+                            </StackPanel>
+                            <TextBlock Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}" />
+                            <TextBlock FontWeight="SemiBold" Text="{x:Bind ViewModel.FileName, Mode=OneWay}" />
+                            <TextBlock
+                                IsTextSelectionEnabled="True"
+                                Style="{StaticResource StorageSecondary}"
+                                Text="{x:Bind ViewModel.StoragePath, Mode=OneWay}" />
+                        </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            VerticalAlignment="Top"
+                            l:Uids.Uid="StorageCreateBackup"
+                            Command="{x:Bind ViewModel.CreateBackupCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsIdle, Mode=OneWay}"
+                            Style="{StaticResource AccentButtonStyle}" />
+                    </Grid>
+                </Border>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1.5*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource StorageCard}">
+                        <StackPanel Spacing="6">
+                            <TextBlock l:Uids.Uid="StorageSize" Style="{StaticResource StorageSecondary}" />
+                            <TextBlock
+                                FontSize="23"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind ViewModel.DatabaseSize, Mode=OneWay}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource StorageCard}">
+                        <StackPanel Spacing="6">
+                            <TextBlock l:Uids.Uid="StorageChats" Style="{StaticResource StorageSecondary}" />
+                            <TextBlock
+                                FontSize="23"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind ViewModel.ChatCount, Mode=OneWay}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource StorageCard}">
+                        <StackPanel Spacing="6">
+                            <TextBlock l:Uids.Uid="StorageMessages" Style="{StaticResource StorageSecondary}" />
+                            <TextBlock
+                                FontSize="23"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind ViewModel.MessageCount, Mode=OneWay}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="3" Style="{StaticResource StorageCard}">
+                        <StackPanel Spacing="6">
+                            <TextBlock l:Uids.Uid="StorageLastBackup" Style="{StaticResource StorageSecondary}" />
+                            <TextBlock
+                                FontSize="18"
+                                Text="{x:Bind ViewModel.LastBackup, Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                <ProgressBar IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                <TextBlock
+                    IsTextSelectionEnabled="True"
+                    Text="{x:Bind ViewModel.Message, Mode=OneWay}"
+                    TextWrapping="Wrap"
+                    Visibility="{x:Bind ViewModel.HasMessage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <SelectorBar
                     x:Name="StorageSelectorBar"
-                    Margin="0,-10,0,-10"
+                    IsEnabled="{x:Bind ViewModel.IsIdle, Mode=OneWay}"
                     SelectionChanged="StorageSelectorBar_SelectionChanged">
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageTables" Tag="TgStorageTablesPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageConfiguration" Tag="TgStorageConfigurationPage" />
-                    <SelectorBarItem l:Uids.Uid="SelectorBarItemPageStorageAdvancedSettings" Tag="TgStorageAdvancedPage" />
+                    <SelectorBarItem
+                        l:Uids.Uid="StorageOverview"
+                        IsSelected="True"
+                        Tag="Overview" />
+                    <SelectorBarItem l:Uids.Uid="StorageData" Tag="Data" />
+                    <SelectorBarItem l:Uids.Uid="StorageBackups" Tag="Backups" />
+                    <SelectorBarItem l:Uids.Uid="StorageMaintenance" Tag="Maintenance" />
                 </SelectorBar>
-                <!--  Область отображения страницы  -->
-                <Frame
-                    x:Name="ContentFrame"
-                    Grid.Row="1"
-                    Margin="-5,5,-5,-10"
-                    IsNavigationStackEnabled="False" />
-            </Grid>
-        </ContentControl>
-    </ScrollView>
+                <ContentControl HorizontalContentAlignment="Stretch" IsEnabled="{x:Bind ViewModel.IsIdle, Mode=OneWay}">
+                    <Grid>
+                        <!--  Обзор показывает состав базы без раскрытия содержимого записей  -->
+                        <StackPanel x:Name="OverviewSection" Spacing="16">
+                            <TextBlock
+                                l:Uids.Uid="StorageComposition"
+                                FontSize="20"
+                                FontWeight="SemiBold" />
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.Tables}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border
+                                            Margin="0,0,0,6"
+                                            Padding="14,10"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                                    <TextBlock Text="{Binding Title}" />
+                                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding Name}" />
+                                                </StackPanel>
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    FontWeight="SemiBold"
+                                                    Text="{Binding CountText}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock l:Uids.Uid="StorageMediaHint" Style="{StaticResource StorageSecondary}" />
+                        </StackPanel>
+                        <!--  Проводник находится внутри паспорта и открывает записи только для чтения  -->
+                        <StackPanel
+                            x:Name="DataSection"
+                            Spacing="12"
+                            Visibility="Collapsed">
+                            <TextBlock l:Uids.Uid="StorageExplorerHint" Style="{StaticResource StorageSecondary}" />
+                            <TextBlock
+                                l:Uids.Uid="StoragePrivacyHint"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            <Grid ColumnSpacing="16" Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ListView
+                                    MaxHeight="580"
+                                    VerticalAlignment="Top"
+                                    ItemsSource="{x:Bind ViewModel.Tables}"
+                                    SelectedItem="{x:Bind ViewModel.SelectedTable, Mode=TwoWay}"
+                                    SelectionChanged="Tables_SelectionChanged">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Margin="0,5" Spacing="3">
+                                                <TextBlock Text="{Binding Title}" />
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="{Binding CountText}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <StackPanel Grid.Column="1" Spacing="12">
+                                    <AutoSuggestBox
+                                        l:Uids.Uid="StorageSearch"
+                                        QueryIcon="Find"
+                                        QuerySubmitted="Search_QuerySubmitted"
+                                        Text="{x:Bind ViewModel.Search, Mode=TwoWay}" />
+                                    <Grid x:Name="ExplorerColumns" ColumnSpacing="14">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="8">
+                                            <TextBlock
+                                                l:Uids.Uid="StorageNoRecords"
+                                                Style="{StaticResource StorageSecondary}"
+                                                Visibility="{x:Bind ViewModel.HasRecords, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                            <ListView
+                                                MaxHeight="490"
+                                                ItemsSource="{x:Bind ViewModel.Records, Mode=OneWay}"
+                                                SelectedItem="{x:Bind ViewModel.SelectedRecord, Mode=TwoWay}">
+                                                <ListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Margin="0,6" Spacing="4">
+                                                            <TextBlock
+                                                                MaxLines="2"
+                                                                Text="{Binding Title}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                TextWrapping="Wrap" />
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                                Text="{Binding Id}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ListView.ItemTemplate>
+                                            </ListView>
+                                        </StackPanel>
+                                        <Border
+                                            Grid.Column="1"
+                                            Padding="14"
+                                            VerticalAlignment="Top"
+                                            Style="{StaticResource StorageCard}">
+                                            <ScrollViewer MaxHeight="490" HorizontalScrollBarVisibility="Disabled">
+                                                <StackPanel Spacing="12">
+                                                    <TextBlock l:Uids.Uid="StorageRecordDetails" FontWeight="SemiBold" />
+                                                    <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedRecord.Fields, Mode=OneWay}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Margin="0,0,0,12" Spacing="4">
+                                                                    <TextBlock
+                                                                        FontSize="11"
+                                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                                        Text="{Binding Name}" />
+                                                                    <TextBlock
+                                                                        IsTextSelectionEnabled="True"
+                                                                        Text="{Binding Value}"
+                                                                        TextWrapping="Wrap" />
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </StackPanel>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Grid>
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button l:Uids.Uid="StoragePrevious" Command="{x:Bind ViewModel.PreviousCommand}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind ViewModel.PageCaption, Mode=OneWay}" />
+                                        <Button
+                                            Grid.Column="2"
+                                            l:Uids.Uid="StorageNext"
+                                            Command="{x:Bind ViewModel.NextCommand}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel
+                            x:Name="BackupsSection"
+                            Spacing="14"
+                            Visibility="Collapsed">
+                            <TextBlock l:Uids.Uid="StorageBackupHint" Style="{StaticResource StorageSecondary}" />
+                            <TextBlock
+                                l:Uids.Uid="StorageNoBackups"
+                                Style="{StaticResource StorageSecondary}"
+                                Visibility="{x:Bind ViewModel.HasBackups, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            <ListView
+                                MaxHeight="420"
+                                ItemsSource="{x:Bind ViewModel.Backups}"
+                                SelectedItem="{x:Bind ViewModel.SelectedBackup, Mode=TwoWay}"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,8" Spacing="5">
+                                            <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                                            <TextBlock Text="{Binding Description}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                Spacing="12"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Button
+                                    l:Uids.Uid="StorageRestore"
+                                    Command="{x:Bind ViewModel.RestoreCommand}"
+                                    IsEnabled="{x:Bind ViewModel.HasBackups, Mode=OneWay}" />
+                                <Button l:Uids.Uid="StorageDeleteBackup" Command="{x:Bind ViewModel.DeleteBackupCommand}" />
+                            </StackPanel>
+                            <TextBlock
+                                l:Uids.Uid="StoragePrivacyHint"
+                                TextWrapping="Wrap"
+                                Visibility="{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                            <TextBlock l:Uids.Uid="StorageRestoreHint" Style="{StaticResource StorageSecondary}" />
+                        </StackPanel>
+                        <StackPanel
+                            x:Name="MaintenanceSection"
+                            Spacing="14"
+                            Visibility="Collapsed">
+                            <TextBlock l:Uids.Uid="StorageMaintenanceIntro" Style="{StaticResource StorageSecondary}" />
+                            <CheckBox l:Uids.Uid="StorageBackupBefore" IsChecked="{x:Bind ViewModel.BackupBeforeMaintenance, Mode=TwoWay}" />
+                            <Border Style="{StaticResource StorageCard}">
+                                <StackPanel Spacing="10">
+                                    <TextBlock l:Uids.Uid="StorageIntegrityDescription" Style="{StaticResource StorageSecondary}" />
+                                    <Button l:Uids.Uid="StorageCheck" Command="{x:Bind ViewModel.CheckCommand}" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource StorageCard}">
+                                <StackPanel Spacing="10">
+                                    <TextBlock l:Uids.Uid="StorageCompactDescription" Style="{StaticResource StorageSecondary}" />
+                                    <Button l:Uids.Uid="StorageCompact" Command="{x:Bind ViewModel.CompactCommand}" />
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource StorageCard}">
+                                <StackPanel Spacing="10">
+                                    <TextBlock l:Uids.Uid="StorageDisableDescription" Style="{StaticResource StorageSecondary}" />
+                                    <Button l:Uids.Uid="StorageDisableAuto" Command="{x:Bind ViewModel.DisableAutoUpdateCommand}" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ContentControl>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </common:TgPageBase>

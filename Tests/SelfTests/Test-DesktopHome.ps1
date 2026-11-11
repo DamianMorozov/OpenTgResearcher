@@ -73,6 +73,16 @@ try {
   Start-Sleep -Milliseconds 900
   $first=Find-HomeElement -id 'HomeChats'
   $last=Find-HomeElement -id 'HomeSettings'
+  $storage=Find-HomeElement -id 'HomeStorage'
+  $storageSize=Find-HomeElement -id 'HomeStorageSize'
+  $databaseBytes=(Get-Item -LiteralPath (Join-Path $caseDirectory 'Demo.db')).Length
+  $expectedSize=if($databaseBytes -lt 1024){'{0:###} B' -f $databaseBytes}
+    elseif($databaseBytes -lt 1048576){'{0:###} KB' -f ($databaseBytes/1024)}
+    elseif($databaseBytes -lt 1073741824){'{0:###} MB' -f ($databaseBytes/1048576)}
+    else{'{0:###} GB' -f ($databaseBytes/1073741824)}
+  if($storageSize.Current.Name -ne $expectedSize){throw "Карточка показывает неверный размер: $($storageSize.Current.Name), ожидался $expectedSize"}
+  $cardBounds=$storage.Current.BoundingRectangle
+  if($cardBounds.Width -le 0 -or $cardBounds.Height -le 0){throw 'Карточка хранилища обрезана'}
   $viewport=[System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($first)
   while($null -ne $viewport -and $viewport.Current.ClassName -ne 'ScrollViewer'){
    $viewport=[System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($viewport)
@@ -89,9 +99,14 @@ try {
   if($leftGap -lt 0 -or $rightGap -lt 0 -or $delta -gt 4){throw "Главная страница смещена или обрезана: $measurement"}
   Write-Output "PASS: $measurement"
  }
+ $storage=Find-HomeElement -id 'HomeStorage'
+ $storageInvoke=$null
+ if(!$storage.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern,[ref]$storageInvoke)){throw 'Карточка не поддерживает открытие'}
+ $storageInvoke.Invoke()
+ [void](Find-HomeElement -name '^(Паспорт хранилища|Storage passport)$')
  [void]$appProcess.CloseMainWindow()
  if(!$appProcess.WaitForExit(15000)){throw 'Desktop не завершился штатно'}
- Write-Output "PASS: центровка и изменение ширины настоящего окна; $caseDirectory"
+ Write-Output "PASS: центровка, размер БД и переход из карточки хранилища в настоящем окне; $caseDirectory"
 }
 finally {
  if($null -ne $appProcess -and !$appProcess.HasExited){[void]$appProcess.CloseMainWindow();[void]$appProcess.WaitForExit(15000)}

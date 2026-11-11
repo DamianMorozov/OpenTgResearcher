@@ -2686,4 +2686,67 @@ API-параметры, телефон и выбранный прокси буд
 Откройте раздел «Чаты», выберите чат, укажите каталог для файлов и запустите парсинг.</value></data>
   <data name="HomeAbout.Content" xml:space="preserve"><value>О приложении</value></data>
   <data name="HomeSupport.Content" xml:space="preserve"><value>Поддержка и сообщество</value></data>
+  <data name="StoragePassport.Text" xml:space="preserve"><value>Паспорт хранилища</value></data>
+  <data name="StorageCreateBackup.Content" xml:space="preserve"><value>Создать копию</value></data>
+  <data name="StorageSize.Text" xml:space="preserve"><value>База и журнал SQLite</value></data>
+  <data name="StorageChats.Text" xml:space="preserve"><value>Чаты</value></data>
+  <data name="StorageMessages.Text" xml:space="preserve"><value>Сообщения</value></data>
+  <data name="StorageLastBackup.Text" xml:space="preserve"><value>Последняя копия</value></data>
+  <data name="StorageOverview.Text" xml:space="preserve"><value>Обзор</value></data>
+  <data name="StorageData.Text" xml:space="preserve"><value>Данные</value></data>
+  <data name="StorageBackups.Text" xml:space="preserve"><value>Резервные копии</value></data>
+  <data name="StorageMaintenance.Text" xml:space="preserve"><value>Обслуживание</value></data>
+  <data name="StorageComposition.Text" xml:space="preserve"><value>Состав хранилища</value></data>
+  <data name="StorageMediaHint.Text" xml:space="preserve"><value>Фотографии, видео и другие скачанные файлы находятся в каталогах чатов. Размер выше учитывает только базу и её журнал, без медиафайлов.</value></data>
+  <data name="StorageExplorerHint.Text" xml:space="preserve"><value>Просмотр только для чтения. Выберите таблицу, найдите запись и откройте её поля справа. Пароли, ключи и данные авторизации в проводнике не отображаются.</value></data>
+  <data name="StoragePrivacyHint.Text" xml:space="preserve"><value>Чтобы увидеть записи, включите отображение данных кнопкой с глазом на верхней панели.</value></data>
+  <data name="StorageSearch.PlaceholderText" xml:space="preserve"><value>Поиск в выбранной таблице · Enter</value></data>
+  <data name="StorageNoRecords.Text" xml:space="preserve"><value>Записи не найдены</value></data>
+  <data name="StorageRecordDetails.Text" xml:space="preserve"><value>Карточка записи</value></data>
+  <data name="StoragePrevious.Content" xml:space="preserve"><value>← Назад</value></data>
+  <data name="StorageNext.Content" xml:space="preserve"><value>Далее →</value></data>
+  <data name="StorageBackupHint.Text" xml:space="preserve"><value>Копии сохраняются рядом с базой. Создание копии доступно и во время парсинга: SQLite сохраняет согласованный снимок данных.</value></data>
+  <data name="StorageNoBackups.Text" xml:space="preserve"><value>Резервных копий пока нет. Нажмите «Создать копию».</value></data>
+  <data name="StorageRestore.Content" xml:space="preserve"><value>Восстановить и перезапустить</value></data>
+  <data name="StorageRestoreTitle" xml:space="preserve"><value>Восстановить и перезапустить</value></data>
+  <data name="StorageRestoreHint.Text" xml:space="preserve"><value>Копия будет проверена и восстановлена в новый файл рядом с текущей базой. Приложение перезапустится с этим файлом в текущем профиле. Исходная база и сессия Telegram сохранятся.</value></data>
+  <data name="StorageRestoreExplanation" xml:space="preserve"><value>Копия будет проверена и восстановлена в новый файл рядом с текущей базой. Приложение перезапустится с этим файлом в текущем профиле. Исходная база и сессия Telegram сохранятся.</value></data>
+  <data name="StorageMaintenanceIntro.Text" xml:space="preserve"><value>Перед изменением базы завершите парсинг и другие загрузки. Просмотр данных и создание копий остаются доступны во время работы.</value></data>
+  <data name="StorageBackupBefore.Content" xml:space="preserve"><value>Создавать копию перед обслуживанием</value></data>
+  <data name="StorageIntegrityDescription.Text" xml:space="preserve"><value>Проверить структуру SQLite и сообщить о повреждениях. Данные не изменяются.</value></data>
+  <data name="StorageCheck.Content" xml:space="preserve"><value>Проверить целостность</value></data>
+  <data name="StorageCompactDescription.Text" xml:space="preserve"><value>Освободить место после удаления записей. Операция VACUUM может занять время на большой базе.</value></data>
+  <data name="StorageCompact.Content" xml:space="preserve"><value>Сжать базу</value></data>
+  <data name="StorageCompactTitle" xml:space="preserve"><value>Сжать базу</value></data>
+  <data name="StorageDisableDescription.Text" xml:space="preserve"><value>Отключить автоматическое обновление для всех сохранённых чатов. Сообщения и файлы сохранятся.</value></data>
+  <data name="StorageDisableAuto.Content" xml:space="preserve"><value>Отключить автообновление чатов</value></data>
+  <data name="StorageDisableAutoTitle" xml:space="preserve"><value>Отключить автообновление чатов</value></data>
+  <data name="StorageNoBackup" xml:space="preserve"><value>Копий пока нет</value></data>
+  <data name="StoragePageRange" xml:space="preserve"><value>{0}–{1} из {2}</value></data>
+  <data name="StorageOperationError" xml:space="preserve"><value>Не удалось выполнить операцию с хранилищем.</value></data>
+  <data name="StorageBackupCreated" xml:space="preserve"><value>Резервная копия создана.</value></data>
+  <data name="StorageIntegrityOk" xml:space="preserve"><value>Проверка завершена: целостность SQLite не нарушена.</value></data>
+  <data name="StorageStopOperations" xml:space="preserve"><value>Сначала завершите парсинг и другие операции загрузки, затем повторите обслуживание хранилища.</value></data>
+  <data name="StorageMaintenanceHint" xml:space="preserve"><value>Будет изменена текущая база. Если включена настройка «Создавать копию перед обслуживанием», сначала сохранится резервная копия. Продолжить?</value></data>
+  <data name="StorageMaintenanceDone" xml:space="preserve"><value>Обслуживание завершено.</value></data>
+  <data name="StorageTable_APPS" xml:space="preserve"><value>Приложения</value></data>
+  <data name="StorageTable_CHAT_USERS" xml:space="preserve"><value>Участники чатов</value></data>
+  <data name="StorageTable_DOCUMENTS" xml:space="preserve"><value>Документы</value></data>
+  <data name="StorageTable_FILTERS" xml:space="preserve"><value>Фильтры</value></data>
+  <data name="StorageTable_LICENSES" xml:space="preserve"><value>Лицензии</value></data>
+  <data name="StorageTable_MESSAGES" xml:space="preserve"><value>Сообщения</value></data>
+  <data name="StorageTable_MESSAGES_RELATIONS" xml:space="preserve"><value>Связи сообщений</value></data>
+  <data name="StorageTable_PROXIES" xml:space="preserve"><value>Прокси</value></data>
+  <data name="StorageTable_SOURCES" xml:space="preserve"><value>Чаты</value></data>
+  <data name="StorageTable_STORIES" xml:space="preserve"><value>Истории</value></data>
+  <data name="StorageTable_USERS" xml:space="preserve"><value>Пользователи</value></data>
+  <data name="StorageTable_VERSIONS" xml:space="preserve"><value>Версии базы</value></data>
+  <data name="StorageProfileMissing" xml:space="preserve"><value>Не найден текущий профиль. Откройте «Настройки» и выберите профиль хранилища.</value></data>
+  <data name="StorageDeleteBackup.Content" xml:space="preserve"><value>Удалить копию</value></data>
+  <data name="StorageDeleteBackupTitle" xml:space="preserve"><value>Удаление резервной копии</value></data>
+  <data name="StorageDeleteBackupHint" xml:space="preserve"><value>Удалить резервную копию «{0}»? Файл будет удалён с диска без возможности восстановления из программы. Текущее хранилище и остальные копии сохранятся.</value></data>
+  <data name="StorageBackupDeleted" xml:space="preserve"><value>Резервная копия удалена.</value></data>
+  <data name="HomeStorageTitle.Text" xml:space="preserve"><value>Хранилище</value></data>
+  <data name="HomeStorageMissing" xml:space="preserve"><value>Файл не найден</value></data>
+  <data name="HomeStorageUnavailable" xml:space="preserve"><value>Размер недоступен</value></data>
 </root>

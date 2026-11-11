@@ -141,13 +141,16 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition x:Name="TileColumnMiddle" Width="0" />
                             <ColumnDefinition x:Name="TileColumnRight" Width="0" />
+                            <ColumnDefinition x:Name="TileColumnSettings" Width="0" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition x:Name="TileRowMiddle" Height="Auto" />
                             <RowDefinition x:Name="TileRowBottom" Height="Auto" />
+                            <RowDefinition x:Name="TileRowSettings" Height="Auto" />
                         </Grid.RowDefinitions>
                         <Button
+                            x:Name="ChatsTile"
                             AutomationProperties.AutomationId="HomeChats"
                             Command="{x:Bind ViewModel.OpenChatsCommand}"
                             Style="{StaticResource HomeTileStyle}">
@@ -176,8 +179,27 @@
                             </StackPanel>
                         </Button>
                         <Button
-                            x:Name="SettingsTile"
+                            x:Name="StorageTile"
                             Grid.Row="2"
+                            AutomationProperties.AutomationId="HomeStorage"
+                            Command="{x:Bind ViewModel.OpenStorageCommand}"
+                            Style="{StaticResource HomeTileStyle}">
+                            <StackPanel Spacing="10">
+                                <styles:TgOutlineIcon HorizontalAlignment="Left" Kind="storage" />
+                                <TextBlock
+                                    l:Uids.Uid="HomeStorageTitle"
+                                    FontWeight="SemiBold"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    AutomationProperties.AutomationId="HomeStorageSize"
+                                    FontSize="20"
+                                    Text="{x:Bind ViewModel.StorageSize, Mode=OneWay}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Button>
+                        <Button
+                            x:Name="SettingsTile"
+                            Grid.Row="3"
                             AutomationProperties.AutomationId="HomeSettings"
                             Command="{x:Bind ViewModel.OpenSettingsCommand}"
                             Style="{StaticResource HomeTileStyle}">
@@ -386,6 +408,26 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                 </VisualState>
+                <VisualState x:Name="MediumHome">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="760" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="LaunchTileGrid.RowSpacing" Value="0" />
+                        <Setter Target="ChatsTile.Margin" Value="0,0,6,12" />
+                        <Setter Target="NetworkTile.Margin" Value="6,0,0,12" />
+                        <Setter Target="StorageTile.Margin" Value="0,0,6,0" />
+                        <Setter Target="SettingsTile.Margin" Value="6,0,0,0" />
+                        <Setter Target="NetworkTile.(Grid.Row)" Value="0" />
+                        <Setter Target="NetworkTile.(Grid.Column)" Value="1" />
+                        <Setter Target="StorageTile.(Grid.Row)" Value="1" />
+                        <Setter Target="SettingsTile.(Grid.Row)" Value="1" />
+                        <Setter Target="SettingsTile.(Grid.Column)" Value="1" />
+                        <Setter Target="TileColumnMiddle.Width" Value="*" />
+                        <Setter Target="TileRowBottom.Height" Value="0" />
+                        <Setter Target="TileRowSettings.Height" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="WideHome">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="960" />
@@ -405,12 +447,16 @@
                         <Setter Target="LaunchTileGrid.RowSpacing" Value="0" />
                         <Setter Target="NetworkTile.(Grid.Row)" Value="0" />
                         <Setter Target="NetworkTile.(Grid.Column)" Value="1" />
+                        <Setter Target="StorageTile.(Grid.Row)" Value="0" />
+                        <Setter Target="StorageTile.(Grid.Column)" Value="2" />
                         <Setter Target="SettingsTile.(Grid.Row)" Value="0" />
-                        <Setter Target="SettingsTile.(Grid.Column)" Value="2" />
+                        <Setter Target="SettingsTile.(Grid.Column)" Value="3" />
                         <Setter Target="TileColumnMiddle.Width" Value="*" />
                         <Setter Target="TileColumnRight.Width" Value="*" />
+                        <Setter Target="TileColumnSettings.Width" Value="*" />
                         <Setter Target="TileRowMiddle.Height" Value="0" />
                         <Setter Target="TileRowBottom.Height" Value="0" />
+                        <Setter Target="TileRowSettings.Height" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

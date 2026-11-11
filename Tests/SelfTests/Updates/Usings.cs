@@ -15,5 +15,6 @@ global using TgBusinessLogic.Models;
 global using OpenTgResearcherDesktop.Models;
 global using TgBusinessLogic.Services;
 global using TgInfrastructure.Helpers;
+global using TgStorage.Utils;
 global using TgConstants = OpenTgResearcherDesktop.UpdateSelfTests.TestConstants;
 global using VelopackAsset = OpenTgResearcherDesktop.UpdateSelfTests.TestAsset;

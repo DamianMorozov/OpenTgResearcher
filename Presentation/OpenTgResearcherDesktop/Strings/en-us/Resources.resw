@@ -2622,4 +2622,67 @@ On Client connection, enter your API ID and API hash from my.telegram.org/apps, 
 Open Chats, select a chat, choose a download folder and start parsing.</value></data>
   <data name="HomeAbout.Content" xml:space="preserve"><value>About</value></data>
   <data name="HomeSupport.Content" xml:space="preserve"><value>Support and community</value></data>
+  <data name="StoragePassport.Text" xml:space="preserve"><value>Storage passport</value></data>
+  <data name="StorageCreateBackup.Content" xml:space="preserve"><value>Create backup</value></data>
+  <data name="StorageSize.Text" xml:space="preserve"><value>Database and SQLite journal</value></data>
+  <data name="StorageChats.Text" xml:space="preserve"><value>Chats</value></data>
+  <data name="StorageMessages.Text" xml:space="preserve"><value>Messages</value></data>
+  <data name="StorageLastBackup.Text" xml:space="preserve"><value>Latest backup</value></data>
+  <data name="StorageOverview.Text" xml:space="preserve"><value>Overview</value></data>
+  <data name="StorageData.Text" xml:space="preserve"><value>Data</value></data>
+  <data name="StorageBackups.Text" xml:space="preserve"><value>Backups</value></data>
+  <data name="StorageMaintenance.Text" xml:space="preserve"><value>Maintenance</value></data>
+  <data name="StorageComposition.Text" xml:space="preserve"><value>Storage contents</value></data>
+  <data name="StorageMediaHint.Text" xml:space="preserve"><value>Downloaded photos, videos and other files are stored in chat folders. The size above includes only the database and its journal, excluding media.</value></data>
+  <data name="StorageExplorerHint.Text" xml:space="preserve"><value>Read-only view. Choose a table, find a record and inspect its fields on the right. Passwords, keys and authorization details are excluded.</value></data>
+  <data name="StoragePrivacyHint.Text" xml:space="preserve"><value>Enable data visibility using the eye button in the top toolbar to view records.</value></data>
+  <data name="StorageSearch.PlaceholderText" xml:space="preserve"><value>Search this table · Enter</value></data>
+  <data name="StorageNoRecords.Text" xml:space="preserve"><value>No records found</value></data>
+  <data name="StorageRecordDetails.Text" xml:space="preserve"><value>Record details</value></data>
+  <data name="StoragePrevious.Content" xml:space="preserve"><value>← Previous</value></data>
+  <data name="StorageNext.Content" xml:space="preserve"><value>Next →</value></data>
+  <data name="StorageBackupHint.Text" xml:space="preserve"><value>Backups are stored next to the database. You can create a backup during parsing: SQLite saves a consistent snapshot.</value></data>
+  <data name="StorageNoBackups.Text" xml:space="preserve"><value>No backups yet. Select Create backup.</value></data>
+  <data name="StorageRestore.Content" xml:space="preserve"><value>Restore and restart</value></data>
+  <data name="StorageRestoreTitle" xml:space="preserve"><value>Restore and restart</value></data>
+  <data name="StorageRestoreHint.Text" xml:space="preserve"><value>The backup will be checked and restored to a new file next to the current database. The app will restart using this file in the current profile. The original database and Telegram session will be preserved.</value></data>
+  <data name="StorageRestoreExplanation" xml:space="preserve"><value>The backup will be checked and restored to a new file next to the current database. The app will restart using this file in the current profile. The original database and Telegram session will be preserved.</value></data>
+  <data name="StorageMaintenanceIntro.Text" xml:space="preserve"><value>Finish parsing and other downloads before modifying the database. Browsing and backup remain available during operations.</value></data>
+  <data name="StorageBackupBefore.Content" xml:space="preserve"><value>Back up before maintenance</value></data>
+  <data name="StorageIntegrityDescription.Text" xml:space="preserve"><value>Check the SQLite structure and report corruption. Data is not modified.</value></data>
+  <data name="StorageCheck.Content" xml:space="preserve"><value>Check integrity</value></data>
+  <data name="StorageCompactDescription.Text" xml:space="preserve"><value>Reclaim space after deleting records. VACUUM may take a while on large databases.</value></data>
+  <data name="StorageCompact.Content" xml:space="preserve"><value>Compact database</value></data>
+  <data name="StorageCompactTitle" xml:space="preserve"><value>Compact database</value></data>
+  <data name="StorageDisableDescription.Text" xml:space="preserve"><value>Disable automatic updates for all saved chats. Messages and files will be kept.</value></data>
+  <data name="StorageDisableAuto.Content" xml:space="preserve"><value>Disable chat auto-update</value></data>
+  <data name="StorageDisableAutoTitle" xml:space="preserve"><value>Disable chat auto-update</value></data>
+  <data name="StorageNoBackup" xml:space="preserve"><value>No backups yet</value></data>
+  <data name="StoragePageRange" xml:space="preserve"><value>{0}–{1} of {2}</value></data>
+  <data name="StorageOperationError" xml:space="preserve"><value>The storage operation failed.</value></data>
+  <data name="StorageBackupCreated" xml:space="preserve"><value>Backup created.</value></data>
+  <data name="StorageIntegrityOk" xml:space="preserve"><value>Check complete: SQLite integrity is valid.</value></data>
+  <data name="StorageStopOperations" xml:space="preserve"><value>Finish parsing and other loading operations before running storage maintenance.</value></data>
+  <data name="StorageMaintenanceHint" xml:space="preserve"><value>The current database will be modified. If Back up before maintenance is enabled, a backup will be saved first. Continue?</value></data>
+  <data name="StorageMaintenanceDone" xml:space="preserve"><value>Maintenance complete.</value></data>
+  <data name="StorageTable_APPS" xml:space="preserve"><value>Applications</value></data>
+  <data name="StorageTable_CHAT_USERS" xml:space="preserve"><value>Chat members</value></data>
+  <data name="StorageTable_DOCUMENTS" xml:space="preserve"><value>Documents</value></data>
+  <data name="StorageTable_FILTERS" xml:space="preserve"><value>Filters</value></data>
+  <data name="StorageTable_LICENSES" xml:space="preserve"><value>Licenses</value></data>
+  <data name="StorageTable_MESSAGES" xml:space="preserve"><value>Messages</value></data>
+  <data name="StorageTable_MESSAGES_RELATIONS" xml:space="preserve"><value>Message relations</value></data>
+  <data name="StorageTable_PROXIES" xml:space="preserve"><value>Proxies</value></data>
+  <data name="StorageTable_SOURCES" xml:space="preserve"><value>Chats</value></data>
+  <data name="StorageTable_STORIES" xml:space="preserve"><value>Stories</value></data>
+  <data name="StorageTable_USERS" xml:space="preserve"><value>Users</value></data>
+  <data name="StorageTable_VERSIONS" xml:space="preserve"><value>Database versions</value></data>
+  <data name="StorageProfileMissing" xml:space="preserve"><value>The active profile was not found. Open Settings and select a storage profile.</value></data>
+  <data name="StorageDeleteBackup.Content" xml:space="preserve"><value>Delete backup</value></data>
+  <data name="StorageDeleteBackupTitle" xml:space="preserve"><value>Delete backup</value></data>
+  <data name="StorageDeleteBackupHint" xml:space="preserve"><value>Delete the backup “{0}”? The file will be deleted from disk and cannot be recovered through the app. The current database and other backups will be kept.</value></data>
+  <data name="StorageBackupDeleted" xml:space="preserve"><value>Backup deleted.</value></data>
+  <data name="HomeStorageTitle.Text" xml:space="preserve"><value>Storage</value></data>
+  <data name="HomeStorageMissing" xml:space="preserve"><value>File not found</value></data>
+  <data name="HomeStorageUnavailable" xml:space="preserve"><value>Size unavailable</value></data>
 </root>

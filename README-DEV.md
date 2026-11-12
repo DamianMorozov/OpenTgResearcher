@@ -1,4 +1,4 @@
-# OpenTgResearcher — руководство разработчика
+﻿# OpenTgResearcher — руководство разработчика
 
 [README](README.md) · [Архитектура](ARCHITECTURE.md) · [Журнал изменений](CHANGELOG.md) · [Список задач](TODO.md)
 
@@ -159,6 +159,18 @@ dotnet run --project Tests/SelfTests/Proxies/Proxies.SelfTest.csproj
 ./Tests/SelfTests/Test-DesktopProxies.ps1 -ExecutablePath '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language Russian
 ./Tests/SelfTests/Test-DesktopProxies.ps1 -ExecutablePath '.../OpenTgResearcher/Releases/Desktop-x64/OpenTgResearcherDesktop.exe' -Language English
 ```
+
+### Центр подключения и мастер входа
+
+Проверка нового профиля использует отдельные настройки и БД: автоматическое открытие мастера, локальную проверку API-параметров, переход к телефону, возврат в центр и повторное открытие мастера без потери реквизитов. Проверяются скрытие конфиденциальных данных, ширины окна 1200 и 800 пикселей, штатное закрытие и отсутствие исключений в журнале. Во время этой проверки запросы в Telegram не отправляются.
+
+```powershell
+./Tests/SelfTests/Test-DesktopConnection.ps1 -ExecutablePath '.../OpenTgResearcherDesktop.exe' -Language Russian -Theme Dark
+./Tests/SelfTests/Test-DesktopConnection.ps1 -ExecutablePath '.../OpenTgResearcherDesktop.exe' -Language English -Theme Light
+dotnet run --project Tests/SelfTests/ClientConnection/ClientConnection.SelfTest.csproj -p:Platform=x64
+```
+
+Пошаговая передача кода и пароля, сохранение профиля после входа и продолжение тем же клиентом проверяются с управляемыми ответами авторизации. Вход с настоящим кодом Telegram и двухэтапной проверкой подтверждается отдельно в пользовательском контуре.
 
 ### Проверка реального подключения
 

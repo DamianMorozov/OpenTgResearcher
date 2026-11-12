@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -1269,7 +1269,7 @@
     <value>Вы пытались войти в систему слишком много раз</value>
   </data>
   <data name="RpcErrorPhoneCodeInvalid" xml:space="preserve">
-    <value>Для входа требуется действующий код Telegram. Скопируйте код входа из авторизованного приложения Telegram (например, на мобильном устройстве), вставьте его в поле «Код логина» и нажмите «Подключить Telegram» ещё раз. Если код уже вводили, используйте последний полученный код.</value>
+    <value>Для входа требуется действующий код Telegram. Скопируйте код входа из авторизованного приложения Telegram (например, на мобильном устройстве), вставьте его в поле «Проверочный код» и нажмите «Подключиться» или «Подтвердить» ещё раз. Если код уже вводили, используйте последний полученный код.</value>
   </data>
   <data name="RpcErrorPasswordHashInvalid" xml:space="preserve">
     <value>Введенный вами пароль (и, соответственно, его хэш-значение) недействителен</value>
@@ -1768,14 +1768,14 @@
   <data name="ActionBackToList.Text" xml:space="preserve"><value>К списку</value></data>
   <data name="ClientApiSettingsHelp" xml:space="preserve">
     <value>Не удалось подключиться к Telegram: API ID или API hash не заполнены либо отклонены Telegram.
-Откройте «Подключение клиента» и заполните «АПИ ИД» (API ID, положительное целое число), «АПИ хеш» (API hash, 32 шестнадцатеричных символа) и «Номер телефона» (с кодом страны, например +7…). Свою пару api_id и api_hash возьмите на https://my.telegram.org в разделе API development tools. Если поля скрыты, включите отображение конфиденциальных данных. Затем нажмите «Подключить Telegram»; после успешного входа профиль сохранится.
+Откройте «Подключение клиента» и заполните «API ID» (API ID, положительное целое число), «API hash» (API hash, 32 шестнадцатеричных символа) и «Номер телефона» (с кодом страны, например +7…). Свою пару api_id и api_hash возьмите на https://my.telegram.org в разделе API development tools. Если поля скрыты, включите отображение конфиденциальных данных. Затем нажмите «Подключиться» или «Подтвердить»; после успешного входа профиль сохранится.
 Если вы уже подключались, откройте «Настройки» → «Профиль», выберите профиль или нажмите «Редактировать» и укажите прежний файл БД в поле «Хранилище». Нажмите «Применить профиль»: программа перезапустится при смене файлов.</value>
   </data>
   <data name="ClientSessionReadHelp" xml:space="preserve">
     <value>Не удалось прочитать сохранённую сессию Telegram: {0}
 Файл мог быть создан с другой парой API ID / API hash или повреждён. Эта ошибка возникает до обращения к Telegram.
-Проверьте «АПИ ИД» и «АПИ хеш» на странице «Подключение клиента». В «Настройки» → «Профиль» нажмите «Редактировать», укажите прежний файл сессии для этой пары API ID / API hash в поле «Сессия» и нажмите «Применить профиль».
-Для нового входа нажмите «Сбросить сессию» на этой странице и подтвердите удаление указанного файла. API-параметры, телефон и прокси сохранятся. Затем нажмите «Подключить Telegram», введите полученный от Telegram код в поле «Проверочный код» и при необходимости пароль двухэтапной проверки в поле «Пароль», повторяя подключение по запросу.
+Проверьте «API ID» и «API hash» на странице «Подключение клиента». В «Настройки» → «Профиль» нажмите «Редактировать», укажите прежний файл сессии для этой пары API ID / API hash в поле «Сессия» и нажмите «Применить профиль».
+Для нового входа нажмите «Сбросить сессию» на этой странице и подтвердите удаление указанного файла. API-параметры, телефон и прокси сохранятся. Затем нажмите «Подключиться» или «Подтвердить», введите полученный от Telegram код в поле «Проверочный код» и при необходимости пароль двухэтапной проверки в поле «Пароль», повторяя подключение по запросу.
 Чтобы сохранить прежний файл, вместо сброса укажите в поле «Сессия» новый, ещё не существующий путь в отдельном каталоге данных и сохраните настройки. Кнопка «Удалить» удаляет и профиль, и файл сессии.</value>
   </data>
   <data name="ClientSessionReset.Text" xml:space="preserve">
@@ -2749,4 +2749,74 @@ API-параметры, телефон и выбранный прокси буд
   <data name="HomeStorageTitle.Text" xml:space="preserve"><value>Хранилище</value></data>
   <data name="HomeStorageMissing" xml:space="preserve"><value>Файл не найден</value></data>
   <data name="HomeStorageUnavailable" xml:space="preserve"><value>Размер недоступен</value></data>
+  <data name="ConnectionApiIdField.Header" xml:space="preserve"><value>API ID</value></data>
+  <data name="ConnectionApiIdField.PlaceholderText" xml:space="preserve"><value>Введите API ID</value></data>
+  <data name="ConnectionApiHashField.Header" xml:space="preserve"><value>API hash</value></data>
+  <data name="ConnectionApiHashField.PlaceholderText" xml:space="preserve"><value>Введите API hash</value></data>
+  <data name="ConnectionPhoneField.Header" xml:space="preserve"><value>Телефон с кодом страны</value></data>
+  <data name="ConnectionPhoneField.PlaceholderText" xml:space="preserve"><value>+7 ___ ___-__-__</value></data>
+  <data name="ConnectionProxyField.Header" xml:space="preserve"><value>Прокси</value></data>
+  <data name="ConnectionCodeField.Header" xml:space="preserve"><value>Проверочный код</value></data>
+  <data name="ConnectionPasswordField.Header" xml:space="preserve"><value>Пароль двухэтапной проверки</value></data>
+  <data name="ConnectionFirstNameField.Header" xml:space="preserve"><value>Имя</value></data>
+  <data name="ConnectionLastNameField.Header" xml:space="preserve"><value>Фамилия</value></data>
+  <data name="ConnectionEmailField.Header" xml:space="preserve"><value>Электронная почта</value></data>
+  <data name="ConnectionApiHelp.Text" xml:space="preserve"><value>API ID и API hash выдаются вашему приложению Telegram. Скопируйте оба значения из раздела API development tools.</value></data>
+  <data name="ConnectionMyTelegram.Content" xml:space="preserve"><value>Получить реквизиты на my.telegram.org ↗</value></data>
+  <data name="ConnectionSecretsHelp.Text" xml:space="preserve"><value>Код и пароль используются только для входа и не сохраняются в настройках.</value></data>
+  <data name="ConnectionAppTitle.Text" xml:space="preserve"><value>Данные приложения Telegram</value></data>
+  <data name="ConnectionConnectButton.Content" xml:space="preserve"><value>Подключиться</value></data>
+  <data name="ConnectionSaveButton.Content" xml:space="preserve"><value>Сохранить</value></data>
+  <data name="ConnectionAdvanced.Header" xml:space="preserve"><value>Дополнительно</value></data>
+  <data name="ConnectionUseClient.Header" xml:space="preserve"><value>Использовать Telegram-клиент</value></data>
+  <data name="ConnectionClearButton.Content" xml:space="preserve"><value>Очистить поля…</value></data>
+  <data name="ConnectionAuthTitle.Text" xml:space="preserve"><value>Подтвердите вход</value></data>
+  <data name="ConnectionConfirmButton.Content" xml:space="preserve"><value>Подтвердить</value></data>
+  <data name="ConnectionSessionTitle.Text" xml:space="preserve"><value>Аккаунт и сессия</value></data>
+  <data name="ConnectionSessionFileLabel.Text" xml:space="preserve"><value>Файл сессии</value></data>
+  <data name="ConnectionWizardButton.Content" xml:space="preserve"><value>Мастер входа</value></data>
+  <data name="ConnectionDisconnectButton.Content" xml:space="preserve"><value>Отключиться</value></data>
+  <data name="ConnectionSessionActions.Header" xml:space="preserve"><value>Управление сессией</value></data>
+  <data name="ConnectionResetHelp.Text" xml:space="preserve"><value>Сброс сессии потребует повторного входа. Удаление реквизитов также удаляет выбранный файл сессии; оба действия требуют подтверждения.</value></data>
+  <data name="ConnectionProfileSettingsButton.Content" xml:space="preserve"><value>Настройки профиля</value></data>
+  <data name="ConnectionResetButton.Content" xml:space="preserve"><value>Сбросить сессию…</value></data>
+  <data name="ConnectionDeleteButton.Content" xml:space="preserve"><value>Удалить реквизиты и сессию…</value></data>
+  <data name="ConnectionDiagnostics.Header" xml:space="preserve"><value>Диагностика подключения</value></data>
+  <data name="ConnectionLastConnectedField.Header" xml:space="preserve"><value>Последнее подключение</value></data>
+  <data name="ConnectionUsernameField.Header" xml:space="preserve"><value>Имя пользователя</value></data>
+  <data name="ConnectionProxyUrlField.Header" xml:space="preserve"><value>Адрес MTProxy</value></data>
+  <data name="ConnectionReconnectsField.Header" xml:space="preserve"><value>Максимум переподключений</value></data>
+  <data name="ConnectionAttemptsField.Header" xml:space="preserve"><value>Максимум попыток кода и пароля</value></data>
+  <data name="ConnectionFloodField.Header" xml:space="preserve"><value>Порог ожидания ограничения запросов</value></data>
+  <data name="ConnectionPingField.Header" xml:space="preserve"><value>Интервал проверки соединения</value></data>
+  <data name="ConnectionRequestsField.Header" xml:space="preserve"><value>Запрошенные поля без значений</value></data>
+  <data name="ConnectionWizardTitle.Text" xml:space="preserve"><value>Мастер входа</value></data>
+  <data name="ConnectionCenterButton.Content" xml:space="preserve"><value>В центр подключения</value></data>
+  <data name="ConnectionApiStepTitle.Text" xml:space="preserve"><value>Начнём с API ID и API hash</value></data>
+  <data name="ConnectionTooManyTitle.Header" xml:space="preserve"><value>На сайте «Too many attempts»?</value></data>
+  <data name="ConnectionTooManyHelp.Text" xml:space="preserve"><value>Telegram временно ограничил попытки. Сделайте паузу и попробуйте позже: точный срок Telegram не сообщает. Если приложение уже создано, используйте прежние API ID и API hash.</value></data>
+  <data name="ConnectionPhoneStepTitle.Text" xml:space="preserve"><value>Укажите номер телефона</value></data>
+  <data name="ConnectionExistingSessionHelp.Text" xml:space="preserve"><value>Программа сначала попробует использовать сохранённую сессию. Код потребуется только при запросе Telegram.</value></data>
+  <data name="ConnectionDoneTitle.Text" xml:space="preserve"><value>Telegram подключён</value></data>
+  <data name="ConnectionDoneHelp.Text" xml:space="preserve"><value>Теперь доступны поиск чатов, парсинг и скачивание файлов. При следующем входе программа попробует использовать сохранённую сессию.</value></data>
+  <data name="ConnectionBackButton.Content" xml:space="preserve"><value>Назад</value></data>
+  <data name="ConnectionPhoneRequired" xml:space="preserve"><value>Укажите номер телефона аккаунта с кодом страны.</value></data>
+  <data name="ConnectionInputRequired" xml:space="preserve"><value>Заполните поле, запрошенное Telegram, и повторите подтверждение.</value></data>
+  <data name="ConnectionAccountPending" xml:space="preserve"><value>Вход ещё не завершён</value></data>
+  <data name="ConnectionWaiting" xml:space="preserve"><value>Ожидается подтверждение</value></data>
+  <data name="ConnectionStepCaption" xml:space="preserve"><value>Шаг {0} из 4 · Приложение → Телефон → Подтверждение → Готово</value></data>
+  <data name="ConnectionNext" xml:space="preserve"><value>Далее</value></data>
+  <data name="ConnectionConnect" xml:space="preserve"><value>Подключиться</value></data>
+  <data name="ConnectionConfirm" xml:space="preserve"><value>Подтвердить</value></data>
+  <data name="ConnectionPasswordHelp" xml:space="preserve"><value>Введите пароль двухэтапной проверки, заданный для аккаунта Telegram.</value></data>
+  <data name="ConnectionNameHelp" xml:space="preserve"><value>Имя и фамилия нужны только при регистрации нового аккаунта Telegram.</value></data>
+  <data name="ConnectionEmailHelp" xml:space="preserve"><value>Telegram запросил адрес электронной почты для авторизации.</value></data>
+  <data name="ConnectionEmailCodeHelp" xml:space="preserve"><value>Введите код подтверждения из письма Telegram.</value></data>
+  <data name="ConnectionCodeHelp" xml:space="preserve"><value>Скопируйте код из авторизованного приложения Telegram, например на мобильном устройстве.</value></data>
+  <data name="ConnectionCenterTitle.Text" xml:space="preserve"><value>Центр подключения</value></data>
+  <data name="ConnectionCenterHelp.Text" xml:space="preserve"><value>Аккаунт Telegram, параметры приложения и сохранённая сессия выбранного профиля.</value></data>
+  <data name="ConnectionPendingCredentials" xml:space="preserve"><value>Для изменения телефона, API-параметров или прокси завершите текущий вход либо нажмите «Отключиться».</value></data>
+  <data name="ConnectionConnected" xml:space="preserve"><value>Подключён</value></data>
+  <data name="ConnectionDisconnected" xml:space="preserve"><value>Не подключён</value></data>
+  <data name="ConnectionDirectProxy.Text" xml:space="preserve"><value>Без прокси</value></data>
 </root>

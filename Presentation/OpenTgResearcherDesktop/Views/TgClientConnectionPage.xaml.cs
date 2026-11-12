@@ -12,12 +12,19 @@ public sealed partial class TgClientConnectionPage
 		
         InitializeComponent();
         DataContext = ViewModel;
-        Loaded += PageLoaded;
+        Loaded += OnConnectionLoaded;
+        Unloaded += OnConnectionUnloaded;
 	}
 
 	#endregion
 
 	#region Methods
+
+    // Подключаем локализованные подписи только для открытой страницы
+    private void OnConnectionLoaded(object sender, RoutedEventArgs e) { PageLoaded(sender, e); ViewModel.Activate(); }
+
+    // Переход в другой раздел не отключает текущую сессию
+    private void OnConnectionUnloaded(object sender, RoutedEventArgs e) => ViewModel.Deactivate();
 
 	private void OnApiHashTextChanged(object sender, TextChangedEventArgs e) => ViewModel.OnApiHashTextChanged(sender, e);
 

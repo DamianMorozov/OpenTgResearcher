@@ -14,6 +14,8 @@ internal static partial class Program
         var tests = new (string Name, Func<Task> Run)[]
         {
             ("FormInitialized", FormInitializedAsync),
+            ("SessionStepsKeepClient", SessionStepsKeepClientAsync),
+            ("SessionStepRejectsFalseSuccess", SessionStepRejectsFalseSuccessAsync),
             ("ProxyTableHeaders", ProxyTableHeadersAsync),
             ("ProxyHeadersUseStringContent", ProxyHeadersUseStringContentAsync),
             ("ProxyTableActions", ProxyTableActionsAsync),

@@ -26,6 +26,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
     public Task DisconnectBotAsync(bool isAfterClientConnect = true);
     public Task ConnectBotConsoleAsync();
 	public Task ConnectSessionAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop);
+    /// <summary> Выполняет один этап входа Desktop, сохраняя клиент между запросами кода и пароля </summary>
+    public Task<string?> ConnectSessionStepAsync(Func<string, string?> config, TgEfProxyDto proxyDto, string? loginInfo = null, CancellationToken ct = default);
 
 	public Task<IEnumerable<long>> CollectAllChatsAsync(CancellationToken ct = default);
 

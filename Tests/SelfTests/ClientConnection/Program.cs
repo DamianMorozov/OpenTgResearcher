@@ -8,6 +8,10 @@ internal static partial class Program
         if (args.Length > 0 && args[0] == "--inspect-session") return await InspectSessionAsync(args);
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("SignInWizardIntegration", SignInWizardIntegrationAsync),
+            ("SignInExistingSessionStartsCenter", SignInExistingSessionStartsCenterAsync),
+            ("SignInDisconnectResetsRequest", SignInDisconnectResetsRequestAsync),
+            ("SignInPageResources", SignInPageResourcesAsync),
             ("ConstructorInitializesModel", ConstructorInitializesModelAsync),
             ("ConnectionReadsWhileParserBusy", ConnectionReadsWhileParserBusyAsync),
             ("ApplyProxyFromNavigation", ApplyProxyFromNavigationAsync),
@@ -45,6 +49,7 @@ internal static partial class Program
             ("CancelledDeleteKeepsSession", CancelledDeleteKeepsSessionAsync),
             ("SessionResetPreservesProfileAndAllowsNewSession", SessionResetPreservesProfileAndAllowsNewSessionAsync),
             ("CancelledSessionResetKeepsSession", CancelledSessionResetKeepsSessionAsync),
+            ("SessionResetDialogSeparatesHeadingAndBody", SessionResetDialogSeparatesHeadingAndBodyAsync),
             ("SessionResetWaitsForDisconnect", SessionResetWaitsForDisconnectAsync),
             ("SessionResetFailureIsShownAndLogged", SessionResetFailureIsShownAndLoggedAsync),
             ("DisconnectFailureStopsDeletion", DisconnectFailureStopsDeletionAsync),
@@ -74,37 +79,27 @@ internal static partial class Program
         var page = System.Xml.Linq.XDocument.Load(stream);
         System.Xml.Linq.XNamespace controls = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
         var field = page.Descendants(controls + "TextBox")
-            .Single(x => (string?)x.Attribute("Text") == "{x:Bind ViewModel.Exception.Message, Mode=OneWay}");
+            .Single(x => (string?)x.Attribute("AutomationProperties.AutomationId") == "ConnectionMessage");
         Assert((string?)field.Attribute("IsReadOnly") == "True", "Текст исключения доступен для редактирования");
         Assert(field.AncestorsAndSelf().All(x => (string?)x.Attribute("IsEnabled") != "False"
             && (string?)x.Attribute("IsHitTestVisible") != "False"), "Поле исключения или его контейнер блокирует выделение и копирование текста");
         return Task.CompletedTask;
     }
 
-    // Проверяем свободную строку состояния, перенос текста и сохранение скрытия конфиденциальных данных
+    // Проверяем сообщение на полной ширине вне колонок центра и общее скрытие конфиденциальных данных
     private static Task ConnectionMessageHasSeparateFullWidthRowAsync()
     {
         using var stream = typeof(Program).Assembly.GetManifestResourceStream("ConnectionPage.xaml")!;
         var page = System.Xml.Linq.XDocument.Load(stream);
-        System.Xml.Linq.XNamespace controls = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
-        var field = page.Descendants(controls + "TextBox")
-            .Single(x => (string?)x.Attribute("Text") == "{x:Bind ViewModel.ConnectionMsg, Mode=OneWay}");
-        var grid = field.Parent!;
-        var columns = grid.Element(controls + "Grid.ColumnDefinitions")!.Elements().Count();
-        Assert((string?)field.Attribute("Grid.ColumnSpan") == columns.ToString() && columns >= 4,
-            "Сообщение состояния зажато рядом с подписью и переключателем вместо отдельной строки на ширину блока");
-        Assert((string?)field.Attribute("IsReadOnly") == "True" && (string?)field.Attribute("IsEnabled") != "False"
-            && (string?)field.Attribute("TextWrapping") == "Wrap", "Сообщение не допускает чтение, копирование или перенос текста");
-        var row = (string?)field.Attribute("Grid.Row");
-        var neighbours = grid.Elements().Where(x => (string?)x.Attribute("Grid.Row") == row && x != field).ToArray();
-        Assert(neighbours.Length == 1 && (string?)neighbours[0].Attribute("Text") == "{x:Bind ViewModel.SensitiveData, Mode=OneWay}",
-            "Строка сообщения пересекается с другими полями");
-        Assert((string?)field.Attribute("Visibility")
-            == "{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-            && (string?)neighbours[0].Attribute("Visibility")
-            == "{x:Bind ViewModel.IsDisplaySensitiveData, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}",
-            "Сообщение и скрывающая заглушка не переключаются вместе с отображением конфиденциальных данных");
-        Assert((string?)neighbours[0].Attribute("Grid.ColumnSpan") == columns.ToString(), "Заглушка не занимает ширину строки состояния");
+        var field = page.Descendants().Single(x => (string?)x.Attribute("AutomationProperties.AutomationId") == "ConnectionMessage");
+        Assert((string?)field.Attribute("Text") == "{x:Bind ViewModel.DisplayConnectionMessage, Mode=OneWay}", "Сообщение обходит скрытие данных");
+        Assert((string?)field.Attribute("TextWrapping") == "Wrap" && field.Parent!.Elements().Count() == 1,
+            "Сообщение зажато среди других полей или не переносится");
+        Assert(field.Parent!.Parent!.Name.LocalName == "StackPanel", "Сообщение ограничено колонкой центра");
+        var vm = CreateViewModel();
+        vm.ConnectionMsg = "private error";
+        vm.IsDisplaySensitiveData = false;
+        Assert(vm.DisplayConnectionMessage == vm.SensitiveData, "Ошибка раскрывает конфиденциальные данные");
         return Task.CompletedTask;
     }
 
@@ -234,7 +229,10 @@ internal static partial class Program
         var configuration = App.BusinessLogicManager.ConnectClient.Configuration;
         Assert(configuration["api_id"] == "42" && configuration["api_hash"] == hash.ToString("N"), "Обратный вызов вернул неверные API-параметры");
         Assert(configuration["phone_number"] == vm.AppDto.PhoneNumber && configuration["session_pathname"] == "test.session", "Пути или телефон не переданы");
-        Assert(configuration["password"] == "test-password" && configuration["verification_code"] == "12345", "Данные авторизации не взяты из формы");
+        Assert(configuration["password"] is null && configuration["verification_code"] is null,
+            "Конфигурация подавляет пошаговые запросы Telegram старым кодом или паролем");
+        Assert(!vm.DataRequest.Contains("test-password") && !vm.DataRequest.Contains("12345") && !vm.DataRequest.Contains(hash.ToString("N")),
+            "Диагностика раскрывает секреты авторизации");
     }
 
     // Проверяем сообщение об успешном подключении при отсутствии исключений
@@ -267,6 +265,7 @@ internal static partial class Program
         App.BusinessLogicManager.StorageManager.AppRepository.FailSave = true;
         await vm.AppSaveCommand.ExecuteAsync(null);
         Assert(vm.Errors.Count == 1 && vm.Exception.IsExist, "Ошибка сохранения не зарегистрирована в журнале и форме");
+        Assert(vm.HasConnectionMessage && vm.ConnectionMsg == vm.Exception.Message, "Ошибка сохранения не видна в сообщении центра подключения");
     }
 
     // Проверяем очистку формы без удаления записи из хранилища

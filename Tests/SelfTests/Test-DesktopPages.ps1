@@ -111,7 +111,7 @@ try {
  # Проверяем настоящее окно без авторизации и пользовательской БД
  foreach($case in @(
   @('^(Хранилище|Storage)$','^(Паспорт хранилища|Storage passport)$','storage'),
-  @('^(Подключение клиента|Client connection)$','^(АПИ ИД|API ID)$','connection'),
+  @('^(Подключение клиента|Client connection)$','^(Мастер входа|Sign-in wizard|Центр подключения|Connection center)$','connection'),
   @('^(Фильтры|Filters)$','^(Загрузка хранилища|Loading storage)$','filters'),
   @('^(Сторис|Stories)$','^(Загрузка хранилища|Loading storage)$','stories'),
   @('^(Пользователи и контакты|Users and contacts)$','^(Загрузить ещё|Load more)$','users')

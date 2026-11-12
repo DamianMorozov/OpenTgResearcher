@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="../../../Core/TgBusinessLogic/TgBusinessLogic.csproj" />
     <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgClientConnectionViewModel.cs" Link="TgClientConnectionViewModel.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/ViewModels/TgClientConnectionViewModel.SignIn.cs" Link="TgClientConnectionViewModel.SignIn.cs" />
+    <Compile Include="../../../Presentation/OpenTgResearcherDesktop/Models/TgClientSignInFlow.cs" Link="TgClientSignInFlow.cs" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/ru-RU/Resources.resw" LogicalName="ConnectionMessages.ru-RU.resw" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Strings/en-US/Resources.resw" LogicalName="ConnectionMessages.en-US.resw" />
     <EmbeddedResource Include="../../../Presentation/OpenTgResearcherDesktop/Views/TgClientConnectionPage.xaml" LogicalName="ConnectionPage.xaml" />

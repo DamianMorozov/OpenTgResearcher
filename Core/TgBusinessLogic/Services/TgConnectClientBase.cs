@@ -393,6 +393,13 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     // Сохраняем существующую последовательность подготовки и авторизации клиента
     private async Task ConnectSessionCoreAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop)
     {
+        if (!await PrepareClientSessionAsync(config, proxyDto, isDesktop: isDesktop)) return;
+        await LoginUserAsync(isProxyUpdate: true);
+    }
+
+    // Подготавливаем общий транспорт до выбора обычного или пошагового входа
+    private async Task<bool> PrepareClientSessionAsync(Func<string, string?>? config, TgEfProxyDto proxyDto, bool isDesktop)
+    {
         var appDto = await StorageManager.AppRepository.GetCurrentDtoAsync();
         if (appDto.UseBot)
         {
@@ -402,7 +409,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                 throw new ArgumentOutOfRangeException(nameof(proxyDto), proxyDto, "Cannot set UseBot property!");
         }
 
-        if (await CheckClientConnectionReadyAsync()) return;
+        if (await CheckClientConnectionReadyAsync()) return false;
 
         await DisconnectClientAsync(isAfterClientConnect: false);
         await DisconnectBotAsync(isAfterClientConnect: false);
@@ -417,8 +424,52 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         Client.OnOther += OnClientOtherAsync;
         Client.OnOwnUpdates += OnOwnUpdatesClientAsync;
         Client.OnUpdates += OnUpdatesClientAsync;
-        await LoginUserAsync(isProxyUpdate: true);
+        return true;
     }
+
+    /// <summary> Продолжает авторизацию тем же клиентом без повторной отправки телефона при вводе кода </summary>
+    public async Task<string?> ConnectSessionStepAsync(Func<string, string?> config, TgEfProxyDto proxyDto, string? loginInfo = null, CancellationToken ct = default)
+    {
+        string? request = null;
+        await LoadStateService.NetworkActivity.RunAsync(TgNetworkOperationKind.Connection,
+            async () => { request = await ConnectSessionStepCoreAsync(config, proxyDto, loginInfo, ct); });
+        return request;
+    }
+
+    // WTelegram возвращает название следующего поля; завершение подтверждаем только реальным пользователем
+    private async Task<string?> ConnectSessionStepCoreAsync(Func<string, string?> config, TgEfProxyDto proxyDto, string? loginInfo, CancellationToken ct)
+    {
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+            ClientException = new();
+            if (loginInfo is null && !await PrepareClientSessionAsync(config, proxyDto, isDesktop: true)) return null;
+            if (Client is null) throw new InvalidOperationException("Клиент Telegram отключён. Начните подключение заново");
+            var request = await LoginSessionStepAsync(loginInfo ?? config("phone_number"));
+            if (request is null)
+            {
+                Me = Client.User;
+                if (!await CheckClientConnectionReadyAsync())
+                    throw new InvalidOperationException("Telegram не подтвердил вход. Повторите подключение");
+            }
+            await AfterClientConnectAsync();
+            return request;
+        }
+        catch (Exception ex)
+        {
+            // Завершённая с ошибкой последовательность Login уже не принимает новый код
+            await DisconnectClientAsync(isAfterClientConnect: false);
+            // Ошибку входа сохраняем также после освобождения клиента
+            ClientException.Set(ex);
+            UpdateException(ex);
+            TgLogUtils.WriteException(ex);
+            await AfterClientConnectAsync();
+            throw;
+        }
+    }
+
+    /// <summary> Передаёт один ответ авторизации действующему клиенту Telegram </summary>
+    protected virtual Task<string?> LoginSessionStepAsync(string? loginInfo) => Client!.Login(loginInfo);
 
     /// <summary> Настраивает транспорт прокси до авторизации клиента </summary>
     public async Task ConnectThroughProxyAsync(TgEfProxyDto proxyDto, bool isDesktop)

@@ -7,6 +7,7 @@ internal static partial class Program
     {
         var tests = new (string Name, Func<Task> Run)[]
         {
+            ("ClientSignInFlow", ClientSignInFlowAsync),
             ("StoragePassportCommands", StoragePassportCommandsAsync),
             ("StorageBackupDeletion", StorageBackupDeletionAsync),
             ("StorageMaintenanceAndRestore", StorageMaintenanceAndRestoreAsync),

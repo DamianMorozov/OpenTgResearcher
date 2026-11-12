@@ -2,6 +2,7 @@ global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.Input;
 global using OpenTgResearcherDesktop.ConnectionSelfTests;
 global using OpenTgResearcherDesktop.ViewModels;
+global using OpenTgResearcherDesktop.Models;
 global using System.Collections.ObjectModel;
 global using TgBusinessLogic.ViewModels;
 global using TgInfrastructure.Enums;

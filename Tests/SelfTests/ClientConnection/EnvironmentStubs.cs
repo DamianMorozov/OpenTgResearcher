@@ -17,20 +17,28 @@ public sealed class TestLoadStateService : ILoadStateService
     /// <summary> Заменяет завершение учёта операции </summary>
     public void StopSoftOnlineProcessing(Guid uid) { }
 }
-public interface ITgSettingsService { bool IsExistsAppStorage { get; } string AppSession { get; } void Load(); }
+public interface ITgSettingsService { bool IsExistsAppStorage { get; } string AppStorage { get; } string AppSession { get; } void Load(); }
 public sealed class TestSettingsService : ITgSettingsService
 {
     public bool IsExistsAppStorage => true;
+    public string AppStorage => "test.db";
     public string AppSession { get; set; } = "test.session";
     public int LoadCalls { get; private set; }
     /// <summary> Запоминает обновление признака наличия сессии </summary>
     public void Load() => LoadCalls++;
 }
-public interface INavigationService;
+public interface INavigationService { bool NavigateTo(string page); }
 public interface ILogger<T>;
 public sealed class NavigationEventArgs { public object? Parameter { get; set; } }
 public sealed class TextChangedEventArgs;
 public sealed class TextBox { public string Text { get; set; } = string.Empty; }
+public enum TextWrapping { NoWrap, Wrap }
+public sealed class TextBlock
+{
+    public string Text { get; set; } = string.Empty;
+    public TextWrapping TextWrapping { get; set; }
+    public bool IsTextSelectionEnabled { get; set; }
+}
 public static class TestGlobalTools { public static object Container { get; } = new(); }
 public enum ContentDialogResult { None, Primary }
 public enum ContentDialogButton { Close }
@@ -40,8 +48,10 @@ public sealed class ContentDialog
     public static bool IsOpen { get; private set; }
     public static Task? LastAction { get; private set; }
     public static string LastTitle { get; private set; } = string.Empty;
+    public static object? LastContent { get; private set; }
     public object? XamlRoot { get; set; }
     public string Title { get; set; } = string.Empty;
+    public object? Content { get; set; }
     public string PrimaryButtonText { get; set; } = string.Empty;
     public string CloseButtonText { get; set; } = string.Empty;
     public ContentDialogButton DefaultButton { get; set; }
@@ -51,6 +61,7 @@ public sealed class ContentDialog
     {
         IsOpen = true;
         LastTitle = Title;
+        LastContent = Content;
         LastAction = null;
         if (Confirm && PrimaryButtonCommand is not null)
         {
@@ -66,6 +77,10 @@ public abstract class TgPageViewModelBase : ObservableObject
 {
     protected ILoadStateService LoadStateService { get; }
     protected ITgSettingsService SettingsService { get; }
+    protected INavigationService NavigationService { get; }
+    public bool IsExistsAppSession => File.Exists(SettingsService.AppSession);
+    public bool IsDisplaySensitiveData { get; set; } = true;
+    public string SensitiveData => "***";
     public TgExceptionViewModel Exception { get; set; } = new();
     public string ConnectionDt { get; set; } = string.Empty;
     public string ConnectionMsg { get; set; } = string.Empty;
@@ -77,7 +92,9 @@ public abstract class TgPageViewModelBase : ObservableObject
     public bool ConfirmDialog { get => ContentDialog.Confirm; set => ContentDialog.Confirm = value; }
 
     protected TgPageViewModelBase(ILoadStateService state, ITgSettingsService settings, INavigationService navigation, object logger, string name)
-    { LoadStateService = state; SettingsService = settings; }
+    { LoadStateService = state; SettingsService = settings; NavigationService = navigation; }
+    /// <summary> Подменяет завершение жизненного цикла страницы </summary>
+    public virtual void ReleaseManagedResources() { }
     /// <summary> Заменяет переход на страницу </summary>
     public virtual Task OnNavigatedToAsync(NavigationEventArgs? e) => Task.CompletedTask;
     /// <summary> Выполняет исходную загрузку через подменённые репозитории </summary>
@@ -184,6 +201,15 @@ public sealed class TestConnection
     public TaskCompletionSource? ConnectGate { get; set; }
     public bool StartedWhileDialogOpen { get; private set; }
     public Dictionary<string, string?> Configuration { get; } = [];
+    public Func<string?, Task<string?>>? LoginStep { get; set; }
+    public List<string?> LoginInputs { get; } = [];
+    /// <summary> Подменяет шаг Telegram с сохранением переданного подтверждения </summary>
+    public async Task<string?> ConnectSessionStepAsync(Func<string, string?> config, TgEfProxyDto proxy, string? loginInfo = null, CancellationToken ct = default)
+    {
+        LoginInputs.Add(loginInfo);
+        await ConnectSessionAsync(config, proxy, isDesktop: true);
+        return LoginStep is null ? null : await LoginStep(loginInfo);
+    }
     /// <summary> Заменяет регистрацию обработчика ошибки </summary>
     public void SetupUpdateException(Action<Exception> action) => _updateException = action;
     /// <summary> Регистрирует исходный обработчик завершения подключения </summary>
@@ -223,6 +249,24 @@ public sealed class TestConnection
     public Task<Guid> OpenOrCreateSavedMessagesAsync() { SavedMessagesCalls++; return Task.FromResult(SavedMessagesUid); }
 }
 public sealed class ShellViewModel { public Guid UidSavedMessages { get; set; } }
+public sealed class TgChatsViewModel;
+public sealed class TgSettingsViewModel;
+public sealed class LanguageChangedEventArgs : EventArgs;
+public sealed class Localizer
+{
+    private static readonly Localizer _instance = new();
+    public event EventHandler<LanguageChangedEventArgs>? LanguageChanged;
+    /// <summary> Возвращает локализатор стенда </summary>
+    public static Localizer Get() => _instance;
+    /// <summary> Передаёт смену языка подписчикам страницы </summary>
+    public void Notify() => LanguageChanged?.Invoke(this, new());
+}
+public static class TgAccountProfiles
+{
+    /// <summary> Возвращает имя изолированного профиля без пользовательских настроек </summary>
+    public static TestAccountProfile? ReadActive(ITgSettingsService settings) => null;
+}
+public sealed class TestAccountProfile { public Guid Id { get; set; } public string Name { get; set; } = "Test"; }
 public sealed class TestLocator
 {
     public ShellViewModel Shell { get; } = new();
@@ -252,6 +296,7 @@ public static class TgResourceExtensions
     /// <summary> Возвращает инструкцию нового входа из ресурсов </summary>
     public static string GetClientSessionResetDone() => ReadConnectionResource("ClientSessionResetDone");
     // Читаем ресурсы приложения без запуска WinUI
+    public static string GetLocalizedResource(this string key) => ReadConnectionResource(key);
     private static string ReadConnectionResource(string key)
     {
         using var stream = typeof(TgResourceExtensions).Assembly.GetManifestResourceStream($"ConnectionMessages.{Language}.resw")!;

@@ -1,4 +1,4 @@
-namespace OpenTgResearcherDesktop.ConnectionSelfTests;
+﻿namespace OpenTgResearcherDesktop.ConnectionSelfTests;
 
 internal static partial class Program
 {
@@ -25,8 +25,8 @@ internal static partial class Program
             await vm.ClientConnectCommand.ExecuteAsync(true);
             var message = vm.Exception.Message;
             var expectedParts = language == "ru-RU"
-                ? new[] { "Скопируйте", "авторизованного приложения Telegram", "мобильном", "Код логина", "Подключить Telegram" }
-                : new[] { "Copy", "Telegram", "logged in", "mobile", "Login code", "Connect" };
+                ? new[] { "Скопируйте", "авторизованного приложения Telegram", "мобильном", "Проверочный код", "Подключиться" }
+                : new[] { "Copy", "Telegram", "logged in", "mobile", "Verification code", "Connect" };
             Assert(expectedParts.All(part => message.Contains(part, StringComparison.Ordinal)),
                 $"Нет инструкции получения и ввода кода Telegram: {language}");
             Assert(!message.Contains("PHONE_CODE_INVALID") && vm.ConnectionMsg == message && vm.Exception.IsExist,
@@ -146,11 +146,11 @@ internal static partial class Program
         var connection = App.BusinessLogicManager.ConnectClient;
         connection.ConnectException = new InvalidOperationException("API_HASH_INVALID");
         await vm.ClientConnectCommand.ExecuteAsync(false);
-        Assert(vm.Exception.Message.Contains("API development tools") && vm.Exception.Message.Contains("Settings → Files → Storage"),
+        Assert(vm.Exception.Message.Contains("API development tools") && vm.Exception.Message.Contains("Settings → Profile"),
             "Английская подсказка API не загружена из ресурсов приложения");
         connection.ConnectException = new InvalidOperationException("Exception while reading session file: Padding is invalid and cannot be removed.");
         await vm.ClientConnectCommand.ExecuteAsync(false);
-        Assert(vm.Exception.Message.Contains("Settings → Files → Session") && vm.Exception.Message.Contains("test.session")
+        Assert(vm.Exception.Message.Contains("Settings → Profile") && vm.Exception.Message.Contains("test.session")
             && vm.Exception.Message.Contains("Verification code"), "Английская подсказка сессии не объясняет восстановление");
         Assert(connection.ConnectCalls == 2, "Подключение бездействует или повторяется без команды пользователя");
     }
@@ -158,12 +158,13 @@ internal static partial class Program
     // Проверяем конкретные действия пользователя, а не только наличие сообщения
     private static void AssertSetupInstructions(string message)
     {
-        Assert(message.Contains("Подключение") && message.Contains("АПИ ИД") && message.Contains("АПИ хеш")
+        Assert(message.Contains("Подключение") && message.Contains("API ID") && message.Contains("API hash")
             && message.Contains("my.telegram.org") && message.Contains("Номер телефона")
-            && message.Contains("Настройки") && message.Contains("Хранилище") && message.Contains("перезапустите"),
+            && message.Contains("Настройки") && message.Contains("Хранилище") && message.Contains("Применить профиль"),
             "Нет понятной инструкции по заполнению API-параметров и выбору прежней БД");
     }
 
     // Создаём синтетический профиль без пользовательских реквизитов
-    private static TgEfAppDto CreateValidProfile() => new() { ApiId = 42, ApiHash = Guid.Parse("00112233-4455-6677-8899-aabbccddeeff") };
+    private static TgEfAppDto CreateValidProfile() => new()
+        { ApiId = 42, ApiHash = Guid.Parse("00112233-4455-6677-8899-aabbccddeeff"), PhoneNumber = "+10000000000" };
 }

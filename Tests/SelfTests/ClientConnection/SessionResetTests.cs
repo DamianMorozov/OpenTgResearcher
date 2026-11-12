@@ -2,6 +2,26 @@ namespace OpenTgResearcherDesktop.ConnectionSelfTests;
 
 internal static partial class Program
 {
+    // Проверяем обычный переносимый текст последнего абзаца отдельно от заголовка окна
+    private static async Task SessionResetDialogSeparatesHeadingAndBodyAsync()
+    {
+        using var fixture = new SessionResetFixture();
+        foreach (var language in new[] { "ru-RU", "en-US" })
+        {
+            TgResourceExtensions.Language = language;
+            await GetSessionResetCommand(fixture.ViewModel).ExecuteAsync(null);
+            Assert(!ContentDialog.LastTitle.Contains('\n') && !ContentDialog.LastTitle.Contains('\r'),
+                "Пояснение и последняя строка отображаются крупным шрифтом заголовка");
+            Assert(ContentDialog.LastContent is TextBlock { TextWrapping: TextWrapping.Wrap, IsTextSelectionEnabled: true } body
+                && body.Text.Contains(fixture.Settings.AppSession)
+                && body.Text.Contains(language == "ru-RU" ? "API-параметры" : "API credentials")
+                && body.Text.Contains(language == "ru-RU" ? "пароль." : "if enabled."),
+                "Путь или последний абзац потерян либо текст нельзя переносить и копировать");
+            fixture.AssertUnchanged();
+            Assert(fixture.Connection.DisconnectCalls == 0, "Просмотр и отмена диалога изменили сессию");
+        }
+    }
+
     // Проверяем диагностику на настоящем формате файла WTelegram, включая служебный заголовок
     private static async Task SessionInspectionUsesFileFormatAsync()
     {
@@ -85,7 +105,7 @@ internal static partial class Program
         await fixture.ViewModel.AppDeleteCommand.ExecuteAsync(null);
         Assert(!File.Exists(fixture.Settings.AppSession), "Кнопка удаления оставила файл сессии");
         Assert(fixture.Connection.DisconnectCalls == 1 && fixture.Repository.DeleteCalls == 1, "Удаление не отключило клиента или не удалило профиль");
-        Assert(!ContentDialog.IsOpen && ContentDialog.LastTitle.Contains(fixture.Settings.AppSession)
+        Assert(!ContentDialog.IsOpen && ContentDialog.LastContent is TextBlock body && body.Text.Contains(fixture.Settings.AppSession)
             && ContentDialog.LastTitle.Contains("профиль"), "Подтверждение не объясняет удаление профиля и файла сессии");
     }
 

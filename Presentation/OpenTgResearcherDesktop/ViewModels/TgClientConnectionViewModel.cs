@@ -52,6 +52,14 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		AppClearCommand = new AsyncRelayCommand(AppClearAsync);
 		AppDeleteCommand = new AsyncRelayCommand(AppDeleteAsync);
         SessionResetCommand = new AsyncRelayCommand(SessionResetAsync);
+        OpenSignInCommand = new RelayCommand(() => SignIn.Open(isOnline: IsOnlineReady));
+        CloseSignInCommand = new RelayCommand(SignIn.Close);
+        SignInBackCommand = new RelayCommand(SignIn.Back);
+        SignInNextCommand = new AsyncRelayCommand(SignInNextAsync);
+        OpenChatListCommand = new RelayCommand(() => NavigationService.NavigateTo(typeof(TgChatsViewModel).FullName!));
+        OpenProfileSettingsCommand = new RelayCommand(() => NavigationService.NavigateTo(typeof(TgSettingsViewModel).FullName!));
+        SignIn.PropertyChanged += OnSignInChanged;
+        PropertyChanged += OnConnectionPropertyChanged;
         // Обратные вызовы обновляют интерфейс
         App.BusinessLogicManager.ConnectClient.SetupUpdateException(UpdateException);
         App.BusinessLogicManager.ConnectClient.SetupAfterClientConnect(AfterClientConnectAsync);
@@ -64,7 +72,9 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     /// <summary> Загружает профиль и применяет прокси, переданный из таблицы </summary>
     public override async Task OnNavigatedToAsync(NavigationEventArgs? e)
     {
-        await LoadStorageDataAsync(LoadDataStorageCoreAsync);
+        if (!SignIn.HasRequest || App.BusinessLogicManager.ConnectClient.Client is null)
+            await LoadStorageDataAsync(LoadDataStorageCoreAsync);
+        InitializeSignIn();
         if (e?.Parameter is not Guid proxyUid) return;
         Exception.Default();
         ConnectionMsg = string.Empty;
@@ -75,6 +85,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     // Меняем только выбор прокси, сохраняя API-параметры и текущую авторизацию
     private async Task ApplyProxyAsync(Guid proxyUid, CancellationToken ct = default)
     {
+        if (SignIn.HasRequest)
+        {
+            ConnectionMsg = "ConnectionPendingCredentials".GetLocalizedResource();
+            return;
+        }
         var proxy = ProxiesVms.FirstOrDefault(x => x.Dto.Uid == proxyUid)
             ?? throw new InvalidOperationException("Выбранный прокси больше не существует. Обновите список и повторите выбор");
         if (AppDto is null) return;
@@ -99,6 +114,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         else if (message.Contains("PHONE_CODE_INVALID", StringComparison.OrdinalIgnoreCase))
             Exception.Message = TgResourceExtensions.GetRpcErrorPhoneCodeInvalid();
         ConnectionMsg = Exception.Message;
+        RefreshConnectionPresentation();
     }
 
     // Обновляем состояние подключения, сохраняя сообщение об ошибке авторизации
@@ -112,6 +128,10 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
             await TgDesktopUtils.InvokeOnUIThreadAsync(() =>
             {
+                if (App.BusinessLogicManager.ConnectClient.Client is null)
+                {
+                    ClearAuthorizationFields();
+                }
                 ConnectionDt = TgDataFormatUtils.GetDtFormat(DateTime.Now);
                 ConnectionMsg = isReady ? TgResourceExtensions.GetClientIsConnected() : TgResourceExtensions.GetClientIsDisconnected();
                 if (!isReady && Exception.IsExist) ConnectionMsg = Exception.Message;
@@ -163,7 +183,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         catch (Exception ex)
         {
             LogError(ex);
-            Exception.Set(ex);
+            UpdateException(ex);
         }
         finally
         {
@@ -178,10 +198,17 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         try
         {
             ct.ThrowIfCancellationRequested();
+            var headingEnd = title.IndexOfAny(['\r', '\n']);
             var dialog = new ContentDialog
             {
                 XamlRoot = XamlRootVm,
-                Title = title,
+                Title = headingEnd < 0 ? title : title[..headingEnd],
+                Content = headingEnd < 0 ? null : new TextBlock
+                {
+                    Text = title[headingEnd..].TrimStart('\r', '\n'),
+                    TextWrapping = TextWrapping.Wrap,
+                    IsTextSelectionEnabled = true,
+                },
                 PrimaryButtonText = TgResourceExtensions.GetYesButton(),
                 CloseButtonText = TgResourceExtensions.GetCancelButton(),
                 DefaultButton = ContentDialogButton.Close,
@@ -196,7 +223,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         catch (Exception ex)
         {
             LogError(ex);
-            Exception.Set(ex);
+            UpdateException(ex);
         }
     }
 
@@ -209,10 +236,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 			"api_hash" => AppDto.ApiHashString,
 			"api_id" => AppDto.ApiId.ToString(),
 			"phone_number" => AppDto.PhoneNumber,
-			"first_name" => AppDto.FirstName,
-			"last_name" => AppDto.LastName,
-			"password" => Password,
-			"verification_code" => VerificationCode,
+            // Подтверждения передаются в Login отдельно, иначе даже пустая строка подавляет запрос мастера
 			"session_pathname" => SettingsService.AppSession,
 			_ => null,
 		};
@@ -220,10 +244,8 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         TgDesktopUtils.InvokeOnUIThread(() => { 
 		    try
 		    {
-			    DataRequest = string.IsNullOrEmpty(DataRequest)
-				    ? $"{what}: {(string.IsNullOrEmpty(response) ? DataRequestEmptyResponse : response)}"
-				    : DataRequest + Environment.NewLine +
-					    $"{what}: {(string.IsNullOrEmpty(response) ? DataRequestEmptyResponse : response)}";
+            // В диагностике оставляем только название запрошенного поля, без секретов авторизации
+            DataRequest = string.IsNullOrEmpty(DataRequest) ? what : DataRequest + Environment.NewLine + what;
 		    }
 		    catch (Exception ex)
 		    {
@@ -279,7 +301,27 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
         try
         {
-            await App.BusinessLogicManager.ConnectClient.ConnectSessionAsync(ConfigClientDesktop, ProxyVm?.Dto ?? new(), isDesktop: true);
+            if (!IsOnlineReady && !SignIn.HasRequest && string.IsNullOrWhiteSpace(AppDto.PhoneNumber) && !IsExistsAppSession)
+            {
+                ConnectionMsg = "ConnectionPhoneRequired".GetLocalizedResource();
+                return;
+            }
+            var input = GetSignInInput();
+            if (SignIn.HasRequest && string.IsNullOrWhiteSpace(input))
+            {
+                ConnectionMsg = "ConnectionInputRequired".GetLocalizedResource();
+                return;
+            }
+            await SignIn.SubmitAsync(() => App.BusinessLogicManager.ConnectClient.ConnectSessionStepAsync(
+                ConfigClientDesktop, ProxyVm?.Dto ?? new(), input));
+            VerificationCode = string.Empty;
+            Password = string.Empty;
+            LoginEmail = string.Empty;
+            if (SignIn.HasRequest)
+            {
+                ConnectionMsg = AuthorizationHint;
+                return;
+            }
             if (!await App.BusinessLogicManager.ConnectClient.CheckClientConnectionReadyAsync()) return;
             if (AppDto is not null && App.BusinessLogicManager.ConnectClient.Me is TL.User me)
             {
@@ -290,6 +332,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
             await AppSaveCoreAsync();
             _shellVm ??= App.VmLocator.Get<ShellViewModel>();
             _shellVm.UidSavedMessages = await App.BusinessLogicManager.ConnectClient.OpenOrCreateSavedMessagesAsync();
+            RefreshConnectionPresentation();
         }
         catch (Exception ex)
         {
@@ -327,7 +370,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         catch (Exception ex)
         {
             LogError(ex);
-            Exception.Set(ex);
+            UpdateException(ex);
             if (isRetry)
                 return;
             if (Exception.Message.Contains("or delete the file to start a new session"))
@@ -358,6 +401,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 		DataRequestEmptyResponse = TgResourceExtensions.GetClientDataRequestEmptyResponse();
 
 		await ReloadProxyAsync();
+        RefreshConnectionPresentation();
 	}
 
     // Очищаем сведения о клиенте без сброса ошибки подключения
@@ -423,7 +467,7 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
         catch (Exception ex)
         {
             LogError(ex);
-            Exception = new(ex);
+            UpdateException(ex);
         }
     }
 
@@ -432,6 +476,12 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
 
 	private async Task AppClearCoreAsync()
 	{
+        if (SignIn.HasRequest)
+        {
+            await App.BusinessLogicManager.ConnectClient.DisconnectClientAsync();
+            if (App.BusinessLogicManager.ConnectClient.Client is not null) return;
+        }
+        SignIn.Reset();
         AppDto = new();
 		ProxiesVms.Clear();
 		ProxyVm?.Dto = new();
@@ -502,9 +552,11 @@ public sealed partial class TgClientConnectionViewModel : TgPageViewModelBase
     // Очищаем данные предыдущей попытки входа, сохраняя API-параметры
     private void ClearAuthorizationFields()
     {
+        SignIn.Reset();
         Password = string.Empty;
         VerificationCode = string.Empty;
         DataRequest = string.Empty;
+        LoginEmail = string.Empty;
     }
 
 	public void OnApiHashTextChanged(object sender, TextChangedEventArgs e)

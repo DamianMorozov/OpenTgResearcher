@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -1207,7 +1207,7 @@
     <value>You have tried logging in too many times</value>
   </data>
   <data name="RpcErrorPhoneCodeInvalid" xml:space="preserve">
-    <value>A valid Telegram login code is required. Copy the login code from a Telegram app where you are already logged in (for example, on your mobile device), paste it into Login code, and click Connect again. If you already entered a code, use the most recent code you received.</value>
+    <value>A valid Telegram login code is required. Copy the login code from a Telegram app where you are already logged in (for example, on your mobile device), paste it into Verification code, and click Connect again. If you already entered a code, use the most recent code you received.</value>
   </data>
   <data name="RpcErrorPasswordHashInvalid" xml:space="preserve">
     <value>The password (and thus its hash value) you entered is invalid</value>
@@ -2685,4 +2685,74 @@ Open Chats, select a chat, choose a download folder and start parsing.</value></
   <data name="HomeStorageTitle.Text" xml:space="preserve"><value>Storage</value></data>
   <data name="HomeStorageMissing" xml:space="preserve"><value>File not found</value></data>
   <data name="HomeStorageUnavailable" xml:space="preserve"><value>Size unavailable</value></data>
+  <data name="ConnectionApiIdField.Header" xml:space="preserve"><value>API ID</value></data>
+  <data name="ConnectionApiIdField.PlaceholderText" xml:space="preserve"><value>Enter API ID</value></data>
+  <data name="ConnectionApiHashField.Header" xml:space="preserve"><value>API hash</value></data>
+  <data name="ConnectionApiHashField.PlaceholderText" xml:space="preserve"><value>Enter API hash</value></data>
+  <data name="ConnectionPhoneField.Header" xml:space="preserve"><value>Phone number with country code</value></data>
+  <data name="ConnectionPhoneField.PlaceholderText" xml:space="preserve"><value>+_ ___ ___-__-__</value></data>
+  <data name="ConnectionProxyField.Header" xml:space="preserve"><value>Proxy</value></data>
+  <data name="ConnectionCodeField.Header" xml:space="preserve"><value>Verification code</value></data>
+  <data name="ConnectionPasswordField.Header" xml:space="preserve"><value>Two-step verification password</value></data>
+  <data name="ConnectionFirstNameField.Header" xml:space="preserve"><value>First name</value></data>
+  <data name="ConnectionLastNameField.Header" xml:space="preserve"><value>Last name</value></data>
+  <data name="ConnectionEmailField.Header" xml:space="preserve"><value>Email address</value></data>
+  <data name="ConnectionApiHelp.Text" xml:space="preserve"><value>Telegram provides API ID and API hash for your application. Copy both values from API development tools.</value></data>
+  <data name="ConnectionMyTelegram.Content" xml:space="preserve"><value>Get credentials at my.telegram.org ↗</value></data>
+  <data name="ConnectionSecretsHelp.Text" xml:space="preserve"><value>The code and password are used only for sign-in and are not saved in settings.</value></data>
+  <data name="ConnectionAppTitle.Text" xml:space="preserve"><value>Telegram application</value></data>
+  <data name="ConnectionConnectButton.Content" xml:space="preserve"><value>Connect</value></data>
+  <data name="ConnectionSaveButton.Content" xml:space="preserve"><value>Save</value></data>
+  <data name="ConnectionAdvanced.Header" xml:space="preserve"><value>Advanced</value></data>
+  <data name="ConnectionUseClient.Header" xml:space="preserve"><value>Use Telegram client</value></data>
+  <data name="ConnectionClearButton.Content" xml:space="preserve"><value>Clear fields…</value></data>
+  <data name="ConnectionAuthTitle.Text" xml:space="preserve"><value>Confirm sign-in</value></data>
+  <data name="ConnectionConfirmButton.Content" xml:space="preserve"><value>Confirm</value></data>
+  <data name="ConnectionSessionTitle.Text" xml:space="preserve"><value>Account and session</value></data>
+  <data name="ConnectionSessionFileLabel.Text" xml:space="preserve"><value>Session file</value></data>
+  <data name="ConnectionWizardButton.Content" xml:space="preserve"><value>Sign-in wizard</value></data>
+  <data name="ConnectionDisconnectButton.Content" xml:space="preserve"><value>Disconnect</value></data>
+  <data name="ConnectionSessionActions.Header" xml:space="preserve"><value>Manage session</value></data>
+  <data name="ConnectionResetHelp.Text" xml:space="preserve"><value>Resetting the session requires signing in again. Deleting credentials also deletes the selected session file; both actions require confirmation.</value></data>
+  <data name="ConnectionProfileSettingsButton.Content" xml:space="preserve"><value>Profile settings</value></data>
+  <data name="ConnectionResetButton.Content" xml:space="preserve"><value>Reset session…</value></data>
+  <data name="ConnectionDeleteButton.Content" xml:space="preserve"><value>Delete credentials and session…</value></data>
+  <data name="ConnectionDiagnostics.Header" xml:space="preserve"><value>Connection diagnostics</value></data>
+  <data name="ConnectionLastConnectedField.Header" xml:space="preserve"><value>Last connection</value></data>
+  <data name="ConnectionUsernameField.Header" xml:space="preserve"><value>Username</value></data>
+  <data name="ConnectionProxyUrlField.Header" xml:space="preserve"><value>MTProxy URL</value></data>
+  <data name="ConnectionReconnectsField.Header" xml:space="preserve"><value>Maximum reconnections</value></data>
+  <data name="ConnectionAttemptsField.Header" xml:space="preserve"><value>Maximum code and password attempts</value></data>
+  <data name="ConnectionFloodField.Header" xml:space="preserve"><value>Flood wait threshold</value></data>
+  <data name="ConnectionPingField.Header" xml:space="preserve"><value>Connection ping interval</value></data>
+  <data name="ConnectionRequestsField.Header" xml:space="preserve"><value>Requested fields without values</value></data>
+  <data name="ConnectionWizardTitle.Text" xml:space="preserve"><value>Sign-in wizard</value></data>
+  <data name="ConnectionCenterButton.Content" xml:space="preserve"><value>Connection center</value></data>
+  <data name="ConnectionApiStepTitle.Text" xml:space="preserve"><value>Start with API ID and API hash</value></data>
+  <data name="ConnectionTooManyTitle.Header" xml:space="preserve"><value>“Too many attempts” on the website?</value></data>
+  <data name="ConnectionTooManyHelp.Text" xml:space="preserve"><value>Telegram has temporarily limited attempts. Pause and try again later; Telegram does not specify an exact waiting period. If your application already exists, use its existing API ID and API hash.</value></data>
+  <data name="ConnectionPhoneStepTitle.Text" xml:space="preserve"><value>Enter your phone number</value></data>
+  <data name="ConnectionExistingSessionHelp.Text" xml:space="preserve"><value>The app will first try the saved session. A code is required only if Telegram requests it.</value></data>
+  <data name="ConnectionDoneTitle.Text" xml:space="preserve"><value>Telegram connected</value></data>
+  <data name="ConnectionDoneHelp.Text" xml:space="preserve"><value>You can now search chats, parse messages, and download files. The app will try the saved session next time.</value></data>
+  <data name="ConnectionBackButton.Content" xml:space="preserve"><value>Back</value></data>
+  <data name="ConnectionPhoneRequired" xml:space="preserve"><value>Enter the account phone number with its country code.</value></data>
+  <data name="ConnectionInputRequired" xml:space="preserve"><value>Fill in the field requested by Telegram and confirm again.</value></data>
+  <data name="ConnectionAccountPending" xml:space="preserve"><value>Sign-in is not complete</value></data>
+  <data name="ConnectionWaiting" xml:space="preserve"><value>Waiting for confirmation</value></data>
+  <data name="ConnectionStepCaption" xml:space="preserve"><value>Step {0} of 4 · Application → Phone → Verification → Done</value></data>
+  <data name="ConnectionNext" xml:space="preserve"><value>Next</value></data>
+  <data name="ConnectionConnect" xml:space="preserve"><value>Connect</value></data>
+  <data name="ConnectionConfirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="ConnectionPasswordHelp" xml:space="preserve"><value>Enter the two-step verification password for your Telegram account.</value></data>
+  <data name="ConnectionNameHelp" xml:space="preserve"><value>First and last names are needed only when registering a new Telegram account.</value></data>
+  <data name="ConnectionEmailHelp" xml:space="preserve"><value>Telegram requested your email address to continue sign-in.</value></data>
+  <data name="ConnectionEmailCodeHelp" xml:space="preserve"><value>Enter the verification code from the Telegram email.</value></data>
+  <data name="ConnectionCodeHelp" xml:space="preserve"><value>Copy the code from an authorized Telegram app, for example on your mobile device.</value></data>
+  <data name="ConnectionCenterTitle.Text" xml:space="preserve"><value>Connection center</value></data>
+  <data name="ConnectionCenterHelp.Text" xml:space="preserve"><value>Telegram account, application credentials and saved session for the selected profile.</value></data>
+  <data name="ConnectionPendingCredentials" xml:space="preserve"><value>To change the phone, API credentials or proxy, complete the current sign-in or click Disconnect.</value></data>
+  <data name="ConnectionConnected" xml:space="preserve"><value>Connected</value></data>
+  <data name="ConnectionDisconnected" xml:space="preserve"><value>Disconnected</value></data>
+  <data name="ConnectionDirectProxy.Text" xml:space="preserve"><value>No proxy</value></data>
 </root>

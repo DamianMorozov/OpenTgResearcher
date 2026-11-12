@@ -1,5 +1,74 @@
 # Скриншоты
 
+## [0.8.900]
+
+### OpenTgResearcherDesktop
+
+Размер окна и изображений — **1200×1000 пикселей**, русский язык, тёмная тема. Чаты и контакты заполнены демонстрационными данными; подключение к Telegram не выполнялось. Сохранены назначения снимков предыдущей версии. Страница подключения показывает «Центр подключения»; «Мастер входа» представлен отдельным снимком. Снимок обновлений показывает соответствующий раздел страницы «Настройки».
+
+#### Заставка
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_01_SplashScreen.png" alt="Заставка — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Главная
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_02_Main.png" alt="Главная — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Хранилище
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_03_Storage.png" alt="Хранилище — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Подключение клиента
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_04_Connection.png" alt="Подключение клиента — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Фильтры
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_05_Filters.png" alt="Фильтры — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Прокси
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_06_Proxies.png" alt="Прокси — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Сторис
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_07_Stories.png" alt="Сторис — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Чаты
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_08_Chats.png" alt="Чаты — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Пульт чата
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_09_ChatDetails.png" alt="Пульт чата — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Содержимое чата
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_10_ChatContent.png" alt="Содержимое чата — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Пользователи и контакты
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_11_Contacts.png" alt="Пользователи и контакты — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Карточка контакта
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_12_ContactDetails.png" alt="Карточка контакта — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Оборудование
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_13_Hardware.png" alt="Оборудование — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Логи
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_14_Logs.png" alt="Логи — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Обновления в настройках
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_15_Update.png" alt="Обновления в настройках — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Лицензия
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_16_License.png" alt="Лицензия — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Настройки
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_17_Settings.png" alt="Настройки — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Сетевая активность
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_18_NetworkActivity.png" alt="Сетевая активность — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Оборудование — динамика нагрузки
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_19_HardwareLoad.png" alt="Динамика нагрузки — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Мастер входа
+<p align="center"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_20_SignInWizard.png" alt="Мастер входа — OpenTgResearcher Desktop 0.8.900"></p>
+
+#### Анимация заставки
+<p align="center"><img src="Assets/Animations/OpenTgResearcherDesktop_SplashScreen.gif" alt="Анимация заставки — OpenTgResearcher Desktop 0.8.900"></p>
+
 ## [0.8.800]
 
 ### OpenTgResearcherDesktop

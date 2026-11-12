@@ -30,9 +30,9 @@
 Продукт подходит для личного архива, исследования сообществ и OSINT-анализа доступных данных Telegram. Для работы доступны графическое приложение Desktop для Windows и консольное приложение Console.
 
 <p align="center">
-  <a href="SCREENSHOTS.md"><img src="Assets/v0.8.800/OpenTgResearcherDesktop_02_Main.png" alt="Главная страница OpenTgResearcher Desktop: профиль, подключение и быстрый доступ к архиву" width="900"></a>
+  <a href="SCREENSHOTS.md"><img src="Assets/v0.8.900/OpenTgResearcherDesktop_02_Main.png" alt="Главная страница OpenTgResearcher Desktop: профиль, подключение и быстрый доступ к архиву" width="900"></a>
 </p>
-<p align="center"><sub>Desktop 0.8.800 · Демонстрационные данные · <a href="SCREENSHOTS.md">Все скриншоты</a></sub></p>
+<p align="center"><sub>Desktop 0.8.900 · Демонстрационные данные · <a href="SCREENSHOTS.md">Все скриншоты</a></sub></p>
 
 ## Документация
 

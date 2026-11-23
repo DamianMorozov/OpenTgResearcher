@@ -8,7 +8,54 @@ internal static partial class Program
         ("StoryImportKeepsAllStoriesAndSources", StoryImportKeepsAllStoriesAndSourcesAsync),
         ("StoryArchiveDownloadsAndKeepsDeletedMedia", StoryArchiveDownloadsAndKeepsDeletedMediaAsync),
         ("StoryArchiveRejectsPartialAndEscapingFiles", StoryArchiveRejectsPartialAndEscapingFilesAsync),
+        ("StoryArchiveClearDeletesOnlyRequestedData", StoryArchiveClearDeletesOnlyRequestedDataAsync),
     ];
+
+    // Проверяем оба режима очистки и независимость операции от фильтра журнала
+    private static async Task StoryArchiveClearDeletesOnlyRequestedDataAsync()
+    {
+        using var fixture = new MediaFixture();
+        var settings = new ITgSettingsService { AppStorage = Path.Combine(fixture.Directory, "stories.db") };
+        using var vm = new TgStoriesViewModel(_state, settings, _navigation, null!);
+        using var repository = new TgEfStoryRepository();
+        using var users = new TgEfUserRepository();
+        var userCount = await users.GetCountAsync();
+        await vm.OnNavigatedToAsync(null);
+        var mediaPath = Path.Combine("user-100", "7-300.mp4");
+        var media = Path.Combine(vm.ArchiveDirectory, mediaPath);
+        var marker = media + ".deleted";
+        var keep = Path.Combine(vm.ArchiveDirectory, "keep.mp4");
+        var outside = Path.Combine(fixture.Directory, "outside.mp4");
+        Directory.CreateDirectory(Path.GetDirectoryName(media)!);
+        foreach (var file in new[] { media, marker, keep, outside })
+            await File.WriteAllTextAsync(file, "fixture");
+        var stories = new TgEfStoryDto[]
+        {
+            new() { Id = 7, FromId = 100, Caption = "Видео", MediaPath = mediaPath, IsDeleted = true },
+            new() { Id = 8, FromId = 101 },
+        };
+        await repository.SaveListAsync(stories);
+        await vm.ReloadUiAsync();
+        vm.SearchText = "Видео";
+        Assert(vm.Rows.Count == 1, "Для проверки нужен отфильтрованный журнал");
+        await vm.ClearArchiveAsync(includeFiles: false);
+        Assert(await repository.GetCountAsync() == 0 && vm.SelectedStory is null && vm.IsJournalEmpty, "Очистка оставила записи или карточку");
+        Assert(new[] { media, marker, keep }.All(File.Exists), "Очистка без флажка изменила файлы");
+
+        await repository.SaveListAsync(stories);
+        await repository.SaveAsync(new() { Id = 9, FromId = 101, MediaPath = Path.Combine("..", "outside.mp4") });
+        await vm.ClearArchiveAsync(includeFiles: true);
+        Assert(vm.ArchiveMessage == "StoriesClearWithFilesError" && await repository.GetCountAsync() == 3
+            && new[] { media, marker, keep, outside }.All(File.Exists), "Недопустимый путь должен остановить очистку до удаления");
+        var badPath = await repository.GetByDtoAsync(new() { Id = 9, FromId = 101 });
+        await repository.DeleteAsync(badPath.Item!);
+
+        vm.ArchiveDirectoryInput = fixture.Directory;
+        await vm.ClearArchiveAsync(includeFiles: true);
+        Assert(await repository.GetCountAsync() == 0 && await users.GetCountAsync() == userCount, "Очистка затронула не только таблицу сторис");
+        Assert(!File.Exists(media) && !File.Exists(marker) && File.Exists(keep) && File.Exists(outside),
+            "Очистка должна удалить только медиа сторис и их отметки из сохранённого каталога");
+    }
 
     private static async Task StoryJournalSearchAndSelectionAsync()
     {

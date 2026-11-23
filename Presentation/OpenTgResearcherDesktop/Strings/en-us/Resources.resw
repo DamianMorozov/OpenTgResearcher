@@ -2779,6 +2779,15 @@ Open Chats, select a chat, choose a download folder and start parsing.</value></
   <data name="StoriesUnknownAuthor" xml:space="preserve"><value>Unknown author</value></data>
   <data name="StoriesChooseFolder.Content" xml:space="preserve"><value>Browse…</value></data>
   <data name="StoriesDirectory.Header" xml:space="preserve"><value>Stories folder</value></data>
+  <data name="StoriesClearArchive.Text" xml:space="preserve"><value>Clear all stories</value></data>
+  <data name="StoriesClearTitle" xml:space="preserve"><value>Clear all stories?</value></data>
+  <data name="StoriesClearConfirm" xml:space="preserve"><value>All story records will be removed from the current database. Select the checkbox to also remove the corresponding files from the saved stories folder.</value></data>
+  <data name="StoriesClearIncludeFiles" xml:space="preserve"><value>Include files on disk?</value></data>
+  <data name="StoriesClearConfirmButton" xml:space="preserve"><value>Clear</value></data>
+  <data name="StoriesCleared" xml:space="preserve"><value>Story records were removed. Files were kept on disk.</value></data>
+  <data name="StoriesClearedWithFiles" xml:space="preserve"><value>Story records and their files were removed.</value></data>
+  <data name="StoriesClearError" xml:space="preserve"><value>Unable to clear story records. See the application log for details.</value></data>
+  <data name="StoriesClearWithFilesError" xml:space="preserve"><value>Unable to finish clearing stories. Some files may have already been removed. See the application log for details.</value></data>
   <data name="StoriesCopyDirectory.AutomationProperties.Name" xml:space="preserve"><value>Copy stories folder path</value></data>
   <data name="StoriesCopyDirectory.ToolTipService.ToolTip" xml:space="preserve"><value>Copy path</value></data>
   <data name="StoriesSaveDirectory.Content" xml:space="preserve"><value>Save folder</value></data>

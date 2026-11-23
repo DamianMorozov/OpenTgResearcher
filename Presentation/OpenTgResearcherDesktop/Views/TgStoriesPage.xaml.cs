@@ -44,8 +44,36 @@ public sealed partial class TgStoriesPage
 
     private void OnStoryChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ViewModel.SelectedStory) or nameof(ViewModel.ArchiveDirectory) or nameof(ViewModel.IsDisplaySensitiveData))
+        if (e.PropertyName is nameof(ViewModel.SelectedStory) or nameof(ViewModel.ArchiveDirectory) or nameof(ViewModel.IsDisplaySensitiveData)
+            or nameof(ViewModel.IsClearingArchive))
             _ = UpdateMediaAsync();
+    }
+
+    // Запрашиваем подтверждение очистки и отдельно предлагаем удалить файлы
+    private async void OnClearArchiveClick(object sender, RoutedEventArgs e)
+    {
+        if (XamlRoot is null || !ViewModel.IsArchiveIdle) return;
+
+        var includeFiles = new CheckBox { Content = "StoriesClearIncludeFiles".GetLocalizedResource() };
+        var content = new StackPanel { Spacing = 8 };
+        content.Children.Add(new TextBlock { Text = "StoriesClearConfirm".GetLocalizedResource(), TextWrapping = TextWrapping.Wrap });
+        content.Children.Add(includeFiles);
+
+        try
+        {
+            var dialog = new ContentDialog
+            {
+                XamlRoot = XamlRoot,
+                Title = "StoriesClearTitle".GetLocalizedResource(),
+                Content = content,
+                PrimaryButtonText = "StoriesClearConfirmButton".GetLocalizedResource(),
+                CloseButtonText = TgResourceExtensions.GetCancelButton(),
+                DefaultButton = ContentDialogButton.Close,
+            };
+            if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+                await ViewModel.ClearArchiveAsync(includeFiles: includeFiles.IsChecked == true);
+        }
+        catch (Exception ex) { ViewModel.LogError(ex); }
     }
 
     private async void OnChooseFolderClick(object sender, RoutedEventArgs e)
@@ -74,7 +102,7 @@ public sealed partial class TgStoriesPage
     {
         ClearMedia();
         var revision = _mediaRevision;
-        if (!ViewModel.IsDisplaySensitiveData || ViewModel.SelectedStory?.Dto.MediaPath is not { Length: > 0 } relativePath)
+        if (ViewModel.IsClearingArchive || !ViewModel.IsDisplaySensitiveData || ViewModel.SelectedStory?.Dto.MediaPath is not { Length: > 0 } relativePath)
             return;
         try
         {

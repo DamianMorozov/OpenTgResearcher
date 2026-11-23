@@ -2843,6 +2843,15 @@ API-параметры, телефон и выбранный прокси буд
   <data name="StoriesUnknownAuthor" xml:space="preserve"><value>Автор неизвестен</value></data>
   <data name="StoriesChooseFolder.Content" xml:space="preserve"><value>Выбрать…</value></data>
   <data name="StoriesDirectory.Header" xml:space="preserve"><value>Каталог сторис</value></data>
+  <data name="StoriesClearArchive.Text" xml:space="preserve"><value>Очистить все сторис</value></data>
+  <data name="StoriesClearTitle" xml:space="preserve"><value>Очистить все сторис?</value></data>
+  <data name="StoriesClearConfirm" xml:space="preserve"><value>Все записи сторис будут удалены из текущей базы. Флажок также удалит связанные с этими записями файлы из сохранённого каталога сторис.</value></data>
+  <data name="StoriesClearIncludeFiles" xml:space="preserve"><value>Включать файлы на диске?</value></data>
+  <data name="StoriesClearConfirmButton" xml:space="preserve"><value>Очистить</value></data>
+  <data name="StoriesCleared" xml:space="preserve"><value>Записи сторис удалены. Файлы оставлены на диске.</value></data>
+  <data name="StoriesClearedWithFiles" xml:space="preserve"><value>Записи сторис и связанные файлы удалены.</value></data>
+  <data name="StoriesClearError" xml:space="preserve"><value>Не удалось очистить записи сторис. Подробности в журнале приложения.</value></data>
+  <data name="StoriesClearWithFilesError" xml:space="preserve"><value>Не удалось завершить очистку. Часть файлов уже могла быть удалена. Подробности в журнале приложения.</value></data>
   <data name="StoriesCopyDirectory.AutomationProperties.Name" xml:space="preserve"><value>Копировать путь к каталогу сторис</value></data>
   <data name="StoriesCopyDirectory.ToolTipService.ToolTip" xml:space="preserve"><value>Копировать путь</value></data>
   <data name="StoriesSaveDirectory.Content" xml:space="preserve"><value>Сохранить каталог</value></data>

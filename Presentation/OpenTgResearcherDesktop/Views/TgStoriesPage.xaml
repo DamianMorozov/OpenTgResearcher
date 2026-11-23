@@ -76,6 +76,7 @@
                     <ColumnDefinition x:Name="LoadColumn" Width="*" />
                     <ColumnDefinition x:Name="TelegramColumn" Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition x:Name="ClearArchiveColumn" Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button
                     HorizontalAlignment="Stretch"
@@ -110,6 +111,19 @@
                     Style="{StaticResource SubtleButtonStyle}">
                     <TextBlock
                         l:Uids.Uid="ActionClearView"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </Button>
+                <Button
+                    Grid.Column="3"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    AutomationProperties.AutomationId="StoriesClearArchive"
+                    Click="OnClearArchiveClick"
+                    IsEnabled="{x:Bind ViewModel.IsArchiveIdle, Mode=OneWay}"
+                    Style="{StaticResource SubtleButtonStyle}">
+                    <TextBlock
+                        l:Uids.Uid="StoriesClearArchive"
                         TextAlignment="Center"
                         TextWrapping="Wrap" />
                 </Button>
@@ -437,6 +451,7 @@
                         <Setter Target="DetailsPane.VerticalAlignment" Value="Top" />
                         <Setter Target="LoadColumn.Width" Value="Auto" />
                         <Setter Target="TelegramColumn.Width" Value="Auto" />
+                        <Setter Target="ClearArchiveColumn.Width" Value="Auto" />
                         <Setter Target="ClearButton.HorizontalAlignment" Value="Right" />
                     </VisualState.Setters>
                 </VisualState>

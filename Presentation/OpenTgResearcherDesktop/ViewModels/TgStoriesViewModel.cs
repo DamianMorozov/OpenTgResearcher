@@ -47,7 +47,12 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
     [NotifyCanExecuteChangedFor(nameof(SaveArchiveDirectoryCommand))]
     public partial bool IsArchiveBusy { get; private set; }
 
-    public bool IsArchiveIdle => !IsArchiveBusy;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsArchiveIdle))]
+    [NotifyCanExecuteChangedFor(nameof(SaveArchiveDirectoryCommand))]
+    public partial bool IsClearingArchive { get; private set; }
+
+    public bool IsArchiveIdle => !IsArchiveBusy && !IsClearingArchive;
     public bool HasArchiveDirectoryInput => !string.IsNullOrWhiteSpace(ArchiveDirectoryInput);
     public bool IsJournalEmpty => Rows.Count == 0;
     public bool HasSelection => SelectedStory is not null;
@@ -182,6 +187,40 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
         RefreshJournal();
     }
 
+    /// <summary> Очищает локальный журнал сторис после подтверждения </summary>
+    public async Task ClearArchiveAsync(bool includeFiles, CancellationToken ct = default)
+    {
+        if (!IsArchiveIdle || !SettingsService.IsExistsAppStorage) return;
+
+        var directory = ArchiveDirectory;
+        IsClearingArchive = true;
+        ArchiveMessage = string.Empty;
+        try
+        {
+            await LoadStorageDataAsync(async () =>
+            {
+                using var repository = new TgEfStoryRepository();
+                if (includeFiles)
+                {
+                    var stories = await repository.GetListDtosAsync(ct: ct);
+                    // Сохраняем записи при сбое удаления, чтобы можно было повторить очистку файлов
+                    await Task.Run(() => TgStoryMediaArchive.DeleteFiles(directory, stories.Select(story => story.MediaPath), ct), ct);
+                }
+                var result = await repository.DeleteAllAsync(ct);
+                if (result.State != TgEnumEntityState.IsDeleted)
+                    throw new InvalidOperationException("Не удалось очистить таблицу сторис.");
+                ClearView();
+                ArchiveMessage = (includeFiles ? "StoriesClearedWithFiles" : "StoriesCleared").GetLocalizedResource();
+            });
+        }
+        finally
+        {
+            if (ArchiveMessage.Length == 0)
+                ArchiveMessage = (includeFiles ? "StoriesClearWithFilesError" : "StoriesClearError").GetLocalizedResource();
+            IsClearingArchive = false;
+        }
+    }
+
     private async Task LoadDataStorageCoreAsync()
     {
         if (!SettingsService.IsExistsAppStorage)
@@ -200,7 +239,7 @@ public sealed partial class TgStoriesViewModel : TgPageViewModelBase
 
     private async Task SyncArchiveAsync(bool forAuthor, CancellationToken ct)
     {
-        if (IsArchiveBusy || !SettingsService.IsExistsAppStorage || ArchiveDirectory.Length == 0) return;
+        if (!IsArchiveIdle || !SettingsService.IsExistsAppStorage || ArchiveDirectory.Length == 0) return;
         var selected = forAuthor ? SelectedStory?.Dto : null;
         var username = forAuthor ? AuthorUsername.Trim() : null;
         if (forAuthor && string.IsNullOrEmpty(username) && (selected?.FromId ?? 0) <= 0)

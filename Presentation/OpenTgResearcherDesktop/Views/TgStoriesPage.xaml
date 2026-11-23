@@ -355,20 +355,35 @@
                                     x:Name="StoryMedia"
                                     Spacing="8"
                                     Visibility="Collapsed">
-                                    <Image
-                                        x:Name="StoryPhoto"
-                                        MaxHeight="310"
-                                        l:Uids.Uid="StoriesPhoto"
-                                        AutomationProperties.AutomationId="StoryArchivedPhoto"
-                                        Stretch="Uniform"
-                                        Visibility="Collapsed" />
-                                    <MediaPlayerElement
-                                        x:Name="StoryVideo"
-                                        Height="270"
-                                        AreTransportControlsEnabled="True"
-                                        AutoPlay="False"
-                                        AutomationProperties.AutomationId="StoryArchivedVideo"
-                                        Visibility="Collapsed" />
+                                    <Grid x:Name="StoryMediaHost" Visibility="Collapsed">
+                                        <Grid x:Name="StoryMediaSurface">
+                                            <Image
+                                                x:Name="StoryPhoto"
+                                                l:Uids.Uid="StoriesPhoto"
+                                                AutomationProperties.AutomationId="StoryArchivedPhoto"
+                                                Stretch="Uniform"
+                                                Visibility="Collapsed">
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Setter Property="MaxHeight" Value="310" />
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                            <MediaPlayerElement
+                                                x:Name="StoryVideo"
+                                                AreTransportControlsEnabled="True"
+                                                AutoPlay="False"
+                                                AutomationProperties.AutomationId="StoryArchivedVideo"
+                                                Stretch="Uniform"
+                                                Visibility="Collapsed">
+                                                <MediaPlayerElement.Style>
+                                                    <Style TargetType="MediaPlayerElement">
+                                                        <Setter Property="Height" Value="270" />
+                                                    </Style>
+                                                </MediaPlayerElement.Style>
+                                            </MediaPlayerElement>
+                                        </Grid>
+                                    </Grid>
                                     <TextBlock
                                         x:Name="StoryMediaNotice"
                                         Style="{StaticResource StorySecondary}"

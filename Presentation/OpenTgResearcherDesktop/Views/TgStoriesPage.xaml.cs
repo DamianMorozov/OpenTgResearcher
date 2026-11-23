@@ -5,6 +5,7 @@ public sealed partial class TgStoriesPage
     private readonly DispatcherTimer _expirationTimer = new() { Interval = TimeSpan.FromSeconds(15) };
     private int _mediaRevision;
     private StorageFile? _mediaFile;
+    private Microsoft.UI.Xaml.Controls.Primitives.Popup? _mediaPopup;
 	#region Fields, properties, constructor
 
 	public override TgStoriesViewModel ViewModel { get; }
@@ -17,6 +18,10 @@ public sealed partial class TgStoriesPage
         DataContext = ViewModel;
         Loaded += OnStoriesLoaded;
         Unloaded += OnStoriesUnloaded;
+        StoryMediaSurface.AddHandler(TappedEvent, new TappedEventHandler(OnStoryMediaTapped), handledEventsToo: true);
+        var closeMedia = new KeyboardAccelerator { Key = VirtualKey.Escape };
+        closeMedia.Invoked += OnCloseMediaInvoked;
+        KeyboardAccelerators.Add(closeMedia);
         _expirationTimer.Tick += (_, _) => ViewModel.RefreshExpiration();
 	}
 
@@ -88,13 +93,77 @@ public sealed partial class TgStoriesPage
         catch (Exception ex) { ViewModel.LogError(ex); }
     }
 
+    // Переключаем просмотр по области изображения, оставляя кнопки и ползунки плеера доступными
+    private void OnStoryMediaTapped(object sender, TappedRoutedEventArgs e)
+    {
+        for (var element = e.OriginalSource as DependencyObject; element is not null && element != StoryMediaSurface;
+            element = VisualTreeHelper.GetParent(element))
+        {
+            if (element is Microsoft.UI.Xaml.Controls.Primitives.ButtonBase or Slider) return;
+        }
+
+        if (_mediaPopup is not null)
+            CloseMediaPreview();
+        else if (XamlRoot is { } root && _mediaFile is not null && ViewModel.IsDisplaySensitiveData)
+            OpenMediaPreview(root);
+        e.Handled = true;
+    }
+
+    // Возвращаем медиа в карточку по Esc только при открытом просмотре
+    private void OnCloseMediaInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        if (_mediaPopup is not { IsOpen: true }) return;
+
+        CloseMediaPreview();
+        args.Handled = true;
+    }
+
+    // Переносим ту же поверхность просмотра, чтобы сохранить источник и позицию видео
+    private void OpenMediaPreview(XamlRoot root)
+    {
+        StoryMediaHost.Children.Remove(StoryMediaSurface);
+        StoryPhoto.MaxHeight = double.PositiveInfinity;
+        StoryVideo.Height = double.NaN;
+        StoryMediaSurface.Background = new SolidColorBrush(Microsoft.UI.Colors.Black);
+        _mediaPopup = new() { XamlRoot = root, Child = StoryMediaSurface };
+        ResizeMediaPreview(root, null);
+        root.Changed += ResizeMediaPreview;
+        _mediaPopup.IsOpen = true;
+    }
+
+    // Подгоняем просмотр под клиентскую область при изменении размеров окна
+    private void ResizeMediaPreview(XamlRoot root, XamlRootChangedEventArgs? args)
+    {
+        StoryMediaSurface.Width = root.Size.Width;
+        StoryMediaSurface.Height = root.Size.Height;
+    }
+
+    // Возвращаем поверхность и её исходные размеры в карточке сторис
+    private void CloseMediaPreview()
+    {
+        if (_mediaPopup is not { } popup) return;
+
+        _mediaPopup = null;
+        if (popup.XamlRoot is { } root) root.Changed -= ResizeMediaPreview;
+        popup.IsOpen = false;
+        popup.Child = null;
+        StoryMediaSurface.ClearValue(WidthProperty);
+        StoryMediaSurface.ClearValue(HeightProperty);
+        StoryMediaSurface.ClearValue(Panel.BackgroundProperty);
+        StoryPhoto.ClearValue(MaxHeightProperty);
+        StoryVideo.ClearValue(HeightProperty);
+        StoryMediaHost.Children.Add(StoryMediaSurface);
+    }
+
     private void ClearMedia()
     {
+        CloseMediaPreview();
         _mediaRevision++;
         _mediaFile = null;
         StoryPhoto.Source = null;
         StoryVideo.MediaPlayer?.Pause();
         StoryVideo.Source = null;
+        StoryMediaHost.Visibility = Visibility.Collapsed;
         StoryPhoto.Visibility = StoryVideo.Visibility = OpenStoryMedia.Visibility = StoryMediaNotice.Visibility = StoryMedia.Visibility = Visibility.Collapsed;
     }
 
@@ -129,11 +198,13 @@ public sealed partial class TgStoriesPage
                 if (revision != _mediaRevision) return;
                 StoryPhoto.Source = photo;
                 StoryPhoto.Visibility = Visibility.Visible;
+                StoryMediaHost.Visibility = Visibility.Visible;
             }
             else if (TgStoryMediaArchive.IsVideo(path))
             {
                 StoryVideo.Source = Windows.Media.Core.MediaSource.CreateFromStorageFile(file);
                 StoryVideo.Visibility = Visibility.Visible;
+                StoryMediaHost.Visibility = Visibility.Visible;
             }
         }
         catch (Exception ex)

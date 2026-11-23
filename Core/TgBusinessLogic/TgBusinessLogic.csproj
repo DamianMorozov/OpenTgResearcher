@@ -15,5 +15,6 @@
   <ItemGroup>
     <ProjectReference Include="..\TgInfrastructure\TgInfrastructure.csproj" />
     <ProjectReference Include="..\TgStorage\TgStorage.csproj" />
+    <InternalsVisibleTo Include="TgBusinessLogicTests" />
   </ItemGroup>
 </Project>

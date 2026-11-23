@@ -113,7 +113,7 @@ try {
   @('^(Хранилище|Storage)$','^(Паспорт хранилища|Storage passport)$','storage'),
   @('^(Подключение клиента|Client connection)$','^(Мастер входа|Sign-in wizard|Центр подключения|Connection center)$','connection'),
   @('^(Фильтры|Filters)$','^(Загрузка хранилища|Loading storage)$','filters'),
-  @('^(Сторис|Stories)$','^(Загрузка хранилища|Loading storage)$','stories'),
+  @('^(Сторис|Stories)$','^(Журнал сторис|Story journal)$','stories'),
   @('^(Пользователи и контакты|Users and contacts)$','^(Загрузить ещё|Load more)$','users')
  )) {
   Invoke-Element (Find-Element $case[0] '' 'Microsoft.UI.Xaml.Controls.NavigationViewItem')
@@ -145,7 +145,7 @@ try {
     Save-Snapshot ('storage-'+$index)
    }
   }
-  $gridIds=@{filters='DataGridFilters';stories='DataGridStories';users='DataGridUsers'}
+  $gridIds=@{filters='DataGridFilters';stories='StoriesJournalList';users='DataGridUsers'}
   if($gridIds.ContainsKey($case[2])){[void](Find-Element '.*' $gridIds[$case[2]])}
   Save-Snapshot $case[2]
   Write-Output ('PASS: открыта страница '+$case[2])

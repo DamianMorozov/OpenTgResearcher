@@ -81,7 +81,8 @@ internal static partial class Program
             ("ChatsFilterHasOwnRow", ChatsFilterHasOwnRowAsync),
         }.Concat(MediaTests.GetTests()).Concat(GetRevisionTests()).Concat(GetPresentationTests()).Concat(GetRegistryTests())
             .Concat(GetParallelParsingTests()).Concat(GetPageAvailabilityTests()).Concat(GetRegistryActionTests()).Concat(GetRegistrySizeTests())
-            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).Concat(GetMessageContentTests()).Concat(GetGlobalSearchTests()).ToArray();
+            .Concat(GetRegistryPagingTests()).Concat(GetPublicChatTests()).Concat(GetMessageContentTests()).Concat(GetGlobalSearchTests())
+            .Concat(GetStoriesTests()).ToArray();
         if (args is ["--test", var testName]) tests = [tests.Single(x => x.Name == testName)];
         var failures = 0;
         foreach (var test in tests)

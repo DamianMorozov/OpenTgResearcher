@@ -2819,4 +2819,54 @@ API-параметры, телефон и выбранный прокси буд
   <data name="ConnectionConnected" xml:space="preserve"><value>Подключён</value></data>
   <data name="ConnectionDisconnected" xml:space="preserve"><value>Не подключён</value></data>
   <data name="ConnectionDirectProxy.Text" xml:space="preserve"><value>Без прокси</value></data>
+  <data name="StoriesSearch.PlaceholderText" xml:space="preserve"><value>Поиск по автору или подписи</value></data>
+  <data name="StoriesSearch.AutomationProperties.Name" xml:space="preserve"><value>Поиск по автору или подписи</value></data>
+  <data name="StoriesLoad.Text" xml:space="preserve"><value>Загрузить из хранилища</value></data>
+  <data name="StoriesUpdateTelegram.Text" xml:space="preserve"><value>Скачать активные из Telegram</value></data>
+  <data name="StoriesFilter.AutomationProperties.Name" xml:space="preserve"><value>Срок действия сторис</value></data>
+  <data name="StoriesFilterAll.Content" xml:space="preserve"><value>Все сторис</value></data>
+  <data name="StoriesFilterActive.Content" xml:space="preserve"><value>Активные</value></data>
+  <data name="StoriesFilterExpired.Content" xml:space="preserve"><value>Истёкшие</value></data>
+  <data name="StoriesJournal.Text" xml:space="preserve"><value>Журнал сторис</value></data>
+  <data name="StoriesDetails.Text" xml:space="preserve"><value>Сведения о сторис</value></data>
+  <data name="StoriesSelect.Text" xml:space="preserve"><value>Выберите сторис в журнале, чтобы увидеть подробности.</value></data>
+  <data name="StoriesNoResults.Text" xml:space="preserve"><value>Нет сторис для отображения</value></data>
+  <data name="StoriesPrivate.Text" xml:space="preserve"><value>Данные сторис скрыты. Включите их показ на верхней панели.</value></data>
+  <data name="StoriesPublished.Text" xml:space="preserve"><value>Опубликована</value></data>
+  <data name="StoriesExpires.Text" xml:space="preserve"><value>Действует до</value></data>
+  <data name="StoriesId.Text" xml:space="preserve"><value>ID сторис</value></data>
+  <data name="StoriesShown" xml:space="preserve"><value>{0:N0} из {1:N0}</value></data>
+  <data name="StoriesActive" xml:space="preserve"><value>Активна</value></data>
+  <data name="StoriesExpired" xml:space="preserve"><value>Срок истёк</value></data>
+  <data name="StoriesUnknownExpiry" xml:space="preserve"><value>Срок неизвестен</value></data>
+  <data name="StoriesNoCaption" xml:space="preserve"><value>Без подписи</value></data>
+  <data name="StoriesUnknownAuthor" xml:space="preserve"><value>Автор неизвестен</value></data>
+  <data name="StoriesChooseFolder.Content" xml:space="preserve"><value>Выбрать…</value></data>
+  <data name="StoriesDirectory.Header" xml:space="preserve"><value>Каталог сторис</value></data>
+  <data name="StoriesCopyDirectory.AutomationProperties.Name" xml:space="preserve"><value>Копировать путь к каталогу сторис</value></data>
+  <data name="StoriesCopyDirectory.ToolTipService.ToolTip" xml:space="preserve"><value>Копировать путь</value></data>
+  <data name="StoriesSaveDirectory.Content" xml:space="preserve"><value>Сохранить каталог</value></data>
+  <data name="StoriesDirectoryInvalid" xml:space="preserve"><value>Укажите полный путь к каталогу сторис.</value></data>
+  <data name="StoriesDirectoryIsFile" xml:space="preserve"><value>Указанный путь ведёт к файлу. Выберите каталог.</value></data>
+  <data name="StoriesDirectorySaved" xml:space="preserve"><value>Каталог сторис сохранён.</value></data>
+  <data name="StoriesDirectorySaveError" xml:space="preserve"><value>Не удалось сохранить каталог сторис. Подробности в журнале приложения.</value></data>
+  <data name="StoriesCancelArchive.Content" xml:space="preserve"><value>Прервать загрузку</value></data>
+  <data name="StoriesFilterDeleted.Content" xml:space="preserve"><value>Удалённые</value></data>
+  <data name="StoriesDeleted" xml:space="preserve"><value>Удалена в Telegram</value></data>
+  <data name="StoriesSort.AutomationProperties.Name" xml:space="preserve"><value>Сортировка сторис</value></data>
+  <data name="StoriesSortDate.Content" xml:space="preserve"><value>По дате</value></data>
+  <data name="StoriesSortName.Content" xml:space="preserve"><value>По имени</value></data>
+  <data name="StoriesSortId.Content" xml:space="preserve"><value>По ID сторис</value></data>
+  <data name="StoriesAuthorUsername.PlaceholderText" xml:space="preserve"><value>@username или выберите сторис автора ниже</value></data>
+  <data name="StoriesDownloadAuthor.Content" xml:space="preserve"><value>Скачать сторис автора</value></data>
+  <data name="StoriesChooseAuthor" xml:space="preserve"><value>Выберите сторис автора или укажите его @username.</value></data>
+  <data name="StoriesConnectFirst" xml:space="preserve"><value>Подключитесь к Telegram, чтобы скачать сторис.</value></data>
+  <data name="StoriesSyncResult" xml:space="preserve"><value>Обработано сторис: {0}. Скачано файлов: {1}. Ошибок: {2}.</value></data>
+  <data name="StoriesSyncCancelled" xml:space="preserve"><value>Загрузка прервана. Готовые файлы сохранены.</value></data>
+  <data name="StoriesSyncError" xml:space="preserve"><value>Не удалось загрузить сторис. Подробности в журнале приложения.</value></data>
+  <data name="StoriesOpenMedia.Content" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="StoriesMissingMedia" xml:space="preserve"><value>Файл не найден в выбранном каталоге сторис.</value></data>
+  <data name="StoriesMediaError" xml:space="preserve"><value>Не удалось открыть медиафайл.</value></data>
+  <data name="StoriesPhoto.AutomationProperties.Name" xml:space="preserve"><value>Фото сторис</value></data>
+  <data name="StoriesUnsupportedMedia" xml:space="preserve"><value>Файл сохранён в каталоге. Этот формат недоступен для просмотра.</value></data>
 </root>

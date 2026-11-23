@@ -34,7 +34,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
     public ConcurrentDictionary<long, TL.ChatBase> DicChats { get; private set; } = [];
     public ConcurrentDictionary<long, TL.ChatBase> DicChatsUpdated { get; private set; } = [];
     public ConcurrentDictionary<long, TL.InputChannel> InputChannelCache { get; private set; } = [];
-    public ConcurrentDictionary<long, TL.StoryItem> DicStories { get; private set; } = [];
     public ConcurrentDictionary<long, TL.User> DicUsers { get; private set; } = [];
     public ConcurrentDictionary<long, TL.User> DicUsersUpdated { get; private set; } = [];
     public ConcurrentQueue<TL.Channel> EnumerableChannels { get; private set; } = [];
@@ -94,7 +93,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
         _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), dto => $"{dto.SourceId}:{dto.Id}");
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
-        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.Id}");
+        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.FromId}:{dto.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
         _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
 
@@ -121,7 +120,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         _chatBuffer = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
         _messageBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessagePrefix(), dto => $"{dto.SourceId}:{dto.Id}");
         _messageRelationBuffer = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(), dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
-        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.Id}");
+        _storyBuffer = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.FromId}:{dto.Id}");
         _userBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
         _tlUserBuffer = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
 
@@ -694,19 +693,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         return listIds ?? [];
     }
 
-    /// <summary> Collect all stories from Telegram </summary>
-    public async Task CollectAllStoriesAsync(CancellationToken ct = default)
-    {
-        if (!IsReady || Client is null) return;
-
-        // Call Telegram API with cancellation support
-        var storiesBase = await TelegramCallAsync(apiCt => Client.Stories_GetAllStories(), isThrow: false, ct);
-        if (storiesBase is TL.Stories_AllStories allStories)
-        {
-            FillEnumerableStories([.. allStories.peer_stories]);
-        }
-    }
-
     private void FillEnumerableChats(Dictionary<long, TL.ChatBase> chats)
     {
         DicChats = new ConcurrentDictionary<long, TL.ChatBase>(chats.ToDictionary());
@@ -806,18 +792,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         {
             EnumerableUsers.Enqueue(user.Value);
         }
-    }
-
-    private void FillEnumerableStories(List<TL.PeerStories> peerStories)
-    {
-        DicStories.Clear();
-
-        // Sort
-        var peerStoriesSorted = peerStories.OrderBy(i => i.stories.Rank).ToArray();
-        foreach (var peerStory in peerStoriesSorted)
-            foreach (var storyBase in peerStory.stories)
-                if (storyBase is TL.StoryItem story)
-                    DicStories.AddOrUpdate(peerStory.peer.ID, story, (key, oldValue) => story);
     }
 
     private async Task OnUpdateShortClientAsync(TL.UpdateShort updateShort)
@@ -1582,98 +1556,6 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
         IsContact = dto.IsContact
     };
 
-    private static void TgEfStoryEntityByMessageType(TgEfStoryDto storyNew, TL.MessageEntity message)
-    {
-        if (message is null)
-            return;
-        switch (message.GetType())
-        {
-            case var cls when cls == typeof(TL.MessageEntityUnknown):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityMention):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityHashtag):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityBotCommand):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityUrl):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityEmail):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityBold):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityItalic):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityCode):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityPre):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityTextUrl):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityMentionName):
-                break;
-            case var cls when cls == typeof(TL.InputMessageEntityMentionName):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityPhone):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityCashtag):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityUnderline):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityStrike):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityBankCard):
-                break;
-            case var cls when cls == typeof(TL.MessageEntitySpoiler):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityCustomEmoji):
-                break;
-            case var cls when cls == typeof(TL.MessageEntityBlockquote):
-                break;
-        }
-    }
-
-    private static void TgEfStoryEntityByMediaType(TgEfStoryDto storyNew, TL.MessageMedia media)
-    {
-        if (media is null)
-            return;
-        switch (media.GetType())
-        {
-            case var cls when cls == typeof(TL.MessageMediaContact):
-                break;
-            case var cls when cls == typeof(TL.MessageMediaDice):
-                break;
-            case var cls when cls == typeof(MessageMediaDocument):
-                break;
-            case var cls when cls == typeof(MessageMediaGame):
-                break;
-            case var cls when cls == typeof(MessageMediaGeo):
-                break;
-            case var cls when cls == typeof(MessageMediaGeoLive):
-                break;
-            case var cls when cls == typeof(MessageMediaGiveaway):
-                break;
-            case var cls when cls == typeof(MessageMediaGiveawayResults):
-                break;
-            case var cls when cls == typeof(MessageMediaInvoice):
-                break;
-            case var cls when cls == typeof(MessageMediaPaidMedia):
-                break;
-            case var cls when cls == typeof(MessageMediaPhoto):
-                break;
-            case var cls when cls == typeof(MessageMediaPoll):
-                break;
-            case var cls when cls == typeof(MessageMediaStory):
-                break;
-            case var cls when cls == typeof(MessageMediaUnsupported):
-                break;
-            case var cls when cls == typeof(MessageMediaVenue):
-                break;
-            case var cls when cls == typeof(MessageMediaWebPage):
-                break;
-        }
-    }
-
     /// <summary> Search sources from Telegram </summary>
     public async Task SearchSourcesTgAsync(ITgDownloadViewModel iSettings, TgEnumSourceType sourceType, List<long>? listIds = null)
     {
@@ -1721,10 +1603,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
                     await SearchChatsAsync(tgDownloadSettings, listIds, LoadStateService.DownloadToken);
                     break;
                 case TgEnumSourceType.Story:
-                    await CollectAllStoriesAsync();
-                    tgDownloadSettings.SourceScanCount = DicStories.Count;
-                    tgDownloadSettings.SourceScanCurrent = 0;
-                    await SearchStoriesAsync(tgDownloadSettings);
+                    await SearchStoriesAsync(tgDownloadSettings, LoadStateService.DownloadToken);
                     break;
                 case TgEnumSourceType.UserContact:
                     await UpdateChatViewModelAsync(tgDownloadSettings.ContactVm.Dto.Id, 0, 0, TgLocale.CollectContacts);
@@ -1891,24 +1770,43 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
 
     private async Task SearchStoriesAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default)
     {
+        var stories = (await ReadActiveStoryFeedAsync(ct))
+            .SelectMany(source => source.Stories.OfType<TL.StoryItem>().Select(story => (source.Peer, Story: story)))
+            .DistinctBy(item => (item.Peer.Id, item.Story.id)).ToList();
+
+        tgDownloadSettings.SourceScanCount = stories.Count;
+        tgDownloadSettings.SourceScanCurrent = 0;
+        var source = tgDownloadSettings.SourceVm.Dto;
         try
         {
-            var counter = 0;
-            foreach (var story in DicStories)
+            foreach (var (peer, story) in stories)
             {
-                counter++;
+                ct.ThrowIfCancellationRequested();
                 tgDownloadSettings.SourceScanCurrent++;
-                await UpdateChatsViewModelAsync(counter, DicStories.Count, TgEnumChatsMessageType.ProcessingStories);
-                _ = await FillBufferStoriesAsync(story.Key, story.Value, ct);
+                await UpdateChatsViewModelAsync(tgDownloadSettings.SourceScanCurrent, stories.Count, TgEnumChatsMessageType.ProcessingStories);
+                await FillBufferStoriesAsync(peer.Id, story, peer.Name, ct);
                 await UpdateTitleAsync($"{TgDataUtils.CalcSourceProgress(tgDownloadSettings.SourceScanCount, tgDownloadSettings.SourceScanCurrent):#00.00} %");
-
-                await FlushStoryBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: false, ct);
+                await FlushStoryBufferAsync(source.IsSaveMessages, isForce: false, ct);
             }
         }
         finally
         {
-            await FlushStoryBufferAsync(tgDownloadSettings.SourceVm.Dto.IsSaveMessages, tgDownloadSettings.SourceVm.Dto.IsRewriteMessages, isForce: true, ct);
+            await FlushStoryBufferAsync(source.IsSaveMessages, isForce: true);
         }
+    }
+
+    // Для следующей страницы Telegram требует состояние предыдущего ответа
+    protected virtual async Task<TL.Stories_AllStories?> ReadStoriesPageAsync(string? state, CancellationToken ct)
+    {
+        if (!IsReady || Client is not { } client) return null;
+        return await TelegramCallAsync(apiCt => client.Stories_GetAllStories(state: state, next: state is not null), isThrow: true, ct)
+            as TL.Stories_AllStories;
+    }
+
+    private static string? GetStoryUserName(TL.User user)
+    {
+        var name = $"{user.first_name} {user.last_name}".Trim();
+        return name.Length > 0 ? name : user.username;
     }
 
     private async Task SearchUsersAsync(TgDownloadSettingsViewModel tgDownloadSettings, bool isContact, List<long>? listIds, CancellationToken ct = default)

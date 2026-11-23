@@ -123,10 +123,11 @@ public sealed class TgStorageService : TgWebDisposable, ITgStorageService
         var storyDto = await StoryRepository.GetDtoAsync(where: x => x.FromId == peerId && x.Id == story.id) ?? new();
         storyDto.DtChanged = DateTime.UtcNow;
         storyDto.Id = story.id;
-        storyDto.FromId = story.from_id?.ID ?? peerId;
+        // Идентификатор сторис уникален внутри владельца публикации
+        storyDto.FromId = peerId;
         storyDto.Date = story.date;
         storyDto.ExpireDate = story.expire_date;
-        storyDto.Caption = story.caption;
+        storyDto.Caption = story.caption ?? string.Empty;
         return storyDto;
     }
 

@@ -27,6 +27,10 @@ public sealed partial class TgEfStoryDto : TgDtoBase, ITgEfStoryDto
 	public partial int Length { get; set; }
 	[ObservableProperty]
 	public partial string Message { get; set; }
+    public string MediaPath { get; set; } = string.Empty;
+    public bool IsDeleted { get; set; }
+    public long PeerAccessHash { get; set; }
+    public bool IsChannel { get; set; }
 	public bool IsReady => Id > 0;
 
 	public TgEfStoryDto() : base()

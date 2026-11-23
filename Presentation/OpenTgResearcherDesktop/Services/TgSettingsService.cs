@@ -642,20 +642,29 @@ public sealed partial class TgSettingsService : ObservableRecipient, ITgSettings
     {
         try
         {
-            Initialize();
-            if (value is string strValue)
-            {
-                _settings[key] = strValue;
-            }
-            else
-            {
-                _settings[key] = JsonUtils.Stringify(value);
-            }
-            _fileService.Save(_applicationDataFolder, _localSettingsFile, _settings);
+            SaveSettingOrThrow(key, value);
         }
         catch (Exception ex)
         {
             TgLogUtils.WriteException(ex);
+        }
+    }
+
+    public void SaveSettingOrThrow<T>(string key, T value)
+    {
+        Initialize();
+        var serialized = value is string strValue ? strValue : JsonUtils.Stringify(value);
+        var existed = _settings.TryGetValue(key, out var previous);
+        try
+        {
+            _settings[key] = serialized;
+            _fileService.Save(_applicationDataFolder, _localSettingsFile, _settings);
+        }
+        catch
+        {
+            if (existed) _settings[key] = previous!;
+            else _settings.Remove(key);
+            throw;
         }
     }
 

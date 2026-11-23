@@ -96,7 +96,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
     [Test]
     public async Task StopMonitoring_ShouldStopWithoutExceptions()
     {
-        using var service = Scope.Resolve<ITgHardwareResourceMonitoringService>();
+        using var service = new TgHardwareResourceMonitoringService(() => new TgHardwareMetrics());
         var started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var count = 0;
         service.MetricsUpdated += (_, _) =>
@@ -106,7 +106,7 @@ internal sealed class TgHardwareResourceMonitoringServiceTests : BusinessLogicTe
         };
         service.StartMonitoring(TimeSpan.FromMilliseconds(50));
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-        await service.StopMonitoringAsync(isClose: false);
+        await Task.WhenAll(service.StopMonitoringAsync(isClose: false), service.StopMonitoringAsync(isClose: false));
         var stoppedCount = Volatile.Read(ref count);
         await service.StopMonitoringAsync(isClose: false);
         await Task.Delay(TimeSpan.FromMilliseconds(200));

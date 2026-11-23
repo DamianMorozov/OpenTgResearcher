@@ -47,6 +47,8 @@ public interface ITgConnectClient : ITgDebug, IDisposable
 	public void SetupUpdateException(Action<Exception> updateException);
 
 	public Task SearchSourcesTgAsync(ITgDownloadViewModel tgDownloadSettings, TgEnumSourceType sourceType, List<long>? listIds = null);
+    public Task<TgStoryArchiveResult> SyncStoryArchiveAsync(string directory, TgEfStoryDto? selected = null, string? username = null,
+        CancellationToken ct = default);
 	public Task CreateChatAsync(ITgDownloadViewModel tgDownloadSettings, bool isSilent, CancellationToken ct = default);
     public Task CreateChatBaseCoreAsync(TgDownloadSettingsViewModel tgDownloadSettings, CancellationToken ct = default);
     /// <summary> Добавляет доступный публичный канал или группу без вступления </summary>

@@ -53,7 +53,7 @@ internal static partial class Program
         await stories.SaveAsync(new TgStorage.Domain.Stories.TgEfStoryDto { Uid = Guid.NewGuid(), Id = 77, FromId = 100, FromName = "story-for-reading" });
         var vm = new TgStoriesViewModel(_state, _settings, _navigation, null!);
         await OpenWhileParsingAsync(ct => App.BusinessLogicManager.StorageManager.StoryRepository.GetCountAsync(ct: ct),
-            () => vm.OnNavigatedToAsync(null), () => CheckPageRows(vm.Errors, vm.Dtos.Any(x => x.FromName == "story-for-reading")));
+            () => vm.OnNavigatedToAsync(null), () => CheckPageRows(vm.Errors, vm.Rows.Any(x => x.Author == "story-for-reading")));
     }
 
     // Первая порция контактов и их счётчики читаются без использования занятого контекста

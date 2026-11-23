@@ -1158,8 +1158,13 @@ public static class TgEfDomainUtils
         target.Date = dto.Date;
         target.ExpireDate = dto.ExpireDate;
         target.Caption = dto.Caption;
+        target.MediaPath = dto.MediaPath;
+        target.IsDeleted = dto.IsDeleted;
+        target.IsChannel = dto.IsChannel;
+        target.PeerAccessHash = dto.PeerAccessHash;
         target.Type = dto.Type;
         target.Offset = dto.Offset;
+        target.Length = dto.Length;
         target.Message = dto.Message;
 
         if (isUidCopy)
@@ -1179,6 +1184,10 @@ public static class TgEfDomainUtils
         target.Date = source.Date;
         target.ExpireDate = source.ExpireDate;
         target.Caption = source.Caption;
+        target.MediaPath = source.MediaPath;
+        target.IsDeleted = source.IsDeleted;
+        target.IsChannel = source.IsChannel;
+        target.PeerAccessHash = source.PeerAccessHash;
         target.Type = source.Type;
         target.Offset = source.Offset;
         target.Length = source.Length;
@@ -1202,6 +1211,10 @@ public static class TgEfDomainUtils
             Date = dto.Date,
             ExpireDate = dto.ExpireDate,
             Caption = dto.Caption,
+            MediaPath = dto.MediaPath,
+            IsDeleted = dto.IsDeleted,
+            IsChannel = dto.IsChannel,
+            PeerAccessHash = dto.PeerAccessHash,
             Type = dto.Type,
             Offset = dto.Offset,
             Length = dto.Length,
@@ -1228,6 +1241,10 @@ public static class TgEfDomainUtils
             Date = entity.Date ?? DateTime.MinValue,
             ExpireDate = entity.ExpireDate ?? DateTime.MinValue,
             Caption = entity.Caption ?? string.Empty,
+            MediaPath = entity.MediaPath ?? string.Empty,
+            IsDeleted = entity.IsDeleted,
+            IsChannel = entity.IsChannel,
+            PeerAccessHash = entity.PeerAccessHash,
             Type = entity.Type ?? string.Empty,
             Offset = entity.Offset,
             Length = entity.Length,

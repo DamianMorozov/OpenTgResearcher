@@ -2755,4 +2755,54 @@ Open Chats, select a chat, choose a download folder and start parsing.</value></
   <data name="ConnectionConnected" xml:space="preserve"><value>Connected</value></data>
   <data name="ConnectionDisconnected" xml:space="preserve"><value>Disconnected</value></data>
   <data name="ConnectionDirectProxy.Text" xml:space="preserve"><value>No proxy</value></data>
+  <data name="StoriesSearch.PlaceholderText" xml:space="preserve"><value>Search by author or caption</value></data>
+  <data name="StoriesSearch.AutomationProperties.Name" xml:space="preserve"><value>Search by author or caption</value></data>
+  <data name="StoriesLoad.Text" xml:space="preserve"><value>Load from storage</value></data>
+  <data name="StoriesUpdateTelegram.Text" xml:space="preserve"><value>Download active stories</value></data>
+  <data name="StoriesFilter.AutomationProperties.Name" xml:space="preserve"><value>Story expiration</value></data>
+  <data name="StoriesFilterAll.Content" xml:space="preserve"><value>All stories</value></data>
+  <data name="StoriesFilterActive.Content" xml:space="preserve"><value>Active</value></data>
+  <data name="StoriesFilterExpired.Content" xml:space="preserve"><value>Expired</value></data>
+  <data name="StoriesJournal.Text" xml:space="preserve"><value>Story journal</value></data>
+  <data name="StoriesDetails.Text" xml:space="preserve"><value>Story details</value></data>
+  <data name="StoriesSelect.Text" xml:space="preserve"><value>Select a story in the journal to see its details.</value></data>
+  <data name="StoriesNoResults.Text" xml:space="preserve"><value>No stories to display</value></data>
+  <data name="StoriesPrivate.Text" xml:space="preserve"><value>Story data is hidden. Use the top bar to show it.</value></data>
+  <data name="StoriesPublished.Text" xml:space="preserve"><value>Published</value></data>
+  <data name="StoriesExpires.Text" xml:space="preserve"><value>Expires</value></data>
+  <data name="StoriesId.Text" xml:space="preserve"><value>Story ID</value></data>
+  <data name="StoriesShown" xml:space="preserve"><value>{0:N0} of {1:N0}</value></data>
+  <data name="StoriesActive" xml:space="preserve"><value>Active</value></data>
+  <data name="StoriesExpired" xml:space="preserve"><value>Expired</value></data>
+  <data name="StoriesUnknownExpiry" xml:space="preserve"><value>Expiration unknown</value></data>
+  <data name="StoriesNoCaption" xml:space="preserve"><value>No caption</value></data>
+  <data name="StoriesUnknownAuthor" xml:space="preserve"><value>Unknown author</value></data>
+  <data name="StoriesChooseFolder.Content" xml:space="preserve"><value>Browse…</value></data>
+  <data name="StoriesDirectory.Header" xml:space="preserve"><value>Stories folder</value></data>
+  <data name="StoriesCopyDirectory.AutomationProperties.Name" xml:space="preserve"><value>Copy stories folder path</value></data>
+  <data name="StoriesCopyDirectory.ToolTipService.ToolTip" xml:space="preserve"><value>Copy path</value></data>
+  <data name="StoriesSaveDirectory.Content" xml:space="preserve"><value>Save folder</value></data>
+  <data name="StoriesDirectoryInvalid" xml:space="preserve"><value>Enter the full path to the stories folder.</value></data>
+  <data name="StoriesDirectoryIsFile" xml:space="preserve"><value>The path points to a file. Select a folder.</value></data>
+  <data name="StoriesDirectorySaved" xml:space="preserve"><value>Stories folder saved.</value></data>
+  <data name="StoriesDirectorySaveError" xml:space="preserve"><value>Could not save the stories folder. See the application log for details.</value></data>
+  <data name="StoriesCancelArchive.Content" xml:space="preserve"><value>Cancel download</value></data>
+  <data name="StoriesFilterDeleted.Content" xml:space="preserve"><value>Deleted</value></data>
+  <data name="StoriesDeleted" xml:space="preserve"><value>Deleted in Telegram</value></data>
+  <data name="StoriesSort.AutomationProperties.Name" xml:space="preserve"><value>Story sort order</value></data>
+  <data name="StoriesSortDate.Content" xml:space="preserve"><value>By date</value></data>
+  <data name="StoriesSortName.Content" xml:space="preserve"><value>By name</value></data>
+  <data name="StoriesSortId.Content" xml:space="preserve"><value>By story ID</value></data>
+  <data name="StoriesAuthorUsername.PlaceholderText" xml:space="preserve"><value>@username or select a story by the author below</value></data>
+  <data name="StoriesDownloadAuthor.Content" xml:space="preserve"><value>Download author’s stories</value></data>
+  <data name="StoriesChooseAuthor" xml:space="preserve"><value>Select a story by the author or enter their @username.</value></data>
+  <data name="StoriesConnectFirst" xml:space="preserve"><value>Connect to Telegram to download stories.</value></data>
+  <data name="StoriesSyncResult" xml:space="preserve"><value>Stories processed: {0}. Files downloaded: {1}. Errors: {2}.</value></data>
+  <data name="StoriesSyncCancelled" xml:space="preserve"><value>Download cancelled. Completed files were kept.</value></data>
+  <data name="StoriesSyncError" xml:space="preserve"><value>Unable to download stories. See the application log for details.</value></data>
+  <data name="StoriesOpenMedia.Content" xml:space="preserve"><value>Open file</value></data>
+  <data name="StoriesMissingMedia" xml:space="preserve"><value>File not found in the selected stories folder.</value></data>
+  <data name="StoriesMediaError" xml:space="preserve"><value>Could not open the media file.</value></data>
+  <data name="StoriesPhoto.AutomationProperties.Name" xml:space="preserve"><value>Story photo</value></data>
+  <data name="StoriesUnsupportedMedia" xml:space="preserve"><value>The file was saved in the folder. This format cannot be previewed.</value></data>
 </root>

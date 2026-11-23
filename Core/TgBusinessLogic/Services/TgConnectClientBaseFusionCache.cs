@@ -104,7 +104,7 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             });
 
     /// <summary> Flush story buffer to database </summary>
-    private async Task FlushStoryBufferAsync(bool isSaveMessages, bool isRewriteMessages, bool isForce, CancellationToken ct = default) =>
+    private async Task FlushStoryBufferAsync(bool isSaveMessages, bool isForce, CancellationToken ct = default) =>
         await StoryBuffer.FlushAsync(isSaveMessages, isForce,
             saveAction: async (list) =>
             {
@@ -202,41 +202,22 @@ public abstract partial class TgConnectClientBase : TgWebDisposable, ITgConnectC
             });
     }
 
-    /// <summary> Fills the buffer with stories for a specific peer </summary>
-    public async Task<TgEfStoryDto?> FillBufferStoriesAsync(long peerId, TL.StoryItem story, CancellationToken ct = default) =>
-        await TryGetCatchAsync(async () =>
+    private async Task FillBufferStoriesAsync(long peerId, TL.StoryItem story, string? sourceName, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        var dto = await StorageManager.CreateOrGetStoryAsync(peerId, story);
+        if (!string.IsNullOrWhiteSpace(sourceName))
+            dto.FromName = sourceName;
+        if (story.entities?.FirstOrDefault() is { } entity)
         {
-            TgEfStoryDto? storyDto = null;
-            if (story.entities is not null)
-            {
-                foreach (var message in story.entities)
-                {
-                    storyDto = await StorageManager.CreateOrGetStoryAsync(peerId, story);
-                    await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), storyDto, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
-                    if (message is not null)
-                    {
-                        storyDto.Type = message.Type;
-                        storyDto.Offset = message.Offset;
-                        storyDto.Length = message.Length;
-                        TgEfStoryEntityByMessageType(storyDto, message);
-                    }
-                    // Switch media type
-                    TgEfStoryEntityByMediaType(storyDto, story.media);
-                    // Save at memory
-                    if (StoryBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
-                        StoryBuffer.Add(storyDto);
-                }
-            }
-            else
-            {
-                storyDto = await StorageManager.CreateOrGetStoryAsync(peerId, story);
-                await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), storyDto, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
-                // Save at memory
-                if (StoryBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
-                    StoryBuffer.Add(storyDto);
-            }
-            return storyDto;
-        }, ct: ct);
+            dto.Type = entity.Type;
+            dto.Offset = entity.Offset;
+            dto.Length = entity.Length;
+        }
+        await Cache.SetAsync(TgCacheUtils.GetCacheKeyStory(peerId, story.id), dto, TgCacheUtils.CacheOptionsChannelMessages, token: ct);
+        if (StoryBuffer.FirstOrDefault(x => x.Id == story.id && x.FromId == peerId) is null)
+            StoryBuffer.Add(dto);
+    }
 
     /// <summary> Fills the buffer with users with cancellation and exception handling </summary>
     public async Task<TgEfUserDto?> FillBufferUsersAsync(TL.User user, bool isContact, CancellationToken ct = default) =>

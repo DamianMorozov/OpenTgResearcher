@@ -74,7 +74,7 @@ public abstract partial class TgConnectClientBase
             Relations = new(Cache, TgCacheUtils.GetCacheKeyMessageRelationPrefix(),
                 dto => $"{dto.ParentSourceId}:{dto.ParentMessageId}:{dto.ChildSourceId}:{dto.ChildMessageId}");
             Chats = new(Cache, TgCacheUtils.GetCacheKeyChatPrefix(), dto => $"{dto.Id}");
-            Stories = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.Id}");
+            Stories = new(Cache, TgCacheUtils.GetCacheKeyStoryPrefix(), dto => $"{dto.FromId}:{dto.Id}");
             Users = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
             Participants = new(Cache, TgCacheUtils.GetCacheKeyUserPrefix(), dto => $"{dto.Id}");
         }

@@ -81,6 +81,18 @@ public sealed class TgEfStoryEntity : ITgEfStoryEntity
 	[Column(TgEfConstants.ColumnMessage, TypeName = "NVARCHAR(256)")]
 	public string? Message { get; set; } = null!;
 
+    [Column("MEDIA_PATH")]
+    public string? MediaPath { get; set; }
+
+    [Column("IS_DELETED")]
+    public bool IsDeleted { get; set; }
+
+    [Column("PEER_ACCESS_HASH")]
+    public long PeerAccessHash { get; set; }
+
+    [Column("IS_CHANNEL")]
+    public bool IsChannel { get; set; }
+
     public TgEfStoryEntity() => Default();
 
     #endregion

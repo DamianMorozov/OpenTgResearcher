@@ -24,8 +24,8 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
         if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 		
-        // Find by ID
-		itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id, ct);
+        // Идентификатор сторис уникален в пределах источника
+		itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == item.Id && x.FromId == item.FromId, ct);
 			
         return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
@@ -44,7 +44,7 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
 			return new(TgEnumEntityState.IsExists, itemFind);
 		
         // Find by ID
-		itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == dto.Id, ct);
+		itemFind = await GetQuery(isReadOnly).SingleOrDefaultAsync(x => x.Id == dto.Id && x.FromId == dto.FromId, ct);
 			
         return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
@@ -63,7 +63,7 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
 			return new(TgEnumEntityState.IsExists, itemFind);
 		
         // Find by ID
-		itemFind = GetQuery(isReadOnly).SingleOrDefault(x => x.Id == item.Id);
+		itemFind = GetQuery(isReadOnly).SingleOrDefault(x => x.Id == item.Id && x.FromId == item.FromId);
 			
         return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
@@ -80,7 +80,7 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
 		if (itemFind is not null)
 			return new(TgEnumEntityState.IsExists, itemFind);
 		// Find by ID
-		itemFind = GetQuery(isReadOnly).SingleOrDefault(x => x.Id == dto.Id);
+		itemFind = GetQuery(isReadOnly).SingleOrDefault(x => x.Id == dto.Id && x.FromId == dto.FromId);
 			
         return itemFind is not null
 			? new(TgEnumEntityState.IsExists, itemFind)
@@ -124,10 +124,10 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
                 return;
 
             // Try to find existing entity
-            entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
+            if (dto.Uid != Guid.Empty)
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Uid == dto.Uid, ct);
             if (entity is null)
-                // Find by Id
-                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Id == dto.Id, ct);
+                entity = await GetQuery(isReadOnly: false).SingleOrDefaultAsync(x => x.Id == dto.Id && x.FromId == dto.FromId, ct);
 
             if (entity is null)
             {
@@ -135,6 +135,8 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
                     dbContext.ChangeTracker.Clear();
                 // Create new entity
                 entity = TgEfDomainUtils.CreateNewEntity(dto, isUidCopy: true);
+                if (entity.Uid == Guid.Empty)
+                    entity.Uid = Guid.NewGuid();
                 EfContext.Stories.Add(entity);
             }
             else
@@ -144,7 +146,7 @@ public sealed class TgEfStoryRepository : TgEfRepositoryBase<TgEfStoryEntity, Tg
             }
 
             ValidateAndNormalize(entity);
-            await EfContext.SaveChangesAsync();
+            await EfContext.SaveChangesAsync(ct);
         }
         catch (Exception ex)
         {

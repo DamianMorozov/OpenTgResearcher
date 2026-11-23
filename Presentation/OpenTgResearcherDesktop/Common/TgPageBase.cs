@@ -62,24 +62,21 @@ public abstract class TgPageBase : Page
     /// <summary> Clipboard silent write with animation </summary>
     public async void OnClipboardSilentWriteClick(object sender, RoutedEventArgs e)
     {
-        if (sender is not TgAnimatedClipboardButton button) return;
+        if (sender is not TgAnimatedClipboardButton button || button.Tag?.ToString() is not { Length: > 0 } tag) return;
         
-        if (button.Tag.ToString() is string tag && !string.IsNullOrEmpty(tag))
+        try
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(tag);
             Clipboard.SetContent(dataPackage);
 
-            try
-            {
-                VisualStateManager.GoToState(button, "CheckedState", useTransitions: true);
-                await Task.Delay(TimeSpan.FromSeconds(button.ResetDelay));
-                VisualStateManager.GoToState(button, "NormalState", useTransitions: true);
-            }
-            catch (Exception ex)
-            {
-                ViewModel.LogError(ex);
-            }
+            VisualStateManager.GoToState(button, "CheckedState", useTransitions: true);
+            await Task.Delay(TimeSpan.FromSeconds(button.ResetDelay));
+            VisualStateManager.GoToState(button, "NormalState", useTransitions: true);
+        }
+        catch (Exception ex)
+        {
+            ViewModel.LogError(ex);
         }
     }
 

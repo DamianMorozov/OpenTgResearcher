@@ -38,6 +38,7 @@ public sealed class ITgSettingsService
     public T? ReadSetting<T>(string key) => _settings.TryGetValue(key, out var value) ? (T?)value : default;
     /// <summary> Сохраняет историю открытых чатов в памяти </summary>
     public void SaveSetting<T>(string key, T value) => _settings[key] = value;
+    public void SaveSettingOrThrow<T>(string key, T value) => SaveSetting(key, value);
 }
 public interface ILogger<out T>;
 public interface IAppNotificationService;
@@ -228,6 +229,8 @@ public sealed class TestClient
     /// <summary> Заменяет обновление списка чатов без сети </summary>
     public Task SearchSourcesTgAsync(TgDownloadSettingsViewModel settings, TgEnumSourceType type, List<long>? ids = null) =>
         SearchSources?.Invoke(settings, type, ids) ?? Task.CompletedTask;
+    public Task<TgStoryArchiveResult> SyncStoryArchiveAsync(string directory, TgEfStoryDto? selected = null, string? username = null,
+        CancellationToken ct = default) => Task.FromResult(new TgStoryArchiveResult());
     public Func<TgDownloadSettingsViewModel, TgEnumSourceType, List<long>?, Task>? SearchSources { get; set; }
     public TestClient? Client => this;
     public long UserId { get; set; } = 10;
@@ -292,6 +295,7 @@ public static class TgResourceExtensions
         "NetworkParsingMessageIds" => "Чтение ID {0} из {1}",
         "NetworkParsingMessageId" => "Чтение ID {0}",
         "ChatDetailsFailed" => "Не удалось обновить сведения о чате: {0}",
+        "StoriesShown" => "{0} из {1}",
         _ => key,
     };
     /// <summary> Возвращает ключ заголовка участника для проверки модели </summary>

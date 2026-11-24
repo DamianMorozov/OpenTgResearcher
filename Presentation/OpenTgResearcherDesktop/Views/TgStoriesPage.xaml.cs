@@ -5,7 +5,7 @@ public sealed partial class TgStoriesPage
     private readonly DispatcherTimer _expirationTimer = new() { Interval = TimeSpan.FromSeconds(15) };
     private int _mediaRevision;
     private StorageFile? _mediaFile;
-    private Microsoft.UI.Xaml.Controls.Primitives.Popup? _mediaPopup;
+    private TgWindowMediaPopup? _mediaPopup;
 	#region Fields, properties, constructor
 
 	public override TgStoriesViewModel ViewModel { get; }
@@ -96,11 +96,7 @@ public sealed partial class TgStoriesPage
     // Переключаем просмотр по области изображения, оставляя кнопки и ползунки плеера доступными
     private void OnStoryMediaTapped(object sender, TappedRoutedEventArgs e)
     {
-        for (var element = e.OriginalSource as DependencyObject; element is not null && element != StoryMediaSurface;
-            element = VisualTreeHelper.GetParent(element))
-        {
-            if (element is Microsoft.UI.Xaml.Controls.Primitives.ButtonBase or Slider) return;
-        }
+        if (TgWindowMediaPopup.IsPlayerControl(e, StoryMediaSurface)) return;
 
         if (_mediaPopup is not null)
             CloseMediaPreview();
@@ -112,7 +108,7 @@ public sealed partial class TgStoriesPage
     // Возвращаем медиа в карточку по Esc только при открытом просмотре
     private void OnCloseMediaInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
-        if (_mediaPopup is not { IsOpen: true }) return;
+        if (_mediaPopup is null) return;
 
         CloseMediaPreview();
         args.Handled = true;
@@ -124,18 +120,7 @@ public sealed partial class TgStoriesPage
         StoryMediaHost.Children.Remove(StoryMediaSurface);
         StoryPhoto.MaxHeight = double.PositiveInfinity;
         StoryVideo.Height = double.NaN;
-        StoryMediaSurface.Background = new SolidColorBrush(Microsoft.UI.Colors.Black);
-        _mediaPopup = new() { XamlRoot = root, Child = StoryMediaSurface };
-        ResizeMediaPreview(root, null);
-        root.Changed += ResizeMediaPreview;
-        _mediaPopup.IsOpen = true;
-    }
-
-    // Подгоняем просмотр под клиентскую область при изменении размеров окна
-    private void ResizeMediaPreview(XamlRoot root, XamlRootChangedEventArgs? args)
-    {
-        StoryMediaSurface.Width = root.Size.Width;
-        StoryMediaSurface.Height = root.Size.Height;
+        _mediaPopup = new(root, StoryMediaSurface);
     }
 
     // Возвращаем поверхность и её исходные размеры в карточке сторис
@@ -144,12 +129,7 @@ public sealed partial class TgStoriesPage
         if (_mediaPopup is not { } popup) return;
 
         _mediaPopup = null;
-        if (popup.XamlRoot is { } root) root.Changed -= ResizeMediaPreview;
-        popup.IsOpen = false;
-        popup.Child = null;
-        StoryMediaSurface.ClearValue(WidthProperty);
-        StoryMediaSurface.ClearValue(HeightProperty);
-        StoryMediaSurface.ClearValue(Panel.BackgroundProperty);
+        popup.Close();
         StoryPhoto.ClearValue(MaxHeightProperty);
         StoryVideo.ClearValue(HeightProperty);
         StoryMediaHost.Children.Add(StoryMediaSurface);

@@ -45,6 +45,8 @@ public static class ChatPageTestNative {
     public static extern bool SetCursorPos(int x, int y);
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, System.UIntPtr extraInfo);
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    public static extern void keybd_event(byte key, byte scan, uint flags, System.UIntPtr extraInfo);
 }
 '@
 
@@ -126,6 +128,15 @@ function Invoke-AppPoint([double]$x, [double]$y) {
     [void][ChatPageTestNative]::SetCursorPos([int]$x, [int]$y)
     [ChatPageTestNative]::mouse_event(2, 0, 0, 0, [UIntPtr]::Zero)
     [ChatPageTestNative]::mouse_event(4, 0, 0, 0, [UIntPtr]::Zero)
+    Start-Sleep -Milliseconds 250
+}
+
+# Посылаем Esc окну Desktop после проверки фокуса
+function Invoke-AppEscape {
+    [void][ChatPageTestNative]::SetForegroundWindow($appProcess.MainWindowHandle)
+    if ([ChatPageTestNative]::GetForegroundWindow() -ne $appProcess.MainWindowHandle) { throw 'Окно перекрыто перед нажатием Esc' }
+    [ChatPageTestNative]::keybd_event(0x1B, 0, 0, [UIntPtr]::Zero)
+    [ChatPageTestNative]::keybd_event(0x1B, 0, 2, [UIntPtr]::Zero)
     Start-Sleep -Milliseconds 250
 }
 
@@ -658,27 +669,21 @@ try {
                 Start-Sleep -Milliseconds 300
                 $image = Wait-AppElement ('(^|[\\/ ])' + [regex]::Escape($VideoFileName) + '$') '' 'MessageThumbnail'
                 Save-AppSnapshot 'VideoCaption'
-                $beforePlayers = @(Get-Process | Where-Object { $_.MainWindowTitle -like ('*' + $VideoFileName + '*') } | Select-Object -ExpandProperty Id)
                 $bounds = $image.Current.BoundingRectangle
                 Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
-                $deadline = [DateTime]::UtcNow.AddSeconds(15)
-                do {
-                    $player = Get-Process | Where-Object { $_.MainWindowTitle -like ('*' + $VideoFileName + '*') } | Select-Object -First 1
-                    if ($null -eq $player) { Start-Sleep -Milliseconds 100 }
-                } until ($null -ne $player -or [DateTime]::UtcNow -gt $deadline)
-                if ($null -eq $player) { throw 'Нажатие обложки не открыло оригинал в системном проигрывателе' }
-                try {
-                    Start-Sleep -Milliseconds 1200
-                    $playerWindow = [System.Windows.Automation.AutomationElement]::FromHandle($player.MainWindowHandle)
-                    $playerWindow.FindAll([System.Windows.Automation.TreeScope]::Descendants, [System.Windows.Automation.Condition]::TrueCondition) |
-                        ForEach-Object { "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name)" } |
-                        Set-Content -LiteralPath (Join-Path $caseDirectory 'player.txt') -Encoding utf8
-                    Write-Output "PASS: обложка открыла настоящий оригинал в системном проигрывателе: $($player.MainWindowTitle)"
-                }
-                finally {
-                    if ($player.Id -notin $beforePlayers) { [void]$player.CloseMainWindow(); [void]$player.WaitForExit(5000) }
-                    $player.Dispose()
-                }
+                $pause = Wait-AppElement '^(Pause|Приостановить|Пауза)$' 'AppBarButton' 'PlayPauseButton'
+                Save-AppSnapshot 'VideoInline'
+                $controls = (Wait-AppElement '.*' '' 'ProgressSlider').Current.BoundingRectangle
+                $x = $controls.Left + $controls.Width / 2
+                $y = $pause.Current.BoundingRectangle.Top - 95
+                Invoke-AppPoint $x $y
+                [void](Wait-AppElement '.*' 'Popup')
+                Save-AppSnapshot 'VideoExpanded'
+                Invoke-AppEscape
+                [void](Wait-AppElement '^(Pause|Приостановить|Пауза)$' 'AppBarButton' 'PlayPauseButton')
+                Invoke-AppEscape
+                [void](Wait-AppElement ('(^|[\\/ ])' + [regex]::Escape($VideoFileName) + '$') '' 'MessageThumbnail')
+                Write-Output 'PASS: встроенный проигрыватель, увеличение видео и возврат по Esc к проигрывателю и обложке'
             }
         }
         if ($CheckMediaPreview -and $models[$index] -eq 'Content') {
@@ -724,6 +729,10 @@ try {
             $preview = Wait-AppElement '.*' '' 'ChatFullScreenImage'
             $previewBounds = $preview.Current.BoundingRectangle
             Invoke-AppPoint ($previewBounds.Left + $previewBounds.Width / 2) ($previewBounds.Top + $previewBounds.Height / 2)
+            Assert-ImageViewerClosed
+            Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
+            [void](Wait-AppElement '.*' '' 'ChatFullScreenImage')
+            Invoke-AppEscape
             Assert-ImageViewerClosed
             Invoke-AppPoint ($bounds.Left + $bounds.Width / 2) ($bounds.Top + $bounds.Height / 2)
             [void](Wait-AppElement '.*' '' 'ChatFullScreenImage')

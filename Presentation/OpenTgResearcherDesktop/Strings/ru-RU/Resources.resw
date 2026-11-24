@@ -2503,6 +2503,8 @@ API-параметры, телефон и выбранный прокси буд
     <value>Будет проверена доступность истории. Подписка не оформляется. После открытия выберите каталог и параметры парсинга. Для неизвестного источника одного ID недостаточно.</value>
   </data>
   <data name="ChatOpenMediaLabel.Text" xml:space="preserve"><value>Открыть файл</value></data>
+  <data name="ChatPlayMedia.Content" xml:space="preserve"><value>Воспроизвести</value></data>
+  <data name="ChatInlineMediaFailed" xml:space="preserve"><value>Встроенный проигрыватель не смог воспроизвести файл. Попробуйте «Открыть файл».</value></data>
   <data name="ChatOpenMedia.ToolTipService.ToolTip" xml:space="preserve"><value>Открыть оригинал в системном приложении</value></data>
   <data name="ChatOpenMediaFailed" xml:space="preserve"><value>Не удалось открыть файл. Проверьте, что он существует и в Windows выбрано приложение для этого типа файлов.</value></data>
   <data name="GlobalSearchLocal.Text" xml:space="preserve"><value>Мои чаты</value></data>

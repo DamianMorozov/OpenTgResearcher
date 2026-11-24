@@ -125,6 +125,8 @@ internal static partial class Program
             (string?)x.Attribute("AutomationProperties.AutomationId") == "MessageThumbnail");
         Assert((string?)thumbnail.Attribute("Tapped") == "OnMediaPreviewClick"
             && ((string?)thumbnail.Attribute("Tag"))?.Contains("MediaFullPath") == true, "Обложка открывает картинку вместо видео");
+        Assert(thumbnail.Ancestors().Any(x => (string?)x.Attribute(XName.Get("Name", "http://schemas.microsoft.com/winfx/2006/xaml")) == "MessageMediaHost"),
+            "У сообщения нет места для встроенного проигрывателя рядом с обложкой");
         return Task.CompletedTask;
     }
 
